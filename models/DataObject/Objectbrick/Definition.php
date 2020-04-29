@@ -33,6 +33,8 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 {
     use Model\DataObject\ClassDefinition\Helper\VarExport;
 
+    use DataObject\Traits\FieldcollectionObjectbrickDefinitionTrait;
+
     /**
      * @var array
      */
@@ -42,16 +44,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
      * @var array
      */
     private $oldClassDefinitions = [];
-
-    /**
-     * @var string
-     */
-    public $title;
-
-    /**
-     * @var string
-     */
-    public $group;
 
     /**
      * @param array $classDefinitions
@@ -172,8 +164,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         $this->checkTablenames();
 
-        $definitionFile = $this->getDefinitionFile();
-
         $newClassDefinitions = [];
         $classDefinitionsToDelete = [];
 
@@ -187,11 +177,30 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
 
         $this->classDefinitions = $newClassDefinitions;
 
+        $this->generateClassFiles($saveDefinitionFile);
+
+        $cacheKey = 'objectbrick_' . $this->getKey();
+        // for localized fields getting a fresh copy
+        Runtime::set($cacheKey, $this);
+
+        $this->createContainerClasses();
+        $this->updateDatabase();
+    }
+
+    /**
+     * @param bool $generateDefinitionFile
+     *
+     * @throws \Exception
+     */
+    public function generateClassFiles($generateDefinitionFile = true)
+    {
+        $definitionFile = $this->getDefinitionFile();
+
         $infoDocBlock = $this->getInfoDocBlock();
 
-        $this->cleanupOldFiles($definitionFile);
+        if ($generateDefinitionFile) {
+            $this->cleanupOldFiles($definitionFile);
 
-        if ($saveDefinitionFile) {
             $clone = clone $this;
             $clone->setDao(null);
             unset($clone->oldClassDefinitions);
@@ -225,17 +234,21 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cd .= "\n\n";
         $cd .= 'namespace Pimcore\\Model\\DataObject\\Objectbrick\\Data;';
         $cd .= "\n\n";
-        $cd .= 'use Pimcore\\Model\\DataObject;';
-        $cd .= "\n";
-        $cd .= 'use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;';
-        $cd .= "\n";
-        $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
-        $cd .= "\n\n";
 
-        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . ' implements \\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface {';
-        $cd .= "\n\n";
+        $useParts = [
+            'Pimcore\Model\DataObject',
+            'Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException',
+            'Pimcore\Model\DataObject\PreGetValueHookInterface'
+        ];
 
-        $cd .= 'use \\Pimcore\\Model\\DataObject\\Traits\\DirtyIndicatorTrait;';
+        $cd .= DataObject\ClassDefinition\Service::buildUseCode($useParts);
+
+        $cd .= "\n";
+
+        $implementsParts = [];
+        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
+
+        $cd .= 'class ' . ucfirst($this->getKey()) . ' extends ' . $extendClass . $implements .' {';
         $cd .= "\n\n";
 
         $cd .= 'protected $type = "' . $this->getKey() . "\";\n";
@@ -280,12 +293,6 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $cd .= "\n";
 
         File::putPhpFile($this->getPhpClassFile(), $cd);
-        $cacheKey = 'objectbrick_' . $this->getKey();
-        // for localized fields getting a fresh copy
-        Runtime::set($cacheKey, $this);
-
-        $this->createContainerClasses();
-        $this->updateDatabase();
     }
 
     /**
@@ -670,21 +677,5 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $classFile = $classFolder . '/' . ucfirst($this->getKey()) . '.php';
 
         return $classFile;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @param string $title
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
     }
 }

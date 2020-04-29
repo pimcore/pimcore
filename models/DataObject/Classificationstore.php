@@ -18,6 +18,7 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
 
 /**
@@ -29,7 +30,7 @@ use Pimcore\Tool;
  */
 class Classificationstore extends Model\AbstractModel implements DirtyIndicatorInterface
 {
-    use Model\DataObject\Traits\DirtyIndicatorTrait;
+    use Model\Element\Traits\DirtyIndicatorTrait;
     /**
      * @var array
      */
@@ -198,7 +199,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
 
         if (!$this->isFieldDirty('_self')) {
             if ($this->object) {
-                $oldData = $this->items[$groupId][$keyId][$language];
+                $oldData = $this->items[$groupId][$keyId][$language] ?? null;
                 $oldData = $dataDefinition->getDataForResource($oldData, $this->object);
                 $oldData = serialize($oldData);
 
@@ -309,7 +310,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
      * @param string $language
      * @param Model\DataObject\ClassDefinition\Data $fielddefinition
      *
-     * @return null
+     * @return mixed
      */
     protected function getFallbackValue($groupId, $keyId, $language, $fielddefinition)
     {
@@ -378,7 +379,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         }
 
         if ($fieldDefinition->isEmpty($data) && !$ignoreDefaultLanguage && $language != 'default') {
-            $data = $this->items[$groupId][$keyId]['default'];
+            $data = $this->items[$groupId][$keyId]['default'] ?? null;
         }
 
         // check for inherited value

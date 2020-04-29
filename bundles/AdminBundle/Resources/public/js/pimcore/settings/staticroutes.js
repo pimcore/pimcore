@@ -70,6 +70,7 @@ pimcore.settings.staticroutes = Class.create({
                 {name:'defaults'},
                 {name:'siteId'},
                 {name:'priority', type:'int'},
+                {name:'methods'},
                 {name:'creationDate'},
                 {name:'modificationDate'}
             ], null, {
@@ -200,6 +201,9 @@ pimcore.settings.staticroutes = Class.create({
                 mode:"local",
                 triggerAction:"all"
             })},
+            {text:t("methods"), flex:50, sortable:false, dataIndex:'methods',
+                editor:new Ext.form.TextField({}),
+            },
             {text: t("creationDate"), sortable: true, dataIndex: 'creationDate', editable: false,
                 hidden: true,
                 renderer: function(d) {

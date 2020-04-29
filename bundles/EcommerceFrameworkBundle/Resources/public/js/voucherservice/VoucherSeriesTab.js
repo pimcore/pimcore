@@ -75,7 +75,6 @@ pimcore.bundle.EcommerceFramework.VoucherSeriesTab = Class.create({
 
     reload: function () {
         try {
-            var d = new Date();
             Ext.get("bundle_ecommerce_vouchertoolkit_tab_frame_" + this.id).dom.src = this.src;
         }
         catch (e) {

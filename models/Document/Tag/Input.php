@@ -27,7 +27,7 @@ class Input extends Model\Document\Tag
     /**
      * Contains the text for this element
      *
-     * @var int
+     * @var string
      */
     public $text = '';
 

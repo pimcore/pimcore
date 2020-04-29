@@ -464,7 +464,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
                 var menu = [];
                 for (var i = 0; i < this.data.validLayouts.length; i++) {
-                    var menuLabel = ts(this.data.validLayouts[i].name);
+                    var menuLabel = t(this.data.validLayouts[i].name);
                     if (this.data.currentLayoutId == this.data.validLayouts[i].id) {
                         menuLabel = "<b>" + menuLabel + "</b>";
                     }
@@ -539,7 +539,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: ts(this.data.general.o_className),
+                text: t(this.data.general.o_className),
                 scale: "medium"
             });
 

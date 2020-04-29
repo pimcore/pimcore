@@ -16,10 +16,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
-use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -42,6 +40,10 @@ class HardlinkController extends DocumentControllerBase
     {
         $link = Document\Hardlink::getById($request->get('id'));
 
+        if (!$link) {
+            throw $this->createNotFoundException('Hardlink not found');
+        }
+
         // check for lock
         if ($link->isAllowed('save') || $link->isAllowed('publish') || $link->isAllowed('unpublish') || $link->isAllowed('delete')) {
             if (Element\Editlock::isLocked($request->get('id'), 'document')) {
@@ -51,38 +53,20 @@ class HardlinkController extends DocumentControllerBase
         }
 
         $link = clone $link;
-
-        $link->idPath = Element\Service::getIdPath($link);
-        $link->setUserPermissions($link->getUserPermissions());
         $link->setLocked($link->isLocked());
         $link->setParent(null);
-
-        if ($link->getSourceDocument()) {
-            $link->sourcePath = $link->getSourceDocument()->getRealFullPath();
-        }
-
-        $this->addTranslationsData($link);
-        $this->minimizeProperties($link);
         $link->getScheduledTasks();
 
-        //Hook for modifying return value - e.g. for changing permissions based on object data
-        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $link->getObjectVars();
 
-        $data['php'] = [
-            'classes' => array_merge([get_class($link)], array_values(class_parents($link))),
-            'interfaces' => array_values(class_implements($link))
-        ];
+        $this->addTranslationsData($link, $data);
+        $this->minimizeProperties($link, $data);
 
-        $this->addAdminStyle($link, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
+        if ($link->getSourceDocument()) {
+            $data['sourcePath'] = $link->getSourceDocument()->getRealFullPath();
+        }
 
-        $event = new GenericEvent($this, [
-            'data' => $data,
-            'document' => $link
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
-        $data = $event->getArgument('data');
-        $data['versionDate'] = $link->getModificationDate();
+        $this->preSendDataActions($data, $link);
 
         if ($link->isAllowed('view')) {
             return $this->adminJson($data);
@@ -102,40 +86,41 @@ class HardlinkController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        if ($request->get('id')) {
-            $link = Document\Hardlink::getById($request->get('id'));
-            $this->setValuesToDocument($request, $link);
+        $link = Document\Hardlink::getById($request->get('id'));
 
-            $link->setModificationDate(time());
-            $link->setUserModification($this->getAdminUser()->getId());
-
-            if ($request->get('task') == 'unpublish') {
-                $link->setPublished(false);
-            }
-            if ($request->get('task') == 'publish') {
-                $link->setPublished(true);
-            }
-
-            // only save when publish or unpublish
-            if (($request->get('task') == 'publish' && $link->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $link->isAllowed('unpublish'))) {
-                $link->save();
-
-                $this->addAdminStyle($link, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
-
-                return $this->adminJson([
-                    'success' => true,
-                     'data' => [
-                         'versionDate' => $link->getModificationDate(),
-                         'versionCount' => $link->getVersionCount()
-                     ],
-                    'treeData' => $treeData
-                ]);
-            } else {
-                throw $this->createAccessDeniedHttpException();
-            }
+        if (!$link) {
+            throw $this->createNotFoundException('Hardlink not found');
         }
 
-        throw $this->createNotFoundException();
+        $this->setValuesToDocument($request, $link);
+
+        $link->setModificationDate(time());
+        $link->setUserModification($this->getAdminUser()->getId());
+
+        if ($request->get('task') == 'unpublish') {
+            $link->setPublished(false);
+        }
+        if ($request->get('task') == 'publish') {
+            $link->setPublished(true);
+        }
+
+        // only save when publish or unpublish
+        if (($request->get('task') == 'publish' && $link->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $link->isAllowed('unpublish'))) {
+            $link->save();
+
+            $this->addAdminStyle($link, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
+            return $this->adminJson([
+                'success' => true,
+                 'data' => [
+                     'versionDate' => $link->getModificationDate(),
+                     'versionCount' => $link->getVersionCount()
+                 ],
+                'treeData' => $treeData
+            ]);
+        } else {
+            throw $this->createAccessDeniedHttpException();
+        }
     }
 
     /**
@@ -144,7 +129,6 @@ class HardlinkController extends DocumentControllerBase
      */
     protected function setValuesToDocument(Request $request, Document $link)
     {
-
         // data
         if ($request->get('data')) {
             $data = $this->decodeJson($request->get('data'));

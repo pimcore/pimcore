@@ -44,7 +44,6 @@ class Service
                 return $destDoc;
             }
         } else {
-            /** @var Document\Hardlink\Wrapper\WrapperInterface $destDoc */
             $destDoc = self::upperCastDocument($doc);
             $destDoc->initDao(get_class($doc), true);
             $destDoc->setSourceDocument($doc);
@@ -60,7 +59,7 @@ class Service
      *
      * @param Document $doc
      *
-     * @return Document
+     * @return Document\Hardlink\Wrapper\WrapperInterface
      */
     public static function upperCastDocument(Document $doc)
     {
@@ -89,7 +88,7 @@ class Service
      * @param Document\Hardlink $hardlink
      * @param string $path
      *
-     * @return Document
+     * @return Document\Hardlink\Wrapper\WrapperInterface|null
      */
     public static function getChildByPath(Document\Hardlink $hardlink, $path)
     {
@@ -117,7 +116,7 @@ class Service
      * @param Document\Hardlink $hardlink
      * @param string $path
      *
-     * @return Document|null
+     * @return Document\Hardlink\Wrapper\WrapperInterface|null
      */
     public static function getNearestChildByPath(Document\Hardlink $hardlink, $path)
     {

@@ -21,6 +21,8 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Tool\UUID\Dao getDao()
+ * @method void delete()
+ * @method void save()
  */
 class UUID extends Model\AbstractModel
 {
@@ -76,8 +78,8 @@ class UUID extends Model\AbstractModel
      */
     public function setSystemInstanceIdentifier()
     {
-        $instanceIdentifier = \Pimcore\Config::getSystemConfig()->general->instanceIdentifier;
-        if (!$instanceIdentifier) {
+        $instanceIdentifier = \Pimcore\Config::getSystemConfiguration('general')['instance_identifier'] ?? null;
+        if (empty($instanceIdentifier)) {
             throw new \Exception('No instance identifier set in system config!');
         }
         $this->setInstanceIdentifier($instanceIdentifier);
@@ -136,7 +138,7 @@ class UUID extends Model\AbstractModel
             throw new \Exception('No instance identifier specified.');
         }
 
-        $this->uuid = \Ramsey\Uuid\Uuid::uuid5(\Ramsey\Uuid\Uuid::NAMESPACE_DNS, $this->getInstanceIdentifier() . '~' . $this->getType() . '~' . $this->getItemId());
+        $this->uuid = \Ramsey\Uuid\Uuid::uuid5(\Ramsey\Uuid\Uuid::NAMESPACE_DNS, $this->getInstanceIdentifier() . '~' . $this->getType() . '~' . $this->getItemId())->toString();
         $this->getDao()->save();
 
         return $this->uuid;

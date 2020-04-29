@@ -120,10 +120,8 @@ class Image extends Model\Asset
                 $yPoints[] = ($fc['y'] + $fc['y'] + $fc['height']) / 2;
             }
 
-            if (!$this->getCustomSetting('focalPointX')) {
-                $focalPointX = array_sum($xPoints) / count($xPoints);
-                $focalPointY = array_sum($yPoints) / count($yPoints);
-            }
+            $focalPointX = array_sum($xPoints) / count($xPoints);
+            $focalPointY = array_sum($yPoints) / count($yPoints);
 
             $this->setCustomSetting('focalPointX', $focalPointX);
             $this->setCustomSetting('focalPointY', $focalPointY);
@@ -139,7 +137,7 @@ class Image extends Model\Asset
         $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['focal_point_detection'];
 
         if (!$config['enabled']) {
-            return false;
+            return;
         }
 
         $facedetectBin = \Pimcore\Tool\Console::getExecutable('facedetect');
@@ -415,7 +413,7 @@ EOT;
      * @param string|null $path
      * @param bool $force
      *
-     * @return array
+     * @return array|null
      *
      * @throws \Exception
      */
@@ -442,7 +440,7 @@ EOT;
         //try to get the dimensions with getimagesize because it is much faster than e.g. the Imagick-Adapter
         if (is_readable($path)) {
             $imageSize = getimagesize($path);
-            if ($imageSize[0] && $imageSize[1]) {
+            if ($imageSize && $imageSize[0] && $imageSize[1]) {
                 $dimensions = [
                     'width' => $imageSize[0],
                     'height' => $imageSize[1]
@@ -455,7 +453,7 @@ EOT;
 
             $status = $image->load($path, ['preserveColor' => true, 'asset' => $this]);
             if ($status === false) {
-                return;
+                return null;
             }
 
             $dimensions = [

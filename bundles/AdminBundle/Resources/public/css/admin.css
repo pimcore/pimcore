@@ -265,6 +265,10 @@
     color: #0091f8 !important;
 }
 
+.pimcore_treenode_hide_plus_button .x-tree-expander {
+    visibility: hidden;
+}
+
 .pimcore_overflow_scrolling {
     -webkit-overflow-scrolling:touch;
     overflow: auto;

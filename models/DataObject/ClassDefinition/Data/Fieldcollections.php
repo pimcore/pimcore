@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool\Cast;
 
-class Fieldcollections extends Data implements CustomResourcePersistingInterface
+class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface
 {
     /**
      * Static type of this element
@@ -40,7 +40,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Fieldcollection';
 
     /**
-     * @var string
+     * @var array
      */
     public $allowedTypes = [];
 
@@ -59,9 +59,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public $disallowAddRemove;
 
-    /**
-     * @var bool
-     */
     public $disallowReorder;
 
     /**
@@ -163,7 +160,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return string
+     * @return DataObject\Fieldcollection
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -238,7 +235,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @see Data::getVersionPreview
      *
      * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string
@@ -253,7 +250,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -272,7 +269,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        return;
+        return null;
     }
 
     /**
@@ -318,11 +315,9 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
 
         if ($container instanceof DataObject\Fieldcollection) {
-            $params = [
-                'context' => [
-                    'containerType' => 'fieldcollection',
-                    'fieldname' => $this->getName()
-                ]
+            $params['context'] = [
+                'containerType' => 'fieldcollection',
+                'fieldname' => $this->getName()
             ];
 
             $container->save($object, $params);
@@ -339,18 +334,14 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function load($object, $params = [])
     {
-        if (!$this->getLazyLoading() || (isset($params['force']) && $params['force'])) {
-            $container = new DataObject\Fieldcollection(null, $this->getName());
-            $container->load($object);
+        $container = new DataObject\Fieldcollection(null, $this->getName());
+        $container->load($object);
 
-            if ($container->isEmpty()) {
-                return null;
-            }
-
-            return $container;
+        if ($container->isEmpty()) {
+            return null;
         }
 
-        return null;
+        return $container;
     }
 
     /**
@@ -638,8 +629,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
         $data = $object->getObjectVar($this->getName());
         if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-            $data = $this->load($object, ['force' => true]);
-            if ($data instanceof DataObject\DirtyIndicatorInterface) {
+            $data = $this->load($object);
+            if ($data instanceof Model\Element\DirtyIndicatorInterface) {
                 $data->resetDirtyMap();
             }
 
@@ -658,7 +649,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @param DataObject\Fieldcollection|null $data
      * @param array $params
      *
-     * @return array
+     * @return DataObject\Fieldcollection|null
      */
     public function preSetData($object, $data, $params = [])
     {
@@ -788,7 +779,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param DataObject\Fieldcollection|null $data
+     * @param array $data
      * @param DataObject\Concrete $object
      * @param array $params
      *

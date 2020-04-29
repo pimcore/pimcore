@@ -34,8 +34,8 @@ class Config
     public static function fromReportConfig(ConfigObject $reportConfig): self
     {
         $config = null;
-        if ($reportConfig->piwik) {
-            $config = $reportConfig->piwik;
+        if ($reportConfig->get('piwik')) {
+            $config = $reportConfig->get('piwik');
         } else {
             $config = new ConfigObject([]);
         }
@@ -80,11 +80,11 @@ class Config
      */
     public function getConfigForSite(string $configKey)
     {
-        if (!$this->config->sites || !$this->config->sites->$configKey) {
+        if (!$this->config->get('sites') || !$this->config->get('sites')->$configKey) {
             return null;
         }
 
-        return $this->config->sites->$configKey;
+        return $this->config->get('sites')->$configKey;
     }
 
     public function getConfiguredSites(): array
@@ -102,7 +102,7 @@ class Config
      */
     public function getPiwikUrl()
     {
-        $url = $this->normalizeStringValue($this->config->piwik_url);
+        $url = $this->normalizeStringValue($this->config->get('piwik_url'));
 
         if (null !== $url && 0 !== strpos($url, 'http')) {
             $url = null;
@@ -121,7 +121,7 @@ class Config
      */
     public function getApiToken()
     {
-        return $this->normalizeStringValue($this->config->api_token);
+        return $this->normalizeStringValue($this->config->get('api_token'));
     }
 
     /**
@@ -129,12 +129,12 @@ class Config
      */
     public function getReportToken()
     {
-        return $this->normalizeStringValue($this->config->report_token);
+        return $this->normalizeStringValue($this->config->get('report_token'));
     }
 
     public function getApiClientOptions(): array
     {
-        $value = $this->normalizeStringValue($this->config->api_client_options);
+        $value = $this->normalizeStringValue($this->config->get('api_client_options'));
         if (empty($value)) {
             return [];
         }
@@ -172,7 +172,7 @@ class Config
      */
     public function getIframeUsername()
     {
-        return $this->normalizeStringValue($this->config->iframe_username);
+        return $this->normalizeStringValue($this->config->get('iframe_username'));
     }
 
     /**
@@ -180,7 +180,7 @@ class Config
      */
     public function getIframePassword()
     {
-        return $this->normalizeStringValue($this->config->iframe_password);
+        return $this->normalizeStringValue($this->config->get('iframe_password'));
     }
 
     public function generateIframeUrl(array $parameters = []): string
@@ -229,11 +229,11 @@ class Config
      */
     private function normalizePiwikSiteId(ConfigObject $config)
     {
-        if (!$config->site_id) {
+        if (!$config->get('site_id')) {
             return null;
         }
 
-        $piwikSiteId = (int)$config->site_id;
+        $piwikSiteId = (int)$config->get('site_id');
         if ($piwikSiteId > 0) {
             return $piwikSiteId;
         }

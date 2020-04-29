@@ -17,11 +17,18 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
     initialize: function (data, fieldConfig) {
         this.data = data;
         this.fieldConfig = fieldConfig;
+
+        if (intval(this.fieldConfig.width) < 1) {
+            this.fieldConfig.width = 650;
+        }
+        if (intval(this.fieldConfig.height) < 1) {
+            this.fieldConfig.height = 370;
+        }
     },
 
     getGridColumnConfig: function(field) {
         return {
-            text: ts(field.label),
+            text: t(field.label),
             width: 150,
             sortable: false,
             dataIndex: field.key,
@@ -32,7 +39,7 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
                     metaData.tdCls += ' grid_value_inherited';
                 }
                 if (value) {
-                    return ts('preview_not_available');
+                    return t('preview_not_available');
                 }
             }.bind(this, field.key)
         };
@@ -50,7 +57,8 @@ pimcore.object.tags.geo.abstract = Class.create(pimcore.object.tags.abstract, {
     },
     
     getLeafletMap: function(lat, lng, mapZoom) {
-        document.getElementById('leaflet_maps_container_' + this.mapImageID).innerHTML = '<div id="'+ this.mapId +'" style="height:296px;width:650px;"></div>';
+        document.getElementById('leaflet_maps_container_' + this.mapImageID)
+            .innerHTML = '<div id="'+ this.mapId +'" style="height:' + (this.fieldConfig.height - 74) + 'px;width:' + this.fieldConfig.width + 'px;"></div>';
 
         var leafletMap =  L.map(this.mapId).setView([lat, lng], mapZoom);
         L.tileLayer(pimcore.settings.tile_layer_url_template, {

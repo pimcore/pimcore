@@ -35,7 +35,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
     getGridColumnConfig: function (field) {
 
         return {
-            text: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+            text: t(field.label), width: 100, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
@@ -159,8 +159,6 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
         var placeholderComponent = this.createPlaceholder(fieldConfig);
         items.push(placeholderComponent);
 
-        var defaultFieldConfig = this.getDefaultFieldConfig();
-
         var toolbarCfg = {
             region: "north",
             border: false,
@@ -215,8 +213,8 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             // title: this.fieldConfig.title,
             items: items,
             proxyConfig: {
-                width: defaultFieldConfig.width,
-                height: defaultFieldConfig.height,
+                width: fieldConfig.width,
+                height: fieldConfig.height,
                 respectPlaceholder: true,
                 callback: this
             },

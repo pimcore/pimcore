@@ -281,7 +281,7 @@ class UserRole extends AbstractUser
     }
 
     /**
-     * @param mixed $perspectives
+     * @param array|string $perspectives
      */
     public function setPerspectives($perspectives)
     {
@@ -330,9 +330,9 @@ class UserRole extends AbstractUser
      * checks if given parameter is string and if so splits it creates array
      * returns empty array if empty parameter is given
      *
-     * @param array $array
+     * @param array|string $array
      *
-     * @return array|string
+     * @return array
      */
     protected function prepareArray($array)
     {

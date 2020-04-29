@@ -116,7 +116,7 @@ class PublicServicesController extends Controller
                     }
 
                     // check if a media query thumbnail was requested
-                    if (preg_match("#~\-~([\d]+w)#", $matches[1], $mediaQueryResult)) {
+                    if (preg_match("#~\-~media\-\-(.*)\-\-query#", $matches[1], $mediaQueryResult)) {
                         $thumbnailConfig->selectMedia($mediaQueryResult[1]);
                     }
 
@@ -132,7 +132,7 @@ class PublicServicesController extends Controller
                         // this can be e.g. the case when the thumbnail is called as foo.png but the thumbnail config
                         // is set to auto-optimized format so the resulting thumbnail can be jpeg
                         $requestedFile = preg_replace('/\.' . $actualFileExtension . '$/', '.' . $requestedFileExtension, $thumbnailFile);
-                        $linked = symlink($thumbnailFile, $requestedFile);
+                        $linked = is_link($requestedFile) || symlink($thumbnailFile, $requestedFile);
                         if (false === $linked) {
                             // create a hard copy
                             copy($thumbnailFile, $requestedFile);

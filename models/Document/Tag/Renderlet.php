@@ -34,28 +34,28 @@ class Renderlet extends Model\Document\Tag
     /**
      * Contains the ID of the linked object
      *
-     * @var int
+     * @var int|null
      */
     public $id;
 
     /**
      * Contains the object
      *
-     * @var Document | Asset | DataObject\AbstractObject
+     * @var Document|Asset|DataObject|null
      */
     public $o;
 
     /**
      * Contains the type
      *
-     * @var string
+     * @var string|null
      */
     public $type;
 
     /**
      * Contains the subtype
      *
-     * @var string
+     * @var string|null
      */
     public $subtype;
 
@@ -104,7 +104,7 @@ class Renderlet extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::frontend
      *
-     * @return string|void
+     * @return string
      */
     public function frontend()
     {
@@ -113,7 +113,7 @@ class Renderlet extends Model\Document\Tag
         $tagHandler = $container->get('pimcore.document.tag.handler');
 
         if (!$tagHandler->supports($this->view)) {
-            return null;
+            return '';
         }
 
         if (!$this->options['controller'] && !$this->options['action']) {
@@ -152,33 +152,24 @@ class Renderlet extends Model\Document\Tag
                 }
             }
 
-            try {
-                $moduleOrBundle = null;
+            $moduleOrBundle = null;
 
-                if (isset($this->options['bundle'])) {
-                    $moduleOrBundle = $this->options['bundle'];
-                } elseif (isset($this->options['module'])) {
-                    $moduleOrBundle = $this->options['module'];
-                }
-
-                $content = $tagHandler->renderAction(
-                    $this->view,
-                    $this->options['controller'],
-                    $this->options['action'],
-                    $moduleOrBundle,
-                    $params
-                );
-
-                return $content;
-            } catch (\Exception $e) {
-                if (\Pimcore::inDebugMode()) {
-                    return 'ERROR: ' . $e->getMessage() . ' (for details see log files in /var/logs)';
-                }
-                Logger::error($e);
+            if (isset($this->options['bundle'])) {
+                $moduleOrBundle = $this->options['bundle'];
+            } elseif (isset($this->options['module'])) {
+                $moduleOrBundle = $this->options['module'];
             }
+
+            return $tagHandler->renderAction(
+                $this->view,
+                $this->options['controller'],
+                $this->options['action'],
+                $moduleOrBundle,
+                $params
+            );
         }
 
-        return;
+        return '';
     }
 
     /**
@@ -271,9 +262,9 @@ class Renderlet extends Model\Document\Tag
         }
         if ($object instanceof Element\ElementInterface) {
             return Element\Service::getType($object);
-        } else {
-            return false;
         }
+
+        return null;
     }
 
     /**

@@ -18,14 +18,16 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
- * @method array delete(DataObject\Concrete $object, $saveMode = false)
- * @method \Pimcore\Model\DataObject\Fieldcollection\Dao getDao()
+ * @method array delete(Concrete $object, $saveMode = false)
+ * @method Fieldcollection\Dao getDao()
+ * @method array load(Concrete $object)
  */
 class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyIndicatorInterface
 {
-    use Model\DataObject\Traits\DirtyIndicatorTrait;
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
      * @var Model\DataObject\Fieldcollection\Data\AbstractData[]
@@ -95,7 +97,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     }
 
     /**
-     * @return array
+     * @return Fieldcollection\Definition[]
      */
     public function getItemDefinitions()
     {
@@ -117,7 +119,9 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
     {
         $saveRelationalData = $this->getDao()->save($object, $params);
 
-        $allowedTypes = $object->getClass()->getFieldDefinition($this->getFieldname())->getAllowedTypes();
+        /** @var Model\DataObject\ClassDefinition\Data\Fieldcollections $fieldDef */
+        $fieldDef = $object->getClass()->getFieldDefinition($this->getFieldname());
+        $allowedTypes = $fieldDef->getAllowedTypes();
 
         $collectionItems = $this->getItems();
         if (is_array($collectionItems)) {

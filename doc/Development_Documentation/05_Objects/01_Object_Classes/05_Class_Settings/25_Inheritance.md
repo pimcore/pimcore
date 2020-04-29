@@ -65,7 +65,6 @@ with existing methods of `Pimcore\Model\DataObject\Concrete` or any magic functi
 or its parent classes.
 
 It is also possible to use class inheritance and traits for listing data object model.
-</div>
 
 ### Hooks available when using class inheritance
 Currently there's only one hook available. 

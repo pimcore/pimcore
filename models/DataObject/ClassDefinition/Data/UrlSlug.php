@@ -21,10 +21,14 @@ use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\Redirect;
 
 class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface
 {
+    use Model\DataObject\Traits\DefaultValueTrait;
+
     use Extension\ColumnType;
+
     use Model\DataObject\Traits\ContextPersistenceTrait;
 
     /**
@@ -91,8 +95,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     public function getDataForEditmode($data, $object = null, $params = [])
     {
         $result = [];
-
-        // for now we don't support sites (=> there is just a plain input field in the UI)
         if (is_array($data)) {
             foreach ($data as $slug) {
                 if ($slug instanceof Model\DataObject\Data\UrlSlug) {
@@ -124,7 +126,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Model\DataObject\Data\UrlSlug|null
+     * @return Model\DataObject\Data\UrlSlug[]
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -134,6 +136,11 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 $siteId = $item[0];
                 $slug = $item[1];
                 $slug = new Model\DataObject\Data\UrlSlug($slug, $siteId);
+
+                if ($item[2]) {
+                    $slug->setPreviousSlug($item[2]);
+                }
+
                 $result[] = $slug;
             }
         }
@@ -146,7 +153,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float
+     * @return Model\DataObject\Data\UrlSlug[]
      */
     public function getDataFromGridEditor($data, $object = null, $params = [])
     {
@@ -228,7 +235,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param Model\DataObject\Concrete $object
+     * @param Model\DataObject\Concrete|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Localizedfield $object
      * @param array $params
      *
      * @throws \Exception
@@ -240,6 +247,15 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
 
         $data = $this->getDataFromObjectParam($object, $params);
+
+        if (!is_array($data) || count($data) === 0) {
+            $container = $object instanceof Model\DataObject\Concrete ? $object : $object->getObject();
+            $data = $this->handleDefaultValue($data, $container, $params);
+            if ($data instanceof Model\DataObject\Data\UrlSlug) {
+                $data = [$data];
+            }
+        }
+
         $slugs = $this->prepareDataForPersistence($data, $object, $params);
         $db = Db::get();
 
@@ -286,11 +302,51 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 }
             }
         }
+
+        // check for previous slugs and create redirects
+        if (!is_array($data)) {
+            return;
+        }
+
+        foreach ($data as $slug) {
+            if ($previousSlug = $slug->getPreviousSlug()) {
+                if ($previousSlug === $slug->getSlug() || !$slug->getSlug()) {
+                    continue;
+                }
+
+                $checkSql = 'SELECT id FROM redirects WHERE source = :sourcePath AND `type` = :typeAuto';
+                if ($slug->getSiteId()) {
+                    $checkSql .= ' AND sourceSite = ' . $db->quote($slug->getSiteId());
+                } else {
+                    $checkSql .= ' AND sourceSite IS NULL';
+                }
+
+                $existingCheck = $db->fetchOne($checkSql, ['sourcePath' => $previousSlug, 'typeAuto' => Redirect::TYPE_AUTO_CREATE]);
+                if (!$existingCheck) {
+                    $redirect = new Redirect();
+                    $redirect->setType(Redirect::TYPE_AUTO_CREATE);
+                    $redirect->setRegex(false);
+                    $redirect->setTarget($slug->getSlug());
+                    $redirect->setSource($previousSlug);
+                    $redirect->setStatusCode(301);
+                    $redirect->setExpiry(time() + 86400 * 365); // this entry is removed automatically after 1 year
+
+                    if ($slug->getSiteId()) {
+                        $redirect->setSourceSite($slug->getSiteId());
+                        $redirect->setTargetSite($slug->getSiteId());
+                    }
+
+                    $redirect->save();
+                }
+
+                $slug->setPreviousSlug(null);
+            }
+        }
     }
 
     /**
      * @param null|Model\DataObject\Data\UrlSlug[] $data
-     * @param Model\DataObject\Concrete|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData $object
+     * @param Model\DataObject\Concrete|Model\DataObject\Fieldcollection\Data\AbstractData|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Localizedfield $object
      * @param array $params
      *
      * @return array|null
@@ -558,7 +614,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param null|array $data
+     * @param Model\DataObject\Data\UrlSlug[]|null $data
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
@@ -574,7 +630,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return null
+     * @return array
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -662,12 +718,12 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         if ($object instanceof Model\DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object, ['force' => true]);
+                $data = $this->load($object);
 
                 $object->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($object);
 
-                if ($object instanceof Model\DataObject\DirtyIndicatorInterface) {
+                if ($object instanceof Model\Element\DirtyIndicatorInterface) {
                     $object->markFieldDirty($this->getName(), false);
                 }
             }
@@ -706,7 +762,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     /**
      * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Fieldcollection\Data\AbstractData $object
-     * @param array|null $data
+     * @param Model\DataObject\Data\UrlSlug[]|null $data
      * @param array $params
      *
      * @return array|null
@@ -775,5 +831,16 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
 
         return $result;
+    }
+
+    /**
+     * @param \Pimcore\Model\DataObject\Concrete $object
+     * @param array $context
+     *
+     * @return null|string
+     */
+    protected function doGetDefaultValue($object, $context = [])
+    {
+        return null;
     }
 }

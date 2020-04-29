@@ -23,6 +23,8 @@ use Pimcore\Model;
  * @method \Pimcore\Model\Translation\AbstractTranslation\Listing\Dao getDao()
  * @method Model\Translation\AbstractTranslation[] load()
  * @method Model\Translation\AbstractTranslation current()
+ * @method int getTotalCount()
+ * @method void onCreateQuery(callable $callback)
  */
 class Listing extends Model\Listing\AbstractListing
 {
@@ -52,7 +54,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param array $translations
      *
-     * @return $this
+     * @return static
      */
     public function setTranslations($translations)
     {

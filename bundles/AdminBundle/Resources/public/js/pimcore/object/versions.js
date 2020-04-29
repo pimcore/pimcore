@@ -270,11 +270,6 @@ pimcore.object.versions = Class.create({
         }
     },
 
-    editVersion: function (index, grid) {
-        var data = grid.getStore().getAt(index).data;
-        var versionId = data.id;
-    },
-
     publishVersion: function (index, grid) {
         var data = grid.getStore().getAt(index).data;
         var versionId = data.id;

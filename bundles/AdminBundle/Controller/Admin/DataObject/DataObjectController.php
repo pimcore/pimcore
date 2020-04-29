@@ -142,10 +142,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
                 $condition .= ' AND (
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                    OR
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                                 )';
+                    (SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(objects.o_path,objects.o_key),cpath)=1 ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                    OR
+                    (SELECT list FROM users_workspaces_object WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(objects.o_path,objects.o_key))=1 ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                )';
             }
 
             if (!is_null($filter)) {
@@ -173,6 +173,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'context' => $allParams
             ]);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            /** @var DataObject\Listing $childsList */
             $childsList = $beforeListLoadEvent->getArgument('list');
 
             $childs = $childsList->load();
@@ -187,7 +188,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
             //pagination for custom view
             $total = $cv
-                ? $childsList->count()
+                ? $filteredTotalCount
                 : $object->getChildAmount(null, $this->getAdminUser());
         }
 
@@ -259,8 +260,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $tmpObject['leaf'] = !$hasChildren;
         $tmpObject['cls'] = 'pimcore_class_icon ';
 
-        if ($child->getType() != 'folder') {
-            /** @var DataObject\Concrete $child */
+        if ($child instanceof DataObject\Concrete) {
             $tmpObject['published'] = $child->isPublished();
             $tmpObject['className'] = $child->getClass()->getName();
 
@@ -559,11 +559,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         // ReverseManyToManyObjectRelation should go in there anyway (regardless if it a version or not),
         // so that the values can be loaded.
         if (
-            (
-                !$objectFromVersion
-                && $fielddefinition instanceof AbstractRelations
-                && $fielddefinition->getLazyLoading()
-            )
+            (!$objectFromVersion && $fielddefinition instanceof AbstractRelations)
             || $fielddefinition instanceof ReverseManyToManyObjectRelation
         ) {
             $refId = null;
@@ -823,7 +819,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                 if ($request->get('variantViaTree')) {
                     $parentId = $request->get('parentId');
-                    $parent = DataObject::getById($parentId);
+                    $parent = DataObject\Concrete::getById($parentId);
                     $object->setClassId($parent->getClass()->getId());
                 } else {
                     $object->setClassId($request->get('classId'));
@@ -972,7 +968,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     public function changeChildrenSortByAction(Request $request)
     {
-        /** @var Model\Object $object */
         $object = DataObject::getById($request->get('id'));
         if ($object) {
             $object->setChildrenSortBy($request->get('sortBy'));
@@ -1156,7 +1151,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     [$updatedObject->getParentId(), $updatedObject->getId()]
                 );
                 $index = 0;
-                /** @var DataObject\AbstractObject $child */
+
                 foreach ($siblings as $sibling) {
                     if ($index == $newIndex) {
                         $index++;
@@ -1253,14 +1248,14 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             // do not allow all values to be set, will cause problems (eg. icon)
             if (is_array($general) && count($general) > 0) {
                 foreach ($general as $key => $value) {
-                    if (!in_array($key, ['o_id', 'o_classId', 'o_className', 'o_type', 'icon', 'o_userOwner', 'o_userModification'])) {
+                    if (!in_array($key, ['o_id', 'o_classId', 'o_className', 'o_type', 'icon', 'o_userOwner', 'o_userModification', 'o_modificationDate'])) {
                         $object->setValue($key, $value);
                     }
                 }
             }
         }
 
-        $object = $this->assignPropertiesFromEditmode($request, $object);
+        $this->assignPropertiesFromEditmode($request, $object);
         $this->applySchedulerDataToElement($request, $object);
 
         if ($request->get('task') == 'unpublish') {
@@ -1377,16 +1372,18 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     {
         $object = DataObject::getById($request->get('id'));
 
+        if (!$object) {
+            throw $this->createNotFoundException('Object not found');
+        }
+
         if ($object->isAllowed('publish')) {
             try {
-                $classId = $request->get('class_id');
-
                 // general settings
                 $general = $this->decodeJson($request->get('general'));
                 $object->setValues($general);
                 $object->setUserModification($this->getAdminUser()->getId());
 
-                $object = $this->assignPropertiesFromEditmode($request, $object);
+                $this->assignPropertiesFromEditmode($request, $object);
 
                 $object->save();
 
@@ -1402,8 +1399,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     /**
      * @param Request $request
      * @param DataObject\AbstractObject $object
-     *
-     * @return DataObject\AbstractObject
      */
     protected function assignPropertiesFromEditmode(Request $request, $object)
     {
@@ -1438,8 +1433,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             }
             $object->setProperties($properties);
         }
-
-        return $object;
     }
 
     /**
@@ -1501,10 +1494,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if ($object->isAllowed('versions')) {
                 return ['object' => $object];
             } else {
-                throw new \Exception('Permission denied, version id [' . $id . ']');
+                throw $this->createAccessDeniedException('Permission denied, version id [' . $id . ']');
             }
         } else {
-            throw new \Exception('Version with id [' . $id . "] doesn't exist");
+            throw $this->createNotFoundException('Version with id [' . $id . "] doesn't exist");
         }
     }
 
@@ -1542,10 +1535,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     'object2' => $object2
                 ];
             } else {
-                throw new \Exception('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
+                throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
             }
         } else {
-            throw new \Exception('Version with ids [' . $id1 . ', ' . $id2 . "] doesn't exist");
+            throw $this->createNotFoundException('Version with ids [' . $id1 . ', ' . $id2 . "] doesn't exist");
         }
     }
 
@@ -1587,11 +1580,15 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
                     // save
                     $object = DataObject::getById($data['id']);
-                    /** @var DataObject\ClassDefinition $class */
+
+                    if (!$object instanceof DataObject\Concrete) {
+                        throw $this->createNotFoundException('Object not found');
+                    }
+
                     $class = $object->getClass();
 
                     if (!$object->isAllowed('publish')) {
-                        throw new \Exception("Permission denied. You don't have the rights to save this object.");
+                        throw $this->createAccessDeniedException("Permission denied. You don't have the rights to save this object.");
                     }
 
                     $user = Tool\Admin::getCurrentUser();
@@ -1741,6 +1738,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'context' => $allParams
             ]);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            /** @var DataObject\Listing\Concrete $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
             $list->load();
@@ -2018,8 +2016,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     public function previewAction(Request $request)
     {
         $id = $request->get('id');
+        $object = DataObject\Service::getElementFromSession('object', $id);
 
-        if ($object = DataObject\Service::getElementFromSession('object', $id)) {
+        if ($object instanceof DataObject\Concrete) {
             $url = $object->getClass()->getPreviewUrl();
             if ($url) {
                 // replace named variables

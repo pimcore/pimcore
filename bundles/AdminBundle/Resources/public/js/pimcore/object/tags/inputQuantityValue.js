@@ -132,7 +132,7 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstra
         }.bind(this, field.key);
 
         return {
-            text:ts(field.label),
+            text: t(field.label),
             sortable:true,
             dataIndex:field.key,
             renderer:renderer

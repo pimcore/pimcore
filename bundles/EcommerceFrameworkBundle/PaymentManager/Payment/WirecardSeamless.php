@@ -315,8 +315,8 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
 
     public function getInitPaymentRedirectUrl($config)
     {
-        /** @var CartInterface $cart */
         if (!$cart = $config['cart']) {
+            /** @var CartInterface $cart */
             throw new \Exception('no cart sent');
         }
 

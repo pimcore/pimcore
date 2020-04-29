@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject;
 
+use Doctrine\DBAL\Exception\DeadlockException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
@@ -28,10 +29,12 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 
 /**
- * @method \Pimcore\Model\DataObject\AbstractObject\Dao getDao()
- * @method array|null getPermissions($type, $user, $quote = true)
+ * @method AbstractObject\Dao getDao()
+ * @method array|null getPermissions(string $type, Model\User $user, bool $quote = true)
  * @method bool __isBasedOnLatestData()
  * @method string getCurrentFullPath()
+ * @method int getChildAmount($objectTypes = [DataObject::OBJECT_TYPE_OBJECT, DataObject::OBJECT_TYPE_FOLDER], Model\User $user = null)
+ * @method array getChildPermissions(string $type, Model\User $user, bool $quote = true)
  */
 class AbstractObject extends Model\Element\AbstractElement
 {
@@ -80,7 +83,7 @@ class AbstractObject extends Model\Element\AbstractElement
     protected $o_parentId;
 
     /**
-     * @var self
+     * @var self|null
      */
     protected $o_parent;
 
@@ -149,7 +152,7 @@ class AbstractObject extends Model\Element\AbstractElement
     protected $o_hasSiblings = [];
 
     /**
-     * @var Model\Dependency[]
+     * @var Model\Dependency|null
      */
     protected $o_dependencies;
 
@@ -267,9 +270,9 @@ class AbstractObject extends Model\Element\AbstractElement
         if (!is_numeric($id) || $id < 1) {
             return null;
         }
-        $id = intval($id);
 
-        $cacheKey = 'object_' . $id;
+        $id = intval($id);
+        $cacheKey = self::getCacheKey($id);
 
         if (!$force && Runtime::isRegistered($cacheKey)) {
             $object = Runtime::get($cacheKey);
@@ -294,13 +297,12 @@ class AbstractObject extends Model\Element\AbstractElement
                     $object = self::getModelFactory()->build($className);
                     Runtime::set($cacheKey, $object);
                     $object->getDao()->getById($id);
+                    $object->__setDataVersionTimestamp($object->getModificationDate());
 
                     Service::recursiveResetDirtyMap($object);
 
-                    $object->__setDataVersionTimestamp($object->getModificationDate());
-
-                    if ($object instanceof CacheRawRelationDataInterface) {
-                        // force loading of relation data
+                    // force loading of relation data
+                    if ($object instanceof Concrete) {
                         $object->__getRawRelationData();
                     }
 
@@ -366,6 +368,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
             if ($className) {
                 $listClass = $className . '\\Listing';
+                /** @var DataObject\Listing $list */
                 $list = self::getModelFactory()->build($listClass);
                 $list->setValues($config);
 
@@ -490,9 +493,9 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * Returns true if the element is locked
+     * enum('self','propagate') nullable
      *
-     * @return string
+     * @return string|null
      */
     public function getLocked()
     {
@@ -500,7 +503,9 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param bool $o_locked
+     * enum('self','propagate') nullable
+     *
+     * @param string|null $o_locked
      *
      * @return $this
      */
@@ -547,6 +552,16 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->getDao()->delete();
 
             $this->commit();
+
+            //clear parent data from registry
+            $parentCacheKey = self::getCacheKey($this->getParentId());
+            if (Runtime::isRegistered($parentCacheKey)) {
+                /** @var AbstractObject $parent * */
+                $parent = Runtime::get($parentCacheKey);
+                if ($parent instanceof self) {
+                    $parent->setChildren(null);
+                }
+            }
         } catch (\Exception $e) {
             $this->rollBack();
             $failureEvent = new DataObjectEvent($this);
@@ -561,7 +576,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->clearDependentCache();
 
         //clear object from registry
-        Runtime::set('object_' . $this->getId(), null);
+        Runtime::set(self::getCacheKey($this->getId()), null);
 
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE, new DataObjectEvent($this));
     }
@@ -648,27 +663,25 @@ class AbstractObject extends Model\Element\AbstractElement
                         Logger::info($er);
                     }
 
-                    if ($e instanceof Model\Element\ValidationException) {
-                        throw $e;
-                    }
-
-                    if ($e instanceof UniqueConstraintViolationException) {
-                        throw new Element\ValidationException('unique constraint violation', 0, $e);
-                    }
-
                     // set "HideUnpublished" back to the value it was originally
                     self::setHideUnpublished($hideUnpublishedBackup);
 
-                    // we try to start the transaction $maxRetries times again (deadlocks, ...)
-                    if ($retries < ($maxRetries - 1)) {
-                        $run = $retries + 1;
-                        $waitTime = rand(1, 5) * 100000; // microseconds
-                        Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
+                    if ($e instanceof UniqueConstraintViolationException) {
+                        throw new Element\ValidationException('unique constraint violation', 0, $e);
+                    } elseif ($e instanceof DeadlockException) {
+                        // we try to start the transaction $maxRetries times again (deadlocks, ...)
+                        if ($retries < ($maxRetries - 1)) {
+                            $run = $retries + 1;
+                            $waitTime = rand(1, 5) * 100000; // microseconds
+                            Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
 
-                        usleep($waitTime); // wait specified time until we restart the transaction
+                            usleep($waitTime); // wait specified time until we restart the transaction
+                        } else {
+                            // if the transaction still fail after $maxRetries retries, we throw out the exception
+                            Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
+                            throw $e;
+                        }
                     } else {
-                        // if the transaction still fail after $maxRetries retries, we throw out the exception
-                        Logger::error('Finally giving up restarting the same transaction again and again, last message: ' . $e->getMessage());
                         throw $e;
                     }
                 }
@@ -800,7 +813,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $d->save();
 
         //set object to registry
-        Runtime::set('object_' . $this->getId(), $this);
+        Runtime::set(self::getCacheKey($this->getId()), $this);
     }
 
     /**
@@ -985,7 +998,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setParentId($o_parentId)
     {
         $o_parentId = (int) $o_parentId;
-        if ($o_parentId != $this->o_parentId && $this instanceof DirtyIndicatorInterface) {
+        if ($o_parentId != $this->o_parentId) {
             $this->markFieldDirty('o_parentId');
         }
         $this->o_parentId = $o_parentId;
@@ -1075,6 +1088,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setModificationDate($o_modificationDate)
     {
+        $this->markFieldDirty('o_modificationDate');
+
         $this->o_modificationDate = (int) $o_modificationDate;
 
         return $this;
@@ -1099,6 +1114,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setUserModification($o_userModification)
     {
+        $this->markFieldDirty('o_userModification');
+
         $this->o_userModification = (int) $o_userModification;
 
         return $this;
@@ -1239,7 +1256,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = ['o_userPermissions', 'o_dependencies', 'o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
+        $blockedVars = ['o_dependencies', 'o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -1297,7 +1314,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->removeInheritedProperties();
 
         // add to registry to avoid infinite regresses in the following $this->getDao()->getProperties()
-        $cacheKey = 'object_' . $this->getId();
+        $cacheKey = self::getCacheKey($this->getId());
         if (!Runtime::isRegistered($cacheKey)) {
             Runtime::set($cacheKey, $this);
         }
@@ -1446,5 +1463,18 @@ class AbstractObject extends Model\Element\AbstractElement
         $cacheKey = $objectTypes . (!empty($includingUnpublished) ? '_' : '') . (string)$includingUnpublished;
 
         return $cacheKey;
+    }
+
+    /**
+     * load lazy loaded fields before cloning
+     */
+    public function __clone()
+    {
+        parent::__clone();
+        $this->o_parent = null;
+        // note that o_children is currently needed for the recycle bin
+        $this->o_hasSiblings = [];
+        $this->o_siblings = [];
+        $this->o_dependencies = null;
     }
 }

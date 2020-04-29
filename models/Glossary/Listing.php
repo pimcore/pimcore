@@ -24,6 +24,7 @@ use Pimcore\Model;
  * @method Model\Glossary[] load()
  * @method Model\Glossary current()
  * @method int getTotalCount()
+ * @method array getDataArray()
  */
 class Listing extends Model\Listing\AbstractListing
 {
@@ -50,7 +51,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\Glossary[]|null $glossary
      *
-     * @return $this
+     * @return static
      */
     public function setGlossary($glossary)
     {

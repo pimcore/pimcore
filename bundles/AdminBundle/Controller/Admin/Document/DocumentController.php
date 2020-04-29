@@ -24,10 +24,12 @@ use Pimcore\Event\AdminEvents;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
+use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Model\Version;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Tool;
+use Pimcore\Tool\Frontend;
 use Pimcore\Tool\Session;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -62,10 +64,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
     public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $document = Document::getById($request->get('id'));
-        $document = clone $document;
 
-        //Hook for modifying return value - e.g. for changing permissions based on object data
-        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
+        if (!$document) {
+            throw $this->createNotFoundException('Document not found');
+        }
+
+        $document = clone $document;
         $data = $document->getObjectVars();
         $data['versionDate'] = $document->getModificationDate();
 
@@ -145,7 +149,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($filter) {
                 $db = Db::get();
 
-                $condition = '(' . $condition . ')' . ' AND ' . $db->quoteIdentifier('key') . ' LIKE ' . $db->quote($filter);
+                $condition = '(' . $condition . ')' . ' AND CAST(documents.key AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
             }
 
             $list->setCondition($condition);
@@ -164,6 +168,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             ]);
 
             $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            /** @var Document\Listing $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
             $childsList = $list->load();
@@ -232,7 +237,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     $createValues['action'] = $docType->getAction();
                     $createValues['module'] = $docType->getModule();
                 } elseif ($request->get('translationsBaseDocument')) {
-                    $translationsBaseDocument = Document::getById($request->get('translationsBaseDocument'));
+                    $translationsBaseDocument = Document\PageSnippet::getById($request->get('translationsBaseDocument'));
                     $createValues['template'] = $translationsBaseDocument->getTemplate();
                     $createValues['controller'] = $translationsBaseDocument->getController();
                     $createValues['action'] = $translationsBaseDocument->getAction();
@@ -407,6 +412,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         $document = Document::getById($request->get('id'));
 
+        $oldPath = $document->getDao()->getCurrentFullPath();
+        $oldDocument = Document::getById($document->getId(), true);
+
         // this prevents the user from renaming, relocating (actions in the tree) if the newest version isn't the published one
         // the reason is that otherwise the content of the newer not published version will be overwritten
         if ($document instanceof Document\PageSnippet) {
@@ -417,7 +425,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         }
 
         if ($document->isAllowed('settings')) {
-            // if the position is changed the path must be changed || also from the childs
+            // if the position is changed the path must be changed || also from the children
             if ($request->get('parentId')) {
                 $parentDocument = Document::getById($request->get('parentId'));
 
@@ -470,6 +478,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     }
 
                     $success = true;
+
+                    $this->createRedirectForFormerPath($request, $document, $oldPath, $oldDocument);
                 } catch (\Exception $e) {
                     return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
                 }
@@ -486,6 +496,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $document->setUserModification($this->getAdminUser()->getId());
                 $document->save();
                 $success = true;
+
+                $this->createRedirectForFormerPath($request, $document, $oldPath, $oldDocument);
             } catch (\Exception $e) {
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
             }
@@ -494,6 +506,75 @@ class DocumentController extends ElementControllerBase implements EventedControl
         }
 
         return $this->adminJson(['success' => $success]);
+    }
+
+    private function createRedirectForFormerPath(Request $request, Document $document, string $oldPath, Document $oldDocument)
+    {
+        if ($document instanceof Document\Page || $document instanceof Document\Hardlink) {
+            if ($request->get('create_redirects') === 'true' && $this->getAdminUser()->isAllowed('redirects')) {
+                if ($oldPath && $oldPath != $document->getRealFullPath()) {
+                    $sourceSite = null;
+                    if ($oldDocument) {
+                        $sourceSite = Frontend::getSiteForDocument($oldDocument);
+                        if ($sourceSite) {
+                            $oldPath = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $oldPath);
+                        }
+                    }
+
+                    $targetSite = Frontend::getSiteForDocument($document);
+
+                    $this->doCreateRedirectForFormerPath($oldPath, $document->getId(), $sourceSite, $targetSite);
+
+                    if ($document->hasChildren()) {
+                        $list = new Document\Listing();
+                        $list->setCondition('path LIKE :path', [
+                            'path' => $document->getRealFullPath() . '/%'
+                        ]);
+
+                        $childrenList = $list->loadIdPathList();
+
+                        $count = 0;
+
+                        foreach ($childrenList as $child) {
+                            $source = preg_replace('@^' . preg_quote($document->getRealFullPath(), '@') . '@', $oldDocument, $child['path']);
+                            if ($sourceSite) {
+                                $source = preg_replace('@^' . preg_quote($sourceSite->getRootPath(), '@') . '@', '', $source);
+                            }
+
+                            $target = $child['id'];
+
+                            $this->doCreateRedirectForFormerPath($source, $target, $sourceSite, $targetSite);
+
+                            $count++;
+                            if ($count % 10 === 0) {
+                                \Pimcore::collectGarbage();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private function doCreateRedirectForFormerPath(string $source, int $targetId, ?Site $sourceSite, ?Site $targetSite)
+    {
+        $redirect = new Redirect();
+        $redirect->setType(Redirect::TYPE_AUTO_CREATE);
+        $redirect->setRegex(false);
+        $redirect->setTarget($targetId);
+        $redirect->setSource($source);
+        $redirect->setStatusCode(301);
+        $redirect->setExpiry(time() + 86400 * 365); // this entry is removed automatically after 1 year
+
+        if ($sourceSite) {
+            $redirect->setSourceSite($sourceSite->getId());
+        }
+
+        if ($targetSite) {
+            $redirect->setTargetSite($targetSite->getId());
+        }
+
+        $redirect->save();
     }
 
     /**
@@ -1026,7 +1107,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             return $response;
         }
 
-        throw $this->createNotFoundException();
+        throw $this->createNotFoundException('Version diff file not found');
     }
 
     /**
@@ -1038,6 +1119,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $site = null;
         $childDocument = $element;
+        $config = $this->get(Config::class);
 
         $tmpDocument = [
             'id' => $childDocument->getId(),
@@ -1087,7 +1169,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $this->addAdminStyle($childDocument, ElementAdminStyleEvent::CONTEXT_TREE, $tmpDocument);
 
         // PREVIEWS temporary disabled, need's to be optimized some time
-        if ($childDocument instanceof Document\Page && Config::getSystemConfig()->documents->generatepreview) {
+        if ($childDocument instanceof Document\Page && isset($config['documents']['generate_preview'])) {
             $thumbnailFile = $childDocument->getPreviewImageFilesystemPath();
             // only if the thumbnail exists and isn't out of time
             if (file_exists($thumbnailFile) && filemtime($thumbnailFile) > ($childDocument->getModificationDate() - 20)) {
@@ -1108,10 +1190,10 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($site instanceof Site) {
                 $tmpDocument['url'] = 'http://' . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $childDocument->getRealFullPath());
             }
+        }
 
-            if ($childDocument->getProperty('navigation_exclude')) {
-                $tmpDocument['cls'] .= 'pimcore_navigation_exclude ';
-            }
+        if ($childDocument->getProperty('navigation_exclude')) {
+            $tmpDocument['cls'] .= 'pimcore_navigation_exclude ';
         }
 
         if (!$childDocument->isPublished()) {
@@ -1162,7 +1244,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
     {
         $this->checkPermission('seo_document_editor');
 
-        $root = Document::getById(1);
+        /** @var Document\Page $root */
+        $root = Document\Page::getById(1);
         if ($root->isAllowed('list')) {
             // make sure document routes are also built for unpublished documents
             $documentRouteHandler->setForceHandleUnpublishedDocuments(true);
@@ -1217,6 +1300,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'context' => $allParams
             ]);
             $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            /** @var Document\Listing $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
             $childsList = $list->load();
@@ -1522,7 +1606,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @param Document\PageSnippet|Document\Page $document
+     * @param Document\Page $document
      *
      * @return array
      */

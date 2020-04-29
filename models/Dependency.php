@@ -75,6 +75,9 @@ class Dependency extends AbstractModel
     }
 
     /**
+     * Used when element gets deleted. Removes entries (by source = element) and
+     * schedules a sanity check for the affected targets.
+     *
      * @param Element\ElementInterface $element
      */
     public function cleanAllForElement($element)
@@ -83,7 +86,8 @@ class Dependency extends AbstractModel
     }
 
     /**
-     * Cleanup the dependencies for current source id
+     * Cleanup the dependencies for current source id.
+     * Can be used for updating the dependencies.
      */
     public function clean()
     {
@@ -119,6 +123,19 @@ class Dependency extends AbstractModel
     public function getRequiredBy($offset = null, $limit = null)
     {
         return $this->getDao()->getRequiredBy($offset, $limit);
+    }
+
+    /**
+     * @param string|null $orderBy
+     * @param string|null $orderDirection
+     * @param int|null $offset
+     * @param int|null $limit
+     *
+     * @return array
+     */
+    public function getRequiredByWithPath($offset = null, $limit = null, $orderBy = null, $orderDirection = null)
+    {
+        return $this->getDao()->getRequiredByWithPath($offset, $limit, $orderBy, $orderDirection);
     }
 
     /**

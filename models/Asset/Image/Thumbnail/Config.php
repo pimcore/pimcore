@@ -346,17 +346,20 @@ class Config extends Model\AbstractModel
      */
     public function selectMedia($name)
     {
-        if (array_key_exists($name, $this->medias)) {
-            $this->setItems($this->medias[$name]);
+        if (preg_match('/^[0-9a-f]{8}$/', $name)) {
+            $hash = $name;
+        } else {
+            $hash = hash('crc32b', $name);
+        }
 
-            $suffix = strtolower($name);
-            $suffix = preg_replace("/[^a-z\-0-9]/", '-', $suffix);
-            $suffix = trim($suffix, '-');
-            $suffix = preg_replace("/[\-]+/", '-', $suffix);
+        foreach ($this->medias as $key => $value) {
+            $currentHash = hash('crc32b', $key);
+            if ($key === $name || $currentHash === $hash) {
+                $this->setItems($value);
+                $this->setFilenameSuffix('media--' . $currentHash . '--query');
 
-            $this->setFilenameSuffix($suffix);
-
-            return true;
+                return true;
+            }
         }
 
         return false;
@@ -670,6 +673,11 @@ class Config extends Model\AbstractModel
                         if (in_array($transformation['method'], ['resize', 'cover', 'frame', 'crop'])) {
                             $dimensions['width'] = $arg['width'];
                             $dimensions['height'] = $arg['height'];
+                        } elseif ($transformation['method'] == '1x1_pixel') {
+                            return [
+                                'width' => 1,
+                                'height' => 1
+                            ];
                         } elseif ($transformation['method'] == 'scaleByWidth') {
                             if ($arg['width'] <= $dimensions['width'] || $asset->isVectorGraphic() || $forceResize) {
                                 $dimensions['height'] = round(($arg['width'] / $dimensions['width']) * $dimensions['height'], 0);

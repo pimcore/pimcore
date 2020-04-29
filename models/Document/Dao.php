@@ -81,6 +81,7 @@ class Dao extends Model\Element\Dao
     {
         $this->db->insert('documents', [
             'key' => $this->model->getKey(),
+            'type' => $this->model->getType(),
             'path' => $this->model->getRealPath(),
             'parentId' => $this->model->getParentId(),
             'index' => 0
@@ -104,8 +105,6 @@ class Dao extends Model\Element\Dao
             $typeSpecificTable = 'documents_' . $this->model->getType();
             $validColumnsTypeSpecific = $this->getValidTableColumns($typeSpecificTable);
         }
-
-        $this->model->setModificationDate(time());
 
         $document = $this->model->getObjectVars();
 
@@ -524,7 +523,7 @@ class Dao extends Model\Element\Dao
     /**
      * Fetches the maximum index value from siblings.
      *
-     * @return string
+     * @return int
      */
     public function getNextIndex()
     {

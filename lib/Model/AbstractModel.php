@@ -25,11 +25,11 @@ use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
  * @method array getValidTableColumns(string $table, bool $cache)
  * @method void resetValidTableColumnsCache(string $table)
  */
-abstract class AbstractModel
+abstract class AbstractModel implements ModelInterface
 {
     use ObjectVarTrait;
     /**
-     * @var \Pimcore\Model\Dao\AbstractDao
+     * @var \Pimcore\Model\Dao\AbstractDao|null
      */
     protected $dao;
 

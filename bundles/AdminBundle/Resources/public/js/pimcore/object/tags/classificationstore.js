@@ -397,8 +397,6 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                 definition.labelWidth = this.fieldConfig.labelWidth;
             }
 
-            var visible = true;
-
             if (this.fieldConfig.hideEmptyData && !isNew) {
                 // check if we should hide the feature because it is empty but only if the group hasn't been just added added via the dialog
                 if (!this.data[language] || !this.data[language][group.id] || typeof this.data[language][group.id][key.id] === "undefined") {
@@ -413,15 +411,19 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                 }
             }
 
-            var childItem = this.getRecursiveLayout(definition, !editable);
-            // index++;
+            var context = this.getContext();
+            if (isNew) {
+                context["applyDefaults"] = true;
+            }
+
+            var childItem = this.getRecursiveLayout(definition, !editable, context);
 
             groupedChildItems.push(childItem);
         }
 
 
         var config = {
-            title: ts(groupTitle),
+            title: t(groupTitle),
             items: groupedChildItems,
             collapsible: true
         };
@@ -441,7 +443,6 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
         if (expandable) {
             var expandableId = Ext.id();
-            var expandingId = Ext.id();
             tools.push(
                 {
                     type: 'expand',
@@ -517,7 +518,6 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         var currentLanguage;
 
         this.groupModified = true;
-        var itemHeight = 0;
 
         for (var i=0; i < this.frontendLanguages.length; i++) {
 
@@ -559,24 +559,26 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
         var activeLanguage = this.currentLanguage;
 
+        var newGroupIds = [];
+
+        for (var groupId in data) {
+            if (!this.activeGroups[groupId]) {
+                newGroupIds.push(groupId);
+            }
+        }
+
+
         for (var i=0; i < nrOfLanguages; i++) {
             var currentLanguage = this.frontendLanguages[i];
             this.currentLanguage = currentLanguage;
 
-            var childItems = [];
-
-            for (var groupId in data) {
+            for (let g = 0; g < newGroupIds.length; g++ ) {
+                let groupId = newGroupIds[g];
                 var groupedChildItems = [];
 
                 if (data.hasOwnProperty(groupId)) {
 
                     var group = data[groupId];
-
-                    if (this.activeGroups[groupId]) {
-                        continue;
-                    }
-
-                    this.activeGroups[groupId] = true;
 
                     addedGroups[groupId] = true;
                     this.groupCollectionMapping[groupId] = group.collectionId;

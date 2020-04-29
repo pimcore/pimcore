@@ -70,7 +70,7 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
         this.detailedSettingsPanel = new Ext.panel.Panel({
             width: '100%',
             defaults: {
-                labelWidth: 150,
+                labelWidth: 200,
                 width: 400
             }
         });
@@ -109,7 +109,6 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
 
         var resolverStore = new Ext.data.ArrayStore({
             data: resolverOptions,
-            // sorters: 'name',
             fields: ['type', 'name']
         });
 
@@ -309,6 +308,19 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                     name: "prefix",
                     fieldLabel: t("import_file_prefix"),
                     value: this.config.resolverSettings.prefix
+                },
+                {
+                    xtype: "checkbox",
+                    name: "skipIfExists",
+                    fieldLabel: t("skip_if_exists"),
+                    value: this.config.resolverSettings.skipIfExists
+                },
+                {
+                    xtype: "textfield",
+                    name: "phpClassOrService",
+                    fieldLabel: t("php_class_or_service"),
+                    width: 800,
+                    value: this.config.resolverSettings.phpClassOrService
                 }
             ]
         );
@@ -326,17 +338,26 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
                     inputValue: true,
                     value: this.config.resolverSettings.createOnDemand,
                     fieldLabel: t("create_on_demand")
-                }
-            ]
-        );
-
-        this.detailedSettingsPanel.add([
+                },
                 {
                     xtype: "checkbox",
                     name: "createParents",
                     inputValue: true,
                     value: this.config.resolverSettings.createParents,
                     fieldLabel: t("create_parents")
+                },
+                {
+                    xtype: "checkbox",
+                    name: "skipIfExists",
+                    fieldLabel: t("skip_if_exists"),
+                    value: this.config.resolverSettings.skipIfExists
+                },
+                {
+                    xtype: "textfield",
+                    name: "phpClassOrService",
+                    fieldLabel: t("php_class_or_service"),
+                    width: 800,
+                    value: this.config.resolverSettings.phpClassOrService
                 }
             ]
         );
@@ -347,12 +368,31 @@ pimcore.object.helpers.import.resolverSettingsTab = Class.create({
         this.addObjectTypeOptions();
 
         this.detailedSettingsPanel.add([
-                {
-                    xtype: "textfield",
-                    name: "attribute",
-                    fieldLabel: t("attribute"),
-                    value: this.config.resolverSettings.attribute
-                }
+            {
+                xtype: "textfield",
+                name: "attribute",
+                fieldLabel: t("attribute"),
+                value: this.config.resolverSettings.attribute
+            },
+            {
+                xtype: "checkbox",
+                name: "skipIfExists",
+                fieldLabel: t("skip_if_exists"),
+                value: this.config.resolverSettings.skipIfExists
+            },
+            {
+                xtype: "checkbox",
+                name: "createOnDemand",
+                fieldLabel: t("create_on_demand"),
+                value: this.config.resolverSettings.createOnDemand
+            },
+            {
+                xtype: "textfield",
+                name: "phpClassOrService",
+                fieldLabel: t("php_class_or_service"),
+                width: 800,
+                value: this.config.resolverSettings.phpClassOrService
+            }
             ]
         );
     },

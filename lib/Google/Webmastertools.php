@@ -46,13 +46,14 @@ class Webmastertools
     public static function getSiteConfig($site = null)
     {
         $siteKey = \Pimcore\Tool\Frontend::getSiteKey($site);
+        $config = Config::getReportConfig()->get('webmastertools');
 
-        if (is_null(Config::getReportConfig()->webmastertools)) {
+        if (is_null($config)) {
             return false;
         }
 
-        if (Config::getReportConfig()->webmastertools->sites->$siteKey->verification) {
-            return Config::getReportConfig()->webmastertools->sites->$siteKey;
+        if ($config->sites->$siteKey->verification) {
+            return $config->sites->$siteKey;
         }
 
         return false;

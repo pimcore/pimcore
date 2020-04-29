@@ -71,8 +71,7 @@ class AssetController extends AbstractElementController
             $algo = 'sha1';
 
             $thumbnailConfig = $request->get('thumbnail');
-            if ($thumbnailConfig && $asset->getType() === 'image') {
-                /** @var Asset\Image $asset */
+            if ($thumbnailConfig && $asset instanceof Asset\Image) {
                 $checksum = $asset->getThumbnail($thumbnailConfig)->getChecksum($algo);
 
                 $object->thumbnail = (string) $asset->getThumbnail($thumbnailConfig);

@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
+use Pimcore\Bundle\CoreBundle\Controller\PublicServicesController;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
@@ -21,6 +22,7 @@ use Pimcore\Http\Request\Resolver\SiteResolver;
 use Pimcore\Model\Document;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -61,6 +63,11 @@ class DocumentFallbackListener implements EventSubscriberInterface
      */
     protected $options;
 
+    /**
+     * @var Document
+     */
+    private $fallbackDocument;
+
     public function __construct(
         RequestStack $requestStack,
         DocumentResolver $documentResolver,
@@ -98,6 +105,7 @@ class DocumentFallbackListener implements EventSubscriberInterface
             // -> Symfony\Component\HttpKernel\EventListener\LocaleListener::onKernelRequest()
             // -> Pimcore\Bundle\CoreBundle\EventListener\Frontend\EditmodeListener::onKernelRequest()
             KernelEvents::REQUEST => ['onKernelRequest', 20],
+            KernelEvents::CONTROLLER => ['onKernelController', 20],
         ];
     }
 
@@ -114,39 +122,13 @@ class DocumentFallbackListener implements EventSubscriberInterface
         }
 
         if ($this->documentResolver->getDocument($request)) {
-            // we already have a document (e.g. set through the document router)
             return;
-        } else {
-            // if we're in a sub request and no explicit document is set - try to load document from
-            // parent and/or master request and set it on our sub-request
-            if (!$event->isMasterRequest()) {
-                $parentRequest = $this->requestStack->getParentRequest();
-                $masterRequest = $this->requestStack->getMasterRequest();
-
-                $eligibleRequests = [];
-
-                if (null !== $parentRequest) {
-                    $eligibleRequests[] = $parentRequest;
-                }
-
-                if ($masterRequest !== $parentRequest) {
-                    $eligibleRequests[] = $masterRequest;
-                }
-
-                foreach ($eligibleRequests as $eligibleRequest) {
-                    if ($document = $this->documentResolver->getDocument($eligibleRequest)) {
-                        $this->documentResolver->setDocument($request, $document);
-
-                        return;
-                    }
-                }
-            }
         }
 
-        // no document found yet - try to find the nearest document by request path
-        // this is only done on the master request as a sub-request's pathInfo is _fragment when
-        // rendered via actions helper
         if ($event->isMasterRequest()) {
+            // no document found yet - try to find the nearest document by request path
+            // this is only done on the master request as a sub-request's pathInfo is _fragment when
+            // rendered via actions helper
             $path = null;
             if ($this->siteResolver->isSiteRequest($request)) {
                 $path = $this->siteResolver->getSitePath($request);
@@ -156,8 +138,47 @@ class DocumentFallbackListener implements EventSubscriberInterface
 
             $document = $this->documentService->getNearestDocumentByPath($path, false, $this->options['nearestDocumentTypes']);
             if ($document) {
-                $this->documentResolver->setDocument($request, $document);
+                $this->fallbackDocument = $document;
+                if ($document->getProperty('language')) {
+                    $request->setLocale($document->getProperty('language'));
+                }
             }
+        } else {
+            // if we're in a sub request and no explicit document is set - try to load document from
+            // parent and/or master request and set it on our sub-request
+            $parentRequest = $this->requestStack->getParentRequest();
+            $masterRequest = $this->requestStack->getMasterRequest();
+
+            $eligibleRequests = [];
+
+            if (null !== $parentRequest) {
+                $eligibleRequests[] = $parentRequest;
+            }
+
+            if ($masterRequest !== $parentRequest) {
+                $eligibleRequests[] = $masterRequest;
+            }
+
+            foreach ($eligibleRequests as $eligibleRequest) {
+                if ($document = $this->documentResolver->getDocument($eligibleRequest)) {
+                    $this->documentResolver->setDocument($request, $document);
+
+                    return;
+                }
+            }
+        }
+    }
+
+    public function onKernelController(FilterControllerEvent $event)
+    {
+        $controller = $event->getController();
+        if (is_array($controller) && isset($controller[0]) && $controller[0] instanceof PublicServicesController) {
+            // ignore PublicServicesController because this could lead to conflicts of Asset and Document paths, see #2704
+            return;
+        }
+
+        if ($this->fallbackDocument && $event->isMasterRequest()) {
+            $this->documentResolver->setDocument($event->getRequest(), $this->fallbackDocument);
         }
     }
 }

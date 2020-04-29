@@ -88,8 +88,6 @@ class Dao extends Model\Element\Dao
 
     public function update()
     {
-        $this->model->setModificationDate(time());
-
         $asset = $this->model->getObjectVars();
 
         foreach ($asset as $key => $value) {
@@ -283,7 +281,7 @@ class Dao extends Model\Element\Dao
     }
 
     /**
-     * @return string retrieves the current full set path from DB
+     * @return string|null retrieves the current full set path from DB
      */
     public function getCurrentFullPath()
     {

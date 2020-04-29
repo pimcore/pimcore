@@ -75,33 +75,33 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @var bool
      */
-    public $objectsAllowed;
+    public $objectsAllowed = false;
 
     /**
      *
      * @var bool
      */
-    public $assetsAllowed;
+    public $assetsAllowed = false;
 
     /**
      * Allowed asset types
      *
      * @var array
      */
-    public $assetTypes;
+    public $assetTypes = [];
 
     /**
      *
      * @var bool
      */
-    public $documentsAllowed;
+    public $documentsAllowed = false;
 
     /**
      * Allowed document types
      *
      * @var array
      */
-    public $documentTypes;
+    public $documentTypes = [];
 
     /**
      * @return bool
@@ -148,7 +148,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function getDocumentTypes()
     {
-        return $this->documentTypes;
+        return $this->documentTypes ?: [];
     }
 
     /**
@@ -190,7 +190,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function getAssetTypes()
     {
-        return $this->assetTypes;
+        return $this->assetTypes ?: [];
     }
 
     /**
@@ -303,7 +303,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return Asset|Document|DataObject\AbstractObject
+     * @return Asset|Document|DataObject\AbstractObject|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -341,17 +341,19 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @see Data::getVersionPreview
      *
-     * @param Document | Asset | DataObject\AbstractObject $data
-     * @param null|DataObject\AbstractObject $object
+     * @param Element\AbstractElement|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof Element\ElementInterface) {
+        if ($data instanceof Element\AbstractElement) {
             return $data->getRealFullPath();
         }
+
+        return '';
     }
 
     /**
@@ -402,7 +404,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         if (!$allow) {
-            throw new \Exception(sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()), null, null);
+            throw new Element\ValidationException(sprintf('Invalid data in field `%s` [type: %s]', $this->getName(), $this->getFieldtype()), null, null);
         }
     }
 
@@ -411,7 +413,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -421,9 +423,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
             return Element\Service::getType($data).':'.$data->getRealFullPath();
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
@@ -457,31 +459,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
-     */
-    public function getCacheTags($data, $tags = [])
-    {
-        $tags = is_array($tags) ? $tags : [];
-
-        if ($this->getLazyLoading()) {
-            return $tags;
-        }
-
-        if ($data instanceof Element\ElementInterface) {
-            if (!array_key_exists($data->getCacheTag(), $tags)) {
-                $tags = $data->getCacheTags($tags);
-            }
-        }
-
-        return $tags;
-    }
-
-    /**
      * @param Element\AbstractElement|null $data
      *
      * @return array
@@ -506,10 +483,10 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @deprecated
      *
-     * @param string $object
-     * @param mixed $params
+     * @param DataObject\Concrete $object
+     * @param array $params
      *
-     * @return mixed
+     * @return array|null
      */
     public function getForWebserviceExport($object, $params = [])
     {
@@ -520,9 +497,9 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
                 'subtype' => $data->getType(),
                 'id' => $data->getId()
             ];
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -583,8 +560,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
 
-            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object, ['force' => true]);
+            if (!$object->isLazyKeyLoaded($this->getName())) {
+                $data = $this->load($object);
 
                 $object->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($object);
@@ -609,8 +586,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $object
-     * @param $data
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array|null $data
      * @param array $params
      *
      * @return mixed
@@ -623,7 +600,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param $assetUploadPath
+     * @param string $assetUploadPath
      *
      * @return $this
      */
@@ -761,6 +738,8 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @param DataObject\Listing      $listing
      * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]
      * @param string                  $operator SQL comparison operator, currently only "=" possible
+     *
+     * @return DataObject\Listing
      */
     public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
     {
@@ -778,7 +757,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         if ($operator === '=') {
             $listing->addConditionParam('`'.$this->getName().'__id` = ? AND `'.$this->getName().'__type` = ?', [$data['id'], $data['type']]);
 
-            return;
+            return $listing;
         }
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }

@@ -96,9 +96,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      *
      * @param string $data
      * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param array $params
      *
-     * @return string
+     * @return array
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -132,7 +132,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      * @param string $allowedBrickType
      * @param int $level
      *
-     * @return array
+     * @return array|null
      */
     private function doGetDataForEditmode($getter, $data, $params, $allowedBrickType, $level = 0)
     {
@@ -197,12 +197,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     /**
      * gets recursively attribute data from parent and fills objectData and metaData
      *
-     * @param $item
+     * @param Objectbrick\Data\AbstractData $item
      * @param string $key
      * @param Data $fielddefinition
      * @param int $level
      * @param DataObject\Concrete|null $baseObject
-     * @param $getter
+     * @param string $getter
      * @param array|null $params
      *
      * @return mixed
@@ -290,7 +290,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string
+     * @return Objectbrick\Data\AbstractData
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -347,8 +347,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param Objectbrick\Data\AbstractData|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -363,7 +363,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -376,13 +376,13 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     /**
      * @param string $importValue
      * @param null|DataObject\Concrete $object
-     * @param mixed $params
+     * @param array $params
      *
      * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        return;
+        return null;
     }
 
     /**
@@ -430,7 +430,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      * @param DataObject\Concrete $object
      * @param array $params
      *
-     * @return null
+     * @return Objectbrick|null
      */
     public function load($object, $params = [])
     {
@@ -441,9 +441,9 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             $container->load($object);
 
             return $container;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -540,12 +540,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     /**
      * @deprecated
      *
-     * @param mixed $data
-     * @param Model\Element\AbstractElement $relatedObject
-     * @param mixed $params
+     * @param array $data
+     * @param DataObject\Concrete $relatedObject
+     * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
-     * @return mixed
+     * @return Objectbrick|null
      *
      * @throws \Exception
      */
@@ -701,15 +701,15 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
         $key = $this->getName();
         $code = '';
 
+        $classname = '\\Pimcore\\Model\\DataObject\\' . ucfirst($class->getName()) . '\\' . ucfirst($this->getName());
+
         $code .= '/**' . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '* @return ' . $classname . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . " () {\n";
 
         $code .= "\t" . '$data = $this->' . $key . ";\n";
         $code .= "\t" . 'if(!$data) { ' . "\n";
-
-        $classname = '\\Pimcore\\Model\\DataObject\\' . ucfirst($class->getName()) . '\\' . ucfirst($this->getName());
 
         $code .= "\t\t" . 'if(\Pimcore\Tool::classExists("' . str_replace('\\', '\\\\', $classname) . '")) { ' . "\n";
         $code .= "\t\t\t" . '$data = new ' . $classname . '($this, "' . $key . '");' . "\n";
@@ -788,7 +788,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $data
+     * @param Objectbrick|null $data
      * @param DataObject\Concrete $object
      * @param mixed $params
      *
@@ -800,7 +800,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $item
+     * @param Objectbrick\Data\AbstractData $item
      * @param string $key
      * @param Data $fielddefinition
      * @param int $level
@@ -820,12 +820,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param $data
+     * @param Objectbrick\Data\AbstractData $data
      * @param string $getter
      * @param array $params
      * @param int $level
      *
-     * @return array
+     * @return array|null
      */
     private function doGetDiffDataForEditmode($data, $getter, $params = [], $level = 0)
     {
@@ -909,7 +909,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     /**
      * See parent class.
      *
-     * @param $data
+     * @param array $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *

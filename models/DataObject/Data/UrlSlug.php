@@ -41,7 +41,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     protected $objectId;
 
     /**
-     * @var int
+     * @var string
      */
     protected $classId;
 
@@ -79,6 +79,11 @@ class UrlSlug implements OwnerAwareFieldInterface
      * @var string
      */
     protected $position;
+
+    /**
+     * @var null|string
+     */
+    protected $previousSlug;
 
     /**
      * @var array
@@ -135,6 +140,26 @@ class UrlSlug implements OwnerAwareFieldInterface
         $this->slug = $slug;
 
         return $this;
+    }
+
+    /**
+     * @internal
+     *
+     * @return string|null
+     */
+    public function getPreviousSlug(): ?string
+    {
+        return $this->previousSlug;
+    }
+
+    /**
+     * @internal
+     *
+     * @param string|null $previousSlug
+     */
+    public function setPreviousSlug(?string $previousSlug): void
+    {
+        $this->previousSlug = $previousSlug;
     }
 
     /**
@@ -258,7 +283,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getClassId()
     {
@@ -266,7 +291,7 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param int $classId
+     * @param string $classId
      *
      * @return $this
      */
@@ -292,6 +317,7 @@ class UrlSlug implements OwnerAwareFieldInterface
         $slug->setOwnertype($rawItem['ownertype']);
         $slug->setOwnername($rawItem['ownername']);
         $slug->setPosition($rawItem['position']);
+        $slug->setPreviousSlug($rawItem['slug']);
 
         return $slug;
     }
@@ -366,18 +392,18 @@ class UrlSlug implements OwnerAwareFieldInterface
                     $objectFieldname = $objectFieldname[0];
 
                     if ($type == 'objectbrick') {
-                        if ($objectFieldDef = $classDefinition->getFieldDefinition($objectFieldname)) {
-
-                            /** @var Objectbricks $objectFieldDef */
+                        $objectFieldDef = $classDefinition->getFieldDefinition($objectFieldname);
+                        if ($objectFieldDef instanceof Objectbricks) {
                             $allowedBricks = $objectFieldDef->getAllowedTypes();
                             if (is_array($allowedBricks)) {
                                 foreach ($allowedBricks as $allowedBrick) {
-                                    /** @var Definition $brickDef */
                                     $brickDef = Definition::getByKey($allowedBrick);
-                                    if ($lfDef = $brickDef->getFieldDefinition('localizedfields')) {
-                                        /** @var Localizedfields $lfDef */
-                                        $fd = $lfDef->getFieldDefinition($this->getFieldname());
-                                        break;
+                                    if ($brickDef instanceof Definition) {
+                                        $lfDef = $brickDef->getFieldDefinition('localizedfields');
+                                        if ($lfDef instanceof Localizedfields) {
+                                            $fd = $lfDef->getFieldDefinition($this->getFieldname());
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -405,8 +431,8 @@ class UrlSlug implements OwnerAwareFieldInterface
                         }
                     }
                 } else {
-                    /** @var Localizedfields $lfDef */
-                    if ($lfDef = $classDefinition->getFieldDefinition('localizedfields')) {
+                    $lfDef = $classDefinition->getFieldDefinition('localizedfields');
+                    if ($lfDef instanceof Localizedfields) {
                         $fd = $lfDef->getFieldDefinition($this->getFieldname());
                     }
                 }
@@ -467,11 +493,11 @@ class UrlSlug implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param int $classId
+     * @param string $classId
      *
      * @throws \Exception
      */
-    public static function handleClassDeleted(int $classId)
+    public static function handleClassDeleted(string $classId)
     {
         $db = Db::get();
         $db->delete('object_url_slugs', ['classId' => $classId]);

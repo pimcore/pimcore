@@ -34,7 +34,6 @@ pimcore.report.custom.definition.analytics = Class.create({
 
         this.sourceDefinitionData = sourceDefinitionData;
 
-        var profileLoaded = false;
         var dimensionLoaded = false;
         var metricLoaded = false;
         var segmentLoaded = false;

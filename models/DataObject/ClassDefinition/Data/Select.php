@@ -38,7 +38,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * Available options to select
      *
-     * @var array
+     * @var array|null
      */
     public $options;
 
@@ -48,7 +48,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     public $width;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $defaultValue;
 
@@ -234,7 +234,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-        return $data;
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
@@ -292,7 +292,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
 
     /** See parent class.
      * @param mixed $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|null
@@ -362,7 +362,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getDefaultValue()
     {
@@ -370,7 +370,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param string $defaultValue
+     * @param string|null $defaultValue
      */
     public function setDefaultValue($defaultValue)
     {
@@ -471,7 +471,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @param DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return array
+     * @return array|string
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -498,9 +498,9 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
             }
 
             return $result;
-        } else {
-            return $data;
         }
+
+        return $data;
     }
 
     /**
@@ -510,15 +510,17 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
+     * @return string|null
      */
     public function getFilterConditionExt($value, $operator, $params = [])
     {
-        if ($operator === '=') {
-            $value = is_array($value) ? current($value) : $value;
-            $name = $params['name'] ?: $this->name;
+        $value = is_array($value) ? current($value) : $value;
+        $name = $params['name'] ?: $this->name;
 
-            return '`'.$name.'` LIKE '."'$value'".' ';
+        if ($operator === '=') {
+            return '`'.$name.'` = '."'$value'".' ';
+        } elseif ($operator === 'LIKE') {
+            return '`'.$name.'` LIKE '."'%$value%'".' ';
         }
 
         return null;
@@ -554,8 +556,8 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
             }
 
             return $optionsProvider->getDefaultValue($context, $this);
-        } else {
-            return $this->getDefaultValue() ?? null;
         }
+
+        return $this->getDefaultValue();
     }
 }

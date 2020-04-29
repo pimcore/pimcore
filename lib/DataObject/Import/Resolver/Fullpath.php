@@ -17,8 +17,11 @@
 
 namespace Pimcore\DataObject\Import\Resolver;
 
+use const FILTER_VALIDATE_BOOLEAN;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\ImportClassResolver;
+use Pimcore\Model\DataObject\ImportDataServiceInterface;
 use Pimcore\Model\FactoryInterface;
 
 class Fullpath extends AbstractResolver
@@ -35,46 +38,62 @@ class Fullpath extends AbstractResolver
 
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
-        $createOnDemand = $config->resolverSettings->createOnDemand;
-        $createParents = $config->resolverSettings->createParents;
+        $createOnDemand = filter_var($config->resolverSettings->createOnDemand, FILTER_VALIDATE_BOOLEAN);
+        $createParents = filter_var($config->resolverSettings->createParents, FILTER_VALIDATE_BOOLEAN);
+        $skipIfExists = filter_var($config->resolverSettings->skipIfExists, FILTER_VALIDATE_BOOLEAN);
+        $service = ImportClassResolver::resolveClassOrService($config->resolverSettings->phpClassOrService);
 
         $fullpath = $rowData[$this->getIdColumn($config)];
         $object = DataObject::getByPath($fullpath);
 
-        if (!$object && $createOnDemand) {
-            $keyParts = explode('/', $fullpath);
-            $objectKey = $keyParts[count($keyParts) - 1];
-            array_pop($keyParts);
-
-            $parentPath = implode('/', $keyParts);
-
-            $parent = DataObject::getByPath($parentPath);
-            if (!$parent && $createParents) {
-                $parent = DataObject\Service::createFolderByPath($parentPath);
-            }
-
-            $classId = $config->classId;
-            $classDefinition = ClassDefinition::getById($classId);
-            $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
-
-            $object = $this->modelFactory->build($className);
-            $object->setKey($objectKey);
-            $object->setParent($parent);
-            $object->setPublished(1);
-        } else {
-            if ($object) {
-                $parent = $object->getParent();
-            } else {
-                throw new \Exception('failed to resolve object ' . $fullpath);
-            }
+        if ($object && $skipIfExists) {
+            throw new ImportWarningException('skipped object exists: ' . $object->getFullPath());
         }
 
-        if (!$parent->isAllowed('create')) {
-            throw new \Exception('not allowed to import into folder ' . $parent->getFullPath());
+        if (!$object && $createOnDemand) {
+            if ($service instanceof ImportDataServiceInterface) {
+                $object = $service->populate($config, null, $rowData, ['parentId' => $parentId]);
+            } else {
+                $keyParts = explode('/', $fullpath);
+                $objectKey = $keyParts[count($keyParts) - 1];
+                array_pop($keyParts);
+
+                $parentPath = implode('/', $keyParts);
+
+                $parent = DataObject::getByPath($parentPath);
+                if (!$parent && $createParents) {
+                    $parent = DataObject\Service::createFolderByPath($parentPath);
+                }
+
+                $classId = $config->classId;
+                $classDefinition = ClassDefinition::getById($classId);
+                $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
+
+                $object = $this->modelFactory->build($className);
+                $object->setKey($objectKey);
+                $object->setParent($parent);
+                $object->setPublished(1);
+            }
+        } else {
+            if ($object && !$service) {
+                $parent = $object->getParent();
+            } elseif ($object && $service) {
+                $object = $service->populate($config, $object, $rowData, ['parentId' => $parentId]);
+            } else {
+                throw new ImportErrorException('failed to resolve object ' . $fullpath);
+            }
         }
 
         if (!$object) {
-            throw new \Exception('failed to resolve object ' . $fullpath);
+            throw new ImportErrorException('failed to resolve object ' . $fullpath);
+        }
+
+        if (empty($parent)) {
+            $parent = $object->getParent();
+        }
+
+        if (!$parent->isAllowed('create')) {
+            throw new ImportErrorException('not allowed to import into folder ' . $parent->getFullPath());
         }
 
         $this->setObjectType($config, $object, $rowData);

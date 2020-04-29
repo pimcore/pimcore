@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\ResponseInjectionTrait;
+use Pimcore\Config;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -50,11 +51,17 @@ class CookiePolicyNoticeListener
     protected $translator;
 
     /**
+     * @var Config
+     */
+    protected $config;
+
+    /**
      * @param KernelInterface $kernel
      */
-    public function __construct(KernelInterface $kernel)
+    public function __construct(KernelInterface $kernel, Config $config)
     {
         $this->kernel = $kernel;
+        $this->config = $config;
     }
 
     /**
@@ -144,10 +151,9 @@ class CookiePolicyNoticeListener
         }
 
         $response = $event->getResponse();
-        $config = \Pimcore\Config::getSystemConfig();
         $locale = $request->getLocale();
 
-        if ($this->enabled && $config->general->show_cookie_notice && \Pimcore\Tool::useFrontendOutputFilters()) {
+        if ($this->enabled && $this->config['general']['show_cookie_notice'] && \Pimcore\Tool::useFrontendOutputFilters()) {
             if ($event->isMasterRequest() && $this->isHtmlResponse($response)) {
                 $template = $this->getTemplateCode();
 

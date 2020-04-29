@@ -139,7 +139,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     }
 
     /**
-     * Get the data-elements for the object from database for the given path
+     * Get all data-elements for all fields that are not lazy-loaded.
      */
     public function getData()
     {
@@ -148,15 +148,17 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $fieldDefinitions = $this->model->getClass()->getFieldDefinitions(['object' => $this->model]);
         foreach ($fieldDefinitions as $key => $value) {
             if ($value instanceof CustomResourcePersistingInterface) {
-                // datafield has it's own loader
-                $params = [
-                    'context' => [
-                        'object' => $this->model
-                    ]
-                ];
-                $value = $value->load($this->model, $params);
-                if ($value === 0 || !empty($value)) {
-                    $this->model->setValue($key, $value);
+                if (!$value instanceof LazyLoadingSupportInterface || !$value->getLazyLoading()) {
+                    // datafield has it's own loader
+                    $params = [
+                        'context' => [
+                            'object' => $this->model
+                        ]
+                    ];
+                    $value = $value->load($this->model, $params);
+                    if ($value === 0 || !empty($value)) {
+                        $this->model->setValue($key, $value);
+                    }
                 }
             }
             if ($value instanceof ResourcePersistenceAwareInterface) {
@@ -198,7 +200,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
             }
 
             if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $fd->supportsDirtyDetection()) {
-                if ($this->model instanceof DataObject\DirtyIndicatorInterface && !$this->model->isFieldDirty($key)) {
+                if ($this->model instanceof Model\Element\DirtyIndicatorInterface && !$this->model->isFieldDirty($key)) {
                     if (!in_array($key, $untouchable)) {
                         $untouchable[] = $key;
                     }
@@ -235,7 +237,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     'context' => [
                         'containerType' => 'object'
                     ]];
-                if ($this->model instanceof DataObject\DirtyIndicatorInterface) {
+                if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
                     $saveParams['newParent'] = $this->model->isFieldDirty('o_parentId');
                 }
                 $fd->save($this->model, $saveParams);

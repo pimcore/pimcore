@@ -289,7 +289,7 @@ Ext.onReady(function () {
             {
                 name: "translatedName",
                 convert: function (v, rec) {
-                    return ts(rec.data.name);
+                    return t(rec.data.name);
                 },
                 depends : ['name']
             },
@@ -348,7 +348,7 @@ Ext.onReady(function () {
         {name: 'text', allowBlank: false},
         {
             name: "translatedText", convert: function (v, rec) {
-                return ts(rec.data.text);
+                return t(rec.data.text);
             }
         },
         {name: 'icon'},
@@ -483,7 +483,7 @@ Ext.onReady(function () {
 
         // use vanilla javascript instead of ExtJS to bypass default error handling
         var request = new XMLHttpRequest();
-        request.open('POST', "https://liveupdate.pimcore.org/update-check", false);
+        request.open('POST', "https://liveupdate.pimcore.org/update-check");
 
         request.onload = function() {
             if (this.status >= 200 && this.status < 400) {
@@ -714,7 +714,6 @@ Ext.onReady(function () {
             var treeConfig = elementTree[i];
             var type = treeConfig["type"];
             var side = treeConfig["position"] ? treeConfig["position"] : "left";
-            var expanded = treeConfig["expanded"];
             var treepanel = null;
             var tree = null;
             var treetype = null;
@@ -769,7 +768,7 @@ Ext.onReady(function () {
                                 rootVisible: treeConfig.showroot,
                                 treeId: "pimcore_panel_tree_" + treetype + "_" + treeConfig.id,
                                 treeIconCls: "pimcore_" + treetype + "_customview_icon_" + treeConfig.id + " pimcore_icon_material",
-                                treeTitle: ts(treeConfig.name),
+                                treeTitle: t(treeConfig.name),
                                 parentPanel: treepanel,
                                 loaderBaseParams: {}
                             }, treeConfig);

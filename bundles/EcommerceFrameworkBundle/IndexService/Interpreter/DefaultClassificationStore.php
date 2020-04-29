@@ -60,6 +60,7 @@ class DefaultClassificationStore implements InterpreterInterface
             $items = [];
 
             //TODO eventually cache that information
+            /** @var \Pimcore\Model\DataObject\ClassDefinition\Data\Classificationstore $fieldDefinition */
             $fieldDefinition = $store->getClass()->getFieldDefinition($store->getFieldname());
             $activeGroupIds = $fieldDefinition->recursiveGetActiveGroupsIds($store->getObject());
 

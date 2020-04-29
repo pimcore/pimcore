@@ -187,7 +187,7 @@ class CacheItem implements PimcoreCacheItemInterface, ItemInterface
      *
      * @param string[] $tags An array of tags
      *
-     * @throws \Psr\Cache\InvalidArgumentException When a tag is not valid.
+     * @throws InvalidArgumentException When a tag is not valid.
      *
      * @return TaggableCacheItemInterface
      */

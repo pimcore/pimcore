@@ -352,7 +352,6 @@ class TranslationController extends AdminController
             $data = $this->decodeJson($request->get('data'));
 
             if ($request->get('xaction') == 'destroy') {
-                $data = $this->decodeJson($request->get('data'));
                 $t = $class::getByKey($data['key']);
                 $t->delete();
 
@@ -496,7 +495,7 @@ class TranslationController extends AdminController
 
     /**
      * @param array $joins
-     * @param Translation\AbstractTranslation $list
+     * @param Translation\AbstractTranslation\Listing $list
      * @param string $tableName
      * @param array $filters
      */
@@ -723,7 +722,8 @@ class TranslationController extends AdminController
                             'id' => $childId,
                             'type' => $element['type'],
                         ];
-                        if ($element['relations']) {
+
+                        if (isset($element['relations']) && $element['relations']) {
                             $childDependencies = $child->getDependencies()->getRequires();
                             foreach ($childDependencies as $cd) {
                                 if ($cd['type'] == 'object' || $cd['type'] == 'document') {
@@ -734,7 +734,7 @@ class TranslationController extends AdminController
                     }
                 }
 
-                if ($element['relations']) {
+                if (isset($element['relations']) && $element['relations']) {
                     if (!$el instanceof Element\AbstractElement) {
                         $el = Element\Service::getElementById($element['type'], $element['id']);
                     }
@@ -896,12 +896,17 @@ class TranslationController extends AdminController
 
         try {
             $attributeSet = $importDataExtractor->extractElement($id, $step);
-            $importerService->import($attributeSet);
+            if ($attributeSet) {
+                $importerService->import($attributeSet);
+            } else {
+                Logger::warning(sprintf('Could not resolve element %s', $id));
+            }
         } catch (\Exception $e) {
             Logger::err($e->getMessage());
 
             return $this->adminJson([
-                'success' => false
+                'success' => false,
+                'message' => $e->getMessage()
             ]);
         }
 

@@ -34,6 +34,8 @@ class RedirectHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
+    const RESPONSE_HEADER_NAME_ID = 'X-Pimcore-Redirect-ID';
+
     /**
      * @var RequestHelper
      */
@@ -50,22 +52,32 @@ class RedirectHandler implements LoggerAwareInterface
     private $redirects;
 
     /**
+     * @var Config
+     */
+    private $config;
+
+    /**
      * @param RequestHelper $requestHelper
      * @param SiteResolver $siteResolver
+     * @param Config $config
      */
-    public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver)
+    public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver, Config $config)
     {
         $this->requestHelper = $requestHelper;
         $this->siteResolver = $siteResolver;
+        $this->config = $config;
     }
 
     /**
      * @param Request $request
      * @param bool $override
+     * @param Site|null $sourceSite
      *
-     * @return null|Response
+     * @return RedirectResponse|null
+     *
+     * @throws \Exception
      */
-    public function checkForRedirect(Request $request, $override = false)
+    public function checkForRedirect(Request $request, $override = false, $sourceSite = null)
     {
         // not for admin requests
         if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
@@ -73,16 +85,19 @@ class RedirectHandler implements LoggerAwareInterface
         }
 
         // get current site if available
-        $sourceSite = null;
-        if ($this->siteResolver->isSiteRequest($request)) {
+        if (!$sourceSite && $this->siteResolver->isSiteRequest($request)) {
             $sourceSite = $this->siteResolver->getSite($request);
         }
 
-        $config = Config::getSystemConfig();
-        $partResolver = new RedirectUrlPartResolver($request);
+        if ($redirect = Redirect::getByExactMatch($request, $sourceSite, $override)) {
+            if (null !== $response = $this->buildRedirectResponse($redirect, $request)) {
+                return $response;
+            }
+        }
 
-        foreach ($this->getFilteredRedirects($override) as $redirect) {
-            if (null !== $response = $this->matchRedirect($redirect, $request, $partResolver, $config, $sourceSite)) {
+        $partResolver = new RedirectUrlPartResolver($request);
+        foreach ($this->getRegexFilteredRedirects($override) as $redirect) {
+            if (null !== $response = $this->matchRegexRedirect($redirect, $request, $partResolver, $sourceSite)) {
                 return $response;
             }
         }
@@ -90,11 +105,10 @@ class RedirectHandler implements LoggerAwareInterface
         return null;
     }
 
-    private function matchRedirect(
+    private function matchRegexRedirect(
         Redirect $redirect,
         Request $request,
         RedirectUrlPartResolver $partResolver,
-        Config\Config $config,
         Site $sourceSite = null
     ) {
         if (empty($redirect->getType())) {
@@ -123,6 +137,20 @@ class RedirectHandler implements LoggerAwareInterface
             }
         }
 
+        return $this->buildRedirectResponse($redirect, $request, $matches);
+    }
+
+    /**
+     * @param Redirect $redirect
+     * @param Request $request
+     * @param array $matches
+     *
+     * @return RedirectResponse|null
+     *
+     * @throws \Exception
+     */
+    protected function buildRedirectResponse(Redirect $redirect, Request $request, $matches = [])
+    {
         $target = $redirect->getTarget();
         if (is_numeric($target)) {
             $d = Document::getById($target);
@@ -146,23 +174,34 @@ class RedirectHandler implements LoggerAwareInterface
             $url = replace_pcre_backreferences($url, $matches);
         }
 
-        if ($redirect->getTargetSite() && !preg_match('@http(s)?://@i', $url)) {
-            if ($targetSite = Site::getById($redirect->getTargetSite())) {
-                // if the target site is specified and and the target-path is starting at root (not absolute to site)
-                // the root-path will be replaced so that the page can be shown
-                $url = preg_replace('@^' . $targetSite->getRootPath() . '/@', '/', $url);
-                $url = $request->getScheme() . '://' . $targetSite->getMainDomain() . $url;
-            } else {
-                $this->logger->error('Site with ID {targetSite} not found', [
-                    'redirect' => $redirect->getId(),
-                    'targetSite' => $redirect->getTargetSite()
-                ]);
+        if (!preg_match('@http(s)?://@i', $url)) {
+            if ($redirect->getTargetSite()) {
+                if ($targetSite = Site::getById($redirect->getTargetSite())) {
+                    // if the target site is specified and and the target-path is starting at root (not absolute to site)
+                    // the root-path will be replaced so that the page can be shown
+                    $url = preg_replace('@^' . $targetSite->getRootPath() . '/@', '/', $url);
+                    $url = $request->getScheme() . '://' . $targetSite->getMainDomain() . $url;
+                } else {
+                    $this->logger->error('Site with ID {targetSite} not found', [
+                        'redirect' => $redirect->getId(),
+                        'targetSite' => $redirect->getTargetSite()
+                    ]);
 
-                return null;
+                    return null;
+                }
+            } else {
+                $site = Site::getByDomain($request->getHost());
+                if ($site instanceof Site) {
+                    $redirectDomain = $request->getHost();
+                } else {
+                    $redirectDomain = $this->config['general']['domain'];
+                }
+
+                if ($redirectDomain) {
+                    // prepend the host and scheme to avoid infinite loops when using "domain" redirects
+                    $url = $request->getScheme().'://'.$redirectDomain.$url;
+                }
             }
-        } elseif (!preg_match('@http(s)?://@i', $url) && $config->general->domain) {
-            // prepend the host and scheme to avoid infinite loops when using "domain" redirects
-            $url = $request->getScheme() . '://' . $config->general->domain . $url;
         }
 
         // pass-through parameters if specified
@@ -179,7 +218,7 @@ class RedirectHandler implements LoggerAwareInterface
 
         $statusCode = $redirect->getStatusCode() ?: Response::HTTP_MOVED_PERMANENTLY;
         $response = new RedirectResponse($url, $statusCode);
-        $response->headers->set('X-Pimcore-ID', $redirect->getId());
+        $response->headers->set(self::RESPONSE_HEADER_NAME_ID, $redirect->getId());
 
         // log all redirects to the redirect log
         \Pimcore\Log\Simple::log(
@@ -193,7 +232,7 @@ class RedirectHandler implements LoggerAwareInterface
     /**
      * @return Redirect[]
      */
-    private function getRedirects()
+    private function getRegexRedirects()
     {
         if (null !== $this->redirects && is_array($this->redirects)) {
             return $this->redirects;
@@ -208,7 +247,7 @@ class RedirectHandler implements LoggerAwareInterface
             if (($this->redirects = Cache::load($cacheKey)) === false) {
                 try {
                     $list = new Redirect\Listing();
-                    $list->setCondition('active = 1');
+                    $list->setCondition('active = 1 AND regex = 1');
                     $list->setOrder('DESC');
                     $list->setOrderKey('priority');
 
@@ -239,11 +278,11 @@ class RedirectHandler implements LoggerAwareInterface
      *
      * @return Redirect[]
      */
-    private function getFilteredRedirects($override = false)
+    private function getRegexFilteredRedirects($override = false)
     {
         $now = time();
 
-        return array_filter($this->getRedirects(), function (Redirect $redirect) use ($override, $now) {
+        return array_filter($this->getRegexRedirects(), function (Redirect $redirect) use ($override, $now) {
             // this is the case when maintenance did't deactivate the redirect yet but it is already expired
             if (!empty($redirect->getExpiry()) && $redirect->getExpiry() < $now) {
                 return false;

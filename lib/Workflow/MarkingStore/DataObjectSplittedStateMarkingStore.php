@@ -31,7 +31,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     private $workflowName;
 
     /**
-     * @var string
+     * @var array
      */
     private $stateMapping;
 

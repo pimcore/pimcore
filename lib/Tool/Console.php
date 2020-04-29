@@ -85,16 +85,11 @@ class Console
             return $value;
         }
 
-        $systemConfig = Config::getSystemConfig();
-
-        $pathVariable = null;
-        if ($systemConfig) {
-            $pathVariable = Config::getSystemConfig()->general->path_variable;
-        }
+        $systemConfig = Config::getSystemConfiguration('general');
 
         $paths = [];
-        if ($pathVariable) {
-            $paths = explode(PATH_SEPARATOR, $pathVariable);
+        if (!empty($systemConfig['path_variable'])) {
+            $paths = explode(PATH_SEPARATOR, $systemConfig['path_variable']);
         }
 
         array_push($paths, '');
@@ -293,7 +288,7 @@ class Console
      * @param string $arguments
      * @param string|null $outputFile
      *
-     * @return string
+     * @return int
      */
     public static function runPhpScriptInBackground($script, $arguments = '', $outputFile = null)
     {
@@ -416,7 +411,7 @@ class Console
 
         Logger::debug('Process started with PID ' . $pid);
 
-        return $pid;
+        return (int)$pid;
     }
 
     /**

@@ -4,6 +4,7 @@ On class level, there are multiple additional settings and features available wh
 backend or via code by a developer. 
 
 #### These features include: 
+* [Composite Indices](./05_Composite_Indices.md)
 * [Data Inheritance and Parent Class](./25_Inheritance.md)
 * [Object Variants](./70_Variants.md)
 * [Object Preview](./55_Preview.md)
@@ -13,4 +14,3 @@ backend or via code by a developer.
 * [Locking Fields](./35_Locking_Fields.md)
 * [Path Formatter](./50_Path_Formatter.md)
 * [Link Generator](./30_Link_Generator.md)
-* [Cache Raw Relation Data](./05_Cache_Raw_Relation_Data.md)

@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
+use Pimcore\Model\DataObject\Concrete;
+
 interface DynamicTextLabelInterface
 {
     /**

@@ -94,8 +94,6 @@ pimcore.report.piwik.dashboard_iframe = Class.create(pimcore.report.abstract, {
     },
 
     openWindow: function() {
-        var that = this;
-
         this.getReportConfig().then(function(config) {
             window.open(config.url);
         });

@@ -24,4 +24,8 @@ use Pimcore\Model;
  */
 class Item extends Model\Webservice\Data\Element\Listing\Item
 {
+    /**
+     * @var bool
+     */
+    public $published;
 }

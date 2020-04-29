@@ -30,6 +30,7 @@ use Zend\Paginator\AdapterAggregateInterface;
  * @method int[] loadIdList()
  * @method \Pimcore\Model\Document\Listing\Dao getDao()
  * @method onCreateQuery(callable $callback)
+ * @method array loadIdPathList()
  */
 class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
@@ -140,7 +141,7 @@ class Listing extends Model\Listing\AbstractListing implements AdapterInterface,
      * @param int $offset
      * @param int $itemCountPerPage
      *
-     * @return Listing
+     * @return Document[]
      */
     public function getItems($offset, $itemCountPerPage)
     {

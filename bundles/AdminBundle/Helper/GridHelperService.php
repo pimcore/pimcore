@@ -125,6 +125,12 @@ class GridHelperService
                     $brickType = $keyParts[0];
                     $brickKey = $keyParts[1];
 
+                    if (strpos($brickType, '?') !== false) {
+                        $brickDescriptor = substr($brickType, 1);
+                        $brickDescriptor = json_decode($brickDescriptor, true);
+                        $brickType = $brickDescriptor['containerKey'];
+                    }
+
                     $brickDef = Objectbrick\Definition::getByKey($brickType);
                     if ($slugFd = $brickDef->getFieldDefinition($brickKey) instanceof ClassDefinition\Data\UrlSlug) {
                         $slugKey = $brickKey;
@@ -215,6 +221,7 @@ class GridHelperService
                 $brickKey = null;
                 $brickType = null;
                 $brickDescriptor = null;
+                $isLocalized = false;
                 if (!$field) {
 
                     // if the definition doesn't exist check for a localized field
@@ -235,63 +242,65 @@ class GridHelperService
                         $brickType = $keyParts[0];
                         $brickKey = $keyParts[1];
 
-                        $key = Model\DataObject\Service::getFieldForBrickType($class, $brickType);
-                        $field = $class->getFieldDefinition($key);
-
                         if (strpos($brickType, '?') !== false) {
                             $brickDescriptor = substr($brickType, 1);
                             $brickDescriptor = json_decode($brickDescriptor, true);
                             $brickType = $brickDescriptor['containerKey'];
                         }
 
+                        $key = Model\DataObject\Service::getFieldForBrickType($class, $brickType);
+                        $field = $class->getFieldDefinition($key);
+
                         $brickClass = Objectbrick\Definition::getByKey($brickType);
 
-                        if ($brickDescriptor) {
+                        $brickFieldKey = $brickDescriptor ? $brickDescriptor['brickfield'] : $brickKey;
+
+                        $brickClassDefinitions = $brickClass->getFieldDefinitions();
+                        if (array_key_exists($brickFieldKey, $brickClassDefinitions)) {
+                            $brickField = $brickClass->getFieldDefinition($brickFieldKey);
+                        } else {
                             /** @var ClassDefinition\Data\Localizedfields|null $localizedFields */
                             $localizedFields = $brickClass->getFieldDefinition('localizedfields');
                             if ($localizedFields) {
-                                $brickField = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
+                                $brickField = $localizedFields->getFieldDefinition($brickFieldKey);
+                                $isLocalized = true;
                             }
-                        } else {
-                            $brickField = $brickClass->getFieldDefinition($brickKey);
                         }
                     }
                 }
                 if ($field instanceof ClassDefinition\Data\Objectbricks || $brickDescriptor) {
                     // custom field
-                    $db = \Pimcore\Db::get();
-                    $brickPrefix = '';
-
-                    $ommitPrefix = false;
-
-                    if ($brickField instanceof Model\DataObject\ClassDefinition\Data\Checkbox
-                        || (($brickField instanceof Model\DataObject\ClassDefinition\Data\Date || $brickField instanceof Model\DataObject\ClassDefinition\Data\Datetime) && $brickField->getColumnType() == 'datetime')
-                    ) {
-                        $ommitPrefix = true;
+                    if ($brickDescriptor) {
+                        $brickFilterField = $brickDescriptor['fieldname'];
+                    } else {
+                        $brickFilterField = $field->getName();
                     }
 
-                    if (!$ommitPrefix) {
-                        if ($brickDescriptor) {
-                            $brickPrefix = $db->quoteIdentifier($brickType . '_localized') . '.';
+                    $db = \Pimcore\Db::get();
+
+                    if ($isLocalized) {
+                        $brickPrefix = $db->quoteIdentifier($brickType . '_localized') . '.';
+                    } else {
+                        if ($brickField instanceof ClassDefinition\Data\UrlSlug) {
+                            $brickPrefix = $db->quoteIdentifier($brickKey) . '.';
                         } else {
-                            if ($brickField instanceof ClassDefinition\Data\UrlSlug) {
-                                $brickPrefix = $db->quoteIdentifier($brickKey) . '.';
-                            } else {
-                                $brickPrefix = $db->quoteIdentifier($brickType) . '.';
-                            }
+                            $brickPrefix = $db->quoteIdentifier($brickType) . '.';
                         }
                     }
+
                     if (is_array($filter['value'])) {
                         $fieldConditions = [];
                         foreach ($filter['value'] as $filterValue) {
-                            $fieldConditions[] = $brickPrefix . $brickField->getFilterCondition($filterValue, $operator,
-                                    ['brickType' => $brickType]
-                                );
+                            $brickCondition = '(' . $brickField->getFilterCondition($filterValue, $operator,
+                                    ['brickPrefix' => $brickPrefix]
+                                ) . ' AND fieldname = ' . $db->quote($brickFilterField) . ')';
+                            $fieldConditions[] = $brickCondition;
                         }
                         $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
                     } else {
-                        $conditionPartsFilters[] = $brickPrefix . $brickField->getFilterCondition($filter['value'], $operator,
-                                ['brickType' => $brickType]);
+                        $brickCondition = '(' . $brickField->getFilterCondition($filter['value'], $operator,
+                                ['brickPrefix' => $brickPrefix]) . ' AND fieldname = ' . $db->quote($brickFilterField) . ')';
+                        $conditionPartsFilters[] = $brickCondition;
                     }
                 } elseif ($field instanceof ClassDefinition\Data\UrlSlug) {
                     $conditionPartsFilters[] = $db->quoteIdentifier($field->getName()) . '.' . $field->getFilterCondition($filter['value'], $operator);

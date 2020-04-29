@@ -58,7 +58,7 @@ class Checkbox extends Model\Document\Tag
      */
     public function frontend()
     {
-        return $this->value;
+        return (string)$this->value;
     }
 
     /**

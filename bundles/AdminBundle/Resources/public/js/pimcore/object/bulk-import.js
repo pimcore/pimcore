@@ -179,16 +179,20 @@ pimcore.object.bulkimport = Class.create(pimcore.object.bulkbase, {
         if (idx < this.values.length) {
             if (idx == 0) {
                 this.batchProgressBar = new Ext.ProgressBar({
-                    text: t('generating'),
+                    text: t('initializing'),
                     style: "margin: 10px;",
                     width: 500
                 });
 
                 this.batchProgressWin = new Ext.Window({
+                    title: t("export"),
+                    layout: 'fit',
                     items: [this.batchProgressBar],
-                    modal: true,
-                    bodyStyle: "background: #fff;",
-                    closable: false
+                    width: 200,
+                    plain: true,
+                    bodyStyle: "padding: 10px;",
+                    closable: false,
+                    listeners: pimcore.helpers.getProgressWindowListeners()
                 });
                 this.batchProgressWin.show();
 
@@ -203,7 +207,7 @@ pimcore.object.bulkimport = Class.create(pimcore.object.bulkbase, {
                 });
             }
 
-            this.batchProgressBar.updateText(t('saving') + ' ' + t(this.values[idx].type) + " " + t("definition") + " " + ts(this.values[idx].displayName) + " (" + (idx + 1) + "/" + this.values.length + ")");
+            this.batchProgressBar.updateText(t('saving') + ' ' + t(this.values[idx].type) + " " + t("definition") + " " + t(this.values[idx].displayName) + " (" + (idx + 1) + "/" + this.values.length + ")");
 
             Ext.Ajax.request({
                 url: "/admin/class/bulk-commit",
@@ -232,7 +236,6 @@ pimcore.object.bulkimport = Class.create(pimcore.object.bulkbase, {
                 }.bind(this),
                 failure: function(transport) {
                     this.batchProgressWin.close();
-                    var response = Ext.decode(transport.responseText);
                     pimcore.helpers.showNotification(t("error"), t("saving_failed") + " " + this.values[idx].displayName);
                 }.bind(this)
             });

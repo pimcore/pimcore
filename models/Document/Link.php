@@ -31,7 +31,7 @@ class Link extends Model\Document
     /**
      * Contains the ID of the internal ID
      *
-     * @var int
+     * @var int|null
      */
     protected $internal;
 
@@ -43,9 +43,9 @@ class Link extends Model\Document
     protected $internalType;
 
     /**
-     * Contains object of linked Document|Asset
+     * Contains object of linked Document|Asset|DataObject
      *
-     * @var Document | Asset
+     * @var Document|Asset|Model\DataObject\Concrete|null
      */
     protected $object;
 

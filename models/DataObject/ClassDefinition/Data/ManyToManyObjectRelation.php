@@ -26,6 +26,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
+    use DataObject\ClassDefinition\Data\Relations\ManyToManyRelationTrait;
 
     /**
      * Static type of this element
@@ -223,7 +224,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param null|Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -260,8 +261,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param array|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|null
@@ -274,8 +275,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @see Data::getVersionPreview
      *
-     * @param array $data
-     * @param null|DataObject\AbstractObject $object
+     * @param Element\ElementInterface[]|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -378,7 +379,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -395,13 +396,13 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             }
 
             return implode(',', $paths);
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
-     * @param $importValue
+     * @param string $importValue
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -419,33 +420,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         }
 
         return $value;
-    }
-
-    /**
-     * This is a dummy and is mostly implemented by relation types
-     *
-     * @param mixed $data
-     * @param array $tags
-     *
-     * @return array
-     */
-    public function getCacheTags($data, $tags = [])
-    {
-        $tags = is_array($tags) ? $tags : [];
-
-        if ($this->getLazyLoading()) {
-            return $tags;
-        }
-
-        if (is_array($data) && count($data) > 0) {
-            foreach ($data as $object) {
-                if ($object instanceof Element\ElementInterface && !array_key_exists($object->getCacheTag(), $tags)) {
-                    $tags = $object->getCacheTags($tags);
-                }
-            }
-        }
-
-        return $tags;
     }
 
     /**
@@ -474,7 +448,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|mixed|null
@@ -494,16 +468,16 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
             }
 
             return $items;
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
      * @deprecated
      *
      * @param mixed $value
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -558,8 +532,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         $data = null;
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
-            if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object, ['force' => true]);
+            if (!$object->isLazyKeyLoaded($this->getName())) {
+                $data = $this->load($object);
 
                 $object->setObjectVar($this->getName(), $data);
                 $this->markLazyloadedFieldAsLoaded($object);
@@ -589,8 +563,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param $object
-     * @param $data
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array|null $data
      * @param array $params
      *
      * @return array|null
@@ -607,7 +581,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /**
-     * @param $maxItems
+     * @param int|string|null $maxItems
      *
      * @return $this
      */
@@ -640,7 +614,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
+     * @param Element\ElementInterface[]|null $data
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
@@ -675,7 +649,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param array $idMapping
      * @param array $params
      *
-     * @return Element\ElementInterface
+     * @return array
      */
     public function rewriteIds($object, $idMapping, $params = [])
     {
@@ -833,7 +807,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * Returns a ID which must be unique across the grid rows
      *
-     * @param $item
+     * @param array $item
      *
      * @return string
      */
@@ -911,8 +885,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     }
 
     /** See parent class.
-     * @param $data
-     * @param null $object
+     * @param array $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return mixed
@@ -1000,6 +974,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @param DataObject\Listing      $listing
      * @param DataObject\Concrete|int $data     object or object ID
      * @param string                  $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     *
+     * @return DataObject\Listing
      */
     public function addListingFilter(DataObject\Listing $listing, $data, $operator = '=')
     {
@@ -1010,10 +986,10 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         if ($operator === '=') {
             $listing->addConditionParam('`'.$this->getName().'` LIKE ?', '%,'.$data.',%');
 
-            return;
+            return $listing;
         }
 
-        parent::addListingFilter($listing, $data, $operator);
+        return parent::addListingFilter($listing, $data, $operator);
     }
 }
 

@@ -64,31 +64,6 @@ pimcore.object.quantityValue.unitsettings = Class.create({
 
     getRowEditor: function () {
 
-        var languages = this.languages;
-
-        var readerFields = [
-            {name: 'id', allowBlank: false},
-            {name: 'abbreviation', allowBlank: false},
-            {name: 'longname'},
-            {name: 'group'},
-            {name: 'baseunit'},
-            {name: 'factor'},
-            {name: 'conversionOffset'},
-            {name: 'reference'},
-            {name: 'converter'}
-        ];
-
-
-        var configuredFilters = [
-            {type: "string", dataIndex: "abbreviation"},
-            {type: "string", dataIndex: "longname"},
-            {type: "string", dataIndex: "group"},
-            {type: "string", dataIndex: "baseunit"},
-            {type: "numeric", dataIndex: "factor"},
-            {type: "string", dataIndex: "reference"},
-            {type: "string", dataIndex: "converter"}
-        ];
-
         var baseUnitStore = Ext.create('Ext.data.JsonStore', {
             proxy: {
                 type: 'ajax',

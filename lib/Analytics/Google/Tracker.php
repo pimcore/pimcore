@@ -150,19 +150,19 @@ class Tracker extends AbstractTracker
             'siteId' => $siteId,
             'config' => $config,
             'siteConfig' => $siteConfig,
-            'trackId' => $siteConfig->trackid,
+            'trackId' => $siteConfig->get('trackid'),
             'defaultPath' => $this->getDefaultPath(),
-            'universalConfiguration' => $siteConfig->universal_configuration ?? null,
-            'retargeting' => $siteConfig->retargetingcode ?? false,
+            'universalConfiguration' => $siteConfig->get('universal_configuration') ?? null,
+            'retargeting' => $siteConfig->get('retargetingcode') ?? false,
         ];
 
-        if ($siteConfig->gtagcode) {
+        if ($siteConfig->get('gtagcode')) {
             $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/gtagTrackingCode.html.twig';
 
-            $data['gtagConfig'] = $this->getTrackerConfigurationFromJson($siteConfig->universal_configuration ?? null, [
+            $data['gtagConfig'] = $this->getTrackerConfigurationFromJson($siteConfig->get('universal_configuration') ?? null, [
                 'anonymize_ip' => true
             ]);
-        } elseif ($siteConfig->asynchronouscode || $siteConfig->retargetingcode) {
+        } elseif ($siteConfig->get('asynchronouscode') || $siteConfig->get('retargetingcode')) {
             $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/asynchronousTrackingCode.html.twig';
         } else {
             $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/universalTrackingCode.html.twig';
@@ -217,16 +217,16 @@ class Tracker extends AbstractTracker
     {
         $blockData = [];
 
-        if (!empty($siteConfig->additionalcodebeforeinit)) {
-            $blockData[self::BLOCK_BEFORE_INIT] = $siteConfig->additionalcodebeforeinit;
+        if (!empty($siteConfig->get('additionalcodebeforeinit'))) {
+            $blockData[self::BLOCK_BEFORE_INIT] = $siteConfig->get('additionalcodebeforeinit');
         }
 
-        if (!empty($siteConfig->additionalcodebeforepageview)) {
-            $blockData[self::BLOCK_BEFORE_TRACK] = $siteConfig->additionalcodebeforepageview;
+        if (!empty($siteConfig->get('additionalcodebeforepageview'))) {
+            $blockData[self::BLOCK_BEFORE_TRACK] = $siteConfig->get('additionalcodebeforepageview');
         }
 
-        if (!empty($siteConfig->additionalcode)) {
-            $blockData[self::BLOCK_AFTER_TRACK] = $siteConfig->additionalcode;
+        if (!empty($siteConfig->get('additionalcode'))) {
+            $blockData[self::BLOCK_AFTER_TRACK] = $siteConfig->get('additionalcode');
         }
 
         return $blockData;

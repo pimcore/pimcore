@@ -23,6 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\ProductInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
 
 /**
  * Takes an object (e.g. a product, an order) and transforms it into a
@@ -33,7 +34,7 @@ class TrackingItemBuilder implements TrackingItemBuilderInterface
     /**
      * Build a product impression object
      *
-     * @param ProductInterface $product
+     * @param ProductInterface&Concrete $product
      * @param string $list
      *
      * @return ProductImpression

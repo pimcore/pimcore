@@ -17,6 +17,7 @@ namespace Pimcore\Maintenance\Tasks;
 use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
+use Pimcore\Model\Version;
 use Psr\Log\LoggerInterface;
 
 final class AssetDocumentConversionTask implements TaskInterface
@@ -50,9 +51,11 @@ final class AssetDocumentConversionTask implements TaskInterface
 
             try {
                 if ($asset instanceof Asset\Document) {
-                    $this->logger->debug(sprintf('Processing document with ID %s | Path: %s', $asset->getId(),
-                        $asset->getFullPath()));
+                    $this->logger->debug(sprintf('Processing document with ID %s | Path: %s', $asset->getId(), $asset->getFullPath()));
                     $asset->processPageCount();
+                    Version::disable();
+                    $asset->save();
+                    Version::enable();
                 }
             } catch (\Throwable $e) {
                 $this->logger->debug(sprintf('Processing document with ID %s failed', $asset->getId()));

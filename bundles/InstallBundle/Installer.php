@@ -636,13 +636,12 @@ class Installer
 
         $settings = array_replace_recursive($defaultConfig, $config);
 
-        /**
-         * @var User $user
-         */
         if ($user = User::getByName($settings['username'])) {
+            /** @var User $user */
             $user->delete();
         }
 
+        /** @var User $user */
         $user = User::create([
             'parentId' => 0,
             'username' => $settings['username'],

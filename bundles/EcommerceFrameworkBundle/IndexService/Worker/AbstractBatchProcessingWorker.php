@@ -79,6 +79,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
           PRIMARY KEY (`o_id`,`tenant`),
           KEY `update_worker_index` (`tenant`,`crc_current`,`crc_index`,`worker_timestamp`),
           KEY `preparation_status_index` (`tenant`,`preparation_status`),
+          KEY `in_preparation_queue_index` (`tenant`,`in_preparation_queue`),
           KEY `worker_id_index` (`worker_id`)        
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
     }
@@ -230,7 +231,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                             $data[$attribute->getName()] = $value;
                         }
 
-                        if (is_array($data[$attribute->getName()])) {
+                        if (array_key_exists($attribute->getName(), $data) && is_array($data[$attribute->getName()])) {
                             $data[$attribute->getName()] = $this->convertArray($data[$attribute->getName()]);
                         }
                     } catch (\Throwable $e) {

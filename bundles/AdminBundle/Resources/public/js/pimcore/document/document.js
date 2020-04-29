@@ -103,7 +103,21 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
             }
 
-            pimcore.plugin.broker.fireEvent("preSaveDocument", this, this.getType(), task, only);
+            try {
+                pimcore.plugin.broker.fireEvent("preSaveDocument", this, this.getType(), task, only);
+            } catch (e) {
+                if (e instanceof pimcore.error.ValidationException) {
+                        this.tab.unmask();
+                        pimcore.helpers.showPrettyError('document', t("error"), t("saving_failed"), e.message);
+                        return false;
+                    }
+
+                    if (e instanceof pimcore.error.ActionCancelledException) {
+                        this.tab.unmask();
+                        pimcore.helpers.showNotification(t("Info"), 'Document not saved: ' + e.message, 'info');
+                        return false;
+                    }
+            }
 
             Ext.Ajax.request({
                 url: this.urlprefix + this.getType() + '/save?task=' + task,

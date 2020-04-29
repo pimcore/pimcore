@@ -52,7 +52,7 @@ pimcore.settings.user.user.settings = Class.create({
 
         generalItems.push({
             xtype: "checkbox",
-            fieldLabel: t("active"),
+            boxLabel: t("active"),
             name: "active",
             disabled: user.id == this.currentUser.id,
             checked: this.currentUser.active
@@ -75,7 +75,12 @@ pimcore.settings.user.user.settings = Class.create({
             listeners: {
                 keyup: function (el) {
                     this.validatePassword(el);
-                }.bind(this)
+                }.bind(this),
+                afterrender: function (cmp) {
+                    cmp.inputEl.set({
+                        autocomplete: 'new-password'
+                    });
+                }
             }
         });
 
@@ -290,7 +295,7 @@ pimcore.settings.user.user.settings = Class.create({
                 {
                     name:"translatedName",
                     convert: function (v, rec) {
-                        return ts(rec.data.name);
+                        return t(rec.data.name);
                     },
                     depends : ['name']
                 }
@@ -490,7 +495,7 @@ pimcore.settings.user.user.settings = Class.create({
             }
             itemsPerSection[section].push({
                 xtype: "checkbox",
-                fieldLabel: t(this.data.availablePermissions[i].key),
+                boxLabel: t(this.data.availablePermissions[i].key),
                 name: "permission_" + this.data.availablePermissions[i].key,
                 checked: this.data.permissions[this.data.availablePermissions[i].key],
                 labelWidth: 200

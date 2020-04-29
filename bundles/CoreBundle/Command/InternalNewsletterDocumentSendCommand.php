@@ -82,6 +82,7 @@ class InternalNewsletterDocumentSendCommand extends AbstractCommand
         $tmpStore->setData($data);
         $tmpStore->update();
 
+        /** @var Model\Document\Newsletter $document */
         $document = Model\Document\Newsletter::getById($data['documentId']);
         $addressSourceAdapterName = $data['addressSourceAdapterName'];
         $adapterParams = $data['adapterParams'];

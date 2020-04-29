@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Rest;
 
+use Pimcore\Config;
 use Pimcore\Tool\Console;
 use Pimcore\Version;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,11 +56,10 @@ class InfoController extends AbstractRestController
      *
      * Returns a list of all class definitions.
      */
-    public function serverInfoAction()
+    public function serverInfoAction(Config $config)
     {
         $this->checkPermission('system_settings');
 
-        $systemSettings = \Pimcore\Config::getSystemConfig()->toArray();
         $system = [
             'currentTime' => time(),
             'phpCli' => Console::getPhpCli(),
@@ -75,7 +75,7 @@ class InfoController extends AbstractRestController
         $pimcore = [
             'version' => Version::getVersion(),
             'revision' => Version::getRevision(),
-            'instanceIdentifier' => $systemSettings['general']['instanceIdentifier'],
+            'instanceIdentifier' => $config['general']['instance_identifier'],
             'constants' => $pimcoreConstants,
         ];
 

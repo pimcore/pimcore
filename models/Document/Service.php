@@ -31,10 +31,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Pimcore\Model\Document\Service\Dao getDao()
- * @method array getTranslations(Document $document)
+ * @method array getTranslations(Document $document, string $task = 'open')
  * @method addTranslation(Document $document, Document $translation, $language = null)
  * @method removeTranslation(Document $document)
  * @method int getTranslationSourceId(Document $document)
+ * @method removeTranslationLink(Document $document, Document $targetDocument)
  */
 class Service extends Model\Element\Service
 {
@@ -610,16 +611,6 @@ class Service extends Model\Element\Service
         }
 
         $url = $hostUrl . $doc->getRealFullPath();
-
-        $config = \Pimcore\Config::getSystemConfig();
-        if ($config->general->http_auth) {
-            $username = $config->general->http_auth->username;
-            $password = $config->general->http_auth->password;
-            if ($username && $password) {
-                $url = str_replace('://', '://' . $username .':'. $password . '@', $url);
-            }
-        }
-
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.png';
         $file = $doc->getPreviewImageFilesystemPath();
 

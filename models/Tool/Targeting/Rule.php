@@ -18,7 +18,6 @@
 namespace Pimcore\Model\Tool\Targeting;
 
 use Pimcore\Model;
-use Pimcore\Model\Tool;
 
 /**
  * @method Rule\Dao getDao()
@@ -105,7 +104,7 @@ class Rule extends Model\AbstractModel
      *
      * @param int $id
      *
-     * @return Tool\Targeting\Rule
+     * @return self|null
      */
     public static function getById($id)
     {
@@ -122,7 +121,7 @@ class Rule extends Model\AbstractModel
     /**
      * @param string $name
      *
-     * @return null|Rule
+     * @return self|null
      */
     public static function getByName($name)
     {

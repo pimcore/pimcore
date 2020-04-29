@@ -14,6 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
+/**
+ * @method Statistic\Dao getDao()
+ */
 class Statistic extends \Pimcore\Model\AbstractModel
 {
     /**

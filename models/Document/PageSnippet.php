@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Config;
 use Pimcore\Document\Tag\TagUsageResolver;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
@@ -153,8 +152,9 @@ abstract class PageSnippet extends Model\Document
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
-            if (Config::getSystemConfig()->documents->versions->steps
-                || Config::getSystemConfig()->documents->versions->days
+            $documentsConfig = \Pimcore\Config::getSystemConfiguration('documents');
+            if (!empty($documentsConfig['versions']['steps'])
+                || !empty($documentsConfig['versions']['days'])
                 || $setModificationDate) {
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
             }
@@ -387,7 +387,7 @@ abstract class PageSnippet extends Model\Document
      */
     public function removeElement($name)
     {
-        if ($this->hasElement($name)) {
+        if (isset($this->elements[$name])) {
             unset($this->elements[$name]);
         }
 
@@ -399,12 +399,12 @@ abstract class PageSnippet extends Model\Document
      *
      * @param string $name
      *
-     * @return Tag
+     * @return Tag|null
      */
     public function getElement($name)
     {
         $elements = $this->getElements();
-        if ($this->hasElement($name)) {
+        if (isset($this->elements[$name])) {
             return $elements[$name];
         }
 
@@ -468,7 +468,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return Document
+     * @return Document|null
      *
      * @throws \Exception
      */
@@ -504,9 +504,7 @@ abstract class PageSnippet extends Model\Document
      */
     public function hasElement($name)
     {
-        $elements = $this->getElements();
-
-        return array_key_exists($name, $elements);
+        return $this->getElement($name) !== null;
     }
 
     /**
@@ -602,7 +600,8 @@ abstract class PageSnippet extends Model\Document
         }
 
         if (!$hostname) {
-            if (!$hostname = \Pimcore\Config::getSystemConfig()->general->domain) {
+            $hostname = \Pimcore\Config::getSystemConfiguration('general')['domain'];
+            if (empty($hostname)) {
                 if (!$hostname = \Pimcore\Tool::getHostname()) {
                     throw new \Exception('No hostname available');
                 }
@@ -657,12 +656,12 @@ abstract class PageSnippet extends Model\Document
             /** @var TagUsageResolver $tagUsageResolver */
             $tagUsageResolver = \Pimcore::getContainer()->get(TagUsageResolver::class);
             try {
-                $document = Document::getById($this->getId());
-                if ($document instanceof self) {
+                $documentCopy = Service::cloneMe($this);
+                if ($documentCopy instanceof self) {
                     // rendering could fail if the controller/action doesn't exist, in this case we can skip the required check
-                    $tagNames = $tagUsageResolver->getUsedTagnames($document);
+                    $tagNames = $tagUsageResolver->getUsedTagnames($documentCopy);
                     foreach ($tagNames as $tagName) {
-                        $tag = $document->getElement($tagName);
+                        $tag = $documentCopy->getElement($tagName);
                         if ($tag instanceof Tag && in_array($tag->getType(), $allowedTypes)) {
                             $documentOptions = $tag->getOptions();
                             if ($tag->isEmpty() && isset($documentOptions['required']) && $documentOptions['required'] == true) {

@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Config;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
@@ -223,7 +222,6 @@ class EditmodeListener implements EventSubscriberInterface
      */
     protected function buildHeadHtml(Document $document, $language)
     {
-        $config = Config::getSystemConfig();
         $libraries = $this->getEditmodeLibraries();
         $scripts = $this->getEditmodeScripts();
         $stylesheets = $this->getEditmodeStylesheets();

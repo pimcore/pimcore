@@ -28,7 +28,7 @@ use Pimcore\Model\Document;
 class Pdf extends Model\Document\Tag
 {
     /**
-     * @var int
+     * @var int|null
      */
     public $id;
 
@@ -70,8 +70,8 @@ class Pdf extends Model\Document\Tag
     public function getDataEditmode()
     {
         $pages = 0;
-        if ($asset = Asset::getById($this->id)) {
-            /** @var Asset\Document $asset */
+
+        if ($asset = Asset\Document::getById($this->id)) {
             $pages = $asset->getPageCount();
         }
 

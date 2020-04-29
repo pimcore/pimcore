@@ -19,11 +19,12 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
 
 /**
  * @method Localizedfield\Dao getDao()*
- * @method void delete()
+ * @method void delete($deleteQuery = true, $isUpdate = true)
  * @method void load($object, $params = [])
  * @method void save($params = [])
  * @method void createUpdateTable($params = [])
@@ -32,7 +33,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
-    use Model\DataObject\Traits\DirtyIndicatorTrait;
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     use Model\Element\ElementDumpStateTrait;
 
@@ -370,10 +371,15 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         return $container->getFieldDefinitions($params);
     }
 
+    /**
+     * @param ClassDefinition\Data $fieldDefinition
+     * @param string $name
+     * @param string $language
+     */
     private function loadLazyField(Model\DataObject\ClassDefinition\Data $fieldDefinition, $name, $language)
     {
         $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
-        if (!$this->isLazyKeyLoaded($lazyKey)) {
+        if (!$this->isLazyKeyLoaded($lazyKey) && $fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface) {
             $params['language'] = $language;
             $params['object'] = $this->getObject();
             $params['context'] = $this->getContext();
@@ -416,7 +422,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             return $data;
         }
 
-        if ($fieldDefinition instanceof LazyLoadingSupportInterface && !Concrete::isLazyLoadingDisabled() && $fieldDefinition->getLazyLoading()) {
+        if ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading()) {
             $this->loadLazyField($fieldDefinition, $name, $language);
         }
 

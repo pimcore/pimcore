@@ -118,7 +118,8 @@ class ClassController extends AdminController implements EventedControllerInterf
                 'leaf' => true,
                 'icon' => $class->getIcon() ? $class->getIcon() : $defaultIcon,
                 'cls' => 'pimcore_class_icon',
-                'propertyVisibility' => $class->getPropertyVisibility()
+                'propertyVisibility' => $class->getPropertyVisibility(),
+                'enableGridLocking' => $class->isEnableGridLocking()
             ];
         };
 
@@ -209,7 +210,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     public function getAction(Request $request)
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
-        $class->setFieldDefinitions(null);
+        $class->setFieldDefinitions([]);
 
         return $this->adminJson($class);
     }
@@ -426,8 +427,8 @@ class ClassController extends AdminController implements EventedControllerInterf
 
             $class->save();
 
-            // set the fielddefinitions to null because we don't need them in the response
-            $class->setFieldDefinitions(null);
+            // set the fielddefinitions to [] because we don't need them in the response
+            $class->setFieldDefinitions([]);
 
             return $this->adminJson(['success' => true, 'class' => $class]);
         } catch (\Exception $e) {
@@ -697,14 +698,15 @@ class ClassController extends AdminController implements EventedControllerInterf
                 }
             }
 
-            $fc = new DataObject\Fieldcollection\Definition();
-            $fc->setKey($key);
-            $fc->setTitle($title);
-            $fc->setGroup($group);
+            $fcDef = new DataObject\Fieldcollection\Definition();
+            $fcDef->setKey($key);
+            $fcDef->setTitle($title);
+            $fcDef->setGroup($group);
 
             if ($request->get('values')) {
                 $values = $this->decodeJson($request->get('values'));
-                $fc->setParentClass($values['parentClass']);
+                $fcDef->setParentClass($values['parentClass']);
+                $fcDef->setImplementsInterfaces($values['implementsInterfaces']);
             }
 
             if ($request->get('configuration')) {
@@ -714,12 +716,12 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $configuration['fieldtype'] = 'panel';
 
                 $layout = DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
-                $fc->setLayoutDefinitions($layout);
+                $fcDef->setLayoutDefinitions($layout);
             }
 
-            $fc->save();
+            $fcDef->save();
 
-            return $this->adminJson(['success' => true, 'id' => $fc->getKey()]);
+            return $this->adminJson(['success' => true, 'id' => $fcDef->getKey()]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
 
@@ -969,7 +971,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $layoutDefinitions = isset($filteredDefinitions['layoutDefinition']) ? $filteredDefinitions['layoutDefinition'] : false;
         $filteredFieldDefinition = isset($filteredDefinitions['fieldDefinition']) ? $filteredDefinitions['fieldDefinition'] : false;
 
-        $class->setFieldDefinitions(null);
+        $class->setFieldDefinitions([]);
 
         $result = [];
 
@@ -1005,7 +1007,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                         $result[$key]['nodeLabel'] = $key;
                         $result[$key]['brickField'] = $fieldName;
                         $result[$key]['nodeType'] = 'objectbricks';
-                        $result[$key]['childs'] = $brickDefinition->getLayoutdefinitions()->getChilds();
+                        $result[$key]['childs'] = $brickDefinition->getLayoutDefinitions()->getChildren();
                         break;
                     }
                 }
@@ -1060,16 +1062,17 @@ class ClassController extends AdminController implements EventedControllerInterf
             }
 
             // now we create a new definition
-            $fc = new DataObject\Objectbrick\Definition();
-            $fc->setKey($key);
-            $fc->setTitle($title);
-            $fc->setGroup($group);
+            $brickDef = new DataObject\Objectbrick\Definition();
+            $brickDef->setKey($key);
+            $brickDef->setTitle($title);
+            $brickDef->setGroup($group);
 
             if ($request->get('values')) {
                 $values = $this->decodeJson($request->get('values'));
 
-                $fc->setParentClass($values['parentClass']);
-                $fc->setClassDefinitions($values['classDefinitions']);
+                $brickDef->setParentClass($values['parentClass']);
+                $brickDef->setImplementsInterfaces($values['implementsInterfaces']);
+                $brickDef->setClassDefinitions($values['classDefinitions']);
             }
 
             if ($request->get('configuration')) {
@@ -1079,12 +1082,18 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $configuration['fieldtype'] = 'panel';
 
                 $layout = DataObject\ClassDefinition\Service::generateLayoutTreeFromArray($configuration, true);
-                $fc->setLayoutDefinitions($layout);
+                $brickDef->setLayoutDefinitions($layout);
             }
 
-            $fc->save();
+            $event = new GenericEvent($this, [
+                'brickDefinition' => $brickDef
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch(AdminEvents::CLASS_OBJECTBRICK_UPDATE_DEFINITION, $event);
+            $brickDef = $event->getArgument('brickDefinition');
 
-            return $this->adminJson(['success' => true, 'id' => $fc->getKey()]);
+            $brickDef->save();
+
+            return $this->adminJson(['success' => true, 'id' => $brickDef->getKey()]);
         } catch (\Exception $e) {
             Logger::error($e->getMessage());
 
@@ -1177,6 +1186,8 @@ class ClassController extends AdminController implements EventedControllerInterf
         $fieldname = null;
         $className = null;
 
+        $object = DataObject\AbstractObject::getById($request->get('object_id'));
+
         if ($request->query->has('class_id') && $request->query->has('field_name')) {
             $classId = $request->get('class_id');
             $fieldname = $request->get('field_name');
@@ -1216,7 +1227,10 @@ class ClassController extends AdminController implements EventedControllerInterf
                     ];
                 }
                 if ($forObjectEditor) {
-                    $layoutDefinitions[$item->getKey()] = $item->getLayoutDefinitions();
+                    $itemLayoutDefinitions = $item->getLayoutDefinitions();
+                    DataObject\Service::enrichLayoutDefinition($itemLayoutDefinitions, $object);
+
+                    $layoutDefinitions[$item->getKey()] = $itemLayoutDefinitions;
                 }
                 $groups[$item->getGroup()]['children'][] =
                     [
@@ -1244,8 +1258,6 @@ class ClassController extends AdminController implements EventedControllerInterf
                         'containerKey' => $item->getKey(),
                         'outerFieldname' => $request->get('field_name')
                     ];
-
-                    $object = DataObject\AbstractObject::getById($request->get('object_id'));
 
                     DataObject\Service::enrichLayoutDefinition($layout, $object, $context);
 
@@ -1646,7 +1658,8 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $customLayout = DataObject\ClassDefinition\CustomLayout::getById($item['name']);
                 $classId = $customLayout->getClassId();
                 $class = DataObject\ClassDefinition::getById($classId);
-                $customLayout->className = $class->getName();
+                $customLayout = $customLayout->getObjectVars();
+                $customLayout['className'] = $class->getName();
                 $result['customlayout'][] = $customLayout;
             }
         }

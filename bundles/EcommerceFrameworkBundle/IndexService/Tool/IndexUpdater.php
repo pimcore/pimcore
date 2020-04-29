@@ -88,7 +88,7 @@ class IndexUpdater
             self::log($loggername, '=========================');
 
             foreach ($products as $p) {
-                self::log($loggername, 'Updating product ' . $p->getId());
+                self::log($loggername, 'Updating ' . $p->getClass()->getName() . ': '.$p->getId());
                 $updater->updateIndex($p);
             }
             $page++;

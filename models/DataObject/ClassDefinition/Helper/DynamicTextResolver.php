@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout\DynamicTextLabelInterface;
 class DynamicTextResolver extends ClassResolver
 {
     /**
-     * @param $renderingClass
+     * @param string $renderingClass
      *
      * @return DynamicTextLabelInterface|null
      */

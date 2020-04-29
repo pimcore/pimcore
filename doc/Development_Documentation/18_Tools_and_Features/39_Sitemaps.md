@@ -48,7 +48,7 @@ using the `presta:sitemaps:dump` command, you can override those parameters by p
 
 For details see:
 
-* [Bundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/2-Configuration.md#the-base-url-for-dumper) 
+* [Bundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/2-configuration.md#configuring-your-application-base-url) 
 * [Symfony Documentation on the Request Context](http://symfony.com/doc/3.4/console/request_context.html#configuring-the-request-context-globally)
 * [`UrlGenerator`](https://github.com/pimcore/pimcore/blob/master/lib/Sitemap/UrlGenerator.php)
 

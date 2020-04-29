@@ -76,9 +76,6 @@ class WorkflowController extends AdminController implements EventedControllerInt
                 ];
 
                 $enabledTransitions = $workflow->getEnabledTransitions($this->element);
-                /**
-                 * @var Transition $transition
-                 */
                 $transition = null;
                 foreach ($enabledTransitions as $_transition) {
                     if ($_transition->getName() === $request->get('transitionName')) {
@@ -86,7 +83,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
                     }
                 }
 
-                if (empty($transition)) {
+                if (!$transition instanceof Transition) {
                     $wfConfig['message'] = sprintf('transition %s currently not allowed', (string) $request->get('transitionName'));
                 } else {
                     $wfConfig['notes_required'] = $transition->getNotesCommentRequired();
@@ -326,11 +323,11 @@ class WorkflowController extends AdminController implements EventedControllerInt
         }
 
         //TODO move this maybe to a service method, since this is also used in DataObjectController and DocumentControllers
-        if ($element instanceof Document) {
+        if ($element instanceof Document\PageSnippet) {
             $latestVersion = $element->getLatestVersion();
             if ($latestVersion) {
                 $latestDoc = $latestVersion->loadData();
-                if ($latestDoc instanceof Document) {
+                if ($latestDoc instanceof Document\PageSnippet) {
                     $element = $latestDoc;
                     $element->setModificationDate($element->getModificationDate());
                 }

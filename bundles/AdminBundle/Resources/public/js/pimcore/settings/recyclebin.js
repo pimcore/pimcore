@@ -201,7 +201,6 @@ pimcore.settings.recyclebin = Class.create({
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts) {
 
         var menu = new Ext.menu.Menu();
-        var data = grid.getStore().getAt(rowIndex);
         var selModel = grid.getSelectionModel();
         var selectedRows = selModel.getSelection();
 
@@ -245,27 +244,13 @@ pimcore.settings.recyclebin = Class.create({
         this.grid.getView().refresh();
 
         if (offset == ids.length) {
-            // refresh all trees
             try {
-                if (pimcore.globalmanager.get("layout_document_tree").tree.rendered) {
-                    var tree = pimcore.globalmanager.get("layout_document_tree").tree;
-                    tree.getStore().load({
-                        node: tree.getRootNode()
-                    });
-                }
-                if (pimcore.globalmanager.get("layout_asset_tree").tree.rendered) {
-                    var tree = pimcore.globalmanager.get("layout_asset_tree").tree;
-                    tree.getStore().load({
-                        node: tree.getRootNode()
-                    });
-
-                }
-                if (pimcore.globalmanager.get("layout_object_tree").tree.rendered) {
-                    var tree = pimcore.globalmanager.get("layout_object_tree").tree;
-                    tree.getStore().load({
-                        node: tree.getRootNode()
-                    });
-                }
+                // would be nice if /admin/recyclebin/restore could return the affected types
+                // so that we don't have to refresh all types
+               const elementTypes = ["document", "asset", "object"];
+               elementTypes.forEach(function(elementType, index) {
+                   pimcore.elementservice.refreshRootNodeAllTrees(elementType);
+                });
             }
             catch (e) {
                 console.log(e);

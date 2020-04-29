@@ -119,7 +119,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                 } else {
                     pimcore.helpers.showNotification(t("error"), t('unsupported_filetype'), "error");
                 }
-            }.bind(this));
+            }.bind(this), null, this.getContext());
         } else {
             this.element.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
             this.element.addCls("pimcore_tag_image_no_upload_empty");
@@ -350,10 +350,9 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
             if (typeof this.options.thumbnail == "string") {
                 path = "/admin/asset/get-image-thumbnail?id=" + this.datax.id + "&thumbnail=" + this.options.thumbnail
                     + "&" + Ext.urlEncode(this.datax) + "&pimcore_editmode=1";
-            }
-            else if (this.options.thumbnail.width || this.options.thumbnail.height) {
-                path = "/admin/asset/get-image-thumbnail?id=" + this.datax.id + "&width="
-                    + this.options.thumbnail.width + "&height=" + this.options.thumbnail.height + "&"
+            } else if (typeof this.options.thumbnail === 'object') {
+                path = "/admin/asset/get-image-thumbnail?id=" + this.datax.id + "&"
+                    + Ext.urlEncode(this.options.thumbnail) + "&"
                     + Ext.urlEncode(this.datax);
             }
         }

@@ -47,6 +47,11 @@ class ResponseExceptionListener implements EventSubscriberInterface
     protected $renderErrorPage = true;
 
     /**
+     * @var Config
+     */
+    protected $config;
+
+    /**
      * @var ConnectionInterface
      */
     protected $db;
@@ -56,11 +61,12 @@ class ResponseExceptionListener implements EventSubscriberInterface
      * @param ConnectionInterface $db
      * @param bool $renderErrorPage
      */
-    public function __construct(DocumentRenderer $documentRenderer, ConnectionInterface $db, $renderErrorPage = true)
+    public function __construct(DocumentRenderer $documentRenderer, ConnectionInterface $db, Config $config, $renderErrorPage = true)
     {
         $this->documentRenderer = $documentRenderer;
         $this->renderErrorPage = (bool)$renderErrorPage;
         $this->db = $db;
+        $this->config = $config;
     }
 
     /**
@@ -108,9 +114,12 @@ class ResponseExceptionListener implements EventSubscriberInterface
         if ($exception instanceof HttpExceptionInterface) {
             $statusCode = $exception->getStatusCode();
             $headers = $exception->getHeaders();
+        } else {
+            // only log exception if it's not intentional (like a NotFoundHttpException)
+            $this->logger->error($exception);
         }
 
-        $errorPath = Config::getSystemConfig()->documents->error_pages->default;
+        $errorPath = $this->config['documents']['error_pages']['default'];
 
         if (Site::isSiteRequest()) {
             $site = Site::getCurrentSite();

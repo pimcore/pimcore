@@ -395,6 +395,8 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             $indexAttributeData = [];
             $indexRelationData = [];
 
+            $data = $this->doPreIndexDataModification($data);
+
             //add system and index attributes
             foreach ($data['data'] as $dataKey => $dataEntry) {
                 if (array_key_exists($dataKey, $systemAttributeKeys)) {
@@ -415,8 +417,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                 $indexRelationData[$relation['fieldname']][] = $relation['dest'];
             }
 
-            $data = $this->doPreIndexDataModification($data);
-
             //check if parent should exist and if so, consider parent relation at indexing
             $routingId = $indexSystemData['o_type'] == ProductListInterface::PRODUCT_TYPE_VARIANT ? $indexSystemData['o_virtualProductId'] : $indexSystemData['o_id'];
 
@@ -426,7 +426,9 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             }
 
             $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'], '_id' => $objectId, '_routing' => $routingId]];
-            $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
+            $bulkIndexData = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData, function ($value) {
+                return $value !== null;
+            }), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
 
             if ($indexSystemData['o_type'] == ProductListInterface::PRODUCT_TYPE_VARIANT) {
                 $bulkIndexData[self::RELATION_FIELD] = ['name' => $indexSystemData['o_type'], 'parent' => $indexSystemData['o_virtualProductId']];

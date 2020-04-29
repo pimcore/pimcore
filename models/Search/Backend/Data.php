@@ -96,7 +96,7 @@ class Data extends \Pimcore\Model\AbstractModel
     public $userModification;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $data;
 
@@ -423,10 +423,12 @@ class Data extends \Pimcore\Model\AbstractModel
                 if (\Pimcore\Document::isFileTypeSupported($element->getFilename())) {
                     try {
                         $contentText = $element->getText();
-                        $contentText = Encoding::toUTF8($contentText);
-                        $contentText = str_replace(["\r\n", "\r", "\n", "\t", "\f"], ' ', $contentText);
-                        $contentText = preg_replace('/[ ]+/', ' ', $contentText);
-                        $this->data .= ' ' . $contentText;
+                        if ($contentText) {
+                            $contentText = Encoding::toUTF8($contentText);
+                            $contentText = str_replace(["\r\n", "\r", "\n", "\t", "\f"], ' ', $contentText);
+                            $contentText = preg_replace('/[ ]+/', ' ', $contentText);
+                            $this->data .= ' ' . $contentText;
+                        }
                     } catch (\Exception $e) {
                         Logger::error($e);
                     }
@@ -446,7 +448,11 @@ class Data extends \Pimcore\Model\AbstractModel
                 try {
                     $metaData = array_merge($element->getEXIFData(), $element->getIPTCData());
                     foreach ($metaData as $key => $value) {
-                        $this->data .= ' ' . $key . ' : ' . $value;
+                        if (is_array($value)) {
+                            $this->data .= ' ' . $key . ' : ' . implode(' - ', $value);
+                        } else {
+                            $this->data .= ' ' . $key . ' : ' . $value;
+                        }
                     }
                 } catch (\Exception $e) {
                     Logger::error($e);

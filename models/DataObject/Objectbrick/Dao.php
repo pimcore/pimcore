@@ -67,7 +67,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                         $doLoad = true;
 
                         if ($fd instanceof LazyLoadingSupportInterface) {
-                            if (!DataObject\Concrete::isLazyLoadingDisabled() && $fd->getLazyLoading()) {
+                            if ($fd->getLazyLoading()) {
                                 $doLoad = false;
                             }
                         }
@@ -109,7 +109,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
                 $setter = 'set' . ucfirst($type);
 
-                if ($brick instanceof DataObject\DirtyIndicatorInterface) {
+                if ($brick instanceof Model\Element\DirtyIndicatorInterface) {
                     $brick->markFieldDirty('_self', false);
                 }
 

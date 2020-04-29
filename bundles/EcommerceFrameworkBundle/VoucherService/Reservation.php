@@ -15,8 +15,12 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao;
 use Pimcore\Model\AbstractModel;
 
+/**
+ * @method Dao getDao()
+ */
 class Reservation extends AbstractModel
 {
     public $id;

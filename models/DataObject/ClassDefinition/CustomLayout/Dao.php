@@ -119,16 +119,14 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * Save object to database
-     *
-     * @return string|null
+     * @return Model\DataObject\ClassDefinition\Layout|null
      */
     protected function getLayoutData()
     {
         $file = PIMCORE_CUSTOMLAYOUT_DIRECTORY . '/custom_definition_'. $this->model->getId() .'.php';
         if (is_file($file)) {
             $layout = @include $file;
-            if ($layout instanceof \Pimcore\Model\DataObject\ClassDefinition\CustomLayout) {
+            if ($layout instanceof Model\DataObject\ClassDefinition\CustomLayout) {
                 return $layout->getLayoutDefinitions();
             }
         }

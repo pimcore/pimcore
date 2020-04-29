@@ -150,7 +150,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
+     * @param DataObject\Data\Geopoint[]|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -186,7 +186,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
             }
         }
 
-        return null;
+        return '';
     }
 
     /**
@@ -289,7 +289,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
      * @param array|null $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string

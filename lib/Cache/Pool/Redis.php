@@ -580,8 +580,6 @@ LUA;
      *
      * @param string[] $tags An array of tags to invalidate
      *
-     * @throws \Psr\Cache\InvalidArgumentException When $tags is not valid
-     *
      * @return bool True on success
      */
     protected function doInvalidateTags(array $tags)

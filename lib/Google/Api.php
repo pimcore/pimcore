@@ -36,7 +36,7 @@ class Api
      */
     public static function getConfig()
     {
-        return Config::getSystemConfig()->services->google;
+        return Config::getSystemConfiguration('services')['google'] ?? [];
     }
 
     /**
@@ -60,7 +60,7 @@ class Api
     {
         $config = self::getConfig();
 
-        if ($config->client_id && $config->email && file_exists(self::getPrivateKeyPath())) {
+        if (!empty($config['client_id']) && !empty($config['email']) && file_exists(self::getPrivateKeyPath())) {
             return true;
         }
 
@@ -74,7 +74,7 @@ class Api
     {
         $config = self::getConfig();
 
-        if ($config->simpleapikey) {
+        if (!empty($config['simple_api_key'])) {
             return true;
         }
 
@@ -124,7 +124,7 @@ class Api
 
         $client->setScopes($scope);
 
-        $client->setClientId($config->client_id);
+        $client->setClientId($config['client_id'] ?? '');
 
         // token cache
         $hash = crc32(serialize([$scope]));
@@ -165,7 +165,7 @@ class Api
         $client->setCache($cache);
 
         $client->setApplicationName('pimcore CMF');
-        $client->setDeveloperKey(Config::getSystemConfig()->services->google->simpleapikey);
+        $client->setDeveloperKey(Config::getSystemConfiguration('services')['google']['simple_api_key']);
 
         return $client;
     }

@@ -46,7 +46,6 @@ pimcore.asset.tags.select = Class.create(pimcore.asset.tags.abstract, {
             fields: ['key', 'value'],
             data: options
         });
-
         var editorConfig = {};
 
         if (field.config) {
@@ -72,9 +71,7 @@ pimcore.asset.tags.select = Class.create(pimcore.asset.tags.abstract, {
             )
         });
 
-        var combo = new Ext.form.ComboBox(editorConfig);
-        var currentValue = combo.getValue();
-        return combo;
+        return new Ext.form.ComboBox(editorConfig);
     },
 
     getGridColumnEditor: function(field) {
@@ -119,7 +116,7 @@ pimcore.asset.tags.select = Class.create(pimcore.asset.tags.abstract, {
             options = options.split(',');
             for (var i = 0; i < options.length; i++) {
 
-                var key = ts(options[i]);
+                var key = t(options[i]);
                 if(key.indexOf('<') >= 0) {
                     key = replace_html_event_attributes(strip_tags(key, "div,span,b,strong,em,i,small,sup,sub"));
                 }

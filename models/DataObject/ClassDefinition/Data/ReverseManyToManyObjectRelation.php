@@ -36,7 +36,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     public $ownerClassName;
 
     /**
-     * @var number
+     * @var string|null
      */
     public $ownerClassId;
 
@@ -60,25 +60,6 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     public function setClasses($classes)
     {
         //dummy, classes are set from owner classId
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getLazyLoading()
-    {
-        return true;
-    }
-
-    /**
-     * @param  bool|int|null $lazyLoading
-     *
-     * @return $this
-     */
-    public function setLazyLoading($lazyLoading)
-    {
-        //dummy, non owner objects must be lazy loading
         return $this;
     }
 
@@ -113,7 +94,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @return number
+     * @return string
      */
     public function getOwnerClassId()
     {
@@ -201,7 +182,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -218,7 +199,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\ClassDefinition\Data
+     * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -251,7 +232,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * @deprecated
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -267,7 +248,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      * @deprecated
      *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *

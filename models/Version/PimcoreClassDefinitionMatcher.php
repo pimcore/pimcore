@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Version;
 
 use DeepCopy\Matcher\Matcher;
+use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 
 class PimcoreClassDefinitionMatcher implements Matcher
@@ -43,7 +44,16 @@ class PimcoreClassDefinitionMatcher implements Matcher
      */
     public function matches($object, $property)
     {
-        return $object instanceof Concrete &&
-            $object->getClass()->getFieldDefinition($property) instanceof $this->matchType;
+        // TODO check if matcher only works for container type object (but not for localized fields, bricks, etc...)
+
+        if ($object instanceof Concrete) {
+            // do not call getClass on the object as this will set the class again
+            $def = ClassDefinition::getById($object->getClassId());
+            if ($def) {
+                return $def->getFieldDefinition($property) instanceof $this->matchType;
+            }
+        }
+
+        return false;
     }
 }

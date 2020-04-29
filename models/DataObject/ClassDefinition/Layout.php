@@ -291,7 +291,7 @@ class Layout
     }
 
     /**
-     * @param mixed $child
+     * @param Data|Layout $child
      */
     public function addChild($child)
     {
@@ -299,7 +299,7 @@ class Layout
     }
 
     /**
-     * @param mixed $data
+     * @param array $data
      * @param array $blockedKeys
      *
      * @return $this

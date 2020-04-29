@@ -630,7 +630,6 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         var allowedTypes = [];
         var allowedSpecific = {};
         var allowedSubtypes = {};
-        var i;
 
         allowedTypes.push(type);
         if (type == "object") {
@@ -693,7 +692,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                 }
                 menu.push(
                     {
-                        text: ts(templateMenuName),
+                        text: t(templateMenuName),
                         iconCls: "pimcore_icon_hotspotmarker_template",
                         handler: function (templateConfig) {
                             var elId = callbackFunction(templateConfig);

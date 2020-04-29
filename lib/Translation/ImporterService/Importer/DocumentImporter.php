@@ -27,7 +27,7 @@ class DocumentImporter extends AbstractElementImporter
     {
         parent::importAttribute($element, $targetLanguage, $attribute);
 
-        if ($attribute->getType() === Attribute::TYPE_TAG && method_exists($element, 'getElement')) {
+        if ($attribute->getType() === Attribute::TYPE_TAG && $element instanceof Document\PageSnippet) {
             $tag = $element->getElement($attribute->getName());
             if ($tag) {
                 if (in_array($tag->getType(), ['image', 'link'])) {

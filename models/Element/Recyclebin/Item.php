@@ -85,7 +85,7 @@ class Item extends Model\AbstractModel
      * @param Element\ElementInterface $element
      * @param Model\User $user
      */
-    public static function create(Element\ElementInterface $element, Model\User $user)
+    public static function create(Element\ElementInterface $element, Model\User $user = null)
     {
         $item = new self();
         $item->setElement($element);
@@ -263,9 +263,7 @@ class Item extends Model\AbstractModel
 
         // for all
         $element->getProperties();
-        if (method_exists($element, 'getScheduledTasks')) {
-            $element->getScheduledTasks();
-        }
+        $element->getScheduledTasks();
 
         if ($element instanceof Element\ElementDumpStateInterface) {
             $element->setInDumpState(true);
@@ -344,11 +342,15 @@ class Item extends Model\AbstractModel
     {
         //for full dump of relation fields in container types
         $copier = new DeepCopy();
+        $copier->skipUncloneable(true);
+
+        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Pimcore\Model\DataObject\ClassDefinition'));
+
         $copier->addTypeFilter(
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {
                     $elementType = Element\Service::getType($currentValue);
-                    $descriptor = new Model\Version\ElementDescriptor($elementType, $currentValue->getId());
+                    $descriptor = new Element\ElementDescriptor($elementType, $currentValue->getId());
 
                     return $descriptor;
                 }
@@ -398,7 +400,7 @@ class Item extends Model\AbstractModel
         $copier->addTypeFilter(
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {
-                    if ($currentValue instanceof Model\Version\ElementDescriptor) {
+                    if ($currentValue instanceof Element\ElementDescriptor) {
                         $value = Element\Service::getElementById($currentValue->getType(), $currentValue->getId());
 
                         return $value;

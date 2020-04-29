@@ -64,12 +64,32 @@ $object->save();
 If you want to use localized fields inside field collections you have to set the object before calling any localized field - related methods.
 
 ```php
-
-...
-
 $item = new DataObject\Fieldcollection\Data\MyCollection();
-$item->setObject($object)
-
+$item->setObject($object);
 ```
 
-**Warning:** Inheritance is not supported by this datatype.
+## Inheritance
+
+Field collections do not support inheritance out of the box because currently field collection data does not get saved to a query table (so you would not be able to query for inherited data).
+
+Nevertheless you can use inheritance for field collections for data maintenance by [overriding the class](../../../20_Extending_Pimcore/03_Overriding_Models.md) which contains the field collection field and adding a custom getter method to this overriding class:
+```php
+// custom getter for field collection field named 'fieldCollection'
+public function getFieldCollection () {
+	$data = parent::getFieldCollection();
+
+	if(\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("fieldCollection")->isEmpty($data)) {
+		try {
+			return $this->getValueFromParent("fieldCollection");
+		} catch (\Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException $e) {
+			// no data from parent available, continue ... 
+		}
+	}
+
+	return $data;
+}
+```
+
+Beware that only complete field collection containers can be inherited. As soon as you change the order of the field collection items or any field value in a child object, the whole field collection will get assigned to that child object.
+
+There could also be some UI quirks in the Pimcore backend.

@@ -127,8 +127,8 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param array|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Geopoint[]|null
@@ -150,7 +150,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
+     * @param array|null $data
      * @param null|DataObject\AbstractObject $object
      * @param mixed $params
      *
@@ -166,7 +166,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -186,7 +186,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
             }
         }
 
-        return null;
+        return '';
     }
 
     /**
@@ -289,7 +289,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
      * @param array|null $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return string

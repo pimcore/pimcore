@@ -61,8 +61,8 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
         this.component = new Ext.Panel({
             border: true,
             style: "margin-bottom: 10px",
-            height: 370,
-            width: 650,
+            height: this.fieldConfig.height,
+            width: this.fieldConfig.width,
             componentCls: "object_field object_geo_field",
             html: '<div id="leaflet_maps_container_' + this.mapImageID + '"></div>',
             bbar: [
@@ -251,7 +251,7 @@ pimcore.object.tags.geopoint = Class.create(pimcore.object.tags.geo.abstract, {
 
     getGridColumnConfig: function (field) {
         return {
-            text: ts(field.label),
+            text: t(field.label),
             width: 150,
             sortable: false,
             dataIndex: field.key,

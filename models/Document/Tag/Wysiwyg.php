@@ -85,7 +85,7 @@ class Wysiwyg extends Model\Document\Tag
     /**
      * @see TagInterface::setDataFromResource
      *
-     * @param mixed $data
+     * @param string $data
      *
      * @return $this
      */
@@ -99,7 +99,7 @@ class Wysiwyg extends Model\Document\Tag
     /**
      * @see TagInterface::setDataFromEditmode
      *
-     * @param mixed $data
+     * @param string $data
      *
      * @return $this
      */

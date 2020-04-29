@@ -596,6 +596,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->booleanNode('create_redirect_when_moved')
+                    ->setDeprecated('The "%node%" option is deprecated and not used anymore, it is just there for compatibility.')
                     ->beforeNormalization()
                         ->ifString()
                         ->then(function ($v) {
@@ -1674,7 +1675,7 @@ class Configuration implements ConfigurationInterface
                                                     ->end()
 
                                                     ->enumNode('changePublishedState')
-                                                        ->values([ChangePublishedStateSubscriber::NO_CHANGE, ChangePublishedStateSubscriber::FORCE_UNPUBLISHED, ChangePublishedStateSubscriber::FORCE_PUBLISHED])
+                                                        ->values([ChangePublishedStateSubscriber::NO_CHANGE, ChangePublishedStateSubscriber::FORCE_UNPUBLISHED, ChangePublishedStateSubscriber::FORCE_PUBLISHED, ChangePublishedStateSubscriber::SAVE_VERSION])
                                                         ->defaultValue(ChangePublishedStateSubscriber::NO_CHANGE)
                                                         ->info('Change published state of element while transition (only available for documents and data objects).')
                                                     ->end()

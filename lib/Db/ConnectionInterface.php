@@ -247,4 +247,16 @@ interface ConnectionInterface extends Connection
      * @return void
      */
     public function close();
+
+    /**
+     * @param string $table
+     * @param string $idColumn
+     * @param string $where
+     */
+    public function selectAndDeleteWhere($table, $idColumn = 'id', $where = '');
+
+    /**
+     * @return string
+     */
+    public function getDatabase();
 }

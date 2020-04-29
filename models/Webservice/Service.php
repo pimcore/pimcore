@@ -1205,6 +1205,7 @@ class Service
         }
 
         $this->setModificationParams($object, false);
+        /** @var Webservice\Data\DataObject\Concrete|Data\DataObject\Folder $wsDocument */
         if ($object instanceof DataObject\Concrete && $object->getClassName() == $wsDocument->className) {
             $wsDocument->reverseMap($object);
             $object->save();

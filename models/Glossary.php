@@ -82,7 +82,7 @@ class Glossary extends AbstractModel
     /**
      * @param int $id
      *
-     * @return Glossary
+     * @return self|null
      */
     public static function getById($id)
     {

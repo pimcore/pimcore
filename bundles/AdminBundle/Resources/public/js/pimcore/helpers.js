@@ -101,7 +101,6 @@ pimcore.helpers.openAsset = function (id, type, options) {
 pimcore.helpers.closeAsset = function (id) {
 
     try {
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "asset_" + id;
         var panel = Ext.getCmp(tabId);
         if (panel) {
@@ -137,7 +136,6 @@ pimcore.helpers.openDocument = function (id, type, options) {
 
 pimcore.helpers.closeDocument = function (id) {
     try {
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "document_" + id;
         var panel = Ext.getCmp(tabId);
         if (panel) {
@@ -177,7 +175,6 @@ pimcore.helpers.openObject = function (id, type, options) {
 
 pimcore.helpers.closeObject = function (id) {
     try {
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "object_" + id;
         var panel = Ext.getCmp(tabId);
         if (panel) {
@@ -392,7 +389,11 @@ pimcore.helpers.getTreeNodeLoadingIndicatorElements = function (type, id) {
 
 pimcore.helpers.treeNodeLoadingIndicatorTimeouts = {};
 
-pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
+pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id, disableExpander) {
+
+    if(disableExpander !== false) {
+        disableExpander = true;
+    }
 
     pimcore.helpers.treeNodeLoadingIndicatorTimeouts[type + id] = window.setTimeout(function () {
         // display loading indicator on treenode
@@ -401,6 +402,9 @@ pimcore.helpers.addTreeNodeLoadingIndicator = function (type, id) {
             var iconEl = iconEls[index];
             if (iconEl) {
                 iconEl.addCls("pimcore_tree_node_loading_indicator");
+                if(disableExpander) {
+                    iconEl.up('.x-grid-cell').addCls('pimcore_treenode_hide_plus_button');
+                }
             }
         }
     }, 200);
@@ -416,8 +420,21 @@ pimcore.helpers.removeTreeNodeLoadingIndicator = function (type, id) {
         var iconEl = iconEls[index];
         if (iconEl) {
             iconEl.removeCls("pimcore_tree_node_loading_indicator");
+            iconEl.up('.x-grid-cell').removeCls('pimcore_treenode_hide_plus_button');
         }
     }
+};
+
+pimcore.helpers.hasTreeNodeLoadingIndicator = function (type, id) {
+    var iconEls = pimcore.helpers.getTreeNodeLoadingIndicatorElements(type, id);
+    for (var index = 0; index < iconEls.length; index++) {
+        var iconEl = iconEls[index];
+        if (iconEl) {
+            return iconEl.hasCls("pimcore_tree_node_loading_indicator");
+        }
+    }
+
+    return false;
 };
 
 
@@ -1024,7 +1041,8 @@ pimcore.helpers.searchAction = function (type) {
     pimcore.helpers.itemselector(false, function (selection) {
             pimcore.helpers.openElement(selection.id, selection.type, selection.subtype);
         }, {type: [type]},
-        {moveToTab: true,
+        {
+            asTab: true,
             context: {
                 scope: "globalSearch"
             }
@@ -1385,7 +1403,11 @@ pimcore.helpers.uploadAssetFromFileObject = function (file, url, callbackSuccess
     // these wrappers simulate the jQuery behavior
     var successWrapper = function (ev) {
         var data = JSON.parse(request.responseText);
-        callbackSuccess(data, request.statusText, request);
+        if(ev.currentTarget.status < 400 && data.success === true) {
+            callbackSuccess(data, request.statusText, request);
+        } else {
+            callbackFailure(request, request.statusText, ev);
+        }
     };
 
     var errorWrapper = function (ev) {
@@ -1454,13 +1476,14 @@ pimcore.helpers.searchAndMove = function (parentId, callback, type) {
         });
 
         this.addChildWindow = new Ext.Window({
+            title: t("move"),
             layout: 'fit',
-            width: 500,
+            width: 200,
             bodyStyle: "padding: 10px;",
             closable: false,
             plain: true,
-            modal: true,
-            items: [this.addChildProgressBar]
+            items: [this.addChildProgressBar],
+            listeners: pimcore.helpers.getProgressWindowListeners()
         });
 
         this.addChildWindow.show();
@@ -2471,6 +2494,10 @@ pimcore.helpers.requestNicePathDataGridDecorator = function (gridView, targets) 
 };
 
 pimcore.helpers.requestNicePathData = function (source, targets, config, fieldConfig, context, decorator, responseHandler) {
+    if (context && context['containerType'] == "batch") {
+        return;
+    }
+
     if (!config.loadEditModeData && (typeof targets === "undefined" || !fieldConfig.pathFormatterClass)) {
         return;
     }
@@ -2891,7 +2918,7 @@ pimcore.helpers.keyBindingMapping = {
 };
 
 pimcore.helpers.showPermissionError = function(permission) {
-    Ext.MessageBox.alert(t("error"), sprintf(t('permission_missing'), ts(permission)));
+    Ext.MessageBox.alert(t("error"), sprintf(t('permission_missing'), t(permission)));
 };
 
 pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parentType, success, failure, context) {
@@ -2977,7 +3004,8 @@ pimcore.helpers.registerAssetDnDSingleUpload = function (element, parent, parent
                         },
                         function (evt) {
                             // error
-                            pimcore.helpers.showNotification(t("error"), e["responseText"], "error");
+                            var res = Ext.decode(evt["responseText"]);
+                            pimcore.helpers.showNotification(t("error"), res.message ? res.message : t("error"), "error", evt["responseText"]);
                             win.close();
                             failure(evt);
                         }
@@ -3085,3 +3113,25 @@ pimcore.helpers.treeToolTipHide = function () {
     Ext.get('pimcore_tooltip').hide();
 };
 
+pimcore.helpers.progressWindowOffsets = [-50];
+
+pimcore.helpers.getProgressWindowListeners = function () {
+    return {
+        show: function(win) {
+            let winY = pimcore.helpers.progressWindowOffsets.reduce(function(a, b) {
+                return Math.min(a, b);
+            });
+
+            win.alignTo(Ext.getBody(), "br-br", [-40, winY]);
+            let newOffset = winY - (win.getHeight()+20);
+            pimcore.helpers.progressWindowOffsets.push(newOffset);
+            win.myProgressWinOffset = newOffset;
+        },
+        destroy: function(win) {
+            let index = pimcore.helpers.progressWindowOffsets.indexOf(win.myProgressWinOffset);
+            if (index !== -1) {
+                pimcore.helpers.progressWindowOffsets.splice(index, 1);
+            }
+        }
+    };
+};

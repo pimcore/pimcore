@@ -142,7 +142,12 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
                     width: source.datax.width,
                     height: source.datax.height,
                     maxTabs: source.datax.maxTabs,
-                    labelWidth: source.datax.labelWidth
+                    labelWidth: source.datax.labelWidth,
+                    localized: source.datax.localized,
+                    allowedGroupIds: source.datax.allowedGroupIds,
+                    hideEmptyData: source.datax.hideEmptyData,
+                    disallowAddRemove: source.datax.disallowAddRemove,
+                    storeId: source.datax.storeId 
                 });
         }
     }
