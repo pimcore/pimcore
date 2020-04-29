@@ -66,6 +66,8 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
             if(colConfig["width"]) {
                 gridColConfig["width"] = intval(colConfig["width"]);
+            } else {
+                gridColConfig["flex"] = 1;
             }
 
             if(colConfig["filter"]) {
@@ -232,9 +234,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             plugins: ['pimcore.gridfilters'],
             stripeRows: true,
             trackMouseOver: true,
-            viewConfig: {
-                forceFit: false
-            },
+            forceFit: false,
             tbar: topBar
         });
 
@@ -253,7 +253,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             drillDownFilterComboboxes.push({
                 xtype: 'label',
                 text: this.drillDownFilterDefinitions[i]["label"] ? t(this.drillDownFilterDefinitions[i]["label"])
-                                                    : t(this.drillDownFilterDefinitions[i]["name"]),
+                    : t(this.drillDownFilterDefinitions[i]["name"]),
                 style: 'padding-right: 5px'
             });
 
