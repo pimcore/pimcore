@@ -241,6 +241,7 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
 
         this.store = new Ext.data.Store({
             remoteSort: true,
+            remoteFilter: true,
             proxy: proxy,
             fields: readerFields,
             listeners: {
