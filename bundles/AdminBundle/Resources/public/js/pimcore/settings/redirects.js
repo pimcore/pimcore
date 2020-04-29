@@ -140,24 +140,39 @@ pimcore.settings.redirects = Class.create({
                     return store.getAt(pos).get("domain");
                 }
             }},
-            {text: t("source"), flex: 200, sortable: true, dataIndex: 'source', editor: new Ext.form.TextField({})},
-            {text: t("target_site") + ' (' + t('optional') + ')', flex: 200, sortable:true, dataIndex: "targetSite",
-                editor: new Ext.form.ComboBox({
-                store: pimcore.globalmanager.get("sites"),
-                valueField: "id",
-                displayField: "domain",
-                editable: false,
-                triggerAction: "all"
-            }), renderer: function (siteId) {
-                var store = pimcore.globalmanager.get("sites");
-                var pos = store.findExact("id", siteId);
-                if(pos >= 0) {
-                    return store.getAt(pos).get("domain");
-                }
-            }},
-            {text: t("target"), flex: 200, sortable: false, dataIndex: 'target',
+            {
+                text: t("source"),
+                flex: 200,
+                sortable: true,
+                dataIndex: 'source',
                 editor: new Ext.form.TextField({}),
-                tdCls: "input_drop_target"
+                renderer: function (value) {
+                    return Ext.util.Format.htmlEncode(value);
+                }
+            },
+            {
+                text: t("target_site") + ' (' + t('optional') + ')', flex: 200, sortable: true, dataIndex: "targetSite",
+                editor: new Ext.form.ComboBox({
+                    store: pimcore.globalmanager.get("sites"),
+                    valueField: "id",
+                    displayField: "domain",
+                    editable: false,
+                    triggerAction: "all"
+                }), renderer: function (siteId) {
+                    var store = pimcore.globalmanager.get("sites");
+                    var pos = store.findExact("id", siteId);
+                    if (pos >= 0) {
+                        return store.getAt(pos).get("domain");
+                    }
+                }
+            },
+            {
+                text: t("target"), flex: 200, sortable: false, dataIndex: 'target',
+                editor: new Ext.form.TextField({}),
+                tdCls: "input_drop_target",
+                renderer: function (value) {
+                    return Ext.util.Format.htmlEncode(value);
+                }
             },
             {text: t("status"), width: 70, sortable: true, dataIndex: 'statusCode', editor: new Ext.form.ComboBox({
                 store: [

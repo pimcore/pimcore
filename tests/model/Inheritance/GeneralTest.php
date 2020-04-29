@@ -127,7 +127,6 @@ class GeneralTest extends ModelTestCase
         // TODO the following doesn't work as the catch catches the exception thrown in fail
     }
 
-
     /**
      * Tests https://github.com/pimcore/pimcore/pull/6269
      * [Data objects] Override inherited value with same value (break inheritance)
@@ -140,9 +139,9 @@ class GeneralTest extends ModelTestCase
 
         $target = new RelationTest();
         $target->setParent(Service::createFolderByPath('__test/relationobjects'));
-        $target->setKey("relation-1");
+        $target->setKey('relation-1');
         $target->setPublished(true);
-        $target->setSomeAttribute("Some content 1");
+        $target->setSomeAttribute('Some content 1');
         $target->save();
 
         /** @var Inheritance $one */
@@ -170,11 +169,11 @@ class GeneralTest extends ModelTestCase
 
         AbstractObject::setGetInheritedValues(true);
         $fetchedTarget = $two->getRelation();
-        $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), "expectected inherited target");
+        $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
 
         AbstractObject::setGetInheritedValues(false);
         $fetchedTarget = $two->getRelation();
-        $this->assertNull($fetchedTarget, "target should not be inherited");
+        $this->assertNull($fetchedTarget, 'target should not be inherited');
 
         // enable inheritance and set the target
         AbstractObject::setGetInheritedValues(true);
@@ -186,10 +185,11 @@ class GeneralTest extends ModelTestCase
         AbstractObject::setGetInheritedValues(false);
         $two = Concrete::getById($two->getId(), true);
         $fetchedTarget = $two->getRelation();
-        $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), "expectected inherited target");
+        $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
 
         AbstractObject::setGetInheritedValues($inheritanceEnabled);
     }
+
     /**
      * Tests the following scenario:
      *

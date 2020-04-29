@@ -251,7 +251,7 @@ pimcore.asset.helpers.grid = Class.create({
                     fieldType = 'manyToOneRelation';
                 }
 
-                var tag = pimcore.asset.tags[fieldType];
+                var tag = pimcore.asset.metadata.tags[fieldType];
                 var fc = tag.prototype.getGridColumnConfig(field);
                 fc.locked = this.getColumnLock(field);
                 gridColumns.push(fc);

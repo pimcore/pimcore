@@ -127,6 +127,11 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $activeGroupDefinitions = [];
 
     /**
+     * @var int
+     */
+    public $maxItems;
+
+    /**
      * @see Data::getDataForEditmode
      *
      * @param string $data
@@ -207,7 +212,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         $items = $data->getItems();
 
-        foreach ($items  as $groupId => $keys) {
+        foreach ($items as $groupId => $keys) {
             if (!isset($data->getActiveGroups()[$groupId])) {
                 continue;
             }
@@ -969,6 +974,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $getInheritedValues = DataObject\AbstractObject::doGetInheritedValues();
 
         if (!$omitMandatoryCheck) {
+            if ($this->maxItems > 0 && count($activeGroups) > $this->maxItems) {
+                throw new Model\Element\ValidationException(
+                    'Groups in field [' . $this->getName() . '] is bigger than ' . $this->getMaxItems()
+                );
+            }
+
             foreach ($activeGroups as $activeGroupId => $enabled) {
                 if ($enabled) {
                     $groupDefinition = DataObject\Classificationstore\GroupConfig::getById($activeGroupId);
@@ -1100,6 +1111,22 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function getLabelWidth()
     {
         return $this->labelWidth;
+    }
+
+    /**
+     * @param int $maxItems
+     */
+    public function setMaxItems($maxItems)
+    {
+        $this->maxItems = (int) $maxItems;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxItems()
+    {
+        return $this->maxItems;
     }
 
     /**

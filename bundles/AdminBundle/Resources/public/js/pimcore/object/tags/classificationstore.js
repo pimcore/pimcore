@@ -134,7 +134,8 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                                 enableGroupByKey: true,
                                 storeId: storeId,
                                 object: this.object,
-                                fieldname: this.fieldConfig.name
+                                fieldname: this.fieldConfig.name,
+                                maxItems: this.fieldConfig.maxItems
                             }
                         );
                         keySelectionWindow.show();
@@ -567,6 +568,14 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
             }
         }
 
+        if (
+            this.fieldConfig.maxItems > 0 &&
+            (this.getUsedActiveGroups().length + newGroupIds.length) > this.fieldConfig.maxItems
+        ) {
+            pimcore.helpers.showNotification(t('validation_failed'), t('limit_reached'), 'error');
+
+            return;
+        }
 
         for (var i=0; i < nrOfLanguages; i++) {
             var currentLanguage = this.frontendLanguages[i];
@@ -652,8 +661,20 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
 
     markInherited:function (metaData) {
         // nothing to do, only sub-elements can be marked
-    }
+    },
 
+    getUsedActiveGroups: function () {
+        var activeGroups = [];
+
+        // The array must be checked for empty entries
+        for (var key in this.activeGroups) {
+            if (this.activeGroups[key]) {
+                activeGroups.push(parseInt(key));
+            }
+        }
+
+        return activeGroups;
+    }
 });
 
 pimcore.object.tags.classificationstore.addMethods(pimcore.object.helpers.edit);
