@@ -540,7 +540,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         }
 
         // increment version and recreate index structures
-        $this->indexVersion++;
+        $this->indexVersion = $this->getNextIndexVersion();
         Logger::info('Index-Actions - Start Reindex Mode - Version Number: ' . $this->indexVersion.' Index Name: ' . $this->getIndexNameVersion());
 
         //set the new version here so other processes write in the new index
