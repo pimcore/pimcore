@@ -150,12 +150,13 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
     /**
      * the versioned index-name
-     *
-     * @return string
+     * @param int $indexVersionOverride if set, then the index name for a specific index version is built. example. 13
+     * @return string the name of the index, such as at_de_elastic_13
      */
-    public function getIndexNameVersion()
+    public function getIndexNameVersion(int $indexVersionOverride = null)
     {
-        return $this->indexName . '-' . $this->getIndexVersion();
+        $indexVersion = $indexVersionOverride ?? $this->getIndexVersion();
+        return $this->indexName . '-' . $indexVersion;
     }
 
     /**
@@ -847,21 +848,8 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      * Get the next index version, e.g. if currently 13, then 14 will be returned.
      * @return int
      */
-    private function getNextIndexVersion() : int {
+    protected function getNextIndexVersion() : int {
         return $this->getIndexVersion()+1;
-    }
-
-    /**
-     * Build the name of the index for a specific index number.
-     * @param int $id e.g. 13
-     * @return string the name of the index, such as at_de_elastic_13
-     */
-    private function buildIndexName(int $id) : string {
-        $currentIndexVersion = $this->getIndexVersion();
-        $this->indexVersion = $id;
-        $indexName = $this->getIndexNameVersion();
-        $this->indexVersion = $currentIndexVersion;
-        return $indexName;
     }
 
     /**
@@ -871,13 +859,13 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      * @throws BadRequest400Exception
      * @throws \Elasticsearch\Common\Exceptions\NoNodesAvailableException
      */
-    private function buildIndexAndPerformEsRebuild(string $indexName) {
+    protected function buildIndexAndPerformEsRebuild(string $indexName) {
         $indexName = strtolower($indexName);
         $esClient = $this->getElasticSearchClient();
-        Logger::info('Index '.$indexName.' already existed. Delete and rebuild it...');
+        Logger::info('Index '.$indexName.' already existing. Delete and rebuild it...');
         $result = $esClient->indices()->exists(['index' => $indexName]);
         if ($result) {
-            Logger::info('Deleted '.$indexName.'.');
+            Logger::info('Deleting '.$indexName.'.');
             $esClient->indices()->delete(['index' => $indexName]);
         }
 
@@ -887,15 +875,8 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             [
                 'source' => [
                     'index' => $this->getIndexNameVersion(), //currently active ES index with data.
-                    /*
-                    "query" => [
-                        "term" => [
-                            "attributes.remoteId" => "12J928143"
-                        ]
-                    ] */
                 ],
                 'dest' => [
-                    // 'index' => 'mytestindex',
                     'index' => $indexName, //target index name
                 ]
             ];
@@ -933,7 +914,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         }
 
         $nextIndex = $this->getNextIndexVersion();
-        $nextIndexName = $this->buildIndexName($nextIndex);
+        $nextIndexName = $this->getIndexNameVersion($nextIndex);
         $this->buildIndexAndPerformEsRebuild($nextIndexName);
 
         $this->indexVersion = $nextIndex;
