@@ -16,7 +16,6 @@ pimcore.registerNS("pimcore.object.classificationstore.keySelectionWindow");
  * this is for the object editor and the add key window in the classification store definition
  */
 pimcore.object.classificationstore.keySelectionWindow = Class.create({
-
     acceptEvents: true,
 
     initialize: function (config) {
@@ -32,11 +31,15 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         if (this.config.enableCollections) {
             this.config.isCollectionSearch = true;
         }
-
     },
 
-
     show: function () {
+        if (this.config.maxItems > 0 && this.config.parent.getUsedActiveGroups().length >= this.config.maxItems) {
+            pimcore.helpers.showNotification(t('validation_failed'), t('limit_reached'), 'error');
+
+            return;
+        }
+
         this.searchfield = new Ext.form.field.Text({
             width: 300,
             style: "float: left;",
@@ -143,12 +146,26 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         }
     },
 
-
     addGroups: function (groupIds) {
         if (!this.acceptEvents) {
             return;
         }
+
+        groupIds = Ext.Array.unique(groupIds.map(function (groupId) {
+            return parseInt(groupId);
+        }));
+
+        if (
+            this.config.maxItems > 0 &&
+            Ext.Array.merge(groupIds, this.config.parent.getUsedActiveGroups()).length > this.config.maxItems
+        ) {
+            pimcore.helpers.showNotification(t('validation_failed'), t('limit_reached'), 'error');
+
+            return;
+        }
+
         this.acceptEvents = false;
+
         if (groupIds.length > 0) {
             this.config.parent.requestPending.call(this.config.parent);
             Ext.Ajax.request({
@@ -481,5 +498,4 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         this.resultPanel.add(this.gridPanel);
         this.resultPanel.updateLayout();
     }
-
 });

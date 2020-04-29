@@ -65,7 +65,6 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
             name: "localized",
             fieldLabel: t("localized"),
             checked: this.datax.localized
-
         });
 
         this.specificPanel.add({
@@ -75,6 +74,14 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
             height: 150,
             fieldLabel: t("allowed_group_ids"),
             value: this.datax.allowedGroupIds
+        });
+
+        this.specificPanel.add({
+            xtype: "numberfield",
+            fieldLabel: t("classificationstore_group_limitation"),
+            name: "maxItems",
+            value: this.datax.maxItems,
+            minValue: 0
         });
 
         var  store = new Ext.data.Store({
@@ -107,7 +114,6 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
             name: "hideEmptyData",
             fieldLabel: t("hide_empty_data"),
             checked: this.datax.hideEmptyData
-
         });
 
         this.specificPanel.add({
@@ -117,8 +123,6 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
             checked: this.datax.disallowAddRemove
 
         });
-
-
 
         this.layout.on("render", this.layoutRendered.bind(this));
 
@@ -135,6 +139,7 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
             if (!this.datax) {
                 this.datax =  {};
             }
+
             Ext.apply(this.datax,
                 {
                     region: source.datax.region,
