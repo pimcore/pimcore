@@ -436,36 +436,39 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
             remoteSort: true,
             proxy: proxy,
             fields: readerFields,
-            filters: [
-                function(item) {
-                    // translate collection and group results
-                    if (item.get('name')) {
-                        item.set('name', t(item.get('name')));
-                    }
+            listeners: {
+                // translate classification store texts
+                load: function (store, records, options) {
+                    Ext.Array.forEach(records, function(item) {
+                        // translate collection and group results
+                        if (item.get('name')) {
+                            item.set('name', t(item.get('name')));
+                        }
 
-                    if (item.get('description')) {
-                        item.set('description', t(item.get('description')));
-                    }
+                        if (item.get('description')) {
+                            item.set('description', t(item.get('description')));
+                        }
 
-                    // translate group by key results
-                    if (item.get('keyName')) {
-                        item.set('keyName', t(item.get('keyName')));
-                    }
+                        // translate group by key results
+                        if (item.get('keyName')) {
+                            item.set('keyName', t(item.get('keyName')));
+                        }
 
-                    if (item.get('keyDescription')) {
-                        item.set('keyDescription', t(item.get('keyDescription')));
-                    }
+                        if (item.get('keyDescription')) {
+                            item.set('keyDescription', t(item.get('keyDescription')));
+                        }
 
-                    if (item.get('groupName')) {
-                        item.set('groupName', t(item.get('groupName')));
-                    }
+                        if (item.get('groupName')) {
+                            item.set('groupName', t(item.get('groupName')));
+                        }
 
-                    // remove modified state so there is no ui effect
-                    item.modified = {};
+                        // remove modified state so there is no ui effect
+                        item.dirty = false;
+                    });
 
-                    return item;
-                }
-            ]
+                    this.store.setRecords(records);
+                }.bind(this)
+            }
         });
 
         var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
@@ -511,5 +514,4 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         this.resultPanel.add(this.gridPanel);
         this.resultPanel.updateLayout();
     }
-
 });

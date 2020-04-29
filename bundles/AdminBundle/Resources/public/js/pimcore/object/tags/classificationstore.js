@@ -416,6 +416,8 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                 context["applyDefaults"] = true;
             }
 
+            context["type"] = this.type;
+
             var childItem = this.getRecursiveLayout(definition, !editable, context);
 
             groupedChildItems.push(childItem);

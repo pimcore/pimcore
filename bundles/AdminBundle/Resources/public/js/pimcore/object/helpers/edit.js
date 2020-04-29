@@ -408,9 +408,8 @@ pimcore.object.helpers.edit = {
 
                                     // special rule for classification store keys
                                     // in this context there is no way to refer to the description of a classification store keys
-                                    // therefore the fallback tootip provided by the api will be separated and translated correctly
-                                    if (dataProvider.component !== undefined &&
-                                        dataProvider.component.bodyCls == 'pimcore_object_tag_classification_store' &&
+                                    // therefore the fallback tooltip provided by the api will be separated and translated correctly
+                                    if (context.type == 'classificationstore' &&
                                         field.tooltip.indexOf(field.name + ' - ') == 0
                                     ) {
                                         tooltipHtml = t(field.name) + ' - ' + t(
