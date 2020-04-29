@@ -259,7 +259,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutShow: function () {
         var layout = this.getLayoutEdit();
-        for (key in this.elements) {
+        for (let key in this.elements) {
             if (this.elements.hasOwnProperty(key)) {
                 this.elements[key].setReadOnly(true);
             }
@@ -275,7 +275,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
     getValue: function () {
         var value = [];
 
-        for (key in this.elements) {
+        for (let key in this.elements) {
             if (this.elements.hasOwnProperty(key)) {
                 let textfield = this.elements[key];
                 value.push([key, textfield.getValue(), textfield.originalValue]);
@@ -299,7 +299,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
     isDirty: function () {
         var dirty = this.dirty;
 
-        for (key in this.elements) {
+        for (let key in this.elements) {
             if (this.elements.hasOwnProperty(key)) {
                 let textfield = this.elements[key];
                 if (textfield.isDirty()) {
