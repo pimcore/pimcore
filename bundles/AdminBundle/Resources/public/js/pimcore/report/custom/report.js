@@ -253,7 +253,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             drillDownFilterComboboxes.push({
                 xtype: 'label',
                 text: this.drillDownFilterDefinitions[i]["label"] ? t(this.drillDownFilterDefinitions[i]["label"])
-                    : t(this.drillDownFilterDefinitions[i]["name"]),
+                                                    : t(this.drillDownFilterDefinitions[i]["name"]),
                 style: 'padding-right: 5px'
             });
 
