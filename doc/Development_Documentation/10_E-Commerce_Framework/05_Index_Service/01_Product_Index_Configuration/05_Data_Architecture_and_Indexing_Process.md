@@ -115,12 +115,12 @@ php bin/console ecommerce:indexservice:elasticsearch-sync reindex
 The native reindexing is faster than running the ecommerce process updating queue, and only one command needs to be executed.
 This is especially useful when a new search feature is under development. In the later case, changes in the ES index mapping
 often require a complete reindexing so that the new settings will be applied to the index
-(cf. [Product Index Configuration](../)).
+(cf. [Product Index Configuration](../README.md)).
 
 #### Case 2: Synonym Support
 Pimcore provides a simple solution for ES synonym search integration out of the box.
 
-Basic index configuration setup for synonyms (cf. [Product Index Configuration](../)):
+Basic index configuration setup for synonyms (cf. [Product Index Configuration](../README.md)):
 ```yml
 pimcore_ecommerce_framework:
     index_service:

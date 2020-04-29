@@ -137,5 +137,6 @@ class EsSyncCommand extends AbstractIndexServiceCommand
         }
 
         $bar->finish();
+        return 0;
     }
 }
