@@ -948,5 +948,8 @@
     "enable_grid_locking": "Activer le verrouillage de grille",
     "export_configuration": "Exporter la configuration au format JSON",
     "composite_indices": "Indices composites",
-    "default_value_generator": "Générateur service / classe valeur par défaut"
+    "default_value_generator": "Générateur service / classe valeur par défaut",
+    "no_value_set": "aucune valeur définie",
+    "delete_class_message": "Voulez-vous vraiment supprimer la classe '%s' ?",
+    "replace_assignments_in_all_elements": "Remplacer les affectations dans tous les éléments"
 }
