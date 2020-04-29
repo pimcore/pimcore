@@ -948,5 +948,8 @@
     "enable_grid_locking": "Rastersperre aktivieren",
     "export_configuration": "Konfiguration als JSON exportieren",
     "composite_indices": "Zusammengesetzte Indizes",
-    "default_value_generator": "Standardwertgenerator-Service / Klasse"
+    "default_value_generator": "Standardwertgenerator-Service / Klasse",
+    "no_value_set": "no value set",
+    "delete_class_message": "Do you really want to delete class '%s' ?",
+    "replace_assignments_in_all_elements": "Replace assignments in all elements"
 }
