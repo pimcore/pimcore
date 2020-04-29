@@ -257,7 +257,11 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
 
     getLayoutShow: function () {
         var layout = this.getLayoutEdit();
-        this.component.setReadOnly(true);
+        for (key in this.elements) {
+            if (this.elements.hasOwnProperty(key)) {
+                this.elements[key].setReadOnly(true);
+            }
+        }
         return layout;
     },
 
