@@ -12,11 +12,11 @@ class Version20200428082346 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-        $this->addSql("ALTER TABLE `http_error_log` ROW_FORMAT=DYNAMIC;");
+        $this->addSql('ALTER TABLE `http_error_log` ROW_FORMAT=DYNAMIC;');
         $this->addSql("ALTER TABLE `http_error_log` CHANGE `uri` `uri` varchar(1024) COLLATE 'utf8_bin' NULL AFTER `id`;");
 
         $table = $schema->getTable('http_error_log');
-        if($table->hasIndex('uri')) {
+        if ($table->hasIndex('uri')) {
             $table->dropIndex('uri');
             $table->addIndex(['uri'], 'uri');
         }

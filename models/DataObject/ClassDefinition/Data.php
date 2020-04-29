@@ -740,12 +740,12 @@ abstract class Data
         }
 
         if ($this->supportsDirtyDetection()) {
-            if($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
+            if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
                 $code .= "\t" . '$inheritValues = self::getGetInheritedValues();'."\n";
                 $code .= "\t" . 'self::setGetInheritedValues(false);'."\n";
             }
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
-            if($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
+            if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
                 $code .= "\t" . 'self::setGetInheritedValues($inheritValues);'."\n";
             }
             $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
@@ -1029,12 +1029,12 @@ abstract class Data
         }
 
         if ($this->supportsDirtyDetection()) {
-            if($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
+            if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
                 $code .= "\t" . '$inheritValues = self::getGetInheritedValues();'."\n";
                 $code .= "\t" . 'self::setGetInheritedValues(false);'."\n";
             }
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '($language);' . "\n";
-            if($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
+            if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
                 $code .= "\t" . 'self::setGetInheritedValues($inheritValues);'."\n";
             }
             $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
