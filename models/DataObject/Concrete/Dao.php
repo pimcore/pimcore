@@ -153,7 +153,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     $params = [
                         'context' => [
                             'object' => $this->model
-                        ]
+                        ],
+                        'owner' => $this->model,
+                        'fieldname' => $key
                     ];
                     $value = $value->load($this->model, $params);
                     if ($value === 0 || !empty($value)) {
@@ -170,7 +172,9 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     }
                     $this->model->setValue($key, $value->getDataFromResource($multidata));
                 } else {
-                    $this->model->setValue($key, $value->getDataFromResource($data[$key], $this->model));
+                    $this->model->setValue($key, $value->getDataFromResource($data[$key], $this->model,
+                            ['owner' => $this->model,
+                                'fieldname' => $key]));
                 }
             }
         }
@@ -236,7 +240,11 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     'isUpdate' => $isUpdate,
                     'context' => [
                         'containerType' => 'object'
-                    ]];
+                    ],
+                    'owner' => $this->model,
+                    'fieldname' => $key
+                ]
+                ;
                 if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
                     $saveParams['newParent'] = $this->model->isFieldDirty('o_parentId');
                 }
@@ -248,7 +256,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $this->model,
                         [
                             'isUpdate' => $isUpdate,
-                            'owner' => $this->model
+                            'owner' => $this->model,
+                            'fieldname' => $key
                         ]);
                     if (is_array($insertDataArray)) {
                         $data = array_merge($data, $insertDataArray);
@@ -257,7 +266,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     $insertData = $fd->getDataForResource($this->model->$getter(), $this->model,
                         [
                             'isUpdate' => $isUpdate,
-                            'owner' => $this->model
+                            'owner' => $this->model,
+                            'fieldname' => $key
                         ]);
                     $data[$key] = $insertData;
                 }
@@ -295,7 +305,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     $insertData = $fd->getDataForQueryResource($fieldValue, $this->model,
                         [
                             'isUpdate' => $isUpdate,
-                            'owner' => $this->model
+                            'owner' => $this->model,
+                            'fieldname' => $key
                         ]);
                     $isEmpty = $fd->isEmpty($fieldValue);
 

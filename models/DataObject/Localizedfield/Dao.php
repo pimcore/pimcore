@@ -108,16 +108,22 @@ class Dao extends Model\Dao\AbstractDao
 
         if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
             $containerKey = $context['containerKey'];
-            $container = DataObject\Fieldcollection\Definition::getByKey($containerKey);
+            $containerDefinition = DataObject\Fieldcollection\Definition::getByKey($containerKey);
         } elseif (isset($context['containerType']) && $context['containerType'] === 'objectbrick') {
             $containerKey = $context['containerKey'];
-            $container = DataObject\Objectbrick\Definition::getByKey($containerKey);
+            $containerDefinition = DataObject\Objectbrick\Definition::getByKey($containerKey);
         } else {
-            $container = $this->model->getClass();
+            $containerDefinition = $this->model->getClass();
         }
 
+        if (!isset($params['owner'])) {
+            throw new \Exception("need owner from container implementation");
+        }
+
+        $this->model->setOwner($params['owner'], 'localizedfields');
+
         /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
-        $localizedfields = $container->getFieldDefinition('localizedfields');
+        $localizedfields = $containerDefinition->getFieldDefinition('localizedfields');
         $fieldDefinitions = $localizedfields->getFieldDefinitions(
             ['suppressEnrichment' => true]
         );
@@ -141,9 +147,9 @@ class Dao extends Model\Dao\AbstractDao
                 'language' => $language,
             ];
 
-            if ($container instanceof DataObject\Objectbrick\Definition) {
+            if ($containerDefinition instanceof DataObject\Objectbrick\Definition) {
                 $insertData['fieldname'] = $context['fieldname'];
-            } elseif ($container instanceof DataObject\Fieldcollection\Definition) {
+            } elseif ($containerDefinition instanceof DataObject\Fieldcollection\Definition) {
                 $insertData['fieldname'] = $context['fieldname'];
                 $insertData['index'] = $context['index'];
             }
@@ -163,9 +169,9 @@ class Dao extends Model\Dao\AbstractDao
                         if ((isset($params['saveRelationalData'])
                                 && isset($params['saveRelationalData']['saveLocalizedRelations'])
                                 && $params['saveRelationalData']['saveLocalizedRelations']
-                                && $container instanceof DataObject\Fieldcollection\Definition
+                                && $containerDefinition instanceof DataObject\Fieldcollection\Definition
                             )
-                            || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
+                            || (((!$containerDefinition instanceof DataObject\Fieldcollection\Definition || $containerDefinition instanceof DataObject\Objectbrick\Definition)
                                     && $this->model->isLanguageDirty($language))
                                 || $params['saveRelationalData']['saveLocalizedRelations'])) {
                             $fd->save($this->model, $childParams);
@@ -186,7 +192,7 @@ class Dao extends Model\Dao\AbstractDao
                         $insertData[$fd->getName()] = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $params['isUpdate']])
+                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => ($params['isUpdate'] ?? false)])
                         );
                     }
                 }
@@ -211,7 +217,7 @@ class Dao extends Model\Dao\AbstractDao
                 throw $e;
             }
 
-            if ($container instanceof DataObject\ClassDefinition || $container instanceof DataObject\Objectbrick\Definition) {
+            if ($containerDefinition instanceof DataObject\ClassDefinition || $containerDefinition instanceof DataObject\Objectbrick\Definition) {
                 // query table
                 $data = [];
                 $data['ooo_id'] = $this->model->getObject()->getId();
@@ -531,7 +537,7 @@ class Dao extends Model\Dao\AbstractDao
             $index = $context['index'];
             $fieldname = $context['fieldname'];
 
-            $container = DataObject\Fieldcollection\Definition::getByKey($containerKey);
+            $containerDefinition = DataObject\Fieldcollection\Definition::getByKey($containerKey);
 
             $data = $this->db->fetchAll(
                 'SELECT * FROM '.$this->getTableName()
@@ -547,7 +553,7 @@ class Dao extends Model\Dao\AbstractDao
             );
         } elseif (isset($context['containerType']) && $context['containerType'] === 'objectbrick') {
             $containerKey = $context['containerKey'];
-            $container = DataObject\Objectbrick\Definition::getByKey($containerKey);
+            $containerDefinition = DataObject\Objectbrick\Definition::getByKey($containerKey);
             $fieldname = $context['fieldname'];
 
             $data = $this->db->fetchAll(
@@ -559,7 +565,7 @@ class Dao extends Model\Dao\AbstractDao
                 ]
             );
         } else {
-            $container = $this->model->getClass();
+            $containerDefinition = $this->model->getClass();
             $data = $this->db->fetchAll(
                 'SELECT * FROM '.$this->getTableName().' WHERE ooo_id = ? AND language IN ('.implode(
                     ',',
@@ -569,9 +575,15 @@ class Dao extends Model\Dao\AbstractDao
             );
         }
 
+        if (!isset($params['owner'])) {
+            throw new \Exception("need owner from container implementation");
+        }
+
+        $this->model->setOwner($params['owner'], 'localizedfields');
+
         foreach ($data as $row) {
             /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
-            $localizedfields = $container->getFieldDefinition('localizedfields');
+            $localizedfields = $containerDefinition->getFieldDefinition('localizedfields');
             foreach ($localizedfields->getFieldDefinitions(
                 ['object' => $object, 'suppressEnrichment' => true]
             ) as $key => $fd) {

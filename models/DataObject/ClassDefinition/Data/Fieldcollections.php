@@ -315,9 +315,11 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         }
 
         if ($container instanceof DataObject\Fieldcollection) {
-            $params['context'] = [
-                'containerType' => 'fieldcollection',
-                'fieldname' => $this->getName()
+            $params = [
+                'context' => [
+                    'containerType' => 'fieldcollection',
+                    'fieldname' => $this->getName()
+                ]
             ];
 
             $container->save($object, $params);
