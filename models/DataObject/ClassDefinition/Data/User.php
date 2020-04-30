@@ -214,9 +214,6 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
      */
     public function setRestrictTo($restrictTo)
     {
-        /**
-         * @extjs6
-         */
         if (is_array($restrictTo)) {
             $restrictTo = implode(',', $restrictTo);
         }
