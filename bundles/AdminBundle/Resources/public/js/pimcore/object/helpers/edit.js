@@ -406,16 +406,8 @@ pimcore.object.helpers.edit = {
                                 try {
                                     var tooltipHtml = field.tooltip;
 
-                                    // special rule for classification store keys
-                                    // in this context there is no way to refer to the description of a classification store keys
-                                    // therefore the fallback tooltip provided by the api will be separated and translated correctly
-                                    if (context.type == 'classificationstore' &&
-                                        field.tooltip.indexOf(field.name + ' - ') == 0
-                                    ) {
-                                        tooltipHtml = t(field.name) + ' - ' + t(
-                                            field.tooltip.replace(field.name + ' - ', '')
-                                        );
-                                    } else {
+                                    // classification-store tooltips are already translated
+                                    if (context.type != "classificationstore") {
                                         tooltipHtml = t(tooltipHtml);
                                     }
 

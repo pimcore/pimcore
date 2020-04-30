@@ -382,24 +382,34 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                 || in_array(this.currentLanguage, this.fieldConfig.permissionEdit));
 
 
-        var keys = group.keys;
+        var csKeys = group.keys;
         var expandable = false;
 
         var index = -1;
 
-        for (var k = 0; k < keys.length; k++) {
+        for (var k = 0; k < csKeys.length; k++) {
             index++;
-            var key = keys[k];
-            var definition = key.definition;
-            definition.csKeyId = key.id;
+
+            var csKey = csKeys[k];
+            var definition = csKey.definition;
+
+            definition.csKeyId = csKey.id;
             definition.csGroupId = group.id;
+
             if (this.fieldConfig.labelWidth) {
                 definition.labelWidth = this.fieldConfig.labelWidth;
             }
 
+            // creating the fallback tooltip or translate the fallback given from the api
+            if (!definition.tooltip || definition.tooltip.indexOf(csKey.name + " - ") == 0) {
+                definition.tooltip = t(csKey.name) + " - " + t(csKey.description);
+            } else {
+                definition.tooltip = t(definition.tooltip);
+            }
+
             if (this.fieldConfig.hideEmptyData && !isNew) {
                 // check if we should hide the feature because it is empty but only if the group hasn't been just added added via the dialog
-                if (!this.data[language] || !this.data[language][group.id] || typeof this.data[language][group.id][key.id] === "undefined") {
+                if (!this.data[language] || !this.data[language][group.id] || typeof this.data[language][group.id][csKey.id] === "undefined") {
                     expandable = true;
 
                     invisibleItems.push({
@@ -412,11 +422,11 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
             }
 
             var context = this.getContext();
+            context["type"] = this.type;
+
             if (isNew) {
                 context["applyDefaults"] = true;
             }
-
-            context["type"] = this.type;
 
             var childItem = this.getRecursiveLayout(definition, !editable, context);
 

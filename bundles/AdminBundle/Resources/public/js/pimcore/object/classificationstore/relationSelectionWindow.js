@@ -217,10 +217,33 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
 
         var gridColumns = [];
         gridColumns.push({text: "ID", width: 60, sortable: true, dataIndex: 'id'});
-        gridColumns.push({text: t("group"), flex: 1, sortable: true, dataIndex: 'groupName', filter: 'string'});
-        gridColumns.push({text: t("name"), flex: 1, sortable: true, dataIndex: 'keyName', filter: 'string'});
-        gridColumns.push({text: t("description"), flex: 1, sortable: true, dataIndex: 'keyDescription', filter: 'string'});
 
+        gridColumns.push({
+            text: t("group"),
+            flex: 1,
+            sortable: true,
+            dataIndex: 'groupName',
+            filter: 'string',
+            renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
+        });
+
+        gridColumns.push({
+            text: t("name"),
+            flex: 1,
+            sortable: true,
+            dataIndex: 'keyName',
+            filter: 'string',
+            renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
+        });
+
+        gridColumns.push({
+            text: t("description"),
+            flex: 1,
+            sortable: true,
+            dataIndex: 'keyDescription',
+            filter: 'string',
+            renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
+        });
 
         var proxy = {
             type: 'ajax',
@@ -243,31 +266,7 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
             remoteSort: true,
             remoteFilter: true,
             proxy: proxy,
-            fields: readerFields,
-            listeners: {
-                // translate classification store texts
-                load: function (store, records, options) {
-                    Ext.Array.forEach(records, function(item) {
-                        // translate group by key results
-                        if (item.get('keyName')) {
-                            item.set('keyName', t(item.get('keyName')));
-                        }
-
-                        if (item.get('keyDescription')) {
-                            item.set('keyDescription', t(item.get('keyDescription')));
-                        }
-
-                        if (item.get('groupName')) {
-                            item.set('groupName', t(item.get('groupName')));
-                        }
-
-                        // remove modified state so there is no ui effect
-                        item.dirty = false;
-                    });
-
-                    this.store.setRecords(records);
-                }.bind(this)
-            }
+            fields: readerFields
         });
 
         var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
