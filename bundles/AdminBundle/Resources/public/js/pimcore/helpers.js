@@ -3135,3 +3135,19 @@ pimcore.helpers.getProgressWindowListeners = function () {
         }
     };
 };
+
+pimcore.helpers.reloadUserImage = function (userId) {
+    var image = "/admin/user/get-image?id=" + userId + "&_dc=" + Ext.Date.now();
+
+    if (pimcore.currentuser.id == userId) {
+        Ext.get("pimcore_avatar").query('img')[0].src = image;
+    }
+
+    if (Ext.getCmp("pimcore_user_image_" + userId)) {
+        Ext.getCmp("pimcore_user_image_" + userId).setSrc(image);
+    }
+
+    if (Ext.getCmp("pimcore_profile_image_" + userId)) {
+        Ext.getCmp("pimcore_profile_image_" + userId).setSrc(image);
+    }
+};
