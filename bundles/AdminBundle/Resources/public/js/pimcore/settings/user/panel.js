@@ -189,7 +189,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
             return;
         }
 
-        if(!record.data.allowChildren && record.data.id > 0) {
+        if(record.get("elementType") === "user" && record.get("id") > 0) {
             this.openUser(record.data.id);
         }
     },
@@ -206,6 +206,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
 
         var menu = new Ext.menu.Menu();
 
+
         if (record.data.allowChildren) {
             menu.add(new Ext.menu.Item({
                 text: t('create_folder'),
@@ -221,7 +222,9 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
                     "click": this.add.bind(this, "user", null, record)
                 }
             }));
-        } else if (record.data.elementType == "user") {
+        }
+
+        if (record.data.elementType === "user") {
             menu.add(new Ext.menu.Item({
                 text: t('clone'),
                 iconCls: "pimcore_icon_user pimcore_icon_overlay_add",
@@ -231,7 +234,7 @@ pimcore.settings.user.panel = Class.create(pimcore.settings.user.panels.abstract
             }));
         }
 
-        if (record.data.id > 0 && record.data.id != user.id && (record.data.type != "userfolder" || user.admin)) {
+        if (record.data.id > 0 && record.data.id != user.id && (record.data.type !== "userfolder" || user.admin)) {
             menu.add(new Ext.menu.Item({
                 text: t('delete'),
                 iconCls: "pimcore_icon_delete",

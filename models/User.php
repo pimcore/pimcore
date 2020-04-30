@@ -140,6 +140,11 @@ class User extends User\UserRole
     public $twoFactorAuthentication;
 
     /**
+     * @var bool
+     */
+    public $hasChilds;
+
+    /**
      * @return string
      */
     public function getPassword()
@@ -1050,5 +1055,31 @@ class User extends User\UserRole
 
             $this->twoFactorAuthentication[$key] = $value;
         }
+    }
+
+    /**
+     * @param bool $state
+     *
+     * @return $this
+     */
+    public function setHasChilds($state)
+    {
+        $this->hasChilds = $state;
+
+        return $this;
+    }
+
+    /**
+     * Returns true if the document has at least one child
+     *
+     * @return bool
+     */
+    public function hasChildren()
+    {
+        if ($this->hasChilds !== null) {
+            return $this->hasChilds;
+        }
+
+        return $this->getDao()->hasChildren();
     }
 }

@@ -71,7 +71,6 @@ class UserController extends AdminController implements EventedControllerInterfa
         $tmpUser = [
             'id' => $user->getId(),
             'text' => $user->getName(),
-            'elementType' => 'user',
             'type' => $user->getType(),
             'qtipCfg' => [
                 'title' => 'ID: ' . $user->getId()
@@ -80,6 +79,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         // set type specific settings
         if ($user instanceof User\Folder) {
+            $tmpUser['elementType'] = 'userfolder';
             $tmpUser['leaf'] = false;
             $tmpUser['iconCls'] = 'pimcore_icon_folder';
             $tmpUser['expanded'] = true;
@@ -91,12 +91,21 @@ class UserController extends AdminController implements EventedControllerInterfa
                 $tmpUser['loaded'] = true;
             }
         } else {
+            $tmpUser['elementType'] = 'user';
             $tmpUser['leaf'] = true;
             $tmpUser['iconCls'] = 'pimcore_icon_user';
             if (!$user->getActive()) {
                 $tmpUser['cls'] = ' pimcore_unpublished';
             }
-            $tmpUser['allowChildren'] = false;
+            $tmpUser['allowChildren'] = true;
+            $tmpUser['expanded'] = true;
+
+            if ($user->hasChildren()) {
+                $tmpUser['expanded'] = false;
+                $tmpUser['leaf'] = false;
+            } else {
+                $tmpUser['loaded'] = true;
+            }
             $tmpUser['admin'] = $user->isAdmin();
         }
 
