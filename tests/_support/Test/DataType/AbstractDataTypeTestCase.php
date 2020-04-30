@@ -3,6 +3,7 @@
 namespace Pimcore\Tests\Test\DataType;
 
 use Pimcore\Cache;
+use Pimcore\Logger;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\UrlSlug;
@@ -341,7 +342,11 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
     public function testLink()
     {
+        Logger::error("XXXXXXXXXXXXXXX start link test");
         $this->createTestObject('link');
+        Logger::error("XXXXXXXXXXXXXXX start link test 2");
+
+        $this->assertNotNull($this->testObject->getLink(), "Link is null");
 
         $this->testDataHelper->assertLink($this->testObject, 'link', $this->seed);
     }
