@@ -27,7 +27,7 @@ class DataObject extends Data
      * @param array $params
      */
     public function marshal($value, $params = []) {
-        $element = Service::getElementByPath("object", $this->data);
+        $element = Service::getElementByPath("object", $value);
         if ($element) {
             return $element->getId();
         } else {

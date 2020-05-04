@@ -242,8 +242,6 @@ pimcore.asset.metadata.tags.manyToOneRelation = Class.create(pimcore.asset.metad
                         }
                     });
 
-                    this.updateRows();
-
                     return true;
                 }
                 return false;

@@ -27,7 +27,7 @@ class Asset extends Data
      * @param array $params
      */
     public function marshal($value, $params = []) {
-        $element = Service::getElementByPath("asset", $this->data);
+        $element = Service::getElementByPath("asset", $value);
         if ($element) {
             return $element->getId();
         } else {

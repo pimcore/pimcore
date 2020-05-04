@@ -27,7 +27,7 @@ class Document extends Data
      * @param array $params
      */
     public function marshal($value, $params = []) {
-        $element = Service::getElementByPath("document", $this->data);
+        $element = Service::getElementByPath("document", $value);
         if ($element) {
             return $element->getId();
         } else {
