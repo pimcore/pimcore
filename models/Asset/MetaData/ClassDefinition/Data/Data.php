@@ -23,6 +23,8 @@ abstract class Data
     /**
      * @param mixed $value
      * @param array $params
+     *
+     * @return mixed
      */
     public function marshal($value, $params = []) {
         return $value;
@@ -31,6 +33,8 @@ abstract class Data
     /**
      * @param mixed $value
      * @param array $params
+     *
+     * @return mixed
      */
     public function unmarshal($value, $params = []) {
         return $value;

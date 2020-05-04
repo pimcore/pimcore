@@ -25,19 +25,23 @@ class Document extends Data
     /**
      * @param mixed $value
      * @param array $params
+     *
+     * @return null|int
      */
     public function marshal($value, $params = []) {
         $element = Service::getElementByPath("document", $value);
         if ($element) {
             return $element->getId();
         } else {
-            return '';
+            return null;
         }
     }
 
     /**
      * @param mixed $value
      * @param array $params
+     *
+     * @return string
      */
     public function unmarshal($value, $params = []) {
         $element = null;

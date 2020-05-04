@@ -17,14 +17,14 @@
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
-use Pimcore\Model\Element\Service;
-
 class Date extends Data
 {
 
     /**
      * @param mixed $value
      * @param array $params
+     *
+     * @return null|string
      */
     public function marshal($value, $params = []) {
         if ($value && !is_numeric($value)) {
