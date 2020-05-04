@@ -35,16 +35,5 @@ pimcore.asset.metadata.data.select = Class.create(pimcore.asset.metadata.data.da
 
     getIconClass: function () {
         return "pimcore_icon_select";
-    },
-
-    getLayout: function ($super) {
-
-        $super();
-
-        this.specificPanel.removeAll();
-        var specificItems = this.getSpecificPanelItems(this.datax);
-        this.specificPanel.add(specificItems);
-
-        return this.layout;
     }
 });

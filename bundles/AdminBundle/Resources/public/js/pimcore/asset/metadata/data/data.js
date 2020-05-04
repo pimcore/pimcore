@@ -34,5 +34,16 @@ pimcore.asset.metadata.data.data = Class.create({
         ];
 
         return specificItems;
+    },
+
+    getLayout: function ($super) {
+
+        $super();
+
+        this.specificPanel.removeAll();
+        var specificItems = this.getSpecificPanelItems(this.datax);
+        this.specificPanel.add(specificItems);
+
+        return this.layout;
     }
 });

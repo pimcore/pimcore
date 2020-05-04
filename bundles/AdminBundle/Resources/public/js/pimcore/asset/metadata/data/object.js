@@ -30,16 +30,5 @@ pimcore.asset.metadata.data.object = Class.create(pimcore.asset.metadata.data.da
 
     getIconClass: function () {
         return "pimcore_icon_object";
-    },
-
-    getLayout: function ($super) {
-
-        $super();
-
-        this.specificPanel.removeAll();
-        var specificItems = this.getSpecificPanelItems(this.datax);
-        this.specificPanel.add(specificItems);
-
-        return this.layout;
     }
 });
