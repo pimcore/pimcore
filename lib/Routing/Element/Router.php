@@ -114,7 +114,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
                 $qs = '?' . $qs;
             }
 
-            return $schemeAuthority . $name->getFullPath() . $qs;
+            return $schemeAuthority . $this->context->getBaseUrl() . $name->getFullPath() . $qs;
         }
         if ($name instanceof Concrete) {
             $linkGenerator = $name->getClass()->getLinkGenerator();
