@@ -17,7 +17,7 @@
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
-class Textara extends Data
+class Textarea extends Data
 {
 
 }
