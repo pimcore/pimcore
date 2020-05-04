@@ -76,7 +76,6 @@ pimcore.asset.metadata.tags.checkbox = Class.create(pimcore.asset.metadata.tags.
     },
 
     getLayoutShow:function () {
-
         this.component = this.getLayoutEdit();
         this.component.disable();
 
@@ -93,5 +92,20 @@ pimcore.asset.metadata.tags.checkbox = Class.create(pimcore.asset.metadata.tags.
 
     isDirty:function () {
         return this.dataChanged;
+    },
+
+    getGridCellRenderer: function(value, metaData, record, rowIndex, colIndex, store) {
+        if (value) {
+            return '<div style="text-align: left"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
+        } else {
+            return '<div style="text-align: left"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
+        }
+    },
+
+    handleGridCellClick: function(grid, cell, rowIndex, cellIndex, e) {
+        var store = grid.getStore();
+        var record = store.getAt(rowIndex);
+        record.set("data", !record.data.data);
     }
+
 });

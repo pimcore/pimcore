@@ -3109,6 +3109,19 @@ pimcore.helpers.treeToolTipShow = function (el, record, item) {
     }
 };
 
+pimcore.helpers.getAssetMetadataDataTypes = function (allowIn) {
+    var result = [];
+    for (var property in pimcore.asset.metadata.data) {
+        // filter out base class
+        if (property !== "data" && pimcore.asset.metadata.data.hasOwnProperty(property)) {
+            if (pimcore.asset.metadata.data[property].prototype.allowIn[allowIn]) {
+                result.push(property);
+            }
+        }
+    }
+    return result;
+};
+
 pimcore.helpers.treeToolTipHide = function () {
     Ext.get('pimcore_tooltip').hide();
 };

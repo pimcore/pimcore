@@ -90,5 +90,47 @@ pimcore.asset.metadata.tags.date = Class.create(pimcore.asset.metadata.tags.abst
 
     getName:function () {
         return this.fieldConfig.name;
-    }
+    },
+
+    getGridCellEditor: function (gridtype, record) {
+        return Ext.create('Ext.form.field.Date', {
+            format: "Y-m-d"
+        });
+    },
+
+    convertPredefinedGridData: function(v, r) {
+        if (v && !(v instanceof Date)) {
+            var d = new Date(intval(v) * 1000);
+            return d;
+        }
+        return v;
+    },
+
+    getGridCellRenderer: function(value, metaData, record, rowIndex, colIndex, store) {
+        if (value) {
+            if(!(value instanceof Date)) {
+                value = new Date(value * 1000);
+            }
+            return Ext.Date.format(value, "Y-m-d");
+        }
+        return value;
+    },
+
+    marshal: function(value) {
+        // value used for submission
+        if (value) {
+            value = value.valueOf() / 1000;
+        }
+
+        return value;
+    },
+
+    unmarshal: function(value) {
+        // process received and transform it to grid value
+        if (value) {
+            value = new Date(intval(value) * 1000);
+        }
+
+        return value;
+    },
 });
