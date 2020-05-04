@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
@@ -1116,16 +1117,52 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             $languages = explode(',', $config['valid_languages']);
         }
 
-        $data = $this->getDataForValidity($data, $languages);
+        $dataForValidityCheck = $this->getDataForValidity($data, $languages);
         $validationExceptions = [];
         if (!$omitMandatoryCheck) {
             foreach ($languages as $language) {
                 foreach ($this->getFieldDefinitions() as $fd) {
                     try {
-                        if (isset($data[$language]) && isset($data[$language][$fd->getName()])) {
-                            $fd->checkValidity($data[$language][$fd->getName()]);
-                        } else {
-                            $fd->checkValidity(null);
+                        try {
+                            if (isset($dataForValidityCheck[$language]) && isset($dataForValidityCheck[$language][$fd->getName()])) {
+                                $fd->checkValidity($dataForValidityCheck[$language][$fd->getName()]);
+                            } else {
+                                $fd->checkValidity(null);
+                            }
+                        } catch (\Exception $e) {
+                            if ($data->getObject()->getClass()->getAllowInherit()) {
+                                //try again with parent data when inheritance is activated
+                                try {
+                                    $getInheritedValues = AbstractObject::doGetInheritedValues();
+                                    AbstractObject::setGetInheritedValues(true);
+
+                                    $value = null;
+                                    $context = $data->getContext();
+                                    $containerType = $context['containerType'] ?? null;
+                                    if ($containerType === 'objectbrick') {
+                                        $brickContainer = $data->getObject()->{'get' . ucfirst($context['fieldname'])}();
+                                        $brick = $brickContainer->{'get' . ucfirst($context['containerKey'])}();
+                                        if ($brick) {
+                                            $value = $brick->{'get' . ucfirst($fd->getName())}($language);
+                                        }
+                                    } else if ($containerType === null || $containerType === 'object') {
+                                        $getter = 'get' . ucfirst($fd->getName());
+                                        $value = $data->getObject()->$getter($language);
+                                    }
+
+                                    $fd->checkValidity($value, $omitMandatoryCheck);
+                                    AbstractObject::setGetInheritedValues($getInheritedValues);
+                                } catch (\Exception $e) {
+                                    if ($e instanceof Model\Element\ValidationException) {
+                                        throw $e;
+                                    }
+                                    $exceptionClass = get_class($e);
+                                    throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                }
+                            } else {
+                                $exceptionClass = get_class($e);
+                                throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
+                            }
                         }
                     } catch (Model\Element\ValidationException $ve) {
                         $ve->addContext($this->getName() . '-' . $language);
