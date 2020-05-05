@@ -1145,7 +1145,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                                         if ($brick) {
                                             $value = $brick->{'get' . ucfirst($fd->getName())}($language);
                                         }
-                                    } else if ($containerType === null || $containerType === 'object') {
+                                    } elseif ($containerType === null || $containerType === 'object') {
                                         $getter = 'get' . ucfirst($fd->getName());
                                         $value = $data->getObject()->$getter($language);
                                     }
