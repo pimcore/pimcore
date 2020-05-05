@@ -278,10 +278,7 @@ pimcore.asset.metadata.grid = Class.create({
 
         for (let i = 0; i < rows.length; i++) {
             try {
-                var propertyName = Ext.get(rows[i]).query(".x-grid-cell-first div div")[0].getAttribute("name");
-                var storeIndex = this.grid.getStore().findExact("name", propertyName);
-
-                var data = this.grid.getStore().getAt(storeIndex).data;
+                var data = this.grid.getStore().getAt(i).data;
 
                 if(in_array(data.name, this.disallowedKeys)) {
                     Ext.get(rows[i]).addCls("pimcore_properties_hidden_row");
