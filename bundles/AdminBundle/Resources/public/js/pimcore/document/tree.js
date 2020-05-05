@@ -364,6 +364,7 @@ pimcore.document.tree = Class.create({
 
 
                 var addDocuments = perspectiveCfg.inTreeContextMenu("document.add");
+                var addBlankDocument = perspectiveCfg.inTreeContextMenu("document.addBlankDocument");
                 var addPrintDocuments = perspectiveCfg.inTreeContextMenu("document.addPrintPage");
                 var addEmail = perspectiveCfg.inTreeContextMenu("document.addEmail");
                 var addSnippet = perspectiveCfg.inTreeContextMenu("document.addSnippet");
@@ -384,12 +385,14 @@ pimcore.document.tree = Class.create({
 
                     documentMenu = this.populatePredefinedDocumentTypes(documentMenu, tree, record);
 
-                    // empty page
-                    documentMenu.page.push({
-                        text: "&gt; " + t("blank"),
-                        iconCls: "pimcore_icon_page pimcore_icon_overlay_add",
-                        handler: this.addDocument.bind(this, tree, record, "page")
-                    });
+                    if (addBlankDocument) {
+                        // empty page
+                        documentMenu.page.push({
+                            text: "&gt; " + t("blank"),
+                            iconCls: "pimcore_icon_page pimcore_icon_overlay_add",
+                            handler: this.addDocument.bind(this, tree, record, "page")
+                        });
+                    }
 
                     if (addSnippet) {
                         // empty snippet
