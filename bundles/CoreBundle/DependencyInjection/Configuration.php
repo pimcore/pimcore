@@ -408,7 +408,7 @@ class Configuration implements ConfigurationInterface
      */
     private function addAssetNode(ArrayNodeDefinition $rootNode)
     {
-        $rootNode
+        $assetsNode = $rootNode
             ->children()
                 ->arrayNode('assets')
                 ->ignoreExtraKeys()
@@ -509,8 +509,30 @@ class Configuration implements ConfigurationInterface
                     ->booleanNode('disable_tree_preview')
                         ->defaultTrue()
                     ->end()
-                ->end()
-            ->end();
+                ->end();
+
+        $assetsNode
+            ->children()
+                ->arrayNode('metadata')
+                ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('class_definitions')
+                            ->children()
+                                ->arrayNode('data')
+                                    ->children()
+                                        ->arrayNode('map')
+                                            ->useAttributeAsKey('name')
+                                            ->prototype('scalar')->end()
+                                        ->end()
+                                        ->arrayNode('prefixes')
+                                            ->prototype('scalar')->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+
+                            ->end()
+                        ->end();
+
     }
 
     /**

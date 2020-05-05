@@ -200,5 +200,88 @@ pimcore.asset.metadata.tags.manyToOneRelation = Class.create(pimcore.asset.metad
                 return this.dataChanged;
             }
         }
+    },
+
+    updatePredefinedGridRow: function(grid, row, data) {
+
+        var dd = new Ext.dd.DropZone(row, {
+            ddGroup: "element",
+
+            getTargetFromEvent: function(e) {
+                return this.getEl();
+            },
+
+            onNodeOver: function(dataRow, target, dd, e, data) {
+                if (data.records.length == 1) {
+                    var record = data.records[0];
+                    var data = record.data;
+
+                    if (dataRow.type == data.elementType) {
+                        return Ext.dd.DropZone.prototype.dropAllowed;
+                    }
+                }
+                return Ext.dd.DropZone.prototype.dropNotAllowed;
+            }.bind(this, data),
+
+            onNodeDrop : function(grid, recordid, target, dd, e, data) {
+                if (pimcore.helpers.dragAndDropValidateSingleItem(data)) {
+                    var rec = grid.getStore().getById(recordid);
+
+                    var record = data.records[0];
+                    var data = record.data;
+
+                    if (data.elementType != rec.get("type")) {
+                        return false;
+                    }
+
+                    rec.set("data", data.path);
+                    rec.set("all", {
+                        data: {
+                            id: data.id,
+                            type: data.type
+                        }
+                    });
+
+                    return true;
+                }
+                return false;
+            }.bind(this, grid, data.id)
+        });
+    },
+
+    getGridCellRenderer: function(value, metaData, record, rowIndex, colIndex, store) {
+        if (value) {
+            value =  nl2br(value);
+        } else {
+            value =  "";
+        }
+
+        return '<div class="pimcore_property_droptarget">' + value + '</div>';
+    },
+
+    getOpenActionItem: function() {
+        return {
+            tooltip: t('open'),
+            icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
+            handler: function (grid, rowIndex) {
+                var pData = grid.getStore().getAt(rowIndex).data;
+                if (pData.data) {
+                    pimcore.helpers.openElement(pData.data, pData.type);
+                }
+            }.bind(this),
+        };
+    },
+
+    getGridOpenActionVisibilityStyle: function() {
+        return "";
+    },
+
+
+    handleGridOpenAction:function (grid, rowIndex) {
+        var pData = grid.getStore().getAt(rowIndex).data;
+        if (pData.data) {
+            pimcore.helpers.openElement(pData.data, pData.type);
+        }
     }
+
 });

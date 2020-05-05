@@ -204,6 +204,10 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
             'pimcore.implementation_loader.object.layout' => [
                 'config' => $config['objects']['class_definitions']['layout'],
                 'prefixLoader' => PrefixLoader::class
+            ],
+            'pimcore.implementation_loader.asset.metadata.data' => [
+                'config' => $config['assets']['metadata']['class_definitions']['data'],
+                'prefixLoader' => PrefixLoader::class
             ]
         ];
 

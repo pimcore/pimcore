@@ -19,7 +19,6 @@ pimcore.asset.metadata.tags.textarea = Class.create(pimcore.asset.metadata.tags.
     initialize: function (data, fieldConfig) {
         this.data = data;
         this.fieldConfig = fieldConfig;
-
     },
 
     getGridColumnConfig:function (field) {
@@ -100,5 +99,17 @@ pimcore.asset.metadata.tags.textarea = Class.create(pimcore.asset.metadata.tags.
 
     getName: function () {
         return this.fieldConfig.name;
+    },
+
+    getGridCellEditor: function (gridtype, record) {
+        return Ext.create('Ext.form.TextArea');
+    },
+
+    getGridCellRenderer: function(value, metaData, record, rowIndex, colIndex, store) {
+        if (value) {
+            return nl2br(value);
+        } else {
+            return "";
+        }
     }
 });
