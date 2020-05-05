@@ -77,19 +77,6 @@ trait DefaultValueTrait
                 $class = $owner->getObject()->getClass();
             }
 
-            if ($class && $class->getAllowInherit()) {
-                $params = [];
-
-                try {
-                    $data = $owner->getValueFromParent($this->getName(), $params);
-                    if (!$this->isEmpty($data)) {
-                        return $data;
-                    }
-                } catch (InheritanceParentNotFoundException $e) {
-                    // no data from parent available, use the default value
-                }
-            }
-
             if ($object !== null && !empty($this->defaultValueGenerator)) {
                 $defaultValueGenerator = DefaultValueGeneratorResolver::resolveGenerator($this->defaultValueGenerator);
 
@@ -130,7 +117,27 @@ trait DefaultValueTrait
                 }
             }
 
-            $data = $this->doGetDefaultValue($object, $context);
+            // we check first if we even want to work with default values. if this is not the case then
+            // we are also not allowed to inspect the parent value.
+
+            // if the parent doesn't have a value then we take the configured value as fallback
+            $configuredDefaultValue = $this->doGetDefaultValue($object, $context);
+            if (!$this->isEmpty($configuredDefaultValue)) {
+
+                if ($class && $class->getAllowInherit()) {
+                    $params = [];
+
+                    try {
+                        $data = $owner->getValueFromParent($this->getName(), $params);
+                        if (!$this->isEmpty($data)) {
+                            return $data;
+                        }
+                    } catch (InheritanceParentNotFoundException $e) {
+                        // no data from parent available, use the default value
+                    }
+                }
+            }
+            $data = $configuredDefaultValue;
         }
 
         return $data;
