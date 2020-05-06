@@ -23,13 +23,5 @@ pimcore.asset.metadata.data.input = Class.create(pimcore.asset.metadata.data.dat
         this.initData(initData);
 
         this.treeNode = treeNode;
-    },
-
-    getTypeName: function () {
-        return t("input");
-    },
-
-    getIconClass: function () {
-        return "pimcore_icon_input";
     }
 });

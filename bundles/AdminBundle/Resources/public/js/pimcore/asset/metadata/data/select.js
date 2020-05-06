@@ -27,13 +27,5 @@ pimcore.asset.metadata.data.select = Class.create(pimcore.asset.metadata.data.da
         this.initData(initData);
 
         this.treeNode = treeNode;
-    },
-
-    getTypeName: function () {
-        return t("select");
-    },
-
-    getIconClass: function () {
-        return "pimcore_icon_select";
     }
 });

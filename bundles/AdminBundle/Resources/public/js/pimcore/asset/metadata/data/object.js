@@ -22,13 +22,5 @@ pimcore.asset.metadata.data.object = Class.create(pimcore.asset.metadata.data.da
         this.initData(initData);
 
         this.treeNode = treeNode;
-    },
-
-    getTypeName: function () {
-        return t("object");
-    },
-
-    getIconClass: function () {
-        return "pimcore_icon_object";
     }
 });

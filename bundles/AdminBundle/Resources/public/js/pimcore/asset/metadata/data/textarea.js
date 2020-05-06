@@ -23,13 +23,5 @@ pimcore.asset.metadata.data.textarea = Class.create(pimcore.asset.metadata.data.
         this.initData(initData);
 
         this.treeNode = treeNode;
-    },
-
-    getTypeName: function () {
-        return t("textarea");
-    },
-
-    getIconClass: function () {
-        return "pimcore_icon_textarea";
     }
 });

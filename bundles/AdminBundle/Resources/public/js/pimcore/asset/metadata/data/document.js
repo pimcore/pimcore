@@ -23,13 +23,5 @@ pimcore.asset.metadata.data.document = Class.create(pimcore.asset.metadata.data.
         this.initData(initData);
 
         this.treeNode = treeNode;
-    },
-
-    getTypeName: function () {
-        return t("document");
-    },
-
-    getIconClass: function () {
-        return "pimcore_icon_document";
     }
 });

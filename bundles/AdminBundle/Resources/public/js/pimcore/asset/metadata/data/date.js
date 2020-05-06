@@ -23,13 +23,5 @@ pimcore.asset.metadata.data.date = Class.create(pimcore.asset.metadata.data.data
         this.initData(initData);
 
         this.treeNode = treeNode;
-    },
-
-    getTypeName: function () {
-        return t("date");
-    },
-
-    getIconClass: function () {
-        return "pimcore_icon_date";
     }
 });

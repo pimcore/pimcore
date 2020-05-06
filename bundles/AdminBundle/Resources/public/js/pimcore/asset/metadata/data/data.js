@@ -19,31 +19,15 @@ pimcore.asset.metadata.data.data = Class.create({
         custom: true
     },
 
-
-    initData: function (config) {
-        config = config || {};
+    getType: function () {
+        return this.type;
     },
 
-    getSpecificPanelItems: function (datax, inEncryptedField) {
-        var specificItems = [{
-            xtype: "numberfield",
-            fieldLabel: t("width"),
-            name: "width",
-            value: datax.width
-        }
-        ];
-
-        return specificItems;
+    getIconClass: function () {
+        return "pimcore_icon_" + this.getType();
     },
 
-    getLayout: function ($super) {
-
-        $super();
-
-        this.specificPanel.removeAll();
-        var specificItems = this.getSpecificPanelItems(this.datax);
-        this.specificPanel.add(specificItems);
-
-        return this.layout;
+    getTypeName: function () {
+        return t(this.getType());
     }
 });
