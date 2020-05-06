@@ -166,7 +166,11 @@ class Dao extends Model\Dao\AbstractDao
                                 $protectedDatastoreColumns[] = $key . '__' . $fkey;
                             }
                         } elseif ($value->getColumnType()) {
-                            $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), '', 'NULL');
+                            $defaultValue = '';
+                            if(method_exists($value, 'getDefaultValue') && $value->getDefaultValue() !== '') {
+                                $defaultValue = 'DEFAULT '.$this->db->quote($value->getDefaultValue());
+                            }
+                            $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), $defaultValue, 'NULL');
                             $protectedDatastoreColumns[] = $key;
                         }
                     }
