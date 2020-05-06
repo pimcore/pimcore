@@ -17,6 +17,7 @@ You have to create them the same way as other documents (pages).
 | `title`         | string  | You can give the element a title                                                   |
 | `width`         | integer | Width of the snippet in pixel                                                      |
 | `class`         | string  | A CSS class that is added to the surrounding container of this element in editmode |
+| `cache`         | bool    | Enable output cache for snippet                                                  |
 
 ## Methods
 
@@ -27,6 +28,7 @@ You have to create them the same way as other documents (pages).
 | `isEmpty()`    | bool    | Whether the editable is empty or not. |
 
 ## Examples
+### Basic Usage
 <div class="code-section">
 
 ```php  
@@ -38,3 +40,16 @@ You have to create them the same way as other documents (pages).
 {{ pimcore_snippet("mySnippet", {"width": 250, "height": 100}) }}
 ```
 </div>
+
+### Cache Snippet
+
+By default Snippet caching is disabled. You can enable snippet caching by passing the configuration `cache: true`.
+
+```php  
+ // Define a place for a snippet to be dragged onto, advanced usage
+ <?= $this->snippet("mySnippet", ["cache" => true]) ?>
+```
+
+```twig
+{{ pimcore_snippet("mySnippet", {cache: true}) }}
+```
