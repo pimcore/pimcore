@@ -123,7 +123,6 @@ trait DefaultValueTrait
             // if the parent doesn't have a value then we take the configured value as fallback
             $configuredDefaultValue = $this->doGetDefaultValue($object, $context);
             if (!$this->isEmpty($configuredDefaultValue)) {
-
                 if ($class && $class->getAllowInherit()) {
                     $params = [];
 
