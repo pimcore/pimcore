@@ -711,6 +711,10 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     public function isEqual($oldValue, $newValue)
     {
+        if($oldValue === null && $newValue === null) {
+            return true;
+        }
+
         if(!$oldValue instanceof Model\DataObject\Data\QuantityValue) {
             return false;
         }
