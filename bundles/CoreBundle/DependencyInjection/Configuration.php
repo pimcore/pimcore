@@ -532,7 +532,6 @@ class Configuration implements ConfigurationInterface
 
                             ->end()
                         ->end();
-
     }
 
     /**

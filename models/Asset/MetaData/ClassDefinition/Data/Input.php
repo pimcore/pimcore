@@ -19,5 +19,4 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 class Input extends Data
 {
-
 }

@@ -21,15 +21,15 @@ use Pimcore\Model\Element\Service;
 
 class Document extends Data
 {
-
     /**
      * @param mixed $value
      * @param array $params
      *
      * @return null|int
      */
-    public function marshal($value, $params = []) {
-        $element = Service::getElementByPath("document", $value);
+    public function marshal($value, $params = [])
+    {
+        $element = Service::getElementByPath('document', $value);
         if ($element) {
             return $element->getId();
         } else {
@@ -43,17 +43,18 @@ class Document extends Data
      *
      * @return string
      */
-    public function unmarshal($value, $params = []) {
+    public function unmarshal($value, $params = [])
+    {
         $element = null;
         if (is_numeric($value)) {
-            $element = Service::getElementById("document", $value);
+            $element = Service::getElementById('document', $value);
         }
         if ($element) {
             $value = $element->getRealFullPath();
         } else {
             $value = '';
         }
+
         return $value;
     }
-
 }

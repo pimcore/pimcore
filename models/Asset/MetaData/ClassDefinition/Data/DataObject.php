@@ -21,15 +21,15 @@ use Pimcore\Model\Element\Service;
 
 class DataObject extends Data
 {
-
     /**
      * @param mixed $value
      * @param array $params
      *
      * @return null|int
      */
-    public function marshal($value, $params = []) {
-        $element = Service::getElementByPath("object", $value);
+    public function marshal($value, $params = [])
+    {
+        $element = Service::getElementByPath('object', $value);
         if ($element) {
             return $element->getId();
         } else {
@@ -43,16 +43,18 @@ class DataObject extends Data
      *
      * @return string
      */
-    public function unmarshal($value, $params = []) {
+    public function unmarshal($value, $params = [])
+    {
         $element = null;
         if (is_numeric($value)) {
-            $element = Service::getElementById("object", $value);
+            $element = Service::getElementById('object', $value);
         }
         if ($element) {
             $value = $element->getRealFullPath();
         } else {
             $value = '';
         }
+
         return $value;
     }
 }

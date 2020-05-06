@@ -331,7 +331,6 @@ class Predefined extends Model\AbstractModel
 
     public function expand()
     {
-
         $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
         /** @var Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
         $instance = $loader->build($this->type);

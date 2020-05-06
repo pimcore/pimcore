@@ -21,15 +21,15 @@ use Pimcore\Model\Element\Service;
 
 class Asset extends Data
 {
-
     /**
      * @param mixed $value
      * @param array $params
      *
      * @return null|int
      */
-    public function marshal($value, $params = []) {
-        $element = Service::getElementByPath("asset", $value);
+    public function marshal($value, $params = [])
+    {
+        $element = Service::getElementByPath('asset', $value);
         if ($element) {
             return $element->getId();
         } else {
@@ -43,17 +43,18 @@ class Asset extends Data
      *
      * @return string
      */
-    public function unmarshal($value, $params = []) {
+    public function unmarshal($value, $params = [])
+    {
         $element = null;
         if (is_numeric($value)) {
-            $element = Service::getElementById("asset", $value);
+            $element = Service::getElementById('asset', $value);
         }
         if ($element) {
             $value = $element->getRealFullPath();
         } else {
             $value = '';
         }
+
         return $value;
     }
-
 }

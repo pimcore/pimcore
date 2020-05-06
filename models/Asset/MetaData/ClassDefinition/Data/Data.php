@@ -19,14 +19,14 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 abstract class Data
 {
-
     /**
      * @param mixed $value
      * @param array $params
      *
      * @return mixed
      */
-    public function marshal($value, $params = []) {
+    public function marshal($value, $params = [])
+    {
         return $value;
     }
 
@@ -36,11 +36,13 @@ abstract class Data
      *
      * @return mixed
      */
-    public function unmarshal($value, $params = []) {
+    public function unmarshal($value, $params = [])
+    {
         return $value;
     }
 
-    public function __toString() {
+    public function __toString()
+    {
         return get_class($this);
     }
 }
