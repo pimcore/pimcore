@@ -14,14 +14,5 @@
 pimcore.registerNS("pimcore.asset.metadata.data.asset");
 pimcore.asset.metadata.data.asset = Class.create(pimcore.asset.metadata.data.data, {
 
-    type: "asset",
-
-
-    initialize: function (treeNode, initData) {
-        this.type = "asset";
-
-        this.initData(initData);
-
-        this.treeNode = treeNode;
-    }
+    type: "asset"
 });

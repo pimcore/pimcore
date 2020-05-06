@@ -14,14 +14,5 @@
 pimcore.registerNS("pimcore.asset.metadata.data.date");
 pimcore.asset.metadata.data.date = Class.create(pimcore.asset.metadata.data.data, {
 
-    type: "date",
-
-
-    initialize: function (treeNode, initData) {
-        this.type = "date";
-
-        this.initData(initData);
-
-        this.treeNode = treeNode;
-    }
+    type: "date"
 });

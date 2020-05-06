@@ -14,12 +14,5 @@
 pimcore.registerNS("pimcore.asset.metadata.data.checkbox");
 pimcore.asset.metadata.data.checkbox = Class.create(pimcore.asset.metadata.data.data, {
 
-    type: "checkbox",
-
-
-    initialize: function (treeNode, initData) {
-        this.type = "checkbox";
-        this.initData(initData);
-        this.treeNode = treeNode;
-    }
+    type: "checkbox"
 });
