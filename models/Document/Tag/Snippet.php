@@ -130,7 +130,8 @@ class Snippet extends Model\Document\Tag
 
         // check if output-cache is enabled, if so, we're also using the cache here
         $cacheKey = null;
-        if ((isset($params['cache']) && $params['cache'] == true) || $cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled()) {
+        $cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled();
+        if ((isset($params['cache']) && $params['cache'] == true) || $cacheConfig) {
 
             // cleanup params to avoid serializing Element\ElementInterface objects
             $cacheParams = $params;
