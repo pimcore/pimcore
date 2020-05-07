@@ -745,6 +745,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             if ($data instanceof DataObject\Objectbrick) {
                 $validationExceptions = [];
 
+                $itemCount = 0;
                 $allowedTypes = $this->getAllowedTypes();
                 foreach ($allowedTypes as $allowedType) {
                     $getter = 'get' . ucfirst($allowedType);
@@ -756,8 +757,14 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                             continue;
                         }
 
+                        $itemCount++;
+
                         if (!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
                             continue;
+                        }
+
+                        if (!empty($this->maxItems) && $itemCount > $this->maxItems) {
+                            throw new Model\Element\ValidationException('Maximum limit reached for items in brick: ' . $this->getName());
                         }
 
                         //needed when new brick is added but not saved yet - then validity check fails.

@@ -589,6 +589,10 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                         continue;
                     }
 
+                    if (!empty($this->maxItems) && $idx + 1 > $this->maxItems) {
+                        throw new Model\Element\ValidationException('Maximum limit reached for items in field collection: ' . $this->getName());
+                    }
+
                     if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                         foreach ($collectionDef->getFieldDefinitions() as $fd) {
                             try {
