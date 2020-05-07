@@ -708,4 +708,27 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
         return implode(' OR ', $conditions);
     }
+
+    /**
+     * @param mixed $oldValue
+     * @param mixed $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        if($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if(!$oldValue instanceof Model\DataObject\Data\QuantityValue) {
+            return false;
+        }
+
+        if(!$newValue instanceof Model\DataObject\Data\QuantityValue) {
+            return false;
+        }
+
+        return $oldValue->getValue() === $newValue->getValue() && $oldValue->getUnitId() === $newValue->getUnitId();
+    }
 }
