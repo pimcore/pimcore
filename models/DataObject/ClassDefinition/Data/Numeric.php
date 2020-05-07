@@ -627,6 +627,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function isEqual($oldValue, $newValue)
     {
-        return $this->isIdentical($oldValue, $newValue);
+        return $oldValue === $newValue;
     }
 }
