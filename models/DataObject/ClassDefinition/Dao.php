@@ -167,7 +167,7 @@ class Dao extends Model\Dao\AbstractDao
                             }
                         } elseif ($value->getColumnType()) {
                             $defaultValue = '';
-                            if(method_exists($value, 'getDefaultValue') && $value->getDefaultValue() !== '') {
+                            if(method_exists($value, 'getDefaultValue') && $value->getDefaultValue() !== null && $value->getDefaultValue() !== '') {
                                 $defaultValue = ' DEFAULT '.$this->db->quote($value->getDefaultValue());
                             }
                             $this->addModifyColumn($objectDatastoreTable, $key, $value->getColumnType(), $defaultValue, 'NULL');
