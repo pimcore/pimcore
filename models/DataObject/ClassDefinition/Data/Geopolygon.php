@@ -359,4 +359,33 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
 
         return null;
     }
+
+    /**
+     *
+     * @param DataObject\Data\Geopoint[]|null $oldValue
+     * @param DataObject\Data\Geopoint[]|null $newValue
+     *
+     * @return string
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!is_array($oldValue) || !is_array($newValue)
+        || count($oldValue) != count($newValue)) {
+            return false;
+        }
+
+        $fd = new Geopoint();
+
+        foreach ($oldValue as $p => $point) {
+            if (!$fd->isEqual($oldValue[$p], $newValue[$p])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

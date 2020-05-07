@@ -522,4 +522,18 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         return true;
     }
+
+    /**
+     * @param Asset|null $oldValue
+     * @param Asset|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        $oldValue = $oldValue instanceof Asset ? $oldValue->getData() : null;
+        $newValue = $newValue instanceof Asset ? $newValue->getData() : null;
+
+        return $oldValue === $newValue;
+    }
 }

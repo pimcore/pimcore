@@ -423,4 +423,15 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
 
         return null;
     }
+
+    /**
+     * @param mixed $oldValue
+     * @param mixed $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        return $oldValue === $newValue;
+    }
 }

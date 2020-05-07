@@ -23,7 +23,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
 {
-    use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -462,5 +461,19 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function supportsInheritance()
     {
         return false;
+    }
+
+    /**
+     * @param DataObject\Data\Consent|null $oldValue
+     * @param DataObject\Data\Consent|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        $oldValue = $oldValue instanceof DataObject\Data\Consent ? $oldValue->getConsent() : null;
+        $newValue = $newValue instanceof DataObject\Data\Consent ? $newValue->getConsent() : null;
+
+        return $oldValue === $newValue;
     }
 }

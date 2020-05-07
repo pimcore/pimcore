@@ -676,4 +676,42 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             return $video;
         }
     }
+
+    /**
+     * @param DataObject\Data\Video|null $oldValue
+     * @param DataObject\Data\Video|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!$oldValue instanceof DataObject\Data\Video
+            || !$newValue instanceof DataObject\Data\Video) {
+            return false;
+        }
+
+        $oldValue = [
+            'type' => $oldValue->getType(),
+            'data' => $oldValue->getData()
+        ];
+
+        if ($oldValue['data'] instanceof Asset\Video) {
+            $oldValue['data'] = $oldValue['data']->getId();
+        }
+
+        $newValue = [
+            'type' => $newValue->getType(),
+            'data' => $newValue->getData()
+        ];
+
+        if ($newValue['data'] instanceof Asset\Video) {
+            $newValue['data'] = $newValue['data']->getId();
+        }
+
+        return \serialize($oldValue) === \serialize($newValue);
+    }
 }

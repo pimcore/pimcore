@@ -754,4 +754,38 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
             return $image;
         }
     }
+
+    /**
+     * @param DataObject\Data\Hotspotimage|null $oldValue
+     * @param DataObject\Data\Hotspotimage|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!$oldValue instanceof DataObject\Data\Hotspotimage
+            || !$newValue instanceof DataObject\Data\Hotspotimage) {
+           return false;
+        }
+
+        $oldValue = [
+            'image' => $oldValue->getImage()->getId(),
+            'hotspots' => $oldValue->getHotspots(),
+            'marker' => $oldValue->getMarker(),
+            'crop' => $oldValue->getCrop()
+        ];
+
+        $newValue = [
+            'image' => $newValue->getImage()->getId(),
+            'hotspots' => $newValue->getHotspots(),
+            'marker' => $newValue->getMarker(),
+            'crop' => $newValue->getCrop()
+        ];
+
+        return serialize($oldValue) === serialize($newValue);
+    }
 }

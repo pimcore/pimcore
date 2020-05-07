@@ -456,4 +456,18 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     {
         return Serialize::unserialize($value);
     }
+
+    /**
+     * @param Model\DataObject\Data\RgbaColor|null $oldValue
+     * @param Model\DataObject\Data\RgbaColor|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        $oldValue = $oldValue instanceof Model\DataObject\Data\RgbaColor ? $oldValue->getHex(true, true) : null;
+        $newValue = $newValue instanceof Model\DataObject\Data\RgbaColor ? $newValue->getHex(true, true) : null;
+
+        return $oldValue === $newValue;
+    }
 }

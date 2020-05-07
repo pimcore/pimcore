@@ -1067,4 +1067,13 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             }
         }
     }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        return false;
+    }
 }

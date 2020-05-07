@@ -24,7 +24,6 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
 {
     use DataObject\Traits\DefaultValueTrait;
 
-    use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -350,5 +349,16 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     protected function doGetDefaultValue($object, $context = [])
     {
         return $this->getDefaultValue() ?? null;
+    }
+
+    /**
+     * @param bool|null $oldValue
+     * @param bool|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        return $oldValue === $newValue;
     }
 }

@@ -659,4 +659,19 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         $this->cols = $masterDefinition->cols;
         $this->rows = $masterDefinition->rows;
     }
+
+    /**
+     *
+     * @param DataObject\Data\StructuredTable|null $oldValue
+     * @param DataObject\Data\StructuredTable|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        $oldData = $oldValue instanceof DataObject\Data\StructuredTable ? $oldValue->getData() : [];
+        $newData = $newValue instanceof DataObject\Data\StructuredTable ? $newValue->getData() : [];
+
+        return $this->isEqualArray($oldData, $newData);
+    }
 }

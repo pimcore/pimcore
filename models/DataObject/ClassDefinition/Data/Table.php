@@ -652,4 +652,15 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $this->rowsFixed = $masterDefinition->rowsFixed;
         $this->data = $masterDefinition->data;
     }
+
+    /**
+     * @param array $oldValue
+     * @param array $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        return $this->isEqualArray($oldValue, $newValue);
+    }
 }

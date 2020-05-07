@@ -630,5 +630,25 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     {
         // encrypted data shouldn't be in search index
         return '';
+        return '';
+    }
+
+    /**
+     * @param Model\DataObject\Data\EncryptedField|null $oldValue
+     * @param Model\DataObject\Data\EncryptedField|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        $fd = $this->getDelegateDatatypeDefinition();
+        $oldValue = $oldValue instanceof Model\DataObject\Data\EncryptedField ? $oldValue->getPlain() : null;
+        $newValue = $newValue instanceof Model\DataObject\Data\EncryptedField ? $newValue->getPlain() : null;
+
+        if ($fd) {
+            return $fd->isEqual($oldValue, $newValue);
+        }
+
+        return false;
     }
 }

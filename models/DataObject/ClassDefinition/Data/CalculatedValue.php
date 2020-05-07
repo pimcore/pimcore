@@ -560,4 +560,15 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     {
         return false;
     }
+
+    /**
+     * @param mixed $oldValue
+     * @param mixed $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        return $oldValue === $newValue;
+    }
 }

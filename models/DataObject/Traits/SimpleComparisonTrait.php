@@ -29,4 +29,22 @@ trait SimpleComparisonTrait
     {
         return $oldValue == $newValue;
     }
+
+    /**
+     * @param array|null $array1
+     * @param array|null $array2
+     *
+     * @return bool
+     */
+    protected function isEqualArray($array1, $array2)
+    {
+        $array1 = array_filter(is_array($array1) ? $array1 : []);
+        $array2 = array_filter(is_array($array2) ? $array2 : []);
+
+        if (count($array1) != count($array2)) {
+            return false;
+        }
+
+        return serialize($array1) === serialize($array2);
+    }
 }

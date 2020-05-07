@@ -347,4 +347,26 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     {
         return $this->getDataForEditmode($data, $object, $params);
     }
+
+    /**
+     *
+     * @param DataObject\Data\Geopoint|null $oldValue
+     * @param DataObject\Data\Geopoint|null $newValue
+     *
+     * @return string
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!$oldValue instanceof DataObject\Data\Geopoint
+            || !$newValue instanceof DataObject\Data\Geopoint) {
+            return false;
+        }
+
+        return $oldValue->getLongitude() === $newValue->getLongitude()
+            && $oldValue->getLatitude() === $newValue->getLatitude();
+    }
 }

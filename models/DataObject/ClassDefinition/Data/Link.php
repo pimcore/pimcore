@@ -538,4 +538,19 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         return $data;
     }
+
+    /**
+     *
+     * @param DataObject\Data\Link|null $oldValue
+     * @param DataObject\Data\Link|null $newValue
+     *
+     * @return string
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        $oldValue = $oldValue instanceof DataObject\Data\Link ? \serialize($oldValue) : null;
+        $newValue = $newValue instanceof DataObject\Data\Link ? \serialize($newValue) : null;
+
+        return $oldValue == $newValue;
+    }
 }

@@ -24,6 +24,7 @@ use ProxyManager\Proxy\LazyLoadingInterface;
 abstract class Data
 {
     use DataObject\ClassDefinition\Helper\VarExport;
+    use Model\DataObject\Traits\SimpleComparisonTrait;
 
     /**
      * @var string
@@ -1559,17 +1560,6 @@ abstract class Data
      * @return bool
      */
     public function supportsDirtyDetection()
-    {
-        return false;
-    }
-
-    /**
-     * @param mixed $oldValue
-     * @param mixed $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue)
     {
         return false;
     }

@@ -487,4 +487,18 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         return null;
     }
+
+    /**
+     * @param \DateTimeInterface|null $oldValue
+     * @param \DateTimeInterface|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        $oldValue = $oldValue instanceof \DateTimeInterface ? $oldValue->getTimestamp() : null;
+        $newValue = $newValue instanceof \DateTimeInterface ? $newValue->getTimestamp() : null;
+
+        return $oldValue === $newValue;
+    }
 }

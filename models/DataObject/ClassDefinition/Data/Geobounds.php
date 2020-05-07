@@ -363,4 +363,39 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             return $result;
         }
     }
+
+    /**
+     *
+     * @param DataObject\Data\Geobounds|null $oldValue
+     * @param DataObject\Data\Geobounds|null $newValue
+     *
+     * @return string
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!$oldValue instanceof DataObject\Data\Geobounds
+            || !$newValue instanceof DataObject\Data\Geobounds) {
+            return false;
+        }
+
+        $oldValue =  [
+            'NElongitude' => $oldValue->getNorthEast()->getLongitude(),
+            'NElatitude' => $oldValue->getNorthEast()->getLatitude(),
+            'SWlongitude' => $oldValue->getSouthWest()->getLongitude(),
+            'SWlatitude' => $oldValue->getSouthWest()->getLatitude()
+        ];
+
+        $newValue =  [
+            'NElongitude' => $newValue->getNorthEast()->getLongitude(),
+            'NElatitude' => $newValue->getNorthEast()->getLatitude(),
+            'SWlongitude' => $newValue->getSouthWest()->getLongitude(),
+            'SWlatitude' => $newValue->getSouthWest()->getLatitude()
+        ];
+
+        return serialize($oldValue) === serialize($newValue);
+    }
 }
