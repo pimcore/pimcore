@@ -94,8 +94,17 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             $schemeAuthority = '';
             $host = $this->context->getHost();
             $scheme = $this->context->getScheme();
+            $path = $name->getFullPath();
+            $needsHostname = self::ABSOLUTE_URL === $referenceType || self::NETWORK_PATH === $referenceType;
 
-            if (self::ABSOLUTE_URL === $referenceType || self::NETWORK_PATH === $referenceType) {
+            if (strpos($path, '://') !== false) {
+                $host = parse_url($path, PHP_URL_HOST);
+                $scheme = parse_url($path, PHP_URL_SCHEME);
+                $path = parse_url($path, PHP_URL_PATH);
+                $needsHostname = true;
+            }
+
+            if ($needsHostname) {
                 if ('' !== $host || ('' !== $scheme && 'http' !== $scheme && 'https' !== $scheme)) {
                     $port = '';
                     if ('http' === $scheme && 80 !== $this->context->getHttpPort()) {
@@ -114,7 +123,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
                 $qs = '?' . $qs;
             }
 
-            return $schemeAuthority . $this->context->getBaseUrl() . $name->getFullPath() . $qs;
+            return $schemeAuthority . $this->context->getBaseUrl() . $path . $qs;
         }
         if ($name instanceof Concrete) {
             $linkGenerator = $name->getClass()->getLinkGenerator();
