@@ -391,13 +391,15 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param string $oldValue
-     * @param string $newValue
+     * @param float|null $oldValue
+     * @param float|null $newValue
      *
      * @return bool
      */
     public function isEqual($oldValue, $newValue)
     {
+        $oldValue = (float) $oldValue;
+        $newValue = (float) $newValue;
         if (abs($oldValue - $newValue) < 0.00001) {
             return true;
         }

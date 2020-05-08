@@ -365,7 +365,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      * @param DataObject\Data\Geopoint[]|null $oldValue
      * @param DataObject\Data\Geopoint[]|null $newValue
      *
-     * @return string
+     * @return bool
      */
     public function isEqual($oldValue, $newValue)
     {

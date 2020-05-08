@@ -369,7 +369,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      * @param DataObject\Data\Geobounds|null $oldValue
      * @param DataObject\Data\Geobounds|null $newValue
      *
-     * @return string
+     * @return bool
      */
     public function isEqual($oldValue, $newValue)
     {

@@ -544,7 +544,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param DataObject\Data\Link|null $oldValue
      * @param DataObject\Data\Link|null $newValue
      *
-     * @return string
+     * @return bool
      */
     public function isEqual($oldValue, $newValue)
     {

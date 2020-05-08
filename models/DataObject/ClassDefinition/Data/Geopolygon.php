@@ -365,7 +365,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @param DataObject\Data\Geopoint[]|null $oldValue
      * @param DataObject\Data\Geopoint[]|null $newValue
      *
-     * @return string
+     * @return bool
      */
     public function isEqual($oldValue, $newValue)
     {
