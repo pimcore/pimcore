@@ -1336,13 +1336,11 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return DataObject\ClassDefinition\LinkGeneratorInterface
+     * @return DataObject\ClassDefinition\LinkGeneratorInterface|null
      */
     public function getLinkGenerator()
     {
-        $generator = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
-
-        return $generator;
+        return DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
     }
 
     /**
