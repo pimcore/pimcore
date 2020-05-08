@@ -1,0 +1,51 @@
+<?php
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
+namespace Pimcore\Bundle\CoreBundle\Command;
+
+use Pimcore\Console\AbstractCommand;
+use Pimcore\Tool\Admin;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+class MaintenanceModeDisableCommand extends AbstractCommand
+{
+    /**
+     * @inheritdoc
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('pimcore:maintenance-mode:disable')
+            ->setDescription('Disable maintenance mode');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        $input->setOption('ignore-maintenance-mode', true);
+        parent::initialize($input, $output);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        Admin::deactivateMaintenanceMode();
+        return 0;
+    }
+}
