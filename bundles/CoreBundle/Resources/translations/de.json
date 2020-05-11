@@ -949,7 +949,7 @@
     "export_configuration": "Konfiguration als JSON exportieren",
     "composite_indices": "Zusammengesetzte Indizes",
     "default_value_generator": "Standardwertgenerator-Service / Klasse",
-    "no_value_set": "no value set",
-    "delete_class_message": "Do you really want to delete class '%s' ?",
-    "replace_assignments_in_all_elements": "Replace assignments in all elements"
+    "no_value_set": "kein Wert gesetzt",
+    "delete_class_message": "Möchten Sie die Klasse '%s' wirklich löschen?",
+    "replace_assignments_in_all_elements": "Ersetze Zuordnungen in allen Elementen"
 }
