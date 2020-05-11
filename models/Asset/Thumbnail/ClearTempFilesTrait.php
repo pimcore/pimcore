@@ -26,17 +26,20 @@ trait ClearTempFilesTrait
 
     protected function recursiveDelete($dir, $thumbnail, &$matches = [])
     {
-        $directoryIterator = new \DirectoryIterator($dir);
-        $filterIterator = new \CallbackFilterIterator($directoryIterator, function(\SplFileInfo $fileInfo) use ($thumbnail) {
-            return $fileInfo->isDir() && (
-                preg_match('@/(image|video)\-thumb__[\d]+__' . $thumbnail . '$@', $fileInfo->getFilename()) ||
-                preg_match('@/(image|video)\-thumb__[\d]+__' . $thumbnail . '_auto_@', $fileInfo->getFilename())
-            );
-        });
+        $directoryIterator = new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS);
 
         /** @var \SplFileInfo $fileInfo */
-        foreach($filterIterator as $fileInfo) {
-            recursiveDelete($fileInfo->getPathname());
+        foreach(new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::SELF_FIRST, \RecursiveIteratorIterator::CATCH_GET_CHILD) as $fileInfo) {
+            if($fileInfo->isDir()) {
+                if (
+                    preg_match('@/(image|video)\-thumb__[\d]+__' . $thumbnail . '$@', $fileInfo->getPathname(), $matches) ||
+                    preg_match('@/(image|video)\-thumb__[\d]+__' . $thumbnail . '_auto_@', $fileInfo->getPathname(), $matches)
+                ) {
+                    recursiveDelete($fileInfo->getPathname());
+                }
+            }
         }
+
+        return $matches;
     }
 }
