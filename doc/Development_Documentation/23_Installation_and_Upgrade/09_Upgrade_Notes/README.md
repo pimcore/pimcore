@@ -1,6 +1,6 @@
 # Upgrade Notes
 
-## 6.7.0
+## 6.6.4
 - If you are using the specific settings 'max. items' option for ObjectBricks & Fieldcollections on your class definition, then API will validate the max limit on save() calls from now on.
 
 ## 6.6.2
