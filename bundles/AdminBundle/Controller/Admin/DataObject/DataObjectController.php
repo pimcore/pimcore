@@ -1716,7 +1716,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     }
 
                     $object->setValues($objectData);
-                    if (!isset($data['published']) || !$data['published']) {
+                    if ($object->getPublished() == false) {
                         $object->setOmitMandatoryCheck(true);
                     }
 
