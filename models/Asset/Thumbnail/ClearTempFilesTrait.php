@@ -26,17 +26,17 @@ trait ClearTempFilesTrait
 
     protected function recursiveDelete($dir, $thumbnail, &$matches = [])
     {
-        $dirs = glob($dir . '/*', GLOB_ONLYDIR);
-        foreach ($dirs as $dir) {
-            if (
-                preg_match('@/(image|video)\-thumb__[\d]+__' . $thumbnail . '$@', $dir) ||
-                preg_match('@/(image|video)\-thumb__[\d]+__' . $thumbnail . '_auto_@', $dir)
-            ) {
-                recursiveDelete($dir);
-            }
-            $this->recursiveDelete($dir, $thumbnail, $matches);
-        }
+        $directoryIterator = new \DirectoryIterator($dir);
+        $filterIterator = new \CallbackFilterIterator($directoryIterator, function(\SplFileInfo $fileInfo) use ($thumbnail) {
+            return $fileInfo->isDir() && (
+                preg_match('@/(image|video)\-thumb__[\d]+__' . $thumbnail . '$@', $fileInfo->getFilename()) ||
+                preg_match('@/(image|video)\-thumb__[\d]+__' . $thumbnail . '_auto_@', $fileInfo->getFilename())
+            );
+        });
 
-        return $matches;
+        /** @var \SplFileInfo $fileInfo */
+        foreach($filterIterator as $fileInfo) {
+            recursiveDelete($fileInfo->getPathname());
+        }
     }
 }
