@@ -2011,7 +2011,7 @@ class DataObjectHelperController extends AdminController
                         if (!isset($mappedFieldnames[$field])) {
                             $mappedFieldnames[$field] = $this->mapFieldname($field, $helperDefinitions);
                         }
-                        $objectData[$field] = $fieldData;
+                        $objectData[$field] = is_array($fieldData) ? $fieldData[0] : $fieldData;
                     }
                 }
                 $objects[] = $objectData;
