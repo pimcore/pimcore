@@ -14,22 +14,6 @@
 pimcore.registerNS("pimcore.asset.metadata.data.document");
 pimcore.asset.metadata.data.document = Class.create(pimcore.asset.metadata.data.data, {
 
-    type: "document",
+    type: "document"
 
-
-    initialize: function (treeNode, initData) {
-        this.type = "document";
-
-        this.initData(initData);
-
-        this.treeNode = treeNode;
-    },
-
-    getTypeName: function () {
-        return t("document");
-    },
-
-    getIconClass: function () {
-        return "pimcore_icon_document";
-    }
 });

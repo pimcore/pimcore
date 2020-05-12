@@ -720,5 +720,6 @@
     "enter_media_query": "Please enter a valid CSS media query",
     "1x1_pixel_placeholder": "1x1 Pixel Placeholder",
     "1x1_pixel_placeholder_description": "Just returns a 1x1 pixel GIF base64 encoded, in case you don't want to display an image for a certain condition",
-    "you_can_drag_the_tabs_to_reorder_the_media_queries": "You can drag the tabs to reorder the priority of the media queries"
+    "you_can_drag_the_tabs_to_reorder_the_media_queries": "You can drag the tabs to reorder the priority of the media queries",
+    "classificationstore_group_limitation": "Max. group items"
 }

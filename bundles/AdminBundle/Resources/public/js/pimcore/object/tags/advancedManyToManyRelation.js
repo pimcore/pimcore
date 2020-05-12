@@ -389,12 +389,12 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                     // probably a ExtJS 6.0 bug. withou this, dropdowns not working anymore if plugin is enabled
                     // TODO: investigate if there this is already fixed 6.2
                     cellmousedown: function (element, td, cellIndex, record, tr, rowIndex, e, eOpts) {
-                        if (cellIndex >= visibleFieldsCount) {
+                        if (this.fieldConfig.noteditable == true || cellIndex >= visibleFieldsCount) {
                             return false;
                         } else {
                             return true;
                         }
-                    }
+                    }.bind(this)
                 }
             },
             componentCls: cls,

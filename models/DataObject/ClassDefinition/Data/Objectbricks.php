@@ -741,25 +741,33 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
-        if (!$omitMandatoryCheck) {
-            if ($data instanceof DataObject\Objectbrick) {
-                $validationExceptions = [];
+        if ($data instanceof DataObject\Objectbrick) {
+            $validationExceptions = [];
 
-                $allowedTypes = $this->getAllowedTypes();
-                foreach ($allowedTypes as $allowedType) {
-                    $getter = 'get' . ucfirst($allowedType);
-                    /** @var DataObject\Objectbrick\Data\AbstractData $item */
-                    $item = $data->$getter();
+            $itemCount = 0;
+            $allowedTypes = $this->getAllowedTypes();
+            foreach ($allowedTypes as $allowedType) {
+                $getter = 'get' . ucfirst($allowedType);
+                /** @var DataObject\Objectbrick\Data\AbstractData $item */
+                $item = $data->$getter();
 
-                    if ($item instanceof DataObject\Objectbrick\Data\AbstractData) {
-                        if ($item->getDoDelete()) {
-                            continue;
-                        }
+                if ($item instanceof DataObject\Objectbrick\Data\AbstractData) {
+                    if ($item->getDoDelete()) {
+                        continue;
+                    }
 
-                        if (!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
-                            continue;
-                        }
+                    $itemCount++;
 
+                    if (!$collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
+                        continue;
+                    }
+
+                    //max limit check should be performed irrespective of omitMandatory check
+                    if (!empty($this->maxItems) && $itemCount > $this->maxItems) {
+                        throw new Model\Element\ValidationException('Maximum limit reached for items in brick: ' . $this->getName());
+                    }
+
+                    if (!$omitMandatoryCheck) {
                         //needed when new brick is added but not saved yet - then validity check fails.
                         if (!$item->getFieldname()) {
                             $item->setFieldname($data->getFieldname());
@@ -777,12 +785,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                         }
                     }
                 }
+            }
 
-                if ($validationExceptions) {
-                    $aggregatedExceptions = new Model\Element\ValidationException('invalid brick ' . $this->getName());
-                    $aggregatedExceptions->setSubItems($validationExceptions);
-                    throw $aggregatedExceptions;
-                }
+            if ($validationExceptions) {
+                $aggregatedExceptions = new Model\Element\ValidationException('invalid brick ' . $this->getName());
+                $aggregatedExceptions->setSubItems($validationExceptions);
+                throw $aggregatedExceptions;
             }
         }
     }
