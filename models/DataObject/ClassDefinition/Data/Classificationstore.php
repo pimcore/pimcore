@@ -1437,4 +1437,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         return $this;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        return false;
+    }
 }

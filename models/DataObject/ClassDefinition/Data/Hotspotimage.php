@@ -774,16 +774,16 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
         $oldValue = [
             'image' => $oldValue->getImage()->getId(),
-            'hotspots' => $oldValue->getHotspots(),
-            'marker' => $oldValue->getMarker(),
-            'crop' => $oldValue->getCrop()
+            'hotspots' => $oldValue->getHotspots() ?? [],
+            'marker' => $oldValue->getMarker() ?? [],
+            'crop' => $oldValue->getCrop() ?? []
         ];
 
         $newValue = [
             'image' => $newValue->getImage()->getId(),
-            'hotspots' => $newValue->getHotspots(),
-            'marker' => $newValue->getMarker(),
-            'crop' => $newValue->getCrop()
+            'hotspots' => $newValue->getHotspots() ?? [],
+            'marker' => $newValue->getMarker() ?? [],
+            'crop' => $newValue->getCrop() ?? []
         ];
 
         return serialize($oldValue) === serialize($newValue);
