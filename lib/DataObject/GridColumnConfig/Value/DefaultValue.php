@@ -123,6 +123,7 @@ class DefaultValue extends AbstractValue
      */
     public function getLabeledValue($element)
     {
+        $result = null;
         /** @var Concrete $element */
         $attributeParts = explode('~', $this->attribute);
 
@@ -130,14 +131,29 @@ class DefaultValue extends AbstractValue
         $brickType = null;
         $brickKey = null;
 
+        
         if (substr($this->attribute, 0, 1) == '~') {
             // key value, ignore for now
+            if(in_array('classificationstore', $attributeParts)){
+                $getter = 'get' . ucfirst($attributeParts[2]);
+                $details = explode('-', $attributeParts[3]);
+
+                $groupId = $this->getGroupByKey($details[1], $element);
+
+                if ($element->$getter()->getLocalizedKeyValue($groupId, $details[1], $this->context['language'], true, true)) {
+                    $result = $this->getDefaultValue($element->$getter()->getLocalizedKeyValue($groupId, $details[1], $this->context['language'], true, true)->__toString());
+                } elseif(empty($result) && $element->$getter()->getLocalizedKeyValue($groupId, $details[1], null, true, true)) {
+                    $result = $this->getDefaultValue($element->$getter()->getLocalizedKeyValue($groupId, $details[1], null, true, true)->__toString());
+                } else {
+                    $getter = null;
+                }
+            }
         } elseif (count($attributeParts) > 1) {
             $brickType = $attributeParts[0];
             $brickKey = $attributeParts[1];
         }
 
-        if ($this->attribute && method_exists($element, $getter)) {
+        if (empty($result) && $this->attribute && method_exists($element, $getter)) {
             if ($element instanceof AbstractObject) {
                 try {
                     $result = $this->getValueForObject($element, $this->attribute, $brickType, $brickKey);
@@ -148,9 +164,20 @@ class DefaultValue extends AbstractValue
                 $result = $this->getDefaultValue($element->$getter());
             }
 
-            return $result;
         }
 
-        return null;
+        return $result;
+    }
+
+    private function getGroupByKey(int $keyId, AbstractObject $element): int
+    {
+        $group = reset(Db::get()->query('SELECT groupId' .
+            ' FROM object_classificationstore_data_' . $element->getClassId() .
+            ' classificationData INNER JOIN classificationstore_keys classificationKeys ON (classificationData.keyId = classificationKeys.id)' .
+            ' INNER JOIN classificationstore_groups classificationGroups ON (classificationData.groupId = classificationGroups.id)' .
+            ' WHERE o_id =' . $element->getId() . ' AND classificationData.keyId = ' . $keyId . ' LIMIT 1')
+            ->fetchAll(FetchMode::COLUMN));
+
+        return $group;
     }
 }
