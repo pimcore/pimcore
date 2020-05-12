@@ -492,8 +492,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function isEqual($oldValue, $newValue)
     {
-        $oldValue = $oldValue instanceof \DateTimeInterface ? $oldValue->getTimestamp() : null;
-        $newValue = $newValue instanceof \DateTimeInterface ? $newValue->getTimestamp() : null;
+        $oldValue = $oldValue instanceof \DateTimeInterface ? $oldValue->format('Y-m-d H:i') : null;
+        $newValue = $newValue instanceof \DateTimeInterface ? $newValue->format('Y-m-d H:i') : null;
 
         return $oldValue === $newValue;
     }
