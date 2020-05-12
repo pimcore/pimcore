@@ -1540,4 +1540,15 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     {
         $this->tabPosition = $tabPosition;
     }
+
+    /**
+     * @param mixed $oldValue
+     * @param mixed $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        return false;
+    }
 }
