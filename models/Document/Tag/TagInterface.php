@@ -24,14 +24,14 @@ interface TagInterface
     /**
      * Return the data for direct output to the frontend, can also contain HTML code!
      *
-     * @return string
+     * @return string|void
      */
     public function frontend();
 
     /**
      * Return the data for the admin, can also contain HTML code!
      *
-     * @return string
+     * @return string|void
      */
     public function admin();
 
