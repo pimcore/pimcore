@@ -158,18 +158,23 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             return null;
         }
 
-        if ($this->algorithm === static::HASH_FUNCTION_PASSWORD_HASH) {
-            $info = password_get_info($data);
+        // is already a hashed string? Then do not re-hash
+        $info = password_get_info($data);
+        if ($info['algo'] !== null && $info['algo'] !== 0) {
+            return $data;
+        }
 
-            // is already a hashed string
-            if ($info['algo'] !== null && $info['algo'] !== 0) {
-                return $data;
-            }
-        } else {
-            // is already a hashed string
-            if (strlen($data) >= 32) {
-                return $data;
-            }
+        // password_get_info() will not detect older, less secure, hashing algos
+        $maybeMD5 = preg_match('/^[a-f0-9]{32}$/', $data);
+        $maybeSHA1 = preg_match("/^([a-f0-9]{40})$/", $data);
+        $maybeSHA224 = preg_match("/^([a-f0-9]{56})$/", $data);
+        $maybeSHA256 = preg_match("/^([a-f0-9]{64})$/", $data);
+        $maybeSHA384 = preg_match("/^([a-f0-9]{96})$/", $data);
+        $maybeSHA512 = preg_match("/^([a-f0-9]{128})$/", $data);
+
+        // Probably already a hashed string
+        if ($maybeMD5 || $maybeSHA1 || $maybeSHA224 || $maybeSHA256 || $maybeSHA384 || $maybeSHA512) {
+            return $data;
         }
 
         $hashed = $this->calculateHash($data);
