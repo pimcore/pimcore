@@ -553,5 +553,6 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                 sleep($sleep);
             }
         }
+        return false;
     }
 }
