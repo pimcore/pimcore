@@ -180,11 +180,11 @@ trait Wrapper
     }
 
     /**
-     * @throws \Exception
+     * @return \Exception
      */
-    protected function getHardlinkError()
+    protected function getHardlinkError(): \Exception
     {
-        return new \Exception('Method no supported by hardlinked documents');
+        return new \Exception('Method not supported by hard linked documents');
     }
 
     /**
