@@ -125,6 +125,8 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
     /**
      * @param DataObject\Concrete $object
      * @param bool $saveMode true if called from save method
+     *
+     * @return array
      */
     public function delete(DataObject\Concrete $object, $saveMode = false)
     {
@@ -138,5 +140,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                 $this->db->delete($tableName, ['o_id' => $object->getId()]);
             }
         }
+
+        return [];
     }
 }
