@@ -296,6 +296,21 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/CheckoutManager/CheckoutManager.php
 
 		-
+			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Command\\\\CleanupPendingOrdersCommand\\:\\:execute\\(\\) should return int but return statement is missing\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Command/CleanupPendingOrdersCommand.php
+
+		-
+			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Command\\\\Voucher\\\\CleanupReservationsCommand\\:\\:execute\\(\\) should return int but return statement is missing\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Command/Voucher/CleanupReservationsCommand.php
+
+		-
+			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Command\\\\Voucher\\\\CleanupStatisticsCommand\\:\\:execute\\(\\) should return int but return statement is missing\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/Command/Voucher/CleanupStatisticsCommand.php
+
+		-
 			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\OrderListInterface\\:\\:joinPriceModifications\\(\\)\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/Controller/AdminOrderController.php
@@ -1226,6 +1241,11 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/PriceSystem/CachingPriceSystem.php
 
 		-
+			message: "#^Cannot access offset string on int\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/AbstractOrder.php
+
+		-
 			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\Condition\\\\TargetGroup\\:\\:\\$targetGroup \\(Pimcore\\\\Model\\\\Tool\\\\Targeting\\\\TargetGroup\\) does not accept null\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/TargetGroup.php
@@ -1321,6 +1341,16 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/VoucherService/TokenManager/Pattern.php
 
 		-
+			message: "#^Method Pimcore\\\\Bundle\\\\GeneratorBundle\\\\Command\\\\BaseGenerateBundleCommand\\:\\:execute\\(\\) should return int but return statement is missing\\.$#"
+			count: 1
+			path: bundles/GeneratorBundle/Command/BaseGenerateBundleCommand.php
+
+		-
+			message: "#^Method Pimcore\\\\Bundle\\\\GeneratorBundle\\\\Command\\\\GenerateBundleCommand\\:\\:execute\\(\\) should return int but return statement is missing\\.$#"
+			count: 1
+			path: bundles/GeneratorBundle/Command/GenerateBundleCommand.php
+
+		-
 			message: "#^Property Pimcore\\\\Analytics\\\\Piwik\\\\Api\\\\SitesManager\\:\\:\\$pimcoreConfig \\(Pimcore\\\\Analytics\\\\Piwik\\\\Config\\\\Config\\) does not accept Pimcore\\\\Config\\.$#"
 			count: 1
 			path: lib/Analytics/Piwik/Api/SitesManager.php
@@ -1336,14 +1366,29 @@ parameters:
 			path: lib/Browser.php
 
 		-
-			message: "#^Method Pimcore\\\\Cache\\\\Core\\\\CoreHandler\\:\\:getItem\\(\\) should return Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface but returns Psr\\\\Cache\\\\CacheItemInterface\\.$#"
+			message: "#^Return type \\(Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\) of method Pimcore\\\\Cache\\\\Pool\\\\AbstractCacheItemPool\\:\\:getItem\\(\\) should be compatible with return type \\(Symfony\\\\Component\\\\Cache\\\\CacheItem\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItem\\(\\)$#"
 			count: 1
-			path: lib/Cache/Core/CoreHandler.php
+			path: lib/Cache/Pool/AbstractCacheItemPool.php
+
+		-
+			message: "#^Return type \\(array\\<Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\>\\|\\(iterable\\<Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\>&Traversable\\)\\) of method Pimcore\\\\Cache\\\\Pool\\\\AbstractCacheItemPool\\:\\:getItems\\(\\) should be compatible with return type \\(iterable\\<Symfony\\\\Component\\\\Cache\\\\CacheItem\\>&Traversable\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItems\\(\\)$#"
+			count: 1
+			path: lib/Cache/Pool/AbstractCacheItemPool.php
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\:\\:getMetadata\\(\\)\\.$#"
 			count: 1
 			path: lib/Cache/Pool/AbstractCacheItemPool.php
+
+		-
+			message: "#^Return type \\(Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\) of method Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemPoolInterface\\:\\:getItem\\(\\) should be compatible with return type \\(Symfony\\\\Component\\\\Cache\\\\CacheItem\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItem\\(\\)$#"
+			count: 1
+			path: lib/Cache/Pool/PimcoreCacheItemPoolInterface.php
+
+		-
+			message: "#^Return type \\(array\\<Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\>\\|\\(iterable\\<Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\>&Traversable\\)\\) of method Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemPoolInterface\\:\\:getItems\\(\\) should be compatible with return type \\(iterable\\<Symfony\\\\Component\\\\Cache\\\\CacheItem\\>&Traversable\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItems\\(\\)$#"
+			count: 1
+			path: lib/Cache/Pool/PimcoreCacheItemPoolInterface.php
 
 		-
 			message: "#^Method Pimcore\\\\Cache\\\\Pool\\\\Redis\\:\\:doClear\\(\\) should return bool but returns Credis_Client\\|string\\.$#"
@@ -1706,11 +1751,6 @@ parameters:
 			path: lib/Workflow/Place/OptionsProvider.php
 
 		-
-			message: "#^Call to an undefined method RecursiveIteratorIterator\\:\\:getSubPathName\\(\\)\\.$#"
-			count: 2
-			path: lib/helper-functions.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getLowQualityPreviewDataUri\\(\\)\\.$#"
 			count: 1
 			path: models/Asset/Image/Thumbnail.php
@@ -1724,6 +1764,21 @@ parameters:
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getDuration\\(\\)\\.$#"
 			count: 1
 			path: models/Asset/Video/ImageThumbnail.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Asset\\\\WebDAV\\\\File\\:\\:put\\(\\) should return string\\|null but return statement is missing\\.$#"
+			count: 1
+			path: models/Asset/WebDAV/File.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Asset\\\\WebDAV\\\\Folder\\:\\:createFile\\(\\) should return string\\|null but return statement is missing\\.$#"
+			count: 1
+			path: models/Asset/WebDAV/Folder.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Asset\\\\WebDAV\\\\Tree\\:\\:move\\(\\) should return int but return statement is missing\\.$#"
+			count: 1
+			path: models/Asset/WebDAV/Tree.php
 
 		-
 			message: "#^Method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Classificationstore\\:\\:getVersionPreview\\(\\) should return string but returns Pimcore\\\\Model\\\\DataObject\\\\Classificationstore\\|null\\.$#"
@@ -1791,9 +1846,194 @@ parameters:
 			path: models/DataObject/Data/InputQuantityValue.php
 
 		-
+			message: "#^Method Pimcore\\\\Model\\\\DataObject\\\\Objectbrick\\\\Dao\\:\\:delete\\(\\) should return array but return statement is missing\\.$#"
+			count: 1
+			path: models/DataObject/Objectbrick/Dao.php
+
+		-
 			message: "#^Access to an undefined property Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Fieldcollections\\:\\:\\$layoutId\\.$#"
 			count: 1
 			path: models/DataObject/Service.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\Email\\:\\:save\\(\\) should return Pimcore\\\\Model\\\\Document but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Email.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\Folder\\:\\:save\\(\\) should return Pimcore\\\\Model\\\\Document but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Folder.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\Hardlink\\:\\:save\\(\\) should return Pimcore\\\\Model\\\\Document but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Hardlink.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\Link\\:\\:save\\(\\) should return Pimcore\\\\Model\\\\Document but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Link.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\Page\\:\\:save\\(\\) should return Pimcore\\\\Model\\\\Document but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Page.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\Printcontainer\\:\\:save\\(\\) should return Pimcore\\\\Model\\\\Document but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Printcontainer.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\Printpage\\:\\:save\\(\\) should return Pimcore\\\\Model\\\\Document but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Printpage.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Hardlink\\\\Wrapper\\\\Snippet\\:\\:save\\(\\) should return Pimcore\\\\Model\\\\Document but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Hardlink/Wrapper/Snippet.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Area\\:\\:admin\\(\\) should return string but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Area.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Area\\:\\:frontend\\(\\) should return string but empty return statement found\\.$#"
+			count: 1
+			path: models/Document/Tag/Area.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Area\\:\\:frontend\\(\\) should return string but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Area.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Areablock\\:\\:admin\\(\\) should return string but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Areablock.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Areablock\\:\\:frontend\\(\\) should return string but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Areablock.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Areablock\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Areablock.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Block\\:\\:admin\\(\\) should return string but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Block.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Block\\:\\:frontend\\(\\) should return string but returns null\\.$#"
+			count: 1
+			path: models/Document/Tag/Block.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Block\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Block.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Checkbox\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Checkbox.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Date\\:\\:frontend\\(\\) should return string but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Date.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Date\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Date.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Embed\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Embed.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Image\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Image.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Input\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Input.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Link\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Link.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Multiselect\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Multiselect.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Numeric\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Numeric.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Pdf\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Pdf.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Relation\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Relation.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Relations\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Relations.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Renderlet\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Renderlet.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Select\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Select.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Snippet\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Snippet.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Table\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Table.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Textarea\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Textarea.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Video\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Video.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Document\\\\Tag\\\\Wysiwyg\\:\\:getFromWebserviceImport\\(\\) should return Pimcore\\\\Model\\\\Webservice\\\\Data\\\\Document\\\\Element but return statement is missing\\.$#"
+			count: 1
+			path: models/Document/Tag/Wysiwyg.php
 
 		-
 			message: "#^Invalid array key type object\\.$#"
@@ -1804,3 +2044,4 @@ parameters:
 			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Webservice\\\\Data\\\\DataObject\\\\Element\\:\\:\\$fieldcollection\\.$#"
 			count: 1
 			path: models/Webservice/Data/DataObject/Concrete.php
+
