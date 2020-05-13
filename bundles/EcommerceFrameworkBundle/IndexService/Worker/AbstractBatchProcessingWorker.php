@@ -531,10 +531,9 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     }
     
     /**
-     * @param string $query
-     * @param null $params
+     * @param \Closure $fn
      * @param int $maxTries
-     * @param int $waitTimeout
+     * @param float $sleep
      * @return bool
      * @throws \Exception
      */
