@@ -181,6 +181,8 @@ class TargetingDataCollector
                 'name' => $targetGroup->getName()
             ];
         }
+
+        return null;
     }
 
     public function collectDocumentTargetGroupMapping(): array

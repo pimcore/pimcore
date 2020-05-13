@@ -6,6 +6,7 @@ services:
 
     Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\DefaultService:
         arguments:
+            - '@pimcore.locale'
             - '%pimcore_ecommerce.voucher_service.options%'
 
     Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\TokenManagerFactory:

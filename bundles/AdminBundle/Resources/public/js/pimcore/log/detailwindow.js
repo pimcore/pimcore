@@ -116,7 +116,6 @@ pimcore.log.detailwindow = Class.create({
                 fileObjectText = fileObjectText.substr(0, 60) + "...";
             }
             var url = '/admin/log/show-file-object?filePath=' + this.data.fileobject;
-            url = pimcore.helpers.addCsrfTokenToUrl(url);
 
             var html = Ext.String.format('<a href="{0}" target="_blank">{1}</a>', url, fileObjectText);
             items.push({

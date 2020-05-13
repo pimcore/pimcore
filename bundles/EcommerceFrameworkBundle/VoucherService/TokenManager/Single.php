@@ -34,7 +34,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     {
         parent::__construct($configuration);
         if ($configuration instanceof VoucherTokenTypeSingle) {
-            $this->template = 'PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabSingle.html.php';
+            $this->template = 'PimcoreEcommerceFrameworkBundle:voucher:voucher_code_tab_single.html.twig';
         } else {
             throw new InvalidConfigException('Invalid Configuration Class for type VoucherTokenTypeSingle.');
         }
@@ -54,6 +54,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
      */
     public function cleanUpCodes($filter = [])
     {
+        return true;
     }
 
     public function cleanupReservations($duration = 0, $seriesId = null)
@@ -62,7 +63,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     }
 
     /**
-     * @param $viewParamsBag
+     * @param array $viewParamsBag
      * @param array $params
      *
      * @return string

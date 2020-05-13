@@ -60,7 +60,7 @@ class InputQuantityValue extends QuantityValue
 
     /**
      * @param array $data
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return InputQuantityValueDataObject|null
@@ -81,8 +81,8 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
-     * @param float $data
-     * @param null $object
+     * @param array $data
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return InputQuantityValueDataObject|null
@@ -130,7 +130,7 @@ class InputQuantityValue extends QuantityValue
 
     /**
      * @param string $importValue
-     * @param null $object
+     * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return null|InputQuantityValueDataObject
@@ -149,10 +149,12 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return null|InputQuantityValueDataObject
      *
@@ -186,16 +188,16 @@ class InputQuantityValue extends QuantityValue
 
     /**
      * @param mixed $value
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array|mixed|null|InputQuantityValueDataObject
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if ($params['blockmode'] && is_array($value)) {
+        if (($params['blockmode'] ?? false) && is_array($value)) {
             return $this->getNewDataObject($value['value'], $value['value2']);
-        } elseif ($params['simple']) {
+        } elseif ($params['simple'] ?? false) {
             return $value;
         } elseif (is_array($value)) {
             return [

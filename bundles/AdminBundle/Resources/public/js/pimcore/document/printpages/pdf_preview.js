@@ -150,9 +150,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
             this.layout.on("resize", this.onLayoutResize.bind(this));
             this.layout.on("activate", this.refresh.bind(this));
             this.layout.on("afterrender", function () {
-
-                // unfortunately we have to do this in jQuery, because Ext doesn'T offer this functionality
-                jQuery("#" + this.iframeName).on("load", function () {
+                Ext.get(this.iframeName).on('load', function() {
                     // this is to hide the mask if edit/startup.js isn't executed (eg. in case an error is shown)
                     // otherwise edit/startup.js will disable the loading mask
                     if(!this["frame"]) {
@@ -344,7 +342,7 @@ pimcore.document.printpages.pdfpreview = Class.create({
         Ext.Ajax.request({
             url: "/admin/printpage/start-pdf-generation",
             method: 'POST',
-            params: params,
+            jsonData: params,
             success: function(response) {
                 result = Ext.decode(response.responseText);
                 if(result.success) {
@@ -374,7 +372,6 @@ pimcore.document.printpages.pdfpreview = Class.create({
     loadCurrentPreview: function () {
         var date = new Date();
         var url = "/admin/printpage/pdf-download?id=" + this.page.id + "&time=" + date.getTime();
-        url = pimcore.helpers.addCsrfTokenToUrl(url);
 
         try {
             Ext.get(this.iframeName).dom.src = url;

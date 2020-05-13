@@ -19,13 +19,14 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class CaseConverter extends AbstractOperator
 {
+    /** @var int */
     private $capitalization;
 
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->capitalization = $config->capitalization;
+        $this->capitalization = $config->capitalization ?? 0;
     }
 
     public function getLabeledValue($element)
@@ -51,7 +52,7 @@ class CaseConverter extends AbstractOperator
                 $childValues = [$childValues];
             }
 
-            /** @var $childValue string */
+            /** @var array $childValues */
             if (is_array($childValues)) {
                 foreach ($childValues as $childValue) {
                     if ($this->capitalization == 1) {

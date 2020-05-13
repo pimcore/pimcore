@@ -22,16 +22,18 @@ use Pimcore\Model\DataObject\Data\Hotspotimage;
 
 class AssetMetadataGetter extends AbstractOperator
 {
+    /** @var string */
     private $metaField;
 
+    /** @var string|null */
     private $locale;
 
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->metaField = $config->metaField;
-        $this->locale = $config->locale;
+        $this->metaField = $config->metaField ?? '';
+        $this->locale = $config->locale ?? null;
     }
 
     public function getLabeledValue($element)
@@ -52,6 +54,8 @@ class AssetMetadataGetter extends AbstractOperator
                     $childValues = [$childValues];
                 }
 
+                $newValue = null;
+
                 if (is_array($childValues)) {
                     foreach ($childValues as $value) {
                         if (is_array($value)) {
@@ -65,8 +69,6 @@ class AssetMetadataGetter extends AbstractOperator
                             $newValue = $this->getMetadata($value);
                         }
                     }
-                } else {
-                    $newValue = null;
                 }
 
                 $newChildsResult[] = $newValue;
@@ -83,7 +85,7 @@ class AssetMetadataGetter extends AbstractOperator
     }
 
     /**
-     * @param $value
+     * @param Hotspotimage|Asset $value
      *
      * @return mixed
      */

@@ -89,7 +89,7 @@ pimcore.object.gridcolumn.operator.assetmetadatagetter = Class.create(pimcore.ob
         var data = [];
         for (var i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
             var language = pimcore.settings.websiteLanguages[i];
-            data.push([language, ts(pimcore.available_languages[language])]);
+            data.push([language, t(pimcore.available_languages[language])]);
         }
 
         var store = new Ext.data.ArrayStore({

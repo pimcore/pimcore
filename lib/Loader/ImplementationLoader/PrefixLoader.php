@@ -84,7 +84,7 @@ class PrefixLoader extends AbstractClassNameLoader
     /**
      * Iterates prefixes and tries to find the class name
      *
-     * @param $name
+     * @param string $name
      *
      * @return mixed|string
      */

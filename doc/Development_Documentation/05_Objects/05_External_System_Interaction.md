@@ -91,15 +91,15 @@ prevent memory issues
 
 ```php
 // just call this static method
-Pimcore::collectGarbage();
+\Pimcore::collectGarbage();
 ```
 
-**WARNING:** This will flush the entire Zend_Registry!
+**WARNING:** This will flush the entire internal registry!
 
 To avoid this, you can pass an array with keys (indexes) which should stay in the registry eg. 
 
 ```php 
-Pimcore::collectGarbage(["myImportantKey","myConfig"]);
+\Pimcore::collectGarbage(["myImportantKey", "myConfig"]);
 
 // You can also add items to the static list of globally protected keys by passing them to
 $longRunningHelper = \Pimcore::getContainer()->get(\Pimcore\Helper\LongRunningHelper::class);

@@ -112,6 +112,7 @@ class Unit extends Model\AbstractModel
     public static function getById($id)
     {
         try {
+            $table = null;
             if (Cache\Runtime::isRegistered(self::CACHE_KEY)) {
                 $table = Cache\Runtime::get(self::CACHE_KEY);
             }
@@ -127,7 +128,7 @@ class Unit extends Model\AbstractModel
                 $table = [];
                 $list = new Model\DataObject\QuantityValue\Unit\Listing();
                 $list = $list->load();
-                /** @var $item Model\DataObject\QuantityValue\Unit */
+                /** @var Model\DataObject\QuantityValue\Unit $item */
                 foreach ($list as $item) {
                     $table[$item->getId()] = $item;
                 }

@@ -34,7 +34,7 @@ to apply the setting to all folders or just leave it as it is.
 
 ## CSV Export Settings
 
-By default, [Inheritance](../../Development_Documentation/05_Objects/01_Object_Classes/05_Class_Settings/01_Inheritance.md) will be disabled.
+By default, [Inheritance](../../Development_Documentation/05_Objects/01_Object_Classes/05_Class_Settings/25_Inheritance.md) will be disabled.
 If you want to enable it or adjust CSV settings do this via the settings dialog.
 
 ![Configurator Button Expanded](../img/gridconfig/csv_export_settings.png)

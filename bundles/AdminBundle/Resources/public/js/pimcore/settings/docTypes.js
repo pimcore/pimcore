@@ -62,7 +62,10 @@ pimcore.settings.document.doctypes = Class.create({
                 flex: 100,
                 sortable: true,
                 dataIndex: 'name',
-                editor: new Ext.form.TextField({})
+                editor: new Ext.form.TextField({}),
+                renderer: function(d) {
+                    return Ext.util.Format.htmlEncode(d);
+                }
             },
             {
                 text: t("group"),

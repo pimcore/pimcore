@@ -5,7 +5,7 @@ Pimcore - Open Source Digital Experience Platform: MDM/PIM, CDP, DAM, CMS/UX & e
 
 [![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)
 [![Software License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg?style=flat)](LICENSE.md)
-[![Build Status](https://travis-ci.org/pimcore/pimcore.svg)](https://travis-ci.org/pimcore/pimcore)
+[![Build Status](https://travis-ci.com/pimcore/pimcore.svg)](https://travis-ci.com/pimcore/pimcore)
 [![Gitter](https://img.shields.io/badge/gitter-join%20chat-brightgreen.svg?style=flat)](https://gitter.im/pimcore/pimcore)
 
 * 🌍 [Website](https://pimcore.com/) - Learn more about Pimcore
@@ -31,7 +31,7 @@ For details, please have a look at our [contributing guide](CONTRIBUTING.md).
 
 ## Key Benefits and Advantages
 ### ⚒ Data Modelling and UI Design at the same Time 
-No matter if your're dealing with unstructured web documents or structured data for MDM/PIM, you define the 
+No matter if you're dealing with unstructured web documents or structured data for MDM/PIM, you define the 
 UI design (web documents by a template and structured data with a intuitive graphical editor), Pimcore knows 
 how to persist the data efficiently and optimized for fast access.
 
@@ -62,27 +62,22 @@ Images, videos, PDF, Word/Excel documents and other files can be managed and org
 ![Pimcore Admin Interface Screenshot PIM/MDM](./doc/Development_Documentation/img/pimcore-screenshot-3.png)
 Predefined structured data, which is centrally managed and created either manually or automatically via the API. Used for products & attributes (MDM/PIM), customers (CDP), blog articles (WCM), orders (digital commerce), and so much more. Objects can be used to fill content areas and elements of a website, portal or app with data from one central source. Single source administration of data ensures a consistent, up-to-date digital customer experience with little effort.
 
-#### Basic Demo (CMS)
-_Admin-URL_: [https://demo-basic.pimcore.org/admin](https://demo-basic.pimcore.org/admin)  
-_Username_: `admin`  
-_Password_: `demo`
-
-#### Advanced Demo (MDM/PIM, E-Commerce, DAM, CMS, ...)
-_Admin-URL_: [https://demo-advanced.pimcore.org/admin](https://demo-advanced.pimcore.org/admin)  
+#### Demo (MDM/PIM, E-Commerce, DAM, CMS, ...)
+_Admin-URL_: [https://demo.pimcore.fun/admin/](https://demo.pimcore.fun/admin/)  
 _Username_: `admin`  
 _Password_: `demo`
 
 ## Getting Started
 _**Only 3 commands to start!**_ 😎
 ```bash
-COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/skeleton:dev-master ./my-project
+COMPOSER_MEMORY_LIMIT=-1 composer create-project pimcore/skeleton ./my-project
 cd ./my-project
 ./vendor/bin/pimcore-install
 ```
 
 This will install an empty skeleton application, 
-but we're also offering 3 different demo packages for your convenience - of course also with 3 commands 💪
-[Click here for more installation options and a detailed guide](https://pimcore.com/docs/5.x/Development_Documentation/Getting_Started/Installation.html)
+but we're also offering a demo package for your convenience - of course also with 3 commands 💪
+[Click here for more installation options and a detailed guide](https://pimcore.com/docs/6.x/Development_Documentation/Getting_Started/Installation.html)
 
 ## Copyright and License 
 Copyright: [Pimcore](http://www.pimcore.org) GmbH  

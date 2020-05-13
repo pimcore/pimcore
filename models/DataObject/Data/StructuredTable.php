@@ -40,7 +40,7 @@ class StructuredTable implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $data
+     * @param array $data
      *
      * @return $this
      */
@@ -61,8 +61,10 @@ class StructuredTable implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $name
-     * @param $arguments
+     * @param string $name
+     * @param array $arguments
+     *
+     * @return mixed
      *
      * @throws \Exception
      */
@@ -153,8 +155,8 @@ class StructuredTable implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param $rowDefs
-     * @param $colDefs
+     * @param array $rowDefs
+     * @param array $colDefs
      *
      * @return string
      */

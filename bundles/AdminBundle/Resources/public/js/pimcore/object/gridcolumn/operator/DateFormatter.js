@@ -129,7 +129,6 @@ pimcore.object.gridcolumn.operator.dateformatter = Class.create(pimcore.object.g
 
     commitData: function(params) {
         this.node.data.configAttributes.format = this.formatField.getValue();
-        var nodeLabel = this.getNodeLabel(this.node.data.configAttributes);
         this.node.set('isOperator', true);
         this.window.close();
 

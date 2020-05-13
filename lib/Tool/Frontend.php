@@ -99,7 +99,7 @@ class Frontend
     /**
      * @param Document $document
      *
-     * @return Site
+     * @return Site|null
      */
     public static function getSiteForDocument($document)
     {
@@ -119,7 +119,7 @@ class Frontend
             }
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -189,13 +189,20 @@ class Frontend
 
                 // not nice to do a browser detection but for now the easiest way to get around the topic described in #4345
                 $userAgent = strtolower($requestHelper->getMasterRequest()->headers->get('User-Agent'));
-                if (preg_match('@(firefox|edge)/([\d]+)@', $userAgent, $matches)) {
-                    if ($matches[1] == 'firefox' && intval($matches[2]) >= 65) {
-                        return true;
-                    }
 
-                    if ($matches[1] == 'edge' && intval($matches[2]) >= 18) {
-                        return true;
+                // order of browsers important since edge also sends chrome in user agent
+                $browsersToCheck = ['firefox' => 65, 'edge' => 18, 'chrome' => 32];
+                foreach ($browsersToCheck as $browser => $version) {
+                    if (preg_match('@(' . $browser . ')/([\d]+)@', $userAgent, $matches)) {
+                        if ($matches[1] == $browser) {
+                            if (intval($matches[2]) >= $version) {
+                                return true;
+                            } else {
+
+                                //explicitly return false if version constraint is not met - since edge also sends chrome in user agent
+                                return false;
+                            }
+                        }
                     }
                 }
             }

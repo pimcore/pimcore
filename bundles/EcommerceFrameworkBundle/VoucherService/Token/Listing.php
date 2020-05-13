@@ -20,15 +20,26 @@ use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * @method Token[] load()
+ * @method Token current()
  * @method int getTotalCount()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing\Dao getDao()
  */
-class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterator, AdapterInterface, AdapterAggregateInterface
+class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
+    /**
+     * @var Token[]|null
+     *
+     * @deprecated use getter/setter methods or $this->data
+     */
     public $tokens;
 
+    public function __construct()
+    {
+        $this->tokens = & $this->data;
+    }
+
     /**
-     * @param  $key
+     * @param string $key
      *
      * @return bool
      */
@@ -42,7 +53,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterato
     }
 
     /**
-     * @param $seriesId
+     * @param int|null $seriesId
      * @param array $filter
      *
      * @throws \Exception
@@ -68,16 +79,12 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterato
                 $this->addConditionParam('length = ?', $filter['length']);
             }
 
-            if ($filter['creation_to'] && $filter['creation_from']) {
-                $this->addConditionParam("Date(timestamp) BETWEEN STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_from']);
-                $this->addConditionParam("STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_to']);
-            } else {
-                if ($filter['creation_from']) {
-                    $this->addConditionParam("DATE(timestamp) >= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_from']);
-                }
-                if ($filter['creation_to']) {
-                    $this->addConditionParam("DATE(timestamp) <= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_to']);
-                }
+            if ($filter['creation_from']) {
+                $this->addConditionParam("DATE(timestamp) >= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_from']);
+            }
+
+            if ($filter['creation_to']) {
+                $this->addConditionParam("DATE(timestamp) <= STR_TO_DATE(?,'%Y-%m-%d')", $filter['creation_to']);
             }
 
             if ($this->isValidOrderKey($filter['sort_criteria'])) {
@@ -113,11 +120,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterato
      */
     public function getTokenList()
     {
-        if (empty($this->tokens)) {
-            $this->load();
-        }
-
-        return $this->tokens;
+        return $this->getData();
     }
 
     public static function getCodes($seriesId, $params)
@@ -209,6 +212,8 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterato
     {
         $query = 'SELECT COUNT(t.id) FROM ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Dao::TABLE_NAME . ' as t
             INNER JOIN ' . \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation\Dao::TABLE_NAME . ' as r ON t.token = r.token';
+        $params = [];
+
         if (isset($seriesId)) {
             $query .= ' WHERE voucherSeriesId = ?';
             $params[] = $seriesId;
@@ -223,7 +228,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterato
     }
 
     /**
-     * @param $length
+     * @param int $length
      * @param null|string $seriesId
      *
      * @return null|string
@@ -320,7 +325,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterato
     }
 
     /**
-     * @param $codes
+     * @param array|string $codes
      *
      * @return bool
      */
@@ -344,19 +349,19 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterato
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getTokens()
     {
-        return $this->tokens;
+        return $this->getData();
     }
 
     /**
-     * @param mixed $tokens
+     * @param array $tokens
      */
     public function setTokens($tokens)
     {
-        $this->tokens = $tokens;
+        return $this->setData($tokens);
     }
 
     /**
@@ -365,64 +370,6 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements \Iterato
     public function getPaginatorAdapter()
     {
         return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function current()
-    {
-        $this->getTokens();
-        $var = current($this->tokens);
-
-        return $var;
-    }
-
-    /**
-     * @return mixed|void
-     */
-    public function next()
-    {
-        $this->getTokens();
-        $var = next($this->tokens);
-
-        return $var;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function key()
-    {
-        $this->getTOkens();
-        $var = key($this->tokens);
-
-        return $var;
-    }
-
-    /**
-     * @return bool
-     */
-    public function valid()
-    {
-        $this->getTokens();
-        $var = $this->current() !== false;
-
-        return $var;
-    }
-
-    /**
-     * (PHP 5 &gt;= 5.0.0)<br/>
-     * Rewind the Iterator to the first element
-     *
-     * @link http://php.net/manual/en/iterator.rewind.php
-     *
-     * @return void Any returned value is ignored.
-     */
-    public function rewind()
-    {
-        $this->getTokens();
-        reset($this->tokens);
     }
 
     /**

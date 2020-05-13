@@ -11,7 +11,8 @@ $url = 'http://'. $_SERVER["HTTP_HOST"] . "/en/payment/complete?state=";
  // wirecard seamless
 $config = [
     'view' => $this->view,
-    'orderIdent' => $paymentInformation->getInternalPaymentId()
+    'orderIdent' => $paymentInformation->getInternalPaymentId(),
+    'language' => $language
 ];
 ```
 After selection of the payment type you can then build your redirect url by doing:
@@ -34,7 +35,9 @@ $config = [
     "paymentType" => $this->getParam('paymentType'),
     "cart" => $this->getCart(),
     "orderDescription" => $orderNumber,
-    "orderReference" => $orderNumber];
+    "orderReference" => $orderNumber,
+    "language" => $language
+    ];
 
 return $this->json(['url' => $payment->getInitPaymentRedirectUrl($config)]);
 ```

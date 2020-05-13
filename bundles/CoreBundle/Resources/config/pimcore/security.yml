@@ -20,7 +20,7 @@ security:
         # admin form login
         admin:
             anonymous: ~
-            pattern: ^/admin
+            pattern: ^/admin(/.*)?$
             # admin firewall is stateless as we open the admin
             # session on demand for non-blocking parallel requests
             stateless: true
@@ -44,7 +44,7 @@ security:
 
 
         webservice:
-            pattern: ^/webservice
+            pattern: ^/webservice(/.*)?$
             stateless: true
             provider: pimcore_admin
             guard:

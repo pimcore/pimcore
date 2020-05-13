@@ -22,7 +22,7 @@ use Pimcore\Model\Tool\CustomReport\Adapter\CustomReportAdapterInterface;
 class ReportAdapter implements AddressSourceAdapterInterface
 {
     /**
-     * @var string[]
+     * @var string
      */
     protected $emailFieldName;
 
@@ -47,7 +47,7 @@ class ReportAdapter implements AddressSourceAdapterInterface
     protected $list;
 
     /**
-     * @param $emailFieldName
+     * @param string $emailFieldName
      * @param CustomReportAdapterInterface $reportAdapter
      */
     public function __construct($emailFieldName, CustomReportAdapterInterface $reportAdapter)
@@ -128,8 +128,8 @@ class ReportAdapter implements AddressSourceAdapterInterface
     /**
      * returns array of params to be set on mail for single sending
      *
-     * @param $limit
-     * @param $offset
+     * @param int $limit
+     * @param int $offset
      *
      * @return SendingParamContainer[]
      */

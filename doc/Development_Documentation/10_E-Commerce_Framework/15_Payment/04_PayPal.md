@@ -8,7 +8,7 @@ The `PayPalSmartPaymentButton` provides an integration with the PayPal Smart Pay
 
 1) Update your `composer.json`
 
-Add add `paypal/paypal-checkout-sdk:^1` to your `composer.json`. 
+Add `paypal/paypal-checkout-sdk:^1` to your `composer.json`. 
 
 2) Setup API credentials and Pimcore E-Commerce Framework Configuration
 
@@ -38,9 +38,7 @@ Integrate PayPal payment button and overwrite a few methods like in the sample. 
 ```php
 
     <?php
-        /**
-        * @var $payment \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PayPalSmartPaymentButton
-        */
+        /** @var \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PayPalSmartPaymentButton $payment */
      ?>
     <script src="<?= $payment->buildPaymentSDKLink() ?>">
     </script>
@@ -126,7 +124,7 @@ public function startPaymentAction() {
     ];
     
     $response = $payment->initPayment($cart->getPriceCalculator()->getGrandTotal(), $config);
-    return $this->json((array)$response);
+    return new \Symfony\Component\HttpFoundation\JsonResponse($response);
 
 } 
 

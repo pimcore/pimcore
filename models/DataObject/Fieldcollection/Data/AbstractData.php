@@ -18,14 +18,20 @@
 namespace Pimcore\Model\DataObject\Fieldcollection\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\Concrete;
 
 /**
  * @method Dao getDao()
+ * @method void save(Model\DataObject\Concrete $object, $params = [], $saveRelationalData = true)
  */
-abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface
+abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface
 {
+    use Model\Element\ElementDumpStateTrait;
+
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
+
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
      * @var int
@@ -41,6 +47,11 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      * @var Model\DataObject\Concrete
      */
     protected $object;
+
+    /**
+     * @var int
+     */
+    protected $objectId;
 
     /**
      * @var string
@@ -76,7 +87,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      *
      * @return $this
      */
@@ -96,7 +107,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @return mixed
+     * @return Model\DataObject\Fieldcollection\Definition
      */
     public function getDefinition()
     {
@@ -106,28 +117,33 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param Model\DataObject\Concrete $object
+     * @param Concrete $object
      *
      * @return $this
      */
     public function setObject($object)
     {
+        $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
 
         return $this;
     }
 
     /**
-     * @return Model\DataObject\Concrete
+     * @return Concrete
      */
     public function getObject()
     {
+        if ($this->objectId && !$this->object) {
+            $this->setObject(Concrete::getById($this->objectId));
+        }
+
         return $this->object;
     }
 
     /**
      * @param string $fieldName
-     * @param null $language
+     * @param string|null $language
      *
      * @return mixed
      */
@@ -138,8 +154,8 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     /**
      * @param string $fieldName
-     * @param $value
-     * @param null $language
+     * @param mixed $value
+     * @param string|null $language
      *
      * @return mixed
      */
@@ -156,7 +172,8 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         $lazyLoadedFieldNames = [];
         $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+            if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
+                            && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }
@@ -183,10 +200,10 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     public function __sleep()
     {
         $parentVars = parent::__sleep();
-        $blockedVars = ['loadedLazyKeys'];
+        $blockedVars = ['loadedLazyKeys', 'object'];
         $finalVars = [];
 
-        if (!isset($this->getObject()->_fulldump)) {
+        if (!$this->isInDumpState()) {
             //Remove all lazy loaded fields if item gets serialized for the cache (not for versions)
             $blockedVars = array_merge($this->getLazyLoadedFieldNames(), $blockedVars);
         }
@@ -198,5 +215,12 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         }
 
         return $finalVars;
+    }
+
+    public function __wakeup()
+    {
+        if ($this->object) {
+            $this->objectId = $this->object->getId();
+        }
     }
 }

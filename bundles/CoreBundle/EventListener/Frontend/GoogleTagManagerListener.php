@@ -114,11 +114,11 @@ class GoogleTagManagerListener
         $siteKey = $siteId->getConfigKey();
 
         $reportConfig = Config::getReportConfig();
-        if (!isset($reportConfig->tagmanager->sites->$siteKey->containerId)) {
+        if (!isset($reportConfig->get('tagmanager')->sites->$siteKey->containerId)) {
             return;
         }
 
-        $containerId = $reportConfig->tagmanager->sites->$siteKey->containerId;
+        $containerId = $reportConfig->get('tagmanager')->sites->$siteKey->containerId;
         if (!$containerId) {
             return;
         }

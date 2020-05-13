@@ -65,8 +65,8 @@ class HeadTitle extends AbstractHelper
     }
 
     /**
-     * @param null $title
-     * @param null $setType
+     * @param string|null $title
+     * @param string|null $setType
      *
      * @return $this
      */

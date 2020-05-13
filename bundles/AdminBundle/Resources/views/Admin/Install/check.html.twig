@@ -13,7 +13,7 @@
     {% if check.state == constant('\Pimcore\\Tool\\Requirements\\Check::STATE_OK') %}
         {% set icon = 'ok' %}
     {% elseif check.state == constant('\Pimcore\\Tool\\Requirements\\Check::STATE_WARNING') %}
-        {% set icon = 'warning' %}
+        {% set icon = 'overlay-error' %}
     {% endif %}
 
     <tr>
@@ -129,8 +129,8 @@
             <b>Explanation:</b>
         </p>
         <p>
-            <span class="legend"><img src="/bundles/pimcoreadmin/img/flat-color-icons/ok.svg" /> Everything ok</span>
-            <span class="legend"><img src="/bundles/pimcoreadmin/img/flat-color-icons/warning.svg" /> Recommended but not required</span>
+            <span class="legend"><img src="/bundles/pimcoreadmin/img/flat-color-icons/ok.svg" />Everything ok</span>
+            <span class="legend"><img width="26" height="26" src="/bundles/pimcoreadmin/img/flat-color-icons/overlay-error.svg" /> Recommended but not required</span>
             <span class="legend"><img src="/bundles/pimcoreadmin/img/flat-color-icons/high_priority.svg" /> Required</span>
         </p>
     </div>

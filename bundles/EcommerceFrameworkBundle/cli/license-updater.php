@@ -113,7 +113,7 @@ $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootPa
 foreach ($iterator as $path) {
 
     /**
-     * @var $path SplFileInfo
+     * @var SplFileInfo $path
      */
     if (preg_match($excludePatterns_flattened, $path, $matches) === 1) {
         print $path->__toString() . ' -> exclude' . PHP_EOL;

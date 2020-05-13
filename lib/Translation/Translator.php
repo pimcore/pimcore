@@ -16,7 +16,6 @@ namespace Pimcore\Translation;
 
 use Pimcore\Cache;
 use Pimcore\Model\Translation\AbstractTranslation;
-use Pimcore\Model\Translation\TranslationInterface;
 use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
@@ -25,14 +24,9 @@ use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Component\Translation\TranslatorInterface as LegacyTranslatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Contracts\Translation\TranslatorTrait;
 
 class Translator implements LegacyTranslatorInterface, TranslatorInterface, TranslatorBagInterface
 {
-    use TranslatorTrait {
-        trans as protected doTrans;
-    }
-
     /**
      * @var TranslatorInterface|TranslatorBagInterface
      */
@@ -103,7 +97,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
         $this->lazyInitialize($domain, $locale);
 
         if (isset($parameters['%count%'])) {
-            $id = $this->doTrans($id, $parameters, $domain, $locale);
+            $id = $this->translator->trans($id, $parameters, $domain, $locale);
         }
 
         $term = $this->getFromCatalogue($catalogue, $id, $domain, $locale);
@@ -294,15 +288,12 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                     throw new \Exception("Message ID's longer than 190 characters are invalid!");
                 }
 
-                /** @var TranslationInterface $class */
                 $class = '\\Pimcore\\Model\\Translation\\' . ucfirst($backend);
 
                 // no translation found create key
                 if ($class::isValidLanguage($locale)) {
 
-                    /**
-                     * @var AbstractTranslation $t
-                     */
+                    /** @var AbstractTranslation|null $t */
                     $t = $class::getByKey($id);
                     if ($t) {
                         if (!$t->hasTranslation($locale)) {
@@ -312,6 +303,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                             return $id;
                         }
                     } else {
+                        /** @var AbstractTranslation $t */
                         $t = new $class();
                         $t->setKey($id);
 
@@ -365,9 +357,9 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
     }
 
     /**
-     * @param $domain
+     * @param string $domain
      *
-     * @return string
+     * @return string|null
      */
     protected function getBackendForDomain($domain)
     {
@@ -380,7 +372,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             return $backends[$domain];
         }
 
-        return false;
+        return null;
     }
 
     /**

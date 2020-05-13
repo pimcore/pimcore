@@ -153,6 +153,17 @@ pimcore.settings.web2print = Class.create({
                         value: this.getValue("pdfreactorLicence")
                     }, {
                         xtype: 'checkbox',
+                        fieldLabel: t("web2print_enableLenientHttpsMode"),
+                        name: 'pdfreactorEnableLenientHttpsMode',
+                        value: this.getValue("pdfreactorEnableLenientHttpsMode")
+                    }, {
+                        xtype: "displayfield",
+                        hideLabel: true,
+                        width: 600,
+                        value: t('web2print_enableLenientHttpsMode_txt'),
+                        cls: "pimcore_extra_label_bottom"
+                    }, {
+                        xtype: 'checkbox',
                         fieldLabel: t("web2print_enableDebugMode"),
                         name: 'pdfreactorEnableDebugMode',
                         value: this.getValue("pdfreactorEnableDebugMode")

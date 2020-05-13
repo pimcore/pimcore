@@ -237,13 +237,10 @@ pimcore.document.settings_abstract = Class.create({
 
         var fieldSet = new Ext.form.FieldSet({
             title: t('controller') + ", " + t('action') + " & " + t('template'),
+            id: "pimcore_document_settings_" + this.document.id,
             collapsible: true,
             collapsed: collapsed,
             autoHeight:true,
-            defaults: {
-                labelWidth: 320,
-                width: 700
-            },
             defaultType: 'textfield',
             items :[
                 {
@@ -382,9 +379,28 @@ pimcore.document.settings_abstract = Class.create({
                         maxWidth: 600
                     }
                 }
-            ]
+            ],
+            defaults: {
+                labelWidth: 300,
+                width: 700,
+                listeners: {
+                    "change": function (field, checked) {
+                        Ext.getCmp("pimcore_document_settings_" + this.document.id).dirty = true;
+                    }.bind(this)
+                },
+            }
+
         });
 
         return fieldSet;
+    },
+
+    getValues: function () {
+
+        if (!this.layout.rendered) {
+            throw "settings not available";
+        }
+
+        return this.getLayout().getForm().getFieldValues();
     }
 });

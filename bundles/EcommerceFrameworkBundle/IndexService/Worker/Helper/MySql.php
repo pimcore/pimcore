@@ -86,7 +86,7 @@ class MySql
           `o_id` $primaryIdColumnType,
           `o_virtualProductId` $idColumnType,
           `o_virtualProductActive` TINYINT(1) NOT NULL,
-          `o_classId` int(11) NOT NULL,
+          `o_classId` varchar(50) NOT NULL,
           `o_parentId` $idColumnType,
           `o_type` varchar(20) NOT NULL,
           `categoryIds` varchar(255) NOT NULL,
@@ -100,13 +100,14 @@ class MySql
         $data = $this->db->fetchAll('SHOW COLUMNS FROM ' . $this->tenantConfig->getTablename());
         $columns = [];
         foreach ($data as $d) {
-            $columns[$d['Field']] = $d['Field'];
+            $columns[$d['Field']] = $d;
         }
 
         $systemColumns = $this->getSystemAttributes();
 
         $columnsToDelete = $columns;
         $columnsToAdd = [];
+        $columnsToModify = [];
 
         foreach ($this->tenantConfig->getAttributes() as $attribute) {
             if (!array_key_exists($attribute->getName(), $columns)) {
@@ -118,14 +119,16 @@ class MySql
                 if ($doAdd) {
                     $columnsToAdd[$attribute->getName()] = $attribute->getType();
                 }
+            } elseif ($attribute->getType() != $columns[$attribute->getName()]['Type']) {
+                $columnsToModify[$attribute->getName()] = $attribute->getType();
             }
 
             unset($columnsToDelete[$attribute->getName()]);
         }
 
         foreach ($columnsToDelete as $c) {
-            if (!in_array($c, $systemColumns)) {
-                $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` DROP COLUMN `' . $c . '`;');
+            if (!in_array($c['Field'], $systemColumns)) {
+                $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` DROP COLUMN `' . $c['Field'] . '`;');
             }
         }
 
@@ -133,8 +136,12 @@ class MySql
             $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ADD `' . $c . '` ' . $type . ';');
         }
 
-        $searchIndexColums = $this->tenantConfig->getSearchAttributes();
-        if (!empty($searchIndexColums)) {
+        foreach ($columnsToModify as $c => $type) {
+            $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` MODIFY `' . $c . '` ' . $type . ';');
+        }
+
+        $searchIndexColumns = $this->tenantConfig->getSearchAttributes();
+        if (!empty($searchIndexColumns)) {
             try {
                 $this->dbexec('ALTER TABLE ' . $this->tenantConfig->getTablename() . ' DROP INDEX search;');
             } catch (\Exception $e) {
@@ -143,7 +150,7 @@ class MySql
 
             $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ENGINE = InnoDB;');
             $columnNames = [];
-            foreach ($searchIndexColums as $c) {
+            foreach ($searchIndexColumns as $c) {
                 $columnNames[] = $this->db->quoteIdentifier($c);
             }
             $this->dbexec('ALTER TABLE `' . $this->tenantConfig->getTablename() . '` ADD FULLTEXT INDEX search (' . implode(',', $columnNames) . ');');
@@ -169,8 +176,8 @@ class MySql
 
     protected function dbexec($sql)
     {
-        $this->db->query($sql);
         $this->logSql($sql);
+        $this->db->query($sql);
     }
 
     protected function logSql($sql)

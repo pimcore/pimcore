@@ -59,10 +59,11 @@ see [Working with PHP API](./09_Working_with_PHP_API.md).
 
 
 ## User Notifications
-Email notifications can be configured to be sent to users when an transition takes place. To do this simply specify an 
-array of user(s) or role(s) that you would like to be notified in options section of the transition definition. 
+Notifications (via email or Pimcore notifications) can be configured to be sent to users when an transition takes place. 
+To do this simply specify an array of user(s) or role(s) that you would like to be notified in options section of the 
+transition definition. 
 
-Roles will send an email to every user with that role.
+Roles will send an notification to every user with that role.
 
 ```yml
 ...
@@ -80,6 +81,11 @@ Roles will send an email to every user with that role.
                       # Send a email notification to a list of user roles (role names) when the transition get's applied
                       notifyRoles: ['projectmanagers', 'admins']
                       
+                      # Define which channel notification should be sent to, possible values "mail" and "pimcore_notification", default value is "mail".
+                      channelType:
+                         - mail
+                         - pimcoreNotification
+                      
                       # Type of mail source. 
                       mailType: 'template' # this is the default value, One of "template"; "pimcore_document"
                       
@@ -94,7 +100,7 @@ To customize the e-mail template, following options are available:
 - Overwrite the template `@PimcoreCore/Workflow/NotificationEmail/notificationEmail.html.twig` or configure your own 
   template path in settings. Default parameters available in the template are `subjectType`, `subject`, `action`, `workflow`, 
   `workflowName`, `deeplink`, `note_description`, `translator`, `lang`. If additional parameters are required, overwrite 
-  the service `Pimcore\Workflow\NotificationEmail\NotificationEmailService`.
+  the service `Pimcore\Workflow\Notification\NotificationEmailService`.
 
 - Configure a Pimcore Mail Document and use full power of Pimcore Mail Documents, with Controller, Action, Placeholders, 
   etc. In the mail document same parameters as above are available.    

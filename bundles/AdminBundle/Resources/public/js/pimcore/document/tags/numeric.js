@@ -31,6 +31,15 @@ pimcore.document.tags.numeric = Class.create(pimcore.document.tag, {
 
         this.element = new Ext.form.field.Number(options);
         this.element.render(id);
+
+
+        if(options["required"]) {
+            this.required = options["required"];
+        }
+
+        this.checkValue();
+
+        this.element.on("blur", this.checkValue.bind(this, true));
     },
 
     getValue: function () {
@@ -39,5 +48,19 @@ pimcore.document.tags.numeric = Class.create(pimcore.document.tag, {
 
     getType: function () {
         return "numeric";
+    },
+
+    checkValue: function (mark) {
+        var value = this.getValue();
+
+        if(Number(value) < 1) {
+            this.element.addCls("empty");
+        } else {
+            this.element.removeCls("empty");
+        }
+
+        if (this.required) {
+            this.validateRequiredValue(value, this.element, this, mark);
+        }
     }
 });

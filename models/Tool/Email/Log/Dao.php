@@ -35,7 +35,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Get the data for the object from database for the given id, or from the ID which is set in the object
      *
-     * @param int $id
+     * @param int|null $id
      */
     public function getById($id = null)
     {
@@ -109,7 +109,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $data
+     * @param array|string $data
      *
      * @return array|string
      */
@@ -131,8 +131,8 @@ class Dao extends Model\Dao\AbstractDao
      * Creates the basic logging for the treeGrid in the backend
      * Data will be enhanced with live-data in the backend
      *
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed $value
      *
      * @return \stdClass
      */

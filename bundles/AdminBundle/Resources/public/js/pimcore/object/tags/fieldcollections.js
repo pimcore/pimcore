@@ -39,7 +39,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
 
     getGridColumnConfig: function(field) {
-        return {text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+        return {text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
                 renderer: function (key, value, metaData, record) {
                     this.applyPermissionStyle(key, value, metaData, record);
 
@@ -136,7 +136,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         this.component.updateLayout();
     },
 
-    buildMenu: function(data, blockElement) {
+    buildMenu: function(data, blockElement, position) {
         var collectionMenu = [];
 
         if (data) {
@@ -144,14 +144,14 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
                 var elementData = data[i];
 
                 var menuItem = {
-                    text: elementData.title ? ts(elementData.title) : ts(elementData.text),
+                    text: elementData.title ? t(elementData.title) : t(elementData.text),
                     iconCls: elementData.iconCls
                 };
                 if (elementData.group) {
-                    var subMenu = this.buildMenu(elementData.children, blockElement);
+                    var subMenu = this.buildMenu(elementData.children, blockElement, position);
                     menuItem.menu = subMenu;
                 } else {
-                    menuItem.handler = this.addBlock.bind(this, blockElement, elementData.key, elementData.title);
+                    menuItem.handler = this.addBlock.bind(this, blockElement, elementData.key, elementData.title, position);
                 }
 
                 collectionMenu.push(menuItem);
@@ -165,30 +165,71 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
 
     getControls: function (blockElement, title) {
 
+        if (this.fieldConfig.noteditable) {
+            return new Ext.Toolbar({
+                items: {
+                    xtype: "tbtext",
+                    text: t(title)
+                }
+            });
+        }
+
         var menuData = this.fieldcollections;
-        var collectionMenu = this.buildMenu(menuData, blockElement, true);
+        var collectionMenuBefore = this.buildMenu(menuData, blockElement, 'before');
+        var collectionMenuAfter = this.buildMenu(menuData, blockElement, 'after');
 
         var items = [];
 
-        if(collectionMenu.length == 0) {
+        if(collectionMenuBefore.length == 0) {
             items.push({
                 xtype: "tbtext",
                 text: t("no_collections_allowed")
             });
-        } else if(collectionMenu.length == 1 && !collectionMenu[0].menu) {
-            items.push({
-                disabled: this.fieldConfig.disallowAddRemove,
-                cls: "pimcore_block_button_plus",
-                iconCls: "pimcore_icon_plus",
-                handler: collectionMenu[0].handler
-            });
+        } else if(collectionMenuBefore.length == 1 && !collectionMenuBefore[0].menu) {
+            if(blockElement) {
+                items.push({
+                    disabled: this.fieldConfig.disallowAddRemove,
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus_up",
+                    handler: collectionMenuBefore[0].handler
+                });
+
+                items.push({
+                    disabled: this.fieldConfig.disallowAddRemove,
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus_down",
+                    handler: collectionMenuAfter[0].handler
+                });
+            } else {
+                items.push({
+                    disabled: this.fieldConfig.disallowAddRemove,
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus",
+                    handler: collectionMenuAfter[0].handler
+                });
+            }
         } else  {
-            items.push({
-                disabled: this.fieldConfig.disallowAddRemove,
-                cls: "pimcore_block_button_plus",
-                iconCls: "pimcore_icon_plus",
-                menu: collectionMenu
-            });
+            if(blockElement) {
+                items.push({
+                    disabled: this.fieldConfig.disallowAddRemove,
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus_up",
+                    menu: collectionMenuBefore
+                });
+                items.push({
+                    disabled: this.fieldConfig.disallowAddRemove,
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus_down",
+                    menu: collectionMenuAfter
+                });
+            } else {
+                items.push({
+                    disabled: this.fieldConfig.disallowAddRemove,
+                    cls: "pimcore_block_button_plus",
+                    iconCls: "pimcore_icon_plus",
+                    menu: collectionMenuAfter
+                });
+            }
         }
 
         if(blockElement) {
@@ -222,7 +263,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             if (title) {
                 items.push({
                     xtype: "tbtext",
-                    text: ts(title)
+                    text: t(title)
                 });
             }
         }
@@ -261,7 +302,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
     },
 
-    addBlock: function (blockElement, type, title) {
+    addBlock: function (blockElement, type, title, position) {
 
         this.closeOpenEditors();
 
@@ -284,7 +325,11 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             index = this.detectBlockIndex(blockElement);
         }
 
-        this.addBlockElement(index + 1, {
+        if (position !== 'before') {
+            index++;
+        }
+
+        this.addBlockElement(index, {
             type: type,
             title: title
         });
@@ -358,14 +403,21 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             this.currentData = blockData;
         }
 
-        var items =  this.getRecursiveLayout(this.layoutDefinitions[type], null,
+        var items =  this.getRecursiveLayout(
+            this.layoutDefinitions[type],
+            this.fieldConfig.noteditable,
             {
                 containerType: "fieldcollection",
                 containerName: this.fieldConfig.name,
                 containerKey: type,
                 index: index,
-            }, false, false, this, true).items;
-
+                applyDefaults: true,
+            },
+            false,
+            false,
+            this,
+            true
+        ).items;
 
         var blockElement = new Ext.Panel({
             pimcore_oIndex: oIndex,
@@ -374,8 +426,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
             style: "margin: 0 0 10px 0;",
             manageHeight: false,
             border: true,
-            items: items,
-            disabled: this.fieldConfig.noteditable
+            items: items
         });
 
         blockElement.insert(0, this.getControls(blockElement, title));
@@ -539,38 +590,6 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
 
         return false;
-    },
-
-    isInvalidMandatory: function () {
-        var element;
-        var isInvalid = false;
-        var invalidMandatoryFields = [];
-
-        for(var s=0; s<this.component.items.items.length; s++) {
-            if(this.currentElements[this.component.items.items[s].key]) {
-                element = this.currentElements[this.component.items.items[s].key];
-
-                var elementFieldNames = Object.keys(element.fields);
-
-                for (var u=0; u < elementFieldNames.length; u++) {
-                    var elementFieldName = elementFieldNames[u];
-                    if(element.fields[elementFieldName].isMandatory()) {
-                        if(element.fields[elementFieldName].isInvalidMandatory()) {
-                            invalidMandatoryFields.push(element.fields[elementFieldName].getTitle() + " ("
-                                                                    + element.fields[elementFieldName].getName() + ")");
-                            isInvalid = true;
-                        }
-                    }
-                }
-            }
-        }
-
-        // return the error messages not bool, this is handled in object/edit.js
-        if(isInvalid) {
-            return invalidMandatoryFields;
-        }
-
-        return isInvalid;
     }
 });
 

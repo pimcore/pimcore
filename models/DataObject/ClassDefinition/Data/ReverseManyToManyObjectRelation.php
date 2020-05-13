@@ -31,25 +31,12 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     public $fieldtype = 'reverseManyToManyObjectRelation';
 
     /**
-     * @var bool
-     */
-    public static $remoteOwner = true;
-
-    /**
-     * @return bool
-     */
-    public function isRemoteOwner()
-    {
-        return self::$remoteOwner;
-    }
-
-    /**
      * @var string
      */
     public $ownerClassName;
 
     /**
-     * @var number
+     * @var string|null
      */
     public $ownerClassId;
 
@@ -73,25 +60,6 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     public function setClasses($classes)
     {
         //dummy, classes are set from owner classId
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function getLazyLoading()
-    {
-        return true;
-    }
-
-    /**
-     * @param  $lazyLoading
-     *
-     * @return $this
-     */
-    public function setLazyLoading($lazyLoading)
-    {
-        //dummy, non owner objects must be lazy loading
         return $this;
     }
 
@@ -126,7 +94,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @return number
+     * @return string
      */
     public function getOwnerClassId()
     {
@@ -166,7 +134,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      *
      * Checks if an object is an allowed relation
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      *
      * @return bool
      */
@@ -176,12 +144,12 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         $ownerClass = DataObject\ClassDefinition::getByName($this->getOwnerClassName());
         if ($ownerClass->getId() > 0 and $ownerClass->getId() == $object->getClassId()) {
             $fd = $ownerClass->getFieldDefinition($this->getOwnerFieldName());
-            if ($fd instanceof DataObject\ClassDefinition\Data\Objects) {
+            if ($fd instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation) {
                 return $fd->allowObjectRelation($object);
             }
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
@@ -214,7 +182,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -227,13 +195,11 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * fills object field data values from CSV Import String
      *
-     * @abstract
-     *
      * @param string $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return DataObject\ClassDefinition\Data
+     * @return null
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
@@ -264,7 +230,9 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     }
 
     /**
-     * @param DataObject\AbstractObject $object
+     * @deprecated
+     *
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -277,10 +245,12 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     /**
      * converts data to be imported via webservices
      *
+     * @deprecated
+     *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
-     * @param $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed
      */

@@ -14,6 +14,7 @@ For a multi-line alternative have a look at the [textarea editable](./36_Textare
 | `nowrap`           | boolean | set to false to disable the automatic line break                                      |
 | `class`            | string  | A CSS class that is added to the surrounding container of this element in editmode    |
 | `placeholder`      | string  | A placeholder that is displayed when the field is empty                               |
+| `required`         | boolean | set to true to make field value required for publish                                  |
 
 ## Methods
 
@@ -62,20 +63,3 @@ You could also specify other parameters, like the size:
 </h2>
 ```
 </div>
-
-## Validation
-To validate the input you have to add `validator` parameter to the configuration array. 
-
-```php
-<h2>
-    <?= $this->input("myHeadline", [
-        "validator" => new Zend_Json_Expr('
-            function(value){
-              return value.match(/\d.*/) !== null;
-            }'
-        )
-    ]); ?>
-</h2>
-```
-
-> At the moment, the validation has **only a visual effect**, user can still save an incorrect value. 

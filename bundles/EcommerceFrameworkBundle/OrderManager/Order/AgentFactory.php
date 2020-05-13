@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentFactoryInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AgentFactory implements OrderAgentFactoryInterface
@@ -37,6 +38,11 @@ class AgentFactory implements OrderAgentFactoryInterface
     protected $paymentManager;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * @var string
      */
     protected $agentClass = Agent::class;
@@ -44,10 +50,12 @@ class AgentFactory implements OrderAgentFactoryInterface
     public function __construct(
         EnvironmentInterface $environment,
         PaymentManagerInterface $paymentManager,
+        EventDispatcherInterface $eventDispatcher,
         array $options = []
     ) {
         $this->environment = $environment;
         $this->paymentManager = $paymentManager;
+        $this->eventDispatcher = $eventDispatcher;
 
         $resolver = new OptionsResolver();
         $this->configureOptions($resolver);
@@ -78,6 +86,6 @@ class AgentFactory implements OrderAgentFactoryInterface
     {
         $class = $this->agentClass;
 
-        return new $class($order, $this->environment, $this->paymentManager);
+        return new $class($order, $this->environment, $this->paymentManager, $this->eventDispatcher);
     }
 }

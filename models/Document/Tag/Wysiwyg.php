@@ -59,7 +59,7 @@ class Wysiwyg extends Model\Document\Tag
      */
     public function getDataEditmode()
     {
-        $document = Model\Document::getById($this->getDocumentId());
+        $document = $this->getDocument();
 
         return Text::wysiwygText($this->text, [
             'document' => $document,
@@ -74,7 +74,7 @@ class Wysiwyg extends Model\Document\Tag
      */
     public function frontend()
     {
-        $document = Model\Document::getById($this->getDocumentId());
+        $document = $this->getDocument();
 
         return Text::wysiwygText($this->text, [
                 'document' => $document,
@@ -85,7 +85,7 @@ class Wysiwyg extends Model\Document\Tag
     /**
      * @see TagInterface::setDataFromResource
      *
-     * @param mixed $data
+     * @param string $data
      *
      * @return $this
      */
@@ -99,7 +99,7 @@ class Wysiwyg extends Model\Document\Tag
     /**
      * @see TagInterface::setDataFromEditmode
      *
-     * @param mixed $data
+     * @param string $data
      *
      * @return $this
      */
@@ -119,19 +119,18 @@ class Wysiwyg extends Model\Document\Tag
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
-        if (is_array($data)) {
-            $data = (object) $data;
-        }
+        $data = $this->sanitizeWebserviceData($wsElement->value);
 
         if ($data->text === null or is_string($data->text)) {
             $this->text = $data->text;
@@ -149,7 +148,7 @@ class Wysiwyg extends Model\Document\Tag
     }
 
     /**
-     * @param $ownerDocument
+     * @param Model\Document\PageSnippet $ownerDocument
      * @param array $blockedTags
      *
      * @return array
@@ -172,7 +171,7 @@ class Wysiwyg extends Model\Document\Tag
      *
      * @param array $idMapping
      *
-     * @return string|null
+     * @return string|void
      *
      * @todo: no rewriteIds method ever returns anything, why this one?
      */
@@ -204,5 +203,7 @@ class Wysiwyg extends Model\Document\Tag
 
         $html->clear();
         unset($html);
+
+        return;
     }
 }

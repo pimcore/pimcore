@@ -33,7 +33,7 @@ pimcore.asset.folder = Class.create(pimcore.asset.asset, {
         }
 
         this.tagAssignment = new pimcore.element.tag.assignment(this, "asset");
-        this.listfolder = new pimcore.asset.listfolder(this);
+        this.listfolder = new pimcore.asset.listfolder(this, "folder");
         this.workflows = new pimcore.element.workflows(this, "asset");
 
         this.getData();

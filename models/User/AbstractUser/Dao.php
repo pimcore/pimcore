@@ -28,7 +28,7 @@ class Dao extends Model\Dao\AbstractDao
     use Model\Element\ChildsCompatibilityTrait;
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */
@@ -48,7 +48,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @throws \Exception
      */

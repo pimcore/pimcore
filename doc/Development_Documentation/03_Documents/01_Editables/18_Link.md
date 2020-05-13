@@ -91,7 +91,7 @@ The above example renders a list of links:
 
 ### Link Generators
 
-Please also see the section about [Link Generators](../../05_Objects/01_Object_Classes/05_Class_Settings/15_Link_Generator.md)
+Please also see the section about [Link Generators](../../05_Objects/01_Object_Classes/05_Class_Settings/30_Link_Generator.md)
 
 
 

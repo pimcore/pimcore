@@ -191,7 +191,7 @@
                         "phpdocType": "string",
                         "regex": "",
                         "unique": null,
-                        "name": "auth_gatewyReferenceNumber",
+                        "name": "auth_gatewayReferenceNumber",
                         "title": "Gateway Reference Number",
                         "tooltip": "auth_gatewayReferenceNumber",
                         "mandatory": false,

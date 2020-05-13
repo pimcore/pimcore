@@ -196,7 +196,7 @@ class Processor
     }
 
     /**
-     * @param $data
+     * @param array $data
      *
      * @return array
      */

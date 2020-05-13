@@ -54,6 +54,10 @@ services:
         tags:
             - { name: templating.helper, alias: getAllParams }
 
+    Pimcore\Templating\Helper\BreachAttackRandomContent:
+        tags:
+            - { name: templating.helper, alias: breachAttackRandomContent }
+
     Pimcore\Templating\Helper\Glossary:
         tags:
             - { name: templating.helper, alias: glossary }

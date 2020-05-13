@@ -88,7 +88,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             for (var i = 0; i < this.data.length; i++) {
                 if (this.data[i] != null) {
                     this.preventDelete[this.data[i].type] = this.data[i].inherited;
-                    this.addBlockElement(i, this.data[i].type, this.data[i], true, this.data[i].title);
+                    this.addBlockElement(i, this.data[i].type, this.data[i], true, this.data[i].title, false);
                 }
             }
         }
@@ -110,7 +110,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 }
 
                 var menuItem = {
-                    text: elementData.title ? ts(elementData.title) : ts(elementData.text),
+                    text: elementData.title ? t(elementData.title) : t(elementData.text),
                     iconCls: elementData.iconCls
                 };
                 if (elementData.group) {
@@ -168,7 +168,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
             items.push({
                 xtype: "tbtext",
-                text: ts(this.fieldConfig.title)
+                text: t(this.fieldConfig.title)
             });
 
             var toolbar = new Ext.Toolbar({
@@ -183,7 +183,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
             var index = 0;
 
-            this.addBlockElement(index, type, null, false, title);
+            this.addBlockElement(index, type, null, false, title, true);
         }
     ,
 
@@ -224,7 +224,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         }
     ,
 
-        addBlockElement: function (index, type, blockData, ignoreChange, title) {
+        addBlockElement: function (index, type, blockData, ignoreChange, title, manuallyAdded) {
             if (!type) {
                 return;
             }
@@ -270,17 +270,18 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 closable: !this.fieldConfig.noteditable,
                 autoHeight: true,
                 border: false,
-                title: title ? ts(title) : ts(type),
+                title: title ? t(title) : t(type),
                 // items: items
                 items: [],
                 listeners: {
-                    afterrender: function (childConfig, dataProvider, panel) {
+                    afterrender: function (childConfig, dataProvider, manuallyAdded, panel) {
                         if (!panel.__tabpanel_initialized) {
                             var copy = Ext.decode(Ext.encode(childConfig));
                             var children = this.getRecursiveLayout(copy, null, {
                                 containerType: "objectbrick",
                                 containerKey: type,
-                                ownerName: this.fieldConfig.name
+                                ownerName: this.fieldConfig.name,
+                                applyDefaults: manuallyAdded
                             }, false, true, dataProvider);
                             if (this.fieldConfig.noteditable && children) {
                                 children.forEach(function (record) {
@@ -306,7 +307,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
 
                         }
-                    }.bind(this, childConfig, dataProvider)
+                    }.bind(this, childConfig, dataProvider, manuallyAdded)
 
                 }
             });
@@ -476,38 +477,6 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             }
 
             return false;
-        }
-    ,
-
-        isInvalidMandatory: function () {
-            var element;
-            var isInvalid = false;
-            var invalidMandatoryFields = [];
-
-            var types = Object.keys(this.currentElements);
-            for (var t = 0; t < types.length; t++) {
-                if (this.currentElements[types[t]]) {
-                    element = this.currentElements[types[t]];
-                    if (element.action != "deleted") {
-                        for (var u = 0; u < element.fields.length; u++) {
-                            if (element.fields[u].isMandatory()) {
-                                if (element.fields[u].isInvalidMandatory()) {
-                                    invalidMandatoryFields.push(element.fields[u].getTitle()
-                                        + " (" + element.fields[u].getName() + "|" + types[t] + ")");
-                                    isInvalid = true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // return the error messages not bool, this is handled in object/edit.js
-            if (isInvalid) {
-                return invalidMandatoryFields;
-            }
-
-            return isInvalid;
         }
 
     });

@@ -97,10 +97,10 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $object = LazyLoading::getById($id, true);
 
             // inherited data isn't assigned to a property, it's only returned by the getter and therefore doesn't get serialized
-            $contentShouldBeIncluded = ($objectType === 'inherited') ? false : true;
 
             //serialize data object and check for (not) wanted content in serialized string
-            $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
+            // content should never be included in the serialized data
+            $this->checkSerialization($object, $messagePrefix, false);
 
             //load relation and check if relation loads correctly
             $blockItems = $object->getTestBlock();
@@ -108,7 +108,8 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
-            $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
+            // content should never be included in the serialized data
+            $this->checkSerialization($object, $messagePrefix, false);
         }
     }
 
@@ -117,7 +118,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         //prepare data object
         $object = $this->createDataObject();
         $data = [
-            'blockobjectsLazyloaded' => new BlockElement('blockobjectsLazyloaded', 'manyToManyObjectRelation', $this->loadRelations()->load()),
+            'blockobjectsLazyLoaded' => new BlockElement('blockobjectsLazyLoaded', 'manyToManyObjectRelation', $this->loadRelations()->load()),
         ];
         $object->setTestBlockLazyloaded([$data]);
         $object->save();
@@ -139,7 +140,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //load relation and check if relation loads correctly
             $blockItems = $object->getTestBlockLazyloaded();
-            $relationObjects = $blockItems[0]['blockobjectsLazyloaded']->getData();
+            $relationObjects = $blockItems[0]['blockobjectsLazyLoaded']->getData();
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string

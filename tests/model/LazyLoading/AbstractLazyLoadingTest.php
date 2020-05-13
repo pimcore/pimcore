@@ -2,7 +2,7 @@
 
 namespace Pimcore\Tests\Model\LazyLoading;
 
-use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
@@ -29,39 +29,15 @@ class AbstractLazyLoadingTest extends ModelTestCase
 
     protected function setUpTestClasses()
     {
-        $name = 'RelationTest';
-        $file = 'relations/class_RelationTest_export.json';
-        $class = ClassDefinition::getByName($name);
+        $this->tester->setupPimcoreClass_RelationTest();
+        $this->tester->setupFieldcollection_LazyLoadingTest();
 
-        if (!$class) {
-            /** @var ClassDefinition $class */
-            $class = $this->tester->setupClass($name, $file);
-        }
+        $this->tester->setupFieldcollection_LazyLoadingLocalizedTest();
+        $this->tester->setupPimcoreClass_LazyLoading();
 
-        $name = 'LazyLoadingTest';
-        $file = 'lazyloading/fieldcollection_LazyLoadingTest_export.json';
-        $fieldCollection = $this->tester->setupFieldCollection($name, $file);
+        $this->tester->setupObjectbrick_LazyLoadingTest();
 
-        $name = 'LazyLoadingLocalizedTest';
-        $file = 'lazyloading/fieldcollection_LazyLoadingLocalizedTest_export.json';
-        $fieldCollection = $this->tester->setupFieldCollection($name, $file);
-
-        $name = 'LazyLoading';
-        $file = 'lazyloading/class_LazyLoading_export.json';
-        $class = ClassDefinition::getByName($name);
-
-        if (!$class) {
-            /** @var ClassDefinition $class */
-            $class = $this->tester->setupClass($name, $file);
-        }
-
-        $name = 'LazyLoadingTest';
-        $file = 'lazyloading/objectbrick_LazyLoadingTest_export.json';
-        $brick = $this->tester->setupObjectBrick($name, $file);
-
-        $name = 'LazyLoadingLocalizedTest';
-        $file = 'lazyloading/objectbrick_LazyLoadingLocalizedTest_export.json';
-        $brick = $this->tester->setupObjectBrick($name, $file);
+        $this->tester->setupObjectbrick_LazyLoadingLocalizedTest();
     }
 
     protected function createRelationObjects()
@@ -90,7 +66,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
     }
 
     /**
-     * @param $parent
+     * @param AbstractObject $parent
      *
      * @return LazyLoading
      *

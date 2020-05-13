@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document\Tag;
 
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -29,7 +28,7 @@ use Pimcore\Model\Document;
 class Pdf extends Model\Document\Tag
 {
     /**
-     * @var int
+     * @var int|null
      */
     public $id;
 
@@ -71,7 +70,8 @@ class Pdf extends Model\Document\Tag
     public function getDataEditmode()
     {
         $pages = 0;
-        if ($asset = Asset::getById($this->id)) {
+
+        if ($asset = Asset\Document::getById($this->id)) {
             $pages = $asset->getPageCount();
         }
 
@@ -82,7 +82,7 @@ class Pdf extends Model\Document\Tag
     }
 
     /**
-     * @param $ownerDocument
+     * @param Model\Document\PageSnippet $ownerDocument
      * @param array $tags
      *
      * @return array|mixed
@@ -197,7 +197,7 @@ class Pdf extends Model\Document\Tag
         if ($asset instanceof Asset\Document && $asset->getPageCount()) {
             $divId = 'pimcore-pdf-' . uniqid();
             $pdfPath = $asset->getFullPath();
-            $thumbnailPath = $asset->getImageThumbnail($thumbnailConfig);
+            $thumbnailPath = $asset->getImageThumbnail($thumbnailConfig, 1, true);
 
             $code = <<<HTML
             <div id="$divId" class="pimcore-pdfViewer">
@@ -207,7 +207,7 @@ HTML;
 
             return $code;
         } else {
-            return $this->getErrorCode('Asset is not a valid PDF');
+            return $this->getErrorCode('Preview in progress or not a valid PDF file');
         }
     }
 
@@ -219,13 +219,13 @@ HTML;
     public function getErrorCode($message = '')
     {
         // only display error message in debug mode
-        if (!\Pimcore::inDebugMode(DebugMode::RENDER_DOCUMENT_TAG_ERRORS)) {
+        if (!\Pimcore::inDebugMode()) {
             $message = '';
         }
 
         $code = '
         <div id="pimcore_pdf_' . $this->getName() . '" class="pimcore_tag_pdf">
-            <div class="pimcore_tag_video_error" style="text-align:center; width: 100%; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
+            <div class="pimcore_tag_video_error" style="line-height: 50px; text-align:center; width: 100%; min-height: 50px; background: #ececec;">
                 ' . $message . '
             </div>
         </div>';
@@ -246,16 +246,18 @@ HTML;
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
+        $data = $this->sanitizeWebserviceData($wsElement->value);
         if ($data->id) {
             $asset = Asset::getById($data->id);
             if (!$asset) {

@@ -41,10 +41,11 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
     {
         // init
         $field = $this->getField($filterDefinition);
-        $value = $params[$field];
+        $value = $params[$field] ?? null;
+        $isReload = $params['is_reload'] ?? null;
 
         // set defaults
-        if (empty($value) && !$params['is_reload'] && ($preSelect = $this->getPreSelect($filterDefinition))) {
+        if (empty($value) && !$isReload && ($preSelect = $this->getPreSelect($filterDefinition))) {
             $value = explode(',', $preSelect);
         } elseif (!empty($value) && in_array(AbstractFilterType::EMPTY_STRING, $value)) {
             $value = null;

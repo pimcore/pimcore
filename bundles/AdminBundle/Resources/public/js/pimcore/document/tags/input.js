@@ -41,9 +41,13 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
 
         this.element.update(data + "<br>");
 
+        if(options["required"]) {
+            this.required = options["required"];
+        }
+
         this.checkValue();
 
-        this.element.on("keyup", this.checkValue.bind(this));
+        this.element.on("keyup", this.checkValue.bind(this, true));
         this.element.on("keydown", function (e, t, o) {
             // do not allow certain keys, like enter, ...
             if(in_array(e.getCharCode(), [13])) {
@@ -90,13 +94,14 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
             this.element.dom.setAttribute('data-placeholder', options["placeholder"]);
         }
 
+        // @TODO validator is based on \Zend\Json\Expr and does not work with Twig templates, to be removed in v7.0
         if(options["validator"]) {
             this.element.isValid = options["validator"];
             this.validateElement();
         }
     },
 
-    checkValue: function () {
+    checkValue: function (mark) {
         var value = trim(this.element.dom.innerHTML);
         var origValue = value;
 
@@ -111,6 +116,10 @@ pimcore.document.tags.input = Class.create(pimcore.document.tag, {
 
         if(value != origValue) {
             this.element.update(this.getValue());
+        }
+
+        if (this.required) {
+            this.validateRequiredValue(value, this.element, this, mark);
         }
 
         this.validateElement(value);

@@ -1,9 +1,8 @@
 # Advanced Installation Topics
 
-Pimcore allows to fully automate the installation process, every question asked by the 
-interactive installer, can also be passed as an option. 
+To fully automate the installation process, options can be passed in the CLI as parameters, rather than adding them interactively. 
 
-The `--no-interaction` flag will avoid any interactive prompts:
+The `--no-interaction` flag will prevent any interactive prompts:
 
 ```
 ./vendor/bin/pimcore-install --admin-username admin --admin-password admin \
@@ -26,8 +25,7 @@ $ PIMCORE_INSTALL_MYSQL_USERNAME=username PIMCORE_INSTALL_MYSQL_PASSWORD=passwor
 You can preconfigure the values used by the installer by adding a config file which sets values for the database
 credentials. This is especially useful when installing Pimcore on platforms where credentials are available via env vars
 instead of having direct access to them. To preconfigure the installer, add a config file in `app/config/installer.yml` 
-(note: the file can be of any format supported by Symfony's config, so you could also use xml or php as format) configure
-the `pimcore_installer` tree:
+(note: the file can be of any format supported by Symfony's config, so you could also use xml or php as the format), then configure the `pimcore_installer` tree:
 
 ```yaml
 # app/config/installer.yml

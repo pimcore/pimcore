@@ -132,7 +132,9 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/metadata", methods={"POST"})
+     * Used by the predefined metadata grid
+     *
+     * @Route("/predefined-metadata", methods={"POST"})
      *
      * @param Request $request
      *
@@ -216,6 +218,8 @@ class SettingsController extends AdminController
 
             return $this->adminJson(['data' => $properties, 'success' => true, 'total' => $list->getTotalCount()]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -231,8 +235,8 @@ class SettingsController extends AdminController
         $subType = $request->get('subType');
         $list = Metadata\Predefined\Listing::getByTargetType($type, [$subType]);
         $result = [];
+        /** @var Metadata\Predefined $item */
         foreach ($list as $item) {
-            /** @var $item Metadata\Predefined */
             $item->expand();
             $result[] = $item;
         }
@@ -318,6 +322,8 @@ class SettingsController extends AdminController
 
             return $this->adminJson(['data' => $properties, 'success' => true, 'total' => $list->getTotalCount()]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -331,12 +337,14 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('system_settings');
 
+        //TODO use Pimcore\Config service when legacy mapping is removed
         $values = Config::getSystemConfig();
 
         $timezones = \DateTimeZone::listIdentifiers();
 
         $locales = Tool::getSupportedLocales();
         $languageOptions = [];
+        $validLanguages = [];
         foreach ($locales as $short => $translation) {
             if (!empty($short)) {
                 $languageOptions[] = [
@@ -363,11 +371,11 @@ class SettingsController extends AdminController
         }
 
         //cache exclude patterns - add as array
-        if (!empty($valueArray['cache']['excludePatterns'])) {
-            $patterns = explode(',', $valueArray['cache']['excludePatterns']);
+        if (!empty($valueArray['full_page_cache']['excludePatterns'])) {
+            $patterns = explode(',', $valueArray['full_page_cache']['excludePatterns']);
             if (is_array($patterns)) {
                 foreach ($patterns as $pattern) {
-                    $valueArray['cache']['excludePatternsArray'][] = ['value' => $pattern];
+                    $valueArray['full_page_cache']['excludePatternsArray'][] = ['value' => $pattern];
                 }
             }
         }
@@ -384,9 +392,9 @@ class SettingsController extends AdminController
         if (file_exists($debugModeFile)) {
             $debugMode = include $debugModeFile;
         }
-        $valueArray['general']['debug'] = $debugMode['active'];
-        $valueArray['general']['debug_ip'] = $debugMode['ip'];
-        $valueArray['general']['devmode'] = $debugMode['devmode'];
+        $valueArray['general']['debug'] = $debugMode['active'] ?? false;
+        $valueArray['general']['debug_ip'] = $debugMode['ip'] ?? '';
+        $valueArray['general']['devmode'] = $debugMode['devmode'] ?? false;
 
         $response = [
             'values' => $valueArray,
@@ -444,7 +452,7 @@ class SettingsController extends AdminController
             $this->checkFallbackLanguageLoop($sourceLang, $fallbackLanguages);
         }
 
-        $cacheExcludePatterns = $values['cache.excludePatterns'];
+        $cacheExcludePatterns = $values['full_page_cache.excludePatterns'];
         if (is_array($cacheExcludePatterns)) {
             $cacheExcludePatterns = implode(',', $cacheExcludePatterns);
         }
@@ -466,26 +474,25 @@ class SettingsController extends AdminController
             ],
             'documents' => [
                 'versions' => [
-                    'days' => $values['documents.versions.days'],
-                    'steps' => $values['documents.versions.steps']
+                    'days' => $values['documents.versions.days'] ?? null,
+                    'steps' => $values['documents.versions.steps'] ?? null,
                 ],
                 'error_pages' => [
                     'default' => $values['documents.error_pages.default']
                 ],
-                'create_redirect_when_moved' => $values['documents.createredirectwhenmoved'],
                 'allow_trailing_slash' => $values['documents.allowtrailingslash'],
                 'generate_preview' => $values['documents.generatepreview']
             ],
             'objects' => [
                 'versions' => [
-                    'days' => $values['objects.versions.days'],
-                    'steps' => $values['objects.versions.steps']
+                    'days' => $values['objects.versions.days'] ?? null,
+                    'steps' => $values['objects.versions.steps'] ?? null,
                 ]
             ],
             'assets' => [
                 'versions' => [
-                    'days' => $values['assets.versions.days'],
-                    'steps' => $values['assets.versions.steps']
+                    'days' => $values['assets.versions.days'] ?? null,
+                    'steps' => $values['assets.versions.steps'] ?? null,
                 ],
                 'icc_rgb_profile' => $values['assets.icc_rgb_profile'],
                 'icc_cmyk_profile' => $values['assets.icc_cmyk_profile'],
@@ -500,11 +507,11 @@ class SettingsController extends AdminController
                     'browser_api_key' => $values['services.google.browserapikey']
                 ]
             ],
-            'cache' => [
-                'enabled' => $values['cache.enabled'],
-                'lifetime' => $values['cache.lifetime'],
+            'full_page_cache' => [
+                'enabled' => $values['full_page_cache.enabled'],
+                'lifetime' => $values['full_page_cache.lifetime'],
                 'exclude_patterns' => $cacheExcludePatterns,
-                'exclude_cookie' => $values['cache.excludeCookie']
+                'exclude_cookie' => $values['full_page_cache.excludeCookie']
             ],
             'webservice' => [
                 'enabled' => $values['webservice.enabled']
@@ -587,22 +594,22 @@ class SettingsController extends AdminController
         File::putPhpFile($debugModeFile, to_php_data_file_format([
             'active' => $values['general.debug'],
             'ip' => $values['general.debug_ip'],
-            'devmode' => $values['general.devmode']
+            'devmode' => $values['general.devmode'],
         ]));
 
         // clear all caches
         $this->forward(self::class . '::clearCacheAction', [
             'only_symfony_cache' => false,
             'only_pimcore_cache' => false,
-            'env' => array_unique(['dev', 'prod', \Pimcore::getKernel()->getEnvironment()])
+            'env' => [\Pimcore::getKernel()->getEnvironment()]
         ]);
 
         return $this->adminJson(['success' => true]);
     }
 
     /**
-     * @param $source
-     * @param $definitions
+     * @param string $source
+     * @param array $definitions
      * @param array $fallbacks
      *
      * @throws \Exception
@@ -680,7 +687,7 @@ class SettingsController extends AdminController
                 $parts = explode(' ', substr($line, 2));
                 $key = trim($parts[0]);
                 if ($key) {
-                    $value = trim($parts[1]);
+                    $value = trim($parts[1] ?? '');
                     $optionArray[$key] = $value;
                 }
             }
@@ -922,7 +929,7 @@ class SettingsController extends AdminController
             $list->load();
 
             $routes = [];
-            /** @var $route Staticroute */
+            /** @var Staticroute $route */
             foreach ($list->getRoutes() as $route) {
                 if (is_array($route->getSiteId())) {
                     $route = json_encode($route);
@@ -935,7 +942,7 @@ class SettingsController extends AdminController
             return $this->adminJson(['data' => $routes, 'success' => true, 'total' => $list->getTotalCount()]);
         }
 
-        return $this->adminJson(false);
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -959,6 +966,10 @@ class SettingsController extends AdminController
                 ];
             }
         }
+
+        usort($langs, function ($a, $b) {
+            return strcmp($a['display'], $b['display']);
+        });
 
         return $this->adminJson($langs);
     }
@@ -1071,7 +1082,7 @@ class SettingsController extends AdminController
             return $this->adminJson(['data' => $glossaries, 'success' => true, 'total' => $list->getTotalCount()]);
         }
 
-        return $this->adminJson(false);
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -1083,15 +1094,20 @@ class SettingsController extends AdminController
      */
     public function getAvailableSitesAction(Request $request)
     {
+        $excludeMainSite = $request->get('excludeMainSite');
+
         $sitesList = new Model\Site\Listing();
         $sitesObjects = $sitesList->load();
-        $sites = [[
-            'id' => 'default',
-            'rootId' => 1,
-            'domains' => '',
-            'rootPath' => '/',
-            'domain' => $this->trans('main_site')
-        ]];
+        $sites = [];
+        if (!$excludeMainSite) {
+            $sites[] = [
+                'id' => 'default',
+                'rootId' => 1,
+                'domains' => '',
+                'rootPath' => '/',
+                'domain' => $this->trans('main_site')
+            ];
+        }
 
         foreach ($sitesObjects as $site) {
             if ($site->getRootDocument()) {
@@ -1179,10 +1195,10 @@ class SettingsController extends AdminController
         $items = $list->getThumbnails();
 
         $groups = [];
-        /** @var $item Asset\Image\Thumbnail\Config */
+        /** @var Asset\Image\Thumbnail\Config $item */
         foreach ($items as $item) {
             if ($item->getGroup()) {
-                if (!$groups[$item->getGroup()]) {
+                if (empty($groups[$item->getGroup()])) {
                     $groups[$item->getGroup()] = [
                         'id' => 'group_' . $item->getName(),
                         'text' => $item->getGroup(),
@@ -1319,6 +1335,7 @@ class SettingsController extends AdminController
         $pipe = Asset\Image\Thumbnail\Config::getByName($request->get('name'));
         $settingsData = $this->decodeJson($request->get('settings'));
         $mediaData = $this->decodeJson($request->get('medias'));
+        $mediaOrder = $this->decodeJson($request->get('mediaOrder'));
 
         foreach ($settingsData as $key => $value) {
             $setter = 'set' . ucfirst($key);
@@ -1328,6 +1345,14 @@ class SettingsController extends AdminController
         }
 
         $pipe->resetItems();
+
+        uksort($mediaData, function ($a, $b) use ($mediaOrder) {
+            if ($a === 'default') {
+                return -1;
+            }
+
+            return ($mediaOrder[$a] < $mediaOrder[$b]) ? -1 : 1;
+        });
 
         foreach ($mediaData as $mediaName => $items) {
             foreach ($items as $item) {
@@ -1380,7 +1405,7 @@ class SettingsController extends AdminController
         $items = $list->getThumbnails();
 
         $groups = [];
-        /** @var $item Asset\Image\Thumbnail\Config */
+        /** @var Asset\Image\Thumbnail\Config $item */
         foreach ($items as $item) {
             if ($item->getGroup()) {
                 if (!$groups[$item->getGroup()]) {
@@ -1727,38 +1752,35 @@ class SettingsController extends AdminController
      */
     public function websiteSettingsAction(Request $request)
     {
-        try {
-            if ($request->get('data')) {
-                $this->checkPermission('website_settings');
+        if ($request->get('data')) {
+            $this->checkPermission('website_settings');
 
-                $data = $this->decodeJson($request->get('data'));
+            $data = $this->decodeJson($request->get('data'));
 
-                if (is_array($data)) {
-                    foreach ($data as &$value) {
-                        $value = trim($value);
-                    }
+            if (is_array($data)) {
+                foreach ($data as &$value) {
+                    $value = trim($value);
                 }
+            }
 
-                if ($request->get('xaction') == 'destroy') {
-                    $id = $data['id'];
-                    $setting = WebsiteSetting::getById($id);
+            if ($request->get('xaction') == 'destroy') {
+                $id = $data['id'];
+                $setting = WebsiteSetting::getById($id);
+                if ($setting instanceof WebsiteSetting) {
                     $setting->delete();
 
                     return $this->adminJson(['success' => true, 'data' => []]);
-                } elseif ($request->get('xaction') == 'update') {
-                    // save routes
-                    $setting = WebsiteSetting::getById($data['id']);
-
+                }
+            } elseif ($request->get('xaction') == 'update') {
+                // save routes
+                $setting = WebsiteSetting::getById($data['id']);
+                if ($setting instanceof WebsiteSetting) {
                     switch ($setting->getType()) {
                         case 'document':
                         case 'asset':
                         case 'object':
                             if (isset($data['data'])) {
-                                $path = $data['data'];
-                                $element = null;
-                                if ($path != null) {
-                                    $element = Element\Service::getElementByPath($setting->getType(), $path);
-                                }
+                                $element = Element\Service::getElementByPath($setting->getType(), $data['data']);
                                 $data['data'] = $element;
                             }
                             break;
@@ -1770,75 +1792,75 @@ class SettingsController extends AdminController
                     $data = $this->getWebsiteSettingForEditMode($setting);
 
                     return $this->adminJson(['data' => $data, 'success' => true]);
-                } elseif ($request->get('xaction') == 'create') {
-                    unset($data['id']);
-
-                    // save route
-                    $setting = new WebsiteSetting();
-                    $setting->setValues($data);
-
-                    $setting->save();
-
-                    return $this->adminJson(['data' => $setting->getObjectVars(), 'success' => true]);
                 }
-            } else {
-                // get list of routes
+            } elseif ($request->get('xaction') == 'create') {
+                unset($data['id']);
 
-                $list = new WebsiteSetting\Listing();
+                // save route
+                $setting = new WebsiteSetting();
+                $setting->setValues($data);
 
-                $limit = $request->get('limit');
-                $start = $request->get('start');
+                $setting->save();
 
-                $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
-
-                if ($request->get('filter')) {
-                    $filter = $request->get('filter');
-                    $list->setFilter(function ($row) use ($filter) {
-                        foreach ($row as $value) {
-                            if (strpos($value, $filter) !== false) {
-                                return true;
-                            }
-                        }
-
-                        return false;
-                    });
-                }
-
-                $list->setOrder(function ($a, $b) use ($sortingSettings) {
-                    if (!$sortingSettings) {
-                        return 0;
-                    }
-                    $orderKey = $sortingSettings['orderKey'];
-                    if ($a[$orderKey] == $b[$orderKey]) {
-                        return 0;
-                    }
-
-                    $result = $a[$orderKey] < $b[$orderKey] ? -1 : 1;
-                    if ($sortingSettings['order'] == 'DESC') {
-                        $result = -1 * $result;
-                    }
-
-                    return $result;
-                });
-
-                $totalCount = $list->getTotalCount();
-                $list = $list->load();
-
-                $list = array_slice($list, $start, $limit);
-
-                $settings = [];
-                foreach ($list as $item) {
-                    $resultItem = $this->getWebsiteSettingForEditMode($item);
-                    $settings[] = $resultItem;
-                }
-
-                return $this->adminJson(['data' => $settings, 'success' => true, 'total' => $totalCount]);
+                return $this->adminJson(['data' => $setting->getObjectVars(), 'success' => true]);
             }
-        } catch (\Exception $e) {
-            throw $e;
+        } else {
+            // get list of routes
+
+            $list = new WebsiteSetting\Listing();
+
+            $limit = $request->get('limit');
+            $start = $request->get('start');
+
+            $sortingSettings = \Pimcore\Bundle\AdminBundle\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+
+            if ($request->get('filter')) {
+                $filter = $request->get('filter');
+                $list->setFilter(function ($row) use ($filter) {
+                    foreach ($row as $value) {
+                        if (strpos($value, $filter) !== false) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                });
+            }
+
+            $list->setOrder(static function ($a, $b) use ($sortingSettings) {
+                if (!$sortingSettings) {
+                    return 0;
+                }
+                $orderKey = $sortingSettings['orderKey'];
+                $aValue = $a[$orderKey] ?? null;
+                $bValue = $b[$orderKey] ?? null;
+                if ($aValue == $bValue) {
+                    return 0;
+                }
+
+                $result = $aValue < $bValue ? -1 : 1;
+                if ($sortingSettings['order'] === 'DESC') {
+                    $result = -1 * $result;
+                }
+
+                return $result;
+            });
+
+            $totalCount = $list->getTotalCount();
+            $list = $list->load();
+
+            $list = array_slice($list, $start, $limit);
+
+            $settings = [];
+            foreach ($list as $item) {
+                $resultItem = $this->getWebsiteSettingForEditMode($item);
+                $settings[] = $resultItem;
+            }
+
+            return $this->adminJson(['data' => $settings, 'success' => true, 'total' => $totalCount]);
         }
 
-        return $this->adminJson(false);
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -1910,8 +1932,8 @@ class SettingsController extends AdminController
      * delete views for localized fields when languages are removed to
      * prevent mysql errors
      *
-     * @param $language
-     * @param $dbName
+     * @param string $language
+     * @param string $dbName
      */
     protected function deleteViews($language, $dbName)
     {
@@ -1931,7 +1953,7 @@ class SettingsController extends AdminController
      *
      * @param Request $request
      *
-     * @return JsonResponse
+     * @return Response
      */
     public function testWeb2printAction(Request $request)
     {
@@ -1941,6 +1963,7 @@ class SettingsController extends AdminController
         $html = $response->getContent();
 
         $adapter = \Pimcore\Web2Print\Processor::getInstance();
+        $params = [];
 
         if ($adapter instanceof \Pimcore\Web2Print\Processor\WkHtmlToPdf) {
             $params['adapterConfig'] = '-O landscape';

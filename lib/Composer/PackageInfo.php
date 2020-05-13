@@ -49,7 +49,7 @@ class PackageInfo
     }
 
     /**
-     * @return array|null
+     * @return array
      */
     private function readInstalledPackages(): array
     {
@@ -94,5 +94,7 @@ class PackageInfo
 
             return $json;
         }
+
+        return null;
     }
 }

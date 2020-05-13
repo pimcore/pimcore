@@ -3,7 +3,7 @@
 ## General
 
 Perspectives allow to create different views in the backend UI and even customize the standard perspective.
-This feature could be combined with the configuration options already available for the [Custom Views](../05_Objects/01_Object_Classes/05_Class_Settings/11_Custom_Views.md).
+This feature could be combined with the configuration options already available for the [Custom Views](../05_Objects/01_Object_Classes/05_Class_Settings/20_Custom_Views.md).
 
 > **Security Note**    
 > Perspectives and Custom Views are not intended to be used to restrict access to data
@@ -64,7 +64,7 @@ We need only to see
 * search button
 
 To specify the range of objects you're going to use you, you have to firstly add a customview.
-See the [Custom views](../05_Objects/01_Object_Classes/05_Class_Settings/11_Custom_Views.md) section to get more details.
+See the [Custom views](../05_Objects/01_Object_Classes/05_Class_Settings/20_Custom_Views.md) section to get more details.
 
 The custom view definition would look like that:
 

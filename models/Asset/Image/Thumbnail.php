@@ -20,59 +20,23 @@ namespace Pimcore\Model\Asset\Image;
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Logger;
+use Pimcore\Model\Asset\Image;
+use Pimcore\Model\Asset\Thumbnail\ImageThumbnailTrait;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Thumbnail
 {
-    /**
-     * @var \Pimcore\Model\Asset\Image
-     */
-    protected $asset;
+    use ImageThumbnailTrait;
 
     /**
-     * @var mixed|string
+     * @var bool[]
      */
-    protected $filesystemPath;
+    protected static $hasListenersCache = [];
 
     /**
-     * @var int
-     */
-    protected $width;
-
-    /**
-     * @var int
-     */
-    protected $height;
-
-    /**
-     * @var int
-     */
-    protected $realWidth;
-
-    /**
-     * @var int
-     */
-    protected $realHeight;
-
-    /**
-     * @var string
-     */
-    protected $mimetype;
-
-    /**
-     * @var Thumbnail\Config
-     */
-    protected $config;
-
-    /**
-     * @var bool
-     */
-    protected $deferred = true;
-
-    /**
-     * @param $asset
-     * @param null $config
+     * @param Image $asset
+     * @param string|array|Thumbnail\Config $config
      * @param bool $deferred
      */
     public function __construct($asset, $config = null, $deferred = true)
@@ -85,31 +49,45 @@ class Thumbnail
     /**
      * @param bool $deferredAllowed
      *
-     * @return mixed|string
+     * @return string
      */
     public function getPath($deferredAllowed = true)
     {
         $fsPath = $this->getFileSystemPath($deferredAllowed);
-        $path = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/image-thumbnails', '', $fsPath);
-
         if ($this->getConfig()) {
             if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
                 // we still generate the raster image, to get the final size of the thumbnail
                 // we use getRealFullPath() here, to avoid double encoding (getFullPath() returns already encoded path)
-                $path = $this->asset->getRealFullPath();
+                $fsPath = $this->asset->getRealFullPath();
             }
         }
 
-        $path = urlencode_ignore_slash($path);
+        $path = $this->convertToWebPath($fsPath);
 
-        $event = new GenericEvent($this, [
-            'filesystemPath' => $fsPath,
-            'frontendPath' => $path
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
-        $path = $event->getArgument('frontendPath');
+        if ($this->hasListeners(FrontendEvents::ASSET_IMAGE_THUMBNAIL)) {
+            $event = new GenericEvent($this, [
+                'filesystemPath' => $fsPath,
+                'frontendPath' => $path
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
+            $path = $event->getArgument('frontendPath');
+        }
 
         return $path;
+    }
+
+    /**
+     * @param string $eventName
+     *
+     * @return bool
+     */
+    protected function hasListeners(string $eventName): bool
+    {
+        if (!isset(self::$hasListenersCache[$eventName])) {
+            self::$hasListenersCache[$eventName] = \Pimcore::getEventDispatcher()->hasListeners($eventName);
+        }
+
+        return self::$hasListenersCache[$eventName];
     }
 
     /**
@@ -130,20 +108,6 @@ class Thumbnail
 
     /**
      * @param bool $deferredAllowed
-     *
-     * @return mixed|string
-     */
-    public function getFileSystemPath($deferredAllowed = false)
-    {
-        if (!$this->filesystemPath) {
-            $this->generate($deferredAllowed);
-        }
-
-        return $this->filesystemPath;
-    }
-
-    /**
-     * @param bool $deferredAllowed
      */
     public function generate($deferredAllowed = true)
     {
@@ -159,7 +123,7 @@ class Thumbnail
                 $this->filesystemPath = $this->asset->getRealFullPath();
             } else {
                 try {
-                    $deferred = ($deferredAllowed && $this->deferred) ? true : false;
+                    $deferred = $deferredAllowed && $this->deferred;
                     $this->filesystemPath = Thumbnail\Processor::process($this->asset, $this->config, null, $deferred, true, $generated);
                 } catch (\Exception $e) {
                     $this->filesystemPath = $errorImage;
@@ -169,19 +133,12 @@ class Thumbnail
             }
         }
 
-        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::IMAGE_THUMBNAIL, new GenericEvent($this, [
-            'deferred' => $deferred,
-            'generated' => $generated
-        ]));
-    }
-
-    public function reset()
-    {
-        $this->filesystemPath = null;
-        $this->width = null;
-        $this->height = null;
-        $this->realHeight = null;
-        $this->realWidth = null;
+        if ($this->hasListeners(AssetEvents::IMAGE_THUMBNAIL)) {
+            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::IMAGE_THUMBNAIL, new GenericEvent($this, [
+                'deferred' => $deferred,
+                'generated' => $generated
+            ]));
+        }
     }
 
     /**
@@ -197,171 +154,19 @@ class Thumbnail
     }
 
     /**
-     * @return int Width of the generated thumbnail image.
-     */
-    public function getWidth()
-    {
-        if (!$this->width) {
-            $this->getDimensions();
-        }
-
-        return $this->width;
-    }
-
-    /**
-     * Get the width of the generated thumbnail image in pixels.
+     * @param string $path
+     * @param array $options
+     * @param Image $asset
      *
-     * @return int Height of the generated thumbnail image.
-     */
-    public function getHeight()
-    {
-        if (!$this->height) {
-            $this->getDimensions();
-        }
-
-        return $this->height;
-    }
-
-    /**
-     * @return int real Width of the generated thumbnail image. (when using high resolution option)
-     */
-    public function getRealWidth()
-    {
-        if (!$this->realWidth) {
-            $this->getDimensions();
-        }
-
-        return $this->realWidth;
-    }
-
-    /**
-     * Get the real width of the generated thumbnail image in pixels. (when using high resolution option)
-     *
-     * @return int Height of the generated thumbnail image.
-     */
-    public function getRealHeight()
-    {
-        if (!$this->realHeight) {
-            $this->getDimensions();
-        }
-
-        return $this->realHeight;
-    }
-
-    /**
-     * @return array
-     */
-    public function getDimensions()
-    {
-        if (!$this->width || !$this->height) {
-            $config = $this->getConfig();
-            $asset = $this->getAsset();
-            $dimensions = [];
-
-            // first we try to calculate the final dimensions based on the thumbnail configuration
-            if ($config) {
-                $dimensions = $config->getEstimatedDimensions($asset);
-            }
-
-            if (empty($dimensions)) {
-                // unable to calculate dimensions -> use fallback
-                // generate the thumbnail and get dimensions from the thumbnail file
-                $info = @getimagesize($this->getFileSystemPath());
-                if ($info) {
-                    $dimensions = [
-                        'width' => $info[0],
-                        'height' => $info[1]
-                    ];
-                }
-            }
-
-            $this->width = isset($dimensions['width']) ? $dimensions['width'] : null;
-            $this->height = isset($dimensions['height']) ? $dimensions['height'] : null;
-
-            // the following is only relevant if using high-res option (retina, ...)
-            $this->realHeight = $this->height;
-            $this->realWidth = $this->width;
-
-            if ($config && $config->getHighResolution() && $config->getHighResolution() > 1) {
-                $this->realWidth = floor($this->width * $config->getHighResolution());
-                $this->realHeight = floor($this->height * $config->getHighResolution());
-            }
-        }
-
-        return [
-            'width' => $this->width,
-            'height' => $this->height
-        ];
-    }
-
-    /**
-     * Get the height of the generated thumbnail image in pixels.
-     *
-     * @return string HTTP Mime Type of the generated thumbnail image.
-     */
-    public function getMimeType()
-    {
-        if (!$this->mimetype) {
-            // get target mime type without actually generating the thumbnail (deferred)
-            $mapping = [
-                'png' => 'image/png',
-                'jpg' => 'image/jpeg',
-                'jpeg' => 'image/jpeg',
-                'pjpeg' => 'image/jpeg',
-                'gif' => 'image/gif',
-                'tiff' => 'image/tiff',
-                'svg' => 'image/svg+xml',
-            ];
-
-            $targetFormat = strtolower($this->getConfig()->getFormat());
-            $format = $targetFormat;
-            $fileExt = \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
-
-            if ($targetFormat == 'source' || empty($targetFormat)) {
-                $format = Thumbnail\Processor::getAllowedFormat($fileExt, ['jpeg', 'gif', 'png'], 'png');
-            } elseif ($targetFormat == 'print') {
-                $format = Thumbnail\Processor::getAllowedFormat($fileExt, ['svg', 'jpeg', 'png', 'tiff'], 'png');
-                if (($format == 'tiff' || $format == 'svg') && \Pimcore\Tool::isFrontendRequestByAdmin()) {
-                    // return a webformat in admin -> tiff cannot be displayed in browser
-                    $format = 'png';
-                }
-            }
-
-            if (array_key_exists($format, $mapping)) {
-                $this->mimetype = $mapping[$format];
-            } else {
-                // unknown
-                $this->mimetype = 'application/octet-stream';
-            }
-        }
-
-        return $this->mimetype;
-    }
-
-    /**
      * @return string
      */
-    public function getFileExtension()
+    protected function addCacheBuster(string $path, array $options, Image $asset): string
     {
-        $mapping = [
-            'image/png' => 'png',
-            'image/jpeg' => 'jpg',
-            'image/gif' => 'gif',
-            'image/tiff' => 'tif',
-            'image/svg+xml' => 'svg',
-        ];
-
-        $mimeType = $this->getMimeType();
-
-        if (isset($mapping[$mimeType])) {
-            return $mapping[$mimeType];
+        if (isset($options['cacheBuster']) && $options['cacheBuster']) {
+            $path = '/cache-buster-' . $asset->getModificationDate() . $path;
         }
 
-        if ($this->getAsset()) {
-            return \Pimcore\File::getFileExtension($this->getAsset()->getFilename());
-        }
-
-        return '';
+        return $path;
     }
 
     /**
@@ -377,9 +182,10 @@ class Thumbnail
      */
     public function getHtml($options = [], $removeAttributes = [])
     {
+        /** @var Image $image */
         $image = $this->getAsset();
         $attributes = [];
-        $pictureAttribs = []; // this is used for the html5 <picture> element
+        $pictureAttribs = $options['pictureAttributes'] ?? []; // this is used for the html5 <picture> element
 
         // re-add support for disableWidthHeightAttributes
         if (isset($options['disableWidthHeightAttributes']) && $options['disableWidthHeightAttributes']) {
@@ -401,7 +207,7 @@ class Thumbnail
             'onkeydown', 'onkeypress', 'onkeyup', 'itemprop', 'itemscope', 'itemtype'];
 
         $customAttributes = [];
-        if (array_key_exists('attributes', $options) && is_array($options['attributes'])) {
+        if (isset($options['attributes']) && is_array($options['attributes'])) {
             $customAttributes = $options['attributes'];
         }
 
@@ -423,6 +229,8 @@ class Thumbnail
         if (empty($altText) && (!isset($options['disableAutoAlt']) || !$options['disableAutoAlt'])) {
             if ($image->getMetadata('alt')) {
                 $altText = $image->getMetadata('alt');
+            } elseif (isset($options['defaultalt'])) {
+                $altText = $options['defaultalt'];
             } else {
                 $altText = $titleText;
             }
@@ -452,18 +260,13 @@ class Thumbnail
                 continue;
             }
 
-            if (!(in_array($key, $w3cImgAttributes) || array_key_exists($key, $customAttributes) || strpos($key, 'data-') === 0)) {
+            if (!(in_array($key, $w3cImgAttributes) || isset($customAttributes[$key]) || strpos($key, 'data-') === 0)) {
                 continue;
             }
 
             //only include attributes with characters a-z and dashes in their name.
             if (preg_match('/^[a-z-]+$/i', $key)) {
                 $attributes[$key] = $value;
-
-                // do not include all attributes
-                if (!in_array($key, ['width', 'height', 'alt'])) {
-                    $pictureAttribs[$key] = $value;
-                }
 
                 // some attributes need to be added also as data- attribute, this is specific to picturePolyfill
                 if (in_array($key, ['alt'])) {
@@ -473,10 +276,7 @@ class Thumbnail
         }
 
         $path = $this->getPath(true);
-        $attributes['src'] = $path;
-        if (isset($options['cacheBuster']) && $options['cacheBuster']) {
-            $attributes['src'] = '/cache-buster-' . $image->getModificationDate() . $attributes['src'];
-        }
+        $attributes['src'] = $this->addCacheBuster($path, $options, $image);
 
         $thumbConfig = $this->getConfig();
 
@@ -487,10 +287,7 @@ class Thumbnail
                 $thumbConfigRes = clone $thumbConfig;
                 $thumbConfigRes->setHighResolution($highRes);
                 $srcsetEntry = $image->getThumbnail($thumbConfigRes, true) . ' ' . $highRes . 'x';
-                if (isset($options['cacheBuster']) && $options['cacheBuster']) {
-                    $srcsetEntry = '/cache-buster-' . $image->getModificationDate() . $srcsetEntry;
-                }
-                $srcSetValues[] = $srcsetEntry;
+                $srcSetValues[] = $this->addCacheBuster($srcsetEntry, $options, $image);
             }
             $attributes['srcset'] = implode(', ', $srcSetValues);
         }
@@ -501,14 +298,18 @@ class Thumbnail
         }
 
         $isLowQualityPreview = false;
-        if (
-            (isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder'])
-            && ($previewDataUri = $this->getAsset()->getLowQualityPreviewDataUri())
-            && !Tool::isFrontendRequestByAdmin()
-        ) {
+        if ((isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder']) && !Tool::isFrontendRequestByAdmin()) {
+            $previewDataUri = $this->getAsset()->getLowQualityPreviewDataUri();
+            if (!$previewDataUri) {
+                // use a 1x1 transparent GIF as a fallback if no LQIP exists
+                $previewDataUri = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+            }
+
             $isLowQualityPreview = true;
             $attributes['data-src'] = $attributes['src'];
-            $attributes['data-srcset'] = $attributes['srcset'];
+            if (isset($attributes['srcset'])) {
+                $attributes['data-srcset'] = $attributes['srcset'];
+            }
             $attributes['src'] = $previewDataUri;
             unset($attributes['srcset']);
         }
@@ -517,12 +318,20 @@ class Thumbnail
         $htmlImgTag = '<img ' . array_to_html_attribute_string($attributes) . ' />';
 
         // $this->getConfig() can be empty, the original image is returned
-        if ($this->getConfig() && $this->getConfig()->hasMedias()) {
+        if ($this->getConfig() && ($this->getConfig()->hasMedias() || $this->getConfig()->getForcePictureTag())) {
             // output the <picture> - element
-            // mobile first => fallback image is the smallest possible image
-            $fallBackImageThumb = null;
+            $isWebPAutoSupport = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
+            $isAutoFormat = (strtolower($this->getConfig()->getFormat()) === 'source' && $isWebPAutoSupport) ? true : false;
+            $webpSupportBackup = null;
 
-            $html = '<picture ' . array_to_html_attribute_string($pictureAttribs) . ' data-default-src="' . $path . '">' . "\n";
+            if ($isAutoFormat) {
+                $webpSupportBackup = Image\Thumbnail\Processor::setHasWebpSupport(false);
+                // ensure the default image is not WebP
+                $this->filesystemPath = null;
+                $path = $this->getPath(true);
+            }
+
+            $html = '<picture ' . array_to_html_attribute_string($pictureAttribs) . ' data-default-src="' . $this->addCacheBuster($path, $options, $image) . '">' . "\n";
             $mediaConfigs = $thumbConfig->getMedias();
 
             // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
@@ -532,36 +341,62 @@ class Thumbnail
             foreach ($mediaConfigs as $mediaQuery => $config) {
                 $srcSetValues = [];
                 $sourceTagAttributes = [];
+                $thumb = null;
+
                 foreach ([1, 2] as $highRes) {
                     $thumbConfigRes = clone $thumbConfig;
                     $thumbConfigRes->selectMedia($mediaQuery);
                     $thumbConfigRes->setHighResolution($highRes);
                     $thumb = $image->getThumbnail($thumbConfigRes, true);
-                    $srcSetValues[] = $thumb . ' ' . $highRes . 'x';
+                    $srcSetValues[] = $this->addCacheBuster($thumb . ' ' . $highRes . 'x', $options, $image);
 
-                    if (!$fallBackImageThumb) {
-                        $fallBackImageThumb = $thumb;
+                    if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
+                        break;
+                    }
+
+                    if ($isAutoFormat) {
+                        $thumbConfigWebP = clone $thumbConfigRes;
+                        $thumbConfigWebP->setFormat('webp');
+                        $image->getThumbnail($thumbConfigWebP, true)->getPath();
                     }
                 }
 
-                $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
-                if ($mediaQuery) {
-                    // currently only max-width is supported, so we replace the width indicator (400w) out of the name
-                    $maxWidth = str_replace('w', '', $mediaQuery);
-                    $sourceTagAttributes['media'] = '(max-width: ' . $maxWidth . 'px)';
-                    $thumb->reset();
-                }
+                if ($thumb) {
+                    $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
+                    if ($mediaQuery) {
+                        if (preg_match('/^[\d]+w$/', $mediaQuery)) {
+                            // we replace the width indicator (400w) out of the name and build a proper media query for max width
+                            $maxWidth = str_replace('w', '', $mediaQuery);
+                            $sourceTagAttributes['media'] = '(max-width: ' . $maxWidth . 'px)';
+                        } else {
+                            // new style custom media queries
+                            $sourceTagAttributes['media'] = $mediaQuery;
+                        }
 
-                if ($isLowQualityPreview) {
-                    $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
-                    unset($sourceTagAttributes['srcset']);
-                }
+                        $thumb->reset();
+                    }
 
-                $html .= "\t" . '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />' . "\n";
+                    if ($isLowQualityPreview) {
+                        $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
+                        unset($sourceTagAttributes['srcset']);
+                    }
+
+                    $sourceTagAttributes['type'] = $thumb->getMimeType();
+
+                    $sourceHtml = '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
+                    if ($isAutoFormat) {
+                        $sourceHtmlWebP = preg_replace(['@(\.)(jpg|png)( \dx)@', '@(/)(jpeg|png)(")@'], '$1webp$3', $sourceHtml);
+                        if ($sourceHtmlWebP != $sourceHtml) {
+                            $html .= "\t" . $sourceHtmlWebP . "\n";
+                        }
+                    }
+
+                    $html .= "\t" . $sourceHtml . "\n";
+                }
             }
 
             $attrCleanedForPicture = $attributes;
-            $attrCleanedForPicture['src'] = (string) $fallBackImageThumb;
+            $attrCleanedForPicture['src'] = $this->addCacheBuster($path, $options, $image);
             unset($attrCleanedForPicture['width']);
             unset($attrCleanedForPicture['height']);
 
@@ -583,6 +418,10 @@ class Thumbnail
             $html .= '</picture>' . "\n";
 
             $htmlImgTag = $html;
+
+            if ($isAutoFormat) {
+                Image\Thumbnail\Processor::setHasWebpSupport($webpSupportBackup);
+            }
         }
 
         if (isset($options['useDataSrc']) && $options['useDataSrc']) {
@@ -605,7 +444,7 @@ class Thumbnail
         $thumbConfig = $this->getConfig();
         $mediaConfigs = $thumbConfig->getMedias();
 
-        if (array_key_exists($name, $mediaConfigs)) {
+        if (isset($mediaConfigs[$name])) {
             $thumbConfigRes = clone $thumbConfig;
             $thumbConfigRes->selectMedia($name);
             $thumbConfigRes->setHighResolution($highRes);
@@ -619,50 +458,9 @@ class Thumbnail
     }
 
     /**
-     * @return \Pimcore\Model\Asset\Image The original image from which this thumbnail is generated.
-     */
-    public function getAsset()
-    {
-        return $this->asset;
-    }
-
-    /**
-     * Get thumbnail image configuration.
-     *
-     * @return Thumbnail\Config
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    /**
-     * @param string $type
-     *
-     * @return null|string
-     *
-     * @throws \Exception
-     */
-    public function getChecksum($type = 'md5')
-    {
-        $file = $this->getFileSystemPath();
-        if (is_file($file)) {
-            if ($type == 'md5') {
-                return md5_file($file);
-            } elseif ($type == 'sha1') {
-                return sha1_file($file);
-            } else {
-                throw new \Exception("hashing algorithm '" . $type . "' isn't supported");
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Get a thumbnail image configuration.
      *
-     * @param mixed $selector Name, array or object describing a thumbnail configuration.
+     * @param string|array|Thumbnail\Config $selector Name, array or object describing a thumbnail configuration.
      *
      * @return Thumbnail\Config
      */

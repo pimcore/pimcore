@@ -150,15 +150,15 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param DataObject\Data\Geopoint[]|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return '';
+        return $this->getDiffVersionPreview($data, $object, $params);
     }
 
     /**
@@ -166,7 +166,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -186,12 +186,12 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
             }
         }
 
-        return null;
+        return '';
     }
 
     /**
-     * @param $importValue
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|mixed
@@ -211,7 +211,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -224,7 +224,9 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     /**
      * converts data to be exposed via webservices
      *
-     * @param string $object
+     * @deprecated
+     *
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -240,10 +242,12 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     }
 
     /**
+     * @deprecated
+     *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @return mixed|void
      *
@@ -271,7 +275,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     }
 
     /** True if change is allowed in edit mode.
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -282,33 +286,25 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
-     * @param null $object
+     * @param array|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return array|string
+     * @return string
      */
     public function getDiffVersionPreview($data, $object = null, $params = [])
     {
-        if (!empty($data)) {
-            $line = '';
-            $isFirst = true;
-            if (is_array($data)) {
-                foreach ($data as $point) {
-                    if (!$isFirst) {
-                        $line .= ' ';
-                    }
-                    $line .= $point->getLatitude() . ',' . $point->getLongitude();
-                    $isFirst = false;
-                }
+        $line = [];
 
-                return $line;
+        if (is_array($data)) {
+            foreach ($data as $point) {
+                $line[] = $point->getLatitude() . ',' . $point->getLongitude();
             }
         }
 
-        return;
+        return implode(' ', $line);
     }
 
     /** Encode value for packing it into a single column.
@@ -324,7 +320,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
             $value = Serialize::unserialize($value);
             $result = [];
             if (is_array($value)) {
-                /** @var $point DataObject\Data\Geopoint */
+                /** @var DataObject\Data\Geopoint $point */
                 foreach ($value as $point) {
                     $result[] = [
                             $point->getLatitude(),
@@ -344,24 +340,23 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @param Model\DataObject\AbstractObject $object
      * @param mixed $params
      *
-     * @return mixed
+     * @return string|null
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if ($value && $value['value']) {
+        if (isset($value['value'])) {
             $value = json_decode($value['value']);
             $result = [];
             if (is_array($value)) {
                 foreach ($value as $point) {
-                    $newPoint = new DataObject\Data\Geopoint($point[1], $point[1]);
-                    $newPoint->setLatitude($point[0]);
-                    $newPoint->setLongitude($point[1]);
-                    $result[] = $newPoint;
+                    $result[] = new DataObject\Data\Geopoint($point[1], $point[0]);
                 }
             }
             $result = Serialize::serialize($result);
 
             return $result;
         }
+
+        return null;
     }
 }

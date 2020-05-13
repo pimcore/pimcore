@@ -31,7 +31,7 @@ class GD extends Adapter
     protected $resource;
 
     /**
-     * @param $imagePath
+     * @param string $imagePath
      * @param array $options
      *
      * @return $this|self
@@ -76,11 +76,11 @@ class GD extends Adapter
     }
 
     /**
-     * @param $path
-     * @param null $format
-     * @param null $quality
+     * @param string $path
+     * @param string|null $format
+     * @param int|null $quality
      *
-     * @return $this|mixed
+     * @return $this
      */
     public function save($path, $format = null, $quality = null)
     {
@@ -114,7 +114,7 @@ class GD extends Adapter
             imagesavealpha($this->resource, true);
         }
 
-        if ($format == 'jpeg' || $format == 'webp') {
+        if ($functionName === 'imagejpeg' || $functionName === 'imagewebp') {
             $functionName($this->resource, $path, $quality);
         } else {
             $functionName($this->resource, $path);
@@ -155,8 +155,8 @@ class GD extends Adapter
     }
 
     /**
-     * @param $width
-     * @param $height
+     * @param int $width
+     * @param int $height
      *
      * @return resource
      */
@@ -173,8 +173,8 @@ class GD extends Adapter
     }
 
     /**
-     * @param  $width
-     * @param  $height
+     * @param int $width
+     * @param int $height
      *
      * @return self
      */
@@ -195,10 +195,10 @@ class GD extends Adapter
     }
 
     /**
-     * @param  $x
-     * @param  $y
-     * @param  $width
-     * @param  $height
+     * @param int $x
+     * @param int $y
+     * @param int $width
+     * @param int $height
      *
      * @return self
      */
@@ -225,9 +225,9 @@ class GD extends Adapter
     }
 
     /**
-     * @param  $width
-     * @param  $height
-     * @param  bool $forceResize
+     * @param int $width
+     * @param int $height
+     * @param bool $forceResize
      *
      * @return self
      */
@@ -255,7 +255,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param  $color
+     * @param string $color
      *
      * @return Adapter
      */
@@ -282,7 +282,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param $image
+     * @param string $image
      * @param null|string $mode
      *
      * @return $this
@@ -419,7 +419,7 @@ class GD extends Adapter
     }
 
     /**
-     * @param $angle
+     * @param int $angle
      *
      * @return $this|self
      */

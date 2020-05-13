@@ -20,6 +20,7 @@ namespace Pimcore\Model;
 use Pimcore\Event\Model\RedirectEvent;
 use Pimcore\Event\RedirectEvents;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Pimcore\Model\Redirect\Dao getDao()
@@ -29,11 +30,13 @@ class Redirect extends AbstractModel
     const TYPE_ENTIRE_URI = 'entire_uri';
     const TYPE_PATH_QUERY = 'path_query';
     const TYPE_PATH = 'path';
+    const TYPE_AUTO_CREATE = 'auto_create';
 
     const TYPES = [
         self::TYPE_ENTIRE_URI,
         self::TYPE_PATH_QUERY,
-        self::TYPE_PATH
+        self::TYPE_PATH,
+        self::TYPE_AUTO_CREATE,
     ];
 
     /**
@@ -52,14 +55,14 @@ class Redirect extends AbstractModel
     public $source;
 
     /**
-     * @var int
+     * @var int|null
      */
     public $sourceSite;
 
     /**
      * @var bool
      */
-    public $passThroughParameters;
+    public $passThroughParameters = false;
 
     /**
      * @var string
@@ -67,22 +70,22 @@ class Redirect extends AbstractModel
     public $target;
 
     /**
-     * @var int
+     * @var int|null
      */
     public $targetSite;
 
     /**
-     * @var string
+     * @var int
      */
     public $statusCode = 301;
 
     /**
-     * @var string
+     * @var int
      */
     public $priority = 1;
 
     /**
-     * @var bool
+     * @var bool|null
      */
     public $regex;
 
@@ -107,6 +110,20 @@ class Redirect extends AbstractModel
     public $modificationDate;
 
     /**
+     * ID of the owner user
+     *
+     * @var int
+     */
+    protected $userOwner;
+
+    /**
+     * ID of the user who make the latest changes
+     *
+     * @var int
+     */
+    protected $userModification;
+
+    /**
      * StatusCodes
      */
     public static $statusCodes = [
@@ -120,13 +137,32 @@ class Redirect extends AbstractModel
     /**
      * @param int $id
      *
-     * @return Redirect
+     * @return self|null
      */
     public static function getById($id)
     {
         try {
             $redirect = new self();
             $redirect->getDao()->getById($id);
+
+            return $redirect;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param Site|null $site
+     * @param bool $override
+     *
+     * @return self|null
+     */
+    public static function getByExactMatch(Request $request, ?Site $site = null, bool $override = false): ?self
+    {
+        try {
+            $redirect = new self();
+            $redirect->getDao()->getByExactMatch($request, $site, $override);
 
             return $redirect;
         } catch (\Exception $e) {
@@ -294,7 +330,7 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $expiry
+     * @param int|string $expiry
      *
      * @return $this
      */
@@ -330,7 +366,7 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $regex
+     * @param bool $regex
      *
      * @return $this
      */
@@ -354,23 +390,19 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $active
+     * @param bool $active
      *
      * @return $this
      */
     public function setActive($active)
     {
-        if ($active) {
-            $this->active = (bool) $active;
-        } else {
-            $this->active = null;
-        }
+        $this->active = (bool) $active;
 
         return $this;
     }
 
     /**
-     * @param $sourceSite
+     * @param int $sourceSite
      *
      * @return $this
      */
@@ -394,7 +426,7 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $targetSite
+     * @param int $targetSite
      *
      * @return $this
      */
@@ -418,17 +450,13 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $passThroughParameters
+     * @param bool $passThroughParameters
      *
      * @return Redirect
      */
     public function setPassThroughParameters($passThroughParameters)
     {
-        if ($passThroughParameters) {
-            $this->passThroughParameters = (bool) $passThroughParameters;
-        } else {
-            $this->passThroughParameters = null;
-        }
+        $this->passThroughParameters = (bool) $passThroughParameters;
 
         return $this;
     }
@@ -442,7 +470,7 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $modificationDate
+     * @param int $modificationDate
      *
      * @return $this
      */
@@ -462,7 +490,7 @@ class Redirect extends AbstractModel
     }
 
     /**
-     * @param $creationDate
+     * @param int $creationDate
      *
      * @return $this
      */
@@ -479,6 +507,38 @@ class Redirect extends AbstractModel
     public function getCreationDate()
     {
         return $this->creationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserOwner()
+    {
+        return $this->userOwner;
+    }
+
+    /**
+     * @param int $userOwner
+     */
+    public function setUserOwner($userOwner)
+    {
+        $this->userOwner = $userOwner;
+    }
+
+    /**
+     * @return int
+     */
+    public function getUserModification()
+    {
+        return $this->userModification;
+    }
+
+    /**
+     * @param int $userModification
+     */
+    public function setUserModification($userModification)
+    {
+        $this->userModification = $userModification;
     }
 
     public function save()

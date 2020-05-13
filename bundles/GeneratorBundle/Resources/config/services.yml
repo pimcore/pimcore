@@ -19,7 +19,3 @@ services:
 
     Pimcore\Bundle\GeneratorBundle\Command\Helper\QuestionHelper:
         public: true
-
-    Pimcore\Bundle\GeneratorBundle\PimcoreGeneratorBundle:
-        arguments:
-            - 'Pimcore\Bundle\GeneratorBundle\Command\GenerateBundleCommand'

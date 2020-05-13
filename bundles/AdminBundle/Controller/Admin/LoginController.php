@@ -16,12 +16,14 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\BruteforceProtectedControllerInterface;
+use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Event\Admin\Login\LostPasswordEvent;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Tool;
@@ -57,6 +59,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
     public function onKernelResponse(FilterResponseEvent $event)
     {
+        $event->getResponse()->headers->set('X-Frame-Options', 'deny', true);
     }
 
     /**
@@ -65,18 +68,20 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      *
      * @TemplatePhp()
      */
-    public function loginAction(Request $request)
+    public function loginAction(Request $request, CsrfProtectionListener $csrfProtectionListener, Config $config)
     {
         if ($request->get('_route') === 'pimcore_admin_login_fallback') {
             return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
         }
+
+        $csrfProtectionListener->regenerateCsrfToken();
 
         $user = $this->getAdminUser();
         if ($user instanceof UserInterface) {
             return $this->redirectToRoute('pimcore_admin_index');
         }
 
-        $view = $this->buildLoginPageViewModel();
+        $view = $this->buildLoginPageViewModel($config);
 
         if ($request->get('auth_failed')) {
             $view->error = 'error_auth_failed';
@@ -113,36 +118,34 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      * @Route("/login/lostpassword")
      * @TemplatePhp()
      */
-    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler)
+    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionListener $csrfProtectionListener, Config $config)
     {
-        $view = $this->buildLoginPageViewModel();
-        $view->success = false;
+        $view = $this->buildLoginPageViewModel($config);
+        $error = null;
 
-        // TODO is the error on the view used somewhere?
         if ($request->getMethod() === 'POST' && $username = $request->get('username')) {
             $user = User::getByName($username);
 
             if ($user instanceof User) {
                 if (!$user->isActive()) {
-                    $view->error = 'user inactive';
+                    $error = 'user inactive';
                 }
 
                 if (!$user->getEmail()) {
-                    $view->error = 'user has no email address';
+                    $error = 'user has no email address';
                 }
 
                 if (!$user->getPassword()) {
-                    $view->error = 'user has no password';
+                    $error = 'user has no password';
                 }
             } else {
-                $view->error = 'user unknown';
+                $error = 'user unknown';
             }
 
-            if (!$view->error) {
-                $token = Authentication::generateToken($username, $user->getPassword());
+            if (!$error && $user instanceof User) {
+                $token = Authentication::generateToken($user->getName());
 
                 $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
-                    'username' => $username,
                     'token' => $token,
                     'reset' => 'true'
                 ], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -155,7 +158,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                     if ($event->getSendMail()) {
                         $mail = Tool::getMail([$user->getEmail()], 'Pimcore lost password service');
                         $mail->setIgnoreDebugMode(true);
-                        $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 30 minutes: \r\n\r\n" . $loginUrl);
+                        $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in 24 hours: \r\n\r\n" . $loginUrl);
                         $mail->send();
                     }
 
@@ -163,17 +166,18 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                     if ($event->hasResponse()) {
                         return $event->getResponse();
                     }
-
-                    $view->success = true;
                 } catch (\Exception $e) {
-                    $view->error = 'could not send email';
+                    $error = 'could not send email';
                 }
             }
 
-            if ($view->error) {
+            if ($error) {
+                Logger::error('Lost password service: ' . $error);
                 $bruteforceProtectionHandler->addEntry($request->get('username'), $request);
             }
         }
+
+        $csrfProtectionListener->regenerateCsrfToken();
 
         return $view;
     }
@@ -182,16 +186,19 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      * @Route("/login/deeplink")
      * @TemplatePhp()
      */
-    public function deeplinkAction()
+    public function deeplinkAction(Request $request)
     {
         // check for deeplink
         $queryString = $_SERVER['QUERY_STRING'];
 
         if (preg_match('/(document|asset|object)_([0-9]+)_([a-z]+)/', $queryString, $deeplink)) {
+            $deeplink = $deeplink[0];
+            $perspective = strip_tags($request->get('perspective'));
+
             if (strpos($queryString, 'token')) {
-                $deeplink = $deeplink[0];
                 $url = $this->generateUrl('pimcore_admin_login', [
-                    'deeplink' => $deeplink
+                    'deeplink' => $deeplink,
+                    'perspective' => $perspective
                 ]);
 
                 $url .= '&' . $queryString;
@@ -199,7 +206,8 @@ class LoginController extends AdminController implements BruteforceProtectedCont
                 return $this->redirect($url);
             } elseif ($queryString) {
                 return new ViewModel([
-                    'tab' => $queryString
+                    'tab' => $deeplink,
+                    'perspective' => $perspective
                 ]);
             }
         }
@@ -208,12 +216,12 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @return ViewModel
      */
-    protected function buildLoginPageViewModel()
+    protected function buildLoginPageViewModel(Config $config)
     {
         $bundleManager = $this->get('pimcore.extension.bundle_manager');
 
         $view = new ViewModel([
-            'config' => Config::getSystemConfig(),
+            'config' => $config,
             'pluginCssPaths' => $bundleManager->getCssPaths()
         ]);
 
@@ -222,22 +230,25 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
     /**
      * @Route("/login/2fa", name="pimcore_admin_2fa")
-     *
-     * @param Request $request
-     *
      * @TemplatePhp()
      */
-    public function twoFactorAuthenticationAction(Request $request)
+    public function twoFactorAuthenticationAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, Config $config)
     {
-        $view = $this->buildLoginPageViewModel();
+        $view = $this->buildLoginPageViewModel($config);
 
         if ($request->hasSession()) {
+
+            // we have to call the check here manually, because BruteforceProtectionListener uses the 'username' from the request
+            $bruteforceProtectionHandler->checkProtection($this->getAdminUser()->getName(), $request);
+
             $session = $request->getSession();
             $authException = $session->get(Security::AUTHENTICATION_ERROR);
             if ($authException instanceof AuthenticationException) {
                 $session->remove(Security::AUTHENTICATION_ERROR);
 
                 $view->error = $authException->getMessage();
+
+                $bruteforceProtectionHandler->addEntry($this->getAdminUser()->getName(), $request);
             }
         } else {
             $view->error = 'No session available, it either timed out or cookies are not enabled.';

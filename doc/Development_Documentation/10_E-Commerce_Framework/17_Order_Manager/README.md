@@ -17,7 +17,7 @@ pimcore_ecommerce_framework:
         tenants:
             _defaults:
                 # service ID of order manager implementation
-                order_manager_id: Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager
+                order_manager_id: Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManager
                 # options for oder manager
                 options:
                     # Pimcore object class for orders
@@ -36,7 +36,7 @@ pimcore_ecommerce_framework:
                     factory_id: Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory
                     # options for order agent factory - available options vary by factory implementation
                     factory_options:
-                        agent_class: AppBundle\Ecommerce\OrderManager\Order\Agent
+                        agent_class: Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderAgent
             
             # inherits from _defaults
             default: ~

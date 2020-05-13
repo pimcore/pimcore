@@ -1,0 +1,141 @@
+{% extends '@PimcoreEcommerceFramework/back-office.html.twig' %}
+
+{% spaceless -%}
+    {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.css')) %}
+    {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.js')) %}
+{%- endspaceless %}
+
+{% set urlParams = app.request.query.all %}
+{% block content %}
+    <div class="page-header mt-5">
+        <h1>{{ 'bundle_ecommerce.back-office.order-list'|trans([],'admin') }}</h1>
+        <hr>
+    </div>
+    <div class="panel panel-default">
+        <form class="form" role="search">
+            <div class="panel-body border rounded">
+                <div class="form-row m-2">
+                    <div class="form-group col-md-4">
+                        <div class="input-group">
+                            <div class="input-group-btn input-group-prepend" id="search-filter">
+                                {% set arrFields = {'order': ('bundle_ecommerce.back-office.order-list.filter-order')|trans([],'admin') ,
+                                    'productType' :   ('bundle_ecommerce.back-office.order-list.filter-product-type')|trans([],'admin') } %}
+                                {% set selected = app.request.get('search', 'order') %}
+                                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" data-target="#">
+                                    <span id="search-filter-label" data-bind="label">{{ arrFields[selected] }}</span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    {% for field,label in arrFields %}
+                                        <li><a class="dropdown-item search-filter-item" href="#" data-value="{{ field }}">{{ label }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <input type="hidden" id="search-query" name="search" value="{{ selected }}" />
+                            <input type="text" class="form-control" name="q" placeholder="{{ 'bundle_ecommerce.back-office.order-list.search.placeholder'|trans([],'admin') }}" value="{{ app.request.get('q') }}">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <div class="input-group">
+                            <div class="input-group-prepend"><span class="input-group-text fa fa-calendar"></span></div>
+                            <input type="text" id="date-from" class="form-control date" name="from" placeholder="{{ 'bundle_ecommerce.back-office.order-list.filter-date.from'|trans([],'admin') }}" value="{{ app.request.get('from') }}">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <div class="input-group">
+                            <div class="input-group-prepend"><span class="input-group-text fa fa-calendar"></span></div>
+                            <input type="text" id="date-till" class="form-control date" name="till" placeholder="{{ 'bundle_ecommerce.back-office.order-list.filter-date.to'|trans([],'admin') }}" value="{{ app.request.get('till') }}">
+                        </div>
+                    </div>
+                    {% set list = listPricingRule.load() %}
+
+                    {%  if (list|length > 0)  %}
+                        <div class="form-group col-sm-4">
+                            <div class="input-group">
+                                <div class="input-group-prepend"><span class="input-group-text fa fa-tag"></span></div>
+                                <select class="form-control custom-select" name="pricingRule">
+                                    <option value="">{{ 'bundle_ecommerce.back-office.order-list.filter-pricing-rules'|trans([],'admin') }}</option>
+                                    {% for item in list %}
+                                        <option value="{{ item.getId() }}" {{ (item.getId() == app.request.get('pricingRule') ? 'selected':'') }}>{{ item.getLabel() }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+                <div class="form-group col-md-12 card-header">
+                    <button type="submit" class="btn btn-outline-secondary btn-sm d-block mx-auto"><span class="fa fa-filter"></span> {{ 'bundle_ecommerce.back-office.order-list.search.button'|trans([],'admin') }} </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <p class="mt-5"><caption>{{ 'bundle_ecommerce.back-office.order-list.total-orders'|trans([],'admin') }}: {{ paginator.getTotalItemCount() }}</caption></p>
+    <table class="table table-striped table-hover">
+
+        <thead>
+        <tr>
+            <th width="180">{{ 'bundle_ecommerce.back-office.order'|trans([],'admin') }}</th>
+            <th width="180">{{ 'bundle_ecommerce.back-office.order.date'|trans([],'admin') }}</th>
+            <th width="80">{{ 'bundle_ecommerce.back-office.order.order-items'|trans([],'admin') }}</th>
+            <th class="text-right" width="100">{{ 'bundle_ecommerce.back-office.order.price.total'|trans([],'admin') }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% set totalSum = 0 %}
+
+        {% for item in paginator %}
+            {% set totalSum = totalSum + item.getTotalPrice() %}
+
+        <tr>
+            <td>
+                {% set urlDetail = path('pimcore_ecommerce_backend_admin-order_detail', {'id' : item.getOrderId()}|merge(urlParams), null, true) %}
+                <a href="{{ urlDetail }}">{{ item.getOrderNumber() }}</a>
+            </td>
+            <td>
+                {% set date = item.getOrderDate() %}
+
+                {% if date.timestamp is defined %}
+                    {% set date = date() %}
+                    {% do date.setTimestamp(item.getOrderDate()) %}
+                {% endif %}
+
+                {{ formatter.formatDateTime(date, constant('\\Pimcore\\Localization\\IntlFormatter::DATETIME_MEDIUM')) }}
+            </td>
+            <td>{{ item.getItems() }}</td>
+            </td>
+            <td class="text-right">{{ formatter.formatCurrency(item.getTotalPrice(), item.getCurrency()) }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="3"></td>
+            <td class="text-right">
+                <strong>{{ defaultCurrency.toCurrency(totalSum) }}</strong>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+
+    {% if paginator.getPages().pageCount > 1 %}
+        {% include "PimcoreEcommerceFrameworkBundle:includes:paging.html.twig" with {'paginationVariables': paginator.getPages("Sliding") } %}
+    {% endif %}
+
+    {% do pimcore_head_script().captureStart() %}
+            //datepicker
+            flatpickr(".date", {allowInput: true});
+
+            document.querySelectorAll('.search-filter-item').forEach(function(el){
+                el.addEventListener('click', function() {
+                    document.querySelector('#search-filter-label').innerHTML = this.text;
+                    document.querySelector('#search-query').setAttribute("value", this.getAttribute('data-value'));
+                });
+            });
+
+    {% do pimcore_head_script().captureEnd() %}
+{% endblock %}
+
+
+

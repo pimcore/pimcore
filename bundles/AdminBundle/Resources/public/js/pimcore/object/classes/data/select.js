@@ -148,7 +148,6 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                                     var rec = grid.getStore().getAt(rowIndex);
                                     grid.getStore().removeAt(rowIndex);
                                     grid.getStore().insert(--rowIndex, [rec]);
-                                    var sm = valueGrid.getSelectionModel();
                                     this.selectionModel.select(rowIndex);
                                 }
                             }.bind(this)
@@ -252,6 +251,15 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
         });
 
         items.push({
+            xtype: 'textfield',
+            width: 600,
+            fieldLabel: t("default_value_generator"),
+            labelWidth: 140,
+            name: 'defaultValueGenerator',
+            value: datax.defaultValueGenerator
+        });
+
+        items.push({
             xtype: "textfield",
             fieldLabel: t("options_provider_class"),
             width: 600,
@@ -299,7 +307,10 @@ pimcore.object.classes.data.select = Class.create(pimcore.object.classes.data.da
                     options: source.datax.options,
                     width: source.datax.width,
                     optionsProviderClass: source.datax.optionsProviderClass,
-                    optionsProviderData: source.datax.optionsProviderData
+                    optionsProviderData: source.datax.optionsProviderData,
+                    defaultValue: source.datax.defaultValue,
+                    columnLength : source.datax.columnLength,
+                    defaultValueGenerator: source.datax.defaultValueGenerator
                 });
         }
     },

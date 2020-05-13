@@ -29,6 +29,11 @@ use Pimcore\Model\Element;
 class Service extends Model\Element\Service
 {
     /**
+     * @var array
+     */
+    public static $gridSystemColumns = ['preview', 'id', 'type', 'fullpath', 'filename', 'creationDate', 'modificationDate', 'size'];
+
+    /**
      * @var Model\User|null
      */
     protected $_user;
@@ -46,10 +51,12 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param  Asset|Asset\Folder $target
-     * @param  Asset|Asset\Folder $source
+     * @param Asset $target
+     * @param Asset $source
      *
-     * @return Asset copied asset
+     * @return Asset|null copied asset
+     *
+     * @throws \Exception
      */
     public function copyRecursive($target, $source)
     {
@@ -59,13 +66,14 @@ class Service extends Model\Element\Service
             $this->_copyRecursiveIds = [];
         }
         if (in_array($source->getId(), $this->_copyRecursiveIds)) {
-            return;
+            return null;
         }
 
         $source->getProperties();
 
+        /** @var Asset $new */
         $new = Element\Service::cloneMe($source);
-        $new->id = null;
+        $new->setObjectVar('id', null);
         if ($new instanceof Asset\Folder) {
             $new->setChildren(null);
         }
@@ -104,11 +112,14 @@ class Service extends Model\Element\Service
      * @param  Asset $source
      *
      * @return Asset copied asset
+     *
+     * @throws \Exception
      */
     public function copyAsChild($target, $source)
     {
         $source->getProperties();
 
+        /** @var Asset $new */
         $new = Element\Service::cloneMe($source);
         $new->setId(null);
 
@@ -138,8 +149,8 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $target
-     * @param $source
+     * @param Asset $target
+     * @param Asset $source
      *
      * @return mixed
      *
@@ -167,22 +178,101 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param  Asset $asset
+     * @param Asset $asset
+     * @param array|null $fields
+     * @param string|null $requestedLanguage
+     * @param array $params
      *
-     * @return $this
+     * @return array
      */
-    public static function gridAssetData($asset)
+    public static function gridAssetData($asset, $fields = null, $requestedLanguage = null, $params = [])
     {
         $data = Element\Service::gridElementData($asset);
+
+        if ($asset instanceof Asset && !empty($fields)) {
+            $data = [
+                'id' => $asset->getId(),
+                'id~system' => $asset->getId(),
+                'type~system' => $asset->getType(),
+                'fullpath~system' => $asset->getRealFullPath(),
+                'filename~system' => $asset->getKey(),
+                'creationDate~system' => $asset->getCreationDate(),
+                'modificationDate~system' => $asset->getModificationDate(),
+                'idPath~system' => Element\Service::getIdPath($asset),
+            ];
+
+            $requestedLanguage = str_replace('default', '', $requestedLanguage);
+
+            foreach ($fields as $field) {
+                $fieldDef = explode('~', $field);
+                if (isset($fieldDef[1]) && $fieldDef[1] === 'system') {
+                    if ($fieldDef[0] === 'preview') {
+                        $data[$field] = self::getPreviewThumbnail($asset, ['treepreview' => true, 'width' => 108, 'height' => 70, 'frame' => true]);
+                    } elseif ($fieldDef[0] === 'size') {
+                        /** @var Asset $asset */
+                        $filename = PIMCORE_ASSET_DIRECTORY . '/' . $asset->getRealFullPath();
+                        $size = @filesize($filename);
+                        $data[$field] = formatBytes($size);
+                    }
+                } else {
+                    if (isset($fieldDef[1])) {
+                        $language = ($fieldDef[1] === 'none' ? '' : $fieldDef[1]);
+                        $metaData = $asset->getMetadata($fieldDef[0], $language, true);
+                    } else {
+                        $metaData = $asset->getMetadata($field, $requestedLanguage, true);
+                    }
+
+                    if ($metaData instanceof Model\Element\AbstractElement) {
+                        $metaData = $metaData->getFullPath();
+                    }
+
+                    $data[$field] = $metaData;
+                }
+            }
+        }
 
         return $data;
     }
 
     /**
+     * @param Asset $asset
+     * @param array $params
+     * @param bool $onlyMethod
+     *
+     * @return string|null
+     */
+    public static function getPreviewThumbnail($asset, $params = [], $onlyMethod = false)
+    {
+        $thumbnailMethod = '';
+        $thumbnailUrl = null;
+
+        if ($asset instanceof Asset\Image) {
+            $thumbnailMethod = 'getThumbnail';
+        } elseif ($asset instanceof Asset\Video && \Pimcore\Video::isAvailable()) {
+            $thumbnailMethod = 'getImageThumbnail';
+        } elseif ($asset instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
+            $thumbnailMethod = 'getImageThumbnail';
+        }
+
+        if ($onlyMethod) {
+            return $thumbnailMethod;
+        }
+
+        if (!empty($thumbnailMethod)) {
+            $thumbnailUrl = '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId();
+            if (count($params) > 0) {
+                $thumbnailUrl .= '&' . http_build_query($params);
+            }
+        }
+
+        return $thumbnailUrl;
+    }
+
+    /**
      * @static
      *
-     * @param $path
-     * @param null $type
+     * @param string $path
+     * @param string|null $type
      *
      * @return bool
      */
@@ -229,14 +319,13 @@ class Service extends Model\Element\Service
      *  "asset" => array(...)
      * )
      *
-     * @param $asset
-     * @param $rewriteConfig
+     * @param Asset $asset
+     * @param array $rewriteConfig
      *
      * @return Asset
      */
     public static function rewriteIds($asset, $rewriteConfig)
     {
-
         // rewriting properties
         $properties = $asset->getProperties();
         foreach ($properties as &$property) {
@@ -248,7 +337,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $metadata
+     * @param array $metadata
      *
      * @return array
      */
@@ -285,7 +374,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $metadata
+     * @param array $metadata
      *
      * @return array
      */
@@ -332,7 +421,7 @@ class Service extends Model\Element\Service
     }
 
     /**
-     * @param $item \Pimcore\Model\Asset
+     * @param Model\Asset $item
      * @param int $nr
      *
      * @return string

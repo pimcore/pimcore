@@ -17,8 +17,8 @@
 
 namespace Pimcore\Model\DataObject\Traits;
 
-use Pimcore\Model\DataObject\DirtyIndicatorInterface;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 trait OwnerAwareFieldTrait
 {
@@ -33,14 +33,14 @@ trait OwnerAwareFieldTrait
     protected $_fieldname;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $_language;
 
     /**
-     * @param $owner
+     * @param mixed $owner
      * @param string $fieldname
-     * @param string $language
+     * @param string|null $language
      */
     public function setOwner($owner, string $fieldname, $language = null)
     {

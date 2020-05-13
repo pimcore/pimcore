@@ -28,22 +28,22 @@ class Button extends Model\DataObject\ClassDefinition\Layout
     public $fieldtype = 'button';
 
     /**
-     * @var
+     * @var string
      */
     public $handler;
 
     /**
-     * @var
+     * @var string
      */
     public $text;
 
     /**
-     * @var
+     * @var string
      */
     public $icon;
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getText()
     {
@@ -51,7 +51,7 @@ class Button extends Model\DataObject\ClassDefinition\Layout
     }
 
     /**
-     * @param $text
+     * @param string $text
      *
      * @return $this
      */
@@ -63,7 +63,7 @@ class Button extends Model\DataObject\ClassDefinition\Layout
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getHandler()
     {
@@ -71,7 +71,7 @@ class Button extends Model\DataObject\ClassDefinition\Layout
     }
 
     /**
-     * @param $handler
+     * @param string $handler
      *
      * @return $this
      */
@@ -83,7 +83,7 @@ class Button extends Model\DataObject\ClassDefinition\Layout
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getIcon()
     {
@@ -91,7 +91,7 @@ class Button extends Model\DataObject\ClassDefinition\Layout
     }
 
     /**
-     * @param $icon
+     * @param string $icon
      *
      * @return $this
      */

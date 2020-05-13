@@ -29,7 +29,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param Model\DataObject\Concrete $object
      * @param array $params
-     * @param $saveRelationalData
+     * @param bool $saveRelationalData
      *
      * @throws \Exception
      */
@@ -42,7 +42,6 @@ class Dao extends Model\Dao\AbstractDao
             'fieldname' => $this->model->getFieldname()
         ];
 
-        /** @var $fd Model\DataObject\ClassDefinition\Data */
         foreach ($this->model->getDefinition()->getFieldDefinitions() as $fd) {
             $getter = 'get' . ucfirst($fd->getName());
 
@@ -65,18 +64,17 @@ class Dao extends Model\Dao\AbstractDao
 
                 $fd->save(
                     $this->model, $params
-
                 );
             }
             if ($fd instanceof ResourcePersistenceAwareInterface) {
                 if (is_array($fd->getColumnType())) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [
-                        'context' => $this->model //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao
+                        'owner' => $this->model //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao
                     ]);
                     $data = array_merge($data, $insertDataArray);
                 } else {
                     $data[$fd->getName()] = $fd->getDataForResource($this->model->$getter(), $object, [
-                        'context' => $this->model //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao
+                        'owner' => $this->model //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao
                     ]);
                 }
             }

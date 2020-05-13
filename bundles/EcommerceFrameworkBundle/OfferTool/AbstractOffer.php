@@ -237,7 +237,7 @@ class AbstractOffer extends Concrete
     /**
      * @throws UnsupportedException
      *
-     * @param string $cartId
+     * @param int $cartId
      */
     public function setCartId($cartId)
     {

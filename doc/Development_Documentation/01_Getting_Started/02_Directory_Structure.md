@@ -1,7 +1,7 @@
 # Directory Structure
 
 After installing a Pimcore package you should see the folder structure described below.  
-The following tables should give you a quick overview about the purpose of this folders.  
+The following table should give you a quick overview about the purpose of each folder.  
 In general the directory structure follows the [best practice for Symfony projects](https://github.com/symfony/symfony-demo). 
 
 | Directory                                            | Description                               |

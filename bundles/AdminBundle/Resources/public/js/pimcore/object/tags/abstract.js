@@ -71,8 +71,6 @@ pimcore.object.tags.abstract = Class.create({
                 }
             }
         }
-
-
     },
 
     getGridColumnConfig:function (field) {
@@ -91,7 +89,7 @@ pimcore.object.tags.abstract = Class.create({
 
         }.bind(this, field.key);
 
-        return {text:ts(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
+        return {text: t(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
             editor:this.getGridColumnEditor(field)};
     },
 
@@ -182,21 +180,6 @@ pimcore.object.tags.abstract = Class.create({
         }
     },
 
-    isInvalidMandatory:function () {
-
-        if (!this.isRendered() && this.getInitialData() && this.getInitialData().length > 0) {
-            return false;
-        } else if (!this.isRendered()) {
-            return true;
-        }
-
-        if (this.getValue().length < 1) {
-            return true;
-        }
-        return false;
-    },
-
-
     isMandatory:function () {
         return this.fieldConfig.mandatory;
     },
@@ -262,8 +245,9 @@ pimcore.object.tags.abstract = Class.create({
 
 
     getWindowCellEditor: function ( field, record) {
-        return new pimcore.object.helpers.gridCellEditor({
-            fieldInfo: field
+        return new pimcore.element.helpers.gridCellEditor({
+            fieldInfo: field,
+            elementType: "object"
         });
     },
 

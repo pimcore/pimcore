@@ -17,7 +17,6 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
 use Pimcore\Model;
-use Pimcore\Tests\Helper\Pimcore;
 
 class Iframe extends Model\DataObject\ClassDefinition\Layout
 {
@@ -66,9 +65,13 @@ class Iframe extends Model\DataObject\ClassDefinition\Layout
         $this->renderingData = $renderingData;
     }
 
-    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object Model\DataObject\Concrete
+    /**
+     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     *
+     * @param Model\DataObject\Concrete $object
      * @param array $context additional contextual data
+     *
+     * @return self
      */
     public function enrichLayoutDefinition($object, $context = [])
     {

@@ -86,7 +86,7 @@ class PlaceConfig
         return $this->placeConfigArray['visibleInHeader'];
     }
 
-    public function getObjectLayout(Workflow $workflow, $subject): ?int
+    public function getObjectLayout(Workflow $workflow, $subject): ?string
     {
         return $this->getPermissions($workflow, $subject)['objectLayout'] ?? null;
     }

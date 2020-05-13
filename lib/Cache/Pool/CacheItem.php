@@ -187,7 +187,7 @@ class CacheItem implements PimcoreCacheItemInterface, ItemInterface
      *
      * @param string[] $tags An array of tags
      *
-     * @throws \Psr\Cache\InvalidArgumentException When a tag is not valid.
+     * @throws InvalidArgumentException When a tag is not valid.
      *
      * @return TaggableCacheItemInterface
      */
@@ -271,10 +271,10 @@ class CacheItem implements PimcoreCacheItemInterface, ItemInterface
      * @internal
      *
      * @param LoggerInterface $logger
-     * @param $message
+     * @param string $message
      * @param array $context
      */
-    public static function log(LoggerInterface $logger = null, $message, $context = [])
+    public static function log(LoggerInterface $logger, $message, $context = [])
     {
         if ($logger) {
             $logger->warning($message, $context);

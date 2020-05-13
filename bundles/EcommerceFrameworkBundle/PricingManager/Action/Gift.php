@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ActionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 
 class Gift implements GiftInterface
@@ -37,6 +38,7 @@ class Gift implements GiftInterface
     public function executeOnProduct(EnvironmentInterface $environment)
     {
         // TODO: Implement executeOnProduct() method.
+        return $this;
     }
 
     /**
@@ -48,6 +50,8 @@ class Gift implements GiftInterface
     {
         $comment = $environment->getRule()->getDescription();
         $environment->getCart()->addGiftItem($this->getProduct(), 1, null, true, [], [], $comment);
+
+        return $this;
     }
 
     /**
@@ -86,7 +90,7 @@ class Gift implements GiftInterface
     /**
      * @param string $string
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface
+     * @return ActionInterface
      */
     public function fromJSON($string)
     {

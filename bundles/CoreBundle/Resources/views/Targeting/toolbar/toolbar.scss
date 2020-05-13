@@ -11,6 +11,8 @@ $font-family-monospace: Menlo, Monaco, Consolas, "Courier New", monospace;
 ._ptgtb {
     display: block;
     width: $width;
+    height: 100%;
+    overflow: auto;
     position: fixed;
     right: 0;
     top: 0;
@@ -108,6 +110,8 @@ $font-family-monospace: Menlo, Monaco, Consolas, "Courier New", monospace;
         h2, h3 {
             padding-bottom: 3px;
             border-bottom: 1px dotted #686868;
+            line-height: normal;
+            letter-spacing: normal;
 
             ._ptgtb__label {
                 position: relative;

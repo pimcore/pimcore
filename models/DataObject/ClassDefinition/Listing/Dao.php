@@ -36,7 +36,9 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $classesRaw = $this->db->fetchCol('SELECT id FROM classes' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         foreach ($classesRaw as $classRaw) {
-            $classes[] = DataObject\ClassDefinition::getById($classRaw);
+            if ($class = DataObject\ClassDefinition::getById($classRaw)) {
+                $classes[] = $class;
+            }
         }
 
         $this->model->setClasses($classes);
@@ -49,6 +51,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
+        $amount = 0;
+
         try {
             $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM classes ' . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {

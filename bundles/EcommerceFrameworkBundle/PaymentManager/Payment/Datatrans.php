@@ -16,8 +16,13 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\RecurringPaymentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\AbstractRequest;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\FormResponse;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
@@ -30,7 +35,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class Datatrans extends AbstractPayment
+class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface, RecurringPaymentInterface
 {
     const TRANS_TYPE_DEBIT = '05';
     const TRANS_TYPE_CREDIT = '06';
@@ -179,9 +184,9 @@ class Datatrans extends AbstractPayment
         // check params
         $required = $this->getRequiredRequestFields();
 
-        $config = array_intersect_key($config, $required);
+        $requiredConfigIntersect = array_intersect_key($config, $required);
 
-        if (count($required) != count($config)) {
+        if (count($required) != count($requiredConfigIntersect)) {
             throw new \Exception(sprintf('required fields are missing! required: %s', implode(', ', array_keys(array_diff_key($required, $config)))));
         }
 
@@ -283,6 +288,16 @@ class Datatrans extends AbstractPayment
     }
 
     /**
+     * @inheritDoc
+     */
+    public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
+    {
+        $response = $this->initPayment($price, $config->asArray());
+
+        return new FormResponse($orderAgent->getOrder(), $response);
+    }
+
+    /**
      * handle response / execute payment
      *
      * @param mixed $response
@@ -373,7 +388,7 @@ class Datatrans extends AbstractPayment
     }
 
     /**
-     * @param $response
+     * @param array $response
      *
      * @return array
      */
@@ -813,5 +828,7 @@ XML;
 
         $orderListing->setOrderKey("`{$providerBrickName}`.`paymentFinished`", false);
         $orderListing->setOrder('DESC');
+
+        return $orderListing;
     }
 }

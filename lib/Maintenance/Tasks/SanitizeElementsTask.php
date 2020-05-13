@@ -15,6 +15,9 @@
 namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Maintenance\TaskInterface;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Sanitycheck;
 use Pimcore\Model\Element\Service;
@@ -69,14 +72,14 @@ final class SanitizeElementsTask implements TaskInterface
     }
 
     /**
-     * @param ElementInterface $element
+     * @param PageSnippet|Asset|Concrete $element
      *
      * @throws \Exception
      */
     protected function performSanityCheck(ElementInterface $element)
     {
         $latestNotPublishedVersion = null;
-        /** @var $latestVersion Version */
+
         if ($latestVersion = $element->getLatestVersion()) {
             if ($latestVersion->getDate() > $element->getModificationDate() || $latestVersion->getVersionCount() > $element->getVersionCount()) {
                 $latestNotPublishedVersion = $latestVersion;

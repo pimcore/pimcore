@@ -52,7 +52,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $uuid
+     * @param string $uuid
      *
      * @return Model\Tool\UUID
      */

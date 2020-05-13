@@ -11,8 +11,8 @@ namespace Pimcore\Tests\Ecommerce\PricingManager\Rule;
 use Codeception\Util\Stub;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceCalculator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ShippingInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\SessionCart;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
@@ -70,7 +70,7 @@ class AbstractRuleTest extends EcommerceTestCase
     }
 
     /**
-     * @param $value
+     * @param int|float|string|Decimal $value
      *
      * @return PriceInterface
      *
@@ -123,9 +123,9 @@ class AbstractRuleTest extends EcommerceTestCase
     }
 
     /**
-     * @param $id
-     * @param $grossPrice
-     * @param $pricingManager
+     * @param int $id
+     * @param float $grossPrice
+     * @param PricingManagerInterface $pricingManager
      * @param array $categories
      * @param array $taxes
      * @param string $combinationType
@@ -271,7 +271,7 @@ class AbstractRuleTest extends EcommerceTestCase
     protected function getShippingModificator($modificators)
     {
         foreach ($modificators as $modificator) {
-            if ($modificator instanceof  IShipping) {
+            if ($modificator instanceof ShippingInterface) {
                 return $modificator;
             }
         }
@@ -280,7 +280,7 @@ class AbstractRuleTest extends EcommerceTestCase
     }
 
     /**
-     * @param $actionDefinitions
+     * @param array $definitions
      *
      * @return ActionInterface[]
      */
@@ -305,7 +305,7 @@ class AbstractRuleTest extends EcommerceTestCase
     }
 
     /**
-     * @param $conditionDefinitions
+     * @param mixed $conditionDefinitions
      *
      * @return ConditionInterface
      */
@@ -343,7 +343,7 @@ class AbstractRuleTest extends EcommerceTestCase
     }
 
     /**
-     * @param $ruleDefinitions
+     * @param array $ruleDefinitions
      *
      * @return RuleInterface[]
      */

@@ -27,12 +27,12 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 - [zip](http://php.net/zip)
 - [intl](http://www.php.net/intl)
 - [opcache](http://php.net/opcache)
+- [curl](http://php.net/curl)
 - CLI SAPI (for Cron Jobs)
 - [Composer](https://getcomposer.org/) (added to `$PATH` - see also [Additional Tools Installation](./03_System_Setup_and_Hosting/06_Additional_Tools_Installation.md))
 
 #### Recommended Modules & Extensions 
 - [imagick](http://php.net/imagick) (if not installed *gd* is used instead, but with less supported image types)
-- [curl](http://php.net/curl) (required if Google APIs are used)
 - [phpredis](https://github.com/phpredis/phpredis) (recommended cache backend adapter)
 - [graphviz](https://www.graphviz.org/) (for rendering workflow overview)
 
@@ -45,7 +45,6 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 #### Features
 - InnoDB / XtraDB storage engine
 - Support for InnoDB fulltext indexes
-- MEMORY storage engine
 
 #### Permissions
 All permissions on database level, specifically: 
@@ -59,6 +58,8 @@ All permissions on database level, specifically:
 - Execute
 - Create view
 - Show view
+
+> For installing our [demo](https://github.com/pimcore/demo) additionally `Create routine` and `Alter routine` are needed. 
 
 #### System Variables
 ```
@@ -119,8 +120,8 @@ Pimcore supports always the latest 2 versions of all 4 major desktop browsers at
 - Mozilla Firefox 
 - Microsoft Edge
 - Apple Safari
-- Microsoft Internet Explorer (only version 11)   
-**[Note: support for IE will be removed soon!](https://github.com/pimcore/pimcore/issues/2989)**
+
+*Note:* Microsoft Internet Explorer 11 won`t be supported from Pimcore 6.0.0 or higher. More details **[here](https://github.com/pimcore/pimcore/issues/2989)**.
 
 Click [here](http://browserl.ist/?q=last+2+Chrome+versions%2C+last+2+Firefox+versions%2C+last+2+Edge+versions%2C+last+1+IE+versions%2C+last+2+Safari+versions) 
 to check out the latest 2 versions at the current moment of all supported browsers. 

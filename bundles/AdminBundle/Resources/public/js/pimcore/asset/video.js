@@ -35,7 +35,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         }
 
         this.tagAssignment = new pimcore.element.tag.assignment(this, "asset");
-        this.metadata = new pimcore.asset.metadata(this);
+        this.metadata = new pimcore.asset.metadata.grid(this);
         this.workflows = new pimcore.element.workflows(this, "asset");
         this.embeddedMetaData = new pimcore.asset.embedded_meta_data(this);
 
@@ -292,7 +292,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
     },
 
     initPreviewVideo: function () {
-        var frameUrl = pimcore.helpers.addCsrfTokenToUrl('/admin/asset/get-preview-video?id=' + this.id);
+        var frameUrl = '/admin/asset/get-preview-video?id=' + this.id;
         var html = '<iframe src="' + frameUrl + '" frameborder="0" id="' + this.previewFrameId + '" name="' + this.previewFrameId + '" style="width:100%;"></iframe>';
         this.previewPanel.update(html);
 

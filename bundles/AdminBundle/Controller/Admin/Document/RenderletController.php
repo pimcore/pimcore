@@ -73,7 +73,7 @@ class RenderletController extends AdminController
 
         // set document if set in request
         if ($document = $request->get('pimcore_parentDocument')) {
-            $document = Document::getById($document);
+            $document = Document\PageSnippet::getById($document);
             if ($document) {
                 $attributes = $actionRenderer->addDocumentAttributes($document, $attributes);
                 unset($attributes[DynamicRouter::CONTENT_TEMPLATE]);

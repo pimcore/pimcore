@@ -51,7 +51,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param null $name
+     * @param string|null $name
      *
      * @throws \Exception
      */
@@ -80,6 +80,8 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function hasChildren()
     {
+        $amount = 0;
+
         try {
             $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . self::TABLE_NAME_GROUPS . ' where parentId= ' . $this->model->id);
         } catch (\Exception $e) {

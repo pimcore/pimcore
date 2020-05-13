@@ -45,6 +45,9 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
     /**
      * @param Request $request
      * @param PimcoreUsers $pimcoreUsers
+     *
+     * @return JsonResponse
+     *
      * @Route("/search-users", methods={"GET"})
      */
     public function searchUsersAction(Request $request, PimcoreUsers $pimcoreUsers)
@@ -58,7 +61,7 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
             strip_tags($allParams['email']),
             intval($allParams['start']),
             intval($allParams['limit']),
-            $allParams['sort']
+            $allParams['sort'] ?? null
         );
 
         return $this->adminJson($result);

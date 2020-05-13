@@ -28,6 +28,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
+/**
+ * @deprecated
+ */
 class WebserviceAuthenticator extends AbstractGuardAuthenticator implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -53,7 +56,12 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
      */
     public function getCredentials(Request $request)
     {
-        if ($apiKey = $request->get('apikey')) {
+        if ($apiKey = $request->headers->get('x_api-key')) {
+            // check for API key header
+            return [
+                'apiKey' => $apiKey
+            ];
+        } elseif ($apiKey = $request->get('apikey')) {
             // check for API key parameter
             return [
                 'apiKey' => $apiKey
@@ -101,6 +109,8 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
         if ($user && Authentication::isValidUser($user->getUser())) {
             return $user;
         }
+
+        return null;
     }
 
     /**
@@ -126,6 +136,8 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
 
             return $users[0];
         }
+
+        return null;
     }
 
     /**
@@ -162,6 +174,8 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
             'user' => $token->getUser()->getUsername(),
             'path' => $request->getPathInfo()
         ]);
+
+        return null;
     }
 
     /**

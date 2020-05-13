@@ -11,6 +11,14 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+a {
+    color: #428bca;
+    text-decoration: none;
+}
+
+.picker__holder {
+    min-width: 300px;
+}
 
 .border{
     border: 1px solid #ccc;
@@ -76,7 +84,10 @@ div.token-container {
 }
 
 div.token-overview {
-    padding-right: 7%;
+    padding-right: 4%;
+}
+div.token-filter {
+    padding-right: 3%;
 }
 
 div.header {
@@ -160,12 +171,6 @@ div.alert {
 
 /*  MODAL STYLING  */
 
-div.modal-body {
-    padding: 0;
-    padding-top: 20px;
-    padding-right: 20px;
-}
-
 div.modal-body-content, div.modal-footer {
     padding: 15px 35px;
 }
@@ -176,6 +181,19 @@ div.modal-body-content, div.modal-footer {
 
 .modal h3 {
     margin-top: 0;
+}
+
+
+.fade.in {
+    opacity: 1;
+}
+.modal.in .modal-dialog {
+    -webkit-transform: translate(0, 0);
+    -o-transform: translate(0, 0);
+    transform: translate(0, 0);
+}
+.modal-backdrop.in {
+    opacity: 0.5;
 }
 
 div.content-block{

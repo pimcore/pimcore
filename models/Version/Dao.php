@@ -26,7 +26,7 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */
@@ -51,6 +51,7 @@ class Dao extends Model\Dao\AbstractDao
     public function save()
     {
         $version = $this->model->getObjectVars();
+        $data = [];
 
         foreach ($version as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('versions'))) {
@@ -95,16 +96,16 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param string $hash
      *
-     * @return string
+     * @return int|null
      */
-    public function getBinaryFileIdForHash(string $hash): ?string
+    public function getBinaryFileIdForHash(string $hash): ?int
     {
-        $hash = $this->db->fetchOne('SELECT IFNULL(binaryFileId, id) FROM versions WHERE binaryFileHash = ? AND cid = ? ORDER BY id ASC LIMIT 1', [$hash, $this->model->getCid()]);
-        if (!$hash) {
-            $hash = null;
+        $id = $this->db->fetchOne('SELECT IFNULL(binaryFileId, id) FROM versions WHERE binaryFileHash = ? AND cid = ? ORDER BY id ASC LIMIT 1', [$hash, $this->model->getCid()]);
+        if (!$id) {
+            return null;
         }
 
-        return $hash;
+        return (int)$id;
     }
 
     /**
@@ -121,7 +122,7 @@ class Dao extends Model\Dao\AbstractDao
     }
 
     /**
-     * @param $elementTypes
+     * @param array $elementTypes
      * @param array $ignoreIds
      *
      * @return array
@@ -147,11 +148,11 @@ class Dao extends Model\Dao\AbstractDao
                     $versionIds = array_merge($versionIds, $tmpVersionIds);
                 } else {
                     // by steps
-                    $elementIds = $this->db->fetchCol('SELECT cid,count(*) as amount FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (' . $ignoreIdsList . ') GROUP BY cid HAVING amount > ?', [$elementType['elementType'], $elementType['steps']]);
-                    foreach ($elementIds as $elementId) {
+                    $versionData = $this->db->executeQuery('SELECT cid, GROUP_CONCAT(id ORDER BY id DESC) AS versions FROM versions WHERE ctype = ? AND NOT public AND id NOT IN (' . $ignoreIdsList . ') GROUP BY cid HAVING COUNT(*) > ? LIMIT 1000', [$elementType['elementType'], $elementType['steps']]);
+                    while ($versionInfo = $versionData->fetch()) {
                         $count++;
-                        Logger::info($elementId . '(object ' . $count . ') Vcount ' . count($versionIds));
-                        $elementVersions = $this->db->fetchCol('SELECT id FROM versions WHERE cid = ? and ctype = ? ORDER BY date DESC LIMIT ' . $elementType['steps'] . ',1000000', [$elementId, $elementType['elementType']]);
+                        Logger::info($versionInfo['cid'] . '(object ' . $count . ') Vcount ' . count($versionIds));
+                        $elementVersions = \array_slice(explode(',', $versionInfo['versions']), $elementType['steps']);
 
                         $versionIds = array_merge($versionIds, $elementVersions);
 
@@ -159,8 +160,6 @@ class Dao extends Model\Dao\AbstractDao
                         if (memory_get_usage() > 100000000 && ($count % 100 == 0)) {
                             \Pimcore::collectGarbage();
                             sleep(1);
-
-                            $versionIds = array_unique($versionIds);
                         }
 
                         if (count($versionIds) > 1000) {
@@ -168,8 +167,6 @@ class Dao extends Model\Dao\AbstractDao
                             break;
                         }
                     }
-
-                    $versionIds = array_unique($versionIds);
 
                     if ($stop) {
                         break;

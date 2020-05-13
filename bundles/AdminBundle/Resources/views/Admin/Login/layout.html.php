@@ -1,8 +1,8 @@
 <?php
-/** @var $view \Pimcore\Templating\PhpEngine */
+/** @var \Pimcore\Templating\PhpEngine $view */
+/** @var \Pimcore\Config $config */
 
 $config = $this->config;
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -15,18 +15,15 @@ $config = $this->config;
     <link rel="icon" type="image/png" href="/bundles/pimcoreadmin/img/favicon/favicon-32x32.png"/>
 
     <link rel="stylesheet" href="/bundles/pimcoreadmin/css/login.css" type="text/css"/>
-    <script src="/bundles/pimcoreadmin/js/lib/jquery-3.4.1.min.js"></script>
 
     <?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
         <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= time(); ?>"/>
     <?php endforeach; ?>
 </head>
-<body class="pimcore_version_6 <?= $config->branding->login_screen_invert_colors ? 'inverted' : '' ?>">
+<body class="pimcore_version_6 <?= $config['branding']['login_screen_invert_colors'] ? 'inverted' : '' ?>">
 
 <?php
-    if ($config->general->loginscreencustomimage) {
-        $backgroundImageUrl = $config->general->loginscreencustomimage;
-    } else {
+    if (empty($backgroundImageUrl = $config['branding']['login_screen_custom_image'])) {
         $defaultImages = ['pimconaut-ecommerce.svg', 'pimconaut-world.svg', 'pimconaut-engineer.svg', 'pimconaut-moon.svg', 'pimconaut-rocket.svg'];
         $backgroundImageUrl = '/bundles/pimcoreadmin/img/login/' . $defaultImages[array_rand($defaultImages)];
     }
@@ -38,24 +35,20 @@ $config = $this->config;
         }
     </style>
 
-<?php if($config->branding) { ?>
-    <?php if($config->branding->color_login_screen) {
-        $customColor = $config->branding->color_login_screen;
-        ?>
-        <style type="text/css">
-            #content button {
-                background: <?= $customColor ?>;
-            }
+<?php if (!empty($customColor = $config['branding']['color_login_screen'])) { ?>
+    <style type="text/css">
+        #content button {
+            background: <?= $customColor ?>;
+        }
 
-            #content a {
-                color: <?= $customColor ?>;
-            }
-        </style>
-    <?php } ?>
+        #content a {
+            color: <?= $customColor ?>;
+        }
+    </style>
 <?php } ?>
 
 <div id="logo">
-    <img src="/admin/settings/display-custom-logo<?= $config->branding->login_screen_invert_colors ? '' : '?white=true' ?>">
+    <img src="/admin/settings/display-custom-logo<?= $config['branding']['login_screen_invert_colors'] ? '' : '?white=true' ?>">
 </div>
 
 <div id="content">
@@ -84,8 +77,6 @@ $config = $this->config;
     KEEP IN MIND THAT REMOVING THE COPYRIGHT NOTICE IS VIOLATING OUR LICENSING TERMS!
 </div>
 
-
-<script src="/bundles/pimcoreadmin/js/lib/jquery-3.4.1.min.js"></script>
 <script type="text/javascript" src="https://liveupdate.pimcore.org/imageservice"></script>
 
 <?php $view->slots()->output('below_footer') ?>

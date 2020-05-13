@@ -12,6 +12,8 @@ abstract class TestCase extends Test
      */
     protected $cleanupDbInSetup = true;
 
+    protected $backupGlobalsBlacklist = ['IDE_EVAL_CACHE'];     // xdebug
+
     /**
      * Determine if the test needs a DB connection (will be skipped if no DB is present)
      *

@@ -18,7 +18,6 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Event\Webservice\FilterEvent;
 use Pimcore\Event\WebserviceEvents;
-use Pimcore\FeatureToggles\Features\DebugMode;
 use Pimcore\Http\Exception\ResponseException;
 use Pimcore\Model\Webservice\Service;
 use Psr\Log\LoggerInterface;
@@ -27,6 +26,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Stopwatch\Stopwatch;
 
+/**
+ * @deprecated
+ */
 abstract class AbstractRestController extends AdminController
 {
     /**
@@ -191,7 +193,7 @@ abstract class AbstractRestController extends AdminController
 
         if (!is_array($data)) {
             $message = 'Invalid data';
-            if (\Pimcore::inDebugMode(DebugMode::REST_ERRORS)) {
+            if (\Pimcore::inDebugMode()) {
                 $message .= ': ' . $error;
             }
 
@@ -207,7 +209,7 @@ abstract class AbstractRestController extends AdminController
      * Get ID either as parameter or from request
      *
      * @param Request $request
-     * @param null    $id
+     * @param int|null $id
      *
      * @return mixed|null
      *
@@ -284,7 +286,7 @@ abstract class AbstractRestController extends AdminController
     }
 
     /**
-     * @param $condition
+     * @param string $condition
      *
      * @throws \Exception
      */
@@ -298,13 +300,15 @@ abstract class AbstractRestController extends AdminController
     /**
      * @param Request $request
      *
-     * @return string
+     * @throws \Exception
+     *
+     * @return string|null
      */
     protected function buildCondition(Request $request)
     {
         $q = trim($request->get('q'));
         if (!$q) {
-            return;
+            return null;
         }
         $q = json_decode($q, false);
         if (!$q) {
@@ -313,14 +317,12 @@ abstract class AbstractRestController extends AdminController
 
         $condition = Helper::buildSqlCondition($q);
 
-//        var_dump($condition);
-//        die();
-
         return $condition;
     }
 
     /**
-     * @param FilterEvent $event
+     * @param Request $request
+     * @param FilterEvent $eventData
      */
     public function dispatchBeforeLoadEvent(Request $request, FilterEvent $eventData)
     {

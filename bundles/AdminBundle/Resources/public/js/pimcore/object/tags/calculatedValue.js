@@ -29,7 +29,7 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
             fieldLabel: '<img src="/bundles/pimcoreadmin/img/flat-color-icons/calculator.svg" style="height: 1.8em; display: inline-block; vertical-align: middle;"/>' + this.fieldConfig.title,
             componentCls: "object_field",
             labelWidth: 100,
-            disabled: true
+            readOnly: true
         };
 
         if (this.data) {
@@ -51,15 +51,16 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
             input.value = this.data;
         }
 
-
-        this.component = new Ext.form.field.Text(input);
+        if(this.fieldConfig.elementType === 'textarea') {
+            this.component = new Ext.form.field.TextArea(input);
+        } else {
+            this.component = new Ext.form.field.Text(input);
+        }
 
         return this.component;
     },
 
-
     getLayoutShow: function () {
-
         this.getLayoutEdit();
         this.component.setReadOnly(true);
 
@@ -74,7 +75,30 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
         return this.fieldConfig.name;
     },
 
-    isInvalidMandatory: function () {
-        return true;
+    getGridColumnFilter: function (field) {
+        return {type: 'string', dataIndex: field.key};
+    },
+
+    getGridColumnConfig:function (field) {
+        var renderer = function (key, value, metaData, record) {
+            this.applyPermissionStyle(key, value, metaData, record);
+
+            try {
+                if (record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    metaData.tdCls += " grid_value_inherited";
+                }
+            } catch (e) {
+                console.log(e);
+            }
+
+            if (value) {
+                value = value.replace(/\n/g,"<br>");
+                value = strip_tags(value, '<br>');
+            }
+            return value;
+        }.bind(this, field.key);
+
+        return {text: t(field.label), sortable:true, dataIndex:field.key, renderer:renderer,
+            editor:this.getGridColumnEditor(field)};
     }
 });

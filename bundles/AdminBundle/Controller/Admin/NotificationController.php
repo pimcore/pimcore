@@ -158,8 +158,8 @@ class NotificationController extends AdminController
         $this->checkPermission('notifications');
 
         $user = $this->getAdminUser();
-        $interval = (int) $request->get('interval', 10);
-        $result = $service->findLastUnread((int) $user->getId(), $interval);
+        $lastUpdate = (int) $request->get('lastUpdate', time());
+        $result = $service->findLastUnread((int) $user->getId(), $lastUpdate);
         $unread = $service->countAllUnread((int) $user->getId());
 
         $data = [];

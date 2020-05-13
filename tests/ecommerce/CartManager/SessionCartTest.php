@@ -22,8 +22,8 @@ class SessionCartTest extends TestCase
         $product->method('getId')->willReturn(5);
 
         /**
-         * @var $cart    SessionCart
-         * @var $product AbstractProduct
+         * @var SessionCart $cart
+         * @var AbstractProduct $product
          */
         $cart = Stub::construct('\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CartManager\\SessionCart', [], [
             'getSession' => function () {

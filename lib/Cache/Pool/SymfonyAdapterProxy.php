@@ -93,13 +93,13 @@ class SymfonyAdapterProxy extends AbstractCacheItemPool
     /**
      * Deletes all items in the pool.
      *
-     * @param string The prefix used for all identifiers managed by this pool
+     * @param string $namespace The prefix used for all identifiers managed by this pool
      *
      * @return bool True if the pool was successfully cleared, false otherwise
      */
     protected function doClear($namespace)
     {
-        return $this->adapter->clear();
+        return $this->adapter->clear($namespace);
     }
 
     /**
@@ -165,15 +165,20 @@ class SymfonyAdapterProxy extends AbstractCacheItemPool
     protected function transformItem(PimcoreCacheItemInterface $cacheItem, CacheItem $symfonyItem)
     {
         if (null === $this->transformItemClosure) {
-            $closure = function (CacheItem $symfonyItem, $data, array $tags, $expiry) {
-                $symfonyItem->value = $data;
-                $symfonyItem->expiry = $expiry;
-                $symfonyItem->tags = [];
+            $this->transformItemClosure = \Closure::bind(
+                function (CacheItem $symfonyItem, $data, array $tags, $expiry) {
+                    $symfonyItem->value = $data;
+                    $symfonyItem->expiry = $expiry;
 
-                $symfonyItem->tag($tags);
-            };
+                    if (property_exists($symfonyItem, 'tags')) {
+                        $symfonyItem->tags = [];
+                    }
 
-            $this->transformItemClosure = \Closure::bind($closure, null, CacheItem::class);
+                    $symfonyItem->tag($tags);
+                },
+                null,
+                CacheItem::class
+            );
         }
 
         $tags = $cacheItem->getTags();

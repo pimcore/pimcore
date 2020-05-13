@@ -22,7 +22,7 @@ Assumptions - change them to match your environment/distro:
 #   include       mime.types;
 # }
 
-upstream php-pimcore5 {
+upstream php-pimcore6 {
     server unix:/var/run/php/pimcore.sock;
 }
 
@@ -31,6 +31,9 @@ server {
     server_name pimcore.loc;
     root /var/www/pimcore/web;
     index index.php;
+    
+    # Filesize depending on your data
+    client_max_body_size 100m;
 
     access_log  /var/log/access.log;
     error_log   /var/log/error.log error;
@@ -136,7 +139,7 @@ server {
         # fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         # fastcgi_param DOCUMENT_ROOT $realpath_root;
 
-        fastcgi_pass php-pimcore5;
+        fastcgi_pass php-pimcore6;
         # Prevents URIs that include the front controller. This will 404:
         # http://domain.tld/app.php/some-path
         # Remove the internal directive to allow URIs like this
@@ -151,10 +154,10 @@ server {
             allow 127.0.0.1;
             # add additional IP's or Ranges
             deny all;
-            fastcgi_pass php-pimcore5;
+            fastcgi_pass php-pimcore6;
         }
         location /fpm-ping {
-            fastcgi_pass php-pimcore5;
+            fastcgi_pass php-pimcore6;
         }
     }
     # nginx Status

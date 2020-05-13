@@ -37,6 +37,7 @@ class Gender extends Model\DataObject\ClassDefinition\Data\Select
         $options = [
             ['key' => 'male', 'value' => 'male'],
             ['key' => 'female', 'value' => 'female'],
+            ['key' => 'other', 'value' => 'other'],
             ['key' => '', 'value' => 'unknown'],
         ];
 

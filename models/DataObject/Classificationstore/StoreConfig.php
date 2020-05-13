@@ -63,9 +63,9 @@ class StoreConfig extends Model\AbstractModel
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
-     * @return StoreConfig
+     * @return self|null
      */
     public static function getByName($name)
     {
@@ -110,16 +110,20 @@ class StoreConfig extends Model\AbstractModel
         return $this->name;
     }
 
-    /** Returns the description.
-     * @return mixed
+    /**
+     * Returns the description.
+     *
+     * @return string
      */
     public function getDescription()
     {
         return $this->description;
     }
 
-    /** Sets the description.
-     * @param $description
+    /**
+     * Sets the description.
+     *
+     * @param string $description
      *
      * @return Model\DataObject\Classificationstore\StoreConfig
      */

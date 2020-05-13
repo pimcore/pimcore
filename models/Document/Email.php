@@ -128,7 +128,7 @@ class Email extends Model\Document\PageSnippet
      *
      * @static
      *
-     * @param $emailAddress
+     * @param string $emailAddress
      *
      * @return string | null - returns "null" if the email address is invalid otherwise the email address is returned
      */

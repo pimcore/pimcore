@@ -16,6 +16,8 @@ namespace Pimcore\Maintenance\Tasks;
 
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Maintenance\TaskInterface;
+use Pimcore\Model\Tool\Lock;
+use Psr\Log\LoggerInterface;
 
 final class CacheCleanupTask implements TaskInterface
 {
@@ -25,13 +27,20 @@ final class CacheCleanupTask implements TaskInterface
     private $cacheHandler;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * CacheCleanupTask constructor.
      *
      * @param CoreHandlerInterface $cacheHandler
+     * @param LoggerInterface $logger
      */
-    public function __construct(CoreHandlerInterface $cacheHandler)
+    public function __construct(CoreHandlerInterface $cacheHandler, LoggerInterface $logger)
     {
         $this->cacheHandler = $cacheHandler;
+        $this->logger = $logger;
     }
 
     /**
@@ -39,6 +48,14 @@ final class CacheCleanupTask implements TaskInterface
      */
     public function execute()
     {
-        $this->cacheHandler->purge();
+        $lockId = self::class;
+        if (!Lock::isLocked($lockId, 86400) && date('H') <= 4) {
+            // execution should be only sometime between 0:00 and 4:59 -> less load expected
+            Lock::lock($lockId);
+            $this->logger->debug('Execute purge() on cache handler');
+            $this->cacheHandler->purge();
+        } else {
+            $this->logger->debug('Skip purge execution, was done within the last 24 hours');
+        }
     }
 }

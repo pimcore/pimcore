@@ -35,7 +35,7 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker
     /**
      * creates mockup cache key
      *
-     * @param $objectId
+     * @param int $objectId
      *
      * @return string
      */
@@ -47,7 +47,7 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker
     /**
      * deletes element from mockup cache
      *
-     * @param $objectId
+     * @param int $objectId
      */
     protected function deleteFromMockupCache($objectId)
     {
@@ -58,8 +58,8 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker
     /**
      * updates mockup cache, delegates creation of mockup object to tenant config
      *
-     * @param $objectId
-     * @param null $data
+     * @param int $objectId
+     * @param array|null $data
      *
      * @return DefaultMockup
      *
@@ -105,7 +105,7 @@ abstract class AbstractMockupCacheWorker extends AbstractBatchProcessingWorker
     /**
      * gets mockup from cache and if not in cache, adds it to cache
      *
-     * @param $objectId
+     * @param int $objectId
      *
      * @return DefaultMockup
      */

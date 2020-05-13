@@ -28,7 +28,7 @@ class DataObjectEvent extends Event implements ElementEventInterface
     protected $object;
 
     /**
-     * DocumentEvent constructor.
+     * DataObjectEvent constructor.
      *
      * @param AbstractObject $object
      * @param array $arguments

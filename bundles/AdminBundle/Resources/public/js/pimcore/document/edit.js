@@ -119,9 +119,7 @@ pimcore.document.edit = Class.create({
             this.layout.on("resize", this.setLayoutFrameDimensions.bind(this));
 
             this.layout.on("afterrender", function () {
-
-                // unfortunately we have to do this in jQuery, because Ext doesn'T offer this functionality
-                jQuery("#" + this.iframeName).on("load", function () {
+                Ext.get(this.iframeName).on('load', function() {
                     // this is to hide the mask if edit/startup.js isn't executed (eg. in case an error is shown)
                     // otherwise edit/startup.js will disable the loading mask
                     if(!this["frame"]) {
@@ -407,6 +405,34 @@ pimcore.document.edit = Class.create({
         }
 
         return values;
+    },
+
+    getEmptyRequiredEditables: function () {
+        var emptyRequiredEditables = [];
+
+        if (!this.frame || !this.frame.editablesReady) {
+            throw "edit not available";
+        }
+
+        try {
+            var requiredEditables = this.frame.requiredEditables;
+            var editableName = "";
+
+            for (var i = 0; i < requiredEditables.length; i++) {
+                try {
+                    if(requiredEditables[i].requiredError) {
+                        editableName = requiredEditables[i].getName();
+                        requiredEditables[i].checkValue(true);
+                        emptyRequiredEditables.push(editableName);
+                    }
+                } catch (e) {
+                }
+            }
+        }
+        catch (e2) {
+        }
+
+        return emptyRequiredEditables;
     }
 
 });

@@ -58,7 +58,7 @@ class ObjectTest extends RestTestCase
 
         $result = $this->restClient->createObjectConcrete($unsavedObject);
 
-        $this->assertTrue($result->success, 'request not successful . ' . $result->msg);
+        $this->assertTrue($result->success, 'request not successful . ' . ($result->msg ?? ''));
         $this->assertEquals(2, TestHelper::getObjectCount());
 
         $id = $result->id;

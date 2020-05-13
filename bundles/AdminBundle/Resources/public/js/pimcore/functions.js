@@ -10,8 +10,8 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-function t(key, defaultValue) {
-    if(!key) {
+function t(key, defaultValue, placeholders) {
+    if (!key) {
         return "";
     }
 
@@ -21,7 +21,7 @@ function t(key, defaultValue) {
         pimcore.globalmanager.add("translations_admin_translated_values", []);
     }
 
-    //make sure 'key' is a string
+    // make sure 'key' is a string
     key = String(key);
 
     // remove plus at the start and the end to avoid double translations
@@ -34,8 +34,32 @@ function t(key, defaultValue) {
         key = key.toLocaleLowerCase();
     }
 
+    // the maximum length of a translation key are 190 characters
+    if (key.length > 190) {
+        if (!defaultValue) {
+            return key;
+        }
+
+        return defaultValue;
+    }
+
     if (pimcore && pimcore.system_i18n && (pimcore.system_i18n[key] || pimcore.system_i18n[originalKey])) {
         var trans = pimcore.system_i18n[originalKey] ? pimcore.system_i18n[originalKey] : pimcore.system_i18n[key];
+
+        // find and replace placeholders, if provided
+        if (placeholders) {
+            let pKeys = Object.keys(placeholders);
+
+            for (let i = 0; i < pKeys.length; i++) {
+                let regExp = new RegExp('\{(' + pKeys[i] + ')\}', 'gi');
+                let replace = placeholders[pKeys[i]];
+
+                if (trans.match(regExp)) {
+                    trans = trans.replace(regExp, replace);
+                }
+            }
+        }
+
         pimcore.globalmanager.get("translations_admin_translated_values").push(trans);
         return trans;
     }
@@ -61,6 +85,9 @@ function t(key, defaultValue) {
     }
 }
 
+/**
+ * @deprecated
+ */
 function ts(key) {
     return t(key);
 }
@@ -88,7 +115,7 @@ function RealTypeOf(v) {
     return "object";
   }
   return typeof(v);
-};
+}
 
 
 
@@ -107,10 +134,11 @@ function FormatJSON(oData, sIndent) {
         var sHTML = "[";
     } else {
         var iCount = 0;
-        jQuery.each(oData, function() {
-            iCount++;
-            return;
-        });
+        for (let key in oData) {
+            if (oData.hasOwnProperty(key)) {
+                iCount++;
+            }
+        }
         if (iCount == 0) { // object is empty
             return "{}";
         }
@@ -119,7 +147,9 @@ function FormatJSON(oData, sIndent) {
 
     // loop through items
     var iCount = 0;
-    jQuery.each(oData, function(sKey, vValue) {
+    var vValue = null;
+    for (let sKey in oData) {
+        vValue = oData[sKey];
         if (iCount > 0) {
             sHTML += ",";
         }
@@ -151,7 +181,7 @@ function FormatJSON(oData, sIndent) {
 
         // loop
         iCount++;
-    });
+    }
 
     // close object
     if (sDataType == "array") {
@@ -162,12 +192,12 @@ function FormatJSON(oData, sIndent) {
 
     // return
     return sHTML;
-};
+}
 
 
 function in_arrayi(needle, haystack) {
     return in_array(needle.toLocaleLowerCase(), array_map(strtolower, haystack));
-};
+}
 
 
 function strtolower (str) {
@@ -177,7 +207,7 @@ function strtolower (str) {
     // *     example 1: strtolower('Kevin van Zonneveld');
     // *     returns 1: 'kevin van zonneveld'
     return (str + '').toLowerCase();
-};
+}
 
 
 function array_map (callback) {
@@ -246,21 +276,6 @@ function is_numeric(mixed_var) {
 }
 
 
-function ucfirst(str) {
-    // Makes a string's first character uppercase  
-    // 
-    // version: 905.3122
-    // discuss at: http://phpjs.org/functions/ucfirst
-    // +   original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-    // +   bugfixed by: Onno Marsman
-    // +   improved by: Brett Zamir (http://brett-zamir.me)
-    // *     example 1: ucfirst('kevin van zonneveld');
-    // *     returns 1: 'Kevin van zonneveld'
-    str += '';
-    var f = str.charAt(0).toUpperCase();
-    return f + str.substr(1);
-};
-
 
 function in_array(needle, haystack, argStrict) {
     // Checks if the given value exists in the array  
@@ -296,7 +311,7 @@ function in_array(needle, haystack, argStrict) {
     }
 
     return false;
-};
+}
 
 
 function uniqid(prefix, more_entropy) {
@@ -345,7 +360,7 @@ function uniqid(prefix, more_entropy) {
     }
 
     return retId;
-};
+}
 
 
 function empty (mixed_var) {
@@ -383,7 +398,7 @@ function empty (mixed_var) {
     }
 
     return false;
-};
+}
 
 function str_replace(search, replace, subject, count) {
     // Replaces all occurrences of search in haystack with replace  
@@ -434,7 +449,7 @@ function str_replace(search, replace, subject, count) {
         }
     }
     return sa ? s : s[0];
-};
+}
 
 
 function trim(str, charlist) {
@@ -486,7 +501,7 @@ function trim(str, charlist) {
     }
 
     return whitespace.indexOf(str.charAt(0)) === -1 ? str : '';
-};
+}
 
 
 function base64_encode(data) {
@@ -544,7 +559,7 @@ function base64_encode(data) {
     }
 
     return enc;
-};
+}
 
 function base64_decode(data) {
     // Decodes string using MIME base64 algorithm  
@@ -603,7 +618,7 @@ function base64_decode(data) {
     dec = this.utf8_decode(dec);
 
     return dec;
-};
+}
 
 
 function utf8_decode(str_data) {
@@ -643,7 +658,7 @@ function utf8_decode(str_data) {
     }
 
     return tmp_arr.join('');
-};
+}
 
 
 function ucfirst(str) {
@@ -659,7 +674,7 @@ function ucfirst(str) {
     str += '';
     var f = str.charAt(0).toUpperCase();
     return f + str.substr(1);
-};
+}
 
 
 function array_search(needle, haystack, argStrict) {
@@ -683,7 +698,7 @@ function array_search(needle, haystack, argStrict) {
     }
 
     return false;
-};
+}
 
 
 function mergeObject(p, c) {
@@ -697,14 +712,14 @@ function mergeObject(p, c) {
     }
 
     return c;
-};
+}
 
 
 function replace_html_event_attributes(value) {
     return value.replace(/ on[^=]+=/, function (attributeName) {
         return ' data-' + trim(attributeName);
     });
-};
+}
 
 function strip_tags(str, allowed_tags) {
     // http://kevin.vanzonneveld.net
@@ -796,7 +811,7 @@ function strip_tags(str, allowed_tags) {
     }
 
     return str;
-};
+}
 
 
 function md5(str) {
@@ -985,7 +1000,7 @@ function md5(str) {
 
     var temp = wordToHex(a) + wordToHex(b) + wordToHex(c) + wordToHex(d);
     return temp.toLowerCase();
-};
+}
 
 function utf8_encode(string) {
     // Encodes an ISO-8859-1 string to UTF-8  
@@ -1031,7 +1046,7 @@ function utf8_encode(string) {
     }
 
     return utftext;
-};
+}
 
 
 function intval(mixed_var, base) {
@@ -1066,7 +1081,7 @@ function intval(mixed_var, base) {
     } else {
         return 0;
     }
-};
+}
 
 
 function nl2br (str, is_xhtml) {
@@ -1090,64 +1105,7 @@ function nl2br (str, is_xhtml) {
     var breakTag = (is_xhtml || typeof is_xhtml === 'undefined') ? '<br />' : '<br>';
 
     return (str + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1'+ breakTag +'$2');
-};
-
-
-function array_merge () {
-    // http://kevin.vanzonneveld.net
-    // +   original by: Brett Zamir (http://brett-zamir.me)
-    // +   bugfixed by: Nate
-    // +   input by: josh
-    // +   bugfixed by: Brett Zamir (http://brett-zamir.me)
-    // *     example 1: arr1 = {"color": "red", 0: 2, 1: 4}
-    // *     example 1: arr2 = {0: "a", 1: "b", "color": "green", "shape": "trapezoid", 2: 4}
-    // *     example 1: array_merge(arr1, arr2)
-    // *     returns 1: {"color": "green", 0: 2, 1: 4, 2: "a", 3: "b", "shape": "trapezoid", 4: 4}
-    // *     example 2: arr1 = []
-    // *     example 2: arr2 = {1: "data"}
-    // *     example 2: array_merge(arr1, arr2)
-    // *     returns 2: {0: "data"}
-    var args = Array.prototype.slice.call(arguments),
-        retObj = {},
-        k, j = 0,
-        i = 0,
-        retArr = true;
-
-    for (i = 0; i < args.length; i++) {
-        if (!(args[i] instanceof Array)) {
-            retArr = false;
-            break;
-        }
-    }
-
-    if (retArr) {
-        retArr = [];
-        for (i = 0; i < args.length; i++) {
-            retArr = retArr.concat(args[i]);
-        }
-        return retArr;
-    }
-    var ct = 0;
-
-    for (i = 0, ct = 0; i < args.length; i++) {
-        if (args[i] instanceof Array) {
-            for (j = 0; j < args[i].length; j++) {
-                retObj[ct++] = args[i][j];
-            }
-        } else {
-            for (k in args[i]) {
-                if (args[i].hasOwnProperty(k)) {
-                    if (parseInt(k, 10) + '' === k) {
-                        retObj[ct++] = args[i][k];
-                    } else {
-                        retObj[k] = args[i][k];
-                    }
-                }
-            }
-        }
-    }
-    return retObj;
-};
+}
 
 
 function preg_quote (str, delimiter) {
@@ -1164,7 +1122,7 @@ function preg_quote (str, delimiter) {
     // *     example 3: preg_quote("\\.+*?[^]$(){}=!<>|:");
     // *     returns 3: '\\\.\+\*\?\[\^\]\$\(\)\{\}\=\!\<\>\|\:'
     return (str + '').replace(new RegExp('[.\\\\+*?\\[\\^\\]$(){}=!<>|:\\' + (delimiter || '') + '-]', 'g'), '\\$&');
-};
+}
 
 
 function urlencode (str) {
@@ -1198,7 +1156,7 @@ function urlencode (str) {
     // PHP behavior, you would need to add ".replace(/~/g, '%7E');" to the following.
     return encodeURIComponent(str).replace(/!/g, '%21').replace(/'/g, '%27').replace(/\(/g, '%28').
     replace(/\)/g, '%29').replace(/\*/g, '%2A').replace(/%20/g, '+');
-};
+}
 
 
 function htmlentities (string, quote_style, charset, double_encode) {
@@ -1245,7 +1203,7 @@ function htmlentities (string, quote_style, charset, double_encode) {
     }
 
     return string;
-};
+}
 
 
 function get_html_translation_table (table, quote_style) {
@@ -1409,7 +1367,7 @@ function get_html_translation_table (table, quote_style) {
     }
 
     return hash_map;
-};
+}
 
 
 function parse_url (str, component) {
@@ -1462,7 +1420,7 @@ function parse_url (str, component) {
     }
     delete uri.source;
     return uri;
-};
+}
 
 function round (value, precision, mode) {
     // http://kevin.vanzonneveld.net
@@ -1515,7 +1473,7 @@ function round (value, precision, mode) {
     }
 
     return (isHalf ? value : Math.round(value)) / m;
-};
+}
 
 
 function implode (glue, pieces) {
@@ -1543,7 +1501,7 @@ function implode (glue, pieces) {
         }
         return retVal;
     }    return pieces;
-};
+}
 
 /**
  * inserts a text into an input/textarea where the cursor is set
@@ -1581,7 +1539,7 @@ function insertTextToFormElementAtCursor(txtarea, text) {
         txtarea.focus();
     }
     txtarea.scrollTop = scrollPos;
-};
+}
 
 /**
  * inserts a text into an html element with contenteditable where the cursor is set
@@ -1609,7 +1567,7 @@ function insertTextToContenteditableAtCursor (text, win, doc) {
     } else if (doc.selection && doc.selection.createRange) {
         doc.selection.createRange().text = text;
     }
-};
+}
 
 stringToFunction = function(str) {
     if (typeof str !== "string") {

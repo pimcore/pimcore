@@ -16,8 +16,13 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\RecurringPaymentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\AbstractRequest;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\FormResponse;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
@@ -30,7 +35,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class QPay extends AbstractPayment
+class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface, RecurringPaymentInterface
 {
     // supported hashing algorithms
     const HASH_ALGO_MD5 = 'md5';
@@ -288,6 +293,16 @@ class QPay extends AbstractPayment
     }
 
     /**
+     * @inheritDoc
+     */
+    public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
+    {
+        $response = $this->initPayment($price, $config->asArray());
+
+        return new FormResponse($orderAgent->getOrder(), $response);
+    }
+
+    /**
      * Handles response of payment provider and creates payment status object
      *
      * @param mixed $response
@@ -531,7 +546,7 @@ class QPay extends AbstractPayment
      *
      * @param PriceInterface $price
      * @param string $reference
-     * @param $transactionId
+     * @param string $transactionId
      *
      * @return StatusInterface
      *
@@ -629,7 +644,7 @@ class QPay extends AbstractPayment
     /**
      * Compute MD5 fingerprint
      *
-     * @param $data
+     * @param string $data
      *
      * @return string
      */
@@ -641,7 +656,7 @@ class QPay extends AbstractPayment
     /**
      * Calculate HMAC_SHA512 fingerprint
      *
-     * @param $data
+     * @param string $data
      *
      * @return string
      */
@@ -651,8 +666,8 @@ class QPay extends AbstractPayment
     }
 
     /**
-     * @param $url
-     * @param $params
+     * @param string $url
+     * @param array $params
      *
      * @return string[]
      */

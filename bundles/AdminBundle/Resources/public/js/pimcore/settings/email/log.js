@@ -179,7 +179,6 @@ pimcore.settings.email.log = Class.create({
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=html';
-                        url = pimcore.helpers.addCsrfTokenToUrl(url);
                         var iframe = new Ext.Window({
                             title: t('html'),
                             width: iFrameSettings.width,
@@ -211,7 +210,6 @@ pimcore.settings.email.log = Class.create({
                     handler: function(grid, rowIndex){
                         var rec = grid.getStore().getAt(rowIndex);
                         var url = '/admin/email/show-email-log?id=' + rec.get('id') + '&type=text';
-                        url = pimcore.helpers.addCsrfTokenToUrl(url);
                         var iframe = new Ext.Window({
                             title: t('text'),
                             width: iFrameSettings.width,
@@ -280,10 +278,11 @@ pimcore.settings.email.log = Class.create({
                                             //when the objectPath is set -> the object is still available otherwise it was
                                             // deleted in the meantime
                                             if (data.objectPath) {
+                                                var type = data.type;
                                                 var subtype = data.objectClassSubType.toLowerCase();
-                                                return '<span onclick="pimcore.helpers.open'
-                                                    + data.objectClassBase + '(' + data.objectId + ', \''
-                                                    + subtype + '\');" class="input_drop_target" style="display: block;">'
+                                                metadata.tdAttr = 'data-qtip="' + t("open") + '"';
+                                                return '<span onclick="pimcore.helpers.openElement(' + data.objectId + ', \'' + type + '\' , \''
+                                                    + subtype + '\'); Ext.getCmp(\'email_log_params_panel\').close();" class="x-grid-cell-inner input_drop_target" style="display: block;">'
                                                     + data.objectPath + '</span>';
                                             } else {
                                                 return '"' + data.objectClass + '" with Id: '
@@ -295,6 +294,7 @@ pimcore.settings.email.log = Class.create({
                         });
 
                         this.window = new Ext.Window({
+                            id: "email_log_params_panel",
                             modal: true,
                             width: 620,
                             height: "90%",
@@ -334,12 +334,45 @@ pimcore.settings.email.log = Class.create({
                                                 }
                                             },
                                             failure: function () {
-                                                alert('Could not resend email');
+                                                Ext.Msg.alert(t('email_log_resend'),
+                                                    t('email_log_resend_window_error_message'));
                                             },
                                             params: { id : rec.get('id') }
                                         });
                                     }
                                 });
+                        }.bind(this),
+                        getClass: function(v, meta, rec) {
+                            if(!rec.get('emailLogExistsHtml') && !rec.get('emailLogExistsText') ){
+                                return 'pimcore_hidden';
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                xtype:'actioncolumn',
+                width: 30,
+                menuText: t('email_log_forward'),
+                items:[
+                    {
+                        tooltip: t('email_log_forward'),
+                        icon: '/bundles/pimcoreadmin/img/flat-color-icons/email-forward.svg',
+                        handler: function (grid, rowIndex) {
+                            var rec = grid.getStore().getAt(rowIndex);
+
+                            Ext.Ajax.request({
+                                url: '/admin/email/show-email-log?id=' + rec.get('id') + '&type=details',
+                                success: function(response){
+                                    var data = Ext.decode( response.responseText );
+                                    var win = this.getForwardEmailWindow(data);
+                                    win.show();
+                                }.bind(this),
+                                failure: function () {
+                                    Ext.Msg.alert(t('email_log_forward'),
+                                        t('email_log_resend_window_error_message'));
+                                },
+                            });
                         }.bind(this),
                         getClass: function(v, meta, rec) {
                             if(!rec.get('emailLogExistsHtml') && !rec.get('emailLogExistsText') ){
@@ -364,11 +397,13 @@ pimcore.settings.email.log = Class.create({
                             success: function(response){
                                 var data = Ext.decode( response.responseText );
                                 if(!data.success){
-                                    alert('Could not delete email log');
+                                    Ext.Msg.alert(t('error'),
+                                        t('error_deleting_item'));
                                 }
                             },
                             failure: function () {
-                                alert('Could not delete email log');
+                                Ext.Msg.alert(t('error'),
+                                    t('error_deleting_item'));
                             },
                             params: { id : rec.get('id') }
                         });
@@ -431,5 +466,103 @@ pimcore.settings.email.log = Class.create({
         this.grid.store.reload();
         this.grid.getView().refresh();
 
+    },
+
+    getForwardEmailWindow: function (data) {
+        if (data) {
+            var emailType = data.emailLogExistsHtml ? 'html' : 'text';
+            var emailPreviewUrl = '/admin/email/show-email-log?id=' + data.id + '&type=' + emailType;
+
+            var win =  new Ext.Window({
+                width: 800,
+                height: 600,
+                modal: true,
+                title: t("email_log_forward"),
+                layout: "fit",
+                closeAction: "close",
+                items: [{
+                    xtype: "form",
+                    bodyStyle: "padding:10px;",
+                    itemId: "form",
+                    items: [
+                        {
+                            xtype: 'hiddenfield',
+                            name: 'id',
+                            value: data.id
+                        },
+                        {
+                            xtype: 'textfield',
+                            value: data.subject,
+                            readOnly: true,
+                            fieldLabel: t("subject"),
+                        },
+                        {
+                            xtype: 'textfield',
+                            value: data.from,
+                            readOnly: true,
+                            fieldLabel: t("from"),
+                        },
+                        {
+                            xtype: 'textfield',
+                            value: data.replyTo,
+                            hidden: empty(data.replyTo),
+                            readOnly: true,
+                            fieldLabel: t("replyTo"),
+                        },
+                        {
+                            xtype: 'textfield',
+                            name: "to",
+                            allowBlank: false,
+                            fieldLabel: t("to"),
+                        },
+                        {
+                            xtype: 'panel',
+                            height: 350,
+                            layout: 'fit',
+                            items : [{
+                                xtype : 'box',
+                                autoEl: {tag: 'iframe', src: emailPreviewUrl}
+                            }]
+                        }
+
+                    ],
+                    defaults: {
+                        width: 780
+                    }
+                }],
+                buttons: [{
+                    text: t("send"),
+                    iconCls: "pimcore_icon_email",
+                    handler: function () {
+                        var form = win.getComponent("form").getForm();
+                        var params = form.getFieldValues();
+                        if (form.isValid()) {
+                            Ext.Ajax.request({
+                                url: '/admin/email/resend-email',
+                                method: 'POST',
+                                success: function (response) {
+                                    var data = Ext.decode(response.responseText);
+                                    if (data.success) {
+                                        Ext.Msg.alert(t('email_log_forward'),
+                                            t('email_log_resend_window_success_message'));
+                                        win.close();
+                                    } else {
+                                        Ext.Msg.alert(t('email_log_forward'),
+                                            t('email_log_resend_window_error_message'));
+                                    }
+                                },
+                                failure: function () {
+                                    Ext.Msg.alert(t('email_log_forward'),
+                                        t('email_log_resend_window_error_message'));
+                                },
+                                params: params
+                            });
+                        }
+                    }
+                }]
+            });
+
+            return win;
+        }
     }
 });

@@ -22,7 +22,7 @@ use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 class Mail
 {
     /**
-     * @param $type
+     * @param string $type
      * @param MailClient $mail
      *
      * @return string
@@ -144,7 +144,7 @@ CSS;
 
     /**
      * @param MailClient $mail
-     * @param $recipients array
+     * @param array $recipients
      *
      * @return Model\Tool\Email\Log
      */
@@ -206,11 +206,11 @@ CSS;
     }
 
     /**
-     * @param $string
-     * @param null $document
-     * @param null $hostUrl
+     * @param string $string
+     * @param Model\Document $document
+     * @param string|null $hostUrl
      *
-     * @return mixed
+     * @return string
      *
      * @throws \Exception
      */
@@ -256,7 +256,7 @@ CSS;
                     $absolutePath = $netUrl->getNormalizedURL();
                 }
 
-                $path = preg_quote($path);
+                $path = preg_quote($path, '!');
                 $string = preg_replace("!([\"'])$path([\"'])!is", '\\1' . $absolutePath . '\\2', $string);
             }
         }
@@ -282,10 +282,10 @@ CSS;
     }
 
     /**
-     * @param $string
-     * @param null $document
+     * @param string $string
+     * @param Model\Document $document
      *
-     * @return mixed
+     * @return string
      *
      * @throws \Exception
      */
@@ -376,8 +376,8 @@ CSS;
     }
 
     /**
-     * @param $path
-     * @param null $document
+     * @param string $path
+     * @param Model\Document $document
      *
      * @return array
      *
@@ -408,7 +408,7 @@ CSS;
     /**
      * parses an email string in the following name/mail list annotation: 'Name 1 <address1@mail.com>, Name 2 <address2@mail.com>, ...'
      *
-     * @param $emailString
+     * @param string $emailString
      *
      * @return array
      */

@@ -49,7 +49,7 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
      *
      * @param string $filename
      *
-     * @return string
+     * @return string|null
      */
     protected function getDefinitionName($filename)
     {
@@ -57,12 +57,14 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
         if (preg_match('/^custom_definition_(.*)_export\.json$/', $filename, $parts) === 1) {
             return $parts[1];
         }
+
+        return null;
     }
 
     /**
      * Try to load definition by name.
      *
-     * @param $name
+     * @param string $name
      *
      * @throws \Exception
      *
@@ -74,7 +76,7 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return AbstractModel
      */
@@ -97,8 +99,8 @@ class CustomLayoutCommand extends AbstractStructureImportCommand
     }
 
     /**
-     * @param null|AbstractModel|CustomLayout $customLayout
-     * @param null                            $json
+     * @param AbstractModel|CustomLayout|null $customLayout
+     * @param string|null $json
      *
      * @return bool
      */

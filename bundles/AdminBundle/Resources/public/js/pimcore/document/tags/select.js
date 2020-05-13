@@ -32,6 +32,10 @@ pimcore.document.tags.select = Class.create(pimcore.document.tag, {
             options.listeners.select = this.reloadDocument;
         }
 
+        if(options["defaultValue"] && data === null) {
+            data = options["defaultValue"];
+        }
+
         options.name = id + "_editable";
         options.triggerAction = 'all';
         options.editable = false;

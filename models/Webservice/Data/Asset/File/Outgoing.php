@@ -19,6 +19,9 @@ namespace Pimcore\Model\Webservice\Data\Asset\File;
 
 use Pimcore\Model;
 
+/**
+ * @deprecated
+ */
 class Outgoing extends Model\Webservice\Data\Asset\File
 {
 }

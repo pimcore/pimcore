@@ -12,6 +12,9 @@
  */
 
 pimcore.registerNS("pimcore.object.classificationstore.relationSelectionWindow");
+/*
+ * this is for the grid
+ */
 pimcore.object.classificationstore.relationSelectionWindow = Class.create({
 
     acceptEvents: true,
@@ -114,10 +117,8 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
 
     getToolbar: function () {
 
-        var user = pimcore.globalmanager.get("user");
         var toolbar;
         var items = [];
-
 
         var keyButton  = new Ext.Button({
             text: t("key"),
@@ -152,7 +153,6 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
         var formValue = this.searchfield.getValue();
 
         this.store.getProxy().setExtraParam("searchfilter", formValue);
-
 
         var lastOptions = this.store.lastOptions;
         Ext.apply(lastOptions.params, {
@@ -217,10 +217,33 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
 
         var gridColumns = [];
         gridColumns.push({text: "ID", width: 60, sortable: true, dataIndex: 'id'});
-        gridColumns.push({text: t("group"), flex: 1, sortable: true, dataIndex: 'groupName', filter: 'string'});
-        gridColumns.push({text: t("name"), flex: 1, sortable: true, dataIndex: 'keyName', filter: 'string'});
-        gridColumns.push({text: t("description"), flex: 1, sortable: true, dataIndex: 'keyDescription', filter: 'string'});
 
+        gridColumns.push({
+            text: t("group"),
+            flex: 1,
+            sortable: true,
+            dataIndex: 'groupName',
+            filter: 'string',
+            renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
+        });
+
+        gridColumns.push({
+            text: t("name"),
+            flex: 1,
+            sortable: true,
+            dataIndex: 'keyName',
+            filter: 'string',
+            renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
+        });
+
+        gridColumns.push({
+            text: t("description"),
+            flex: 1,
+            sortable: true,
+            dataIndex: 'keyDescription',
+            filter: 'string',
+            renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
+        });
 
         var proxy = {
             type: 'ajax',

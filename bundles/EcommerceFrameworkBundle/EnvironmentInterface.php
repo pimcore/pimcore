@@ -48,8 +48,8 @@ interface EnvironmentInterface extends ComponentInterface
      * Sets custom item to environment - which is saved to the session then
      * save()-call is needed to save the custom items
      *
-     * @param $key
-     * @param $value
+     * @param string $key
+     * @param mixed $value
      */
     public function setCustomItem($key, $value);
 
@@ -57,15 +57,15 @@ interface EnvironmentInterface extends ComponentInterface
      * Removes custom item from the environment
      * save()-call is needed to save the custom items
      *
-     * @param $key
+     * @param string $key
      */
     public function removeCustomItem($key);
 
     /**
      * Returns custom saved item from environment
      *
-     * @param $key
-     * @param $defaultValue
+     * @param string $key
+     * @param mixed $defaultValue
      *
      * @return mixed
      */
@@ -128,6 +128,13 @@ interface EnvironmentInterface extends ComponentInterface
      * @return string
      */
     public function getCurrentCheckoutTenant();
+
+    /**
+     * Set the default currency in a multi-currency environment.
+     *
+     * @param Currency $currency
+     */
+    public function setDefaultCurrency(Currency $currency);
 
     /**
      * Returns instance of default currency

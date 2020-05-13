@@ -98,5 +98,7 @@ class EncoderFactory implements EncoderFactoryInterface
 
             return $encoder;
         }
+
+        return null;
     }
 }

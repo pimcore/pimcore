@@ -1,52 +1,5 @@
 {% extends 'WebProfilerBundle:Profiler:layout.html.twig' %}
 
-{% macro feature_flags_toolbar(collector, type, title) %}
-    {% if collector.isFeatureAllFlagSet(type) or collector.featureHasFlags(type) %}
-        <div class="sf-toolbar-info-piece">
-            <b>{{ title }}</b>
-
-            <span>
-                {% if collector.isFeatureAllFlagSet(type) %}
-                    enabled
-                {% else %}
-                    {% transchoice collector.getFeatureFlags(type)|length %}
-                        {0} No flags enabled|{1} %count% flag enabled|]1,Inf] %count% flags enabled
-                    {% endtranschoice %}
-                {% endif %}
-            </span>
-        </div>
-    {% endif %}
-{% endmacro %}
-
-{% macro feature_flags_metric(collector, type, title) %}
-    <div class="metric">
-        <span class="value">
-            {% if collector.isFeatureAllFlagSet(type) %}
-                enabled
-            {% elseif collector.featureHasFlags(type) %}
-                {% transchoice collector.getFeatureFlags(type)|length %}
-                    {0} No flags enabled|{1} %count% flag enabled|]1,Inf] %count% flags enabled
-                {% endtranschoice %}
-            {% else %}
-                disabled
-            {% endif %}
-        </span>
-        <span class="label">{{ title }}</span>
-    </div>
-{% endmacro %}
-
-{% macro feature_flags_list(collector, type, title) %}
-    {% if collector.featureHasFlags(type) %}
-        <h3>{{ title }}</h3>
-
-        <div class="card">
-            {% for flag in collector.getFeatureFlags(type) %}
-                <span class="label" style="margin-bottom: 2px">{{ flag }}</span>
-            {% endfor %}
-        </div>
-    {% endif %}
-{% endmacro %}
-
 {% block toolbar %}
     {% import _self as macros %}
 
@@ -69,9 +22,6 @@
             <b>Context</b>
             <span>{{ collector.context }}</span>
         </div>
-
-        {{ macros.feature_flags_toolbar(collector, 'debug_mode', 'Debug Mode') }}
-        {{ macros.feature_flags_toolbar(collector, 'dev_mode', 'Dev Mode') }}
     {% endset %}
 
     {# the 'link' value set to 'false' means that this panel doesn't
@@ -108,11 +58,5 @@
             <span class="value">{{ collector.context }}</span>
             <span class="label">Request Context</span>
         </div>
-
-        {{ macros.feature_flags_metric(collector, 'debug_mode', 'Debug Mode') }}
-        {{ macros.feature_flags_metric(collector, 'dev_mode', 'Dev Mode') }}
     </div>
-
-    {{ macros.feature_flags_list(collector, 'debug_mode', 'Debug Mode Flags') }}
-    {{ macros.feature_flags_list(collector, 'dev_mode', 'Dev Mode Flags') }}
 {% endblock %}

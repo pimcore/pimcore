@@ -126,7 +126,8 @@ pimcore.object.versions = Class.create({
                     mode: 'MULTI'
                 }),
                 viewConfig: {
-                    xtype: 'patchedgridview'
+                    xtype: 'patchedgridview',
+                    enableTextSelection: true
                 }
             });
 
@@ -187,7 +188,6 @@ pimcore.object.versions = Class.create({
             var selections = grid.getSelectionModel().getSelection();
 
             var url = "/admin/object/diff-versions/from/" + selections[0].data.id + "/to/" + selections[1].data.id;
-            url = pimcore.helpers.addCsrfTokenToUrl(url);
             Ext.get(this.iframeId).dom.src = url;
         }
     },
@@ -199,7 +199,6 @@ pimcore.object.versions = Class.create({
         var versionId = data.id;
 
         var url = "/admin/object/preview-version?id=" + versionId;
-        url = pimcore.helpers.addCsrfTokenToUrl(url);
         Ext.get(this.iframeId).dom.src = url;
     },
 
@@ -271,11 +270,6 @@ pimcore.object.versions = Class.create({
         }
     },
 
-    editVersion: function (index, grid) {
-        var data = grid.getStore().getAt(index).data;
-        var versionId = data.id;
-    },
-
     publishVersion: function (index, grid) {
         var data = grid.getStore().getAt(index).data;
         var versionId = data.id;
@@ -290,7 +284,7 @@ pimcore.object.versions = Class.create({
                 if (rdata.success) {
                     this.object.reload();
 
-                    pimcore.helpers.updateObjectStyle(this.object.id, rdata.treeData);
+                    pimcore.helpers.updateTreeElementStyle('object', this.object.id, rdata.treeData);
                 } else {
                     Ext.MessageBox.alert(t("error"), rdata.message);
                 }

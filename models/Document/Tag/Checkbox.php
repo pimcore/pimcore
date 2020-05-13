@@ -58,7 +58,7 @@ class Checkbox extends Model\Document\Tag
      */
     public function frontend()
     {
-        return $this->value;
+        return (string)$this->value;
     }
 
     /**
@@ -94,7 +94,7 @@ class Checkbox extends Model\Document\Tag
      */
     public function isEmpty()
     {
-        return $this->value;
+        return !$this->value;
     }
 
     /**
@@ -102,23 +102,24 @@ class Checkbox extends Model\Document\Tag
      */
     public function isChecked()
     {
-        return $this->isEmpty();
+        return $this->value;
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      *
-     * @todo: replace or with ||
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
-        if ($data->bool === null or is_bool($data)) {
+        $data = $this->sanitizeWebserviceData($wsElement->value);
+        if ($data->bool === null || is_bool($data)) {
             $this->value = (bool) $data->value;
         } else {
             throw new \Exception('cannot get values from web service import - invalid data');

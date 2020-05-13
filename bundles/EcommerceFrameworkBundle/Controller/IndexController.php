@@ -17,6 +17,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
+use Pimcore\Event\Ecommerce\AdminEvents;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -60,7 +63,7 @@ class IndexController extends AdminController
      *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */
-    public function getValuesForFilterFieldAction(Request $request)
+    public function getValuesForFilterFieldAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         try {
             $data = [];
@@ -91,6 +94,10 @@ class IndexController extends AdminController
                 $helper = $filterService->getFilterGroupHelper();
                 $data = $helper->getGroupByValuesForFilterGroup($columnGroup, $productList, $request->get('field'));
             }
+
+            $event = new GenericEvent(null, ['data' => $data, 'field' => $request->get('field')]);
+            $eventDispatcher->dispatch(AdminEvents::GET_VALUES_FOR_FILTER_FIELD_PRE_SEND_DATA, $event);
+            $data = $event->getArgument('data');
 
             return $this->adminJson(['data' => array_values($data)]);
         } catch (\Exception $e) {

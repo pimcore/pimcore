@@ -26,7 +26,7 @@ trait RestTestCaseTrait
 
     public function setUp()
     {
-        /** @var $this TestCase */
+        /** @var TestCase $this */
         parent::setUp();
 
         // setup test rest client

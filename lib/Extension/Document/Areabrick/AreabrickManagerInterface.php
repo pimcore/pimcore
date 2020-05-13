@@ -81,4 +81,12 @@ interface AreabrickManagerInterface
      * @return bool
      */
     public function isEnabled(string $id): bool;
+
+    /**
+     * Enables/disables an areabrick
+     *
+     * @param string $id
+     * @param bool $state
+     */
+    public function setState(string $id, bool $state);
 }

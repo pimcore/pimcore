@@ -58,26 +58,7 @@ Create a new file (or re-use existing) with the following code in `/app/config/s
 ```yaml
 
 services:
-    # default configuration for services in *this* file
-    _defaults:
-        # automatically injects dependencies in your services
-        autowire: true
-        # automatically registers your services as commands, event subscribers, etc.
-        autoconfigure: true
-        # this means you cannot fetch services directly from the container via $container->get()
-        # if you need to do this, you can override this setting on individual services
-        public: false
-
-    CommonBundle\EventListener\S3Listener:
-        tags:
-            - { name: kernel.event_listener, event: pimcore.frontend.path.asset.image.thumbnail, method: onFrontendPathThumbnail }
-            - { name: kernel.event_listener, event: pimcore.frontend.path.asset.document.image-thumbnail, method: onFrontendPathThumbnail }
-            - { name: kernel.event_listener, event: pimcore.frontend.path.asset.video.image-thumbnail, method: onFrontendPathThumbnail }
-            - { name: kernel.event_listener, event: pimcore.frontend.path.asset.video.thumbnail, method: onFrontendPathThumbnail }
-            - { name: kernel.event_listener, event: pimcore.asset.image.thumbnail, method: onAssetThumbnailCreated }
-            - { name: kernel.event_listener, event: pimcore.asset.video.image-thumbnail, method: onAssetThumbnailCreated }
-            - { name: kernel.event_listener, event: pimcore.asset.document.image-thumbnail, method: onAssetThumbnailCreated }
-            - { name: kernel.event_listener, event: pimcore.frontend.path.asset, method: onFrontEndPathAsset }
+    AppBundle\EventListener\S3Listener: ~
 ```
 
 ## Add a class to respond to the events
@@ -89,11 +70,14 @@ Again, please have a look at the comments in the code.
 ```php
 <?php
 
-namespace CommonBundle\EventListener;
+namespace AppBundle\EventListener;
 
+use Pimcore\Event\AssetEvents;
+use Pimcore\Event\FrontendEvents;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class S3Listener
+class S3Listener implements EventSubscriberInterface
 {
     public function __construct()
     {
@@ -101,6 +85,20 @@ class S3Listener
         $this->s3BaseUrl = "https://s3.us-east-2.amazonaws.com";
         $this->s3TmpUrlPrefix = $this->s3BaseUrl . str_replace("s3:/", "", PIMCORE_TEMPORARY_DIRECTORY);
         $this->s3AssetUrlPrefix = $this->s3BaseUrl . str_replace("s3:/", "", PIMCORE_ASSET_DIRECTORY);
+    }
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            FrontendEvents::ASSET_IMAGE_THUMBNAIL => 'onFrontendPathThumbnail',
+            FrontendEvents::ASSET_DOCUMENT_IMAGE_THUMBNAIL => 'onFrontendPathThumbnail',
+            FrontendEvents::ASSET_VIDEO_IMAGE_THUMBNAIL => 'onFrontendPathThumbnail',
+            FrontendEvents::ASSET_VIDEO_THUMBNAIL => 'onFrontendPathThumbnail',
+            FrontendEvents::ASSET_PATH => 'onFrontEndPathAsset',
+            AssetEvents::IMAGE_THUMBNAIL => 'onAssetThumbnailCreated',
+            AssetEvents::VIDEO_IMAGE_THUMBNAIL => 'onAssetThumbnailCreated',
+            AssetEvents::DOCUMENT_IMAGE_THUMBNAIL => 'onAssetThumbnailCreated',
+        ];
     }
 
     public function onFrontendPathThumbnail(GenericEvent $event) {
@@ -120,8 +118,6 @@ class S3Listener
         }
 
         $event->setArgument('frontendPath',$path);
-
-        //return $path;
     }
 
     public function onAssetThumbnailCreated(GenericEvent $event)
@@ -142,8 +138,6 @@ class S3Listener
         $path = str_replace(PIMCORE_ASSET_DIRECTORY . "/", $this->s3AssetUrlPrefix . "/", $asset->getFileSystemPath());
 
         $event->setArgument('frontendPath',$path);
-
-        //return $path;
     }
 }
 ```

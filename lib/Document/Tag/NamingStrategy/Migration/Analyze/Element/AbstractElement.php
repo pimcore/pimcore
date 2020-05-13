@@ -269,7 +269,7 @@ abstract class AbstractElement
     }
 
     /**
-     * @param AbstractBlock|null $parent
+     * @param AbstractBlock $parent
      *
      * @return AbstractBlock[]
      */

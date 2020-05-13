@@ -56,13 +56,26 @@ pimcore.settings.translation.xliff = Class.create({
 
     getExportPanel: function () {
 
+        let fields = [
+            "rowId",
+            "id",
+            "path",
+            "type",
+            "children",
+            "relations"
+        ];
+
+        let modelName = 'pimcore.model.xliff.store';
+        if (!Ext.ClassManager.isCreated(modelName)) {
+            Ext.define(modelName, {
+                extend: 'Ext.data.Model',
+                idProperty: "rowId",
+                fields: fields
+            });
+        }
+
         this.exportStore = new Ext.data.ArrayStore({
-            fields: [
-                "id",
-                "path",
-                "type",
-                "children"
-            ]
+            model: modelName
         });
 
         this.component = Ext.create('Ext.grid.Panel', {
@@ -77,12 +90,17 @@ pimcore.settings.translation.xliff = Class.create({
                 },
                 items: [
                     {text: 'ID', dataIndex: 'id', width: 50},
-                    {text: t("path"), dataIndex: 'path', flex: 200},
                     {text: t("type"), dataIndex: 'type', width: 100},
+                    {text: t("path"), dataIndex: 'path', flex: 200},
                     Ext.create('Ext.grid.column.Check', {
                         text: t("children"),
                         dataIndex: "children",
-                        width: 50
+                        width: 70
+                    }),
+                    Ext.create('Ext.grid.column.Check', {
+                        text: t("relations"),
+                        dataIndex: "relations",
+                        width: 100
                     }),
                     {
                         xtype: 'actioncolumn',
@@ -124,11 +142,14 @@ pimcore.settings.translation.xliff = Class.create({
                             pimcore.helpers.itemselector(true, function (items) {
                                 if (items.length > 0) {
                                     for (var i = 0; i < items.length; i++) {
+                                        let rowId = items[i].type + '-' + items[i].id;
                                         this.exportStore.add({
+                                            rowId: rowId,
                                             id: items[i].id,
                                             path: items[i].fullpath,
                                             type: items[i].type,
-                                            children: true
+                                            children: true,
+                                            relations: false
                                         });
                                     }
                                 }
@@ -171,11 +192,14 @@ pimcore.settings.translation.xliff = Class.create({
 
                         var type = data.elementType;
                         if (type == "document" || type == "object") {
+                            let rowId = type + '-' + data.id;
                             this.exportStore.add({
+                                rowId: rowId,
                                 id: data.id,
                                 path: data.path,
                                 type: data.elementType,
-                                children: true
+                                children: true,
+                                relations: false
                             });
                             return true;
                         }
@@ -282,12 +306,12 @@ pimcore.settings.translation.xliff = Class.create({
                 this.exportProgressWin = new Ext.Window({
                     title: t("export"),
                     layout:'fit',
-                    width:500,
+                    width:200,
                     bodyStyle: "padding: 10px;",
                     closable:false,
                     plain: true,
-                    modal: true,
-                    items: [this.exportProgressbar]
+                    items: [this.exportProgressbar],
+                    listeners: pimcore.helpers.getProgressWindowListeners()
                 });
 
                 this.exportProgressWin.show();
@@ -342,12 +366,12 @@ pimcore.settings.translation.xliff = Class.create({
                         this.importProgressWin = new Ext.Window({
                             title: t("import"),
                             layout:'fit',
-                            width:500,
+                            width:200,
                             bodyStyle: "padding: 10px;",
                             closable:false,
                             plain: true,
-                            modal: true,
-                            items: [this.importProgressbar]
+                            items: [this.importProgressbar],
+                            listeners: pimcore.helpers.getProgressWindowListeners()
                         });
 
                         this.importProgressWin.show();

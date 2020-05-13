@@ -20,6 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Concrete;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @property FindologicConfigInterface $tenantConfig
@@ -46,9 +47,9 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
      */
     protected $batchData;
 
-    public function __construct(FindologicConfigInterface $tenantConfig, ConnectionInterface $db)
+    public function __construct(FindologicConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
     {
-        parent::__construct($tenantConfig, $db);
+        parent::__construct($tenantConfig, $db, $eventDispatcher);
     }
 
     /**
@@ -93,10 +94,11 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
     }
 
     /**
-     * @param      $objectId
-     * @param null $data
+     * @param int $objectId
+     * @param array|null $data
+     * @param array|null $metadata
      */
-    protected function doUpdateIndex($objectId, $data = null)
+    protected function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
         $xml = $this->createXMLElement();
 
@@ -129,8 +131,8 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
          * Adds a child with $value inside CDATA
          *
          * @param \SimpleXMLElement $parent
-         * @param string           $name
-         * @param null             $value
+         * @param string $name
+         * @param string|null $value
          *
          * @return \SimpleXMLElement
          */
@@ -259,6 +261,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
 
     /**
      * @param int $objectId
+     * @param IndexableInterface|null $object
      */
     protected function doDeleteFromIndex($objectId, IndexableInterface $object = null)
     {

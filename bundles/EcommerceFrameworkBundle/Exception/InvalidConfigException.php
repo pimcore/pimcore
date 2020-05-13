@@ -17,6 +17,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Exception;
 /**
  * Class InvalidConfigException
  */
-class InvalidConfigException extends \Exception
+class InvalidConfigException extends AbstractEcommerceException
 {
 }

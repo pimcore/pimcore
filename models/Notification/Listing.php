@@ -21,18 +21,22 @@ use Pimcore\Model\Listing\AbstractListing;
 
 /**
  * @method Listing\Dao getDao()
+ * @method Model\Notification[] load()
+ * @method int count()
  */
 class Listing extends AbstractListing
 {
     /**
      * @var array|null
+     *
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $notifications = null;
 
-    /**
-     * @var array
-     */
-    protected $data;
+    public function __construct()
+    {
+        $this->notifications = & $this->data;
+    }
 
     /**
      * @param string $key
@@ -42,48 +46,6 @@ class Listing extends AbstractListing
     public function isValidOrderKey($key)
     {
         return true;
-    }
-
-    /**
-     * @return array
-     *
-     * @throws \Doctrine\DBAL\DBALException
-     */
-    public function getData(): ?array
-    {
-        if (null === $this->data) {
-            $this->setData($this->getDao()->load());
-        }
-
-        return $this->data;
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return Listing
-     */
-    public function setData(array $data): self
-    {
-        $this->data = $data;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function count(): int
-    {
-        return $this->getDao()->count();
-    }
-
-    /**
-     * @return Model\Notification[]
-     */
-    public function load(): array
-    {
-        return $this->getDao()->load();
     }
 
     /**
@@ -97,7 +59,7 @@ class Listing extends AbstractListing
         $this->setOffset($offset);
         $this->setLimit($limit);
 
-        return $this->getDao()->load();
+        return $this->getData();
     }
 
     /**
@@ -105,7 +67,7 @@ class Listing extends AbstractListing
      */
     public function getNotifications(): array
     {
-        return $this->notifications;
+        return $this->getData();
     }
 
     /**
@@ -115,8 +77,6 @@ class Listing extends AbstractListing
      */
     public function setNotifications(array $notifications): self
     {
-        $this->notifications = $notifications;
-
-        return $this;
+        return $this->setData($notifications);
     }
 }

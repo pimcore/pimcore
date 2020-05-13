@@ -49,7 +49,6 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                 this.getOperatorTree()
             ];
 
-            this.brickKeys = [];
             this.leftPanel = new Ext.Panel({
                 layout: "border",
                 region: "center",
@@ -202,7 +201,6 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
 
                             if (target != source) {
                                 var record = data.records[0];
-                                var isOperator = record.data.isOperator;
                                 var realOverModel = overModel;
                                 var isOverwrite = false;
                                 if (dropPosition == "before" || dropPosition == "after") {
@@ -214,7 +212,7 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
                                         }
                                     }
                                 }
-                               
+
                                 var attr = record.data;
                                 if (record.data.configAttributes) {
                                     attr = record.data.configAttributes;
@@ -223,33 +221,25 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
 
                                 var copy = element.getCopyNode(record);
 
-                                if (attr.key && attr.key.indexOf("~") !== -1) {
+                                if (record.data.brickDescriptor && record.data.brickDescriptor.insideBrick) {
                                     var brickOperator = new pimcore.object.importcolumn.operator.objectbricksetter();
                                     var brickNode = brickOperator.getConfigTreeNode();
                                     brickNode.expanded = true;
-                                    brickNode.configAttributes.attr = record.data.brickField;
-                                    keyParts = attr.key.split("~");
-                                    brickNode.configAttributes.brickType = keyParts[0];
+                                    brickNode.configAttributes.attr = record.data.brickDescriptor.brickField;
+                                    brickNode.configAttributes.brickType = record.data.brickDescriptor.brickType;
                                     brickNode = realOverModel.createNode(brickNode);
                                     brickNode.appendChild(copy);
                                     copy = brickNode;
-
                                 }
-
-
 
                                 if (isOverwrite) {
                                     var parentNode = realOverModel.parentNode;
                                     parentNode.replaceChild(copy, realOverModel);
                                     dropHandlers.cancelDrop();
                                     this.updatePreviewArea();
-
                                 } else {
                                     data.records = [copy]; // assign the copy as the new dropNode
                                 }
-                                this.showConfigWindow(element, copy);
-
-                               
                             } else {
                                 // node has been moved inside right selection panel
                                 var record = data.records[0];
@@ -425,10 +415,6 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
 
     getClassDefinitionTreePanel: function () {
         if (!this.classDefinitionTreePanel) {
-
-            var items = [];
-
-            this.brickKeys = [];
             this.classDefinitionTreePanel = this.getClassTree("/admin/class/get-class-definition-for-column-config",
                 this.config.classId, 0);
         }

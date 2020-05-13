@@ -203,6 +203,79 @@ pimcore.object.classes.layout.layout = Class.create({
 
     isInCustomLayoutEditor: function() {
         return this.inCustomLayoutEditor;
+    },
+
+    getIconFormElement: function() {
+        var iconStore = new Ext.data.ArrayStore({
+            proxy: {
+                url: '/admin/class/get-icons',
+                type: 'ajax',
+                reader: {
+                    type: 'json'
+                }
+            },
+            fields: ["text", "value"]
+        });
+
+        var iconFieldId = Ext.id();
+        var iconField = new Ext.form.field.Text({
+            id: iconFieldId,
+            name: "icon",
+            width: 396,
+            value: this.datax.icon,
+            listeners: {
+                "afterrender": function (el) {
+                    el.inputEl.applyStyles("background:url(" + el.getValue() + ") right center no-repeat;");
+                }
+            }
+        });
+
+
+        var container = {
+            xtype: "fieldcontainer",
+            layout: "hbox",
+            fieldLabel: t("icon"),
+            defaults: {
+                labelWidth: 200
+            },
+            items: [
+                iconField,
+                {
+                    xtype: "combobox",
+                    store: iconStore,
+                    width: 50,
+                    valueField: 'value',
+                    displayField: 'text',
+                    listeners: {
+                        select: function (ele, rec, idx) {
+                            var icon = ele.container.down("#" + iconFieldId);
+                            var newValue = rec.data.value;
+                            icon.component.setValue(newValue);
+                            icon.component.inputEl.applyStyles("background:url(" + newValue + ") right center no-repeat;");
+                            return newValue;
+                        }.bind(this)
+                    }
+                },
+                {
+                    iconCls: "pimcore_icon_refresh",
+                    xtype: "button",
+                    tooltip: t("refresh"),
+                    handler: function(iconField) {
+                        iconField.inputEl.applyStyles("background:url(" + iconField.getValue() + ") right center no-repeat;");
+                    }.bind(this, iconField)
+                },
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_icons",
+                    text: t('icon_library'),
+                    handler: function () {
+                        pimcore.helpers.openGenericIframeWindow("icon-library", "/admin/misc/icon-list", "pimcore_icon_icons", t("icon_library"));
+                    }
+                }
+            ]
+        };
+
+        return container;
     }
 
 });

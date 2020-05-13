@@ -136,12 +136,14 @@ class PricingManager implements PricingManagerInterface
     /**
      * @param CartInterface $cart
      *
-     * @return PricingManagerInterface
+     * @return RuleInterface[]
      */
-    public function applyCartRules(CartInterface $cart)
+    public function applyCartRules(CartInterface $cart): array
     {
+        $appliedRules = [];
+
         if (!$this->enabled) {
-            return $this;
+            return $appliedRules;
         }
 
         // configure environment
@@ -190,6 +192,7 @@ class PricingManager implements PricingManagerInterface
 
             // execute rule
             $rule->executeOnCart($env);
+            $appliedRules[] = $rule;
 
             // is this a stop rule?
             if ($rule->getBehavior() === 'stopExecute') {
@@ -197,7 +200,7 @@ class PricingManager implements PricingManagerInterface
             }
         }
 
-        return $this;
+        return $appliedRules;
     }
 
     /**
@@ -205,7 +208,7 @@ class PricingManager implements PricingManagerInterface
      */
     public function getValidRules()
     {
-        if (empty($this->rules)) {
+        if (is_null($this->rules)) {
             /** @var Rule\Listing $rules */
             $rules = $this->getRuleListing();
             $rules->setCondition('active = 1');
@@ -233,18 +236,6 @@ class PricingManager implements PricingManagerInterface
         $environment->setSession($sessionBag);
 
         return $environment;
-    }
-
-    /**
-     * @deprecated as it is never used. Will be removed in Pimcore 6.
-     *
-     * @return RuleInterface
-     */
-    public function getRule()
-    {
-        $class = $this->options['rule_class'];
-
-        return new $class();
     }
 
     /**

@@ -119,7 +119,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
                 } else {
                     pimcore.helpers.showNotification(t("error"), t('unsupported_filetype'), "error");
                 }
-            }.bind(this));
+            }.bind(this), null, this.getContext());
         } else {
             this.element.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
             this.element.addCls("pimcore_tag_image_no_upload_empty");
@@ -337,25 +337,18 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         if (!this.options["thumbnail"]) {
             if(!this.originalDimensions["width"] && !this.originalDimensions["height"]) {
-                path = "/admin/asset/get-image-thumbnail?id=" + this.datax.id + "&width=" + this.element.getWidth()
+                path = "/admin/asset/get-image-thumbnail?width=" + this.element.getWidth()
                     + "&aspectratio=true&" + Ext.urlEncode(this.datax);
             } else if (this.originalDimensions["width"]) {
-                path = "/admin/asset/get-image-thumbnail?id=" + this.datax.id + "&width=" + this.originalDimensions["width"]
+                path = "/admin/asset/get-image-thumbnail?width=" + this.originalDimensions["width"]
                     + "&aspectratio=true&" + Ext.urlEncode(this.datax);
             } else if (this.originalDimensions["height"]) {
-                path = "/admin/asset/get-image-thumbnail?id=" + this.datax.id + "&height="
+                path = "/admin/asset/get-image-thumbnail?height="
                 + this.originalDimensions["height"] + "&aspectratio=true&" + Ext.urlEncode(this.datax);
             }
-        } else {
-            if (typeof this.options.thumbnail == "string") {
-                path = "/admin/asset/get-image-thumbnail?id=" + this.datax.id + "&thumbnail=" + this.options.thumbnail
+        } else if (typeof this.options.thumbnail == "string" || typeof this.options.thumbnail == "object") {
+                path = "/admin/asset/get-image-thumbnail?thumbnail=" + this.options.thumbnail
                     + "&" + Ext.urlEncode(this.datax) + "&pimcore_editmode=1";
-            }
-            else if (this.options.thumbnail.width || this.options.thumbnail.height) {
-                path = "/admin/asset/get-image-thumbnail?id=" + this.datax.id + "&width="
-                    + this.options.thumbnail.width + "&height=" + this.options.thumbnail.height + "&"
-                    + Ext.urlEncode(this.datax);
-            }
         }
 
         var image = document.createElement("img");

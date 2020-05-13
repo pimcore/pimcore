@@ -96,7 +96,7 @@ pimcore.object.tags.abstractRelations = Class.create(pimcore.object.tags.abstrac
         this.store.filter(searchFilter);
     },
 
-    batchPrepare: function(columnDataIndex, grid, onlySelected, append){
+    batchPrepare: function(columnDataIndex, grid, onlySelected, append, remove){
         var columnIndex = columnDataIndex.fullColumnIndex;
         var editor = grid.getColumns()[columnIndex].getEditor();
         var metaIndex = this.fieldConfig.columnKeys.indexOf(columnDataIndex.dataIndex);
@@ -107,7 +107,7 @@ pimcore.object.tags.abstractRelations = Class.create(pimcore.object.tags.abstrac
             if (columnConfig.value) {
                 var selectDataRaw = columnConfig.value.split(";");
                 for (var j = 0; j < selectDataRaw.length; j++) {
-                    selectData.push([selectDataRaw[j], ts(selectDataRaw[j])]);
+                    selectData.push([selectDataRaw[j], t(selectDataRaw[j])]);
                 }
             }
 
@@ -177,7 +177,6 @@ pimcore.object.tags.abstractRelations = Class.create(pimcore.object.tags.abstrac
     batchProcess: function (dataIndex, editor, grid, onlySelected) {
 
         var newValue = editor.getValue();
-        var valueType = "primitive";
 
         if (onlySelected) {
             var selectedRows = grid.getSelectionModel().getSelection();
@@ -194,6 +193,13 @@ pimcore.object.tags.abstractRelations = Class.create(pimcore.object.tags.abstrac
         }
 
         this.batchWin.close();
-    }
+    },
 
+    gridRowDblClickHandler: function(component, record) {
+        var subtype = record.get('subtype');
+        if (record.get('type') === "object" && record.get('subtype') !== "folder") {
+            subtype = "object";
+        }
+        pimcore.helpers.openElement(record.get('id'), record.get('type'), subtype);
+    }
 });

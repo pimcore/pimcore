@@ -15,6 +15,8 @@ pimcore.registerNS("pimcore.element.selector.object");
 pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract, {
 
     fieldObject: {},
+    gridType: 'object',
+
     initStore: function () {
         return 0; // dummy
     },
@@ -27,7 +29,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var i;
 
         //set "Home" object ID for search grid column configuration
-        this.object  = new Object();
+        this.object  = {};
         this.object.id = 1;
 
         this.searchType = "search";
@@ -120,7 +122,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var selectedClassStore = [];
         for (i=0; i<possibleClassRestrictions.length; i++) {
             if(in_array(possibleClassRestrictions[i], this.parent.restrictions.specific.classes )) {
-                filterClassStore.push([possibleClassRestrictions[i], ts(possibleClassRestrictions[i])]);
+                filterClassStore.push([possibleClassRestrictions[i], t(possibleClassRestrictions[i])]);
                 selectedClassStore.push(possibleClassRestrictions[i]);
             }
         }
@@ -212,7 +214,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             this.selectionStore = new Ext.data.JsonStore({
                 data: [],
                 fields: ["id", "type", "filename", "fullpath", "subtype", {name:"classname",renderer: function(v){
-                    return ts(v);
+                    return t(v);
                 }}]
             });
 
@@ -242,7 +244,6 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 listeners: {
                     rowcontextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
                         var menu = new Ext.menu.Menu();
-                        var data = grid.getStore().getAt(rowIndex);
 
                         menu.add(new Ext.menu.Item({
                             text: t('remove'),
@@ -370,7 +371,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 }
             },
             fields: ["id","fullpath","type","subtype","filename",{name:"classname",convert: function(v, rec){
-                return ts(rec.data.classname);
+                return t(rec.data.classname);
             }},"published"]
         });
 
@@ -589,6 +590,8 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         if (this.parent.config && this.parent.config.context) {
             proxy.setExtraParam("context", Ext.encode(this.parent.config.context));
         }
+
+        this.updateTabTitle(formValues.query);
     },
 
     search: function () {
@@ -662,4 +665,4 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     },
 });
 
-pimcore.element.selector.object.addMethods(pimcore.object.helpers.gridcolumnconfig);
+pimcore.element.selector.object.addMethods(pimcore.element.helpers.gridColumnConfig);

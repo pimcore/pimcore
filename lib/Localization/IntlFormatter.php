@@ -57,7 +57,7 @@ class IntlFormatter
     protected $currencyFormats = [];
 
     /**
-     * @param $locale
+     * @param LocaleServiceInterface $locale
      */
     public function __construct(LocaleServiceInterface $locale)
     {
@@ -102,7 +102,7 @@ class IntlFormatter
     }
 
     /**
-     * @param $format
+     * @param string $format
      *
      * @return \IntlDateFormatter|\Symfony\Component\Intl\DateFormatter\IntlDateFormatter
      */
@@ -178,7 +178,9 @@ class IntlFormatter
      */
     public function formatDateTime($dateTime, $format = self::DATETIME_MEDIUM)
     {
-        if (!$formatter = $this->dateFormatters[$format]) {
+        if (isset($this->dateFormatters[$format])) {
+            $formatter = $this->dateFormatters[$format];
+        } else {
             $formatter = $this->buildDateTimeFormatters($format);
             $this->dateFormatters[$format] = $formatter;
         }
@@ -189,7 +191,7 @@ class IntlFormatter
     /**
      * formats given value as number based on current locale
      *
-     * @param $value
+     * @param int|float $value
      *
      * @return bool|string
      */
@@ -205,9 +207,9 @@ class IntlFormatter
     /**
      * formats given value as currency string with given currency based on current locale
      *
-     * @param $value
-     * @param $currency
-     * @param $pattern
+     * @param float $value
+     * @param string $currency
+     * @param string $pattern
      *
      * @return string
      */

@@ -25,7 +25,8 @@ services:
     # API
     #
 
-    Pimcore\Model\Webservice\Service: ~
+    Pimcore\Model\Webservice\Service:
+        deprecated: ~
 
     #
     # Notification Services

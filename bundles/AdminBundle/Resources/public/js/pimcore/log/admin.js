@@ -207,7 +207,6 @@ pimcore.log.admin = Class.create({
                     renderer: function(value, p, record){
                         if (value) {
                             var url = '/admin/log/show-file-object?filePath=' + record.data.fileobject;
-                            url = pimcore.helpers.addCsrfTokenToUrl(url);
                             return Ext.String.format('<a href="{0}" target="_blank">{1}</a>', url,  t("open"));
                         }
 

@@ -11,21 +11,30 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-
-$(document).ready(function ($) {
-    var documentBody = $('body');
+document.addEventListener("DOMContentLoaded", function(event) {
+    var cleanupButtons = document.getElementById('cleanupButtons');
+    if (cleanupButtons) {
+        new Button(cleanupButtons);
+    }
 
     /**
-     * Init Navigation Tabs
+     * Init Tabs
      */
-    $('#tabs').tab();
+    var navTabs = document.getElementById('tabs');
+    var navTabsCollection = navTabs.getElementsByTagName('A');
+    for (var i = 0; i < navTabsCollection.length; i++) {
+        new Tab(navTabsCollection[i]);
+    }
 
     /**
      * Init Status Messages Fadeout
      */
     var initFadeOut = function () {
         setTimeout(function () {
-            $('.js-fadeout').fadeOut('fast');
+            var alert = document.querySelector('.js-fadeout');
+            if (alert) {
+                alert.style.display = 'none';
+            }
         }, 5000);
     };
 
@@ -34,27 +43,40 @@ $(document).ready(function ($) {
     /**
      * Init Modal
      */
-    documentBody.on('click', '.js-modal', function (e) {
-        var selector = $(this).data('modal');
-        $("#" + selector).modal({                    // wire up the actual modal functionality and show the dialog
-            "backdrop": "static",
-            "keyboard": true,
-            "show": true                     // ensure the modal is shown immediately
+    document.querySelectorAll('.js-modal').forEach(function(el){
+        el.addEventListener('click', function() {
+            var selector = this.getAttribute('data-modal');
+
+            var modal = document.getElementById(selector);
+            var modalInstance = new Modal(modal,
+                {
+                    "backdrop": "static",
+                    "keyboard": true,
+                });
+            modalInstance.show();
         });
     });
 
     /**
      * Init Modal Loadings
      */
-    documentBody.on('click', '.modal .js-loading', function (e) {
-        var text = $(this).data('msg');
-        $(this).parent().children().hide();
-        $('.modal-footer').append(
-            "<div class='text-left row'> <div class='col col-sm-12'> <span>"
-            + text +
-            "</span>&nbsp;<img class='pull-right' src='/bundles/pimcoreadmin/img/video-loading.gif' alt='loading' style='margin-right: 40px;'><div><div>"
-        );
-        return true;
+    document.querySelectorAll('.modal .js-loading').forEach(function(el) {
+        el.addEventListener('click', function () {
+            var text = this.getAttribute('data-msg');
+            var children = this.parentNode.children;
+            var children = Array.prototype.slice.call(children);
+            children.forEach.call(children, function(child) {
+                child.style.display = 'none';
+            });
+
+            var newChild = document.createElement('div');
+            newChild.setAttribute('class', 'text-left row');
+            newChild.innerHTML = "<div class='text-left row'> <div class='col col-sm-12'> <span>"
+                + text +
+                "</span>&nbsp;<img class='pull-right' src='/bundles/pimcoreadmin/img/video-loading.gif' alt='loading' style='margin-right: 40px;'><div><div>";
+            document.querySelector('.modal-footer').appendChild(newChild);
+            return true;
+        });
     });
 
 });

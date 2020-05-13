@@ -14,15 +14,22 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractSetProductEntry;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\PricingManagerTokenInformation;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 use Pimcore\Logger;
+use Pimcore\Model\AbstractModel;
+use Pimcore\Model\DataObject\Concrete;
 
-abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements CartInterface
+abstract class AbstractCart extends AbstractModel implements CartInterface
 {
+    const CART_READ_ONLY_MODE_STRICT = 'strict';
+    const CART_READ_ONLY_MODE_DEACTIVATED = 'deactivated';
+
     /**
      * @var bool
      */
@@ -103,6 +110,11 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
      */
     protected $subItemCount;
 
+    /**
+     * @var string
+     */
+    protected $currentReadonlyMode = self::CART_READ_ONLY_MODE_STRICT;
+
     public function __construct()
     {
         $this->setIgnoreReadonly();
@@ -111,6 +123,16 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     }
 
     /**
+     * @param string $currentReadonlyMode
+     */
+    public function setCurrentReadonlyMode(string $currentReadonlyMode): void
+    {
+        $this->currentReadonlyMode = $currentReadonlyMode;
+    }
+
+    /**
+     * @deprecated use checkout implementation V7 instead
+     *
      * @return bool
      */
     public function getIgnoreReadonly()
@@ -128,27 +150,55 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
      */
     abstract protected function getCartCheckoutDataClassName();
 
+    /**
+     * @deprecated use checkout implementation V7 instead
+     */
     protected function setIgnoreReadonly()
     {
         $this->ignoreReadonly = true;
     }
 
+    /**
+     * @deprecated use checkout implementation V7 instead
+     */
     protected function unsetIgnoreReadonly()
     {
         $this->ignoreReadonly = false;
     }
 
+    /**
+     * @return bool
+     *
+     * @throws InvalidConfigException
+     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
+     *
+     * @deprecated use checkout implementation V7 instead
+     */
     public function isCartReadOnly()
     {
-        $order = Factory::getInstance()->getOrderManager()->getOrderFromCart($this);
+        switch ($this->currentReadonlyMode) {
 
-        return !empty($order) && !empty($order->getOrderState());
+            case self::CART_READ_ONLY_MODE_STRICT:
+                $order = Factory::getInstance()->getOrderManager()->getOrderFromCart($this);
+
+                return !empty($order) && !empty($order->getOrderState());
+
+            case self::CART_READ_ONLY_MODE_DEACTIVATED:
+                //read only mode deactivated, always return false
+                return false;
+
+            default:
+                throw new InvalidConfigException("Unknown Readonly Mode '" . $this->currentReadonlyMode . "'");
+
+        }
     }
 
     /**
      * @return bool
      *
      * @throws \Exception
+     *
+     * @deprecated use checkout implementation V7 instead
      */
     protected function checkCartIsReadOnly()
     {
@@ -162,13 +212,13 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     }
 
     /**
-     * @param CheckoutableInterface $product
-     * @param $count
-     * @param null $itemKey
+     * @param CheckoutableInterface&Concrete $product
+     * @param int $count
+     * @param string|null $itemKey
      * @param bool $replace
      * @param array $params
      * @param AbstractSetProductEntry[] $subProducts
-     * @param null $comment
+     * @param string|null $comment
      *
      * @return mixed
      */
@@ -188,15 +238,15 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     }
 
     /**
-     * @param $itemKey
-     * @param CheckoutableInterface $product
-     * @param $count
+     * @param string $itemKey
+     * @param CheckoutableInterface&Concrete $product
+     * @param int $count
      * @param bool $replace
      * @param array $params
      * @param AbstractSetProductEntry[] $subProducts
-     * @param null $comment
+     * @param string|null $comment
      *
-     * @return mixed
+     * @return string
      */
     public function updateItem($itemKey, CheckoutableInterface $product, $count, $replace = false, $params = [], $subProducts = [], $comment = null)
     {
@@ -254,8 +304,10 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     /**
      * updates count of specific cart item
      *
-     * @param $itemKey
-     * @param $count
+     * @param string $itemKey
+     * @param int $count
+     *
+     * @return CartItemInterface
      */
     public function updateItemCount($itemKey, $count)
     {
@@ -270,13 +322,13 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     }
 
     /**
-     * @param CheckoutableInterface $product
-     * @param int                                  $count
-     * @param null                                 $itemKey
-     * @param bool                                 $replace
-     * @param array                                $params
-     * @param array                                $subProducts
-     * @param null                                 $comment
+     * @param CheckoutableInterface&Concrete $product
+     * @param int $count
+     * @param string|null $itemKey
+     * @param bool $replace
+     * @param array $params
+     * @param array $subProducts
+     * @param string|null $comment
      *
      * @return string
      */
@@ -296,13 +348,13 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     }
 
     /**
-     * @param string                               $itemKey
-     * @param CheckoutableInterface $product
-     * @param int                                  $count
-     * @param bool                                 $replace
-     * @param array                                $params
-     * @param array                                $subProducts
-     * @param null                                 $comment
+     * @param string $itemKey
+     * @param CheckoutableInterface&Concrete $product
+     * @param int $count
+     * @param bool $replace
+     * @param array $params
+     * @param array $subProducts
+     * @param string|null $comment
      *
      * @return string
      */
@@ -479,7 +531,9 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     public function getGiftItems()
     {
         //make sure that cart is calculated
-        $this->getPriceCalculator()->calculate();
+        if (!$this->getPriceCalculator()->isCalculated()) {
+            $this->getPriceCalculator()->calculate();
+        }
 
         return $this->giftItems;
     }
@@ -492,7 +546,9 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     public function getGiftItem($itemKey)
     {
         //make sure that cart is calculated
-        $this->getPriceCalculator()->calculate();
+        if (!$this->getPriceCalculator()->isCalculated()) {
+            $this->getPriceCalculator()->calculate();
+        }
 
         return array_key_exists($itemKey, $this->giftItems) ? $this->giftItems[$itemKey] : null;
     }
@@ -548,7 +604,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     public function getIsBookable()
     {
         foreach ($this->getItems() as $item) {
-            if (!$item->getProduct()->getOSIsBookable($item->getCount(), $item->getSetEntries())) {
+            if (!$item->getProduct()->getOSIsBookable($item->getCount())) {
                 return false;
             }
         }
@@ -557,7 +613,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     }
 
     /**
-     * @param $id
+     * @param int $id
      */
     public function setId($id)
     {
@@ -565,7 +621,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -601,7 +657,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     }
 
     /**
-     * @param $creationDateTimestamp
+     * @param int $creationDateTimestamp
      */
     public function setCreationDateTimestamp($creationDateTimestamp)
     {
@@ -648,7 +704,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     }
 
     /**
-     * @param $modificationDateTimestamp
+     * @param int $modificationDateTimestamp
      */
     public function setModificationDateTimestamp($modificationDateTimestamp)
     {
@@ -693,7 +749,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     abstract public function delete();
 
     /**
-     * @param  $key string
+     * @param string $key
      *
      * @return string
      */
@@ -708,10 +764,8 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     }
 
     /**
-     * @param  $key string
-     * @param  $data string
-     *
-     * @return void
+     * @param string $key
+     * @param string $data
      */
     public function setCheckoutData($key, $data)
     {
@@ -787,12 +841,13 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     /**
      * sorts all items in cart according to a given callback function
      *
-     * @param $value_compare_func
+     * @param callable $value_compare_func
      *
-     * @return CartItemInterface[]
+     * @return $this
      */
     public function sortItems(callable $value_compare_func)
     {
+        return $this;
     }
 
     /**
@@ -828,7 +883,7 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
     /**
      * Checks if an error code is a defined Voucher Error Code.
      *
-     * @param $errorCode
+     * @param int $errorCode
      *
      * @return bool
      */
@@ -874,8 +929,10 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
                 return true;
             }
         } else {
-            throw new VoucherServiceException('No Token with code ' . $code . ' in this cart.', 7);
+            throw new VoucherServiceException('No Token with code ' . $code . ' in this cart.', VoucherServiceException::ERROR_CODE_NOT_FOUND_IN_CART);
         }
+
+        return false;
     }
 
     /**
@@ -894,6 +951,16 @@ abstract class AbstractCart extends \Pimcore\Model\AbstractModel implements Cart
         }
 
         return $tokens;
+    }
+
+    /**
+     * @return PricingManagerTokenInformation[]
+     */
+    public function getPricingManagerTokenInformationDetails(): array
+    {
+        $voucherService = Factory::getInstance()->getVoucherService();
+
+        return $voucherService->getPricingManagerTokenInformationDetails($this);
     }
 
     /**

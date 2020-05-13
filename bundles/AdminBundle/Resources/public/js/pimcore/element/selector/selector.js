@@ -68,31 +68,42 @@ pimcore.element.selector.selector = Class.create({
         }
 
         var title = t('search');
+        let iconCls = 'pimcore_icon_search';
         if (this.restrictions.type && this.restrictions.type.length == 1) {
             title = t(this.restrictions.type[0] + '_search');
+            iconCls = 'pimcore_icon_' + this.restrictions.type[0] + ' pimcore_icon_overlay_search'
         }
 
-        var windowConfig = {
-            width: windowWidth,
-            height: 550,
-            title: title,
-            modal: true,
-            layout: "fit",
-            items: [this.panel]
-        };
+        if(this.config["asTab"]) {
+            let myTabId = "pimcore_search_" + uniqid();
+            this.tabPanel = new Ext.Panel({
+                id: myTabId,
+                iconCls: iconCls,
+                title: title,
+                border: false,
+                layout: "fit",
+                items: [this.panel],
+                closable:true
+            });
 
-        if(this.config["moveToTab"]) {
-            windowConfig["tools"] = [{
-                type: "maximize",
-                tooltip: t("move_to_tab"),
-                callback: this.moveToTab.bind(this)
-            }];
+            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+            tabPanel.add(this.tabPanel);
+            tabPanel.setActiveItem(myTabId);
+
+            this.tabPanel.add(this.panel);
+
+            pimcore.layout.refresh();
+        } else {
+            this.window = new Ext.Window({
+                width: windowWidth,
+                height: 550,
+                title: title,
+                modal: true,
+                layout: "fit",
+                items: [this.panel]
+            });
+            this.window.show();
         }
-
-        this.window = new Ext.Window(windowConfig);
-        
-        this.window.show();
-        
         
         var user = pimcore.globalmanager.get("user");
         
@@ -155,43 +166,6 @@ pimcore.element.selector.selector = Class.create({
         return toolbar;
     },
 
-    moveToTab: function () {
-
-        // create new tab-panel
-        this.myTabId = "pimcore_search_" + uniqid();
-
-        var moveData = null;
-        if (this.current.prepareForMove) {
-            moveData = this.current.prepareForMove();
-        }
-
-        this.window.remove(this.panel, false);
-
-        this.tabpanel = new Ext.Panel({
-            id: this.myTabId,
-            iconCls: "pimcore_icon_search",
-            title: t(this.current.getTabTitle()),
-            border: false,
-            layout: "fit",
-            closable:true
-        });
-
-        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.add(this.tabpanel);
-        tabPanel.setActiveItem(this.myTabId);
-
-        this.tabpanel.add(this.panel);
-
-        pimcore.layout.refresh();
-
-        this.window.close();
-
-        if (this.current.afterMove) {
-            this.current.afterMove(moveData);
-        }
-
-    },
-
     setSearch: function (panel) {
         delete this.current;
         this.panel.removeAll();
@@ -235,6 +209,8 @@ pimcore.element.selector.selector = Class.create({
     
     commitData: function (data) {       
         this.callback(data);
-        this.window.close();
+        if(this.window) {
+            this.window.close();
+        }
     }
 });

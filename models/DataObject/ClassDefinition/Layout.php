@@ -291,7 +291,7 @@ class Layout
     }
 
     /**
-     * @param mixed $child
+     * @param Data|Layout $child
      */
     public function addChild($child)
     {
@@ -299,7 +299,7 @@ class Layout
     }
 
     /**
-     * @param mixed $data
+     * @param array $data
      * @param array $blockedKeys
      *
      * @return $this
@@ -348,7 +348,7 @@ class Layout
     }
 
     /**
-     * @param $locked
+     * @param bool $locked
      *
      * @return $this
      */
@@ -360,7 +360,7 @@ class Layout
     }
 
     /**
-     * @param $collapsed
+     * @param bool $collapsed
      *
      * @return $this
      */
@@ -382,7 +382,7 @@ class Layout
     }
 
     /**
-     * @param $bodyStyle
+     * @param string $bodyStyle
      *
      * @return $this
      */
@@ -412,8 +412,10 @@ class Layout
         return $this;
     }
 
-    /** Override point for Enriching the layout definition before the layout is returned to the admin interface.
-     * @param $object Model\DataObject\Concrete
+    /**
+     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     *
+     * @param Model\DataObject\Concrete $object
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])

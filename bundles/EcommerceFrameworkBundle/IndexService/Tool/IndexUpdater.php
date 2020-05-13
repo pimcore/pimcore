@@ -27,10 +27,30 @@ class IndexUpdater
     use CliTrait;
 
     /**
+     * Checks if a session has to be started to accommodate the needs of the pricing system before sending output.
+     *
+     * Stop-Gap solution until later refactoring:
+     *
+     * @TODO Pimcore 7 - check if this is necessary when having monolog logging
+     */
+    private static function startSession()
+    {
+        // Only necessary if this instance runs in CLI and doesn't have a session yet.
+        if (self::isCli() && session_status() == PHP_SESSION_NONE) {
+            // Start a session to ensure that code relying on sessions keep working despite running on cli. One example is
+            // \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager which uses the session to store its
+            // pricing environment.
+            /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
+            $session = \Pimcore::getKernel()->getContainer()->get('session');
+            $session->start();
+        }
+    }
+
+    /**
      * Runs update index for all tenants
      *  - but does not run processPreparationQueue or processUpdateIndexQueue
      *
-     * @param $objectListClass
+     * @param string $objectListClass
      * @param string $condition
      * @param bool $updateIndexStructures
      * @param string $loggername
@@ -42,16 +62,7 @@ class IndexUpdater
             $updater->createOrUpdateIndexStructures();
         }
 
-        // Check if this was triggered in cli. If so do some preparation to properly work.
-        // TODO Pimcore 7 - check if this is necessary when having monolog logging
-        if (self::isCli() && session_status() == PHP_SESSION_NONE) {
-            // Start a session to ensure that code relying on sessions keep working despite running on cli. One example is
-            // \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager which uses the session to store its
-            // pricing environment.
-            /** @var \Symfony\Component\HttpFoundation\Session\SessionInterface $session */
-            $session = \Pimcore::getKernel()->getContainer()->get('session');
-            $session->start();
-        }
+        self::startSession();
 
         $page = 0;
         $pageSize = 100;
@@ -77,7 +88,7 @@ class IndexUpdater
             self::log($loggername, '=========================');
 
             foreach ($products as $p) {
-                self::log($loggername, 'Updating product ' . $p->getId());
+                self::log($loggername, 'Updating ' . $p->getClass()->getName() . ': '.$p->getId());
                 $updater->updateIndex($p);
             }
             $page++;
@@ -95,11 +106,15 @@ class IndexUpdater
      * @param int $maxRounds - max rounds after process returns. null for infinite run until no work is left
      * @param string $loggername
      * @param int $preparationItemsPerRound - number of items to prepare per round
+     * @param int $timeout - timeout in seconds
      *
      * @throws InvalidConfigException
+     * @throws \Exception
      */
-    public static function processPreparationQueue($tenants = null, $maxRounds = null, $loggername = 'indexupdater', $preparationItemsPerRound = 200)
+    public static function processPreparationQueue($tenants = null, $maxRounds = null, $loggername = 'indexupdater', $preparationItemsPerRound = 200, $timeout = -1)
     {
+        $startTime = microtime(true);
+
         if ($tenants == null) {
             $tenants = Factory::getInstance()->getAllTenants();
         }
@@ -107,6 +122,8 @@ class IndexUpdater
         if (!is_array($tenants)) {
             $tenants = [$tenants];
         }
+
+        self::startSession();
 
         foreach ($tenants as $tenant) {
             self::log($loggername, '=========================');
@@ -123,6 +140,8 @@ class IndexUpdater
                 $round = 0;
                 $result = true;
                 while ($result) {
+                    self::checkTimeout($timeout, $startTime);
+
                     $round++;
                     self::log($loggername, 'Starting round: ' . $round);
 
@@ -144,15 +163,19 @@ class IndexUpdater
     /**
      * Runs processUpdateIndexQueue for given tenants or for all tenants
      *
-     * @param null $tenants
+     * @param array|null $tenants
      * @param int $maxRounds - max rounds after process returns. null for infinite run until no work is left
      * @param string $loggername
      * @param int $indexItemsPerRound - number of items to index per round
+     * @param int $timeout - timeout in seconds
      *
      * @throws InvalidConfigException
+     * @throws \Exception
      */
-    public static function processUpdateIndexQueue($tenants = null, $maxRounds = null, $loggername = 'indexupdater', $indexItemsPerRound = 200)
+    public static function processUpdateIndexQueue($tenants = null, $maxRounds = null, $loggername = 'indexupdater', $indexItemsPerRound = 200, $timeout = -1)
     {
+        $startTime = microtime(true);
+
         if ($tenants == null) {
             $tenants = Factory::getInstance()->getAllTenants();
         }
@@ -160,6 +183,8 @@ class IndexUpdater
         if (!is_array($tenants)) {
             $tenants = [$tenants];
         }
+
+        self::startSession();
 
         foreach ($tenants as $tenant) {
             self::log($loggername, '=========================');
@@ -176,6 +201,8 @@ class IndexUpdater
                 $result = true;
                 $round = 0;
                 while ($result) {
+                    self::checkTimeout($timeout, $startTime);
+
                     $round++;
                     self::log($loggername, 'Starting round: ' . $round);
 
@@ -198,5 +225,23 @@ class IndexUpdater
     {
         Simple::log($loggername, $message);
         echo $message . "\n";
+    }
+
+    /**
+     * @param int $timeout
+     * @param int $startTime
+     *
+     * @throws \Exception
+     */
+    private static function checkTimeout($timeout, $startTime): void
+    {
+        if ($timeout > 0) {
+            $timeSinceStart = microtime(true) - $startTime;
+            if ($timeout <= $timeSinceStart) {
+                throw new \Exception(sprintf('Timeout "%d minutes" has been reached. Aborted.',
+                    $timeout / 60
+                ));
+            }
+        }
     }
 }

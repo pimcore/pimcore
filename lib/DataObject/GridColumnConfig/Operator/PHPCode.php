@@ -39,7 +39,7 @@ class PHPCode extends AbstractOperator
         parent::__construct($config, $context);
 
         $this->config = $config;
-        $this->phpClass = (string)$config->phpClass;
+        $this->phpClass = $config->phpClass ?? '';
     }
 
     public function getPhpClass(): string
@@ -60,7 +60,11 @@ class PHPCode extends AbstractOperator
 
     public function getLabeledValue($element)
     {
-        return $this->getInstance()->getLabeledValue($element);
+        try {
+            return $this->getInstance()->getLabeledValue($element);
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     private function getInstance(): OperatorInterface
@@ -80,8 +84,7 @@ class PHPCode extends AbstractOperator
             $operatorInstance = new $phpClass($this->config, $this->context);
 
             return $operatorInstance;
-        } else {
-            throw new \Exception('PHPCode operator class does not exist: ' . $phpClass);
         }
+        throw new \Exception('PHPCode operator class does not exist: ' . $phpClass);
     }
 }

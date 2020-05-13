@@ -31,7 +31,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     private $workflowName;
 
     /**
-     * @var string
+     * @var array
      */
     private $stateMapping;
 
@@ -152,7 +152,7 @@ class DataObjectSplittedStateMarkingStore implements MarkingStoreInterface
     }
 
     /**
-     * @param $subject
+     * @param object $subject
      *
      * @return Concrete
      */

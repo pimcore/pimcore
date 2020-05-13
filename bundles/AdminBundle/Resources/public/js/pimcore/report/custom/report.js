@@ -55,10 +55,10 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 continue;
             }
 
-            this.columnLabels[colConfig["name"]] = colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]);
+            this.columnLabels[colConfig["name"]] = colConfig["label"] ? t(colConfig["label"]) : t(colConfig["name"]);
 
             gridColConfig = {
-                text: colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]),
+                text: colConfig["label"] ? t(colConfig["label"]) : t(colConfig["name"]),
                 hidden: !colConfig["display"],
                 sortable: colConfig["order"],
                 dataIndex: colConfig["name"]
@@ -66,6 +66,8 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
             if(colConfig["width"]) {
                 gridColConfig["width"] = intval(colConfig["width"]);
+            } else {
+                gridColConfig["flex"] = 1;
             }
 
             if(colConfig["filter"]) {
@@ -93,7 +95,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                     }
                     return "";
                 }.bind(this, colConfig["name"]);
-            };
+            }
 
 
             if(colConfig["filter_drilldown"] == 'only_filter' || colConfig["filter_drilldown"] == 'filter_and_show') {
@@ -112,7 +114,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                     width: 40,
                     items: [
                         {
-                            tooltip: t("open") + " " + (colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"])),
+                            tooltip: t("open") + " " + (colConfig["label"] ? t(colConfig["label"]) : t(colConfig["name"])),
                             icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
                             handler: function (colConfig, grid, rowIndex) {
                                 var data = grid.getStore().getAt(rowIndex).getData();
@@ -232,9 +234,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             plugins: ['pimcore.gridfilters'],
             stripeRows: true,
             trackMouseOver: true,
-            viewConfig: {
-                forceFit: false
-            },
+            forceFit: false,
             tbar: topBar
         });
 
@@ -252,8 +252,8 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
         for(var i = 0; i < this.drillDownFilterDefinitions.length; i++) {
             drillDownFilterComboboxes.push({
                 xtype: 'label',
-                text: this.drillDownFilterDefinitions[i]["label"] ? ts(this.drillDownFilterDefinitions[i]["label"])
-                                                    : ts(this.drillDownFilterDefinitions[i]["name"]),
+                text: this.drillDownFilterDefinitions[i]["label"] ? t(this.drillDownFilterDefinitions[i]["label"])
+                                                    : t(this.drillDownFilterDefinitions[i]["name"]),
                 style: 'padding-right: 5px'
             });
 
@@ -433,7 +433,6 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                     tooltip: {
                         trackMouse: true,
                         renderer: function (tooltip, record, item) {
-                            var count = this.chartStore.getCount();
                             var value = record.get(data.pieColumn);
 
 

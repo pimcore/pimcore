@@ -61,7 +61,6 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
             var allowed = false;
 
             if('object' !== typeof dataComp) {
-                var tt = typeof dataComp;
                 if (dataComp.prototype.allowIn['classificationstore']) {
                     allowed = true;
                 }
@@ -275,8 +274,6 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
 
         this.grid = Ext.create('Ext.grid.Panel', gridConfig);
 
-        this.store.load();
-
         this.layout.removeAll();
         this.layout.add(this.grid);
         this.layout.updateLayout();
@@ -284,8 +281,6 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
 
     showDetailedConfig: function (grid, rowIndex) {
         var data = grid.getStore().getAt(rowIndex);
-        var id = data.data.id;
-
         var type = data.data.type;
         var definition = data.data.definition;
         if (definition) {
@@ -385,7 +380,6 @@ pimcore.object.classificationstore.propertiespanel = Class.create({
 
    openConfig: function(id) {
 
-       var sorters = this.store.getSorters();
        var pageSize = pimcore.helpers.grid.getDefaultPageSize(-1);
 
        var params = {

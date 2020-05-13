@@ -133,7 +133,7 @@ class CookieStorage implements TargetingStorageInterface
     public function clear(VisitorInfo $visitorInfo, string $scope = null)
     {
         if (null === $scope) {
-            $this->data = null;
+            $this->data = [];
         } else {
             if (isset($this->data[$scope])) {
                 unset($this->data[$scope]);

@@ -34,7 +34,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     public $key;
 
     /**
-     * @var array
+     * @var string[]
      */
     public $translations;
 
@@ -65,7 +65,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return $this
      */
@@ -77,7 +77,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @return array
+     * @return string[]
      */
     public function getTranslations()
     {
@@ -85,7 +85,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @param $translations
+     * @param string[] $translations
      *
      * @return $this
      */
@@ -97,7 +97,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @param $date
+     * @param int $date
      *
      * @return $this
      */
@@ -117,7 +117,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @param $date
+     * @param int $date
      *
      * @return $this
      */
@@ -137,7 +137,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @param $date
+     * @param int $date
      *
      * @return $this
      */
@@ -158,9 +158,9 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @param  $language
+     * @param string $language
      *
-     * @return array
+     * @return string
      */
     public function getTranslation($language)
     {
@@ -183,7 +183,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @param bool $create
      * @param bool $returnIdIfEmpty
      *
@@ -240,7 +240,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      *
      * @static
      *
-     * @param $id - translation key
+     * @param string $id - translation key
      * @param bool $create - creates an empty translation entry if the key doesn't exists
      * @param bool $returnIdIfEmpty - returns $id if no translation is available
      * @param string $language
@@ -256,7 +256,12 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
             }
         }
 
-        return self::getByKey($id, $create, $returnIdIfEmpty)->getTranslation($language);
+        $translationItem = self::getByKey($id, $create, $returnIdIfEmpty);
+        if ($translationItem instanceof self) {
+            return $translationItem->getTranslation($language);
+        }
+
+        return null;
     }
 
     public function save()
@@ -294,7 +299,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
      *
      * @static
      *
-     * @param $file - path to the csv file
+     * @param string $file - path to the csv file
      * @param bool $replaceExistingTranslations
      * @param array $languages
      * @param array $dialect
@@ -334,6 +339,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
             }
 
             //read data
+            $data = [];
             if (($handle = fopen(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_translations', 'r')) !== false) {
                 while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
                     $data[] = $rowData;
@@ -408,7 +414,9 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
-     * @param $data
+     * @deprecated
+     *
+     * @param array $data
      */
     public function getFromWebserviceImport($data)
     {
@@ -419,6 +427,8 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     }
 
     /**
+     * @deprecated
+     *
      * @return array
      */
     public function getForWebserviceExport()

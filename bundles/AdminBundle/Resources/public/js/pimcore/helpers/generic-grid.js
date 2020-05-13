@@ -126,6 +126,7 @@ pimcore.helpers.grid.buildDefaultPagingToolbar = function (store, options) {
                         newValue = options.pageSize;
                     }
                     store.setPageSize(newValue);
+                    this.pageSize = newValue;
                     this.moveFirst();
                 }.bind(pagingtoolbar)
             }
@@ -133,4 +134,8 @@ pimcore.helpers.grid.buildDefaultPagingToolbar = function (store, options) {
     }
 
     return pagingtoolbar;
+};
+
+pimcore.helpers.grid.getTranslationColumnRenderer = function (value, metaData, record, rowIndex, colIndex, store) {
+    return t(value);
 };

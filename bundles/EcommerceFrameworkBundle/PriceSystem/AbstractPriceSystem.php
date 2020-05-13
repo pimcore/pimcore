@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\CartPriceModificatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxCalculationService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\TaxManagement\TaxEntry;
@@ -125,13 +125,13 @@ abstract class AbstractPriceSystem implements PriceSystemInterface
     }
 
     /**
-     * Returns OnlineShopTaxClass for given ICartPriceModificator
+     * Returns OnlineShopTaxClass for given CartPriceModificatorInterface
      *
-     * @param ICartPriceModificator $modificator
+     * @param CartPriceModificatorInterface $modificator
      *
      * @return OnlineShopTaxClass
      */
-    public function getTaxClassForPriceModification(ICartPriceModificator $modificator)
+    public function getTaxClassForPriceModification(CartPriceModificatorInterface $modificator)
     {
         return $this->getDefaultTaxClass();
     }

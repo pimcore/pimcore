@@ -17,17 +17,19 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\CartPriceModificatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPriceInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 
 interface CartPriceCalculatorInterface
 {
     /**
      * @param EnvironmentInterface $environment
      * @param CartInterface $cart
-     * @param ICartPriceModificator[] $modificators
+     * @param CartPriceModificatorInterface[] $modificators
      */
     public function __construct(EnvironmentInterface $environment, CartInterface $cart, array $modificators = []);
 
@@ -75,27 +77,41 @@ interface CartPriceCalculatorInterface
     /**
      * Manually add a modificator to this cart. By default they are loaded from the configuration.
      *
-     * @param ICartPriceModificator $modificator
+     * @param CartPriceModificatorInterface $modificator
      *
      * @return CartPriceCalculatorInterface
      */
-    public function addModificator(ICartPriceModificator $modificator);
+    public function addModificator(CartPriceModificatorInterface $modificator);
 
     /**
      * Manually remove a modificator from this cart.
      *
-     * @param ICartPriceModificator $modificator
+     * @param CartPriceModificatorInterface $modificator
      *
      * @return CartPriceCalculatorInterface
      */
-    public function removeModificator(ICartPriceModificator $modificator);
+    public function removeModificator(CartPriceModificatorInterface $modificator);
 
     /**
      * Returns all modificators
      *
-     * @return ICartPriceModificator[]
+     * @return CartPriceModificatorInterface[]
      */
     public function getModificators(): array;
+
+    /**
+     * Returns all applied PricingRules on Cart-Level
+     *
+     * @return RuleInterface[]
+     *
+     * @throws UnsupportedException
+     */
+    public function getAppliedPricingRules(): array;
+
+    /**
+     * @return bool
+     */
+    public function isCalculated(): bool;
 }
 
 class_alias(CartPriceCalculatorInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceCalculator');

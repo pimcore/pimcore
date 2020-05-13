@@ -59,7 +59,7 @@ class DataObjectMultipleStateMarkingStore extends MultipleStateMarkingStore
     }
 
     /**
-     * @param $subject
+     * @param object $subject
      *
      * @return Concrete
      */

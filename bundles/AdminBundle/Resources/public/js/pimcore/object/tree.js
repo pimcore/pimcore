@@ -143,7 +143,7 @@ pimcore.object.tree = Class.create({
         });
 
         store.on("nodebeforeexpand", function (node) {
-            pimcore.helpers.addTreeNodeLoadingIndicator("object", node.data.id);
+            pimcore.helpers.addTreeNodeLoadingIndicator("object", node.data.id, false);
         });
 
         store.on("nodeexpand", function (node, index, item, eOpts) {
@@ -177,38 +177,10 @@ pimcore.object.tree = Class.create({
             "itemmove": this.onTreeNodeMove.bind(this),
             "beforeitemmove": this.onTreeNodeBeforeMove.bind(this),
             "itemmouseenter": function (el, record, item, index, e, eOpts) {
-
-                if (record.data.qtipCfg) {
-                    var text = "<b>" + record.data.qtipCfg.title + "</b> | ";
-
-                    if (record.data.qtipCfg.text) {
-                        text += record.data.qtipCfg.text;
-                    } else {
-                        text += (t("type") + ": "+ t(record.data.type));
-                    }
-
-                    jQuery("#pimcore_tooltip").show();
-                    jQuery("#pimcore_tooltip").html(text);
-                    jQuery("#pimcore_tooltip").removeClass('right');
-
-                    var offsetTabPanel = jQuery("#pimcore_panel_tabs").offset();
-
-                    var offsetTreeNode = jQuery(item).offset();
-
-                    var parentTree = el.ownerCt.ownerCt;
-
-                    if(parentTree.region == 'west') {
-                        jQuery("#pimcore_tooltip").css({top: offsetTreeNode.top + 8, left: offsetTabPanel.left, right: 'auto'});
-                    }
-
-                    if(parentTree.region == 'east') {
-                        jQuery("#pimcore_tooltip").addClass('right');
-                        jQuery("#pimcore_tooltip").css({top: offsetTreeNode.top + 8, right: parentTree.width+35, left: 'auto'});
-                    }
-                }
+                pimcore.helpers.treeToolTipShow(el, record, item);
             },
             "itemmouseleave": function () {
-                jQuery("#pimcore_tooltip").hide();
+                pimcore.helpers.treeToolTipHide();
             }
         };
 
@@ -331,6 +303,11 @@ pimcore.object.tree = Class.create({
 
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
         e.stopEvent();
+
+        if(pimcore.helpers.hasTreeNodeLoadingIndicator("object", record.data.id)) {
+            return;
+        }
+
         tree.select();
 
         var menu = new Ext.menu.Menu();
@@ -886,12 +863,12 @@ pimcore.object.tree = Class.create({
                 record.pasteWindow = new Ext.Window({
                     title: t("paste"),
                     layout: 'fit',
-                    width: 500,
+                    width: 200,
                     bodyStyle: "padding: 10px;",
                     closable: false,
                     plain: true,
-                    modal: true,
-                    items: [record.pasteProgressBar]
+                    items: [record.pasteProgressBar],
+                    listeners: pimcore.helpers.getProgressWindowListeners()
                 });
 
                 record.pasteWindow.show();
@@ -969,7 +946,7 @@ pimcore.object.tree = Class.create({
         var dialogTitle = t("object_add_dialog_custom_title" + "." + className);
 
         if (dialogTitle == "object_add_dialog_custom_title" + "." + className) {
-            dialogTitle =  sprintf(t('add_object_mbx_title'), ts(className));
+            dialogTitle =  sprintf(t('add_object_mbx_title'), t(className));
         }
 
         Ext.MessageBox.prompt(dialogTitle, dialogText,
@@ -996,7 +973,7 @@ pimcore.object.tree = Class.create({
             elementType: "object",
             elementSubType: record.data.type,
             id: record.data.id,
-            default: record.data.text
+            default: Ext.util.Format.htmlDecode(record.data.text)
         };
         pimcore.elementservice.editElementKey(options);
     },
@@ -1013,7 +990,6 @@ pimcore.object.tree = Class.create({
             success: function (tree, record, task, response) {
                 try {
                     var rdata = Ext.decode(response.responseText);
-                    var id = record.data.id;
 
                     if (rdata && rdata.success) {
                         var options = {

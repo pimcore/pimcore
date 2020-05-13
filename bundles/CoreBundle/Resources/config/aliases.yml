@@ -59,3 +59,5 @@ services:
     pimcore.event_listener.frontend.google_tag_manager: '@Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleTagManagerListener'
     pimcore.event_listener.frontend.tag_manager: '@Pimcore\Bundle\CoreBundle\EventListener\Frontend\TagManagerListener'
     pimcore.event_listener.frontend.full_page_cache: '@Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener'
+
+    Symfony\Component\HttpKernel\EventListener\SessionListener: '@session_listener'

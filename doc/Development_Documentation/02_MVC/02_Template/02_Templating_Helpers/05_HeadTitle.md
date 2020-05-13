@@ -22,10 +22,26 @@ $this->headTitle('My Pimcore Website');
 $this->headTitle()->setSeparator(' / ');
 ```
 
+```twig
+{% do pimcore_head_title('My first part') %}
+{% do pimcore_head_title('The 2nd part') %}
+
+{# setting the site in the title; possibly in the layout script: #}
+{% do pimcore_head_title('My Pimcore Website') %}
+
+{# setting a separator string for segments: #}
+{% do pimcore_head_title().setSeparator(' / ') %}
+```
+
 When you're finally ready to render the title in your layout script, simply echo the helper:
 
 ```php
 <?= $this->headTitle() ?>
 <!-- renders My first part / The 2nd part / My Pimcore Website -->
+```
+
+```twig
+{{ pimcore_head_title() }}
+{# renders My first part / The 2nd part / My Pimcore Website #}
 ```
 

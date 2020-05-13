@@ -14,10 +14,6 @@
 
 namespace Pimcore\Bundle\CoreBundle\DataCollector;
 
-use Pimcore\FeatureToggles\Feature;
-use Pimcore\FeatureToggles\FeatureManagerInterface;
-use Pimcore\FeatureToggles\Features\DebugMode;
-use Pimcore\FeatureToggles\Features\DevMode;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Version;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,17 +27,10 @@ class PimcoreDataCollector extends DataCollector
      */
     protected $contextResolver;
 
-    /**
-     * @var FeatureManagerInterface
-     */
-    private $featureManager;
-
     public function __construct(
-        PimcoreContextResolver $contextResolver,
-        FeatureManagerInterface $featureManager
+        PimcoreContextResolver $contextResolver
     ) {
         $this->contextResolver = $contextResolver;
-        $this->featureManager = $featureManager;
     }
 
     public function collect(Request $request, Response $response, \Exception $exception = null)
@@ -50,33 +39,7 @@ class PimcoreDataCollector extends DataCollector
             'version' => Version::getVersion(),
             'revision' => Version::getRevision(),
             'context' => $this->contextResolver->getPimcoreContext($request),
-            'features' => []
         ];
-
-        /** @var Feature $feature */
-        foreach ([DebugMode::class, DevMode::class] as $feature) {
-            $featureConfig = [
-                'all' => false,
-                'flags' => []
-            ];
-
-            $all = $this->featureManager->isEnabled($feature::ALL());
-            if ($all) {
-                $featureConfig['all'] = true;
-            } else {
-                foreach ($feature::toArray() as $name => $flag) {
-                    if (0 === $flag) {
-                        continue;
-                    }
-
-                    if ($this->featureManager->isEnabled(new $feature($flag))) {
-                        $featureConfig['flags'][] = $name;
-                    }
-                }
-            }
-
-            $this->data['features'][$feature::getType()] = $featureConfig;
-        }
     }
 
     public function reset()
@@ -111,25 +74,5 @@ class PimcoreDataCollector extends DataCollector
     public function getRevision()
     {
         return $this->data['revision'];
-    }
-
-    public function getFeatures(): array
-    {
-        return $this->data['features'];
-    }
-
-    public function isFeatureAllFlagSet(string $feature): bool
-    {
-        return $this->data['features'][$feature]['all'];
-    }
-
-    public function featureHasFlags(string $feature): bool
-    {
-        return !empty($this->getFeatureFlags($feature));
-    }
-
-    public function getFeatureFlags(string $feature): array
-    {
-        return $this->data['features'][$feature]['flags'] ?? [];
     }
 }

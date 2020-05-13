@@ -19,9 +19,9 @@ class Document
     /**
      * Singleton for Pimcore\Document
      *
-     * @param null $adapter
+     * @param string|null $adapter
      *
-     * @return bool|null|Document
+     * @return Document\Adapter|null
      *
      * @throws \Exception
      */
@@ -65,7 +65,7 @@ class Document
     /**
      * Checks if a file type is supported by the adapter.
      *
-     * @param $filetype
+     * @param string $filetype
      *
      * @return bool
      */
@@ -83,7 +83,7 @@ class Document
     /**
      * Returns adapter class if exists or false if doesn't exist
      *
-     * @return bool|\Pimcore\Document\Adapter
+     * @return Document\Adapter|null
      */
     public static function getDefaultAdapter()
     {

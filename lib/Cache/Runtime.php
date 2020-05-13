@@ -163,22 +163,10 @@ final class Runtime extends \ArrayObject
     }
 
     /**
-     * @param string $index
-     *
-     * @return mixed
-     *
-     * Workaround for http://bugs.php.net/bug.php?id=40442 (ZF-960).
-     */
-    public function offsetExists($index)
-    {
-        return array_key_exists($index, $this);
-    }
-
-    /**
      * Alias of self::set() to be compatible with Pimcore\Cache
      *
-     * @param $data
-     * @param $id
+     * @param mixed $data
+     * @param string $id
      *
      * @return mixed
      */
@@ -190,7 +178,7 @@ final class Runtime extends \ArrayObject
     /**
      * Alias of self::get() to be compatible with Pimcore\Cache
      *
-     * @param $id
+     * @param string $id
      *
      * @return mixed
      */

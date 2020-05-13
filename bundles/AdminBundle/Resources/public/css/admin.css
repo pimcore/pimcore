@@ -74,7 +74,7 @@
 }
 
 #pimcore_menu_maintenance {
-    background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) center center no-repeat !important;
     filter: grayscale(0%) !important;
     -webkit-filter: grayscale(0%) !important;
     background-size: 28px;
@@ -150,11 +150,13 @@
 
 #pimcore_loading.loaded {
     position: absolute;
-    z-index: 10;
+    z-index: 15;
     left: 8px;
-    bottom: 210px;
+    bottom: 200px;
     width:44px;
+    height: 25px;
     padding:0;
+    background: #0C0F12;
 }
 
 #pimcore_loading.loaded .spinner {
@@ -189,7 +191,7 @@
     position: absolute;
     color: #FFFFFF;
     background: #2A2D30;
-    height: 30px;
+    min-height: 30px;
     line-height: 30px;
     text-align: center;
     border-radius: 6px;
@@ -219,6 +221,12 @@
 }
 
 
+#assetMultiUploadField {
+    width: 10px;
+    position: absolute;
+    left: -1000px;
+}
+
 .pimcore_hidden {
     display:none !important;
 }
@@ -233,19 +241,9 @@
     text-decoration: underline;
 }
 
-
-/* TODO to be removed */
-.pimcore_unpublished .x-tree-node-anchor span {
-    text-decoration: line-through;
-    color: #777;
+.pimcore_navigation_exclude .x-tree-node-text {
+    color: #8e8e8e !important;
 }
-
-/* TODO to be removed */
-.pimcore_delete .x-tree-node-anchor span {
-    text-decoration: line-through;
-    color: #ff0000;
-}
-
 
 .pimcore_unpublished span.x-tree-node-text{
     text-decoration: line-through;
@@ -265,6 +263,10 @@
 
 .pimcore_treenode_lockOwner .x-tree-node-text  {
     color: #0091f8 !important;
+}
+
+.pimcore_treenode_hide_plus_button .x-tree-expander {
+    visibility: hidden;
 }
 
 .pimcore_overflow_scrolling {
@@ -1904,7 +1906,7 @@ span.warning {
 
 .pimcore_main_accordion .pimcore_tree_no_root_node .x-tree-view .x-grid-item-container {
     padding-top: 0;
-    margin-left: 15px;
+    padding-left: 30px;
 }
 
 .pimcore_main_splitter {
@@ -2143,7 +2145,7 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 }
 
 
-.strikeThrough {
+.strikeThrough, .strikeThrough input {
     text-decoration: line-through;
     color: #777;
 }
@@ -2276,3 +2278,16 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 }
 
 /** END notifications **/
+
+.x-body .sf-minitoolbar {
+    left:0;
+    right:auto;
+    bottom: 195px;
+    background: #0C0F12;
+    text-align: center;
+    z-index: 12;
+}
+
+.x-body .sf-minitoolbar a {
+    width: 48px;
+}

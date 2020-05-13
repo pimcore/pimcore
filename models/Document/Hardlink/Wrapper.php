@@ -34,7 +34,11 @@ trait Wrapper
      */
     protected $sourceDocument;
 
-    // OVERWRITTEN METHODS
+    /**
+     * OVERWRITTEN METHODS
+     *
+     * @throws \Exception
+     */
     public function save()
     {
         $this->raiseHardlinkError();
@@ -109,7 +113,7 @@ trait Wrapper
                 $c = Service::wrap($result);
                 if ($c instanceof Document\Hardlink\Wrapper\WrapperInterface) {
                     $c->setHardLinkSource($hardLink);
-                    $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealPath()) . '@',
+                    $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealPath(), '@') . '@',
                         $hardLink->getRealPath(), $c->getRealPath()));
 
                     return $c;
@@ -121,32 +125,32 @@ trait Wrapper
     }
 
     /**
-     * @param bool $unpublished
+     * @param bool $includingUnpublished
      *
      * @return Document[]
      */
-    public function getChildren($unpublished = false)
+    public function getChildren($includingUnpublished = false)
     {
-        if ($this->children === null) {
+        $cacheKey = $this->getListingCacheKey(func_get_args());
+        if (!isset($this->children[$cacheKey])) {
             $hardLink = $this->getHardLinkSource();
             $children = [];
-
             if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
-                foreach (parent::getChildren() as $c) {
+                foreach (parent::getChildren($includingUnpublished) as $c) {
                     $c = Service::wrap($c);
                     if ($c instanceof Document\Hardlink\Wrapper\WrapperInterface) {
                         $c->setHardLinkSource($hardLink);
-                        $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealFullpath()) . '@', $hardLink->getRealFullpath(), $c->getRealPath()));
+                        $c->setPath(preg_replace('@^' . preg_quote($hardLink->getSourceDocument()->getRealFullpath(), '@') . '@', $hardLink->getRealFullpath(), $c->getRealPath()));
 
                         $children[] = $c;
                     }
                 }
             }
 
-            $this->setChildren($children);
+            $this->setChildren($children, $includingUnpublished);
         }
 
-        return $this->children;
+        return $this->children[$cacheKey];
     }
 
     /**
@@ -159,7 +163,7 @@ trait Wrapper
         $hardLink = $this->getHardLinkSource();
 
         if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
-            return parent::hasChildren();
+            return parent::hasChildren($unpublished);
         }
 
         return false;

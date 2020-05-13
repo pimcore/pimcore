@@ -208,13 +208,11 @@ pimcore.document.versions = Class.create({
 
     compareVersions: function (id1, id2) {
         var url = "/admin/document/diff-versions/from/" + id1 + "/to/" + id2;
-        url = pimcore.helpers.addCsrfTokenToUrl(url);
         Ext.get(this.frameId).dom.src = url;
     },
 
     showVersionPreview: function (id) {
         var url = this.document.data.path + this.document.data.key + "?pimcore_version=" + id;
-        url = pimcore.helpers.addCsrfTokenToUrl(url);
         Ext.get(this.frameId).dom.src = url;
     },
 
@@ -325,9 +323,15 @@ pimcore.document.versions = Class.create({
             url: "/admin/document/publish-version",
             method: "POST",
             params: {id: versionId},
-            success: function () {
-                // reload document
-                this.document.reload();
+            success: function(response) {
+                var rdata = Ext.decode(response.responseText);
+
+                if (rdata.success) {
+                    this.document.reload();
+                    pimcore.helpers.updateTreeElementStyle('document', this.document.id, rdata.treeData);
+                } else {
+                    Ext.MessageBox.alert(t("error"), rdata.message);
+                }
             }.bind(this)
         });
     },

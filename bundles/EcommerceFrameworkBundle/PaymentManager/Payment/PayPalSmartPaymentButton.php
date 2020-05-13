@@ -23,12 +23,16 @@ use PayPalCheckoutSdk\Orders\OrdersGetRequest;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\Currency;
+use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Status;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\AbstractRequest;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\JsonResponse;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PayPalSmartPaymentButton extends AbstractPayment
+class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
     const CAPTURE_STRATEGY_MANUAL = 'manual';
     const CAPTURE_STRATEGY_AUTOMATIC = 'automatic';
@@ -156,6 +160,27 @@ class PayPalSmartPaymentButton extends AbstractPayment
     }
 
     /**
+     * @inheritDoc
+     */
+    public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $config): StartPaymentResponseInterface
+    {
+        $result = $this->initPayment($price, $config->asArray());
+
+        if ($result instanceof \stdClass) {
+            if ($json = json_encode($result)) {
+                return new JsonResponse($orderAgent->getOrder(), $json);
+            }
+        }
+
+        json_decode($result);
+        if (json_last_error() == JSON_ERROR_NONE) {
+            return new JsonResponse($orderAgent->getOrder(), $result);
+        }
+
+        throw new \Exception('result of initPayment neither stdClass nor JSON');
+    }
+
+    /**
      * Handles response of payment provider and creates payment status object
      *
      * @param StatusInterface $response
@@ -168,7 +193,6 @@ class PayPalSmartPaymentButton extends AbstractPayment
         $required = [
             'orderID' => null,
             'payerID' => null,
-            'paymentID' => null
         ];
 
         $authorizedData = [
@@ -273,7 +297,7 @@ class PayPalSmartPaymentButton extends AbstractPayment
      *
      * @param PriceInterface $price
      * @param string $reference
-     * @param $transactionId
+     * @param string $transactionId
      *
      * @return StatusInterface
      */
@@ -303,8 +327,7 @@ class PayPalSmartPaymentButton extends AbstractPayment
             ->setDefault('user_action', 'PAY_NOW')
             ->setAllowedValues('user_action', ['CONTINUE', 'PAY_NOW'])
             ->setDefault('capture_strategy', self::CAPTURE_STRATEGY_AUTOMATIC)
-            ->setAllowedValues('capture_strategy', [self::CAPTURE_STRATEGY_AUTOMATIC, self::CAPTURE_STRATEGY_MANUAL])
-            ;
+            ->setAllowedValues('capture_strategy', [self::CAPTURE_STRATEGY_AUTOMATIC, self::CAPTURE_STRATEGY_MANUAL]);
 
         $notEmptyValidator = function ($value) {
             return !empty($value);

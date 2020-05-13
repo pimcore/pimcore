@@ -62,6 +62,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
+        $amount = 0;
+
         try {
             $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS . ' '. $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {

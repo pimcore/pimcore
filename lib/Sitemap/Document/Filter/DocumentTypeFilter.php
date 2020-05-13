@@ -56,7 +56,7 @@ class DocumentTypeFilter implements FilterInterface
 
     public function canBeAdded(AbstractElement $element, GeneratorContextInterface $context): bool
     {
-        if (!$element instanceof Document) {
+        if (!$element instanceof Document || $element instanceof Document\Hardlink\Wrapper\WrapperInterface) {
             return false;
         }
 

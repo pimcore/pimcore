@@ -13,12 +13,13 @@ pimcore_ecommerce_config:
                 
                 # options passed to the factory - available options vary by implementation
                 factory_options:
-                    class: \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManager
+                    class: \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManager
+                    handle_pending_payments_strategy: Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\CancelPaymentOrRecreateOrderStrategy
 
                 # commit order processor
                 commit_order_processor:
                     # order processor service ID
-                    id: Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor
+                    id: Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CommitOrderProcessor
                     
                     # options passed to the commit order processor - available options vary by implementation
                     options:
@@ -50,6 +51,8 @@ Following elements are configured:
   It checks the state of single checkout steps, is responsible for the payment integration and also calls the commit order 
   processor in the end. As the a checkout manager is specific to a cart instance, checkout manager factory takes care of
   creating checkout managers on demand. 
+   * Optional configuration option `handle_pending_payments_strategy` defines strategy how to handle pending payments. 
+     See [Integrating Payment](./07_Integrating_Payment.md) for details.
 * [**Checkout steps and their implementation**](./03_Checkout_Steps.md): Each checkout step (e.g. Delivery address, 
   delivery date, ...) needs a concrete checkout step implementation. The implementation is responsible for storing 
   and validating the necessary data, is project dependent and has to be implemented for each project. 

@@ -35,18 +35,20 @@ abstract class Processor
     {
         $config = Config::getWeb2PrintConfig();
 
-        if ($config->generalTool == 'pdfreactor') {
+        if ($config->get('generalTool') === 'pdfreactor') {
             return new PdfReactor8();
-        } elseif ($config->generalTool == 'wkhtmltopdf') {
+        } elseif ($config->get('generalTool') === 'wkhtmltopdf') {
             return new WkHtmlToPdf();
         } else {
-            throw new \Exception('Invalid Configuation - ' . $config->generalTool);
+            throw new \Exception('Invalid Configuation - ' . $config->get('generalTool'));
         }
     }
 
     /**
-     * @param $documentId
-     * @param $config
+     * @param int $documentId
+     * @param array $config
+     *
+     * @return bool
      *
      * @throws \Exception
      */
@@ -75,20 +77,21 @@ abstract class Processor
         $cmd = Tool\Console::getPhpCli() . ' ' . realpath(PIMCORE_PROJECT_ROOT . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'console'). ' pimcore:web2print:pdf-creation ' . implode(' ', $args);
 
         Logger::info($cmd);
+        $disableBackgroundExecution = $config['disableBackgroundExecution'] ?? false;
 
-        if (!$config['disableBackgroundExecution']) {
+        if (!$disableBackgroundExecution) {
             Tool\Console::execInBackground($cmd, PIMCORE_LOG_DIRECTORY . DIRECTORY_SEPARATOR . 'web2print-output.log');
 
             return true;
-        } else {
-            return self::getInstance()->startPdfGeneration($jobConfig->documentId);
         }
+
+        return (bool)self::getInstance()->startPdfGeneration($jobConfig->documentId);
     }
 
     /**
-     * @param $documentId
+     * @param int $documentId
      *
-     * @return mixed|null
+     * @return string|null
      */
     public function startPdfGeneration($documentId)
     {
@@ -116,10 +119,12 @@ abstract class Processor
             ]));
 
             $document->setLastGenerated((time() + 1));
+            $document->setLastGenerateMessage('');
             $document->save();
         } catch (\Exception $e) {
-            $document->save();
             Logger::err($e);
+            $document->setLastGenerateMessage($e->getMessage());
+            $document->save();
         }
 
         Model\Tool\Lock::release($document->getLockKey());
@@ -132,14 +137,16 @@ abstract class Processor
 
     /**
      * @param Document\PrintAbstract $document
-     * @param $config
+     * @param object $config
      *
-     * @return mixed
+     * @return string
+     *
+     * @throws \Exception
      */
     abstract protected function buildPdf(Document\PrintAbstract $document, $config);
 
     /**
-     * @param $jobConfig
+     * @param \stdClass $jobConfig
      *
      * @return bool
      */
@@ -151,7 +158,7 @@ abstract class Processor
     }
 
     /**
-     * @param $documentId
+     * @param int $documentId
      *
      * @return \stdClass
      */
@@ -163,9 +170,9 @@ abstract class Processor
     }
 
     /**
-     * @param $documentId
+     * @param int $documentId
      *
-     * @return Document\Printpage
+     * @return Document\PrintAbstract
      *
      * @throws \Exception
      */
@@ -180,7 +187,7 @@ abstract class Processor
     }
 
     /**
-     * @param $processId
+     * @param int $processId
      *
      * @return string
      */
@@ -195,9 +202,9 @@ abstract class Processor
     abstract public function getProcessingOptions();
 
     /**
-     * @param $documentId
-     * @param $status
-     * @param $statusUpdate
+     * @param int $documentId
+     * @param int $status
+     * @param string $statusUpdate
      */
     protected function updateStatus($documentId, $status, $statusUpdate)
     {
@@ -208,7 +215,7 @@ abstract class Processor
     }
 
     /**
-     * @param $documentId
+     * @param int $documentId
      *
      * @return array
      */
@@ -224,7 +231,7 @@ abstract class Processor
     }
 
     /**
-     * @param $documentId
+     * @param int $documentId
      *
      * @throws \Exception
      */
@@ -238,11 +245,20 @@ abstract class Processor
         Model\Tool\TmpStore::delete($document->getLockKey());
     }
 
+    /**
+     * @param string $html
+     * @param array $params
+     *
+     * @return string
+     */
     protected function processHtml($html, $params)
     {
         $placeholder = new \Pimcore\Placeholder();
-        $html = $placeholder->replacePlaceholders($html, $params, $params['document']);
-        $html = \Pimcore\Helper\Mail::setAbsolutePaths($html, $params['document'], $params['hostUrl']);
+        $document = $params['document'] ?? null;
+        $hostUrl = $params['hostUrl'] ?? null;
+
+        $html = $placeholder->replacePlaceholders($html, $params, $document);
+        $html = \Pimcore\Helper\Mail::setAbsolutePaths($html, $document, $hostUrl);
 
         return $html;
     }

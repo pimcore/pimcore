@@ -3,7 +3,7 @@
 The following pages show a few examples to better understand how things can be archived with the Pimcore targeting 
 engine. 
 
-All mentioned rules here are configured and set up in our [demo advanced](https://demo-advanced.pimcore.org) and can be 
+All mentioned rules here are configured and set up in our [demo](https://demo.pimcore.fun) and can be 
 tested there. 
 
 
@@ -16,8 +16,7 @@ an target group.
 ### Learning about customer interests based on behaviour
 
 ##### Assign Target Groups to Documents
-If there is a document, directly associate this document with a target group. Like the page [tenant switches](https://demo-advanced.pimcore.org/en/special-functions/tenantswitches)
-is assigned to `technical-guy` target group. 
+If there is a document, directly associate this document with a target group.
 
 ![Tenant Switches Settings](../../img/targeting/examples_technical-guy1.jpg)
 
@@ -27,8 +26,8 @@ To filter out the coincidence visitors, a threshold can be defined at the target
 the target group is actually assigned to the visitors profile. 
 
 ![Technical Guy Settings](../../img/targeting/examples_technical-guy2.jpg)
-
-
+  
+For a real-life example please have a look at our [public demo instance](https://demo.pimcore.fun/en/More-Stuff/Demo-Features/Personalization).
  
 ##### Global Targeting Rules with simple Conditions & Actions
 

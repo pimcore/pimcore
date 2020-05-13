@@ -30,16 +30,9 @@ interface PricingManagerInterface
     /**
      * @param CartInterface $cart
      *
-     * @return PricingManagerInterface
+     * @return RuleInterface[] applied rules
      */
-    public function applyCartRules(CartInterface $cart);
-
-    /**
-     * @deprecated as it is never used. Will be removed in Pimcore 6.
-     *
-     * @return RuleInterface
-     */
-    public function getRule();
+    public function applyCartRules(CartInterface $cart): array;
 
     /**
      * Get map from action name to used class
@@ -69,7 +62,7 @@ interface PricingManagerInterface
     /**
      * Factory
      *
-     * @param $type
+     * @param string $type
      *
      * @return ActionInterface
      */

@@ -117,6 +117,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     public function action(Info $info)
     {
         // noop - implement as needed
+        return null;
     }
 
     /**
@@ -125,6 +126,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     public function postRenderAction(Info $info)
     {
         // noop - implement as needed
+        return null;
     }
 
     /**

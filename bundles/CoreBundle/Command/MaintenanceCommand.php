@@ -93,6 +93,8 @@ class MaintenanceCommand extends AbstractCommand
         $this->maintenanceExecutor->executeMaintenance($validJobs, $excludedJobs, (bool) $input->getOption('force'));
 
         $this->logger->info('All maintenance-jobs finished!');
+
+        return 0;
     }
 
     /**

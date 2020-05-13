@@ -48,7 +48,7 @@ using the `presta:sitemaps:dump` command, you can override those parameters by p
 
 For details see:
 
-* [Bundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/2-Configuration.md#the-base-url-for-dumper) 
+* [Bundle Documentation](https://github.com/prestaconcept/PrestaSitemapBundle/blob/master/Resources/doc/2-configuration.md#configuring-your-application-base-url) 
 * [Symfony Documentation on the Request Context](http://symfony.com/doc/3.4/console/request_context.html#configuring-the-request-context-globally)
 * [`UrlGenerator`](https://github.com/pimcore/pimcore/blob/master/lib/Sitemap/UrlGenerator.php)
 
@@ -227,7 +227,7 @@ processors. If you handle nested tree structures, you can also use `handlesChild
 handled. All 3 methods accept a `GeneratorContextInterface` object which you can use to pass context metadata to filters
 and processors. For example, the `DocumentTreeProcessor` uses the context to define the site the document lives in.
 
-In the example above, the URL is created by using a [Link Generator](../05_Objects/01_Object_Classes/05_Class_Settings/15_Link_Generator.md).
+In the example above, the URL is created by using a [Link Generator](../05_Objects/01_Object_Classes/05_Class_Settings/30_Link_Generator.md).
 
 > It's important that your link generator is able to generate an absolute URL for the given object. Above is only an example, but
   you can have a look at the [demo](https://github.com/pimcore/demo-basic/tree/master/src/AppBundle)

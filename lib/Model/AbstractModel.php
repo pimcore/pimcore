@@ -25,11 +25,11 @@ use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
  * @method array getValidTableColumns(string $table, bool $cache)
  * @method void resetValidTableColumnsCache(string $table)
  */
-abstract class AbstractModel
+abstract class AbstractModel implements ModelInterface
 {
     use ObjectVarTrait;
     /**
-     * @var \Pimcore\Model\Dao\AbstractDao
+     * @var \Pimcore\Model\Dao\AbstractDao|null
      */
     protected $dao;
 
@@ -56,7 +56,7 @@ abstract class AbstractModel
     }
 
     /**
-     * @param $dao
+     * @param \Pimcore\Model\Dao\AbstractDao $dao
      *
      * @return self
      */
@@ -68,7 +68,7 @@ abstract class AbstractModel
     }
 
     /**
-     * @param null $key
+     * @param string|null $key
      * @param bool $forceDetection
      *
      * @throws \Exception
@@ -188,8 +188,8 @@ abstract class AbstractModel
     }
 
     /**
-     * @param  $key
-     * @param  $value
+     * @param string $key
+     * @param mixed $value
      *
      * @return $this
      */
@@ -214,7 +214,7 @@ abstract class AbstractModel
     public function __sleep()
     {
         $finalVars = [];
-        $blockedVars = ['dao', '_fulldump', 'o_dirtyFields']; // _fulldump is a temp var which is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
+        $blockedVars = ['dao', 'o_dirtyFields'];
         $vars = get_object_vars($this);
         foreach ($vars as $key => $value) {
             if (!in_array($key, $blockedVars)) {
@@ -226,8 +226,8 @@ abstract class AbstractModel
     }
 
     /**
-     * @param $method
-     * @param $args
+     * @param string $method
+     * @param array $args
      *
      * @return mixed
      *

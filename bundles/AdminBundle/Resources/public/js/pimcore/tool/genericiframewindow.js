@@ -16,8 +16,6 @@ pimcore.tool.genericiframewindow = Class.create({
 
     initialize: function (id, src, iconCls, title) {
 
-        src = pimcore.helpers.addCsrfTokenToUrl(src);
-
         this.id = id;
         this.src = src;
         this.iconCls = iconCls;
@@ -87,7 +85,6 @@ pimcore.tool.genericiframewindow = Class.create({
 
     reload: function () {
         try {
-            var d = new Date();
             Ext.get("pimcore_iframe_frame_" + this.id).dom.src = this.src;
         }
         catch (e) {

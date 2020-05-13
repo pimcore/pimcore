@@ -51,13 +51,15 @@ pimcore.document.properties = Class.create(pimcore.element.properties, {
                 if (!select.labelEl["originalClass"]) {
                     select.labelEl.originalClass = select.labelEl.getAttribute("class");
                 }
-                select.labelEl.dom.setAttribute("class", "");
-                select.labelEl.addCls(select.labelEl.originalClass);
+
+                var classNames = select.labelEl.originalClass;
 
                 if (select.getValue()) {
-                    select.labelEl.addCls("pimcore_icon_language_" + select.getValue().toLowerCase());
-                    select.labelEl.addCls("pimcore_document_property_language_label");
+                    classNames += " pimcore_icon_language_" + select.getValue().toLowerCase();
+                    classNames += " pimcore_document_property_language_label";
                 }
+
+                select.labelEl.dom.className = classNames;
             };
 
             var language = new Ext.form.ComboBox({

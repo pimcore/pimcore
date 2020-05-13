@@ -28,7 +28,6 @@ The `PimcoreCoreBundle` defines a default cache configuration which you can over
 
 pimcore:
     cache:
-        enabled:              true
         pool_service_id:      null
         default_lifetime:     2419200
         pools:
@@ -112,27 +111,14 @@ integrated with Pimcore's cache clearing functionality.
 #### Example of custom usage in an action
 ```php 
 $lifetime = 99999;
-$uri = "http://www.pimcore.org/...";
 $cacheKey = md5($uri);
 if(!$data = \Pimcore\Cache::load($cacheKey)) {
- 
-    $httpClient = \Pimcore\Tool::getHttpClient();
-    $httpClient->setUri($uri);
- 
-    try {
-        $response = $httpClient->request();
- 
-        if($response->isSuccessful()) {
-            $data = $response->getBody();
-            \Pimcore\Cache::save(
-                $data,
-                $cacheKey,
-                ["output","tag1","tag2"],
-                $lifetime);
-        }
-    } catch (Exception $e) {
-        die("Something went wrong, ... sorry");
-    }
+    $data = \Pimcore\Tool::getHttpData('http://www.pimcore.org/...');
+    \Pimcore\Cache::save(
+        $data,
+        $cacheKey,
+        ["output","tag1","tag2"],
+        $lifetime);
 }
 ```
 
@@ -159,10 +145,10 @@ if(!$data = \Pimcore\Cache::load($cacheKey)) {
 
 #### Disable the Cache for a Single Request
 Sometimes it's useful to deactivate the cache for testing purposes for a single request. You 
-can do this by passing the URL parameter `nocache=true`. Note: This is only possible if you have 
+can do this by passing the URL parameter `pimcore_nocache=true`. Note: This is only possible if you have 
 enabled the `DEBUG MODE` in *Settings* > *System*
 
-For example: `http://www.pimcore.org/download?nocache=true` 
+For example: `http://www.pimcore.org/download?pimcore_nocache=true` 
 
 This will disable the entire cache, not only the output-cache. To disable only the output-cache 
 you can add this URL parameter: `?pimcore_outputfilters_disabled=true`

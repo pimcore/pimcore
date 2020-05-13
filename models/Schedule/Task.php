@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Schedule\Task\Dao getDao()
+ * @method void save()
  */
 class Task extends Model\AbstractModel
 {
@@ -60,9 +61,14 @@ class Task extends Model\AbstractModel
     public $active;
 
     /**
+     * @var null|int
+     */
+    protected $userId;
+
+    /**
      * @param int $id
      *
-     * @return Task
+     * @return self|null
      */
     public static function getById($id)
     {
@@ -156,7 +162,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @return $this
      */
@@ -168,7 +174,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param $cid
+     * @param int $cid
      *
      * @return $this
      */
@@ -180,7 +186,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param $ctype
+     * @param string $ctype
      *
      * @return $this
      */
@@ -192,7 +198,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param $date
+     * @param int $date
      *
      * @return $this
      */
@@ -204,7 +210,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param $action
+     * @param string $action
      *
      * @return $this
      */
@@ -216,7 +222,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param $version
+     * @param int $version
      *
      * @return $this
      */
@@ -236,7 +242,7 @@ class Task extends Model\AbstractModel
     }
 
     /**
-     * @param $active
+     * @param bool $active
      *
      * @return $this
      */
@@ -246,6 +252,26 @@ class Task extends Model\AbstractModel
             $active = false;
         }
         $this->active = (bool) $active;
+
+        return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getUserId(): ?int
+    {
+        return $this->userId;
+    }
+
+    /**
+     * @param int|null $userId
+     *
+     * @return $this
+     */
+    public function setUserId(?int $userId): self
+    {
+        $this->userId = $userId;
 
         return $this;
     }

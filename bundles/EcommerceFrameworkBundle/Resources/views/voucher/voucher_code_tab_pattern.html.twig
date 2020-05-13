@@ -1,0 +1,283 @@
+{% extends '@PimcoreEcommerceFramework/voucher/voucher_layout.html.twig' %}
+
+{% block content %}
+    {% set seriesId = app.request.get('id') %}
+    {% set urlParams = app.request.query.all %}
+    {% if paginator is defined %}
+        {% do paginator.setPageRange(10) %}
+        {% set pagesCount = paginator.getItemCountPerPage() %}
+    {% endif %}
+
+    <div class="container-fluid">
+        <div id="content">
+            <ul id="tabs" class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                    <a href="#manager" class="nav-link active" role="tab" data-toggle="tab" aria-controls="manager" aria-selected="true">
+                        <span class="fa fa-home"></span> {{ ('bundle_ecommerce_voucherservice_tab-manager')|trans([],'admin') }}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a id="statistic-tab" href="#statistics" class="nav-link" role="tab" data-toggle="tab" aria-controls="statistics" aria-selected="true">
+                        <span class="fa fa-chart-line"></span> {{ ('bundle_ecommerce_voucherservice_tab-statistics')|trans([],'admin') }}
+                    </a>
+                </li>
+            </ul>
+
+            <div id="my-tab-content" class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="manager">
+                    <div class="row">
+                        <div class="col col-sm-12">
+                            <h2>{{ ('bundle_ecommerce_voucherservice_tab-manager-headline')|trans([],'admin') }}</h2>
+                        </div>
+                    </div>
+
+                    <div class="row header">
+                        <div class="col col-sm-4">
+                            <button type="button" class="btn btn-primary js-modal"  data-toggle="modal" data-modal="generate">{{ ('bundle_ecommerce_voucherservice_generate-button')|trans([],'admin') }}</button>
+                            {% if voucherType is defined and voucherType != "VoucherTokenTypeSingle" %}
+                                <button type="button" class="btn btn-default js-modal" data-modal="cleanUp">{{ ('bundle_ecommerce_voucherservice_cleanup-button')|trans([],'admin') }}</button>
+                            {% endif %}
+                        </div>
+
+                        <div class="col col-sm-4">
+                            {% if msg['error'] is defined and msg['error'] is not null %}
+                                <div class="alert alert-danger js-fadeout"> {{ msg['error'] }} </div>
+                            {% elseif msg['success'] is defined and msg['success'] is not null %}
+                                <div class="alert alert-success js-fadeout"> {{ msg['success'] }}  </div>
+                            {% elseif msg['result'] is defined and msg['result'] is not null %}
+                                <div class="alert alert-info js-fadeout"> {{ msg['result'] }} </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col col-sm-4 text-right">
+                            <div class="btn-group">
+                                {% if supportsExport %}
+                                    {% set exportUrl = path('pimcore_ecommerce_backend_voucher_export-tokens', urlParams|merge({'format': 'csv'})) %}
+                                    <a class="btn btn-secondary" href="{{ exportUrl }}" target="_blank">
+                                        <span class="fa fa-file-export"></span>
+                                        {{ 'bundle_ecommerce_voucherservice_export-button'|trans([],'admin') }}
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row content-block token-container">
+
+                        <div class="col col-sm-8 token-overview">
+                            <div class=" row">
+                                <div class="col col-sm-5 mb-3">
+                                    <h4 style="float: left;"><i class="fa fa-list"></i> {{ 'bundle_ecommerce_voucherservice_token-overview-headline'|trans([],'admin') }}</h4>
+                                </div>
+                                <div class="col col-sm-7 text-right">
+                                    {% include "PimcoreEcommerceFrameworkBundle:voucher/parts:paginator.html.twig" with {'paginationVariables': paginator.getPages("Sliding") } %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col col-sm-6">
+                                    {% if voucherType is defined and voucherType != "VoucherTokenTypeSingle" %}
+                                        <h6 class="card-subtitle font-weight-light">{{ count|number_format(0, ',', ' ') }} {{ ('bundle_ecommerce_voucherservice_result-text')|trans([],'admin') }}</h6>
+                                    {% endif %}
+                                </div>
+                                {% if pagesCount is defined %}
+                                    <div class="col col-sm-6 text-right">
+                                        <h6 class="subtitle pages">{{ ('bundle_ecommerce_voucherservice_tokens-per-page')|trans([],'admin') }}
+                                            <a class="pages-count {{ ( pagesCount == 25? 'active') }}" href="{{ pimcore_url({'tokensPerPage': 25}) }}">25</a>
+                                            <a class="pages-count {{ (pagesCount == 75? 'active') }}" href="{{ pimcore_url({'tokensPerPage': 75}) }}">75</a>
+                                            <a class="pages-count {{ (pagesCount == 150? 'active') }}" href="{{ pimcore_url({'tokensPerPage': 150}) }}">150</a>
+                                        </h6>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="table-container">
+                                <table class="table">
+                                    <thead class="card-header">
+                                    <tr class="active">
+                                        <th>#</th>
+                                        <th><span class="sort fa fa-chevron-down" data-criteria="token"></span> {{ ('bundle_ecommerce_voucherservice_table-token')|trans([],'admin') }}</th>
+                                        <th class="text-center"><span class="sort fa fa-chevron-down" data-criteria="usages"></span> {{ ('bundle_ecommerce_voucherservice_table-usages')|trans([],'admin') }}</th>
+                                        <th class="text-center"><span class="sort fa fa-chevron-down" data-criteria="length"></span> {{ ('bundle_ecommerce_voucherservice_table-length')|trans([],'admin') }}</th>
+                                        <th class="text-center"><span class="sort fa fa-chevron-down" data-criteria="timestamp"></span> {{ ('bundle_ecommerce_voucherservice_table-date')|trans([],'admin') }}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% if paginator %}
+                                        {% set currentPage = (paginator.currentPageNumber() < 2 ? 0: paginator.currentPageNumber() - 1) %}
+                                        {% for id, code in paginator %}
+                                            <tr>
+                                                <td>{{ (pagesCount * currentPage) + (id + 1) }}</td>
+                                                <td class="token">{{ code.getToken() }}</td>
+                                                <td class="text-center">{{ code.getUsages()|number_format }}</td>
+                                                <td class="text-center">{{ code.getLength()|number_format }}</td>
+                                                <td class="text-center">{{ code.getTimestamp() }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% endif %}
+                                    <tr class=" card-header"><td colspan="5"></td> </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        {% if voucherType is defined and voucherType != "VoucherTokenTypeSingle" %}
+                            <div class="col col-sm-4 filter token-filter">
+                                <h3><i class="fa fa-search"></i> {{ ('bundle_ecommerce_voucherservice_filter-headline')|trans([],'admin') }}</h3>
+
+                                <form class="form-horizontal js-filter-form" action="{{ pimcore_url([], null, true) }}">
+                                    <div class="form-group">
+                                            <label>{{ ('bundle_ecommerce_voucherservice_filter-token')|trans([],'admin') }}</label>
+                                            <input type="text" name="token" value="{{ app.request.get('token') }}" placeholder="token"
+                                                   class="form-control"/>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-6">
+                                            <label>{{ ('bundle_ecommerce_voucherservice_filter-from-date')|trans([],'admin') }}</label>
+                                            <input type="text" name="creation_from" value="{{ app.request.get('creation_from') }}"
+                                                   placeholder="YYYY-MM-DD" class="js-datepicker form-control"/>
+                                        </div>
+                                        <div class="form-group  col-sm-6">
+                                                <label>{{ ('bundle_ecommerce_voucherservice_filter-to-date')|trans([],'admin') }}</label>
+                                                <input type="text" name="creation_to" value="{{ app.request.get('creation_to') }}"
+                                                       placeholder="YYYY-MM-DD" class="js-datepicker form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-6">
+                                            <label>{{ ('bundle_ecommerce_voucherservice_filter-usages')|trans([],'admin') }}</label>
+                                            <input type="number" name="usages" value="{{ app.request.get('usages') }}" min="0"
+                                                   placeholder="usages" class="form-control"/>
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label>{{ ('bundle_ecommerce_voucherservice_filter-length')|trans([],'admin') }}</label>
+                                            <select class="form-control" name="length" >
+                                                {% for length, amount in tokenLengths %}
+                                                    <option value="{{ length }}" {{ (app.request.get('length') == length? "selected") }}"> {{ length }} </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <input type="hidden" name="id" value="{{ app.request.get('id') }}">
+
+                                    <div class="form-group">
+                                        <div class=" col col-sm-12">
+                                            <button class="btn btn-primary" type="submit">{{ ('bundle_ecommerce_voucherservice_apply-filter-button')|trans([],'admin') }}</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="statistics">
+                    <div class="row">
+                        <div class="col col-sm-12">
+                            <h2>{{ ('bundle_ecommerce_voucherservice_tab-statistics-headline')|trans([],'admin') }}</h2>
+                        </div>
+                    </div>
+
+                    <div class="row header">
+
+                        <div class="col col-sm-4">
+                            {% if error is defined %}
+                                <div class="alert alert-danger"> {{ error }}  </div>
+                            {% endif %}
+                        </div>
+                        <div class="col col-sm-8 text-right">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-default js-modal" data-modal="cleanup-reservations"><span class="fa fa-refresh"></span>
+                                    {{ ('bundle_ecommerce_voucherservice_cleanup-reservations-button'|trans([],'admin')) }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% include "PimcoreEcommerceFrameworkBundle:voucher/parts:statistics.html.twig" with {'statistics': statistics, 'colors': colors} %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {#Modal Templates#}
+    {% include "PimcoreEcommerceFrameworkBundle:voucher/parts/modals/pattern:cleanup_modal.html.twig" with {'id': seriesId} %}
+    {% include "PimcoreEcommerceFrameworkBundle:voucher/parts/modals/pattern:generate_modal.html.twig" with {'settings': settings, 'urlParams': urlParams} %}
+    {% include "PimcoreEcommerceFrameworkBundle:voucher/parts/modals:cleanup_reservations_modal.html.twig" with {'urlParams': urlParams} %}
+
+    <!--Script for statistics-->
+    {% if statistics['usage'] is iterable  %}
+        {% include "PimcoreEcommerceFrameworkBundle:voucher/parts:usage_statistic_script.html.twig" with {'usage': statistics['usage'], 'colors': colors} %}
+    {% endif %}
+
+    <!--Script for tab view-->
+    <script>
+        document.addEventListener("DOMContentLoaded", function(event) {
+            var documentBody = document.getElementsByTagName("body")[0];
+            /**
+             *  Init Datepicker
+             */
+            flatpickr(".js-datepicker", {allowInput: true});
+
+            var form = document.querySelector('.js-filter-form');
+
+            documentBody.querySelectorAll('th span.sort').forEach(function (el) {
+                el.addEventListener('click', function () {
+                    if (this.classList.contains('active')) {
+                        console.log(this.classList);
+                        if (this.classList.contains('fa-chevron-down')) {
+                            this.classList.remove('fa-chevron-down');
+                            this.classList.add('fa-chevron-up');
+                        } else {
+                            this.classList.remove('fa-chevron-up');
+                            this.classList.add('fa-chevron-down');
+                        }
+                    }
+
+                    var criteria = document.createElement('input');
+                    criteria.setAttribute('type', 'hidden');
+                    criteria.setAttribute('name', 'sort_criteria');
+                    criteria.setAttribute('value', this.getAttribute('data-criteria'));
+
+                    var sort_order = this.classList.contains('fa-chevron-down') ? "DESC" : "ASC";
+                    var order = document.createElement('input');
+                    order.setAttribute('type', 'hidden');
+                    order.setAttribute('name', 'sort_order');
+                    order.setAttribute('value', sort_order);
+
+                    form.appendChild(criteria);
+                    form.appendChild(order);
+
+                    form.submit();
+                });
+            });
+
+            /**
+             * Init sort parameter and display of icon
+             */
+            var initSort = function () {
+                var criteria = "{{ app.request.get('sort_criteria') }}";
+                var order = "{{ app.request.get('sort_order') }}";
+                var sortItemActive = document.querySelector('th .sort[data-criteria="' + criteria + '"]');
+                var sortItems = document.querySelector('th .sort');
+
+                if (criteria) {
+                    sortItems.classList.remove('active');
+                    sortItemActive.classList.add('active');
+                }
+
+                if (sortItemActive) {
+                    if (order == "ASC") {
+                        sortItemActive.classList.remove("fa-chevron-down");
+                        sortItemActive.classList.add("fa-chevron-up");
+                    } else {
+                        sortItemActive.classList.remove("fa-chevron-up");
+                        sortItemActive.classList.add("fa-chevron-down");
+                    }
+                }
+
+            };
+
+            initSort();
+        });
+    </script>
+{% endblock %}

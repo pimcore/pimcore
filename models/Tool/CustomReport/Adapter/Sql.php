@@ -22,13 +22,13 @@ use Pimcore\Db;
 class Sql extends AbstractAdapter
 {
     /**
-     * @param $filters
-     * @param $sort
-     * @param $dir
-     * @param $offset
-     * @param $limit
-     * @param null $fields
-     * @param null $drillDownFilters
+     * @param array|null $filters
+     * @param string|null $sort
+     * @param string|null $dir
+     * @param int|null $offset
+     * @param int|null $limit
+     * @param array|null $fields
+     * @param array|null $drillDownFilters
      *
      * @return array
      */
@@ -37,6 +37,8 @@ class Sql extends AbstractAdapter
         $db = Db::get();
 
         $baseQuery = $this->getBaseQuery($filters, $fields, false, $drillDownFilters);
+        $data = [];
+        $total = 0;
 
         if ($baseQuery) {
             $total = $db->fetchOne($baseQuery['count']);
@@ -58,9 +60,9 @@ class Sql extends AbstractAdapter
     }
 
     /**
-     * @param $configuration
+     * @param \stdClass $configuration
      *
-     * @return array|mixed|null
+     * @return array
      *
      * @throws \Exception
      */
@@ -88,10 +90,10 @@ class Sql extends AbstractAdapter
     }
 
     /**
-     * @param $config
+     * @param \stdClass $config
      * @param bool $ignoreSelectAndGroupBy
-     * @param null $drillDownFilters
-     * @param null $selectField
+     * @param array|null $drillDownFilters
+     * @param string|null $selectField
      *
      * @return string
      */
@@ -99,8 +101,8 @@ class Sql extends AbstractAdapter
     {
         $config = (array)$config;
         $sql = '';
-        if ($config['sql'] && !$ignoreSelectAndGroupBy) {
-            if (strpos(strtoupper(trim($config['sql'])), 'SELECT') === false || strpos(strtoupper(trim($config['sql'])), 'SELECT') > 5) {
+        if (!empty($config['sql']) && !$ignoreSelectAndGroupBy) {
+            if (strpos(strtoupper(trim($config['sql'])), 'SELECT') !== 0) {
                 $sql .= 'SELECT ';
             }
             $sql .= str_replace("\n", ' ', $config['sql']);
@@ -110,15 +112,18 @@ class Sql extends AbstractAdapter
         } else {
             $sql .= 'SELECT *';
         }
-        if ($config['from']) {
-            if (strpos(strtoupper(trim($config['from'])), 'FROM') === false) {
+        if (!empty($config['from'])) {
+            if (strpos(strtoupper(trim($config['from'])), 'FROM') !== 0) {
                 $sql .= ' FROM ';
             }
             $sql .= ' ' . str_replace("\n", ' ', $config['from']);
         }
-        if ($config['where'] || $drillDownFilters) {
+        if (!empty($config['where']) || $drillDownFilters) {
             $whereParts = [];
-            if ($config['where']) {
+            if (!empty($config['where'])) {
+                if (strpos(strtoupper(trim($config['where'])), 'WHERE') === 0) {
+                    $config['where'] = preg_replace('/^\s*WHERE\s*/', '', $config['where']);
+                }
                 $whereParts[] = '(' . str_replace("\n", ' ', $config['where']) . ')';
             }
 
@@ -132,19 +137,11 @@ class Sql extends AbstractAdapter
             }
 
             if ($whereParts) {
-                if ($config['where']) {
-                    $sql .= ' WHERE ';
-                } else {
-                    if (strpos(strtoupper(trim($config['where'])), 'WHERE') === false) {
-                        $sql .= ' WHERE ';
-                    }
-                }
-
-                $sql .= ' ' . implode(' AND ', $whereParts);
+                $sql .= ' WHERE ' . implode(' AND ', $whereParts);
             }
         }
-        if ($config['groupby'] && !$ignoreSelectAndGroupBy) {
-            if (strpos(strtoupper($config['groupby']), 'GROUP BY') === false) {
+        if (!empty($config['groupby']) && !$ignoreSelectAndGroupBy) {
+            if (strpos(strtoupper(trim($config['groupby'])), 'GROUP BY') !== 0) {
                 $sql .= ' GROUP BY ';
             }
             $sql .= ' ' . str_replace("\n", ' ', $config['groupby']);
@@ -154,13 +151,13 @@ class Sql extends AbstractAdapter
     }
 
     /**
-     * @param $filters
-     * @param $fields
+     * @param array $filters
+     * @param array $fields
      * @param bool $ignoreSelectAndGroupBy
-     * @param null $drillDownFilters
-     * @param null $selectField
+     * @param array|null $drillDownFilters
+     * @param string|null $selectField
      *
-     * @return array
+     * @return array|null
      */
     protected function getBaseQuery($filters, $fields, $ignoreSelectAndGroupBy = false, $drillDownFilters = null, $selectField = null)
     {
@@ -177,6 +174,7 @@ class Sql extends AbstractAdapter
                     $value = $filter['value'] ;
                     $type = $filter['type'];
                     $operator = $filter['operator'];
+                    $maxValue = null;
                     if ($type == 'date') {
                         if ($operator == 'eq') {
                             $maxValue = strtotime($value . '+23 hours 59 minutes');
@@ -199,13 +197,10 @@ class Sql extends AbstractAdapter
 
                             if ($type == 'date') {
                                 if ($operator == 'eq') {
-                                    $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN FROM_UNIXTIME(' . $db->quote($value) . ') AND FROM_UNIXTIME(' . $db->quote($maxValue) . ')';
+                                    $condition[] = $db->quoteIdentifier($filter['property']) . ' BETWEEN ' . $db->quote($value) . ' AND ' . $db->quote($maxValue);
                                     break;
                                 }
-                                $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' FROM_UNIXTIME(' . $db->quote($value) . ')';
-                                break;
                             }
-
                             $condition[] = $db->quoteIdentifier($filter['property']) . ' ' . $compMapping[$operator] . ' ' . $db->quote($value);
                             break;
                         case '=':
@@ -227,7 +222,7 @@ class Sql extends AbstractAdapter
                 $data = 'SELECT * FROM (' . $sql . ') AS somerandxyz WHERE ' . $condition;
             }
         } else {
-            return;
+            return null;
         }
 
         return [
@@ -237,11 +232,11 @@ class Sql extends AbstractAdapter
     }
 
     /**
-     * @param $filters
-     * @param $field
-     * @param $drillDownFilters
+     * @param array $filters
+     * @param string $field
+     * @param array $drillDownFilters
      *
-     * @return array|mixed
+     * @return array
      */
     public function getAvailableOptions($filters, $field, $drillDownFilters)
     {
@@ -263,8 +258,8 @@ class Sql extends AbstractAdapter
         return [
             'data' => array_merge(
                 [
-                        ['value' => null]
-                      ],
+                    ['value' => null]
+                ],
                 $filteredData
             )
         ];

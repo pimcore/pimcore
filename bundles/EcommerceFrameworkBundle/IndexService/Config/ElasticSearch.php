@@ -85,6 +85,30 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $this->fieldMapping[$attribute->getName()] = sprintf('%s.%s', $attributeType, $attribute->getName());
     }
 
+    protected function addSearchAttribute(string $searchAttribute)
+    {
+        if (isset($this->attributes[$searchAttribute])) {
+            $this->searchAttributes[] = $searchAttribute;
+
+            return;
+        }
+
+        $fieldNameParts = $this->extractPossibleFirstSubFieldnameParts($searchAttribute);
+        foreach ($fieldNameParts as $fieldNamePart) {
+            if (isset($this->attributes[$fieldNamePart])) {
+                $this->searchAttributes[] = $searchAttribute;
+
+                return;
+            }
+        }
+
+        throw new \InvalidArgumentException(sprintf(
+            'The search attribute "%s" in product index tenant "%s" is not defined as attribute',
+            $searchAttribute,
+            $this->tenantName
+        ));
+    }
+
     protected function processOptions(array $options)
     {
         $options = $this->resolveOptions($options);
@@ -119,27 +143,87 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     }
 
     /**
+     * @param string $fieldName
+     *
+     * @return array
+     */
+    protected function extractPossibleFirstSubFieldnameParts($fieldName)
+    {
+        $parts = [];
+
+        $delimiters = ['.', '^'];
+
+        foreach ($delimiters as $delimiter) {
+            if (strpos($fieldName, $delimiter) !== false) {
+                $fieldNameParts = explode($delimiter, $fieldName);
+                $parts[] = $fieldNameParts[0];
+            }
+        }
+
+        return $parts;
+    }
+
+    /**
      * returns the full field name
      *
-     * @param $fieldName
+     * @param string $fieldName
+     * @param bool $considerSubFieldNames - activate to consider subfield names like name.analyzed or score definitions like name^3
      *
      * @return string
      */
-    public function getFieldNameMapped($fieldName)
+    public function getFieldNameMapped($fieldName, $considerSubFieldNames = false)
     {
-        return $this->fieldMapping[$fieldName] ?: $fieldName;
+        if ($this->fieldMapping[$fieldName]) {
+            return $this->fieldMapping[$fieldName];
+        }
+
+        // consider subfield names like name.analyzed or score definitions like name^3
+        if ($considerSubFieldNames) {
+            $fieldNameParts = $this->extractPossibleFirstSubFieldnameParts($fieldName);
+            foreach ($fieldNameParts as $fieldNamePart) {
+                if ($this->fieldMapping[$fieldNamePart]) {
+                    return $this->fieldMapping[$fieldNamePart] . str_replace($fieldNamePart, '', $fieldName);
+                }
+            }
+        }
+
+        return $fieldName;
     }
 
     /**
      * returns short field name based on full field name
+     * also considers subfield names like name.analyzed etc.
      *
-     * @param $fullFieldName
+     * @param string $fullFieldName
      *
      * @return false|int|string
      */
     public function getReverseMappedFieldName($fullFieldName)
     {
-        return array_search($fullFieldName, $this->fieldMapping);
+        //check for direct match of field name
+        $fieldName = array_search($fullFieldName, $this->fieldMapping);
+        if ($fieldName) {
+            return $fieldName;
+        }
+
+        //search for part match in order to consider sub field names like name.analyzed
+        $fieldNamePart = $fullFieldName;
+        while (!empty($fieldNamePart)) {
+
+            // cut off part after last .
+            $fieldNamePart = substr($fieldNamePart, 0, strripos($fieldNamePart, '.'));
+
+            // search for mapping with field name part
+            $fieldName = array_search($fieldNamePart, $this->fieldMapping);
+
+            if ($fieldName) {
+                // append cut off part again to returned field name
+                return $fieldName . str_replace($fieldNamePart, '', $fullFieldName);
+            }
+        }
+
+        //return full field name if no mapping was found
+        return $fullFieldName;
     }
 
     /**
@@ -187,7 +271,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      * in case of subtenants returns a data structure containing all sub tenants
      *
      * @param IndexableInterface $object
-     * @param null $subObjectId
+     * @param int|null $subObjectId
      *
      * @return array $subTenantData
      */
@@ -243,9 +327,9 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     /**
      * creates object mockup for given data
      *
-     * @param $objectId
-     * @param $data
-     * @param $relations
+     * @param int $objectId
+     * @param mixed $data
+     * @param array $relations
      *
      * @return mixed
      */
@@ -258,7 +342,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      * Gets object mockup by id, can consider subIds and therefore return e.g. an array of values
      * always returns a object mockup if available
      *
-     * @param $objectId
+     * @param int $objectId
      *
      * @return IndexableInterface | array
      */

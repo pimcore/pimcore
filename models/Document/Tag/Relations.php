@@ -254,17 +254,74 @@ class Relations extends Model\Document\Tag implements \Iterator
     }
 
     /**
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param null $document
-     * @param array $params
-     * @param null $idMapper
+     * @deprecated
      *
-     * @return array
+     * @param Model\Webservice\Data\Document\Element $wsElement
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
+     *
+     * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        // currently unsupported
-        return [];
+        $wsData = $wsElement->value;
+        if (is_array($wsData)) {
+            $result = [];
+            foreach ($wsData as $data) {
+                $data = $this->sanitizeWebserviceData($data);
+                if ($data->id !== null) {
+                    $resultItem = [];
+                    $resultItem['type'] = $data->type;
+
+                    if (!is_numeric($data->id)) {
+                        throw new \Exception('cannot get values from web service import - id is not valid');
+                    }
+
+                    if ($idMapper) {
+                        $data->id = $idMapper->getMappedId($data->type, $data->id);
+                    }
+                    $resultItem['id'] = $data->id;
+
+                    if ($data->type == 'asset') {
+                        $element = Asset::getById($data->id);
+                        if (!$element instanceof Asset) {
+                            if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                                $idMapper->recordMappingFailure('document', $this->getDocumentId(), $data->type, $data->id);
+                            } else {
+                                throw new \Exception('cannot get values from web service import - referenced asset with id [ ' . $data->id . ' ] is unknown');
+                            }
+                        }
+                    } elseif ($data->type == 'document') {
+                        $element = Document::getById($data->id);
+                        if (!$element instanceof Document) {
+                            if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                                $idMapper->recordMappingFailure('document', $this->getDocumentId(), $data->type, $data->id);
+                            } else {
+                                throw new \Exception('cannot get values from web service import - referenced document with id [ ' . $data->id . ' ] is unknown');
+                            }
+                        }
+                    } elseif ($data->type == 'object') {
+                        $element = DataObject\AbstractObject::getById($data->id);
+                        if (!$element instanceof DataObject\AbstractObject) {
+                            if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                                $idMapper->recordMappingFailure('document', $this->getDocumentId(), $data->type, $data->id);
+                            } else {
+                                throw new \Exception('cannot get values from web service import - referenced object with id [ ' . $data->id . ' ] is unknown');
+                            }
+                        }
+                    } else {
+                        if ($idMapper && $idMapper->ignoreMappingFailures()) {
+                            $idMapper->recordMappingFailure('document', $this->getDocumentId(), $data->type, $data->id);
+                        } else {
+                            throw new \Exception('cannot get values from web service import - type is not valid');
+                        }
+                    }
+                    $result[] = $resultItem;
+                }
+            }
+            $this->elementIds = $result;
+        }
     }
 
     /**
@@ -352,6 +409,34 @@ class Relations extends Model\Document\Tag implements \Iterator
         $var = $this->current() !== false;
 
         return $var;
+    }
+
+    /**
+     * Returns the current tag's data for web service export
+     *
+     * @deprecated
+     *
+     * @param Model\Document\PageSnippet|null $document
+     * @param array $params
+     *
+     * @return array|null
+     */
+    public function getForWebserviceExport($document = null, $params = [])
+    {
+        $elements = $this->getElements();
+        if (is_array($elements)) {
+            $result = [];
+            foreach ($elements as $element) {
+                $result[] = [
+                    'type' => Element\Service::getType($element),
+                    'id' => $element->getId()
+                ];
+            }
+
+            return $result;
+        }
+
+        return null;
     }
 }
 

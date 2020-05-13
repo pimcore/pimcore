@@ -16,8 +16,12 @@ namespace Pimcore\Workflow;
 
 use Pimcore\Event\Workflow\GlobalActionEvent;
 use Pimcore\Event\WorkflowEvents;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
 use Pimcore\Workflow\Place\PlaceConfig;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -87,8 +91,9 @@ class Manager
     }
 
     /**
-     * @param string $place
-     * @param array $placeConfig
+     * @param string $workflowName
+     * @param string $action
+     * @param array $actionConfig
      *
      * @return $this
      */
@@ -176,7 +181,7 @@ class Manager
     }
 
     /**
-     * @param $subject
+     * @param object $subject
      *
      * @return Workflow[]
      */
@@ -225,7 +230,7 @@ class Manager
 
     /**
      * @param Workflow $workflow
-     * @param $subject
+     * @param Asset|Concrete|PageSnippet $subject
      * @param string $transition
      * @param array $additionalData
      * @param bool $saveSubject
@@ -243,8 +248,12 @@ class Manager
 
         $this->notesSubscriber->setAdditionalData([]);
 
+        $transition = $this->getTransitionByName($workflow->getName(), $transition);
+        $changePublishedState = $transition instanceof Transition ? $transition->getChangePublishedState() : null;
+
         if ($saveSubject && $subject instanceof AbstractElement) {
-            if (method_exists($subject, 'getPublished') && !$subject->getPublished()) {
+            if (method_exists($subject, 'getPublished')
+                && (!$subject->getPublished() || $changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION)) {
                 $subject->saveVersion();
             } else {
                 $subject->save();
@@ -256,7 +265,7 @@ class Manager
 
     /**
      * @param Workflow $workflow
-     * @param $subject
+     * @param object $subject
      * @param string $globalAction
      * @param array $additionalData
      * @param bool $saveSubject

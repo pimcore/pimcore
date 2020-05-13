@@ -49,7 +49,7 @@ class LocaleSwitcher extends AbstractOperator
         if (!$childs) {
             return;
         } else {
-            /** @var $child AbstractConfigElement */
+            /** @var AbstractConfigElement $child */
             foreach ($childs as $child) {
                 $this->localeService->setLocale($this->locale);
 

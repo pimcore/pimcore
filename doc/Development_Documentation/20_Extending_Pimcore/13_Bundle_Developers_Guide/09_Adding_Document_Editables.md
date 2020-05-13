@@ -45,9 +45,39 @@ pimcore:
 
 ## 3) Create frontend JS
 
-For the frontend, a JavaScript class needs to be added `pimcore.document.tags.mytag`. It can 
+For the frontend, a JavaScript class needs to be added `pimcore.document.tags.markdown`. It can 
 extend any of the existing `pimcore.document.tags` and must return it's type by overwriting 
-the function `getType()`.
+the function `getType()`. If you extend from other bundles tags make sure your bundle is loaded after your parent tag has been initialized.
+
+```js
+// src/Resources/public/js/pimcore/document/tags/markdown.js
+
+pimcore.registerNS("pimcore.document.tags.markdown");
+pimcore.document.tags.markdown = Class.create(pimcore.document.tags.markdown, {
+    getType: function () {
+        return "markdown";
+    }
+});
+```
 
 This JS file must be included in editmode. You can tell Pimcore to do so by implementing `getEditmodeJsPaths()`
 in your bundle class. 
+
+```php
+// src/AppBundle/AppBundle.php
+
+namespace AppBundle;
+
+use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+
+class AppBundle extends AbstractPimcoreBundle
+{
+    public function getEditmodeJsPaths()
+    {
+        return [
+            '/bundles/app/js/pimcore/document/tags/markdown.js'
+        ];
+    }
+}
+
+```

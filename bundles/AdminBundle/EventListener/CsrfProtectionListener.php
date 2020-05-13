@@ -41,7 +41,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
     protected $phpTemplatingEngine;
 
     /**
-     * @param $excludedRoutes
+     * @param array $excludedRoutes
      * @param PhpEngine $phpTemplatingEngine
      */
     public function __construct($excludedRoutes, PhpEngine $phpTemplatingEngine)
@@ -56,7 +56,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => 'handleRequest'
+            KernelEvents::REQUEST => ['handleRequest', 11]
         ];
     }
 
@@ -77,10 +77,6 @@ class CsrfProtectionListener implements EventSubscriberInterface
         }
 
         $exludedRoutes = [
-            // login
-            'pimcore_admin_login', 'pimcore_admin_login_fallback', 'pimcore_admin_login_check', 'pimcore_admin_login_lostpassword',
-            'pimcore_admin_login_deeplink', 'pimcore_admin_2fa', 'pimcore_admin_2fa',
-
             // WebDAV
             'pimcore_admin_webdav',
 
@@ -125,11 +121,30 @@ class CsrfProtectionListener implements EventSubscriberInterface
     public function getCsrfToken()
     {
         if (!$this->csrfToken) {
-            $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
-                return $adminSession->get('csrfToken');
-            });
+            $this->csrfToken = Session::getReadOnly()->get('csrfToken');
+            if (!$this->csrfToken) {
+                $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
+                    if (!$adminSession->has('csrfToken') && !$adminSession->get('csrfToken')) {
+                        $adminSession->set('csrfToken', sha1(generateRandomSymfonySecret()));
+                    }
+
+                    return $adminSession->get('csrfToken');
+                });
+            }
         }
 
         return $this->csrfToken;
+    }
+
+    public function regenerateCsrfToken()
+    {
+        $this->csrfToken = Session::useSession(function (AttributeBagInterface $adminSession) {
+            $token = sha1(generateRandomSymfonySecret());
+            $adminSession->set('csrfToken', $token);
+
+            return $token;
+        });
+
+        $this->phpTemplatingEngine->addGlobal('csrfToken', $this->csrfToken);
     }
 }

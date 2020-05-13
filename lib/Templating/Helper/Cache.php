@@ -60,8 +60,8 @@ class Cache extends Helper
     }
 
     /**
-     * @param $name
-     * @param null $lifetime
+     * @param string $name
+     * @param int|null $lifetime
      * @param bool $force
      *
      * @return mixed
@@ -94,7 +94,7 @@ class Cache extends Helper
         }
 
         if ($content = CacheManager::load($this->key)) {
-            echo $content;
+            $this->outputContent($content, $this->key, true);
 
             return true;
         }
@@ -119,8 +119,8 @@ class Cache extends Helper
             }
 
             $content = ob_get_clean();
-            CacheManager::save($content, $this->key, $tags, $this->lifetime, 996, true);
-            echo $content;
+            $this->saveContentToCache($content, $this->key, $tags);
+            $this->outputContent($content, $this->key, false);
         }
     }
 
@@ -130,5 +130,29 @@ class Cache extends Helper
     public function stop()
     {
         $this->end();
+    }
+
+    /**
+     * Output the content.
+     *
+     * @param string $content the content, either rendered or retrieved directly from the cache.
+     * @param string $key the cache key
+     * @param bool $isLoadedFromCache true if the content origins from the cache and hasn't been created "live".
+     */
+    protected function outputContent($content, string $key, bool $isLoadedFromCache)
+    {
+        echo $content;
+    }
+
+    /**
+     * Save the (rendered) content to to cache. May be overriden to add custom markup / code, or specific tags, etc.
+     *
+     * @param string $content
+     * @param string $key
+     * @param array $tags
+     */
+    protected function saveContentToCache($content, string $key, array $tags)
+    {
+        CacheManager::save($content, $key, $tags, $this->lifetime, 996, true);
     }
 }

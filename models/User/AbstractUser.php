@@ -49,7 +49,7 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @param int $id
      *
-     * @return AbstractUser|null
+     * @return static|null
      */
     public static function getById($id)
     {
@@ -92,7 +92,7 @@ class AbstractUser extends Model\AbstractModel
     /**
      * @param string $name
      *
-     * @return self|null
+     * @return static|null
      */
     public static function getByName($name)
     {
@@ -141,7 +141,7 @@ class AbstractUser extends Model\AbstractModel
      */
     public function setParentId($parentId)
     {
-        $this->parentId = $parentId;
+        $this->parentId = (int)$parentId;
 
         return $this;
     }
@@ -224,15 +224,15 @@ class AbstractUser extends Model\AbstractModel
 
         \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::PRE_DELETE, new UserRoleEvent($this));
 
-        // delete all childs
-        $list = new Listing();
+        // delete all children
+        if ($this->getType() === 'role') {
+            $list = new Model\User\Role\Listing();
+        } else {
+            $list = new Listing();
+        }
         $list->setCondition('parentId = ?', $this->getId());
-        $list->load();
-
-        if (is_array($list->getUsers())) {
-            foreach ($list->getUsers() as $user) {
-                $user->delete();
-            }
+        foreach ($list as $user) {
+            $user->delete();
         }
 
         // now delete the current user
@@ -243,7 +243,7 @@ class AbstractUser extends Model\AbstractModel
     }
 
     /**
-     * @param $type
+     * @param string $type
      *
      * @return $this
      */
@@ -252,5 +252,10 @@ class AbstractUser extends Model\AbstractModel
         $this->type = $type;
 
         return $this;
+    }
+
+    public function update()
+    {
+        $this->getDao()->update();
     }
 }

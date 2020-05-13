@@ -89,8 +89,8 @@ php bin/console ecommerce:indexservice:bootstrap --update-index
   the store table is out of sync. Reset the preparation queue for instance when your product model 
   returns updated data for a field.
 ```bash
-php bin/console ecommerce:reset-queue preparation
-php bin/console ecommerce:reset-queue update-index
+php bin/console ecommerce:indexservice:reset-queue preparation
+php bin/console ecommerce:indexservice:reset-queue update-index
 ```
 
 - If you need to create or update the index structures you can still use:

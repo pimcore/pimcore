@@ -19,6 +19,9 @@ namespace Pimcore\Model\Webservice\Data\DataObject\Folder;
 
 use Pimcore\Model;
 
+/**
+ * @deprecated
+ */
 class Out extends Model\Webservice\Data\DataObject\Folder
 {
     /**

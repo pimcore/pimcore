@@ -44,6 +44,9 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
 
     /**
      * @param Request $request
+     *
+     * @return JsonResponse
+     *
      * @Route("/export", methods={"GET"})
      */
     public function exportDataObjectAction(Request $request)

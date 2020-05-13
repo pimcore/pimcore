@@ -25,8 +25,8 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $gridConfigId
-     * @param $sharedWithUserId
+     * @param int $gridConfigId
+     * @param int $sharedWithUserId
      *
      * @throws \Exception
      */
@@ -44,6 +44,7 @@ class Dao extends Model\Dao\AbstractDao
     public function save()
     {
         $gridConfigFavourite = $this->model->getObjectVars();
+        $data = [];
 
         foreach ($gridConfigFavourite as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('gridconfig_shares'))) {

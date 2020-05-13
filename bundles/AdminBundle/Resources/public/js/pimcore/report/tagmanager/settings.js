@@ -84,7 +84,6 @@ pimcore.report.tagmanager.settings = Class.create({
 
     getValues: function () {
 
-        var formData = this.panel.getForm().getFieldValues();
         var sites = pimcore.globalmanager.get("sites");
         var sitesData = {};
 

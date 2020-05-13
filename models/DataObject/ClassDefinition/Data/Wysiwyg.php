@@ -147,6 +147,8 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     /**
      * @param bool $excludeFromSearchIndex
+     *
+     * @return self
      */
     public function setExcludeFromSearchIndex(bool $excludeFromSearchIndex)
     {
@@ -209,7 +211,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * @see Model\DataObject\ClassDefinition\Data::getDataForSearchIndex
      *
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -252,7 +254,9 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param mixed $data
+     * @param string|null $data
+     *
+     * @return array
      */
     public function resolveDependencies($data)
     {
@@ -297,7 +301,7 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData  $object
      * @param array $params
      *
      * @return string
@@ -322,10 +326,10 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
-     * @param null $object
+     * @param string|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|string
@@ -389,5 +393,10 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
 
         return $data;
+    }
+
+    public function isFilterable(): bool
+    {
+        return true;
     }
 }

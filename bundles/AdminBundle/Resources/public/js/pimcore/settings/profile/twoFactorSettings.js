@@ -22,14 +22,10 @@ pimcore.settings.profile.twoFactorSettings = Class.create({
 
     getPanel: function () {
 
-        var that = this;
-        var twoFactorData = this.data;
-
         var buttonLabel = t('setup_two_factor');
         if(this.data['isActive']) {
             buttonLabel = t('renew_2fa_secret');
         }
-
 
         var panelConf = {
             xtype: "fieldset",
@@ -76,7 +72,7 @@ pimcore.settings.profile.twoFactorSettings = Class.create({
             items: [
                 {
                     xtype: "container",
-                    html: '<img src="' + pimcore.helpers.addCsrfTokenToUrl('/admin/user/renew-2fa-qr-secret') + '"/>',
+                    html: '<img src="/admin/user/renew-2fa-qr-secret"/>',
                     width: 230,
                     height: 230
                 },

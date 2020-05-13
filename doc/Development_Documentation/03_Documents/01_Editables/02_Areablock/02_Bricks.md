@@ -240,6 +240,8 @@ reasons, but a couple of methods could be useful when implementing your own bric
 | Method                  | Description                                      |
 |-------------------------|--------------------------------------------------|
 | `$info->getTag()`       | Returns the tag rendering the brick              |
+| `$info->getDocument()`  | Retrieve the document   |
+| `$info->getDocumentElement($name)` | Retrieve the editable tag from document   |
 | `$info->getRequest()`   | Returns the current request                      |
 | `$info->getView()`      | Returns the ViewModel to be rendered             |
 | `$info->getIndex()`     | Returns the current index inside the areablock   |
@@ -368,4 +370,4 @@ the compatibility they still need to be implemented the Pimcore 4 way in `websit
 
 ## Examples
 
-You can find many examples in the [demo / quick start package](https://github.com/pimcore/demo-basic/tree/master/src/AppBundle/Document/Areabrick).
+You can find many examples in the [demo package](https://github.com/pimcore/demo/tree/master/src/AppBundle/Document/Areabrick).

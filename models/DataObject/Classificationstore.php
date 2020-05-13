@@ -18,14 +18,19 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
 
 /**
+ * @method \Pimcore\Model\DataObject\Classificationstore\Dao createUpdateTable()
  * @method \Pimcore\Model\DataObject\Classificationstore\Dao getDao()
+ * @method void delete()
+ * @method Classifictionstore load()
+ * @method void save()
  */
 class Classificationstore extends Model\AbstractModel implements DirtyIndicatorInterface
 {
-    use Model\DataObject\Traits\DirtyIndicatorTrait;
+    use Model\Element\Traits\DirtyIndicatorTrait;
     /**
      * @var array
      */
@@ -62,7 +67,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param  $item
+     * @param array $item
      */
     public function addItem($item)
     {
@@ -144,9 +149,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @throws \Exception
-     *
-     * @param null $language
+     * @param string|null $language
      *
      * @return string
      */
@@ -160,10 +163,10 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param $groupId
-     * @param $keyId
-     * @param $value
-     * @param null $language
+     * @param int $groupId
+     * @param int $keyId
+     * @param mixed $value
+     * @param string|null $language
      *
      * @return $this
      *
@@ -188,11 +191,15 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         // @TODO Find a better solution for using isEmpty() in all ClassDefintion DataTypes
 
         $keyConfig = Model\DataObject\Classificationstore\DefinitionCache::get($keyId);
+        /** @var Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface $dataDefinition */
         $dataDefinition = Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyConfig);
+
+        // set the given group to active groups
+        $this->setActiveGroups($this->activeGroups + [$groupId => true]);
 
         if (!$this->isFieldDirty('_self')) {
             if ($this->object) {
-                $oldData = $this->items[$groupId][$keyId][$language];
+                $oldData = $this->items[$groupId][$keyId][$language] ?? null;
                 $oldData = $dataDefinition->getDataForResource($oldData, $this->object);
                 $oldData = serialize($oldData);
 
@@ -226,8 +233,10 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         return $this;
     }
 
-    /** Removes the group with the given id
-     * @param $groupId
+    /**
+     * Removes the group with the given id
+     *
+     * @param int $groupId
      */
     public function removeGroupData($groupId)
     {
@@ -296,12 +305,12 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param $groupId
-     * @param $keyId
-     * @param $language
-     * @param $fielddefinition
+     * @param int $groupId
+     * @param int $keyId
+     * @param string $language
+     * @param Model\DataObject\ClassDefinition\Data $fielddefinition
      *
-     * @return null
+     * @return mixed
      */
     protected function getFallbackValue($groupId, $keyId, $language, $fielddefinition)
     {
@@ -328,15 +337,15 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param $keyId
-     * @param $groupId
+     * @param int $keyId
+     * @param int $groupId
      * @param string $language
-     * @param bool|false $ignoreFallbackLanguage
-     * @param bool|false $ignoreDefaultLanguage
+     * @param bool $ignoreFallbackLanguage
+     * @param bool $ignoreDefaultLanguage
      *
-     * @return null
+     * @return mixed
      *
-     * @todo: not sure if bool|false is actually allowed in phpdoc?
+     * @throws \Exception
      */
     public function getLocalizedKeyValue($groupId, $keyId, $language = 'default', $ignoreFallbackLanguage = false, $ignoreDefaultLanguage = false)
     {
@@ -370,7 +379,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
         }
 
         if ($fieldDefinition->isEmpty($data) && !$ignoreDefaultLanguage && $language != 'default') {
-            $data = $this->items[$groupId][$keyId]['default'];
+            $data = $this->items[$groupId][$keyId]['default'] ?? null;
         }
 
         // check for inherited value
@@ -388,6 +397,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
                     }
 
                     if ($parent && ($parent->getType() == 'object' || $parent->getType() == 'variant')) {
+                        /** @var Concrete $parent */
                         if ($parent->getClassId() == $object->getClassId()) {
                             $getter = 'get' . ucfirst($this->fieldname);
                             $classificationStore = $parent->$getter();
@@ -438,8 +448,8 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param $groupId
-     * @param $collectionId
+     * @param int $groupId
+     * @param int $collectionId
      */
     public function setGroupCollectionMapping($groupId = null, $collectionId = null)
     {
@@ -449,14 +459,16 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param $groupId
+     * @param int $groupId
      *
-     * @return mixed
+     * @return int|null
      */
     public function getGroupCollectionMapping($groupId)
     {
         if ($this->groupCollectionMapping) {
             return $this->groupCollectionMapping[$groupId];
         }
+
+        return null;
     }
 }

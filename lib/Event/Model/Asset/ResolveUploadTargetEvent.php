@@ -32,7 +32,7 @@ class ResolveUploadTargetEvent extends Event
     protected $context;
 
     /**
-     * @var
+     * @var int
      */
     protected $parentId;
 

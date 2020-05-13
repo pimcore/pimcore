@@ -140,6 +140,7 @@ class DefinitionModifier
         $found = false;
         $index = null;
         $children = $layoutDefinition->getChildren();
+        $child = null;
 
         /**
          * try to find field

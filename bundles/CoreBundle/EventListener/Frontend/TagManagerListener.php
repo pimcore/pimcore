@@ -108,7 +108,7 @@ class TagManagerListener
 
         $editmode = $this->editmodeResolver->isEditmode($request);
 
-        /** @var $tag Tag\Config */
+        /** @var Tag\Config $tag */
         foreach ($tags as $tag) {
             if ($tag->isDisabled()) {
                 continue;

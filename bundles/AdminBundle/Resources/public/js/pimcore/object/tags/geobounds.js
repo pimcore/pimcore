@@ -27,14 +27,23 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
         this.searchfield = new Ext.form.TextField({
             width: 200,
             name: 'mapSearch',
-            style: 'float:left;margin-top:0px;'
+            style: 'float:left;margin-top:0px;',
+            listeners: {
+                render: function (cmp) {
+                    cmp.getEl().on('keypress', function (e) {
+                        if (e.getKey() === e.ENTER) {
+                            this.geocode();
+                        }
+                    }.bind(this));
+                }.bind(this)
+            }
         });
 
         this.component = new Ext.Panel({
             border: true,
             style: "margin-bottom: 10px",
-            height: 370,
-            width: 650,
+            height: this.fieldConfig.height,
+            width: this.fieldConfig.width,
             componentCls: 'object_field object_geo_field',
             html: '<div id="leaflet_maps_container_' + this.mapImageID + '"></div>',
             bbar: [{
@@ -152,17 +161,6 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
             };
         }.bind(this));
     },
-    
-    geocode: function () {
-        var address = this.searchfield.getValue();
-        jQuery.getJSON(this.getSearchUrl(address), function(json) {
-          if( json[0].lat !== null && json[0].lon !== null) {
-                var map = this.getLeafletMap(json[0].lat, json[0].lon, 15);
-                this.getLeafletToolbar(map);
-            }
-        }.bind(this));
-       
-    },
 
     getValue: function () {
         if (this.data) {
@@ -178,17 +176,6 @@ pimcore.object.tags.geobounds = Class.create(pimcore.object.tags.geo.abstract, {
 
     getName: function () {
         return this.fieldConfig.name;
-    },
-
-    isInvalidMandatory: function () {
-        var value = this.getValue();
-
-        // @TODO
-        /*if (value.longitude && value.latitude) {
-         return false;
-         }*/
-
-        return true;
     },
 
     isDirty: function () {

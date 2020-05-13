@@ -359,7 +359,7 @@ class Menu extends AbstractRenderer
     /**
      * Alias of setTemplate()
      *
-     * @param $partial
+     * @param array|string $partial
      *
      * @return $this
      */
@@ -516,7 +516,7 @@ class Menu extends AbstractRenderer
 
         // UL class
         if (isset($options['ulClass']) && $options['ulClass'] !== null) {
-            $options['ulClass'] = (string) $options['ulClass'];
+            $options['ulClass'] = $options['ulClass'];
         } else {
             $options['ulClass'] = $this->getUlClass();
         }
@@ -696,8 +696,8 @@ class Menu extends AbstractRenderer
     /**
      * Renders a normal menu (called from {@link renderMenu()})
      *
-     * @param  Container $container     container to render
-     * @param  string                    $ulClass       CSS class for first UL
+     * @param  Container                 $container     container to render
+     * @param  string|string[]           $ulClasses     CSS class for UL levels
      * @param  string                    $indent        initial indentation
      * @param  string                    $innerIndent   inner indentation
      * @param  int|null                  $minDepth      minimum depth
@@ -719,7 +719,7 @@ class Menu extends AbstractRenderer
      */
     protected function _renderMenu(
         Container $container,
-        $ulClass,
+        $ulClasses,
         $indent,
         $innerIndent,
         $minDepth,
@@ -740,13 +740,12 @@ class Menu extends AbstractRenderer
             $foundDepth = $found['depth'];
         } else {
             $foundPage = null;
+            $foundDepth = null;
         }
 
         // create iterator
-        $iterator = new \RecursiveIteratorIterator(
-            $container,
-                            \RecursiveIteratorIterator::SELF_FIRST
-        );
+        $iterator = new \RecursiveIteratorIterator($container, \RecursiveIteratorIterator::SELF_FIRST);
+
         if (is_int($maxDepth)) {
             $iterator->setMaxDepth($maxDepth);
         }
@@ -756,6 +755,14 @@ class Menu extends AbstractRenderer
         foreach ($iterator as $page) {
             $depth = $iterator->getDepth();
             $isActive = $page->isActive(true);
+
+            // Set ulClass depth wise if array of classes is supplied.
+            if (\is_array($ulClasses)) {
+                $ulClass = $ulClasses[$depth] ?? $ulClasses['default'];
+            } else {
+                $ulClass = (string) $ulClasses;
+            }
+
             if ($depth < $minDepth || !$this->accept($page)) {
                 // page is below minDepth or not accepted by visibilty
                 continue;
@@ -805,7 +812,7 @@ class Menu extends AbstractRenderer
                 $attribs = [];
 
                 // start new ul tag
-                if (0 == $depth) {
+                if ((is_string($ulClasses) && 0 == $depth) || is_array($ulClasses)) {
                     $attribs = [
                         'class' => $ulClass,
                         'id' => $ulId,
@@ -999,7 +1006,7 @@ class Menu extends AbstractRenderer
      * <code>echo 'Number of pages: ', count($this->container);</code>.
      *
      * @param  Container $container
-     * @param  string|array             $partial     [optional] partial view
+     * @param  string|array|null $partial     [optional] partial view
      *                                               script to use. Default is to
      *                                               use the partial registered
      *                                               in the helper. If an array
@@ -1035,7 +1042,7 @@ class Menu extends AbstractRenderer
      * Alias of renderTemplate()
      *
      * @param Container $container
-     * @param null $partial
+     * @param string|array|null $partial
      *
      * @return string
      */

@@ -15,7 +15,7 @@ Web to print flow implemented in Pimcore:
 
 Once activated, print documents are integrated into the default documents tree. 
 But of course you can setup your custom views to have separate trees for web documents and print documents. 
-Just use our completely redesigned [custom views](../../05_Objects/01_Object_Classes/05_Class_Settings/11_Custom_Views.md) 
+Just use our completely redesigned [custom views](../../05_Objects/01_Object_Classes/05_Class_Settings/20_Custom_Views.md) 
 and all [new perspectives features](../../18_Tools_and_Features/13_Perspectives.md).
 
 For more detail-information on the settings see later.
@@ -67,7 +67,7 @@ For details of settings please see section below or renderer documentation.
 They can be activated by the printermarks rendering setting. Technically they are implemented by an additional CSS-file which needs to be included.
 For Details, check links below:
 
-* [view-script](https://github.com/pimcore/demo-basic/blob/master/app/Resources/views/Web2print/default.html.php#L102-L102)
+* [view-script](https://github.com/pimcore/demo/blob/master/app/Resources/views/layouts/print_catalog.html.twig#L18-L20)
 * [css-file](https://github.com/pimcore/pimcore/blob/master/bundles/AdminBundle/Resources/public/css/print/print-printermarks.css)
 
 ## Settings
@@ -85,8 +85,8 @@ The command that you enter in the binary field can then be something like this:
 ```
 xvfb-run -a -s "-screen 0 640x480x16" /usr/bin/wkhtmltopdf
 ```
-In the host field, enter the full URL, like you would in a web browser, not just the hostname. 
-For example: "http://example.mydevdomain.local"
+In the host field, enter the full URL, like you would in a web browser, but without the leading `http://` or `https://`. 
+For example: `example.mydevdomain.local`
 
 To test and debug the PDF rendering, open a Print document, go to the tab "Generate & Preview PDF", click the "Generate PDF" 
 button and observe the message field for any errors.

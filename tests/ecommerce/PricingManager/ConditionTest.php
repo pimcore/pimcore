@@ -34,9 +34,7 @@ class ConditionTest extends EcommerceTestCase
 
         $cart->method('getPriceCalculator')->willReturn($priceCalculator);
 
-        /**
-         * @var $environment Environment
-         */
+        /** @var Environment $environment */
         $environment = Stub::make(Environment::class, [
             'getCart' => function () use ($cart) {
                 return $cart;
@@ -62,9 +60,7 @@ class ConditionTest extends EcommerceTestCase
 
         $this->assertFalse($cartAmount->check($environment), 'check with limit 300 vs. value 200');
 
-        /**
-         * @var $environment Environment
-         */
+        /** @var Environment $environment */
         $environment = Stub::make(Environment::class, [
             'getCart' => function () use ($cart) {
                 return $cart;
@@ -80,9 +76,7 @@ class ConditionTest extends EcommerceTestCase
 
         $this->assertFalse($cartAmount->check($environment), 'check not empty product');
 
-        /**
-         * @var $environment Environment
-         */
+        /** @var Environment $environment */
         $environment = Stub::make(Environment::class, [
             'getCart' => function () use ($cart) {
                 return null;
@@ -100,7 +94,7 @@ class ConditionTest extends EcommerceTestCase
     }
 
     /**
-     * @param $path
+     * @param string $path
      *
      * @return AbstractCategory
      */
@@ -116,9 +110,7 @@ class ConditionTest extends EcommerceTestCase
     {
         $environmentCategories = [];
 
-        /**
-         * @var $environment Environment
-         */
+        /** @var Environment $environment */
         $environment = Stub::make(Environment::class, [
             'getCategories' => function () use ($environmentCategories) {
                 return $environmentCategories;
@@ -134,9 +126,7 @@ class ConditionTest extends EcommerceTestCase
         $environmentCategories[] = $this->mockCategory('/categories/fashion/shoes');
         $environmentCategories[] = $this->mockCategory('/categories/fashion/tshirts');
 
-        /**
-         * @var $environment Environment
-         */
+        /** @var Environment $environment */
         $environment = Stub::make(Environment::class, [
             'getCategories' => function () use ($environmentCategories) {
                 return $environmentCategories;
@@ -186,8 +176,8 @@ class ConditionTest extends EcommerceTestCase
     }
 
     /**
-     * @param $id
-     * @param null $parentId
+     * @param int $id
+     * @param int|null $parentId
      *
      * @return AbstractProduct
      */
@@ -235,10 +225,7 @@ class ConditionTest extends EcommerceTestCase
 
     public function testCatalogProduct()
     {
-
-        /**
-         * @var $environment Environment
-         */
+        /** @var Environment $environment */
         $environment = Stub::make(Environment::class, [
             'getExecutionMode' => function () {
                 return EnvironmentInterface::EXECUTION_MODE_PRODUCT;
@@ -334,10 +321,7 @@ class ConditionTest extends EcommerceTestCase
 
     public function testDateRange()
     {
-
-        /**
-         * @var $environment Environment
-         */
+        /** @var Environment $environment */
         $environment = Stub::make(Environment::class, [
         ]);
 

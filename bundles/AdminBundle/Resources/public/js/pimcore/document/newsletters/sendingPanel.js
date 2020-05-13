@@ -171,8 +171,6 @@ pimcore.document.newsletters.sendingPanel = Class.create({
 
     send: function() {
 
-        var fieldValues = this.layout.getForm().getFieldValues();
-
         var params = {
             id: this.document.id,
             adapterParams: Ext.encode(this.currentSourceAdapter.getValues()),

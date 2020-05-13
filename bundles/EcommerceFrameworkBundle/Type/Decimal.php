@@ -86,7 +86,7 @@ class Decimal
      *
      * Adapted from moneyphp/money PhpCalculator
      *
-     * @param $amount
+     * @param int $amount
      *
      * @throws \OverflowException  If integer overflow occured
      * @throws \UnderflowException If integer underflow occured
@@ -103,7 +103,7 @@ class Decimal
     /**
      * Round value to int value if needed
      *
-     * @param $value
+     * @param mixed $value
      * @param int|null $roundingMode
      *
      * @return int
@@ -688,7 +688,7 @@ class Decimal
      *
      * @example Decimal::create(100)->discount(15) = 85
      *
-     * @param $discount
+     * @param int|float|Decimal $discount
      * @param int|null $roundingMode
      *
      * @return Decimal

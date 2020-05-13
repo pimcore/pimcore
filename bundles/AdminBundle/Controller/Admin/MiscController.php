@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Config;
 use Pimcore\Controller\Config\ControllerDataProvider;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Db;
@@ -26,6 +27,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
+use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -220,7 +222,7 @@ class MiscController extends AdminController
 
             return $response;
         } else {
-            throw $this->createNotFoundException();
+            throw $this->createNotFoundException('Scripts not found');
         }
     }
 
@@ -228,15 +230,16 @@ class MiscController extends AdminController
      * @Route("/admin-css", methods={"GET"})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return Response
      */
-    public function adminCssAction(Request $request)
+    public function adminCssAction(Request $request, Config $config)
     {
         // customviews config
         $cvData = Tool::getCustomViewConfig();
 
-        $response = $this->render('PimcoreAdminBundle:Admin/Misc:admin-css.html.php', ['customviews' => $cvData]);
+        $response = $this->render('PimcoreAdminBundle:Admin/Misc:admin-css.html.php', ['customviews' => $cvData, 'config' => $config]);
         $response->headers->set('Content-Type', 'text/css; charset=UTF-8');
 
         return $response;
@@ -353,6 +356,7 @@ class MiscController extends AdminController
         $success = false;
         $writeable = false;
         $file = $this->getFileexplorerPath($request, 'path');
+        $content = null;
         if (is_file($file)) {
             if (is_readable($file)) {
                 $content = file_get_contents($file);
@@ -366,7 +370,7 @@ class MiscController extends AdminController
             'content' => $content,
             'writeable' => $writeable,
             'filename' => basename($file),
-            'path' => preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT) . '@', '', $file)
+            'path' => preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', '', $file)
         ]);
     }
 
@@ -479,6 +483,7 @@ class MiscController extends AdminController
     public function fileexplorerDeleteAction(Request $request)
     {
         $this->checkPermission('fileexplorer');
+        $success = false;
 
         if ($request->get('path')) {
             $file = $this->getFileexplorerPath($request, 'path');
@@ -503,6 +508,7 @@ class MiscController extends AdminController
     public function fileexplorerRenameAction(Request $request)
     {
         $this->checkPermission('fileexplorer');
+        $success = false;
 
         if ($request->get('path') && $request->get('newPath')) {
             $file = $this->getFileexplorerPath($request, 'path');
@@ -691,6 +697,7 @@ class MiscController extends AdminController
     public function languageListAction(Request $request)
     {
         $locales = Tool::getSupportedLocales();
+        $options = [];
 
         foreach ($locales as $short => $translation) {
             $options[] = [
@@ -706,13 +713,18 @@ class MiscController extends AdminController
      * @Route("/phpinfo", methods={"GET"})
      *
      * @param Request $request
+     * @param Profiler $profiler
      *
      * @throws \Exception
      *
      * @return Response
      */
-    public function phpinfoAction(Request $request)
+    public function phpinfoAction(Request $request, ?Profiler $profiler)
     {
+        if ($profiler) {
+            $profiler->disable();
+        }
+
         if (!$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Permission denied');
         }
@@ -745,11 +757,13 @@ class MiscController extends AdminController
      * @TemplatePhp()
      *
      * @param Request $request
-     *
-     * @return Response
+     * @param Profiler $profiler
      */
-    public function iconListAction(Request $request)
+    public function iconListAction(Request $request, ?Profiler $profiler)
     {
+        if ($profiler) {
+            $profiler->disable();
+        }
     }
 
     /**

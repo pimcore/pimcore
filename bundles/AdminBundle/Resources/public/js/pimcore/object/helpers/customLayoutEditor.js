@@ -222,7 +222,6 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             triggerAction: "all",
             selectOnFocus: true,
             forceSelection: true,
-            editable: false,
             store: this.layoutComboStore,
             displayField: 'name',
             valueField: 'id' ,
@@ -591,7 +590,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
 
                     var text = t(child.name);
                     if(child.nodeType == "objectbricks") {
-                        text = ts(child.title) + " " + t("columns");
+                        text = t(child.title) + " " + t("columns");
                         attributePrefix = child.title;
                     }
 
@@ -699,7 +698,7 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
             key = attributePrefix + "~" + key;
         }
 
-        var text = ts(initData.title);
+        var text = t(initData.title);
         if(showFieldname) {
             text = text + " (" + key.replace("~", ".") + ")";
         }
@@ -761,10 +760,8 @@ pimcore.object.helpers.customLayoutEditor = Class.create({
     },
 
     save: function () {
-        var id = this.layoutChangeCombo.getValue();
-
         this.saveCurrentNode();
-        var regresult = this.data["name"].match(/[a-zA-Z ][a-zA-Z0-9 ]+/);
+        var regresult = this.data["name"].match(/[a-zA-Z _][a-zA-Z0-9 _]+/);
 
         if (this.data["name"].length > 2 && this.data["name"].length < 64 && regresult == this.data["name"]) {
             delete this.data.layoutDefinitions;

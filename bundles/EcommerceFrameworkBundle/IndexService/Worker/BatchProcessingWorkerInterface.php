@@ -44,7 +44,7 @@ interface BatchProcessingWorkerInterface extends WorkerInterface
      *
      * @param int $limit
      *
-     * @return $int number of entries processed
+     * @return int number of entries processed
      */
     public function processUpdateIndexQueue($limit = 200);
 }

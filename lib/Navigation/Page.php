@@ -720,6 +720,8 @@ abstract class Page extends Container
         if (isset($this->_customHtmlAttribs[$name])) {
             unset($this->_customHtmlAttribs[$name]);
         }
+
+        return $this;
     }
 
     /**

@@ -15,28 +15,27 @@ This is done via an extension of the swift mailer `RedirectingPlugin`.
 The `Pimcore\Mail` Class automatically takes care of the nasty stuff (embedding CSS, compiling Less 
 files, normalizing URLs, replacement of Dynamic Placeholders...). Note that all CSS files are embedded 
 to the html with a `<style>` tag because the image paths are also normalised.
- 
-Optionally, you can use `html2text` from [Martin Bayer](http://www.mbayer.de/html2text/index.shtml) 
-for the generation of the text version by calling `enableHtml2textBinary()`.
- 
-On Debian/Ubuntu you can install it with: `apt-get install html2text`
 
+Optionally, you can use `html2text` from [Martin Bayer](http://www.mbayer.de/html2text/index.shtml) 
+for the generation of the text version by calling `enableHtml2textBinary()`. (replaced with `Html2Text\Html2Text` library since 6.6.0)
+ 
+On Debian/Ubuntu you can install it with: `apt-get install html2text` (replaced with `Html2Text\Html2Text` library since 6.6.0)
 
 ## Useful Methods
 
-| Method | Description |
-| ------ | ----------- |
-| disableLogging() | Disables email logging - by default it is enabled |
-| setParams(array) | Sets the parameters for the email view and the Placeholders |
-| setParam($key, $value) | Sets a single parameter for the email view and the Placeholders |
-| isValidEmailAddress(emailAddress) | Static helper to validate a email address |
-| setDocument(Document_Email) | Sets the email document |
-| getDocument() | Returns the Document |
-| getSubjectRendered() | Replaces the placeholders with the content and returns the rendered Subject |
-| getBodyHtmlRendered() | Replaces the placeholders with the content and returns the rendered Html |
-| getBodyTextRendered() | Replaces the placeholders with the content and returns the rendered text if a text was set with `$mail->setBodyText()`. If no text was set, a text version on the html email will be automatically created |
-| enableHtml2textBinary() | `html2text` from Martin Bayer (http://www.mbayer.de/html2text/index.shtml) - throws an Exception if html2text is not installed! |
-| setHtml2TextOptions($options) | set options for html2text (only for binary version) |
+| Method                            | Description                                                                                                                                                                                                |
+|-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| disableLogging()                  | Disables email logging - by default it is enabled                                                                                                                                                          |
+| setParams(array)                  | Sets the parameters to the request object and the Placeholders                                                                                                                                             |
+| setParam($key, $value)            | Sets a single parameter to the request object and the Placeholders                                                                                                                                         |
+| isValidEmailAddress(emailAddress) | Static helper to validate a email address                                                                                                                                                                  |
+| setDocument(Document_Email)       | Sets the email document                                                                                                                                                                                    |
+| getDocument()                     | Returns the Document                                                                                                                                                                                       |
+| getSubjectRendered()              | Replaces the placeholders with the content and returns the rendered Subject                                                                                                                                |
+| getBodyHtmlRendered()             | Replaces the placeholders with the content and returns the rendered Html                                                                                                                                   |
+| getBodyTextRendered()             | Replaces the placeholders with the content and returns the rendered text if a text was set with `$mail->setBodyText()`. If no text was set, a text version on the html email will be automatically created |
+| enableHtml2textBinary()           | `html2text` from Martin Bayer (http://www.mbayer.de/html2text/index.shtml) - throws an Exception if html2text is not installed!     (deprecated since 6.6.0 and will be removed in 7.0)                                                                       |
+| setHtml2TextOptions($options)     | set options for html2text (only for binary version)                                                                                                                                                        |
 
 
 ## Usage Example

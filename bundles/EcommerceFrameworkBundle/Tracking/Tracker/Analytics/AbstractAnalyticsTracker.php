@@ -32,7 +32,7 @@ abstract class AbstractAnalyticsTracker extends EcommerceTracker
      *
      * @internal
      *
-     * TODO Pimcore 6 remove this setter and set as constructor dependency!
+     * TODO Pimcore 7 remove this setter and set as constructor dependency!
      *
      * @param Tracker $tracker
      */

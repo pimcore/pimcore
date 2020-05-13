@@ -25,9 +25,9 @@ use Pimcore\Model;
 class Dao extends Model\Listing\Dao\AbstractDao
 {
     /**
-     * Loads a list of static routes for the specicifies parameters, returns an array of Element\Note elements
+     * Loads a list of static routes for the specified parameters, returns an array of Element\Note elements
      *
-     * @return array
+     * @return Model\Element\Note[]
      */
     public function load()
     {
@@ -62,6 +62,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
+        $amount = 0;
+
         try {
             $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM notes ' . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {

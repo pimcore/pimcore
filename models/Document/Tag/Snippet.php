@@ -18,10 +18,9 @@
 namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Cache;
-use Pimcore\FeatureToggles\Features\DebugMode;
-use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Model\Site;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\Frontend;
@@ -112,72 +111,66 @@ class Snippet extends Model\Document\Tag
         $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
 
         if (!$tagHandler->supports($this->view)) {
-            return null;
+            return '';
         }
 
-        try {
-            if (!$this->snippet instanceof Document\Snippet) {
-                return null;
-            }
+        if (!$this->snippet instanceof Document\Snippet) {
+            return '';
+        }
 
-            if (!$this->snippet->isPublished()) {
-                return '';
-            }
+        if (!$this->snippet->isPublished()) {
+            return '';
+        }
 
-            // apply best matching target group (if any)
-            $targetingConfigurator->configureTargetGroup($this->snippet);
+        // apply best matching target group (if any)
+        $targetingConfigurator->configureTargetGroup($this->snippet);
 
-            $params = $this->options;
-            $params['document'] = $this->snippet;
+        $params = $this->options;
+        $params['document'] = $this->snippet;
 
-            // check if output-cache is enabled, if so, we're also using the cache here
-            $cacheKey = null;
-            if ($cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled()) {
+        // check if output-cache is enabled, if so, we're also using the cache here
+        $cacheKey = null;
+        if ($cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled()) {
 
-                // cleanup params to avoid serializing Element\ElementInterface objects
-                $cacheParams = $params;
-                array_walk($cacheParams, function (&$value, $key) {
-                    if ($value instanceof Model\Element\ElementInterface) {
-                        $value = $value->getId();
-                    }
-                });
-
-                // TODO is this enough for cache or should we disable caching completely?
-                if ($this->snippet->getUseTargetGroup()) {
-                    $cacheParams['target_group'] = $this->snippet->getUseTargetGroup();
+            // cleanup params to avoid serializing Element\ElementInterface objects
+            $cacheParams = $params;
+            array_walk($cacheParams, function (&$value, $key) {
+                if ($value instanceof Model\Element\ElementInterface) {
+                    $value = $value->getId();
                 }
+            });
 
-                if (Frontend::hasWebpSupport()) {
-                    $cacheParams['webp'] = true;
-                }
-
-                $cacheKey = 'tag_snippet__' . md5(serialize($cacheParams));
-                if ($content = Cache::load($cacheKey)) {
-                    return $content;
-                }
+            // TODO is this enough for cache or should we disable caching completely?
+            if ($this->snippet->getUseTargetGroup()) {
+                $cacheParams['target_group'] = $this->snippet->getUseTargetGroup();
             }
 
-            $content = $tagHandler->renderAction(
-                $this->view,
-                $this->snippet->getController(),
-                $this->snippet->getAction(),
-                $this->snippet->getModule(),
-                $params
-            );
+            $cacheParams['webp'] = Frontend::hasWebpSupport();
 
-            // write contents to the cache, if output-cache is enabled
-            if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
-                Cache::save($content, $cacheKey, ['output', 'output_inline'], $cacheConfig['lifetime']);
+            if (Site::isSiteRequest()) {
+                $cacheParams['siteId'] = Site::getCurrentSite()->getId();
             }
 
-            return $content;
-        } catch (\Exception $e) {
-            Logger::error($e);
-
-            if (\Pimcore::inDebugMode(DebugMode::RENDER_DOCUMENT_TAG_ERRORS)) {
-                return 'ERROR: ' . $e->getMessage() . ' (for details see log files in /var/logs)';
+            $cacheKey = 'tag_snippet__' . md5(serialize($cacheParams));
+            if ($content = Cache::load($cacheKey)) {
+                return $content;
             }
         }
+
+        $content = $tagHandler->renderAction(
+            $this->view,
+            $this->snippet->getController(),
+            $this->snippet->getAction(),
+            $this->snippet->getModule(),
+            $params
+        );
+
+        // write contents to the cache, if output-cache is enabled
+        if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
+            Cache::save($content, $cacheKey, ['output', 'output_inline'], $cacheConfig['lifetime']);
+        }
+
+        return $content;
     }
 
     /**
@@ -219,6 +212,8 @@ class Snippet extends Model\Document\Tag
      */
     public function isEmpty()
     {
+        $this->load();
+
         if ($this->snippet instanceof Document\Snippet) {
             return false;
         }
@@ -246,16 +241,18 @@ class Snippet extends Model\Document\Tag
     }
 
     /**
+     * @deprecated
+     *
      * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param $document
-     * @param mixed $params
-     * @param null $idMapper
+     * @param Model\Document\PageSnippet $document
+     * @param array $params
+     * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
      * @throws \Exception
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        $data = $wsElement->value;
+        $data = $this->sanitizeWebserviceData($wsElement->value);
         if ($data->id !== null) {
             $this->id = $data->id;
             if (is_numeric($this->id)) {
@@ -291,7 +288,9 @@ class Snippet extends Model\Document\Tag
      */
     public function load()
     {
-        $this->snippet = Document::getById($this->id);
+        if (!$this->snippet && $this->id) {
+            $this->snippet = Document\Snippet::getById($this->id);
+        }
     }
 
     /**
@@ -320,7 +319,10 @@ class Snippet extends Model\Document\Tag
      */
     public function setSnippet($snippet)
     {
-        $this->snippet = $snippet;
+        if ($snippet instanceof Document\Snippet) {
+            $this->id = $snippet->getId();
+            $this->snippet = $snippet;
+        }
     }
 
     /**
@@ -328,6 +330,8 @@ class Snippet extends Model\Document\Tag
      */
     public function getSnippet()
     {
+        $this->load();
+
         return $this->snippet;
     }
 }

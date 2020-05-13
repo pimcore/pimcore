@@ -45,6 +45,9 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
 
     /**
      * @param Request $request
+     *
+     * @return JsonResponse
+     *
      * @Route("/search-data-objects", methods={"GET"})
      */
     public function searchDataObjectsAction(Request $request, DataObjects $service)
@@ -58,7 +61,7 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
             strip_tags($allParams['email']),
             intval($allParams['start']),
             intval($allParams['limit']),
-            $allParams['sort']
+            $allParams['sort'] ?? null
         );
 
         return $this->adminJson($result);
@@ -66,6 +69,11 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
 
     /**
      * @param Request $request
+     *
+     * @return JsonResponse
+     *
+     * @throws \Exception
+     *
      * @Route("/export", methods={"GET"})
      */
     public function exportDataObjectAction(Request $request, DataObjects $service)

@@ -112,7 +112,7 @@ pimcore.object.importcolumn.operator.splitter = Class.create(pimcore.object.grid
             width: 400,
             height: 200,
             modal: true,
-            title: t('settings'),
+            title: this.getDefaultText(),
             layout: "fit",
             items: [this.configPanel]
         });

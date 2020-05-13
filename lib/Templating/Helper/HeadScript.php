@@ -102,7 +102,7 @@ class HeadScript extends CacheBusterAware
     /**
      * Required attributes for script tag
      *
-     * @var string
+     * @var array
      */
     protected $_requiredAttributes = ['type'];
 
@@ -185,8 +185,9 @@ class HeadScript extends CacheBusterAware
     /**
      * Start capture action
      *
-     * @param  mixed $captureType
-     * @param  string $typeOrAttrs
+     * @param string $captureType
+     * @param string $type
+     * @param array $attrs
      *
      * @return void
      */
@@ -261,6 +262,7 @@ class HeadScript extends CacheBusterAware
             $mode = strtolower($matches['mode']);
             $type = 'text/javascript';
             $attrs = [];
+            $index = null;
 
             if ('offsetSet' == $action) {
                 $index = array_shift($args);
@@ -330,8 +332,7 @@ class HeadScript extends CacheBusterAware
     /**
      * Is the script provided valid?
      *
-     * @param  mixed $value
-     * @param  string $method
+     * @param mixed $value
      *
      * @return bool
      */
@@ -359,7 +360,7 @@ class HeadScript extends CacheBusterAware
             throw new Exception('Invalid argument passed to append(); please use one of the helper methods, appendScript() or appendFile()');
         }
 
-        return $this->getContainer()->append($value);
+        $this->getContainer()->append($value);
     }
 
     /**
@@ -375,7 +376,7 @@ class HeadScript extends CacheBusterAware
             throw new Exception('Invalid argument passed to prepend(); please use one of the helper methods, prependScript() or prependFile()');
         }
 
-        return $this->getContainer()->prepend($value);
+        $this->getContainer()->prepend($value);
     }
 
     /**
@@ -391,7 +392,7 @@ class HeadScript extends CacheBusterAware
             throw new Exception('Invalid argument passed to set(); please use one of the helper methods, setScript() or setFile()');
         }
 
-        return $this->getContainer()->set($value);
+        $this->getContainer()->set($value);
     }
 
     /**
@@ -408,7 +409,7 @@ class HeadScript extends CacheBusterAware
             throw new Exception('Invalid argument passed to offsetSet(); please use one of the helper methods, offsetSetScript() or offsetSetFile()');
         }
 
-        return $this->getContainer()->offsetSet($index, $value);
+        $this->getContainer()->offsetSet($index, $value);
     }
 
     /**
@@ -438,10 +439,10 @@ class HeadScript extends CacheBusterAware
     /**
      * Create script HTML
      *
-     * @param  string $type
-     * @param  array $attributes
-     * @param  string $content
-     * @param  string|int $indent
+     * @param \stdClass $item
+     * @param string $indent
+     * @param string $escapeStart
+     * @param string $escapeEnd
      *
      * @return string
      */
@@ -517,11 +518,7 @@ class HeadScript extends CacheBusterAware
             ? $this->getWhitespace($indent)
             : $this->getIndent();
 
-        if ($this->view) {
-            $useCdata = $this->view->doctype()->isXhtml() ? true : false;
-        } else {
-            $useCdata = $this->useCdata ? true : false;
-        }
+        $useCdata = $this->useCdata ? true : false;
         $escapeStart = ($useCdata) ? '//<![CDATA[' : '//<!--';
         $escapeEnd = ($useCdata) ? '//]]>' : '//-->';
 

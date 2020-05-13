@@ -83,6 +83,8 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
      */
     protected $brickTemplateCache = [];
 
+    public const ATTRIBUTE_AREABRICK_INFO = '_pimcore_areabrick_info';
+
     /**
      * @param AreabrickManagerInterface $brickManager
      * @param EngineInterface $templating
@@ -205,7 +207,11 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         $brick = $this->brickManager->getBrick($info->getId());
 
         $info->setView($view);
-        $info->setRequest($this->requestHelper->getCurrentRequest());
+        $request = $this->requestHelper->getCurrentRequest();
+        $brickInfoRestoreValue = $request->attributes->get(self::ATTRIBUTE_AREABRICK_INFO);
+        $request->attributes->set(self::ATTRIBUTE_AREABRICK_INFO, $info);
+
+        $info->setRequest($request);
 
         // assign parameters to view
         $view->getParameters()->add($params);
@@ -273,16 +279,18 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
 
         echo $brick->getHtmlTagClose($info);
 
+        if ($brickInfoRestoreValue === null) {
+            $request->attributes->remove(self::ATTRIBUTE_AREABRICK_INFO);
+        } else {
+            $request->attributes->set(self::ATTRIBUTE_AREABRICK_INFO, $brickInfoRestoreValue);
+        }
+
         // call post render
         $this->handleBrickActionResult($brick->postRenderAction($info));
     }
 
     protected function handleBrickActionResult($result)
     {
-        // TODO Pimcore 6 rely on responseStack being set as constructor dependency
-        if (null === $this->responseStack) {
-            return;
-        }
 
         // if the action result is a response object, push it onto the
         // response stack. this response will be used by the ResponseStackListener
@@ -297,7 +305,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
      * TemplateAreabrickInterface fall back to auto-resolving the template reference. See interface for examples.
      *
      * @param AreabrickInterface $brick
-     * @param $type
+     * @param string $type
      *
      * @return mixed|null|string
      */

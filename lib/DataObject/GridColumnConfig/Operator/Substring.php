@@ -19,20 +19,22 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class Substring extends AbstractOperator
 {
+    /** @var int */
     private $start;
 
+    /** @var int */
     private $length;
 
+    /** @var bool */
     private $ellipses;
 
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->label = $config->cssClass;
-        $this->start = $config->start;
-        $this->length = $config->length;
-        $this->ellipses = $config->ellipses;
+        $this->start = $config->start ?? 0;
+        $this->length = $config->length ?? 0;
+        $this->ellipses = $config->ellipses ?? false;
     }
 
     public function getLabeledValue($element)
@@ -56,14 +58,15 @@ class Substring extends AbstractOperator
                 $childValues = [$childValues];
             }
 
-            /** @var $childValue string */
+            /** @var array $childValues */
             if (is_array($childValues)) {
+                /** @var string $childValue */
                 foreach ($childValues as $childValue) {
                     $showEllipses = false;
                     if ($childValue && $this->getEllipses()) {
                         $start = $this->getStart() ? $this->getStart() : 0;
                         $length = $this->getLength() ? $this->getLength() : 0;
-                        if (strlen($childValue) > $start + $length) {
+                        if (strlen($childValue) > ($start + $length)) {
                             $showEllipses = true;
                         }
                     }
@@ -92,7 +95,7 @@ class Substring extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getStart()
     {
@@ -100,7 +103,7 @@ class Substring extends AbstractOperator
     }
 
     /**
-     * @param mixed $start
+     * @param int $start
      */
     public function setStart($start)
     {
@@ -108,7 +111,7 @@ class Substring extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getLength()
     {
@@ -116,7 +119,7 @@ class Substring extends AbstractOperator
     }
 
     /**
-     * @param mixed $length
+     * @param int $length
      */
     public function setLength($length)
     {
@@ -124,7 +127,7 @@ class Substring extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function getEllipses()
     {
@@ -132,7 +135,7 @@ class Substring extends AbstractOperator
     }
 
     /**
-     * @param mixed $ellipses
+     * @param bool $ellipses
      */
     public function setEllipses($ellipses)
     {

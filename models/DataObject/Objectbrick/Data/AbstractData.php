@@ -19,15 +19,22 @@ namespace Pimcore\Model\DataObject\Objectbrick\Data;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 
 /**
  * @method Dao getDao()
+ * @method void save(Concrete $object, $params = [])
+ * @method array getRelationData($field, $forOwner, $remoteClassId)
  */
-abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface
+abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
+
+    use Model\Element\ElementDumpStateTrait;
+
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
      * Will be overriden by the actual ObjectBrick
@@ -39,17 +46,22 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     /**
      * @var string
      */
-    public $fieldname;
+    protected $fieldname;
 
     /**
      * @var bool
      */
-    public $doDelete;
+    protected $doDelete;
 
     /**
-     * @var DataObject\Concrete
+     * @var Model\DataObject\Concrete
      */
-    public $object;
+    protected $object;
+
+    /**
+     * @var int
+     */
+    protected $objectId;
 
     /**
      * @param DataObject\Concrete $object
@@ -68,7 +80,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $fieldname
+     * @param string $fieldname
      *
      * @return $this
      */
@@ -80,7 +92,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @return
+     * @return string
      */
     public function getType()
     {
@@ -88,7 +100,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @return mixed
+     * @return DataObject\Objectbrick\Definition
      */
     public function getDefinition()
     {
@@ -98,7 +110,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $doDelete
+     * @param bool $doDelete
      *
      * @return $this
      */
@@ -127,7 +139,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $object
+     * @param Concrete $object
      */
     public function delete($object)
     {
@@ -153,7 +165,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     }
 
     /**
-     * @param $key
+     * @param string $key
      *
      * @return mixed
      *
@@ -161,15 +173,18 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      */
     public function getValueFromParent($key)
     {
-        $parent = DataObject\Service::hasInheritableParentObject($this->getObject());
+        $object = $this->getObject();
+        if ($object) {
+            $parent = DataObject\Service::hasInheritableParentObject($object);
 
-        if (!empty($parent)) {
-            $containerGetter = 'get' . ucfirst($this->fieldname);
-            $brickGetter = 'get' . ucfirst($this->getType());
-            $getter = 'get' . ucfirst($key);
+            if (!empty($parent)) {
+                $containerGetter = 'get' . ucfirst($this->fieldname);
+                $brickGetter = 'get' . ucfirst($this->getType());
+                $getter = 'get' . ucfirst($key);
 
-            if ($parent->$containerGetter()->$brickGetter()) {
-                return $parent->$containerGetter()->$brickGetter()->$getter();
+                if ($parent->$containerGetter()->$brickGetter()) {
+                    return $parent->$containerGetter()->$brickGetter()->$getter();
+                }
             }
         }
 
@@ -183,6 +198,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      */
     public function setObject($object)
     {
+        $this->objectId = $object ? $object->getId() : null;
         $this->object = $object;
 
         return $this;
@@ -193,6 +209,10 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
      */
     public function getObject()
     {
+        if ($this->objectId && !$this->object) {
+            $this->setObject(Concrete::getById($this->objectId));
+        }
+
         return $this->object;
     }
 
@@ -222,7 +242,7 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
 
     /**
      * @param string $fieldName
-     * @param $value
+     * @param mixed $value
      *
      * @return mixed
      */
@@ -239,7 +259,8 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         $lazyLoadedFieldNames = [];
         $fields = $this->getDefinition()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if (method_exists($field, 'getLazyLoading') && $field->getLazyLoading()) {
+            if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
+                            && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }
@@ -266,10 +287,10 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
     public function __sleep()
     {
         $parentVars = parent::__sleep();
-        $blockedVars = ['loadedLazyKeys'];
+        $blockedVars = ['loadedLazyKeys', 'object'];
         $finalVars = [];
 
-        if (!isset($this->getObject()->_fulldump)) {
+        if (!$this->isInDumpState()) {
             //Remove all lazy loaded fields if item gets serialized for the cache (not for versions)
             $blockedVars = array_merge($this->getLazyLoadedFieldNames(), $blockedVars);
         }
@@ -281,5 +302,12 @@ abstract class AbstractData extends Model\AbstractModel implements Model\DataObj
         }
 
         return $finalVars;
+    }
+
+    public function __wakeup()
+    {
+        if ($this->object) {
+            $this->objectId = $this->object->getId();
+        }
     }
 }

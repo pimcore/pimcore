@@ -17,16 +17,20 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Model\DataObject\Objectbrick\Data\AbstractData;
+
 interface CustomResourcePersistingInterface
 {
     /**
-     * @param $object
+     * @param Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function save($object, $params = []);
 
     /**
-     * @param $object
+     * @param Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @return mixed
@@ -34,7 +38,7 @@ interface CustomResourcePersistingInterface
     public function load($object, $params = []);
 
     /**
-     * @param $object
+     * @param Concrete|Localizedfield|AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function delete($object, $params = []);

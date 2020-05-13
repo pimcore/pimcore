@@ -21,6 +21,9 @@ use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @deprecated
+ */
 class ClassController extends AbstractRestController
 {
     /**
@@ -315,7 +318,7 @@ class ClassController extends AbstractRestController
         $items = $list->getList();
 
         $relations = [];
-        /** @var $item DataObject\Classificationstore\CollectionGroupRelation */
+        /** @var DataObject\Classificationstore\CollectionGroupRelation $item */
         foreach ($items as $item) {
             $relations[] = $item->getObjectVars();
         }

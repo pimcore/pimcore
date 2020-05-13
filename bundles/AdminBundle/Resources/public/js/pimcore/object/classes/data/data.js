@@ -21,7 +21,7 @@ pimcore.object.classes.data.data = Class.create({
                 "userpermissions","dependencies","modificationdate","usermodification","byid","bypath","data",
                 "versions","properties","permissions","permissionsforuser","childamount","apipluginbroker","resource",
                 "parentClass","definition","locked","language","omitmandatorycheck", "idpath", "object", "fieldname",
-                "property","localizedfields","parentId", "children"
+                "property","localizedfields","parentId", "children", "scheduledTasks"
             ],
 
     /**
@@ -53,8 +53,8 @@ pimcore.object.classes.data.data = Class.create({
         }
 
         // per default all settings are available
-        this.availableSettingsFields = ["name","title","tooltip","mandatory","noteditable","index", "unique", "invisible",
-                                        "visibleGridView","visibleSearch", "style"];
+        this.availableSettingsFields = ["name", "title", "tooltip", "mandatory", "noteditable", "index", "invisible",
+            "visibleGridView", "visibleSearch", "style"];
     },
 
     getGroup: function () {
@@ -79,20 +79,12 @@ pimcore.object.classes.data.data = Class.create({
             }
         });
 
-        var indexCheckbox = new Ext.form.field.Checkbox({
+        this.indexCheckbox = new Ext.form.field.Checkbox({
             fieldLabel: t("index"),
             name: "index",
             itemId: "index",
             checked: this.datax.index,
             disabled: !in_array("index",this.availableSettingsFields),
-            hidden: true
-        });
-
-        var uniqueCheckbox = new Ext.form.field.Checkbox({
-            fieldLabel: t("unique"),
-            name: "unique",
-            itemId: "unique",
-            checked: this.datax.unique,
             hidden: true
         });
 
@@ -103,6 +95,21 @@ pimcore.object.classes.data.data = Class.create({
             checked: this.datax.mandatory,
             disabled: !in_array("mandatory",this.availableSettingsFields) || this.isInCustomLayoutEditor()
         });
+
+        if (this.supportsUnique()) {
+            this.uniqueCheckbox = new Ext.form.field.Checkbox({
+                fieldLabel: t("unique"),
+                name: "unique",
+                itemId: "unique",
+                checked: this.datax.unique,
+                autoEl: {
+                    tag: 'div',
+                    'data-qtip': t('unique_qtip')
+                },
+                hidden: true
+            });
+        }
+
 
         var standardSettings = [
             {
@@ -156,25 +163,41 @@ pimcore.object.classes.data.data = Class.create({
                 disabled: !in_array("tooltip",this.availableSettingsFields)
             },
             this.mandatoryCheckbox,
-            indexCheckbox,
-            uniqueCheckbox,
-            {
-                xtype: "checkbox",
-                fieldLabel: t("not_editable"),
-                name: "noteditable",
-                itemId: "noteditable",
-                checked: this.datax.noteditable,
-                disabled: !in_array("noteditable",this.availableSettingsFields)
-            },
-            {
-                xtype: "checkbox",
-                fieldLabel: t("invisible"),
-                name: "invisible",
-                itemId: "invisible",
-                checked: this.datax.invisible,
-                disabled: !in_array("invisible",this.availableSettingsFields)
-            }
+            this.indexCheckbox,
         ];
+
+        if (this.supportsUnique()) {
+            this.uniqueCheckbox = new Ext.form.field.Checkbox({
+                fieldLabel: t("unique"),
+                name: "unique",
+                itemId: "unique",
+                checked: this.datax.unique,
+                autoEl: {
+                    tag: 'div',
+                    'data-qtip': t('unique_qtip')
+                }
+            });
+            standardSettings.push(this.uniqueCheckbox);
+        }
+
+        standardSettings.push({
+            xtype: "checkbox",
+            fieldLabel: t("not_editable"),
+            name: "noteditable",
+            itemId: "noteditable",
+            checked: this.datax.noteditable,
+            disabled: !in_array("noteditable", this.availableSettingsFields)
+        });
+
+        standardSettings.push({
+            xtype: "checkbox",
+            fieldLabel: t("invisible"),
+            name: "invisible",
+            itemId: "invisible",
+            checked: this.datax.invisible,
+            disabled: !in_array("invisible", this.availableSettingsFields)
+        });
+
 
         if (!this.inCustomLayoutEditor) {
             standardSettings.push(            {
@@ -195,12 +218,7 @@ pimcore.object.classes.data.data = Class.create({
                 disabled: !in_array("visibleSearch",this.availableSettingsFields)
             });
 
-            indexCheckbox.setHidden(false);
-            if (this.datax.hasOwnProperty("unique")) {
-                uniqueCheckbox.setHidden(false);
-                Ext.QuickTips.init();
-                Ext.QuickTips.register({target:  uniqueCheckbox, text: t("unique")});
-            }
+            this.indexCheckbox.setHidden(false);
         }
 
         var layoutSettings = [
@@ -335,10 +353,6 @@ pimcore.object.classes.data.data = Class.create({
         return this.inCustomLayoutEditor;
     },
 
-    lazyLoadingNotPossible: function() {
-        return false;
-    },
-
     setInClassificationStoreEditor: function(inClassificationStoreEditor) {
         this.inClassificationStoreEditor = inClassificationStoreEditor;
     },
@@ -355,7 +369,11 @@ pimcore.object.classes.data.data = Class.create({
         this.context = context;
     },
 
-    getContext: function() {
+    getContext: function () {
         return this.context;
+    },
+
+    supportsUnique: function () {
+        return false;
     }
 });

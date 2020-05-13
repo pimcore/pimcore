@@ -74,9 +74,8 @@ pimcore.object.preview = Class.create({
 
     loadCurrentPreview: function () {
         var date = new Date();
-
         var url = "/admin/object/preview?id=" + this.object.data.general.o_id + "&time=" + date.getTime();
-        url = pimcore.helpers.addCsrfTokenToUrl(url);
+
         try {
             Ext.get(this.frameId).dom.src = url;
         }

@@ -69,7 +69,7 @@ pimcore.tool.paralleljobs = Class.create({
         }
     },
 
-    continue: function () {
+    continue: function (response) {
         this.jobsFinished++;
         this.jobsRunning-=1;
         this.alloverJobsFinished++;
@@ -80,7 +80,7 @@ pimcore.tool.paralleljobs = Class.create({
 
         try {
             if(typeof this.config.update == "function") {
-                this.config.update(this.alloverJobsFinished, this.alloverJobs, percent);
+                this.config.update(this.alloverJobsFinished, this.alloverJobs, percent, response);
             }
         } catch (e2) {}
     },
@@ -110,9 +110,9 @@ pimcore.tool.paralleljobs = Class.create({
                 method: method,
                 params: this.config.jobs[this.groupsFinished][this.jobsStarted].params,
                 success: function (response) {
-
+                    var res = null;
                     try {
-                        var res = Ext.decode(response.responseText);
+                        res = Ext.decode(response.responseText);
                         if(!res["success"]) {
                             // if the download fails, stop all activity
                             throw res;
@@ -128,7 +128,7 @@ pimcore.tool.paralleljobs = Class.create({
                         }
                     }
 
-                    this.continue();
+                    this.continue(res ? res : response);
                 }.bind(this),
                 failure: function (response) {
                     this.error(response.responseText);

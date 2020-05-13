@@ -14,10 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ICartPriceModificator;
-use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\IShipping;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\CartPriceModificatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\ShippingInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ActionInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 
@@ -44,10 +43,10 @@ class FreeShipping implements ActionInterface
 
         $list = $priceCalculator->getModificators();
         foreach ($list as &$modificator) {
-            /* @var ICartPriceModificator $modificator_ */
+            /* @var CartPriceModificatorInterface $modificator_ */
 
             // remove shipping charge
-            if ($modificator instanceof IShipping) {
+            if ($modificator instanceof ShippingInterface) {
                 $modificator->setCharge(Decimal::zero());
                 $priceCalculator->calculate(true);
             }
@@ -69,7 +68,7 @@ class FreeShipping implements ActionInterface
     /**
      * @param string $string
      *
-     * @return ConditionInterface
+     * @return ActionInterface
      */
     public function fromJSON($string)
     {

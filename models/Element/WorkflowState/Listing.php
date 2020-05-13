@@ -22,24 +22,30 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Element\WorkflowState\Listing\Dao getDao()
  * @method Model\Element\WorkflowState[] load()
+ * @method Model\Element\WorkflowState current()
  */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array
+     * @var Model\Element\WorkflowState[]|null
+     *
+     * @deprecated use getter/setter methods or $this->data
      */
     protected $workflowStates = null;
 
+    public function __construct()
+    {
+        $this->workflowStates = & $this->data;
+    }
+
     /**
-     * @param $workflowStates
+     * @param Model\Element\WorkflowState[]|null $workflowStates
      *
-     * @return $this
+     * @return static
      */
     public function setWorkflowStates($workflowStates)
     {
-        $this->workflowStates = $workflowStates;
-
-        return $this;
+        return $this->setData($workflowStates);
     }
 
     /**
@@ -47,10 +53,6 @@ class Listing extends Model\Listing\AbstractListing
      */
     public function getWorkflowStates()
     {
-        if ($this->workflowStates === null) {
-            $this->getDao()->load();
-        }
-
-        return $this->workflowStates;
+        return $this->getData();
     }
 }

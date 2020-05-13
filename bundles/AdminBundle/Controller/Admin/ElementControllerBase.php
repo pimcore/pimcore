@@ -35,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ElementControllerBase extends AdminController
 {
     /**
-     * @param $element
+     * @param ElementInterface $element
      *
      * @return array
      */
@@ -62,6 +62,7 @@ class ElementControllerBase extends AdminController
         }
 
         if (in_array($type, $allowedTypes)) {
+            /** @var Document|Asset|AbstractObject $root */
             $root = Service::getElementById($type, $id);
             if ($root->isAllowed('list')) {
                 return $this->adminJson($this->getTreeNodeConfig($root));
@@ -83,7 +84,6 @@ class ElementControllerBase extends AdminController
         $hasDependency = false;
         $errors = false;
         $deleteJobs = [];
-        $recycleJobs = [];
         $itemResults = [];
 
         $totalChilds = 0;
@@ -98,7 +98,10 @@ class ElementControllerBase extends AdminController
                 if (!$element) {
                     continue;
                 }
-                $hasDependency = $element->getDependencies()->isRequired();
+
+                if (!$hasDependency) {
+                    $hasDependency = $element->getDependencies()->isRequired();
+                }
             } catch (\Exception $e) {
                 Logger::err('failed to access element with id: ' . $id);
                 continue;
@@ -143,7 +146,7 @@ class ElementControllerBase extends AdminController
                     'allowed' => true,
                 ];
 
-                $recycleJobs[] = [[
+                $deleteJobs[] = [[
                     'url' => '/admin/recyclebin/add',
                     'method' => 'POST',
                     'params' => [
@@ -157,7 +160,6 @@ class ElementControllerBase extends AdminController
                     $hasDependency = $hasChilds;
                 }
 
-                $childs = 0;
                 if ($hasChilds) {
                     // get amount of childs
                     $listClass = '\Pimcore\Model\\' . Service::getBaseClassNameForElement($element) . '\Listing';
@@ -198,14 +200,12 @@ class ElementControllerBase extends AdminController
         // get the element key in case of just one
         $elementKey = false;
         if (count($ids) === 1) {
-            $element = Service::getElementById($type, $id)->getKey();
+            $element = Service::getElementById($type, $ids[0]);
 
             if ($element instanceof ElementInterface) {
                 $elementKey = $element->getKey();
             }
         }
-
-        $deleteJobs = array_merge($recycleJobs, $deleteJobs);
 
         return $this->adminJson([
             'hasDependencies' => $hasDependency,

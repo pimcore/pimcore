@@ -76,7 +76,7 @@ class SiteId
         $name = null;
 
         if (null === $site) {
-            if ($mainDomain = \Pimcore\Config::getSystemConfig()->general->domain) {
+            if (!empty($mainDomain = \Pimcore\Config::getSystemConfiguration('general')['domain'])) {
                 return $mainDomain;
             }
 

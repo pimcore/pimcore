@@ -65,11 +65,6 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         this.tabPanel = Ext.getCmp("pimcore_panel_tabs");
         var tabId = "asset_" + this.id;
 
-        var iconClass = "pimcore_icon_asset_default pimcore_icon_" + this.data.fileExtension;
-        if (this.data.type == "folder") {
-            iconClass = "pimcore_icon_folder";
-        }
-
         this.tab = new Ext.Panel({
             id: tabId,
             title: htmlspecialchars(tabTitle),
@@ -77,7 +72,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             layout: "border",
             items: [this.getLayoutToolbar(),this.getTabPanel()],
             asset: this,
-            iconCls: iconClass
+            iconCls: this.getIconClass()
         });
 
         this.tab.on("activate", function () {
@@ -248,6 +243,15 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 });
             }
 
+            if (pimcore.globalmanager.get("user").isAllowed('notifications_send')) {
+                buttons.push({
+                    tooltip: t('share_via_notifications'),
+                    iconCls: "pimcore_icon_share",
+                    scale: "medium",
+                    handler: this.shareViaNotifications.bind(this)
+                });
+            }
+
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
@@ -333,7 +337,21 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
 
         this.tab.mask();
 
-        pimcore.plugin.broker.fireEvent("preSaveAsset", this.id);
+        try {
+            pimcore.plugin.broker.fireEvent("preSaveAsset", this.id);
+        } catch (e) {
+            if (e instanceof pimcore.error.ValidationException) {
+                this.tab.unmask();
+                pimcore.helpers.showPrettyError('asset', t("error"), t("saving_failed"), e.message);
+                return false;
+            }
+
+            if (e instanceof pimcore.error.ActionCancelledException) {
+                this.tab.unmask();
+                pimcore.helpers.showNotification(t("Info"), 'Asset not saved: ' + e.message, 'info');
+                return false;
+            }
+        }
 
         Ext.Ajax.request({
             url: '/admin/asset/save',
@@ -347,10 +365,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                         Ext.apply(this.data, rdata.data);
 
                         pimcore.plugin.broker.fireEvent("postSaveAsset", this.id);
-                    }
-                    else {
-                        pimcore.helpers.showPrettyError(rdata.type, t("error"), t("saving_failed"),
-                            rdata.message, rdata.stack, rdata.code);
+                        pimcore.helpers.updateTreeElementStyle('asset', this.id, rdata.treeData);
+
                     }
                 } catch(e){
                     pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
@@ -370,7 +386,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             }.bind(this),
             failure: function () {
                 this.tab.unmask();
-            },
+            }.bind(this),
             params: this.getSaveData(only)
         });
     },
@@ -481,6 +497,19 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             }
             pimcore.elementservice.editElementKey(options);
         }
-    }
+    },
 
+    shareViaNotifications: function () {
+        if (pimcore.globalmanager.get("user").isAllowed('notifications_send')) {
+            var elementData = {
+                id:this.id,
+                type:'asset',
+                published:true,
+                path:this.data.path + this.data.filename
+            };
+            if (pimcore.globalmanager.get("new_notifications")) {
+                pimcore.globalmanager.get("new_notifications").getWindow().destroy();
+            }
+            pimcore.globalmanager.add("new_notifications", new pimcore.notification.modal(elementData));        }
+    }
 });

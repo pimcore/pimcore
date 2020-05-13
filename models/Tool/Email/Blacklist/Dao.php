@@ -25,7 +25,7 @@ use Pimcore\Model;
 class Dao extends Model\Dao\AbstractDao
 {
     /**
-     * @param $address
+     * @param string $address
      *
      * @throws \Exception
      */
@@ -42,8 +42,6 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * Save object to database
      *
-     * @return bool
-     *
      * @todo: $data could be undefined
      */
     public function save()
@@ -56,6 +54,7 @@ class Dao extends Model\Dao\AbstractDao
         $version = $this->model->getObjectVars();
 
         // save main table
+        $data = [];
         foreach ($version as $key => $value) {
             if (in_array($key, $this->getValidTableColumns('email_blacklist'))) {
                 if (is_bool($value)) {
@@ -67,8 +66,6 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         $this->db->insertOrUpdate('email_blacklist', $data);
-
-        return true;
     }
 
     /**

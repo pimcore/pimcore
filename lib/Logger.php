@@ -17,7 +17,7 @@ namespace Pimcore;
 class Logger
 {
     /**
-     * @param $message
+     * @param string $message
      * @param string $level
      * @param array $context
      *
@@ -36,7 +36,7 @@ class Logger
      **/
 
     /**
-     * @param $m
+     * @param string $m
      * @param array $context
      */
     public static function emergency($m, $context = [])
@@ -45,7 +45,7 @@ class Logger
     }
 
     /**
-     * @param $m
+     * @param string $m
      * @param array $context
      */
     public static function emerg($m, $context = [])
@@ -54,7 +54,7 @@ class Logger
     }
 
     /**
-     * @param $m
+     * @param string $m
      * @param array $context
      */
     public static function alert($m, $context = [])
@@ -63,7 +63,7 @@ class Logger
     }
 
     /**
-     * @param $m
+     * @param string $m
      * @param array $context
      */
     public static function critical($m, $context = [])
@@ -72,7 +72,7 @@ class Logger
     }
 
     /**
-     * @param $m
+     * @param string $m
      * @param array $context
      */
     public static function crit($m, $context = [])
@@ -81,7 +81,7 @@ class Logger
     }
 
     /**
-     * @param $m
+     * @param string $m
      * @param array $context
      */
     public static function error($m, $context = [])
@@ -90,7 +90,7 @@ class Logger
     }
 
     /**
-     * @param $m
+     * @param string $m
      * @param array $context
      */
     public static function err($m, $context = [])
@@ -99,7 +99,7 @@ class Logger
     }
 
     /**
-     * @param $m
+     * @param string $m
      * @param array $context
      */
     public static function warning($m, $context = [])
@@ -108,7 +108,7 @@ class Logger
     }
 
     /**
-     * @param $m
+     * @param string $m
      * @param array $context
      */
     public static function warn($m, $context = [])
@@ -117,7 +117,7 @@ class Logger
     }
 
     /**
-     * @param $m
+     * @param string $m
      * @param array $context
      */
     public static function notice($m, $context = [])
@@ -126,7 +126,7 @@ class Logger
     }
 
     /**
-     * @param $m
+     * @param string $m
      * @param array $context
      */
     public static function info($m, $context = [])
@@ -135,7 +135,7 @@ class Logger
     }
 
     /**
-     * @param $m
+     * @param string $m
      * @param array $context
      */
     public static function debug($m, $context = [])

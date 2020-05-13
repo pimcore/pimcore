@@ -45,10 +45,10 @@ class Translate extends Helper
     }
 
     /**
-     * @param $key
+     * @param string $key
      * @param array $parameters
-     * @param null $domain
-     * @param null $locale
+     * @param string|null $domain
+     * @param string|null $locale
      *
      * @return string
      */

@@ -39,7 +39,6 @@ class ConfigWriter
                 'error_pages' => [
                     'default' => '/'
                 ],
-                'create_redirect_when_moved' => false,
                 'allow_trailing_slash' => 'no',
                 'generate_preview' => false
             ],
@@ -54,7 +53,7 @@ class ConfigWriter
                 ]
             ],
             'services' => [],
-            'cache' => [
+            'full_page_cache' => [
                 'exclude_cookie' => ''
             ],
             'httpclient' => [
@@ -151,7 +150,7 @@ class ConfigWriter
                 }
 
                 $configTemplate = new \Pimcore\Config\Config($configTemplateArray);
-                if ($configTemplate->pimcore->general) { // check if the template contains a valid configuration
+                if ($configTemplate->get('pimcore')->general) { // check if the template contains a valid configuration
                     $settings = $configTemplate->toArray();
 
                     break;

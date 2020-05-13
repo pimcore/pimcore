@@ -36,6 +36,8 @@ class DelegatingTagHandler implements TagHandlerInterface
     public function addHandler(TagHandlerInterface $handler)
     {
         $this->handlers[] = $handler;
+
+        return $this;
     }
 
     /**

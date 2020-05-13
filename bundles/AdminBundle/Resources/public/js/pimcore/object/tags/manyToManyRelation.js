@@ -19,6 +19,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
     idProperty: "rowId",
     pathProperty: "fullpath",
     allowBatchAppend: true,
+    allowBatchRemove: true,
     dataObjectFolderAllowed: false,
 
     initialize: function (data, fieldConfig) {
@@ -26,7 +27,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
 
         this.fieldConfig = fieldConfig;
 
-        this.fieldConfig.classes =  this.fieldConfig.classes.filter(x => {
+        this.fieldConfig.classes =  this.fieldConfig.classes.filter(function (x) {
             if(x.classes == 'folder') {
                 this.dataObjectFolderAllowed = true;
                 return false;
@@ -73,7 +74,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
 
     getGridColumnConfig: function (field) {
         return {
-            text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+            text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
@@ -113,6 +114,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
         columns.push({
             xtype: 'actioncolumn',
             menuText: t('up'),
+            hideable: false,
             width: 40,
             items: [
                 {
@@ -132,6 +134,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             xtype: 'actioncolumn',
             menuText: t('down'),
             width: 40,
+            hideable: false,
             items: [
                 {
                     tooltip: t('down'),
@@ -150,6 +153,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             xtype: 'actioncolumn',
             menuText: t('open'),
             width: 40,
+            hideable: false,
             items: [{
                 tooltip: t('open'),
                 icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
@@ -167,6 +171,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             xtype: 'actioncolumn',
             menuText: t('remove'),
             width: 40,
+            hideable: false,
             items: [{
                 tooltip: t('remove'),
                 icon: "/bundles/pimcoreadmin/img/flat-color-icons/delete.svg",
@@ -186,9 +191,16 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 markDirty: false,
                 plugins: {
                     ptype: 'gridviewdragdrop',
-                    dragroup: 'element'
+                    draggroup: 'element'
                 },
                 listeners: {
+                    drop: function (node, data, dropRec, dropPosition) {
+                        // this is necessary to avoid endless recursion when long lists are sorted via d&d
+                        // TODO: investigate if there this is already fixed 6.2
+                        if (this.object.toolbar && this.object.toolbar.items && this.object.toolbar.items.items) {
+                            this.object.toolbar.items.items[0].focus();
+                        }
+                    }.bind(this),
                     refresh: function (gridview) {
                         this.requestNicePathData(this.store.data);
                     }.bind(this)
@@ -402,11 +414,15 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             style: "margin-bottom: 10px",
             title: this.fieldConfig.title,
             viewConfig: {
+            enableTextSelection: true,
                 listeners: {
                     refresh: function (gridview) {
                         this.requestNicePathData(this.store.data);
                     }.bind(this)
                 }
+            },
+            listeners: {
+                rowdblclick: this.gridRowDblClickHandler
             }
         });
 
@@ -484,7 +500,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             allowedSubtypes.object = [];
             if (this.fieldConfig.classes != null && this.fieldConfig.classes.length > 0) {
                 allowedSpecific.classes = [];
-                allowedSubtypes.object.push("object");
+                allowedSubtypes.object.push("object", "variant");
                 for (i = 0; i < this.fieldConfig.classes.length; i++) {
                     allowedSpecific.classes.push(this.fieldConfig.classes[i].classes);
 
@@ -589,18 +605,6 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
     removeElement: function (index, item) {
         this.getStore().removeAt(index);
         item.parentMenu.destroy();
-    },
-
-
-    isInvalidMandatory: function () {
-
-        var data = this.store.queryBy(function (record, id) {
-            return true;
-        });
-        if (data.items.length < 1) {
-            return true;
-        }
-        return false;
     },
 
     getValue: function () {

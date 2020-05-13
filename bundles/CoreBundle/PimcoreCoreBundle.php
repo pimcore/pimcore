@@ -25,6 +25,7 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPublicLoggerPa
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\NavigationRendererPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PhpTemplatingPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PimcoreGlobalTemplatingVariablesPass;
+use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ProfilerAliasPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterImageOptimizersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterMaintenanceTaskPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RoutingLoaderPass;
@@ -60,6 +61,8 @@ class PimcoreCoreBundle extends Bundle
         if ($this->extension) {
             return $this->extension;
         }
+
+        return null;
     }
 
     /**
@@ -87,6 +90,7 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new RegisterImageOptimizersPass());
         $container->addCompilerPass(new RegisterMaintenanceTaskPass());
         $container->addCompilerPass(new RoutingLoaderPass());
+        $container->addCompilerPass(new ProfilerAliasPass());
         $container->addCompilerPass(new LegacyTemplatePass());
     }
 }

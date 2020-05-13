@@ -432,7 +432,6 @@ class Config implements Countable, Iterator, ArrayAccess
      */
     public function __toString()
     {
-        // Zend_Xml parses <tag></tag> as empty array
         if (empty($this->data)) {
             return '';
         }

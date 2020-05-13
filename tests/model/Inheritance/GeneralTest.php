@@ -3,8 +3,11 @@
 namespace Pimcore\Tests\Model\Inheritance;
 
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\Inheritance;
+use Pimcore\Model\DataObject\RelationTest;
+use Pimcore\Model\DataObject\Service;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
@@ -122,18 +125,69 @@ class GeneralTest extends ModelTestCase
         $this->assertEquals('parenttext2', $two->getNormalInput());
 
         // TODO the following doesn't work as the catch catches the exception thrown in fail
-        /*
-        // invalid locale
-        $list = new Inheritance\Listing();
-        $list->setCondition("normalinput LIKE '%parenttext%'");
-        $list->setLocale("xx");
+    }
 
-        try {
-            $listItems = $list->load();
-            $this->fail("Excpected exception");
-        } catch (Exception $e) {
-        }
-        */
+    /**
+     * Tests https://github.com/pimcore/pimcore/pull/6269
+     * [Data objects] Override inherited value with same value (break inheritance)
+     *
+     * @throws \Exception
+     */
+    public function testEqual()
+    {
+        // According to the bootstrap file en and de are valid website languages
+
+        $target = new RelationTest();
+        $target->setParent(Service::createFolderByPath('__test/relationobjects'));
+        $target->setKey('relation-1');
+        $target->setPublished(true);
+        $target->setSomeAttribute('Some content 1');
+        $target->save();
+
+        /** @var Inheritance $one */
+        $one = new Inheritance();
+        $one->setKey('one');
+        $one->setParentId(1);
+        $one->setPublished(1);
+
+        $one->setNormalInput('parenttext');
+        $one->setRelation($target);
+        $one->save();
+
+        // create child "two", inherit relation from "one"
+
+        /** @var Inheritance $two */
+        $two = new Inheritance();
+        $two->setKey('one');
+        $two->setParentId($one->getId());
+        $two->setPublished(1);
+
+        $two->setNormalInput('parenttext');
+        $two->save();
+
+        $inheritanceEnabled = AbstractObject::getGetInheritedValues();
+
+        AbstractObject::setGetInheritedValues(true);
+        $fetchedTarget = $two->getRelation();
+        $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
+
+        AbstractObject::setGetInheritedValues(false);
+        $fetchedTarget = $two->getRelation();
+        $this->assertNull($fetchedTarget, 'target should not be inherited');
+
+        // enable inheritance and set the target
+        AbstractObject::setGetInheritedValues(true);
+        $two = Concrete::getById($two->getId(), true);
+        $two->setRelation($target);
+        $two->save();
+
+        // disable inheritance and check that the relation has been set on "two"
+        AbstractObject::setGetInheritedValues(false);
+        $two = Concrete::getById($two->getId(), true);
+        $fetchedTarget = $two->getRelation();
+        $this->assertTrue($fetchedTarget && $fetchedTarget->getId() == $target->getId(), 'expectected inherited target');
+
+        AbstractObject::setGetInheritedValues($inheritanceEnabled);
     }
 
     /**
@@ -181,6 +235,69 @@ class GeneralTest extends ModelTestCase
         $relationobjects = $two->getRelationObjects();
 
         $this->assertEquals(1, count($relationobjects), 'inheritance for object relations failed');
+        $this->assertEquals($one->getId(), $relationobjects[0]->getId(), 'inheritance for object relations failed (wrong object)');
+
+        $db = $this->tester->getContainer()->get('database_connection');
+        $table = 'object_' . $one->getClassId();
+
+        $relationobjectsString = $db->fetchColumn('SELECT relationobjects FROM ' . $table . ' WHERE oo_id = ?', [
+            $two->getId()
+        ]);
+
+        $this->assertEquals(
+            ',' . $one->getId() . ',',
+            $relationobjectsString,
+            'comma separated relation ids not written correctly in object_* view'
+        );
+    }
+
+    /**
+     * Tests the following scenario:
+     *
+     * root
+     *    |-one
+     *      | -object of other class
+     *         |-two
+     *
+     * object relations field should inherit it's values from one to two
+     */
+    public function testInheritanceWithOtherClassObjectBetween()
+    {
+        // According to the bootstrap file en and de are valid website languages
+
+        $one = new Inheritance();
+        $one->setKey('one');
+        $one->setParentId(1);
+        $one->setPublished(1);
+
+        $one->setNormalInput('parenttext');
+        $one->save();
+
+        $objectBetween = new \Pimcore\Model\DataObject\Unittest();
+        $objectBetween->setParent($one);
+        $objectBetween->setKey('object of other class');
+        $objectBetween->save();
+
+        $two = new Inheritance();
+        $two->setKey('two');
+        $two->setParentId($objectBetween->getId());
+        $two->setPublished(1);
+
+        $two->setNormalInput('childtext');
+        $two->save();
+
+        $one->setRelationobjects([$one]);
+        $one->save();
+
+        \Pimcore::collectGarbage();
+
+        $two = Inheritance::getById($two->getId());
+
+        $this->assertEquals('childtext', $two->getNormalInput(), 'inheritance failed - inherited data although child overwrote it');
+
+        $relationobjects = $two->getRelationObjects();
+
+        $this->assertCount(1, $relationobjects, 'inheritance for object relations failed');
         $this->assertEquals($one->getId(), $relationobjects[0]->getId(), 'inheritance for object relations failed (wrong object)');
 
         $db = $this->tester->getContainer()->get('database_connection');

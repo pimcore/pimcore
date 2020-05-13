@@ -26,7 +26,7 @@ class PdfReactor8 extends Processor
     /**
      * returns the default web2print config
      *
-     * @param $config
+     * @param object $config
      *
      * @return array
      */
@@ -36,24 +36,25 @@ class PdfReactor8 extends Processor
         $web2PrintConfig = Config::getWeb2PrintConfig();
         $reactorConfig = [
             'document' => '',
-            'baseURL' => (string)$web2PrintConfig->pdfreactorBaseUrl,
-            'author' => $config->author ? $config->author : '',
-            'title' => $config->title ? $config->title : '',
-            'addLinks' => $config->links == 'true',
-            'addBookmarks' => $config->bookmarks == 'true',
+            'baseURL' => (string)$web2PrintConfig->get('pdfreactorBaseUrl'),
+            'author' => $config->author ?? '',
+            'title' => $config->title ?? '',
+            'addLinks' => isset($config->links) && $config->links === true,
+            'addBookmarks' => isset($config->bookmarks) && $config->bookmarks === true,
             'javaScriptMode' => $config->javaScriptMode,
-            'defaultColorSpace' => $config->colorspace,
-            'encryption' => $config->encryption,
-            'addTags' => $config->tags == 'true',
-            'logLevel' => $config->loglevel,
-            'enableDebugMode' => $web2PrintConfig->pdfreactorEnableDebugMode || $config->enableDebugMode == 'true',
-            'addOverprint' => $config->addOverprint == 'true'
+            'defaultColorSpace' => $config->colorspace ?? \ColorSpace::CMYK,
+            'encryption' => $config->encryption ?? \Encryption::NONE,
+            'addTags' => isset($config->tags) && $config->tags === true,
+            'logLevel' => $config->loglevel ?? \LogLevel::FATAL,
+            'enableDebugMode' => $web2PrintConfig->get('pdfreactorEnableDebugMode') || $config->enableDebugMode === true,
+            'addOverprint' => isset($config->addOverprint) && $config->addOverprint === true,
+            'httpsMode' => $web2PrintConfig->get('pdfreactorEnableLenientHttpsMode') ? \HttpsMode::LENIENT : \HttpsMode::STRICT
         ];
-        if ($config->viewerPreference) {
+        if (!empty($config->viewerPreference)) {
             $reactorConfig['viewerPreferences'] = [$config->viewerPreference];
         }
-        if (trim($web2PrintConfig->pdfreactorLicence)) {
-            $reactorConfig['licenseKey'] = trim($web2PrintConfig->pdfreactorLicence);
+        if (trim($web2PrintConfig->get('pdfreactorLicence'))) {
+            $reactorConfig['licenseKey'] = trim($web2PrintConfig->get('pdfreactorLicence'));
         }
 
         return $reactorConfig;
@@ -68,13 +69,13 @@ class PdfReactor8 extends Processor
 
         include_once(__DIR__ . '/api/v' . $web2PrintConfig->get('pdfreactorVersion', '8.0') . '/PDFreactor.class.php');
 
-        $port = ((string)$web2PrintConfig->pdfreactorServerPort) ? (string)$web2PrintConfig->pdfreactorServerPort : '9423';
-        $protocol = ((string)$web2PrintConfig->pdfreactorProtocol) ? (string)$web2PrintConfig->pdfreactorProtocol : 'http';
+        $port = ((string)$web2PrintConfig->get('pdfreactorServerPort')) ? (string)$web2PrintConfig->get('pdfreactorServerPort') : '9423';
+        $protocol = ((string)$web2PrintConfig->get('pdfreactorProtocol')) ? (string)$web2PrintConfig->get('pdfreactorProtocol') : 'http';
 
-        $pdfreactor = new \PDFreactor($protocol . '://' . $web2PrintConfig->pdfreactorServer . ':' . $port . '/service/rest');
+        $pdfreactor = new \PDFreactor($protocol . '://' . $web2PrintConfig->get('pdfreactorServer') . ':' . $port . '/service/rest');
 
-        if (trim($web2PrintConfig->pdfreactorApiKey)) {
-            $pdfreactor->apiKey = trim($web2PrintConfig->pdfreactorApiKey);
+        if (trim($web2PrintConfig->get('pdfreactorApiKey'))) {
+            $pdfreactor->apiKey = trim($web2PrintConfig->get('pdfreactorApiKey'));
         }
 
         return $pdfreactor;
@@ -115,12 +116,20 @@ class PdfReactor8 extends Processor
         }
     }
 
+    /**
+     * @param Document\PrintAbstract $document
+     * @param object $config
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
         $params = [];
-        $params['printermarks'] = $config->printermarks == 'true';
-        $params['screenResolutionImages'] = $config->screenResolutionImages == 'true';
-        $params['colorspace'] = $config->colorspace;
+        $params['printermarks'] = isset($config->printermarks) && $config->printermarks === true;
+        $params['screenResolutionImages'] = isset($config->screenResolutionImages) && $config->screenResolutionImages === true;
+        $params['colorspace'] = $config->colorspace ?? \ColorSpace::CMYK;
 
         $this->updateStatus($document->getId(), 10, 'start_html_rendering');
         $html = $document->renderDocument($params);
@@ -132,7 +141,6 @@ class PdfReactor8 extends Processor
         $pdfreactor = $this->getClient();
 
         $reactorConfig = $this->getConfig($config);
-        $web2PrintConfig = Config::getWeb2PrintConfig();
         $reactorConfig['document'] = $html;
 
         $event = new PrintConfigEvent($this, ['config' => $config, 'reactorConfig' => $reactorConfig, 'document' => $document]);
@@ -140,30 +148,22 @@ class PdfReactor8 extends Processor
 
         $reactorConfig = $event->getArguments()['reactorConfig'];
 
-        try {
-            $progress = new \stdClass();
-            $progress->finished = false;
+        $progress = new \stdClass();
+        $progress->finished = false;
 
-            $processId = $pdfreactor->convertAsync($reactorConfig);
+        $processId = $pdfreactor->convertAsync($reactorConfig);
 
-            while (!$progress->finished) {
-                $progress = $pdfreactor->getProgress($processId);
-                $this->updateStatus($document->getId(), 50 + ($progress->progress / 2), 'pdf_conversion');
+        while (!$progress->finished) {
+            $progress = $pdfreactor->getProgress($processId);
+            $this->updateStatus($document->getId(), 50 + ($progress->progress / 2), 'pdf_conversion');
 
-                Logger::info('PDF converting progress: ' . $progress->progress . '%');
-                sleep(2);
-            }
-
-            $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
-            $result = $pdfreactor->getDocument($processId);
-            $pdf = base64_decode($result->document);
-        } catch (\Exception $e) {
-            Logger::error($e);
-            $document->setLastGenerateMessage($e->getMessage());
-            throw new \Exception('Error during REST-Request:' . $e->getMessage());
+            Logger::info('PDF converting progress: ' . $progress->progress . '%');
+            sleep(2);
         }
 
-        $document->setLastGenerateMessage('');
+        $this->updateStatus($document->getId(), 100, 'saving_pdf_document');
+        $result = $pdfreactor->getDocument($processId);
+        $pdf = base64_decode($result->document);
 
         return $pdf;
     }
@@ -176,8 +176,8 @@ class PdfReactor8 extends Processor
 
         $options[] = ['name' => 'author', 'type' => 'text', 'default' => ''];
         $options[] = ['name' => 'title', 'type' => 'text', 'default' => ''];
-        $options[] = ['name' => 'printermarks', 'type' => 'bool', 'default' => ''];
-        $options[] = ['name' => 'addOverprint', 'type' => 'bool', 'default' => ''];
+        $options[] = ['name' => 'printermarks', 'type' => 'bool', 'default' => false];
+        $options[] = ['name' => 'addOverprint', 'type' => 'bool', 'default' => false];
         $options[] = ['name' => 'links', 'type' => 'bool', 'default' => true];
         $options[] = ['name' => 'bookmarks', 'type' => 'bool', 'default' => true];
         $options[] = ['name' => 'tags', 'type' => 'bool', 'default' => true];

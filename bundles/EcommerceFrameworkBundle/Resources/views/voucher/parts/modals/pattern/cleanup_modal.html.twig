@@ -1,0 +1,57 @@
+<div id="cleanUp" class="modal fade">
+    <div class="modal-dialog">
+        <form class="form-horizontal js-cleanup-modal-form"
+              action="{{ path('pimcore_ecommerce_backend_voucher_cleanup') }}" method="post">
+            <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
+            <div class="modal-content">
+
+                <input type="hidden" name="id" value="{{ id }}">
+
+                <!-- dialog body -->
+                <div class="modal-body-content">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <div class="clearfix"></div>
+                    <h3>{{ ('bundle_ecommerce_voucherservice_modal_cleanup-headline')|trans([],'admin') }}</h3>
+
+                    <div id="cleanupButtons" class="form-group">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-secondary active cleanup-radio">
+                                <input type="radio" name="usage" value='used' class="form-control">
+                                {{ ('bundle_ecommerce_voucherservice_modal_cleanup-used-checkbox')|trans([],'admin') }}
+                            </label>
+
+                            <label class="btn btn-secondary cleanup-radio">
+                                <input type="radio" name="usage" value='unused' class="form-control">
+                                {{ ('bundle_ecommerce_voucherservice_modal_cleanup-unused-checkbox')|trans([],'admin') }}
+                            </label>
+                            <label class="btn btn-secondary cleanup-radio">
+                                <input type="radio" name="usage" value='both' class="form-control">
+                                {{ ('bundle_ecommerce_voucherservice_modal_cleanup-both-checkbox')|trans([],'admin') }}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 20px">
+                        <div class="col col-sm-6">
+                            <label>{{ ('bundle_ecommerce_voucherservice_modal_cleanup-older-than')|trans([],'admin') }}</label>
+                            <input type="text" name="olderThan" class="form-control js-datepicker">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- dialog buttons -->
+                <div class="modal-footer">
+                    <div class="col col-sm-6 text-left">
+                        <p>
+                            {{ ('bundle_ecommerce_voucherservice_modal_cleanup-infotext')|trans([],'admin') }}
+                        </p>
+                    </div>
+                    <button type="submit" class="btn btn-primary js-loading" data-msg="{{ ('bundle_ecommerce_voucherservice_modal_cleanup-loadingtext')|trans([],'admin') }}">
+                        {{ ('bundle_ecommerce_voucherservice_modal_cleanup-submit-button')|trans([],'admin') }}
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ ('bundle_ecommerce_voucherservice_modal_cancel')|trans([],'admin') }}</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

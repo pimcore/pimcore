@@ -59,7 +59,6 @@ class Composer
     {
         $rootPath = self::getRootPath($event);
         self::parametersYmlCheck($rootPath);
-        self::zendFrameworkOptimization($rootPath);
     }
 
     /**
@@ -69,7 +68,6 @@ class Composer
     {
         $rootPath = self::getRootPath($event);
         self::parametersYmlCheck($rootPath);
-        self::zendFrameworkOptimization($rootPath);
     }
 
     /**
@@ -103,8 +101,41 @@ class Composer
     }
 
     /**
-     * @param $event
-     * @param $consoleDir
+     * @param Event $event
+     */
+    public static function executeBundleMigrationsUp(Event $event)
+    {
+        $consoleDir = static::getConsoleDir($event, 'bundle migrations');
+
+        if (null === $consoleDir) {
+            return;
+        }
+
+        $process = static::executeCommand($event, $consoleDir, 'pimcore:bundle:list --json', 30, false);
+        $bundles = \json_decode($process->getOutput(), true);
+
+        usort($bundles, static function ($bundle1, $bundle2) {
+            return $bundle1['Priority'] <=> $bundle2['Priority'];
+        });
+
+        $updatableBundles = array_filter($bundles, static function ($bundle) {
+            return $bundle['Updatable'];
+        });
+
+        foreach ($updatableBundles as $bundle) {
+            try {
+                static::executeCommand($event, $consoleDir, 'pimcore:migrations:migrate -b '.$bundle['Bundle']);
+            } catch (\Throwable $e) {
+                $event->getIO()->write('<comment>Skipping migrations for bundle "'.$bundle.'": '.PHP_EOL.$e.'</comment>', true);
+            }
+        }
+
+        self::clearDataCache($event, $consoleDir);
+    }
+
+    /**
+     * @param Event $event
+     * @param string $consoleDir
      */
     public static function clearDataCache($event, $consoleDir)
     {
@@ -121,64 +152,28 @@ class Composer
     public static function parametersYmlCheck($rootPath)
     {
         // ensure that there's a parameters.yml, if not we'll create a temporary one, so that the requirement check works
+        $parameters = '';
         $parametersYml = $rootPath . '/app/config/parameters.yml';
         $parametersYmlExample = $rootPath . '/app/config/parameters.example.yml';
         if (!file_exists($parametersYml) && file_exists($parametersYmlExample)) {
-            $secret = base64_encode(random_bytes(24));
             $parameters = file_get_contents($parametersYmlExample);
-            $parameters = str_replace('ThisTokenIsNotSoSecretChangeIt', $secret, $parameters);
-            file_put_contents($parametersYml, $parameters);
+        } elseif (file_exists($parametersYml)) {
+            $parameters = file_get_contents($parametersYml);
         }
-    }
 
-    /**
-     * @param $rootPath
-     */
-    public static function zendFrameworkOptimization($rootPath)
-    {
-        // @TODO: Remove in 6.0
-
-        // strips all require_once out of the sources
-        // see also: http://framework.zend.com/manual/1.10/en/performance.classloading.html#performance.classloading.striprequires.sed
-        $zfPath = $rootPath . '/vendor/zendframework/zendframework1/library/Zend/';
-
-        if (is_dir($zfPath)) {
-            $directory = new \RecursiveDirectoryIterator($zfPath);
-            $iterator = new \RecursiveIteratorIterator($directory);
-            $regex = new \RegexIterator($iterator, '/^.+\.php$/i', \RecursiveRegexIterator::GET_MATCH);
-
-            $excludePatterns = [
-                '/Loader/Autoloader.php$',
-                '/Loader/ClassMapAutoloader.php$',
-                '/Application.php$',
-            ];
-
-            foreach ($regex as $file) {
-                $file = $file[0];
-
-                $excluded = false;
-                foreach ($excludePatterns as $pattern) {
-                    if (preg_match('@' . $pattern . '@', $file)) {
-                        $excluded = true;
-                        break;
-                    }
-                }
-
-                if (!$excluded) {
-                    $content = file_get_contents($file);
-                    $content = preg_replace('@([^/])(require_once)@', '$1//$2', $content);
-                    file_put_contents($file, $content);
-                }
-            }
+        // ensure that there's a random secret defined
+        if (strpos($parameters, 'ThisTokenIsNotSoSecretChangeIt')) {
+            $parameters = preg_replace_callback('/ThisTokenIsNotSoSecretChangeIt/', function ($match) {
+                // generate a unique token for each occurrence
+                return base64_encode(random_bytes(24));
+            }, $parameters);
+            file_put_contents($parametersYml, $parameters);
         }
     }
 
     public static function prePackageUpdate(PackageEvent $event)
     {
-
-        /**
-         * @var $operation UpdateOperation
-         */
+        /** @var UpdateOperation $operation */
         $operation = $event->getOperation();
         if ($operation->getInitialPackage()->getName() == 'pimcore/pimcore') {
             $operation->getInitialPackage()->getSourceReference();

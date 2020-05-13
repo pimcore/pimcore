@@ -361,8 +361,8 @@ LUA;
 
         // TODO implement a better way for multiple items!
 
-        /** @var CacheItem $item */
         while ($item = array_shift($this->deferred)) {
+            /** @var CacheItem $item */
             try {
                 $res = $this->commitItem($item);
             } catch (\Throwable $e) {
@@ -579,8 +579,6 @@ LUA;
      * Invalidates cached items using tags.
      *
      * @param string[] $tags An array of tags to invalidate
-     *
-     * @throws \Psr\Cache\InvalidArgumentException When $tags is not valid
      *
      * @return bool True on success
      */
@@ -879,9 +877,9 @@ LUA;
     }
 
     /**
-     * @param $item
-     * @param $index
-     * @param $prefix
+     * @param string $item
+     * @param int $index
+     * @param string $prefix
      */
     protected function preprocess(&$item, $index, $prefix)
     {
@@ -889,7 +887,7 @@ LUA;
     }
 
     /**
-     * @param $ids
+     * @param array $ids
      *
      * @return array
      */
@@ -901,7 +899,7 @@ LUA;
     }
 
     /**
-     * @param $tags
+     * @param array $tags
      *
      * @return array
      */

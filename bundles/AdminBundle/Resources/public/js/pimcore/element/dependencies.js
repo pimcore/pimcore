@@ -127,6 +127,7 @@ pimcore.element.dependencies = Class.create({
             bbar: pimcore.helpers.grid.buildDefaultPagingToolbar(this.requiresStore, {pageSize: itemsPerPage})
         });
         this.requiresGrid.on("rowclick", this.click.bind(this));
+        this.requiresGrid.on("rowcontextmenu", this.onRowContextmenu.bind(this));
         
         this.requiresStore.load({
             callback : function(records, operation, success) {
@@ -226,6 +227,7 @@ pimcore.element.dependencies = Class.create({
             bbar: pimcore.helpers.grid.buildDefaultPagingToolbar(this.requiredByStore,{pageSize: itemsPerPage})
         });
         this.requiredByGrid.on("rowclick", this.click.bind(this));
+        this.requiredByGrid.on("rowcontextmenu", this.onRowContextmenu.bind(this));
 
         this.requiredByStore.load({
             callback : function(records, operation, success) {
@@ -270,18 +272,23 @@ pimcore.element.dependencies = Class.create({
     },
 
     click: function ( grid, record, tr, rowIndex, e, eOpts ) {
-        
         var d = record.data;
+        pimcore.helpers.openElement(d.id, d.type, d.subtype);
+    },
 
-        if (d.type == "object") {
-            pimcore.helpers.openObject(d.id, d.subtype);
-        }
-        else if (d.type == "asset") {
-            pimcore.helpers.openAsset(d.id, d.subtype);
-        }
-        else if (d.type == "document") {
-            pimcore.helpers.openDocument(d.id, d.subtype);
-        }
+    onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts) {
+        var menu = new Ext.menu.Menu();
+        var data = record.data;
+
+        menu.add(new Ext.menu.Item({
+            text: t('open'),
+            iconCls: "pimcore_icon_open",
+            handler: function (data) {
+                pimcore.helpers.openElement(data.id, data.type, data.subtype);
+            }.bind(this, data)
+        }));
+
+        e.stopEvent();
+        menu.showAt(e.getXY());
     }
-
 });
