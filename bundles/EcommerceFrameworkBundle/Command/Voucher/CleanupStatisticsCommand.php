@@ -31,11 +31,13 @@ class CleanupStatisticsCommand extends AbstractCommand
      * @param InputInterface $input
      * @param OutputInterface $output
      *
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->output->writeln('<comment>*</comment> Cleaning up <info>statistics</info>');
         Factory::getInstance()->getVoucherService()->cleanUpStatistics();
+
+        return 0;
     }
 }
