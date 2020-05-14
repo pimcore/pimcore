@@ -47,9 +47,9 @@ class ListCommand extends AbstractBundleCommand
                 'Bundle',
                 'Enabled',
                 'Installed',
-                $input->hasOption('json')?'Installable':'I?',
-                $input->hasOption('json')?'Uninstallable':'UI?',
-                $input->hasOption('json')?'Updatable':'UP?',
+                $input->hasOption('json') ? 'Installable' : 'I?',
+                $input->hasOption('json') ? 'Uninstallable' : 'UI?',
+                $input->hasOption('json') ? 'Updatable' : 'UP?',
                 'Priority'
             ]
         ];
@@ -92,8 +92,8 @@ class ListCommand extends AbstractBundleCommand
             $returnData['rows'][] = $row;
         }
 
-        if($input->getOption('json')) {
-            $jsonData = array_map(static function($row) use ($returnData) {
+        if ($input->getOption('json')) {
+            $jsonData = array_map(static function ($row) use ($returnData) {
                 return array_combine($returnData['headers'], $row);
             }, $returnData['rows']);
             $output->write(\json_encode($jsonData, \JSON_PRETTY_PRINT));
@@ -102,10 +102,11 @@ class ListCommand extends AbstractBundleCommand
 
             $table->setHeaders($returnData['headers']);
 
-            $returnData['rows'] = array_map(function($row) {
-                for($i=1;$i<=5;$i++) {
+            $returnData['rows'] = array_map(function ($row) {
+                for ($i = 1; $i <= 5; $i++) {
                     $row[$i] = $this->formatBool($row[$i]);
                 }
+
                 return $row;
             }, $returnData['rows']);
 

@@ -442,6 +442,7 @@
   "log_config_archive_alternative_database": "Archive database name (optional)",
   "log_config_archive_description": "Use of an alternative database recommended when huge amounts of logs will be generated.",
   "classificationstore_group_definition": "Groups",
+  "classificationstore_group_limitation": "Max. group items",
   "classificationstore_mbx_entergroup_title": "New Group",
   "classificationstore_mbx_entergroup_prompt": "Enter name",
   "classificationstore_error_addgroup_msg": "Error adding group",

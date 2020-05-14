@@ -133,7 +133,10 @@ pimcore.object.classes.data.block = Class.create(pimcore.object.classes.data.dat
                     disallowAddRemove: source.datax.disallowAddRemove,
                     disallowReorder: source.datax.disallowReorder,
                     collapsible: source.datax.collapsible,
-                    collapsed: source.datax.collapsed
+                    collapsed: source.datax.collapsed,
+                    lazyLoading: source.datax.lazyLoading,
+                    styleElement: source.datax.styleElement
+                    
                 });
         }
     }

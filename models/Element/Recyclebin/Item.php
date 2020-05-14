@@ -350,7 +350,7 @@ class Item extends Model\AbstractModel
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {
                     $elementType = Element\Service::getType($currentValue);
-                    $descriptor = new Model\Version\ElementDescriptor($elementType, $currentValue->getId());
+                    $descriptor = new Element\ElementDescriptor($elementType, $currentValue->getId());
 
                     return $descriptor;
                 }
@@ -400,7 +400,7 @@ class Item extends Model\AbstractModel
         $copier->addTypeFilter(
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {
-                    if ($currentValue instanceof Model\Version\ElementDescriptor) {
+                    if ($currentValue instanceof Element\ElementDescriptor) {
                         $value = Element\Service::getElementById($currentValue->getType(), $currentValue->getId());
 
                         return $value;

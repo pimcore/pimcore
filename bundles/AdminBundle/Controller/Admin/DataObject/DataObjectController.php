@@ -637,9 +637,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 }
             }
 
-            if ($fielddefinition->isEmpty($fieldData) && !empty($parent)
-                && !(method_exists($fielddefinition, 'getDefaultValue') && !$fielddefinition->isEmpty($fielddefinition->getDefaultValue()))
-            ) {
+            if ($fielddefinition->isEmpty($fieldData) && !empty($parent)) {
                 $this->getDataForField($parent, $key, $fielddefinition, $objectFromVersion, $level + 1);
             } else {
                 $isInheritedValue = $isInheritedValue || ($level != 0);
@@ -1721,7 +1719,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     }
 
                     $object->setValues($objectData);
-                    if (!isset($data['published']) || !$data['published']) {
+                    if ($object->getPublished() == false) {
                         $object->setOmitMandatoryCheck(true);
                     }
 

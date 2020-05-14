@@ -73,7 +73,7 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
                 ->setClasses(['RelationTest'])
-                );
+            );
 
             $panel->addChild($this->createDataChild('manyToOneRelation', 'relation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
@@ -490,6 +490,9 @@ class Model extends AbstractDefinitionHelper
             $otherPanel->addChild($this->createDataChild('slider'));
             $otherPanel->addChild($this->createDataChild('manyToManyObjectRelation', 'relationobjects')
                 ->setClasses([]));
+            $panel->addChild($this->createDataChild('manyToOneRelation', 'relation')
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $panel->addChild($lFields);
             $panel->addChild($otherPanel);
@@ -559,6 +562,13 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('manyToManyRelation', 'fieldLazyRelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+
+            $lFields->addChild($this->createDataChild('Input', 'linput'));
+
+            $panel->addChild($lFields);
 
             $root->addChild($rootPanel);
             $definition = $this->createFieldcollection($name, $root, $filename);
@@ -886,6 +896,7 @@ class Model extends AbstractDefinitionHelper
 
         $this->setupPimcoreClass_Unittest();
         $this->setupPimcoreClass_Inheritance();
+        $this->setupPimcoreClass_RelationTest();
 
         $this->setupObjectbrick_UnittestBrick();
     }

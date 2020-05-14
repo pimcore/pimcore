@@ -102,6 +102,7 @@ class GoogleTagManager extends Tracker implements
 
         $call = [
             'ecommerce' => [
+                'event' => 'addToCart',
                 'add' => [
                     'products' => [
                         $productArray,
@@ -123,6 +124,7 @@ class GoogleTagManager extends Tracker implements
 
         $call = [
             'ecommerce' => [
+                'event' => 'removeFromCart',
                 'remove' => [
                     'products' => [
                         $productArray,

@@ -90,8 +90,9 @@ pimcore.object.classes.data.externalImage = Class.create(pimcore.object.classes.
             }
             Ext.apply(this.datax,
                 {
-                    width: source.datax.width,
-                    height: source.datax.height
+                    previewWidth: source.datax.previewWidth,
+                    previewHeight: source.datax.previewHeight,
+                    inputWidth: source.datax.inputWidth
                 });
         }
     }

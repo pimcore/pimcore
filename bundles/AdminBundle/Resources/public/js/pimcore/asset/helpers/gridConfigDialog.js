@@ -357,11 +357,11 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                                 var fieldType = record.data.dataType;
 
                                 try {
-                                    if (record.data.isOperator && record.data.configAttributes && pimcore.asset.tags[record.data.configAttributes.renderer]) {
+                                    if (record.data.isOperator && record.data.configAttributes && pimcore.asset.metadata.tags[record.data.configAttributes.renderer]) {
                                         var rendererType = record.data.configAttributes.renderer;
-                                        var tag = pimcore.asset.tags[rendererType];
+                                        var tag = pimcore.asset.metadata.tags[rendererType];
                                     } else {
-                                        var tag = pimcore.asset.tags[fieldType];
+                                        var tag = pimcore.asset.metadata.tags[fieldType];
                                     }
 
                                     if (tag) {

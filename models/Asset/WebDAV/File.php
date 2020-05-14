@@ -111,6 +111,8 @@ class File extends DAV\File
      *
      * @throws DAV\Exception\Forbidden
      * @throws \Exception
+     *
+     * @return null
      */
     public function put($data)
     {
@@ -128,9 +130,11 @@ class File extends DAV\File
 
             fclose($file);
             unlink($tmpFile);
-        } else {
-            throw new DAV\Exception\Forbidden();
+
+            return null;
         }
+
+        throw new DAV\Exception\Forbidden();
     }
 
     /**
