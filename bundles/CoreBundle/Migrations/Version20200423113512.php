@@ -29,13 +29,13 @@ class Version20200423113512 extends AbstractPimcoreMigration
         $list = new Definition\Listing();
         $list = $list->load();
         foreach ($list as $brickDefinition) {
-            $brickDefinition->save();
+            $brickDefinition->generateClassFiles(false);
         }
 
         $list = new \Pimcore\Model\DataObject\Fieldcollection\Definition\Listing();
         $list = $list->load();
         foreach ($list as $fc) {
-            $fc->save();
+            $fc->generateClassFiles(false);
         }
     }
 
