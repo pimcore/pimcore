@@ -166,11 +166,11 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
 
         // password_get_info() will not detect older, less secure, hashing algos
         $maybeMD5 = preg_match('/^[a-f0-9]{32}$/', $data);
-        $maybeSHA1 = preg_match("/^([a-f0-9]{40})$/", $data);
-        $maybeSHA224 = preg_match("/^([a-f0-9]{56})$/", $data);
-        $maybeSHA256 = preg_match("/^([a-f0-9]{64})$/", $data);
-        $maybeSHA384 = preg_match("/^([a-f0-9]{96})$/", $data);
-        $maybeSHA512 = preg_match("/^([a-f0-9]{128})$/", $data);
+        $maybeSHA1 = preg_match("/^[a-f0-9]{40}$/", $data);
+        $maybeSHA224 = preg_match("/^[a-f0-9]{56}$/", $data);
+        $maybeSHA256 = preg_match("/^[a-f0-9]{64}$/", $data);
+        $maybeSHA384 = preg_match("/^[a-f0-9]{96}$/", $data);
+        $maybeSHA512 = preg_match("/^[a-f0-9]{128}$/", $data);
 
         // Probably already a hashed string
         if ($maybeMD5 || $maybeSHA1 || $maybeSHA224 || $maybeSHA256 || $maybeSHA384 || $maybeSHA512) {
