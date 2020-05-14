@@ -181,7 +181,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         this.save(null, only, function () {
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.remove(this.tab);
-        });
+        }.bind(this));
     },
 
     publishClose: function () {
