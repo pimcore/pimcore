@@ -352,9 +352,13 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
         if (!$currentEntry) {
             $this->db->insert($this->getStoreTableName(), $data);
         } elseif ($currentEntry['crc_current'] != $data['crc_current']) {
-            $this->db->updateWhere($this->getStoreTableName(), $data, 'o_id = ' . $this->db->quote((string)$subObjectId) . ' AND tenant = ' . $this->db->quote($this->name));
+            $this->executeTransactionalQuery(function () use ($data, $subObjectId) {
+                $this->db->updateWhere($this->getStoreTableName(), $data, 'o_id = ' . $this->db->quote((string)$subObjectId) . ' AND tenant = ' . $this->db->quote($this->name));
+            });
         } elseif ($currentEntry['in_preparation_queue']) {
-            $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 0, preparation_worker_timestamp = 0, preparation_worker_id = null WHERE o_id = ? AND tenant = ?', [$subObjectId, $this->name]);
+            $this->executeTransactionalQuery(function () use ($subObjectId) {
+                $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 0, preparation_worker_timestamp = 0, preparation_worker_id = null WHERE o_id = ? AND tenant = ?', [$subObjectId, $this->name]);
+            });
         }
     }
 
@@ -379,8 +383,10 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             //need check, if there are sub objects because update on empty result set is too slow
             $objects = $this->db->fetchCol('SELECT o_id FROM objects WHERE o_path LIKE ?', [$object->getFullPath() . '/%']);
             if ($objects) {
-                $updateStatement = 'UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 1 WHERE tenant = ? AND o_id IN ('.implode(',', $objects).')';
-                $this->db->query($updateStatement, [$this->name]);
+                 $this->executeTransactionalQuery(function () use ($objects) {
+                    $updateStatement = 'UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 1 WHERE tenant = ? AND o_id IN ('.implode(',', $objects).')';
+                    $this->db->query($updateStatement, [$this->name]);
+                });
             }
         }
     }
@@ -522,5 +528,31 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             sprintf('Reset indexing queue in "%s".', $className),
             $this->name
         ]);
+    }
+    
+    /**
+     * @param \Closure $fn
+     * @param int $maxTries
+     * @param float $sleep
+     * @return bool
+     * @throws \Exception
+     */
+    protected function executeTransactionalQuery(\Closure $fn, int $maxTries = 3, float $sleep = .5)
+    {
+        $this->db->beginTransaction();
+        for ($i = 1; $i <= $maxTries; $i++) {
+            try {
+                $fn();
+                return $this->db->commit();
+            } catch (\Exception $e) {
+                $this->db->rollBack();
+                Logger::warning("Executing transational query, no. {$i} of {$maxTries} tries failed. " . $e->getMessage());
+                if ($i === $maxTries) {
+                    throw $e;
+                }
+                sleep($sleep);
+            }
+        }
+        return false;
     }
 }
