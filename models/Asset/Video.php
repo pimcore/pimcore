@@ -96,7 +96,7 @@ class Video extends Model\Asset
 
             $directoryIterator = new \DirectoryIterator($this->getImageThumbnailSavePath());
             $filterIterator = new \CallbackFilterIterator($directoryIterator, function(\SplFileInfo $fileInfo) {
-                return strpos($fileInfo->getFilename(), 'image-thumb__' . $this->getId()) === 0 || strpos($fileInfo->getFilename(), 'video-image-cache__' . $this->getId() . '__thumbnail_');
+                return strpos($fileInfo->getFilename(), 'image-thumb__' . $this->getId()) === 0 || strpos($fileInfo->getFilename(), 'video-image-cache__' . $this->getId() . '__thumbnail_') === 0;
             });
             /** @var \SplFileInfo $fileInfo */
             foreach($filterIterator as $fileInfo) {
