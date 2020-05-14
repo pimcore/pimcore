@@ -414,7 +414,8 @@ class Service extends Model\Element\Service
                 $item['config'] = $predefined->getConfig();
             }
 
-            $result[] = $item;
+            $key = $item['name'] . "~" . $item['language'];
+            $result[$key] = $item;
         }
 
         return $result;

@@ -14,29 +14,33 @@
 pimcore.registerNS("pimcore.asset.metadata.grid");
 pimcore.asset.metadata.grid = Class.create({
 
-    initialize: function(asset) {
-        this.asset = asset;
+    initialize: function (config) {
+        this.config = config;
+        this.asset = config.asset;
+
+        /** @type {pimcore.asset.metadata.dataProvider} */
+        this.dataProvider = config.dataProvider;
     },
 
     getLayout: function () {
 
         if (this.grid == null) {
-            if(this.asset.data.metadata.length < 1) {
+            if (this.dataProvider.getItemCount() < 1) {
                 // default fields
-                if(this.asset.data.type == "image") {
-                    this.asset.data.metadata.push({
+                if (this.asset.data.type == "image") {
+                    this.dataProvider.add({
                         name: "title",
                         type: "input",
                         language: "",
                         value: ""
                     });
-                    this.asset.data.metadata.push({
+                    this.dataProvider.add({
                         name: "alt",
                         type: "input",
                         language: "",
                         value: ""
                     });
-                    this.asset.data.metadata.push({
+                    this.dataProvider.add({
                         name: "copyright",
                         type: "input",
                         language: "",
@@ -48,9 +52,9 @@ pimcore.asset.metadata.grid = Class.create({
             var customKey = new Ext.form.TextField({
                 name: 'key',
                 emptyText: t('name'),
-                enableKeyEvents : true,
+                enableKeyEvents: true,
                 listeners: {
-                    keyup : function(el) {
+                    keyup: function (el) {
                         if (el.getValue().match(/[~]+/)) {
                             el.setValue(el.getValue().replace(/[~]/g, "---"));
                         }
@@ -82,7 +86,7 @@ pimcore.asset.metadata.grid = Class.create({
             var languagestore = [["",t("none")]];
             var websiteLanguages = pimcore.settings.websiteLanguages;
             var selectContent = "";
-            for (var i=0; i<websiteLanguages.length; i++) {
+            for (let i = 0; i < websiteLanguages.length; i++) {
                 selectContent = pimcore.available_languages[websiteLanguages[i]] + " [" + websiteLanguages[i] + "]";
                 languagestore.push([websiteLanguages[i], selectContent]);
             }
@@ -102,35 +106,36 @@ pimcore.asset.metadata.grid = Class.create({
                 Ext.define(modelName, {
                         extend: 'Ext.data.Model',
                         fields: [
-                        {
-                            name: 'name',
-                            convert: function (v, r) {
-                                return v.replace(/[~]/g, "---");
-                            }
-                        }, "type", {
-                            name: "data",
-                            convert: function (v, r) {
-                                let dataType = r.data.type;
-                                if (typeof pimcore.asset.metadata.tags[dataType].prototype.convertPredefinedGridData === "function") {
-                                    v = pimcore.asset.metadata.tags[dataType].prototype.convertPredefinedGridData(v, r);
+                            {
+                                name: 'name',
+                                convert: function (v, r) {
+                                    return v.replace(/[~]/g, "---");
                                 }
-                                return v;
-                            }
-                        }, "language", "config"]
+                            }, "type", {
+                                name: "data",
+                                convert: function (v, r) {
+                                    let dataType = r.data.type;
+                                    if (typeof pimcore.asset.metadata.tags[dataType].prototype.convertPredefinedGridData === "function") {
+                                        v = pimcore.asset.metadata.tags[dataType].prototype.convertPredefinedGridData(v, r);
+                                    }
+                                    return v;
+                                }
+                            }, "language", "config"]
                     }
                 );
             }
 
+            let storeData = this.dataProvider.getDataAsArray();
 
             var store = new Ext.data.Store({
-                    model: modelName,
-                    data: this.asset.data.metadata
+                model: modelName,
+                data: storeData
             });
 
             this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit: 1,
                 listeners: {
-                    beforeedit: function(editor, context, eOpts) {
+                    beforeedit: function (editor, context, eOpts) {
                         //need to clear cached editors of cell-editing editor in order to
                         //enable different editors per row
                         editor.editors.each(function (e) {
@@ -150,34 +155,34 @@ pimcore.asset.metadata.grid = Class.create({
             });
 
             this.grid = Ext.create('Ext.grid.Panel', {
-                title: t("custom_metadata"),
+                title: this.config.title ? this.config.title : t("custom_metadata"),
                 autoScroll: true,
                 region: "center",
-                iconCls: "pimcore_material_icon_metadata pimcore_material_icon",
+                iconCls: this.config.hasOwnProperty('iconCls') ? this.config.iconCls : "pimcore_material_icon_metadata pimcore_material_icon",
                 bodyCls: "pimcore_editable_grid",
                 trackMouseOver: true,
                 store: store,
                 tbar: [{
                     xtype: "tbtext",
                     text: t('add') + " &nbsp;&nbsp;"
-                },customKey, customType, customLanguage, {
+                }, customKey, customType, customLanguage, {
                     xtype: "button",
                     handler: this.addSetFromUserDefined.bind(this, customKey, customType, customLanguage),
                     iconCls: "pimcore_icon_add"
                 }
-                ,{
-                    xtype: "tbspacer",
-                    width: 20
-                },"-",{
-                    xtype: "tbspacer",
-                    width: 20
-                },
-                {
-                    xtype: "button",
-                    text: t('add_predefined_metadata_definitions'),
-                    handler: this.handleAddPredefinedDefinitions.bind(this),
-                    iconCls: "pimcore_icon_add"
-                }
+                    , {
+                        xtype: "tbspacer",
+                        width: 20
+                    }, "-", {
+                        xtype: "tbspacer",
+                        width: 20
+                    },
+                    {
+                        xtype: "button",
+                        text: t('add_predefined_metadata_definitions'),
+                        handler: this.handleAddPredefinedDefinitions.bind(this),
+                        iconCls: "pimcore_icon_add"
+                    }
                 ],
                 plugins: [
                     this.cellEditing
@@ -197,7 +202,7 @@ pimcore.asset.metadata.grid = Class.create({
                         {
                             text: t("name"),
                             dataIndex: 'name',
-                            getEditor: function() {
+                            getEditor: function () {
                                 return new Ext.form.TextField({
                                     allowBlank: false
                                 });
@@ -210,7 +215,7 @@ pimcore.asset.metadata.grid = Class.create({
                             text: t('language'),
                             sortable: true,
                             dataIndex: "language",
-                            getEditor: function() {
+                            getEditor: function () {
                                 return new Ext.form.ComboBox({
                                     name: "language",
                                     store: languagestore,
@@ -280,7 +285,7 @@ pimcore.asset.metadata.grid = Class.create({
             try {
                 var data = this.grid.getStore().getAt(i).data;
 
-                if(in_array(data.name, this.disallowedKeys)) {
+                if (in_array(data.name, this.disallowedKeys)) {
                     Ext.get(rows[i]).addCls("pimcore_properties_hidden_row");
                 }
 
@@ -357,6 +362,11 @@ pimcore.asset.metadata.grid = Class.create({
         return pimcore.asset.metadata.tags[record.data.type].prototype.getGridCellEditor("custom", record);
     },
 
+    commitChanges: function () {
+        var store = this.grid.getStore();
+        store.commitChanges();
+    },
+
     getValues : function () {
         if (!this.grid.rendered) {
             throw "metadata not available";
@@ -382,22 +392,13 @@ pimcore.asset.metadata.grid = Class.create({
             }
         }
 
-        return values;
+        var result = {
+            values: values
+        }
+        return result;
     },
 
-    handleAddPredefinedDefinitions: function() {
-
-        Ext.Ajax.request({
-            url: "/admin/settings/get-predefined-metadata",
-            params: {
-                type: "asset",
-                subType: this.asset.type
-            },
-            success: this.doAddPredefinedDefinitions.bind(this)
-        });
-    },
-
-    doAddPredefinedDefinitions: function(response) {
+    doAddPredefinedDefinitions: function (response) {
         var data = Ext.decode(response.responseText);
         data = data.data;
         var store = this.grid.getStore();
@@ -408,13 +409,13 @@ pimcore.asset.metadata.grid = Class.create({
             let key = item.name || "";
             let language = item.language || "";
 
-            if (!item.type){
+            if (!item.type) {
                 continue;
             }
 
             var duplicateIndex = store.findBy(function (record, id) {
                 if (record.data.name.toLowerCase() == key.toLowerCase()) {
-                    if(String(record.data.language).toLowerCase() == language.toLowerCase()) {
+                    if (String(record.data.language).toLowerCase() == language.toLowerCase()) {
                         return true;
                     }
                 }

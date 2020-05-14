@@ -35,7 +35,7 @@ pimcore.asset.image = Class.create(pimcore.asset.asset, {
         }
 
         this.tagAssignment = new pimcore.element.tag.assignment(this, "asset");
-        this.metadata = new pimcore.asset.metadata.grid(this);
+        this.metadata = new pimcore.asset.metadata.editor(this);
         this.workflows = new pimcore.element.workflows(this, "asset");
         this.embeddedMetaData = new pimcore.asset.embedded_meta_data(this);
 

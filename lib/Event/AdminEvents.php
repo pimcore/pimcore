@@ -430,4 +430,16 @@ final class AdminEvents
      * @var string
      */
     const ELEMENT_PERMISSION_IS_ALLOWED = 'pimcore.admin.permissions.elementIsAllowed';
+
+    /**
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\AssetController
+     * Arguments:
+     *  - id | int | asset id
+     *  - metadata | array | contains the data received from the editor UI
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_METADATA_PRE_SET = 'pimcore.admin.asset.metadata.preSave';
 }
