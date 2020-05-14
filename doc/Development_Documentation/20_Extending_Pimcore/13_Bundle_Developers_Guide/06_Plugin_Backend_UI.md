@@ -53,7 +53,7 @@ corresponding method to the javascript plugin class.
 | postOpenDocument               | after document is opened, document and type are passed as parameters                                            |
 | preSaveDocument                | before document is saved, document, type, task and onlySaveVersion are passed as parameters                     |
 | postSaveDocument               | after document is saved, document, type, task and onlySaveVersion are passed as parameters                      |
-| postAddDocumentTree            | after the decument is successfully created in the tree, document id is passed as parameter                      |
+| postAddDocumentTree            | after the document is successfully created in the tree, document id is passed as parameter                      |
 | preOpenObject                  | before object is opened, object and type are passed as parameters                                               |
 | postOpenObject                 | after object is opened, object and type are passed as parameters                                                |
 | preSaveObject                  | before object is saved, object and type are passed as parameters                                                |
