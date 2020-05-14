@@ -23,7 +23,7 @@ class Version20200423113512 extends AbstractPimcoreMigration
         $list = $list->load();
 
         foreach ($list as $class) {
-            $class->save(false);
+            $class->generateClassFiles(false);
         }
 
         $list = new Definition\Listing();
