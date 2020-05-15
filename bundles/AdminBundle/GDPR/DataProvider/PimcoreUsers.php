@@ -182,9 +182,9 @@ class PimcoreUsers implements DataProviderInterface
             fclose($handle);
         }
 
-        $archiveFiles = glob(PIMCORE_LOG_DIRECTORY . '/usagelog.log-*.gz');
+        $archiveFiles = glob(PIMCORE_LOG_DIRECTORY . '/usagelog-archive-*.log.gz');
         foreach ($archiveFiles as $archiveFile) {
-            $handle = @gzopen(PIMCORE_LOG_DIRECTORY . '/usagelog.log', 'r');
+            $handle = @gzopen($archiveFile, 'r');
             if ($handle) {
                 while (!feof($handle)) {
                     $buffer = fgets($handle);
