@@ -193,4 +193,18 @@ pimcore.asset.metadata.tags.select = Class.create(pimcore.asset.metadata.tags.ab
         return this.fieldConfig.name;
     },
 
+    getGridCellEditor: function (gridtype, record) {
+        // there is no value cell editor for predefined grid
+        if (gridtype == "custom") {
+            let data  = record.data;
+            var config = data.config;
+            return Ext.create('Ext.form.ComboBox', {
+                triggerAction: 'all',
+                editable: false,
+                store: config.split(",")
+            });
+        }
+        return null;
+    }
+
 });

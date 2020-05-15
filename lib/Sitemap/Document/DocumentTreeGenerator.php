@@ -154,7 +154,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
             }
         }
 
-        if ($this->handlesChildren($document, $context)) {
+        if ($document->hasChildren() && $this->handlesChildren($document, $context)) {
             foreach ($document->getChildren() as $child) {
                 yield from $this->visit($child, $context);
             }

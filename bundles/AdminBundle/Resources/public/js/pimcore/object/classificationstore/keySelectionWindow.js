@@ -316,7 +316,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         }
     },
 
-    setupSearch: function(type, configKey) {
+    setupSearch: function (type, configKey) {
         this.resetToolbarButtons();
         this.toolbarbuttons[type].toggle(true);
 
@@ -401,14 +401,32 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         var gridColumns = [];
         if (this.config.isGroupByKeySearch) {
             gridColumns.push({text: "ID", width: 60, sortable: true, dataIndex: 'id'});
-            gridColumns.push({text: t("group"), flex: 1, sortable: true, dataIndex: 'groupName', filter: 'string'});
-            gridColumns.push({text: t("name"), flex: 1, sortable: true, dataIndex: 'keyName', filter: 'string'});
+
+            gridColumns.push({
+                text: t("group"),
+                flex: 1,
+                sortable: true,
+                dataIndex: 'groupName',
+                filter: 'string',
+                renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
+            });
+
+            gridColumns.push({
+                text: t("name"),
+                flex: 1,
+                sortable: true,
+                dataIndex: 'keyName',
+                filter: 'string',
+                renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
+            });
+
             gridColumns.push({
                 text: t("description"),
                 flex: 1,
                 sortable: true,
                 dataIndex: 'keyDescription',
-                filter: 'string'
+                filter: 'string',
+                renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
             });
         } else {
             gridColumns.push({text: "ID", width: 40, sortable: true, dataIndex: 'id'});
@@ -422,8 +440,21 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
                 });
             }
 
-            gridColumns.push({text: t("name"), width: nameWidth, sortable: true, dataIndex: 'name'});
-            gridColumns.push({text: t("description"), width: descWidth, sortable: true, dataIndex: 'description'});
+            gridColumns.push({
+                text: t("name"),
+                width: nameWidth,
+                sortable: true,
+                dataIndex: 'name',
+                renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
+            });
+
+            gridColumns.push({
+                text: t("description"),
+                width: descWidth,
+                sortable: true,
+                dataIndex: 'description',
+                renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
+            });
         }
 
         var extraParams = {

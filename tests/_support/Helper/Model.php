@@ -563,6 +563,13 @@ class Model extends AbstractDefinitionHelper
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+
+            $lFields->addChild($this->createDataChild('Input', 'linput'));
+
+            $panel->addChild($lFields);
+
             $root->addChild($rootPanel);
             $definition = $this->createFieldcollection($name, $root, $filename);
         }

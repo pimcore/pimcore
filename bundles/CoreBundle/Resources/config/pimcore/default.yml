@@ -85,6 +85,20 @@ pimcore:
             - src
             - vendor/pimcore/pimcore/bundles
 
+    assets:
+        metadata:
+            class_definitions:
+                data:
+                    map:
+                        asset: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Asset
+                        checkbox: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Checkbox
+                        date: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Date
+                        document: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Document
+                        input: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Input
+                        object: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataObject
+                        select: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Select
+                        textarea: \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Textarea
+
     objects:
         class_definitions:
             data:

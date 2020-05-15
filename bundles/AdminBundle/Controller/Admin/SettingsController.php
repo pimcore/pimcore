@@ -132,7 +132,9 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/metadata", methods={"POST"})
+     * Used by the predefined metadata grid
+     *
+     * @Route("/predefined-metadata", methods={"POST"})
      *
      * @param Request $request
      *

@@ -104,15 +104,15 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
             $this->endpoint = array_merge($this->endpoint, [
                 'form' => 'https://pay.datatrans.com/upp/jsp/upStart.jsp',
                 'script' => 'https://pay.datatrans.com/upp/payment/js/datatrans-1.0.2.js',
-                'xmlAuthorize' => 'https://pay.datatrans.com/upp/jsp/XML_authorize.jsp',
-                'xmlProcessor' => 'https://pay.datatrans.com/upp/jsp/XML_processor.jsp',
+                'xmlAuthorize' => 'https://api.datatrans.com/upp/jsp/XML_authorize.jsp',
+                'xmlProcessor' => 'https://api.datatrans.com/upp/jsp/XML_processor.jsp',
             ]);
         } else {
             $this->endpoint = array_merge($this->endpoint, [
                 'form' => 'https://pay.sandbox.datatrans.com/upp/jsp/upStart.jsp',
                 'script' => 'https://pay.sandbox.datatrans.com/upp/payment/js/datatrans-1.0.2.js',
-                'xmlAuthorize' => 'https://pay.sandbox.datatrans.com/upp/jsp/XML_authorize.jsp',
-                'xmlProcessor' => 'https://pay.sandbox.datatrans.com/upp/jsp/XML_processor.jsp',
+                'xmlAuthorize' => 'https://api.sandbox.datatrans.com/upp/jsp/XML_authorize.jsp',
+                'xmlProcessor' => 'https://api.sandbox.datatrans.com/upp/jsp/XML_processor.jsp',
             ]);
         }
     }
