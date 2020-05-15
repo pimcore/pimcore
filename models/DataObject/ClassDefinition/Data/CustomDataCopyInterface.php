@@ -24,6 +24,8 @@ interface CustomDataCopyInterface
     /**
      * @param Concrete $object
      * @param mixed $data
+     *
+     * @return mixed
      */
     public function createDataCopy($object, $data);
 }
