@@ -31,6 +31,9 @@ specific attribute.
 > However, you can still call AbstractObject::disableDirtyDetection() before saving the object
 > if you want to explicitely fix that.
 
+> **Default Values
+> Make sure that you understand the impacts of defining a default value which is described
+> [here](../01_Data_Types/README.md)
 
 ![Data Inheritance](../../../img/classes-data-inheritance1.png)
 
