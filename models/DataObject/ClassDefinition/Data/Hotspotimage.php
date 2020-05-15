@@ -772,22 +772,25 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
            return false;
         }
 
+        $fd = new Image();
+        if (!$fd->isEqual($oldValue->getImage(), $newValue->getImage())) {
+            return false;
+        }
+
         $oldValue = [
-            'image' => $oldValue->getImage()->getId(),
-            'hotspots' => $oldValue->getHotspots() ?? [],
-            'marker' => $oldValue->getMarker() ?? [],
-            'crop' => $oldValue->getCrop() ?? []
+            'hotspots' => $oldValue->getHotspots(),
+            'marker' => $oldValue->getMarker(),
+            'crop' => $oldValue->getCrop()
         ];
 
         $newValue = [
-            'image' => $newValue->getImage()->getId(),
-            'hotspots' => $newValue->getHotspots() ?? [],
-            'marker' => $newValue->getMarker() ?? [],
-            'crop' => $newValue->getCrop() ?? []
+            'hotspots' => $newValue->getHotspots(),
+            'marker' => $newValue->getMarker(),
+            'crop' => $newValue->getCrop()
         ];
 
         foreach ($oldValue as $key => $oValue) {
-            if ($oValue !== $newValue[$key]) {
+            if (!$this->isEqualArray($oValue, $newValue[$key])) {
                 return false;
             }
         }
