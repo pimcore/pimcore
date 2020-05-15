@@ -85,6 +85,9 @@ pimcore.settings.videothumbnail.item = Class.create({
             title: this.data.name,
             id: "pimcore_videothumbnail_panel_" + this.data.name,
             labelWidth: 150,
+            defaults: {
+                renderer: Ext.util.Format.htmlEncode
+            },
             items: [{
                 xtype: "panel",
                 autoHeight: true,

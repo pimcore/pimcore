@@ -255,7 +255,12 @@ pimcore.settings.staticroutes = Class.create({
             bodyCls: "pimcore_editable_grid",
             trackMouseOver:true,
             stripeRows:true,
-            columns:typesColumns,
+            columns: {
+                items: typesColumns,
+                defaults: {
+                    renderer: Ext.util.Format.htmlEncode
+                },
+            },
             sm: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
                 this.cellEditing

@@ -69,6 +69,9 @@ pimcore.settings.translation.website = Class.create(pimcore.settings.translation
                 border: false,
                 layout: "fit",
                 closable:true,
+                defaults: {
+                    renderer: Ext.util.Format.htmlEncode
+                },
                 items: [
                     this.getRowEditor()
                 ]
