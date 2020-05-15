@@ -383,7 +383,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             //need check, if there are sub objects because update on empty result set is too slow
             $objects = $this->db->fetchCol('SELECT o_id FROM objects WHERE o_path LIKE ?', [$object->getFullPath() . '/%']);
             if ($objects) {
-                 $this->executeTransactionalQuery(function () use ($objects) {
+                $this->executeTransactionalQuery(function () use ($objects) {
                     $updateStatement = 'UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 1 WHERE tenant = ? AND o_id IN ('.implode(',', $objects).')';
                     $this->db->query($updateStatement, [$this->name]);
                 });
@@ -529,12 +529,14 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             $this->name
         ]);
     }
-    
+
     /**
      * @param \Closure $fn
      * @param int $maxTries
      * @param float $sleep
+     *
      * @return bool
+     *
      * @throws \Exception
      */
     protected function executeTransactionalQuery(\Closure $fn, int $maxTries = 3, float $sleep = .5)
@@ -543,6 +545,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
         for ($i = 1; $i <= $maxTries; $i++) {
             try {
                 $fn();
+
                 return $this->db->commit();
             } catch (\Exception $e) {
                 $this->db->rollBack();
@@ -553,6 +556,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                 sleep($sleep);
             }
         }
+
         return false;
     }
 }
