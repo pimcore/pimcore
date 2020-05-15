@@ -22,6 +22,7 @@ use Pimcore\Config;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
@@ -415,10 +416,11 @@ class SettingsController extends AdminController
      * @Route("/set-system", methods={"PUT"})
      *
      * @param Request $request
+     * @param LocaleServiceInterface $localeService
      *
      * @return JsonResponse
      */
-    public function setSystemAction(Request $request)
+    public function setSystemAction(Request $request, LocaleServiceInterface $localeService)
     {
         $this->checkPermission('system_settings');
 
@@ -442,7 +444,7 @@ class SettingsController extends AdminController
                 $fallbackLanguages[$language] = str_replace(' ', '', $values['general.fallbackLanguages.' . $language]);
             }
 
-            if (\Pimcore::getContainer()->get('pimcore.locale')->isLocale($language)) {
+            if ($localeService->isLocale($language)) {
                 $filteredLanguages[] = $language;
             }
         }
@@ -1132,13 +1134,13 @@ class SettingsController extends AdminController
     /**
      * @Route("/get-available-countries", methods={"GET"})
      *
-     * @param Request $request
+     * @param LocaleServiceInterface $localeService
      *
      * @return JsonResponse
      */
-    public function getAvailableCountriesAction(Request $request)
+    public function getAvailableCountriesAction(LocaleServiceInterface $localeService)
     {
-        $countries = \Pimcore::getContainer()->get('pimcore.locale')->getDisplayRegions();
+        $countries = $localeService->getDisplayRegions();
         asort($countries);
 
         $options = [];

@@ -19,7 +19,7 @@ namespace Pimcore\Bundle\CoreBundle\Command\Targeting;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Db;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
@@ -31,7 +31,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 class MigrateElementNamesCommand extends AbstractCommand
 {
     /**
-     * @var Db\Connection
+     * @var ConnectionInterface
      */
     private $db;
 
@@ -50,8 +50,9 @@ class MigrateElementNamesCommand extends AbstractCommand
      */
     private $runCommand = true;
 
-    public function __construct(NamingStrategyInterface $namingStrategy)
+    public function __construct(ConnectionInterface $connection, NamingStrategyInterface $namingStrategy)
     {
+        $this->db = $connection;
         $this->namingStrategy = $namingStrategy;
 
         parent::__construct();
@@ -106,8 +107,6 @@ class MigrateElementNamesCommand extends AbstractCommand
 
             return 1;
         }
-
-        $this->db = \Pimcore::getContainer()->get(Db\ConnectionInterface::class);
 
         $qb = $this->buildQuery();
         $stmt = $qb->execute();

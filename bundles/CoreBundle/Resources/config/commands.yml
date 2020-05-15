@@ -76,6 +76,7 @@ services:
 
     Pimcore\Bundle\CoreBundle\Command\Targeting\MigrateElementNamesCommand:
         arguments:
+            - '@Pimcore\Db\ConnectionInterface'
             - '@Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface'
         tags:
             - { name: console.command, command: 'pimcore:targeting:migrate-element-names' }

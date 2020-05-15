@@ -20,6 +20,7 @@ use Pimcore\Controller\Config\ControllerDataProvider;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Db;
 use Pimcore\File;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
 use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -665,13 +666,13 @@ class MiscController extends AdminController
     /**
      * @Route("/country-list", methods={"GET"})
      *
-     * @param Request $request
+     * @param LocaleServiceInterface $localeService
      *
      * @return JsonResponse
      */
-    public function countryListAction(Request $request)
+    public function countryListAction(LocaleServiceInterface $localeService)
     {
-        $countries = \Pimcore::getContainer()->get('pimcore.locale')->getDisplayRegions();
+        $countries = $localeService->getDisplayRegions();
         asort($countries);
         $options = [];
 
