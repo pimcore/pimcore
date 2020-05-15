@@ -952,12 +952,13 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             $this->indexVersion = $nextIndex;
 
             if ($isReindexingCompleted) {
-                ///if reindexing mode is not completed, then activat the ES index.
+                ///if reindexing mode is completed, then activate the ES index.
                 $this->switchIndexAlias();
             } elseif ($cleanupOldReindexingIndex) {
                 $this->deleteEsIndexIfExisting($currentIndexName);
             } else {
-                //continue with rebuild, or reset queue manually...
+                //let the (blocked) ecommerce reindexing scripts continue
+                //with their work...
             }
 
             //set the new version here so other processes write in the new index
