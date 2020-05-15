@@ -17,35 +17,33 @@ pimcore.asset.metadata.grid = Class.create({
     initialize: function (config) {
         this.config = config;
         this.asset = config.asset;
-
-        /** @type {pimcore.asset.metadata.dataProvider} */
-        this.dataProvider = config.dataProvider;
     },
 
     getLayout: function () {
 
         if (this.grid == null) {
-            if (this.dataProvider.getItemCount() < 1) {
+            let nrEntries = (Object.keys(this.asset.data.metadata)).length;
+            if(nrEntries < 1) {
                 // default fields
-                if (this.asset.data.type == "image") {
-                    this.dataProvider.add({
+                if(this.asset.data.type == "image") {
+                    this.asset.data.metadata["title~"] = {
                         name: "title",
                         type: "input",
                         language: "",
                         value: ""
-                    });
-                    this.dataProvider.add({
+                    };
+                    this.asset.data.metadata["alt~"] = {
                         name: "alt",
                         type: "input",
                         language: "",
                         value: ""
-                    });
-                    this.dataProvider.add({
+                    };
+                    this.asset.data.metadata["copyright~"] = {
                         name: "copyright",
                         type: "input",
                         language: "",
                         value: ""
-                    });
+                    };
                 }
             }
 
@@ -125,17 +123,16 @@ pimcore.asset.metadata.grid = Class.create({
                 );
             }
 
-            let storeData = this.dataProvider.getDataAsArray();
 
             var store = new Ext.data.Store({
                 model: modelName,
-                data: storeData
+                data: Object.values(this.asset.data.metadata)
             });
 
             this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit: 1,
                 listeners: {
-                    beforeedit: function (editor, context, eOpts) {
+                    beforeedit: function(editor, context, eOpts) {
                         //need to clear cached editors of cell-editing editor in order to
                         //enable different editors per row
                         editor.editors.each(function (e) {
@@ -155,10 +152,10 @@ pimcore.asset.metadata.grid = Class.create({
             });
 
             this.grid = Ext.create('Ext.grid.Panel', {
-                title: this.config.title ? this.config.title : t("custom_metadata"),
+                title: t("custom_metadata"),
                 autoScroll: true,
                 region: "center",
-                iconCls: this.config.hasOwnProperty('iconCls') ? this.config.iconCls : "pimcore_material_icon_metadata pimcore_material_icon",
+                iconCls: "pimcore_material_icon_metadata pimcore_material_icon",
                 bodyCls: "pimcore_editable_grid",
                 trackMouseOver: true,
                 store: store,
@@ -285,7 +282,7 @@ pimcore.asset.metadata.grid = Class.create({
             try {
                 var data = this.grid.getStore().getAt(i).data;
 
-                if (in_array(data.name, this.disallowedKeys)) {
+                if(in_array(data.name, this.disallowedKeys)) {
                     Ext.get(rows[i]).addCls("pimcore_properties_hidden_row");
                 }
 
@@ -362,11 +359,6 @@ pimcore.asset.metadata.grid = Class.create({
         return pimcore.asset.metadata.tags[record.data.type].prototype.getGridCellEditor("custom", record);
     },
 
-    commitChanges: function () {
-        var store = this.grid.getStore();
-        store.commitChanges();
-    },
-
     getValues : function () {
         if (!this.grid.rendered) {
             throw "metadata not available";
@@ -392,10 +384,21 @@ pimcore.asset.metadata.grid = Class.create({
             }
         }
 
-        var result = {
+        return {
             values: values
-        }
-        return result;
+        };
+    },
+
+    handleAddPredefinedDefinitions: function() {
+
+        Ext.Ajax.request({
+            url: "/admin/settings/get-predefined-metadata",
+            params: {
+                type: "asset",
+                subType: this.asset.type
+            },
+            success: this.doAddPredefinedDefinitions.bind(this)
+        });
     },
 
     doAddPredefinedDefinitions: function (response) {
