@@ -376,6 +376,8 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
     protected function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
+        $isLocked = $this->checkIndexLock(true); //better than log pollution?
+
         if (empty($data)) {
             $dataEntry = $this->db->fetchRow('SELECT data, metadata FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
             if ($dataEntry) {
@@ -692,6 +694,8 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
     protected function doCreateOrUpdateIndexStructures($exceptionOnFailure = false)
     {
+        $this->checkIndexLock(true);
+
         $this->createOrUpdateStoreTable();
 
         $esClient = $this->getElasticSearchClient();
@@ -845,6 +849,20 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     }
 
     /**
+     * Delete an ES index if existing.
+     *
+     * @param string $indexName the name of the index.
+     */
+    protected function deleteEsIndexIfExisting(string $indexName) {
+        $esClient = $this->getElasticSearchClient();
+        $result = $esClient->indices()->exists(['index' => $indexName]);
+        if ($result) {
+            Logger::info('Deleted index '.$indexName.'.');
+            $esClient->indices()->delete(['index' => $indexName]);
+        }
+    }
+
+    /**
      * Get the next index version, e.g. if currently 13, then 14 will be returned.
      * @return int
      */
@@ -853,43 +871,43 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     }
 
     /**
-     * Create an index with the given name (delete existing ones), and force a rebuild in ES.
-     * Does not perform an index switch.
-     * @param string $indexName
+     * Create a target index with the current index settings and mappings and
+     * copy the sourceIndex to the targetIndex.
+     *
+     * @param string $sourceIndexName the name of the source index in ES.
+     * @param string $targetIndexName the name of the target index in ES. If existing, will be deleted
      * @throws BadRequest400Exception
      * @throws \Elasticsearch\Common\Exceptions\NoNodesAvailableException
      */
-    protected function buildIndexAndPerformEsRebuild(string $indexName) {
-        $indexName = strtolower($indexName);
-        $esClient = $this->getElasticSearchClient();
-        Logger::info('Index '.$indexName.' already existing. Delete and rebuild it...');
-        $result = $esClient->indices()->exists(['index' => $indexName]);
-        if ($result) {
-            Logger::info('Deleting '.$indexName.'.');
-            $esClient->indices()->delete(['index' => $indexName]);
-        }
+    protected function performReindex(string $sourceIndexName, string $targetIndexName) {
 
-        $this->createEsIndex($indexName);
+        $esClient = $this->getElasticSearchClient();
+
+        $sourceIndexName = strtolower($sourceIndexName);
+        $targetIndexName = strtolower($targetIndexName);
 
         $body =
             [
                 'source' => [
-                    'index' => $this->getIndexNameVersion(), //currently active ES index with data.
+                    'index' => $sourceIndexName
+
                 ],
                 'dest' => [
-                    'index' => $indexName, //target index name
+                    'index' => $targetIndexName,
                 ]
             ];
 
         try {
 
-
             $startTime = time();
             Logger::info('Start reindexing process in Elastic Search...', [
+                'sourceIndexName' => $sourceIndexName,
+                'targetIndexName' => $targetIndexName,
                 'method' => 'POST',
                 'uri' => '/_reindex',
                 'body' => $body
             ]);
+
             $result = $esClient->transport->performRequest('POST', '/_reindex', [], $body);
             Logger::info(sprintf('Completed re-index in %.02f seconds.', (time() - $startTime)));
 
@@ -905,32 +923,51 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      * @throws \Exception
      */
     public function performNativeReindexing() {
-        $hasReindexIndexingModeCompleted = false;
-        Lock::lock(self::REINDEXING_LOCK_KEY);
-        if ($this->isInReindexMode()) {
-            //stop reindexing process. If not yet finished, no alias switch will take place
-            $this->completeReindexMode();
-            $hasReindexIndexingModeCompleted = true;
-        }
 
-        $nextIndex = $this->getNextIndexVersion();
-        $nextIndexName = $this->getIndexNameVersion($nextIndex);
-        $this->buildIndexAndPerformEsRebuild($nextIndexName);
+        $isReindexingCompleted = true;
 
-        $this->indexVersion = $nextIndex;
-        $this->switchIndexAlias();
+        try {
+            $this->activateIndexLock(); //lock all other processes
 
-        //set the new version here so other processes write in the new index
-        $this->settingsHash  = md5(json_encode($this->tenantConfig->getIndexSettings()));
-        $result = $this->updateVersionFile();
-        if (!$result) {
-            throw new \Exception("Can't write version file: " . $this->getVersionFile());
-        }
+            $this->completeReindexMode(); //try to complete the reindex mode as a precaution (will switch index alias)
+            $cleanupOldReindexingIndex = false;
+            $currentIndexName = $this->getIndexNameVersion();
+            if ($this->isInReindexMode()) {
+                $isReindexingCompleted = false;
+                $esActiveIndexName = $this->fetchEsActiveIndex();
+                if ($currentIndexName != $esActiveIndexName) {
+                    //reindexing: old reindexing index should be deleted!
+                    $cleanupOldReindexingIndex = true;
+                }
+            }
 
-        Lock::release(self::REINDEXING_LOCK_KEY);
+            $nextIndex = $this->getNextIndexVersion();
+            $nextIndexName = $this->buildIndexName($nextIndex);
 
-        if ($hasReindexIndexingModeCompleted) {
-            //continue with rebuild, or reset queue...
+            $this->deleteEsIndexIfExisting($nextIndexName);
+            $this->createEsIndex($nextIndexName);
+
+            $this->performReindex($currentIndexName, $nextIndexName);
+
+            $this->indexVersion = $nextIndex;
+
+            if ($isReindexingCompleted) {
+                ///if reindexing mode is not completed, then activat the ES index.
+                $this->switchIndexAlias();
+            } elseif ($cleanupOldReindexingIndex) {
+                $this->deleteEsIndexIfExisting($currentIndexName);
+            } else {
+                //continue with rebuild, or reset queue manually...
+            }
+
+            //set the new version here so other processes write in the new index
+            $result = file_put_contents($this->getVersionFile(), $this->indexVersion);
+            if (!$result) {
+                throw new \Exception("Can't write version file: " . $this->getVersionFile());
+            }
+
+        } finally {
+            $this->releaseIndexLock();
         }
     }
 
@@ -944,5 +981,36 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         $client = $this->getElasticSearchClient();
         $client->indices()->close(['index' => $aliasName]);
         $client->indices()->open(['index' => $aliasName]);
+    }
+
+    /**
+     * Verify if the index is currently locked.
+     * @param bool $throwException if set to false then no exception will be thrown if index is locked
+     * @return bool returns true if no exception is thrown and the index is locked
+     * @throws \Exception
+     */
+    protected function checkIndexLock(bool $throwException = true) : bool {
+        if (Lock::isLocked(self::REINDEXING_LOCK_KEY, 60*10)) {  #lock expires after 10 minutes.
+
+            $errorMessage = sprintf('Reindex cannot be started, as currently locked by "%s".', self::REINDEXING_LOCK_KEY);
+            if ($throwException) {
+                throw new \Exception($errorMessage);
+            } else {
+                Logger::warning($errorMessage);
+            }
+
+            return true;
+
+        }
+
+        return false;
+    }
+
+    protected function activateIndexLock() {
+        Lock::lock(self::REINDEXING_LOCK_KEY);
+    }
+
+    protected function releaseIndexLock() {
+        Lock::release(self::REINDEXING_LOCK_KEY);
     }
 }
