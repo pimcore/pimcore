@@ -396,6 +396,12 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             'SWlatitude' => $newValue->getSouthWest()->getLatitude()
         ];
 
-        return serialize($oldValue) === serialize($newValue);
+        foreach ($oldValue as $key => $oValue) {
+            if ($oValue !== $newValue[$key]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

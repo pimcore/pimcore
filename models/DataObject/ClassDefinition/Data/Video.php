@@ -690,28 +690,41 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         if (!$oldValue instanceof DataObject\Data\Video
-            || !$newValue instanceof DataObject\Data\Video) {
+            || !$newValue instanceof DataObject\Data\Video
+            || $oldValue->getType() != $newValue->getType()) {
             return false;
         }
 
-        $oldValue = [
+        $oldData = [
             'type' => $oldValue->getType(),
             'data' => $oldValue->getData()
         ];
 
-        if ($oldValue['data'] instanceof Asset\Video) {
-            $oldValue['data'] = $oldValue['data']->getId();
+        if ($oldData['data'] instanceof Asset\Video) {
+            $oldData['data'] = $oldData['data']->getId();
+            $oldData['poster'] = $oldValue->getPoster();
+            $oldData['title'] = $oldValue->getTitle();
+            $oldData['description'] = $oldValue->getDescription();
         }
 
-        $newValue = [
+        $newData = [
             'type' => $newValue->getType(),
             'data' => $newValue->getData()
         ];
 
-        if ($newValue['data'] instanceof Asset\Video) {
-            $newValue['data'] = $newValue['data']->getId();
+        if ($newData['data'] instanceof Asset\Video) {
+            $newData['data'] = $newData['data']->getId();
+            $newData['poster'] = $newValue->getPoster();
+            $newData['title'] = $newValue->getTitle();
+            $newData['description'] = $newValue->getDescription();
         }
 
-        return \serialize($oldValue) === \serialize($newValue);
+        foreach ($oldData as $key => $oValue) {
+            if ($oValue !== $newData[$key]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

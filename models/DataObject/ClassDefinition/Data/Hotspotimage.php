@@ -786,6 +786,12 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
             'crop' => $newValue->getCrop() ?? []
         ];
 
-        return serialize($oldValue) === serialize($newValue);
+        foreach ($oldValue as $key => $oValue) {
+            if ($oValue !== $newValue[$key]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
