@@ -871,8 +871,8 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     }
 
     /**
-     * Create a target index with the current index settings and mappings and
-     * copy the sourceIndex to the targetIndex.
+     * Copy an existing ES sourceIndex into an existing ES targetIndex.
+     * Precondition: both ES indices must already exist.
      *
      * @param string $sourceIndexName the name of the source index in ES.
      * @param string $targetIndexName the name of the target index in ES. If existing, will be deleted
