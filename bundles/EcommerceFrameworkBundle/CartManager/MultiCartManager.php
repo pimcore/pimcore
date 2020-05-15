@@ -134,7 +134,6 @@ class MultiCartManager implements CartManagerInterface
     {
         $classname = $this->getCartClassName();
 
-        /* @var CartInterface[] $carts */
         return $classname::getAllCartsForUser($this->environment->getCurrentUserId());
     }
 
