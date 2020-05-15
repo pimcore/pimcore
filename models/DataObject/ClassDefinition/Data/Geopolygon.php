@@ -381,7 +381,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         $fd = new Geopoint();
 
         foreach ($oldValue as $p => $point) {
-            if (!$fd->isEqual($oldValue[$p], $newValue[$p])) {
+            if (!$fd->isEqual($point, $newValue[$p])) {
                 return false;
             }
         }

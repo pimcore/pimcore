@@ -225,7 +225,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof \DateTimeInterface) {
-            return $data->format('Y-m-d H:i');
+            return $data->format('Y-m-d H:i:s');
         }
 
         return '';
@@ -245,7 +245,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof \DateTimeInterface) {
-            return $data->format('Y-m-d H:i');
+            return $data->format('Y-m-d H:i:s');
         }
 
         return null;
@@ -492,8 +492,8 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
      */
     public function isEqual($oldValue, $newValue)
     {
-        $oldValue = $oldValue instanceof \DateTimeInterface ? $oldValue->format('Y-m-d H:i') : null;
-        $newValue = $newValue instanceof \DateTimeInterface ? $newValue->format('Y-m-d H:i') : null;
+        $oldValue = $oldValue instanceof \DateTimeInterface ? $oldValue->format('Y-m-d H:i:s') : null;
+        $newValue = $newValue instanceof \DateTimeInterface ? $newValue->format('Y-m-d H:i:s') : null;
 
         return $oldValue === $newValue;
     }
