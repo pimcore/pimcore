@@ -948,5 +948,8 @@
     "enable_grid_locking": "Enable grid locking",
     "export_configuration": "Export Configuration As JSON",
     "composite_indices": "Composite indices",
-    "default_value_generator": "Default value generator service / class"
+    "default_value_generator": "Default value generator service / class",
+    "no_value_set": "no value set",
+    "delete_class_message": "Do you really want to delete class '%s' ?",
+    "replace_assignments_in_all_elements": "Replace assignments in all elements"
 }

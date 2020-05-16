@@ -16,7 +16,6 @@ pimcore.registerNS("pimcore.object.classificationstore.keySelectionWindow");
  * this is for the object editor and the add key window in the classification store definition
  */
 pimcore.object.classificationstore.keySelectionWindow = Class.create({
-
     acceptEvents: true,
 
     initialize: function (config) {
@@ -32,11 +31,15 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         if (this.config.enableCollections) {
             this.config.isCollectionSearch = true;
         }
-
     },
 
-
     show: function () {
+        if (this.config.maxItems > 0 && this.config.parent.getUsedActiveGroups().length >= this.config.maxItems) {
+            pimcore.helpers.showNotification(t('validation_failed'), t('limit_reached'), 'error');
+
+            return;
+        }
+
         this.searchfield = new Ext.form.field.Text({
             width: 300,
             style: "float: left;",
@@ -143,12 +146,26 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         }
     },
 
-
     addGroups: function (groupIds) {
         if (!this.acceptEvents) {
             return;
         }
+
+        groupIds = Ext.Array.unique(groupIds.map(function (groupId) {
+            return parseInt(groupId);
+        }));
+
+        if (
+            this.config.maxItems > 0 &&
+            Ext.Array.merge(groupIds, this.config.parent.getUsedActiveGroups()).length > this.config.maxItems
+        ) {
+            pimcore.helpers.showNotification(t('validation_failed'), t('limit_reached'), 'error');
+
+            return;
+        }
+
         this.acceptEvents = false;
+
         if (groupIds.length > 0) {
             this.config.parent.requestPending.call(this.config.parent);
             Ext.Ajax.request({
@@ -299,7 +316,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         }
     },
 
-    setupSearch: function(type, configKey) {
+    setupSearch: function (type, configKey) {
         this.resetToolbarButtons();
         this.toolbarbuttons[type].toggle(true);
 
@@ -384,14 +401,32 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         var gridColumns = [];
         if (this.config.isGroupByKeySearch) {
             gridColumns.push({text: "ID", width: 60, sortable: true, dataIndex: 'id'});
-            gridColumns.push({text: t("group"), flex: 1, sortable: true, dataIndex: 'groupName', filter: 'string'});
-            gridColumns.push({text: t("name"), flex: 1, sortable: true, dataIndex: 'keyName', filter: 'string'});
+
+            gridColumns.push({
+                text: t("group"),
+                flex: 1,
+                sortable: true,
+                dataIndex: 'groupName',
+                filter: 'string',
+                renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
+            });
+
+            gridColumns.push({
+                text: t("name"),
+                flex: 1,
+                sortable: true,
+                dataIndex: 'keyName',
+                filter: 'string',
+                renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
+            });
+
             gridColumns.push({
                 text: t("description"),
                 flex: 1,
                 sortable: true,
                 dataIndex: 'keyDescription',
-                filter: 'string'
+                filter: 'string',
+                renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
             });
         } else {
             gridColumns.push({text: "ID", width: 40, sortable: true, dataIndex: 'id'});
@@ -405,8 +440,21 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
                 });
             }
 
-            gridColumns.push({text: t("name"), width: nameWidth, sortable: true, dataIndex: 'name'});
-            gridColumns.push({text: t("description"), width: descWidth, sortable: true, dataIndex: 'description'});
+            gridColumns.push({
+                text: t("name"),
+                width: nameWidth,
+                sortable: true,
+                dataIndex: 'name',
+                renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
+            });
+
+            gridColumns.push({
+                text: t("description"),
+                width: descWidth,
+                sortable: true,
+                dataIndex: 'description',
+                renderer: pimcore.helpers.grid.getTranslationColumnRenderer.bind(this)
+            });
         }
 
         var extraParams = {
@@ -481,5 +529,4 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         this.resultPanel.add(this.gridPanel);
         this.resultPanel.updateLayout();
     }
-
 });

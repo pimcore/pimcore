@@ -62,10 +62,11 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
     getSpecificPanelItems: function (datax, inEncryptedField) {
         var specificItems = [
             {
-                xtype: "numberfield",
+                xtype: "textfield",
                 fieldLabel: t("default_value"),
                 name: "defaultValue",
-                value: datax.defaultValue
+                value: datax.defaultValue,
+                width: 600
             },{
                 xtype: 'textfield',
                 width: 600,
@@ -168,7 +169,8 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                     regex: source.datax.regex,
                     unique: source.datax.unique,
                     defaultValue: source.datax.defaultValue,
-                    defaultValueGenerator: source.datax.defaultValueGenerator
+                    defaultValueGenerator: source.datax.defaultValueGenerator,
+                    showCharCount : source.datax.showCharCount
                 });
         }
     },

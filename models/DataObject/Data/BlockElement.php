@@ -22,9 +22,9 @@ use Pimcore\Cache\Runtime;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Version\ElementDescriptor;
 use Pimcore\Model\Version\MarshalMatcher;
 use Pimcore\Model\Version\UnmarshalMatcher;
 
@@ -110,7 +110,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
      */
     public function getData()
     {
-
         if ($this->needsRenewReferences) {
             $container = null;
             $this->needsRenewReferences = false;
@@ -174,7 +173,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
      */
     public function __sleep()
     {
-
         $copier = new DeepCopy();
         $copier->skipUncloneable(true);
         $copier->addTypeFilter(
@@ -214,5 +212,4 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
     {
         $this->needsRenewReferences = (bool) $needsRenewReferences;
     }
-
 }

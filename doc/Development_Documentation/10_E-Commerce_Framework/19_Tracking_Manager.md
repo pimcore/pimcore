@@ -5,6 +5,7 @@ different tracker implementations, it supports different tracking services.
 
 Current implementations of trackers are
 
+* **Google Tag Manager (GTM)**: `\\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\GoogleTagManager`
 * **Google Analytics Classic**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\Ecommerce`
 * **Google Analytics Universal**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\UniversalEcommerce`
 * **Google Analytics Enhanced E-Commerce**: `\Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\EnhancedEcommerce`

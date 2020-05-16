@@ -347,7 +347,8 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
                     assetsAllowed: source.datax.assetsAllowed,
                     assetTypes: source.datax.assetTypes,
                     documentsAllowed: source.datax.documentsAllowed,
-                    documentTypes: source.datax.documentTypes
+                    documentTypes: source.datax.documentTypes,
+                    pathFormatterClass: source.datax.pathFormatterClass
                 });
         }
     }

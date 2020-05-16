@@ -11,7 +11,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 function t(key, defaultValue, placeholders) {
-    if(!key) {
+    if (!key) {
         return "";
     }
 
@@ -21,7 +21,7 @@ function t(key, defaultValue, placeholders) {
         pimcore.globalmanager.add("translations_admin_translated_values", []);
     }
 
-    //make sure 'key' is a string
+    // make sure 'key' is a string
     key = String(key);
 
     // remove plus at the start and the end to avoid double translations
@@ -34,10 +34,19 @@ function t(key, defaultValue, placeholders) {
         key = key.toLocaleLowerCase();
     }
 
+    // the maximum length of a translation key are 190 characters
+    if (key.length > 190) {
+        if (!defaultValue) {
+            return key;
+        }
+
+        return defaultValue;
+    }
+
     if (pimcore && pimcore.system_i18n && (pimcore.system_i18n[key] || pimcore.system_i18n[originalKey])) {
         var trans = pimcore.system_i18n[originalKey] ? pimcore.system_i18n[originalKey] : pimcore.system_i18n[key];
 
-        //find and replace placeholders, if provided
+        // find and replace placeholders, if provided
         if (placeholders) {
             let pKeys = Object.keys(placeholders);
 

@@ -134,7 +134,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @return string
+     * @return string|void
      */
     public function admin()
     {
@@ -615,12 +615,9 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param Model\Document\PageSnippet $document
      * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return Webservice\Data\Document\Element
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        return $wsElement;
     }
 
     /**
