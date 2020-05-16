@@ -26,8 +26,7 @@ $object->save();
 The password field is basically the same as the input field with hidden input characters. It's column length can not be 
 changed, since passwords are always hashed using the selected algorithm.  
 
-If a string appears to already be hashed, either by detection by [password_get_info()](https://www.php.net/manual/en/function.password-get-info.php) 
-or if it matches any common hash patterns:
+If a string appears to already be hashed, either by detection by [password_get_info()](https://www.php.net/manual/en/function.password-get-info.php) or if it matches any common hash patterns below, then it will not be hashed again.
 
  - Hexadecimal string
  - with legth of 32, 40, 48, 56, 64, 96, or 128 characters
