@@ -164,16 +164,21 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
             return $data;
         }
 
-        // password_get_info() will not detect older, less secure, hashing algos
-        $maybeMD5 = preg_match('/^[a-f0-9]{32}$/', $data);
-        $maybeSHA1 = preg_match("/^[a-f0-9]{40}$/", $data);
-        $maybeSHA224 = preg_match("/^[a-f0-9]{56}$/", $data);
-        $maybeSHA256 = preg_match("/^[a-f0-9]{64}$/", $data);
-        $maybeSHA384 = preg_match("/^[a-f0-9]{96}$/", $data);
-        $maybeSHA512 = preg_match("/^[a-f0-9]{128}$/", $data);
+        // password_get_info() will not detect older, less secure, hashing algos.
+        // It might not detect some less common ones as well.
+        $maybeHash = preg_match('/^[a-f0-9]{32,}$/i', $data);
+        $hashLenghts = [
+            32,  // MD2, MD4, MD5, RIPEMD-128, Snefru 128, Tiger/128, HAVAL128
+            40,  // SHA-1, HAS-160, RIPEMD-160, Tiger/160, HAVAL160
+            48,  // Tiger/192, HAVAL192
+            56,  // SHA-224, HAVAL224
+            64,  // SHA-256, BLAKE-256, GOST, GOST CryptoPro, HAVAL256, RIPEMD-256, Snefru 256
+            96,  // SHA-384
+            128, // SHA-512, BLAKE-512, SWIFFT
+        ];
 
-        // Probably already a hashed string
-        if ($maybeMD5 || $maybeSHA1 || $maybeSHA224 || $maybeSHA256 || $maybeSHA384 || $maybeSHA512) {
+        if ($maybeHash && in_array(strlen($data), $hashLenghts, true)) {
+            // Probably already a hashed string
             return $data;
         }
 
