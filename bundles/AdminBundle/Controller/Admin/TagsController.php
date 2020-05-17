@@ -96,6 +96,43 @@ class TagsController extends AdminController
     }
 
     /**
+     * @param Request $request
+     * @Route("/update-translation-for-tag")
+     */
+    public function updateTranslationForTagAction(Request $request){
+        $success = false;
+
+        if($tag = Tag::getById($request->get('id'))){
+            $translations = $tag->getTranslations();
+            $translations[$request->get('language')] = $request->get('translation');
+
+            $tag->setTranslations(serialize($translations));
+            $tag->setModificationDate(date('U'));
+            $tag->save();
+
+            $success = true;
+        }
+
+        return $this->adminJson(['success' => $success]);
+    }
+
+    /**
+     * @param $id
+     * @Route("/get-translations-for-tag/{id}")
+     */
+    public function getTranslationsForTagAction($id){
+        $tag = Tag::getById($id);
+
+        $storeRow = array_merge([
+            'id' => $id,
+            'creationDate' => $tag->getCreationDate(),
+            'modificationDate' => $tag->getModificationDate(),
+        ], $tag->getTranslations());
+
+        return $this->adminJson([$storeRow]);
+    }
+
+    /**
      * @Route("/tree-get-children-by-id", methods={"GET"})
      *
      * @param Request $request
