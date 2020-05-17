@@ -18,6 +18,8 @@
 namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
+use Pimcore\Tool;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Pimcore\Model\Element\Tag\Dao getDao()
@@ -54,6 +56,26 @@ class Tag extends Model\AbstractModel
      * @var Tag|null
      */
     public $parent;
+
+    /**
+     * @var string
+     */
+    public $translations;
+
+    /**
+     * @var int
+     */
+    public $creationDate;
+
+    /**
+     * @var int
+     */
+    public $modificationDate;
+
+    public function __construct() {
+        $this->creationDate = date('U');
+        $this->modificationDate = date('U');
+    }
 
     /**
      * @static
@@ -163,6 +185,7 @@ class Tag extends Model\AbstractModel
     public function save()
     {
         $this->correctPath();
+        $this->modificationDate = date('U');
         $this->getDao()->save();
     }
 
@@ -318,5 +341,52 @@ class Tag extends Model\AbstractModel
         } else {
             $this->idPath = '/';
         }
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTranslations() {
+        return $this->translations ? unserialize($this->translations) : [];
+    }
+
+    /**
+     * @param mixed $translations
+     */
+    public function setTranslations($translations) {
+        $this->translations = $translations;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreationDate() {
+        return $this->creationDate;
+    }
+
+    /**
+     * @param int $creationDate
+     */
+    public function setCreationDate($creationDate) {
+        $this->creationDate = $creationDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getModificationDate() {
+        return $this->modificationDate;
+    }
+
+    /**
+     * @param int $modificationDate
+     */
+    public function setModificationDate($modificationDate) {
+        $this->modificationDate = $modificationDate;
+    }
+
+    public function __toString(){
+        $currentLanguage = \Pimcore::getContainer()->get('pimcore.locale')->getLocale();
+        return $this->getTranslations()['_' . $currentLanguage] ?? $this->name;
     }
 }
