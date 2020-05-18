@@ -107,7 +107,7 @@ class TagsController extends AdminController
             $translations[$request->get('language')] = $request->get('translation');
 
             $tag->setTranslations(serialize($translations));
-            $tag->setModificationDate(date('U'));
+            $tag->setModificationDate(time());
             $tag->save();
 
             $success = true;
