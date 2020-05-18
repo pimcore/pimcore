@@ -71,6 +71,7 @@ defined.
 * Configure the group sort order for the object editor, groups with lower values are listed first
 * Optionally you can decide whether you want to see all keys or just the non-empty ones.
 * Optionally you can disable add/remove of groups in object editor (in this case, groups can only added and removed via API)
+* Optionally you can define a limit of how many groups can be used
 
 ![Class definitaion with Classification Store](../../../img/Objects_ClassificationStore_classes.png)
 

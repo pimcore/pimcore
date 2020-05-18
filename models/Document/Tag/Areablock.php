@@ -76,6 +76,8 @@ class Areablock extends Model\Document\Tag implements BlockInterface
 
     /**
      * @see Document\Tag\TagInterface::admin
+     *
+     * @return void
      */
     public function admin()
     {
@@ -84,6 +86,8 @@ class Areablock extends Model\Document\Tag implements BlockInterface
 
     /**
      * @see Document\Tag\TagInterface::frontend
+     *
+     * @return void
      */
     public function frontend()
     {

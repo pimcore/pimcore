@@ -135,7 +135,12 @@ pimcore.settings.profile.panel = Class.create({
             width: 400,
             enableKeyEvents: true,
             listeners: {
-                keyup: passwordCheck
+                keyup: passwordCheck,
+                afterrender: function (cmp) {
+                    cmp.inputEl.set({
+                        autocomplete: 'new-password'
+                    });
+                }
             }
         });
 
@@ -148,7 +153,12 @@ pimcore.settings.profile.panel = Class.create({
             style: "margin-bottom: 20px;",
             enableKeyEvents: true,
             listeners: {
-                keyup: passwordCheck
+                keyup: passwordCheck,
+                afterrender: function (cmp) {
+                    cmp.inputEl.set({
+                        autocomplete: 'new-password'
+                    });
+                }
             }
         });
 
@@ -161,7 +171,14 @@ pimcore.settings.profile.panel = Class.create({
                 name: "old_password",
                 inputType: "password",
                 width: 400,
-                hidden: this.currentUser.isPasswordReset
+                hidden: this.currentUser.isPasswordReset,
+                listeners: {
+                    afterrender: function (cmp) {
+                        cmp.inputEl.set({
+                            autocomplete: 'current-password'
+                        });
+                    }
+                }
             }, {
                 xtype: "fieldcontainer",
                 layout: 'hbox',

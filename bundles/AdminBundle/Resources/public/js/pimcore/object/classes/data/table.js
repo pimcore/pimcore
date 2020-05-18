@@ -286,7 +286,8 @@ pimcore.object.classes.data.table = Class.create(pimcore.object.classes.data.dat
                     rows: source.datax.rows,
                     rowsFixed: source.datax.rowsFixed,
                     data: source.datax.data,
-                    columnConfig: source.datax.columnConfig
+                    columnConfig: source.datax.columnConfig,
+                    columnConfigActivated: source.datax.columnConfigActivated,
                 });
         }
     }

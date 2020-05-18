@@ -150,7 +150,11 @@ pimcore.object.classes.data.countrymultiselect = Class.create(pimcore.object.cla
             }
             Ext.apply(this.datax,
                 {
-                    restrictTo: source.datax.restrictTo
+                    restrictTo: source.datax.restrictTo,
+                    width: source.datax.width,
+                    height: source.datax.height,
+                    renderType : source.datax.renderType
+                    
                 });
         }
     }

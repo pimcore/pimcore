@@ -56,10 +56,5 @@ pimcore.object.classes.data.imageGallery = Class.create(pimcore.object.classes.d
         $super();
 
         return this.layout;
-    },
-
-    applySpecialData: function(source) {
-        $super();
-
     }
 });

@@ -97,10 +97,8 @@ class MultiCartManager implements CartManagerInterface
 
     protected function initSavedCarts()
     {
-        $classname = $this->getCartClassName();
-
         /* @var CartInterface[] $carts */
-        $carts = $classname::getAllCartsForUser($this->environment->getCurrentUserId());
+        $carts = $this->getAllCartsForCurrentUser();
 
         if (empty($carts)) {
             $this->carts = [];
@@ -112,7 +110,7 @@ class MultiCartManager implements CartManagerInterface
                     $this->carts[$cart->getId()] = $cart;
 
                     if ($cart instanceof AbstractCart) {
-                        $cart->setCurrentReadOnlyMode($this->cartFactory->getCartReadOnlyMode());
+                        $cart->setCurrentReadonlyMode($this->cartFactory->getCartReadOnlyMode());
                     }
                 } else {
                     // cart is already committed - cleanup cart and environment
@@ -128,6 +126,16 @@ class MultiCartManager implements CartManagerInterface
                 }
             }
         }
+    }
+
+    /**
+     * @return CartInterface[]|null
+     */
+    protected function getAllCartsForCurrentUser()
+    {
+        $classname = $this->getCartClassName();
+
+        return $classname::getAllCartsForUser($this->environment->getCurrentUserId());
     }
 
     /**

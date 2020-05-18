@@ -245,9 +245,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
             );
 
-            this.languageInfo = new Ext.Toolbar.TextItem({
-                text: t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage])
-            });
+            this.languageInfo = new Ext.Toolbar.TextItem();
 
             this.toolbarFilterInfo = new Ext.Button({
                 iconCls: "pimcore_icon_filter_condition",
@@ -303,6 +301,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 menu: exportButtons,
             });
         }
+
+        this.languageInfo.setText(t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage]));
 
         var hideSaveColumnConfig = !fromConfig || save;
 

@@ -90,5 +90,20 @@ pimcore.object.classes.data.inputQuantityValue = Class.create(pimcore.object.cla
         ]);
 
         return this.layout;
-    }
+    },
+    
+    applySpecialData: function(source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax =  {};
+            }
+            Ext.apply(this.datax,
+                {
+                    width: source.datax.width,
+                    defaultValue: source.datax.defaultValue,
+                    defaultUnit: source.datax.defaultUnit,
+                    validUnits : source.datax.validUnits
+                });
+        }
+    },
 });

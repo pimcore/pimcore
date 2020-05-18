@@ -42,14 +42,14 @@ final class CleanupFieldcollectionTablesTask implements TaskInterface
         $db = Db::get();
         $tasks = [
             [
-                "localized" => false,
-                "prefix" => "object_collection_",
-                "pattern" => "object\_collection\_%"
+                'localized' => false,
+                'prefix' => 'object_collection_',
+                'pattern' => "object\_collection\_%"
             ]
         ];
         foreach ($tasks as $task) {
-            $prefix = $task["prefix"];
-            $pattern = $task["pattern"];
+            $prefix = $task['prefix'];
+            $pattern = $task['pattern'];
             $tableNames = $db->fetchAll("SHOW TABLES LIKE '" . $pattern . "'");
 
             foreach ($tableNames as $tableName) {
@@ -66,13 +66,13 @@ final class CleanupFieldcollectionTablesTask implements TaskInterface
                     continue;
                 }
 
-                $classId = substr($fieldDescriptor, $idx +1);
+                $classId = substr($fieldDescriptor, $idx + 1);
 
                 $isLocalized = false;
 
-                if (strpos($classId, "localized_") === 0) {
+                if (strpos($classId, 'localized_') === 0) {
                     $isLocalized = true;
-                    $classId = substr($classId, strlen("localized_"));
+                    $classId = substr($classId, strlen('localized_'));
                 }
 
                 $classDefinition = ClassDefinition::getById($classId);

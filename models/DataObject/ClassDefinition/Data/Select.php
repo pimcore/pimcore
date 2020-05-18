@@ -516,10 +516,10 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     {
         $value = is_array($value) ? current($value) : $value;
         $name = $params['name'] ?: $this->name;
-        
+
         if ($operator === '=') {
             return '`'.$name.'` = '."'$value'".' ';
-        } else if ($operator === 'LIKE') {
+        } elseif ($operator === 'LIKE') {
             return '`'.$name.'` LIKE '."'%$value%'".' ';
         }
 

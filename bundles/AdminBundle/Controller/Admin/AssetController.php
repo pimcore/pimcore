@@ -1198,8 +1198,8 @@ class AssetController extends ElementControllerBase implements EventedController
         if ($thumbnail) {
             $thumbnailFile = $thumbnailFile ?: $thumbnail->getFileSystemPath();
 
-            $downloadFilename = str_replace(
-                '.' . File::getFileExtension($image->getFilename()),
+            $downloadFilename = preg_replace(
+                '/\.' . preg_quote(File::getFileExtension($image->getFilename())) . '$/i',
                 '.' . $thumbnail->getFileExtension(),
                 $image->getFilename()
             );
@@ -1266,36 +1266,37 @@ class AssetController extends ElementControllerBase implements EventedController
             throw $this->createAccessDeniedException('not allowed to view thumbnail');
         }
 
-        $thumbnail = null;
+        $thumbnailConfig = null;
 
         if ($request->get('thumbnail')) {
-            $thumbnail = $image->getThumbnailConfig($request->get('thumbnail'));
+            $thumbnailConfig = $image->getThumbnailConfig($request->get('thumbnail'));
         }
-        if (!$thumbnail) {
+        if (!$thumbnailConfig) {
             if ($request->get('config')) {
-                $thumbnail = $image->getThumbnailConfig($this->decodeJson($request->get('config')));
+                $thumbnailConfig = $image->getThumbnailConfig($this->decodeJson($request->get('config')));
             } else {
-                $thumbnail = $image->getThumbnailConfig(array_merge($request->request->all(), $request->query->all()));
+                $thumbnailConfig = $image->getThumbnailConfig(array_merge($request->request->all(), $request->query->all()));
             }
         } else {
             // no high-res images in admin mode (editmode)
             // this is mostly because of the document's image editable, which doesn't know anything about the thumbnail
             // configuration, so the dimensions would be incorrect (double the size)
-            $thumbnail->setHighResolution(1);
+            $thumbnailConfig->setHighResolution(1);
         }
 
-        $format = strtolower($thumbnail->getFormat());
+        $format = strtolower($thumbnailConfig->getFormat());
         if ($format == 'source' || $format == 'print') {
-            $thumbnail->setFormat('PNG');
+            $thumbnailConfig->setFormat('PNG');
+            $thumbnailConfig->setRasterizeSVG(true);
         }
 
         if ($request->get('treepreview')) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
+            $thumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
         }
 
         $cropPercent = $request->get('cropPercent');
         if ($cropPercent && filter_var($cropPercent, FILTER_VALIDATE_BOOLEAN)) {
-            $thumbnail->addItemAt(0, 'cropPercent', [
+            $thumbnailConfig->addItemAt(0, 'cropPercent', [
                 'width' => $request->get('cropWidth'),
                 'height' => $request->get('cropHeight'),
                 'y' => $request->get('cropTop'),
@@ -1303,10 +1304,10 @@ class AssetController extends ElementControllerBase implements EventedController
             ]);
 
             $hash = md5(Tool\Serialize::serialize(array_merge($request->request->all(), $request->query->all())));
-            $thumbnail->setName($thumbnail->getName() . '_auto_' . $hash);
+            $thumbnailConfig->setName($thumbnailConfig->getName() . '_auto_' . $hash);
         }
 
-        $thumbnail = $image->getThumbnail($thumbnail);
+        $thumbnail = $image->getThumbnail($thumbnailConfig);
 
         if ($fileinfo) {
             return $this->adminJson([
@@ -2077,6 +2078,14 @@ class AssetController extends ElementControllerBase implements EventedController
         $filesPerJob = 5;
         $jobs = [];
         $asset = Asset::getById($request->get('parentId'));
+
+        if (!is_file($_FILES['Filedata']['tmp_name'])) {
+            return $this->adminJson([
+                'success' => false,
+                'message' => 'Something went wrong, please check upload_max_filesize and post_max_size in your php.ini as well as the write permissions on the file system'
+            ]);
+        }
+
         if (!$asset) {
             throw $this->createNotFoundException('Parent asset not found');
         }

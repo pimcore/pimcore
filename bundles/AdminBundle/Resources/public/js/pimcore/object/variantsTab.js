@@ -88,15 +88,20 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             this.fieldObject[fields[i].key] = fields[i];
         }
 
-        var baseParams = {
-            language: this.gridLanguage,
-            objectId: this.element.id
-        };
+        var baseParams;
+
         var existingFilters;
         if (this.store) {
             existingFilters = this.store.getFilters();
             baseParams = this.store.getProxy().getExtraParams();
+        } else {
+            baseParams = {};
         }
+
+        Ext.apply(baseParams, {
+            language: this.gridLanguage,
+            objectId: this.element.id
+        });
 
         var gridHelper = new pimcore.object.helpers.grid(
             this.selectedClass,

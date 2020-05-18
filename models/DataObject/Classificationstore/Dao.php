@@ -213,9 +213,7 @@ class Dao extends Model\Dao\AbstractDao
             `o_id` BIGINT(20) NOT NULL,
             `groupId` BIGINT(20) NOT NULL,
             `fieldname` VARCHAR(70) NOT NULL,
-            PRIMARY KEY (`groupId`, `o_id`, `fieldname`),
-            INDEX `o_id` (`o_id`),
-            INDEX `fieldname` (`fieldname`)
+            PRIMARY KEY (`o_id`, `fieldname`, `groupId`)
         ) DEFAULT CHARSET=utf8mb4;');
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $dataTable . '` (
@@ -228,10 +226,8 @@ class Dao extends Model\Dao\AbstractDao
             `fieldname` VARCHAR(70) NOT NULL,
             `language` VARCHAR(10) NOT NULL,
             `type` VARCHAR(50) NULL,
-            PRIMARY KEY (`groupId`, `keyId`, `o_id`, `fieldname`, `language`),
-            INDEX `o_id` (`o_id`),
+            PRIMARY KEY (`o_id`, `fieldname`, `groupId`, `keyId`, `language`),
             INDEX `keyId` (`keyId`),
-            INDEX `fieldname` (`fieldname`),
             INDEX `language` (`language`)
         ) DEFAULT CHARSET=utf8mb4;');
 

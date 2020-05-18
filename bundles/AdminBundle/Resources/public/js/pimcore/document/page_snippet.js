@@ -447,21 +447,21 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             pimcore.globalmanager.add("new_notifications", new pimcore.notification.modal(elementData));        }
     },
 
-    publish: function($super, only) {
+    publish: function($super, only, callback) {
         /* It is needed to have extra validateRequiredEditables check here
          * so as to stop propagating Admin UI changes in case of required content = true */
         if (this.validateRequiredEditables()) {
             return false;
         }
 
-        $super(only);
+        $super(only, callback);
     },
 
-    save : function ($super, task, only) {
+    save : function ($super, task, only, callback) {
         if(task !== "publish") {
             this.validateRequiredEditables(true);
         }
-        $super(task, only);
+        $super(task, only, callback);
     },
 
     validateRequiredEditables: function (dismissAlert) {

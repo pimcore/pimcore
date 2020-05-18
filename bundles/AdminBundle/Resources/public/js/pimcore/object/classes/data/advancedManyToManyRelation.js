@@ -575,7 +575,11 @@ pimcore.object.classes.data.advancedManyToManyRelation = Class.create(pimcore.ob
                     assetsAllowed: source.datax.assetsAllowed,
                     assetTypes: source.datax.assetTypes,
                     documentsAllowed: source.datax.documentsAllowed,
-                    documentTypes: source.datax.documentTypes
+                    documentTypes: source.datax.documentTypes,
+                    pathFormatterClass: source.datax.pathFormatterClass,
+                    enableBatchEdit: source.datax.enableBatchEdit,
+                    allowMultipleAssignments: source.datax.allowMultipleAssignments,
+                    optimizedAdminLoading: source.datax.optimizedAdminLoading
                 });
         }
     }

@@ -257,7 +257,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function getDataFromResource($data, $object = null, $params = [])
     {
         if ($data[$this->getName() . '__value'] || $data[$this->getName() . '__unit']) {
-            $quantityValue = new Model\DataObject\Data\QuantityValue($data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
+            $quantityValue = new Model\DataObject\Data\QuantityValue((float)$data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
 
             if (isset($params['owner'])) {
                 $quantityValue->setOwner($params['owner'], $params['fieldname'], $params['language']);
@@ -544,12 +544,12 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function marshal($value, $object = null, $params = [])
     {
-        if ($params['blockmode'] && $value instanceof Model\DataObject\Data\QuantityValue) {
+        if (($params['blockmode'] ?? false) && $value instanceof Model\DataObject\Data\QuantityValue) {
             return [
                 'value' => $value->getValue(),
                 'value2' => $value->getUnitId()
             ];
-        } elseif ($params['simple']) {
+        } elseif ($params['simple'] ?? false) {
             if (is_array($value)) {
                 return [$value[$this->getName() . '__value'], $value[$this->getName() . '__unit']];
             } else {
@@ -579,9 +579,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if ($params['blockmode'] && is_array($value)) {
+        if (($params['blockmode'] ?? false) && is_array($value)) {
             return new Model\DataObject\Data\QuantityValue($value['value'], $value['value2']);
-        } elseif ($params['simple']) {
+        } elseif ($params['simple'] ?? false) {
             return $value;
         } elseif (is_array($value)) {
             return [
@@ -707,5 +707,28 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         }
 
         return implode(' OR ', $conditions);
+    }
+
+    /**
+     * @param mixed $oldValue
+     * @param mixed $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!$oldValue instanceof Model\DataObject\Data\QuantityValue) {
+            return false;
+        }
+
+        if (!$newValue instanceof Model\DataObject\Data\QuantityValue) {
+            return false;
+        }
+
+        return $oldValue->getValue() === $newValue->getValue() && $oldValue->getUnitId() === $newValue->getUnitId();
     }
 }

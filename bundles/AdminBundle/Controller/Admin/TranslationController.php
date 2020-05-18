@@ -352,7 +352,6 @@ class TranslationController extends AdminController
             $data = $this->decodeJson($request->get('data'));
 
             if ($request->get('xaction') == 'destroy') {
-                $data = $this->decodeJson($request->get('data'));
                 $t = $class::getByKey($data['key']);
                 $t->delete();
 

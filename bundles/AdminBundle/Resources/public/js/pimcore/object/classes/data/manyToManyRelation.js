@@ -362,7 +362,8 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
                     documentsAllowed: source.datax.documentsAllowed,
                     documentTypes: source.datax.documentTypes,
                     remoteOwner: source.datax.remoteOwner,
-                    classes: source.datax.classes
+                    classes: source.datax.classes,
+                    pathFormatterClass: source.datax.pathFormatterClass
                 });
         }
     }

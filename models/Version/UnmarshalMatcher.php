@@ -35,7 +35,7 @@ class UnmarshalMatcher extends TypeMatcher
      */
     public function matches($element)
     {
-        if ($element instanceof ElementDescriptor) {
+        if ($element instanceof \Pimcore\Model\Element\ElementDescriptor) {
             return true;
         }
 

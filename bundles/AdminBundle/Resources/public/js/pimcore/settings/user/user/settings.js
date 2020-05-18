@@ -75,7 +75,12 @@ pimcore.settings.user.user.settings = Class.create({
             listeners: {
                 keyup: function (el) {
                     this.validatePassword(el);
-                }.bind(this)
+                }.bind(this),
+                afterrender: function (cmp) {
+                    cmp.inputEl.set({
+                        autocomplete: 'new-password'
+                    });
+                }
             }
         });
 

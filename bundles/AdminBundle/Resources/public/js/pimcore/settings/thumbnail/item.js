@@ -46,7 +46,8 @@ pimcore.settings.thumbnail.item = Class.create({
 
 
         this.mediaPanel = new Ext.TabPanel({
-            autoHeight: true
+            autoHeight: true,
+            plugins: [Ext.create('Ext.ux.TabReorderer', {})]
         });
 
         var addViewPortButton = {
@@ -64,6 +65,10 @@ pimcore.settings.thumbnail.item = Class.create({
                         }
                     }.bind(this), null, false, '(min-width: 576px)');
                 }.bind(this)
+            }, {
+                xtype: 'component',
+                style: "float: right; padding: 8px 40px 0 0;",
+                html: t('you_can_drag_the_tabs_to_reorder_the_media_queries')
             }]
         };
 
@@ -270,18 +275,22 @@ pimcore.settings.thumbnail.item = Class.create({
     getData: function () {
 
         var mediaData = {};
+        var mediaOrder = {};
 
         Ext.iterate(this.medias, function (key, value) {
             mediaData[key] = [];
+            mediaOrder[key] = this.mediaPanel.tabBar.items.indexOf(value.tab);
+
             var items = value.items.getRange();
             for (var i = 0; i < items.length; i++) {
                 mediaData[key].push(items[i].getForm().getFieldValues());
             }
-        });
+        }.bind(this));
 
         return {
             settings: Ext.encode(this.settings.getForm().getFieldValues()),
             medias: Ext.encode(mediaData),
+            mediaOrder: Ext.encode(mediaOrder),
             name: this.data.name
         }
     },

@@ -710,8 +710,13 @@ abstract class Data
      */
     public function getSetterCode($class)
     {
-        $returnType = $class instanceof DataObject\Fieldcollection\Definition ? '\\Pimcore\\Model\\DataObject\\FieldCollection\\Data\\' . ucfirst($class->getKey()) :
-            '\\Pimcore\\Model\\DataObject\\' . ucfirst($class->getName());
+        if ($class instanceof DataObject\Objectbrick\Definition) {
+            $classname = 'Objectbrick\\Data\\' . ucfirst($class->getKey());
+        } elseif ($class instanceof DataObject\Fieldcollection\Definition) {
+            $classname = 'Fieldcollection\\Data\\' . ucfirst($class->getKey());
+        } else {
+            $classname = $class->getName();
+        }
 
         $key = $this->getName();
         $code = '';
@@ -719,7 +724,7 @@ abstract class Data
         $code .= '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= '* @return ' . $returnType . "\n";
+        $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
         $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
@@ -735,7 +740,14 @@ abstract class Data
         }
 
         if ($this->supportsDirtyDetection()) {
+            if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
+                $code .= "\t" . '$inheritValues = self::getGetInheritedValues();'."\n";
+                $code .= "\t" . 'self::setGetInheritedValues(false);'."\n";
+            }
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
+                $code .= "\t" . 'self::setGetInheritedValues($inheritValues);'."\n";
+            }
             $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
             $code .= "\t" . 'if (!$isEqual) {' . "\n";
             $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
@@ -828,7 +840,15 @@ abstract class Data
         }
 
         if ($this->supportsDirtyDetection()) {
+            $code .= "\t" . '$class = $this->getObject() ? $this->getObject()->getClass() : null;' . "\n";
+            $code .= "\t" . 'if($class && $class->getAllowInherit()) {' . "\n";
+            $code .= "\t\t" . '$inheritValues = $this->getObject()::getGetInheritedValues();'."\n";
+            $code .= "\t\t" . '$this->getObject()::setGetInheritedValues(false);'."\n";
+            $code .= "\t" . '}'."\n";
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            $code .= "\t" . 'if($class && $class->getAllowInherit()) {' . "\n";
+            $code .= "\t\t" . '$this->getObject()::setGetInheritedValues($inheritValues);'."\n";
+            $code .= "\t" . '}' . "\n";
             $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
             $code .= "\t" . 'if (!$isEqual) {' . "\n";
             $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
@@ -898,7 +918,7 @@ abstract class Data
         $code .= '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
-        $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
+        $code .= '* @return \\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
         $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
@@ -977,8 +997,11 @@ abstract class Data
     public function getSetterCodeLocalizedfields($class)
     {
         $key = $this->getName();
-        if ($class instanceof DataObject\Fieldcollection\Definition || $class instanceof DataObject\Objectbrick\Definition) {
-            $classname = 'FieldCollection\\Data\\' . ucfirst($class->getKey());
+        if ($class instanceof DataObject\Objectbrick\Definition) {
+            $classname = 'Objectbrick\\Data\\' . ucfirst($class->getKey());
+            $containerGetter = 'getDefinition';
+        } elseif ($class instanceof DataObject\Fieldcollection\Definition) {
+            $classname = 'Fieldcollection\\Data\\' . ucfirst($class->getKey());
             $containerGetter = 'getDefinition';
         } else {
             $classname = $class->getName();
@@ -1006,7 +1029,14 @@ abstract class Data
         }
 
         if ($this->supportsDirtyDetection()) {
+            if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
+                $code .= "\t" . '$inheritValues = self::getGetInheritedValues();'."\n";
+                $code .= "\t" . 'self::setGetInheritedValues(false);'."\n";
+            }
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '($language);' . "\n";
+            if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
+                $code .= "\t" . 'self::setGetInheritedValues($inheritValues);'."\n";
+            }
             $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
         } else {
             $code .= "\t" . '$isEqual = false;' . "\n";
@@ -1307,7 +1337,7 @@ abstract class Data
     {
         $data = null;
 
-        if (isset($params['injectedData'])) {
+        if (array_key_exists('injectedData', $params)) {
             return $params['injectedData'];
         }
 
@@ -1554,6 +1584,11 @@ abstract class Data
         }
     }
 
+    /**
+     * Returns if datatype supports listing filters: getBy, filterBy
+     *
+     * @return bool
+     */
     public function isFilterable(): bool
     {
         return false;

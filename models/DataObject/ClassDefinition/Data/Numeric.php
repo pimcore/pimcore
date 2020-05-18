@@ -169,7 +169,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function setDefaultValue($defaultValue)
     {
-        if (strlen(strval($defaultValue)) > 0) {
+        if ((string)$defaultValue !== '') {
             $this->defaultValue = $defaultValue;
         }
 

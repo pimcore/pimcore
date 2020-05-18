@@ -201,7 +201,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             items: [this.inputField, this.unitField, compatibleUnitsButton],
             componentCls: "object_field",
             isDirty: function() {
-                return this.inputField.isDirty() || this.unitField.isDirty()
+                return this.defaultValue || this.inputField.isDirty() || this.unitField.isDirty()
             }.bind(this)
         });
 

@@ -156,10 +156,8 @@ class Dao extends Model\Dao\AbstractDao
                         $context['subContainerType'] = 'localizedfield';
                     }
 
-                    $childParams = [
-                        'context' => $context,
-                        'language' => $language,
-                    ];
+                    $isUpdate = isset($params['isUpdate']) && $params['isUpdate'];
+                    $childParams = $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $isUpdate]);
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                         if ((isset($params['saveRelationalData'])
@@ -181,14 +179,14 @@ class Dao extends Model\Dao\AbstractDao
                         $insertDataArray = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language)
+                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $params['isUpdate'] ?? null ])
                         );
                         $insertData = array_merge($insertData, $insertDataArray);
                     } else {
                         $insertData[$fd->getName()] = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language)
+                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $params['isUpdate'] ?? null])
                         );
                     }
                 }
@@ -882,15 +880,19 @@ QUERY;
     /**
      * @param string $fieldname
      * @param string $language
+     * @param array $extraParams
      *
      * @return array
      */
-    private function getFieldDefinitionParams(string $fieldname, string $language)
+    public function getFieldDefinitionParams(string $fieldname, string $language, $extraParams = [])
     {
-        return [
-            'owner' => $this->model,
-            'fieldname' => $fieldname,
-            'language' => $language,
-        ];
+        return array_merge(
+            [
+                'owner' => $this->model,
+                'fieldname' => $fieldname,
+                'language' => $language,
+            ],
+            $extraParams
+        );
     }
 }

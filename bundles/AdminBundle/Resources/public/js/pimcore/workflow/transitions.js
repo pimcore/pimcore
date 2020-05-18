@@ -30,7 +30,7 @@ pimcore.workflow.transitions.perform = function (ctype, cid, elementEditor, work
 
             if (data.success) {
 
-                pimcore.helpers.showNotification(t("workflow_transition_applied_successfully"), transition.label, "success");
+                pimcore.helpers.showNotification(t("workflow_transition_applied_successfully"), t(transition.label), "success");
 
                 elementEditor.reload({layoutId: transition.objectLayout});
 

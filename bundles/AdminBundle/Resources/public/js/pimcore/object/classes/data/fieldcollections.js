@@ -158,7 +158,10 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
                     lazyLoading: source.datax.lazyLoading,
                     maxItems: source.datax.maxItems,
                     disallowAddRemove: source.datax.disallowAddRemove,
-                    disallowReorder: source.datax.disallowReorder
+                    disallowReorder: source.datax.disallowReorder,
+                    collapsible: source.datax.collapsible,
+                    collapsed: source.datax.collapsed,
+                    border: source.datax.border
                 });
         }
     }
