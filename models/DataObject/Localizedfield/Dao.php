@@ -185,7 +185,7 @@ class Dao extends Model\Dao\AbstractDao
                         $insertDataArray = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $params['isUpdate'] ?? null ])
+                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => ($params['isUpdate'] ?? false) ])
                         );
                         $insertData = array_merge($insertData, $insertDataArray);
                     } else {
