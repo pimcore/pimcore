@@ -59,17 +59,17 @@ class Tag extends Model\AbstractModel
     /**
      * @var string
      */
-    public $translations;
+    protected $translations;
 
     /**
      * @var int
      */
-    public $creationDate;
+    protected $creationDate;
 
     /**
      * @var int
      */
-    public $modificationDate;
+    protected $modificationDate;
 
     public function __construct() {
         $this->creationDate = time();
