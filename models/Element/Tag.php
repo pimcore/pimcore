@@ -343,7 +343,7 @@ class Tag extends Model\AbstractModel
     }
 
     /**
-     * @return mixed
+     * @return string[]
      */
     public function getTranslations() {
         return $this->translations ? unserialize($this->translations) : [];
