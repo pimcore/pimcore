@@ -45,7 +45,7 @@ pimcore.element.tag.configuration = Class.create({
                 itemclick: function(tree, record){
                     this.fillPanelRow(record);
                 }.bind(this),
-            })
+            });
 
             this.layout = new Ext.Panel({
                 id: "tag_configuration",
