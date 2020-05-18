@@ -19,7 +19,6 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\Model;
 use Pimcore\Tool;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Pimcore\Model\Element\Tag\Dao getDao()
