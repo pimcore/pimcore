@@ -85,6 +85,13 @@ pimcore.element.tag.configuration = Class.create({
             this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit: 1,
                 listeners: {
+                    beforeedit: function(editor, context, eOpts) {
+                        editor.editors.each(function (e) {
+                            e.completeEdit();
+                            Ext.destroy(e);
+                        });
+                        editor.editors.clear();
+                    },
                     validateedit: function(editor, context) {
                         editor.editors.each(function (e) {
                             Ext.Ajax.request({
