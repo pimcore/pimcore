@@ -1151,8 +1151,8 @@ class AssetController extends ElementControllerBase implements EventedController
         if ($thumbnail) {
             $thumbnailFile = $thumbnailFile ?: $thumbnail->getFileSystemPath();
 
-            $downloadFilename = str_replace(
-                '.' . File::getFileExtension($image->getFilename()),
+            $downloadFilename = preg_replace(
+                '/\.' . preg_quote(File::getFileExtension($image->getFilename())) . '/i',
                 '.' . $thumbnail->getFileExtension(),
                 $image->getFilename()
             );
