@@ -89,7 +89,7 @@ class ObjectDefinitionListener implements EventSubscriberInterface
     protected function getCurrentUser()
     {
         $user = Admin::getCurrentUser();
-        if ($user instanceof Pimcore\Model\User) {
+        if ($user instanceof \Pimcore\Model\User) {
             return "{$user->getName()} (id:{$user->getId()})";
         }
 
