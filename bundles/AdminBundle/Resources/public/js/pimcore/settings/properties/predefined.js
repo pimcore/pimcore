@@ -111,7 +111,7 @@ pimcore.settings.properties.predefined = Class.create({
                     if(empty(value)) {
                         return "";
                     }
-                    return Ext.util.Format.htmlEncode(nl2br(value));
+                    return nl2br(Ext.util.Format.htmlEncode(value));
                }
             },
             {text: t("key"), flex: 50, sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({})},

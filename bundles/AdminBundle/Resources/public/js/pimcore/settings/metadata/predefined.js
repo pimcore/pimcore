@@ -140,7 +140,7 @@ pimcore.settings.metadata.predefined = Class.create({
                     if (empty(value)) {
                         return "";
                     }
-                    return Ext.util.Format.htmlEncode(nl2br(value));
+                    return nl2br(Ext.util.Format.htmlEncode(value));
                 }
             },
             {text: t("type"), width: 90, sortable: true,
