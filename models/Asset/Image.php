@@ -317,7 +317,7 @@ EOT;
      */
     public function clearThumbnails($force = false)
     {
-        if ($this->getDataChanged() || $force) {
+        if (($this->getDataChanged() || $force) && is_dir($this->getImageThumbnailSavePath())) {
             $directoryIterator = new \DirectoryIterator($this->getImageThumbnailSavePath());
             $filterIterator = new \CallbackFilterIterator($directoryIterator, function(\SplFileInfo $fileInfo) {
                 return strpos($fileInfo->getFilename(), 'image-thumb__' . $this->getId()) === 0;
