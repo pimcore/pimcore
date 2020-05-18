@@ -185,7 +185,7 @@ class Tag extends Model\AbstractModel
     public function save()
     {
         $this->correctPath();
-        $this->modificationDate = (int) date('U');
+        $this->modificationDate = time();
         $this->getDao()->save();
     }
 
