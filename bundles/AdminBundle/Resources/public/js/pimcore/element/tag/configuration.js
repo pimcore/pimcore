@@ -108,7 +108,7 @@ pimcore.element.tag.configuration = Class.create({
 
             var languages = pimcore.settings.websiteLanguages;
             var dateRenderer = function (d) {
-                return Ext.Date.format(new Date(d * 1000), "Y-m-d H:i:s");
+                return d ? Ext.Date.format(new Date(d * 1000), "Y-m-d H:i:s") : '-';
             };
 
             this.columnConfig = [{text: 'id', dataIndex: 'id', hidden: true,}];
