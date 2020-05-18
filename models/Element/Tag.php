@@ -73,8 +73,8 @@ class Tag extends Model\AbstractModel
     public $modificationDate;
 
     public function __construct() {
-        $this->creationDate = (int) date('U');
-        $this->modificationDate = (int) date('U');
+        $this->creationDate = time();
+        $this->modificationDate = time();
     }
 
     /**
