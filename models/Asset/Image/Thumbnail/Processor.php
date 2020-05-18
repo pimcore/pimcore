@@ -148,7 +148,7 @@ class Processor
         }
 
         $thumbDir = $asset->getImageThumbnailSavePath() . '/image-thumb__' . $asset->getId() . '__' . $config->getName();
-        $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '/i', '', $asset->getFilename());
+        $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '$/i', '', $asset->getFilename());
 
         // add custom suffix if available
         if ($config->getFilenameSuffix()) {
