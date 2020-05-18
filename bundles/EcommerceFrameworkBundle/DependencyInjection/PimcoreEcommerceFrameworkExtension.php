@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFacto
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactoryLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\ThrowExceptionStrategy;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Legacy\InterfaceLoader;
@@ -312,6 +313,8 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
                 $locatorMapping = [];
                 if ($factoryConfig['handle_pending_payments_strategy']) {
                     $locatorMapping[$factoryConfig['handle_pending_payments_strategy']] = $factoryConfig['handle_pending_payments_strategy'];
+                } else {
+                    $locatorMapping[ThrowExceptionStrategy::class] = ThrowExceptionStrategy::class;
                 }
 
                 $checkoutManagerFactory->setArgument('$options', $factoryConfig);
