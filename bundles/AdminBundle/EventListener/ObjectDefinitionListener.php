@@ -16,7 +16,6 @@
 namespace Pimcore\Bundle\AdminBundle\EventListener;
 
 use Pimcore\Event\DataObjectClassDefinitionEvents;
-use Pimcore\Event\DataObjectClassificationStoreEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Log\ApplicationLogger;
 use Pimcore\Log\FileObject;
@@ -53,10 +52,8 @@ class ObjectDefinitionListener implements EventSubscriberInterface
     public function onDefinitionAdd(ClassDefinitionEvent $event): void
     {
         $class = $event->getClassDefinition();
-        $user = Admin::getCurrentUser();
-
         $logger = ApplicationLogger::getInstance(self::LOGGER_CLASSES, true);
-        $logger->info("{$user->getName()} (id:{$user->getId()}) added class definition for {$class->getName()} (id:{$class->getId()})", [
+        $logger->info("{$this->getCurrentUser()} added class definition for {$class->getName()} (id:{$class->getId()})", [
             'fileObject' => new FileObject(ClassDefinition\Service::generateClassDefinitionJson($class)),
         ]);
     }
@@ -67,10 +64,8 @@ class ObjectDefinitionListener implements EventSubscriberInterface
     public function onDefinitionUpdate(ClassDefinitionEvent $event): void
     {
         $class = $event->getClassDefinition();
-        $user = Admin::getCurrentUser();
-
         $logger = ApplicationLogger::getInstance(self::LOGGER_CLASSES, true);
-        $logger->info("{$user->getName()} (id:{$user->getId()}) updated class definition for {$class->getName()} (id:{$class->getId()})", [
+        $logger->info("{$this->getCurrentUser()} updated class definition for {$class->getName()} (id:{$class->getId()})", [
             'fileObject' => new FileObject(ClassDefinition\Service::generateClassDefinitionJson($class)),
         ]);
     }
@@ -81,9 +76,23 @@ class ObjectDefinitionListener implements EventSubscriberInterface
     public function onDefinitionDelete(ClassDefinitionEvent $event): void
     {
         $class = $event->getClassDefinition();
-        $user = Admin::getCurrentUser();
-
         $logger = ApplicationLogger::getInstance(self::LOGGER_CLASSES, true);
-        $logger->info("{$user->getName()} (id:{$user->getId()}) deleted class definition for {$class->getName()} (id:{$class->getId()})");
+        $logger->info("{$this->getCurrentUser()} deleted class definition for {$class->getName()} (id:{$class->getId()})");
+    }
+
+    /**
+     * Returns the current user triggering the event, or a dummy "System" user if no user triggered it, such as during
+     * an installation, or Composer update, or Test.
+     *
+     * @return string
+     */
+    protected function getCurrentUser()
+    {
+        $user = Admin::getCurrentUser();
+        if ($user instanceof Pimcore\Model\User) {
+            return "{$user->getName()} (id:{$user->getId()})";
+        }
+
+        return 'System';
     }
 }
