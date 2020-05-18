@@ -117,7 +117,7 @@ class TagsController extends AdminController
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @Route("/get-translations-for-tag/{id}")
      */
     public function getTranslationsForTagAction($id){
