@@ -73,8 +73,8 @@ class Tag extends Model\AbstractModel
     public $modificationDate;
 
     public function __construct() {
-        $this->creationDate = date('U');
-        $this->modificationDate = date('U');
+        $this->creationDate = (int) date('U');
+        $this->modificationDate = (int) date('U');
     }
 
     /**
@@ -185,7 +185,7 @@ class Tag extends Model\AbstractModel
     public function save()
     {
         $this->correctPath();
-        $this->modificationDate = date('U');
+        $this->modificationDate = (int) date('U');
         $this->getDao()->save();
     }
 
