@@ -431,6 +431,26 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
         return $versions;
     }
+    
+    
+     /**
+     * get versions by userId from database, and assign it to object
+     *
+     * @return Model\Version[]
+     */
+    public function getVersionsByUserId($userId = 0)
+    {
+        $versionIds = $this->db->fetchCol("SELECT id FROM versions WHERE cid = ? AND ctype='object' AND userId = ? ORDER BY `id` ASC", [$this->model->getId(), $userId]);
+
+        $versions = [];
+        foreach ($versionIds as $versionId) {
+            $versions[] = Model\Version::getById($versionId);
+        }
+
+        $this->model->setVersions($versions);
+
+        return $versions;
+    }
 
     /**
      * Get latest available version, using $force always returns a version no matter if it is the same as the published one
