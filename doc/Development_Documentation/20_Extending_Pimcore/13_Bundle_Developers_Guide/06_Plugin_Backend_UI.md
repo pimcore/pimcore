@@ -59,6 +59,7 @@ corresponding method to the javascript plugin class.
 | preSaveObject                        | before object is saved, object and type are passed as parameters                                                |          |
 | postSaveObject                       | after object is saved, object is passed as parameter                                                            |          |
 | postAddObjectTree                    | after the object is successfully created in the tree, object id is passed as parameter                          |          |
+| preCreateMenuOption                  | called before navigation menu is created                                                                         |          |
 | preCreateAssetMetadataEditor         | fired when asset metadata editor tab is created                                                                 | internal |
 | postAssetMetadataChange              | fired after an asset metadata item has changed                                                                  | internal |
 | prepareAssetMetadataGridConfigurator | before opening the grid config dialog, url returning the metadata definitions is passed as parameter            |          |
