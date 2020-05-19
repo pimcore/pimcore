@@ -124,6 +124,7 @@ pimcore.object.gridcolumn.operator.merge = Class.create(pimcore.object.gridcolum
 
     commitData: function(params) {
         this.node.set('isOperator', true);
+        this.node.data.configAttributes.label = this.textField.getValue();
         this.node.data.configAttributes.flatten = this.flattenField.getValue();
         this.node.data.configAttributes.unique = this.uniqueField.getValue();
         this.node.set('text', this.textField.getValue());
