@@ -411,7 +411,7 @@ class Video extends Model\Document\Tag
     {
         $options = $this->getOptions();
         if (!array_key_exists('imagethumbnail', $options) || empty($options['imagethumbnail'])) {
-            $thumbnailConfig = $asset->getThumbnailConfig($options['thumbnail'] ?? null);
+            $thumbnailConfig = $asset->getThumbnailConfig($options['thumbnail'] ?: null);
 
             if ($thumbnailConfig instanceof Asset\Video\Thumbnail\Config) {
                 // try to get the dimensions out ouf the video thumbnail
