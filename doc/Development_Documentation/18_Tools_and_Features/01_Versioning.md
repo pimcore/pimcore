@@ -50,7 +50,7 @@ $object->save();
 ### Example: How to get a previous version of an object
 ```php
 $versions = $currentObject->getVersions();
-$previousVersion = $versions[1];
+$previousVersion = $versions[count($versions)-2];
 $previousObject = $previousVersion->getData();
  
 Simple::log("example", "previous value: ".$previousVersion->getData()->getSomeValue());
