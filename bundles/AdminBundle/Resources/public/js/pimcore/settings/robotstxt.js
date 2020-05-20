@@ -144,7 +144,7 @@ pimcore.settings.robotstxt = Class.create({
 
     save : function () {
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_settings_robotstxtput'),
+            url: Routing.generate('pimcore_admin_settings_robotstxt'),
             method: "PUT",
             params: this.formPanel.form.getFieldValues(),
             success: function (response) {

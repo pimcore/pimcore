@@ -222,7 +222,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
         }
 
         var proxy = {
-            url: Routing.generate('pimcore_admin_dataobject_classificationstore_collectionsactionget'),
+            url: Routing.generate('pimcore_admin_dataobject_classificationstore_collectionsget'),
             batchActions: false,
             type: 'ajax',
             reader: {

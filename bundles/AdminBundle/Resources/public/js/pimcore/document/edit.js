@@ -192,7 +192,7 @@ pimcore.document.edit = Class.create({
         this.targetGroupStore = Ext.create('Ext.data.JsonStore', {
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_targeting_targetgrouplist', {'add-default': true})
+                url: Routing.generate('pimcore_admin_targeting_targetgroup_list', {'add-default': true})
             },
             fields: ["id", "text"],
             listeners: {

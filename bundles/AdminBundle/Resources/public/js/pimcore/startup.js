@@ -454,7 +454,7 @@ Ext.onReady(function () {
         model: "pimcore.model.target_groups",
         proxy: {
             type: 'ajax',
-            url: Routing.generate('pimcore_admin_targeting_targetgrouplist'),
+            url: Routing.generate('pimcore_admin_targeting_targetgroup_list'),
             reader: {
                 type: 'json'
             }

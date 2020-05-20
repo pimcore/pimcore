@@ -209,7 +209,7 @@ pimcore.asset.versions = Class.create({
                     var modificationDate = this.asset.data.modificationDate;
 
                     Ext.Ajax.request({
-                        url: Routing.generate('pimcore_admin_element_deleteallversion'),
+                        url: Routing.generate('pimcore_admin_element_deleteallversions'),
                         method: 'DELETE',
                         params: {id: elememntId, date: modificationDate}
                     });

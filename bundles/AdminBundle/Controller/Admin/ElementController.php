@@ -636,7 +636,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/delete-all-versions", name="pimcore_admin_element_deleteallversion", methods={"DELETE"})
+     * @Route("/element/delete-all-versions", name="pimcore_admin_element_deleteallversions", methods={"DELETE"})
      *
      * @param Request $request
      *

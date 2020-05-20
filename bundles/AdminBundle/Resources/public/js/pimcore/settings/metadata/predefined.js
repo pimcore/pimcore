@@ -52,7 +52,7 @@ pimcore.settings.metadata.predefined = Class.create({
     },
 
     getRowEditor: function () {
-        var url = Routing.generate('pimcore_admin_settings_metadata');
+        var url = Routing.generate('pimcore_admin_settings_predefinedmetadata');
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,

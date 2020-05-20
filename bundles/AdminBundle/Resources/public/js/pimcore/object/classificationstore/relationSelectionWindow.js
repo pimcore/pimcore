@@ -98,7 +98,7 @@ pimcore.object.classificationstore.relationSelectionWindow = Class.create({
         if (keyIds.length > 0) {
             this.parent.requestPending.call(this.parent);
             Ext.Ajax.request({
-                url: Routing.generate('pimcore_admin_dataobject_classificationstore_relationsactionget'),
+                url: Routing.generate('pimcore_admin_dataobject_classificationstore_relationsget'),
                 params: {
                     relationIds: Ext.util.JSON.encode(keyIds)
                 },

@@ -21,7 +21,7 @@ pimcore.settings.translation.admin = Class.create(pimcore.settings.translations,
 
         this.dataUrl = Routing.generate('pimcore_admin_translation_translations', {admin: 1});
         this.exportUrl = Routing.generate('pimcore_admin_translation_export', {admin: 1});
-        this.uploadImportUrl = Routing.generate('pimcore_admin_translation_uploadimportfile', {admin: 1});
+        this.uploadImportUrl = Routing.generate('pimcore_admin_translation_uploadimport', {admin: 1});
         this.importUrl = Routing.generate('pimcore_admin_translation_import', {admin: 1});
         this.mergeUrl = Routing.generate('pimcore_admin_translation_import', {admin: 1, merge: 1});
         this.cleanupUrl = Routing.generate('pimcore_admin_translation_cleanup', {admin: 1});

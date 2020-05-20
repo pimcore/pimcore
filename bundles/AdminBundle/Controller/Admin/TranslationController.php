@@ -112,7 +112,7 @@ class TranslationController extends AdminController
     }
 
     /**
-     * @Route("/upload-import", name="pimcore_admin_translation_uploadimportfile", methods={"POST"})
+     * @Route("/upload-import", name="pimcore_admin_translation_uploadimport", methods={"POST"})
      *
      * @param Request $request
      *

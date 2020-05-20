@@ -281,7 +281,7 @@ pimcore.settings.gdpr.dataproviders.sentMail = Class.create({
                             }
 
                             var data = grid.getStore().getAt(rowIndex);
-                            pimcore.helpers.download(Routing.generate('pimcore_admin_gdpr_sentmail_exportdataobject', {id: data.data.id}));
+                            pimcore.helpers.download(Routing.generate('pimcore_admin_gdpr_sentmail_export', {id: data.data.id}));
                         }.bind(this),
                         getClass: function(v, meta, rec) {
                             if (!user.isAllowed("emails")) {
