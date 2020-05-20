@@ -1125,11 +1125,7 @@ abstract class Data
      */
     public function isEmpty($data)
     {
-        if (empty($data)) {
-            return true;
-        }
-
-        return false;
+        return empty($data);
     }
 
     /** True if change is allowed in edit mode.
