@@ -35,7 +35,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     /* RULES */
 
     /**
-     * @Route("/rule/list", name="pimcore_admin_targeting_rulelist", methods={"GET"})
+     * @Route("/rule/list", name="pimcore_admin_targeting_rule_list", methods={"GET"})
      *
      * @param Request $request
      *
