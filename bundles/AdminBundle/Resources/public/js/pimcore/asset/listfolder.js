@@ -21,7 +21,9 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
     object: {},
     gridType: 'asset',
 
-    initialize: function (element, searchType) {
+    initialize: function ($super, element, searchType) {
+        $super();
+
         this.element = element;
         this.searchType = searchType;
         this.classId = element.id;

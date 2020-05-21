@@ -6,29 +6,23 @@
     $this->get("translate")->setDomain("admin");
 
     $previewImage = null;
+    $params = [
+        'id' => $element->getId(),
+        'treepreview' => true,
+        'hdpi' => true,
+    ];
+
     try {
         if ($element instanceof \Pimcore\Model\Asset\Image) {
-             $previewImage =$this->generateUrl('pimcore_admin_asset_getimagethumbnail', [
-                'id' => $element->getId(),
-                'treepreview' => true,
-                'hdpi' => true,
-            ]);
+             $previewImage =$this->generateUrl('pimcore_admin_asset_getimagethumbnail', $params);
         }
 
         elseif ($element instanceof \Pimcore\Model\Asset\Video && \Pimcore\Video::isAvailable()) {
-            $previewImage = $this->generateUrl('pimcore_admin_asset_getvideothumbnail', [
-                'id' => $element->getId(),
-                'treepreview' => true,
-                'hdpi' => true,
-            ]);
+            $previewImage = $this->generateUrl('pimcore_admin_asset_getvideothumbnail', $params);
         }
 
         if ($element instanceof \Pimcore\Model\Asset\Document && \Pimcore\Document::isAvailable()) {
-            $previewImage = $this->generateUrl('pimcore_admin_asset_getdocumentthumbnail', [
-                'id' => $element->getId(),
-                'treepreview' => true,
-                'hdpi' => true,
-            ]);
+            $previewImage = $this->generateUrl('pimcore_admin_asset_getdocumentthumbnail', $params);
         }
     } catch (\Exception $e) {
 

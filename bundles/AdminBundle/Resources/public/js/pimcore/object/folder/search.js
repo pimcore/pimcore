@@ -22,7 +22,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
     onlyDirectChildren: false,
 
     sortinfo: {},
-    initialize: function (object, searchType) {
+    initialize: function ($super, object, searchType) {
+        $super();
+
         this.object = object;
         this.element = object;
         this.searchType = searchType;

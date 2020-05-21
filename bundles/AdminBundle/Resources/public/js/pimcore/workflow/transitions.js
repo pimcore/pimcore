@@ -17,7 +17,7 @@ pimcore.workflow.transitions.perform = function (ctype, cid, elementEditor, work
 
 
     Ext.Ajax.request({
-        url : this.transitionConfig.isGlobalAction ? Routing.generate('pimcore_admin_workflow_submitglobal') : Routing.generate('pimcore_admin_workflow_submitworkflowtransition'),
+        url : transition.isGlobalAction ? Routing.generate('pimcore_admin_workflow_submitglobal') : Routing.generate('pimcore_admin_workflow_submitworkflowtransition'),
         method: 'post',
         params: {
             ctype: ctype,

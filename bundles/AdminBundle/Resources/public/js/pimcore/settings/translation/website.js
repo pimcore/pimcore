@@ -24,7 +24,7 @@ pimcore.settings.translation.website = Class.create(pimcore.settings.translation
         this.uploadImportUrl = Routing.generate('pimcore_admin_translation_uploadimportfile');
         this.importUrl = Routing.generate('pimcore_admin_translation_import');
         this.mergeUrl = Routing.generate('pimcore_admin_translation_import', {merge: 1});
-        this.cleanupUrl = Routing.generate('pimcore_admin_translation_cleanup');
+        this.cleanupUrl = Routing.generate('pimcore_admin_translation_cleanup', {type: 'website'});
     },
 
     activate: function (filter) {

@@ -18,7 +18,9 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
     gridType: 'object',
 
     fieldObject: {},
-    initialize: function (object) {
+    initialize: function ($super, object) {
+        $super();
+
         this.element = object;
         this.searchType = "folder";
         this.noBatchColumns = [];

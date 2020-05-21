@@ -84,7 +84,7 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
                             url = Ext.String.urlAppend(url, cropParams);
                         }
 
-                        url = url + '" style="width:88px; height:88px;" />';
+                        url = '<img src="' + url + '" style="width:88px; height:88px;" />';
                         return url;
                     }
                 }

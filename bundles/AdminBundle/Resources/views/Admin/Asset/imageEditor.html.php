@@ -76,7 +76,7 @@
     $imageUrl = $this->asset->getFullPath();
     if(!in_array($imageFileExtension, ['png', 'jpg', 'jpeg'])) {
         $imageUrl = $view->router()->path('pimcore_admin_asset_getimagethumbnail', [
-            'id' => $this->asset->get(),
+            'id' => $this->asset->getId(),
             'format' => 'png'
         ]);
     }
