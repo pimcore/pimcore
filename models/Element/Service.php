@@ -1299,7 +1299,23 @@ class Service extends Model\AbstractModel
             if ($data) {
                 $element = Serialize::unserialize($data);
 
-                return $element;
+                $copier = new DeepCopy();
+                $copier->addTypeFilter(
+                    new \DeepCopy\TypeFilter\ReplaceFilter(
+                        function ($currentValue) {
+                            if ($currentValue instanceof ElementDescriptor) {
+                                $value = Service::getElementById($currentValue->getType(), $currentValue->getId());
+
+                                return $value;
+                            }
+
+                            return $currentValue;
+                        }
+                    ),
+                    new Model\Version\UnmarshalMatcher()
+                );
+
+                return $copier->copy($element);
             }
         }
 
@@ -1314,8 +1330,25 @@ class Service extends Model\AbstractModel
     public static function saveElementToSession($element, $postfix = '', $clone = true)
     {
         if ($clone) {
+            $sourceType = Service::getType($element);
+            $sourceId = $element->getId();
+
             $copier = new DeepCopy();
-            $copier->skipUncloneable(true);
+            $copier->addTypeFilter(
+                new \DeepCopy\TypeFilter\ReplaceFilter(
+                    function ($currentValue) {
+                        if ($currentValue instanceof ElementInterface) {
+                            $elementType = Service::getType($currentValue);
+                            $descriptor = new ElementDescriptor($elementType, $currentValue->getId());
+
+                            return $descriptor;
+                        }
+
+                        return $currentValue;
+                    }
+                ),
+                new Model\Version\MarshalMatcher($sourceType, $sourceId)
+            );
             $element = $copier->copy($element);
         }
 
