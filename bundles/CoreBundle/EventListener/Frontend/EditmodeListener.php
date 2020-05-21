@@ -23,6 +23,7 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
 use Pimcore\Version;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -64,6 +65,11 @@ class EditmodeListener implements EventSubscriberInterface
     protected $router;
 
     /**
+     * @var Packages
+     */
+    protected $package;
+
+    /**
      * @var array
      */
     protected $contentTypes = [
@@ -76,19 +82,22 @@ class EditmodeListener implements EventSubscriberInterface
      * @param UserLoader $userLoader
      * @param PimcoreBundleManager $bundleManager
      * @param RouterInterface $router
+     * @param Packages $package
      */
     public function __construct(
         EditmodeResolver $editmodeResolver,
         DocumentResolver $documentResolver,
         UserLoader $userLoader,
         PimcoreBundleManager $bundleManager,
-        RouterInterface $router
+        RouterInterface $router,
+        Packages $package
     ) {
         $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;
         $this->userLoader = $userLoader;
         $this->bundleManager = $bundleManager;
         $this->router = $router;
+        $this->package = $package;
     }
 
     /**
@@ -308,6 +317,7 @@ class EditmodeListener implements EventSubscriberInterface
     {
         return array_merge(
             [
+                $this->package->getUrl('bundles/fosjsrouting/js/router.js'),
                 '/bundles/pimcoreadmin/js/pimcore/functions.js',
                 '/bundles/pimcoreadmin/js/pimcore/overrides.js',
                 '/bundles/pimcoreadmin/js/pimcore/tool/milestoneslider.js',
