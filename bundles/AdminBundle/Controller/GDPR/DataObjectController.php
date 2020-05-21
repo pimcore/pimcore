@@ -68,7 +68,7 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
     }
 
     /**
-     * @Route("/export", name="pimcore_admin_gdpr_dataobject_export", methods={"GET"})
+     * @Route("/export", name="pimcore_admin_gdpr_dataobject_exportdataobject", methods={"GET"})
      *
      * @param Request $request
      *

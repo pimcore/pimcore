@@ -134,7 +134,7 @@ class SettingsController extends AdminController
     /**
      * Used by the predefined metadata grid
      *
-     * @Route("/predefined-metadata", name="pimcore_admin_settings_predefinedmetadata", methods={"POST"})
+     * @Route("/predefined-metadata", name="pimcore_admin_settings_metadata", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1563,7 +1563,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/robots-txt", name="pimcore_admin_settings_robotstxt", methods={"PUT"})
+     * @Route("/robots-txt", name="pimcore_admin_settings_robotstxtput", methods={"PUT"})
      *
      * @param Request $request
      *

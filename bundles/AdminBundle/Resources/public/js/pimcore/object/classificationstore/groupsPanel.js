@@ -54,7 +54,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         readerFields.push({name: 'mandatory', type: 'bool'});
 
         var proxy = {
-            url: Routing.generate('pimcore_admin_dataobject_classificationstore_relationsget'),
+            url: Routing.generate('pimcore_admin_dataobject_classificationstore_relationsactionget'),
             type: 'ajax',
             batchActions: false,
             reader: {

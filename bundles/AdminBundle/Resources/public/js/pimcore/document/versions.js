@@ -280,7 +280,7 @@ pimcore.document.versions = Class.create({
                     var modificationDate = this.document.data.modificationDate;
 
                     Ext.Ajax.request({
-                        url: Routing.generate('pimcore_admin_element_deleteallversions'),
+                        url: Routing.generate('pimcore_admin_element_deleteallversion'),
                         method: 'DELETE',
                         params: {id: elememntId, date: modificationDate}
                     });

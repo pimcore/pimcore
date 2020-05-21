@@ -30,6 +30,7 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class ElementControllerBase extends AdminController
 {

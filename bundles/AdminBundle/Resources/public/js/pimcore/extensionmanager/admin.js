@@ -74,7 +74,7 @@ pimcore.extensionmanager.admin = Class.create({
                 ],
                 proxy: {
                     type: 'ajax',
-                    url: Routing.generate('pimcore_admin_extensionmanager_admin_extensionsget'),
+                    url: Routing.generate('pimcore_admin_extensionmanager_extensionmanager_getextensions'),
                     reader: {
                         type: 'json',
                         rootProperty: 'extensions'
@@ -253,7 +253,7 @@ pimcore.extensionmanager.admin = Class.create({
                         this.panel.setLoading(true);
 
                         Ext.Ajax.request({
-                            url: Routing.generate('pimcore_admin_extensionmanager_admin_install'),
+                            url: Routing.generate('pimcore_admin_extensionmanager_extensionmanager_toggleextensionstate'),
                             method: 'PUT',
                             params: {
                                 method: method,
@@ -289,7 +289,7 @@ pimcore.extensionmanager.admin = Class.create({
                         if (rec.get('installable')) {
                             route = 'pimcore_admin_extensionmanager_extensionmanager_install';
                         } else if (rec.get('uninstallable')) {
-                            route = 'pimcore_admin_extensionmanager_admin_uninstall';
+                            route = 'pimcore_admin_extensionmanager_extensionmanager_uninstall';
                         } else {
                             return;
                         }

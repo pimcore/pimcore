@@ -32,7 +32,7 @@ pimcore.registerNS("pimcore.analytics.piwik.WidgetStoreProvider");
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: Routing.generate('pimcore_admin_reports_piwik_config_configuredsites'),
+                    url: Routing.generate('pimcore_admin_reports_piwik_sites'),
                     reader: {
                         type: 'json',
                         rootProperty: 'data'

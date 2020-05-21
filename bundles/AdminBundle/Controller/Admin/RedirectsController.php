@@ -38,7 +38,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class RedirectsController extends AdminController
 {
     /**
-     * @Route("/list", name="pimcore_admin_redirects_list", methods={"POST"})
+     * @Route("/list", name="pimcore_admin_redirects_redirects", methods={"POST"})
      *
      * @param Request $request
      * @param RedirectHandler $redirectHandler

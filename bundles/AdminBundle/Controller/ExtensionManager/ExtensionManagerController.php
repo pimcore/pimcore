@@ -72,7 +72,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
     }
 
     /**
-     * @Route("/admin/extensions", name="pimcore_admin_extensionmanager_admin_extensionsget", methods={"GET"})
+     * @Route("/admin/extensions", name="pimcore_admin_extensionmanager_extensionmanager_getextensions", methods={"GET"})
      *
      * @return JsonResponse
      */
@@ -89,7 +89,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
     /**
      * Updates bundle options (priority, environments)
      *
-     * @Route("/admin/extensions", name="pimcore_admin_extensionmanager_admin_extensions", methods={"PUT"})
+     * @Route("/admin/extensions", name="pimcore_admin_extensionmanager_extensionmanager_updateextensions", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -136,7 +136,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
     }
 
     /**
-     * @Route("/admin/toggle-extension-state", name="pimcore_admin_extensionmanager_admin_install", methods={"PUT"})
+     * @Route("/admin/toggle-extension-state", name="pimcore_admin_extensionmanager_extensionmanager_toggleextensionstate", methods={"PUT"})
      *
      * @param Request $request
      * @param KernelInterface $kernel
@@ -237,7 +237,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
     }
 
     /**
-     * @Route("/admin/uninstall", name="pimcore_admin_extensionmanager_admin_uninstall", methods={"POST"})
+     * @Route("/admin/uninstall", name="pimcore_admin_extensionmanager_extensionmanager_uninstall", methods={"POST"})
      *
      * @param Request $request
      *

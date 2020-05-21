@@ -1534,7 +1534,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
 
     /**
-     * @Route("/bulk-export-prepare", name="pimcore_admin_dataobject_class_bulkexport", methods={"POST"})
+     * @Route("/bulk-export-prepare", name="pimcore_admin_dataobject_class_bulkexportprepare", methods={"POST"})
      *
      * @param Request $request
      *

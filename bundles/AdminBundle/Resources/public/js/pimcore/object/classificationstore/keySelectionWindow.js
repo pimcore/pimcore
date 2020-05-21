@@ -374,7 +374,7 @@ pimcore.object.classificationstore.keySelectionWindow = Class.create({
         var descWidth = 590;
 
         if (this.config.isCollectionSearch) {
-            route = 'pimcore_admin_dataobject_classificationstore_collectionsget';
+            route = 'pimcore_admin_dataobject_classificationstore_collectionsactionget';
             this.groupFields = ['id', 'name', 'description'];
         } else if (this.config.isGroupSearch) {
             route = 'pimcore_admin_dataobject_classificationstore_groupsactionget';

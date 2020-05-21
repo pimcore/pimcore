@@ -191,7 +191,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/collections", name="pimcore_admin_dataobject_classificationstore_collectionsget", methods={"GET"})
+     * @Route("/collections", name="pimcore_admin_dataobject_classificationstore_collectionsactionget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -774,7 +774,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/relations", name="pimcore_admin_dataobject_classificationstore_relationsget", methods={"GET"})
+     * @Route("/relations", name="pimcore_admin_dataobject_classificationstore_relationsactionget", methods={"GET"})
      *
      * @param Request $request
      *

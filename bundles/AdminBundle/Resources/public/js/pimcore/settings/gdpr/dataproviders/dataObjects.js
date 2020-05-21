@@ -87,7 +87,7 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
                                 pimcore.helpers.showPermissionError("view");
                                 return;
                             }
-                            pimcore.helpers.download(Routing.generate('pimcore_admin_gdpr_dataobject_export', {id: data.data.id}));
+                            pimcore.helpers.download(Routing.generate('pimcore_admin_gdpr_dataobject_exportdataobject', {id: data.data.id}));
                         }.bind(this),
                         getClass: function (v, meta, rec) {
                             if (!rec.get("permissions").view) {
