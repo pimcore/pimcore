@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\File;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
@@ -45,10 +46,11 @@ class TranslationController extends AdminController
      * @Route("/import", methods={"POST"})
      *
      * @param Request $request
+     * @param LocaleServiceInterface $localeService
      *
      * @return JsonResponse
      */
-    public function importAction(Request $request)
+    public function importAction(Request $request, LocaleServiceInterface $localeService)
     {
         $admin = $request->get('admin');
         $dialect = $request->get('csvSettings', null);
@@ -93,7 +95,7 @@ class TranslationController extends AdminController
 
             foreach ($delta as $item) {
                 $lg = $item['lg'];
-                $currentLocale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+                $currentLocale = $localeService->findLocale();
                 $item['lgname'] = \Locale::getDisplayLanguage($lg, $currentLocale);
                 $item['icon'] = '/admin/misc/get-language-flag?language=' . $lg;
                 $item['current'] = $item['text'];
