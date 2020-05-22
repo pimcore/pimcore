@@ -122,7 +122,7 @@ interface OrderListInterface extends SeekableIterator, Countable, ArrayAccess, A
      * enable product query
      * table alias: product
      *
-     * @param int $classId
+     * @param string $classId
      *
      * @return $this
      */
