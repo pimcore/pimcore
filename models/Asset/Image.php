@@ -165,7 +165,7 @@ class Image extends Model\Asset
                         'x' => $Px,
                         'y' => $Py,
                         'width' => $Pw,
-                        'height' => $Ph
+                        'height' => $Ph,
                     ];
                 }
 
@@ -270,7 +270,7 @@ EOT;
 
         $event = new GenericEvent($this, [
             'filesystemPath' => $fsPath,
-            'frontendPath' => $path
+            'frontendPath' => $path,
         ]);
         \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
         $path = $event->getArgument('frontendPath');
@@ -317,10 +317,14 @@ EOT;
      */
     public function clearThumbnails($force = false)
     {
-        if ($this->getDataChanged() || $force) {
-            $files = glob($this->getImageThumbnailSavePath() . '/image-thumb__' . $this->getId() . '__*');
-            foreach ($files as $file) {
-                recursiveDelete($file);
+        if (($this->getDataChanged() || $force) && is_dir($this->getImageThumbnailSavePath())) {
+            $directoryIterator = new \DirectoryIterator($this->getImageThumbnailSavePath());
+            $filterIterator = new \CallbackFilterIterator($directoryIterator, function(\SplFileInfo $fileInfo) {
+                return strpos($fileInfo->getFilename(), 'image-thumb__' . $this->getId()) === 0;
+            });
+            /** @var \SplFileInfo $fileInfo */
+            foreach($filterIterator as $fileInfo) {
+                recursiveDelete($fileInfo->getPathname());
             }
         }
     }
@@ -426,7 +430,7 @@ EOT;
             if ($width && $height) {
                 return [
                     'width' => $width,
-                    'height' => $height
+                    'height' => $height,
                 ];
             }
         }
@@ -443,7 +447,7 @@ EOT;
             if ($imageSize && $imageSize[0] && $imageSize[1]) {
                 $dimensions = [
                     'width' => $imageSize[0],
-                    'height' => $imageSize[1]
+                    'height' => $imageSize[1],
                 ];
             }
         }
@@ -458,7 +462,7 @@ EOT;
 
             $dimensions = [
                 'width' => $image->getWidth(),
-                'height' => $image->getHeight()
+                'height' => $image->getHeight(),
             ];
         }
 
@@ -472,7 +476,7 @@ EOT;
                         // flip height & width
                         $dimensions = [
                             'width' => $dimensions['height'],
-                            'height' => $dimensions['width']
+                            'height' => $dimensions['width'],
                         ];
                     }
                 }

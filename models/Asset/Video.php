@@ -94,13 +94,22 @@ class Video extends Model\Asset
             // clear the thumbnail custom settings
             $this->setCustomSetting('thumbnails', null);
 
-            $imageFiles = glob($this->getImageThumbnailSavePath() . '/image-thumb__' . $this->getId() . '__*');
-            $videoFiles = glob($this->getVideoThumbnailSavePath() . '/video-thumb__' . $this->getId() . '__*');
-            $imageCacheFiles = glob($this->getImageThumbnailSavePath() . '/video-image-cache__' . $this->getId() . '__thumbnail_*');
+            $directoryIterator = new \DirectoryIterator($this->getImageThumbnailSavePath());
+            $filterIterator = new \CallbackFilterIterator($directoryIterator, function(\SplFileInfo $fileInfo) {
+                return strpos($fileInfo->getFilename(), 'image-thumb__' . $this->getId()) === 0 || strpos($fileInfo->getFilename(), 'video-image-cache__' . $this->getId() . '__thumbnail_') === 0;
+            });
+            /** @var \SplFileInfo $fileInfo */
+            foreach($filterIterator as $fileInfo) {
+                recursiveDelete($fileInfo->getPathname());
+            }
 
-            $files = array_merge($imageFiles, $videoFiles, $imageCacheFiles);
-            foreach ($files as $file) {
-                recursiveDelete($file);
+            $directoryIterator = new \DirectoryIterator($this->getVideoThumbnailSavePath());
+            $filterIterator = new \CallbackFilterIterator($directoryIterator, function(\SplFileInfo $fileInfo) {
+                return strpos($fileInfo->getFilename(), 'video-thumb__' . $this->getId()) === 0;
+            });
+            /** @var \SplFileInfo $fileInfo */
+            foreach($filterIterator as $fileInfo) {
+                recursiveDelete($fileInfo->getPathname());
             }
         }
     }
