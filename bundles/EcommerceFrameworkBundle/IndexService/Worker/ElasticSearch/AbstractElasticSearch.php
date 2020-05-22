@@ -637,7 +637,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         $stats = $esClient->indices()->stats();
         foreach ($stats['indices'] as $key => $data) {
             preg_match('/'.$this->indexName.'-(\d+)/', $key, $matches);
-            if (is_array($matches) && !is_null($matches[1])) {
+            if (is_array($matches) && count($matches) > 1) {
                 $version = (int)$matches[1];
                 if ($version != $this->indexVersion) {
                     Logger::info('Index-Actions - Delete old Index ' . $this->indexName.'-'.$version);
