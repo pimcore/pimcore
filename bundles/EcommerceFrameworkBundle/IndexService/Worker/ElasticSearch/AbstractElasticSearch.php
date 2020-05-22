@@ -855,7 +855,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             $this->updateVersionFile();
 
         } finally {
-//            $this->releaseIndexLock();
+            $this->releaseIndexLock();
         }
     }
 
