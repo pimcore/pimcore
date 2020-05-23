@@ -15,6 +15,8 @@
 pimcore.registerNS("pimcore.element.helpers.gridColumnConfig");
 pimcore.element.helpers.gridColumnConfig = {
 
+    batchJobDelay: 50,
+
     getSaveAsDialog: function () {
         var defaultName = new Date();
 
@@ -576,7 +578,7 @@ pimcore.element.helpers.gridColumnConfig = {
                 window.setTimeout(function () {
                     this.batchJobCurrent++;
                     this.batchProcess(jobs, append, remove);
-                }.bind(this), 400);
+                }.bind(this), this.batchJobDelay);
             }.bind(this, jobs, this.batchParameters.job)
         });
     },
@@ -681,7 +683,7 @@ pimcore.element.helpers.gridColumnConfig = {
                 window.setTimeout(function () {
                     this.exportJobCurrent++;
                     this.exportProcess(jobs, fileHandle, fields, false, settings, exportType);
-                }.bind(this), 400);
+                }.bind(this), this.batchJobDelay);
             }.bind(this, jobs, jobs[this.exportJobCurrent])
         });
     },
