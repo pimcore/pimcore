@@ -567,7 +567,7 @@ class ClassController extends AdminController implements EventedControllerInterf
         $classList = $classList->load();
 
         foreach ($classList as $class) {
-            if(isset($mapping[$class->getId()])) {
+            if (isset($mapping[$class->getId()])) {
                 $classMapping = $mapping[$class->getId()];
                 $resultList[] = [
                     'type' => 'master',
