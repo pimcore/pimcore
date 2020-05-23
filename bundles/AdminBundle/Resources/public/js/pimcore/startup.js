@@ -521,14 +521,14 @@ Ext.onReady(function () {
 
                 if (data.pushStatistics) {
                     var request = new XMLHttpRequest();
-                    request.open('GET', "/admin/index/statistics", false);
+                    request.open('GET', "/admin/index/statistics");
 
                     request.onload = function () {
                         if (this.status >= 200 && this.status < 400) {
                             var res = Ext.decode(this.response);
 
                             var request = new XMLHttpRequest();
-                            request.open('POST', "https://liveupdate.pimcore.org/statistics", false);
+                            request.open('POST', "https://liveupdate.pimcore.org/statistics");
 
                             var data = new FormData();
                             data.append('data', encodeURIComponent(JSON.stringify(res)));
