@@ -27,6 +27,8 @@ use Pimcore\Model\DataObject;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
+    CONST MAX_ROWS_IN_QUERY = 10000;
+
     /**
      * @var \Closure
      */
@@ -174,10 +176,16 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function loadIdList()
     {
-        $query = $this->getQuery([new Expression(sprintf('%s as o_id', $this->getTableName() . '.o_id')), 'o_type']);
-        $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
-
-        return array_map('intval', $objectIds);
+        $ids = [];
+        $page = 0;
+        do {
+            $query = $this->getQuery([new Expression(sprintf('%s as o_id', $this->getTableName() . '.o_id')), 'o_type'])->limit(static::MAX_ROWS_IN_QUERY, $page*static::MAX_ROWS_IN_QUERY);
+            $objectIds = $this->db->fetchCol($query, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+            $currentIds = array_map('intval', $objectIds);
+            $ids = array_merge($ids, $currentIds);
+            $page++;
+        } while (!empty($currentIds));
+        return $ids;
     }
 
     /**
