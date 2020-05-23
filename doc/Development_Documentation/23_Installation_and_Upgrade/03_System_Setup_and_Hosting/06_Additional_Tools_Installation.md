@@ -125,10 +125,19 @@ Install facedetect for [image thumbnails focal point](../../04_Assets/03_Working
 apt-get install facedetect
 ```
 
-# html2text
+## html2text
 
 Install html2text for [Pimcore mail](../../19_Development_Tools_and_Details/25_Email_Framework/01_Pimcore_Mail.md)
 
 ```bash
 apt-get install html2text
+```
+
+# Check your installation
+
+You can check if everything is here in the UI, via the `Tools` / `System Info & Tools` / `System-Requirements Check` page.  
+You can also check via the following CLI command:
+
+```bash
+bin/console pimcore:requirements:check
 ```
