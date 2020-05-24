@@ -62,6 +62,8 @@ class RequirementsCheckCommand extends AbstractCommand
         $this->display($allChecks['checksMySQL'], "MySQL");
         $this->display($allChecks['checksFS'], "Filesystem");
         $this->display($allChecks['checksApps'], "CLI Tools & Applications");
+
+        return 0;
     }
 
     /**
