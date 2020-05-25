@@ -135,8 +135,9 @@ apt-get install html2text
 
 # Check your installation
 
-You can check if everything is here in the UI, via the `Tools` / `System Info & Tools` / `System-Requirements Check` page.  
-You can also check via the following CLI command:
+You can check system requirements via Admin UI `Tools` / `System Info & Tools` / `System-Requirements Check` menu.
+
+Or via following CLI command:
 
 ```bash
 bin/console pimcore:requirements:check
