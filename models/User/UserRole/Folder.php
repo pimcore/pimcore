@@ -64,7 +64,7 @@ class Folder extends Model\User\AbstractUser
     }
 
     /**
-     * @return Role[]
+     * @return array
      */
     public function getChildren()
     {
@@ -87,9 +87,9 @@ class Folder extends Model\User\AbstractUser
     {
         $this->children = $children;
         if (is_array($children) and count($children) > 0) {
-            $this->hasChildren = true;
+            $this->hasChilds = true;
         } else {
-            $this->hasChildren = false;
+            $this->hasChilds = false;
         }
 
         return $this;

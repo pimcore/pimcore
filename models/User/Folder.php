@@ -29,7 +29,7 @@ class Folder extends UserRole\Folder
 
 
     /**
-     * @return \Pimcore\Model\User[]
+     * @return array
      */
     public function getChildren()
     {
