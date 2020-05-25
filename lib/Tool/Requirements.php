@@ -368,18 +368,6 @@ class Requirements
             'state' => $wkhtmltopdfBin ? Check::STATE_OK : Check::STATE_WARNING
         ]);
 
-        // HTML2TEXT BIN
-        try {
-            $html2textBin = (bool) \Pimcore\Mail::determineHtml2TextIsInstalled();
-        } catch (\Exception $e) {
-            $html2textBin = false;
-        }
-
-        $checks[] = new Check([
-            'name' => 'html2text (mbayer)',
-            'state' => $html2textBin ? Check::STATE_OK : Check::STATE_WARNING
-        ]);
-
         // ghostscript BIN
         try {
             $ghostscriptBin = (bool) \Pimcore\Document\Adapter\Ghostscript::getGhostscriptCli();
