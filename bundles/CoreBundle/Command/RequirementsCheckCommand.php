@@ -32,7 +32,8 @@ class RequirementsCheckCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('pimcore:requirements:check')
+            ->setName('pimcore:system:requirements:check')
+            ->setAliases(['system:requirements:check'])
             ->setDescription('Check system requirements')
             ->addOption('min-level', 'l', InputOption::VALUE_OPTIONAL, "Minimum status level to report: 'warning' or 'error'");
     }
