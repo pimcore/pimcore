@@ -15,19 +15,16 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
-use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Webmozarts\Console\Parallelization\Parallelization;
-
 
 class ThumbnailsImageCommand extends AbstractCommand
 {
     use Parallelization;
-    use LockableTrait;
 
     protected function configure()
     {
@@ -81,14 +78,6 @@ class ThumbnailsImageCommand extends AbstractCommand
                 InputOption::VALUE_NONE,
                 'do not generate high-res (@2x) versions of thumbnails'
             );
-    }
-
-    protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
-    {
-        if (!$this->lock()) {
-            $this->writeError('The command is already running.');
-            exit(1);
-        }
     }
 
     protected function fetchItems(InputInterface $input): array
@@ -153,30 +142,13 @@ class ThumbnailsImageCommand extends AbstractCommand
                 );
             }
         }
-
-    }
-
-    protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
-    {
-        if ($this->input->getOption('processes') <= 1) {
-            if ($output->isVeryVerbose()) {
-                $output->writeln('Collect garbage.');
-            }
-            \Pimcore::collectGarbage();
-        }
-    }
-
-    protected function runAfterLastCommand(InputInterface $input, OutputInterface $output): void
-    {
-        $this->release(); //release the lock
     }
 
     /**
      * @param InputInterface $input
-     * @param OutputInterface $output
      * @return Asset\Image\Thumbnail\Config[]
      */
-    private function fetchThumbnailConfigs(InputInterface $input, OutputInterface $output) : array
+    private function fetchThumbnailConfigs(InputInterface $input) : array
     {
         $list = new Asset\Image\Thumbnail\Config\Listing();
         $thumbnailConfigList = $list->getThumbnails();
@@ -238,11 +210,6 @@ class ThumbnailsImageCommand extends AbstractCommand
 
     protected function getItemName(int $count): string
     {
-        return $count <= 1 ? 'Image' : 'Images';
-    }
-
-    protected function getContainer()
-    {
-        return \Pimcore::getKernel()->getContainer();
+        return $count == 1 ? 'image' : 'images';
     }
 }
