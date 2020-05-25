@@ -615,7 +615,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         }
     }
 
-    protected function doCreateOrUpdateIndexStructures($exceptionOnFailure = false)
+    protected function doCreateOrUpdateIndexStructures()
     {
         $this->checkIndexLock(true);
 
