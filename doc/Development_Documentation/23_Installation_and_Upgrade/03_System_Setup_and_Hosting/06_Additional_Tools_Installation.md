@@ -124,11 +124,3 @@ Install facedetect for [image thumbnails focal point](../../04_Assets/03_Working
 ```bash
 apt-get install facedetect
 ```
-
-# html2text
-
-Install html2text for [Pimcore mail](../../19_Development_Tools_and_Details/25_Email_Framework/01_Pimcore_Mail.md)
-
-```bash
-apt-get install html2text
-```
