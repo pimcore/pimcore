@@ -124,9 +124,9 @@ pimcore.treenodelocator = function()
                             idPath: res.idPath,
                             fullPath: res.fullpath,  // mind lower case here!
                             typePath: res.typePath,
+                            sortIndexPath: res.sortIndexPath,
                             pathIds: res.idPath.replace(/^\//, "").split("/"),
                             elementType: elementType,
-                            index: res.index,
                             locateConfigs: locateConfigs,
                             currentTreeIndex: 0
                         };
@@ -278,10 +278,14 @@ pimcore.treenodelocator = function()
 
                 // elementKey (from fullPath):
                 if (globalState.elementType == "document") {
-                    var elementKey = globalState.index;
+                    var sortIndexParts = globalState.sortIndexPath.replace(/^\//, "").split("/");
+                    let sortIndexPath = sortIndexParts[pos];
+                    var elementKey = sortIndexPath;
                 } else {
                     if (sortBy == "index") {
-                        var elementKey = globalState.index;
+                        var sortIndexParts = globalState.sortIndexPath.replace(/^\//, "").split("/");
+                        let sortIndexPath = sortIndexParts[pos];
+                        var elementKey = sortIndexPath;
                     } else {
                         var pathKeys = globalState.fullPath.replace(/^\//, "").split("/");
                         var elementKey = pathKeys[pos-1];
