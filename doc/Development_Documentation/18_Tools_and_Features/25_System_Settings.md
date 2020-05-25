@@ -103,7 +103,7 @@ Only use a *Service Account* from the Google Cloud Console.
 Google API Key (Simple API Access for CSE, ...) is e.g. required for correct display of geo data types in Pimcore ojbects. 
  
  
-## Ouput-Cache
+## Output-Cache
 Settings for Pimcore [output cache](../19_Development_Tools_and_Details/09_Cache/README.md).
 
 
