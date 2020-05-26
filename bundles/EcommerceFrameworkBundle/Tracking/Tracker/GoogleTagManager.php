@@ -101,8 +101,8 @@ class GoogleTagManager extends Tracker implements
         $productArray = $this->transformProductAction($item);
 
         $call = [
+            'event' => 'addToCart',
             'ecommerce' => [
-                'event' => 'addToCart',
                 'add' => [
                     'products' => [
                         $productArray,
@@ -123,8 +123,8 @@ class GoogleTagManager extends Tracker implements
         $productArray = $this->transformProductAction($item);
 
         $call = [
+            'event' => 'removeFromCart',
             'ecommerce' => [
-                'event' => 'removeFromCart',
                 'remove' => [
                     'products' => [
                         $productArray,
