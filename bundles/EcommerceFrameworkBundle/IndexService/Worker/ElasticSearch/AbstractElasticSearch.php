@@ -65,14 +65,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      *
      * @var int
      */
-    protected $indexVersion = 0;
-
-    /**
-     * Hash of current index settings - used for checking, if putSettings is necessary
-     *
-     * @var string
-     */
-    protected $settingsHash = '';
+    protected $indexVersion = null;
 
     /**
      * @var array
@@ -93,7 +86,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         parent::__construct($tenantConfig, $db, $eventDispatcher);
 
         $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
-        $this->determineAndSetCurrentIndexVersion();
     }
 
     /**
@@ -116,40 +108,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         $this->storeCustomAttributes = $storeCustomAttributes;
     }
 
-    protected function getVersionFile()
-    {
-        return PIMCORE_PRIVATE_VAR . '/ecommerce/elasticsearch-index-version-' . $this->indexName.'.txt';
-    }
-
-    /**
-     * determines and sets the current index version
-     */
-    protected function determineAndSetCurrentIndexVersion()
-    {
-        if (is_readable($this->getVersionFile())) {
-            $fileContent = file_get_contents($this->getVersionFile());
-            $data = explode('|', $fileContent);
-
-            $this->indexVersion = intval($data[0]);
-            $this->settingsHash = trim($data[1]);
-        } else {
-            $this->updateVersionFile();
-        }
-    }
-
-    protected function updateVersionFile()
-    {
-        $versionFile = $this->getVersionFile();
-        if (!is_readable($versionFile)) {
-            \Pimcore\File::mkdir(dirname($versionFile));
-        }
-
-        $version = $this->getIndexVersion();
-        $settingsHash = $this->settingsHash;
-
-        return file_put_contents($versionFile, $version . '|' . $settingsHash);
-    }
-
     /**
      * the versioned index-name
      *
@@ -167,6 +125,22 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      */
     public function getIndexVersion()
     {
+        if($this->indexVersion === null) {
+            $this->indexVersion = 0;
+            $esClient = $this->getElasticSearchClient();
+
+            $stats = $esClient->indices()->stats();
+            foreach ($stats['indices'] as $key => $data) {
+                preg_match('/'.$this->indexName.'-(\d+)/', $key, $matches);
+                if (is_array($matches) && count($matches) > 1) {
+                    $version = (int)$matches[1];
+                    if ($version > $this->indexVersion) {
+                        $this->indexVersion = $version;
+                    }
+                }
+            }
+        }
+
         return $this->indexVersion;
     }
 
@@ -203,7 +177,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     /**
      * creates or updates necessary index structures (like database tables and so on)
      *
-     * @return void
+     * @throws \Exception
      */
     public function createOrUpdateIndexStructures()
     {
@@ -300,6 +274,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      * creates mapping attributes based on system attributes, in product index defined attributes and relations
      * can be overwritten in order to consider additional mappings for sub tenants
      *
+     * @param bool $includeTypes
      * @return array
      */
     public function getSystemAttributes($includeTypes = false)
@@ -329,8 +304,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      * deletes given element from index
      *
      * @param IndexableInterface $object
-     *
-     * @return void
+     * @throws \Exception
      */
     public function deleteFromIndex(IndexableInterface $object)
     {
@@ -353,8 +327,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      * updates given element in index
      *
      * @param IndexableInterface $object
-     *
-     * @return void
+     * @throws \Throwable
      */
     public function updateIndex(IndexableInterface $object)
     {
@@ -500,9 +473,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         // reset
         $this->bulkIndexData = [];
         $this->indexStoreMetaData = [];
-
-        //check for eventual resetting re-index mode
-//        $this->completeReindexMode();
     }
 
     /**
@@ -597,6 +567,8 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
         $storeEntry = \Pimcore\Db::get()->fetchRow('SELECT * FROM ' . $this->getStoreTableName() . ' WHERE  o_id=? AND tenant=? ', [$objectId, $this->getTenantConfig()->getTenantName()]);
         if ($storeEntry) {
+
+
             try {
                 $esClient->delete([
                     'index' => $this->getIndexNameVersion(),
@@ -629,7 +601,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             $indexName = $this->getIndexNameVersion();
             $this->createEsIndex($indexName);
 
-            //index didn't exist -> reset index queue to make sure all products get reindexed
+            //index didn't exist -> reset index queue to make sure all products get re-indexed
             $this->resetIndexingQueue();
 
             $this->createEsAliasIfMissing();
@@ -641,11 +613,14 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             $result = $esClient->indices()->putMapping($params);
             Logger::info('Index-Actions - updated Mapping for Index: ' . $this->getIndexNameVersion());
 
-            $newSettingsHash = md5(json_encode($this->tenantConfig->getIndexSettings()));
+            $configuredSettings = $this->tenantConfig->getIndexSettings();
+            $currentSettings = $esClient->indices()->getSettings([
+                'index' => $this->getIndexNameVersion(),
+            ]);
+            $currentSettings = $currentSettings[$this->getIndexNameVersion()]['settings']['index'];
 
-            if ($newSettingsHash !== $this->settingsHash) {
-                $this->settingsHash = $newSettingsHash;
-
+            $settingsIntersection = array_intersect_key($currentSettings, $configuredSettings);
+            if($settingsIntersection != $configuredSettings) {
                 $esClient->indices()->putSettings([
                     'index' => $this->getIndexNameVersion(),
                     'body' => [
@@ -656,9 +631,10 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
             Logger::info('Index-Actions - updated settings for Index: ' . $this->getIndexNameVersion());
         } catch (\Exception $e) {
-            Logger::info($e->getMessage());
+            Logger::info("Index-Actions - can't create Mapping - trying reindexing " . $e->getMessage());
+            Logger::info('Index-Actions - Perform native reindexing for Index: ' . $this->getIndexNameVersion());
 
-            throw new \Exception("Can't create Mapping - Reindex might be necessary, see 'ecommerce:indexservice:elasticsearch-sync reindex' command. Message: " . $e->getMessage());
+            $this->performNativeReindexing();
         }
 
         // index created return "true" and mapping creation returns array
@@ -760,9 +736,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         if (!$result['acknowledged']) {
             throw new \Exception('Index creation failed. IndexName: ' . $indexName);
         }
-
-        $this->settingsHash = md5(json_encode($this->tenantConfig->getIndexSettings()));
-        $this->updateVersionFile();
     }
 
 
@@ -824,7 +797,10 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             'body' => $body
         ]);
 
-        $result = $esClient->transport->performRequest('POST', '/_reindex', [], $body);
+        $esClient->reindex([
+            'body' => $body
+        ]);
+
         Logger::info(sprintf('Completed re-index in %.02f seconds.', (time() - $startTime)));
     }
 
@@ -851,9 +827,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
             $this->switchIndexAlias();
 
-            //set the new version here so other processes write in the new index
-            $this->updateVersionFile();
-
         } finally {
             $this->releaseIndexLock();
         }
@@ -876,7 +849,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             }
 
             return true;
-
         }
 
         return false;
