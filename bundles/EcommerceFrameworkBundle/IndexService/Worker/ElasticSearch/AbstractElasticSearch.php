@@ -634,7 +634,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             Logger::info("Index-Actions - can't create Mapping - trying reindexing " . $e->getMessage());
             Logger::info('Index-Actions - Perform native reindexing for Index: ' . $this->getIndexNameVersion());
 
-            $this->performNativeReindexing();
+            $this->startReindexMode();
         }
 
         // index created return "true" and mapping creation returns array
@@ -805,11 +805,18 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     }
 
     /**
-     * Perform a native reindexing via the ES reindexing API.
-     * This is typically much faster than reindexing single records.
-     * @throws \Exception
+     * Performs native reindexing in ES
+     * - new index with new version is created
+     * - data is copied from old index to new index
+     *
+     * While in reindex
+     * - all index updates are stored into store table only, and transferred with next ecommerce:indexservice:process-queue update-index
+     * - no index structure updates are allowed
+     *
+     * @throws BadRequest400Exception
+     * @throws NoNodesAvailableException
      */
-    public function performNativeReindexing() {
+    public function startReindexMode() {
 
         try {
             $this->activateIndexLock(); //lock all other processes
