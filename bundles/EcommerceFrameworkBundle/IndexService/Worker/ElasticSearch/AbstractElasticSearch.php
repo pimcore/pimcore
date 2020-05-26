@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch;
 
 use Elasticsearch\Common\Exceptions\BadRequest400Exception;
+use Elasticsearch\Common\Exceptions\Missing404Exception;
 use Elasticsearch\Common\Exceptions\NoNodesAvailableException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
@@ -561,6 +562,11 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         return $data;
     }
 
+    /**
+     * @param int $objectId
+     * @param IndexableInterface|null $object
+     * @throws \Exception
+     */
     protected function doDeleteFromIndex($objectId, IndexableInterface $object = null)
     {
         $esClient = $this->getElasticSearchClient();
@@ -568,6 +574,10 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         $storeEntry = \Pimcore\Db::get()->fetchRow('SELECT * FROM ' . $this->getStoreTableName() . ' WHERE  o_id=? AND tenant=? ', [$objectId, $this->getTenantConfig()->getTenantName()]);
         if ($storeEntry) {
 
+            $isLocked = $this->checkIndexLock(false);
+            if($isLocked) {
+                throw new \Exception("Delete not possible due to product index lock. Please re-try later.");
+            }
 
             try {
                 $esClient->delete([
@@ -578,7 +588,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                 ]);
             } catch (\Exception $e) {
                 //if \Elasticsearch\Common\Exceptions\Missing404Exception <- the object is not in the index so its ok.
-                if ($e instanceof \Elasticsearch\Common\Exceptions\Missing404Exception == false) {
+                if ($e instanceof Missing404Exception == false) {
                     throw $e;
                 }
             }
@@ -848,7 +858,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     protected function checkIndexLock(bool $throwException = true) : bool {
         if (Lock::isLocked(self::REINDEXING_LOCK_KEY, 60*10)) {  #lock expires after 10 minutes.
 
-            $errorMessage = sprintf('Reindex cannot be started, as currently locked by "%s".', self::REINDEXING_LOCK_KEY);
+            $errorMessage = sprintf('Index is currently locked by "%s" as reindex is in progress.', self::REINDEXING_LOCK_KEY);
             if ($throwException) {
                 throw new \Exception($errorMessage);
             } else {
