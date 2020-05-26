@@ -71,7 +71,7 @@ class EsSyncCommand extends AbstractIndexServiceCommand
             $output->writeln("<info>Process tenant \"{$tenantName}\" (mode \"{$mode}\")...</info>");
 
             if ('reindex' == $mode) {
-                $elasticWorker->performNativeReindexing();
+                $elasticWorker->startReindexMode();
             }
 
             $bar->advance(1);
