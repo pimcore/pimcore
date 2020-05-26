@@ -130,9 +130,13 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             $this->indexVersion = 0;
             $esClient = $this->getElasticSearchClient();
 
-            $stats = $esClient->indices()->stats();
-            foreach ($stats['indices'] as $key => $data) {
-                preg_match('/'.$this->indexName.'-(\d+)/', $key, $matches);
+            $result = $esClient->indices()->getAlias([
+                'name' => $this->indexName
+            ]);
+
+            if(is_array($result)) {
+                $aliasIndexName = array_key_first($result);
+                preg_match('/'.$this->indexName.'-(\d+)/', $aliasIndexName, $matches);
                 if (is_array($matches) && count($matches) > 1) {
                     $version = (int)$matches[1];
                     if ($version > $this->indexVersion) {
