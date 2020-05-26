@@ -122,7 +122,7 @@ class Service extends Model\AbstractModel
      * @static
      * @internal
      *
-     * @param ElementInterface $element
+     * @param DataObject|Document $element
      *
      * @return string
      *
