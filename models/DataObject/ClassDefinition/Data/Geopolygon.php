@@ -58,7 +58,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -72,7 +72,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -86,7 +86,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -100,7 +100,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -128,7 +128,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Geopoint[]|null
@@ -309,7 +309,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -337,7 +337,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null

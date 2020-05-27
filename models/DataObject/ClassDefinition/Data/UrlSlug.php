@@ -87,7 +87,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @see Data::getDataForEditmode
      *
      * @param mixed $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -123,7 +123,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Model\DataObject\Data\UrlSlug[]
@@ -558,7 +558,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @deprecated
      *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
