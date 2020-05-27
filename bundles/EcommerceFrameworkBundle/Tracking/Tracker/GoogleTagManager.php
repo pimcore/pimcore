@@ -96,7 +96,7 @@ class GoogleTagManager extends Tracker implements
 
     public function trackCartProductActionAdd(CartInterface $cart, ProductInterface $product, $quantity = 1)
     {
-        $item = $this->trackingItemBuilder->buildProductActionItem($product, $quantity = 1);
+        $item = $this->trackingItemBuilder->buildProductActionItem($product, $quantity);
 
         $productArray = $this->transformProductAction($item);
 
