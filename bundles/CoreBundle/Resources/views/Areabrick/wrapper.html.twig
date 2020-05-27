@@ -1,0 +1,39 @@
+{# @var brick \Pimcore\Extension\Document\Areabrick\AreabrickInterface #}
+{# @var info \Pimcore\Model\Document\Tag\Area\Info #}
+{# @var templating \Symfony\Component\Templating\EngineInterface #}
+
+{# @var editmode bool #}
+
+{# @var viewTemplate string #}
+{# @var viewParameters array #}
+
+{# @var editTemplate string #}
+{# @var editParameters array #}
+
+{% block areabrickWrapper %}
+    {% block areabrickOpenTag %}
+        {{ brick.htmlTagOpen(info) | raw }}
+    {% endblock %}
+
+        {% if brick.hasEditTemplate() and editmode %}
+
+            <div class="pimcore_area_edit_button" data-name="{{ info.tag.name }}" data-real-name="{{ info.tag.realName }}"></div>
+
+        {% endif %}
+
+        {% block areabrickFrontend %}
+            {{ templating.render(viewTemplate, viewParameters) | raw }}
+        {% endblock %}
+
+        {% if brick.hasEditTemplate() and editmode and editTemplate %}
+
+            <div class="pimcore_area_editmode pimcore_area_editmode_hidden" data-name="{{ info.tag.name }}" data-real-name="{{ info.tag.realName }}">
+                {{ templating.render(editTemplate, editParameters) | raw }}
+            </div>
+
+        {% endif %}
+
+    {% block areabrickCloseTag %}
+        {{ brick.htmlTagClose(info) | raw }}
+    {% endblock %}
+{% endblock %}
