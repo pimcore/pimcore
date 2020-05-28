@@ -2073,7 +2073,13 @@ class DataObjectHelperController extends AdminController
                 // check for objects bricks and localized fields
                 if (DataObject\Service::isHelperGridColumnConfig($field)) {
                     if ($helperDefinitions[$field]) {
-                        return DataObject\Service::calculateCellValue($object, $helperDefinitions, $field, ['language' => $requestedLanguage]);
+                        $cellValue = DataObject\Service::calculateCellValue($object, $helperDefinitions, $field, ['language' => $requestedLanguage]);
+
+                        // Mimic grid concatenation behavior
+                        if (is_array($cellValue)) {
+                            $cellValue = implode(',', $cellValue);
+                        }
+                        return $cellValue;
                     }
                 } elseif (substr($field, 0, 1) == '~') {
                     $type = $fieldParts[1];
