@@ -482,7 +482,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
 
         //process entries (outside transaction, as worker ID is secured).
         foreach ($entries as $entry) {
-            Logger::info("Worker $workerId updating index for element " . $entry['id']);
+            Logger::info("Worker $workerId updating index for element " . $entry['o_id']);
             $data = json_decode($entry['data'], true);
             $this->doUpdateIndex($entry['o_id'], $data, $entry['metadata']);
         }

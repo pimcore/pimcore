@@ -505,14 +505,13 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param string $data
+     * @param Model\DataObject\Data\UrlSlug[]|null $data
      *
      * @return bool
      */
     public function isEmpty($data)
     {
         if (is_array($data)) {
-            /** @var Model\DataObject\Data\UrlSlug $item */
             foreach ($data as $item) {
                 if ($item instanceof Model\DataObject\Data\UrlSlug) {
                     if (!$item->getSlug() && !$item->getSiteId()) {

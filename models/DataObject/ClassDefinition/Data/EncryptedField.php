@@ -304,7 +304,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @param Model\DataObject\Data\RgbaColor $data
+     * @param Model\DataObject\Data\EncryptedField|null $data
      *
      * @return bool
      */
@@ -313,10 +313,11 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
             $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : $data;
-            $result = $fd->isEmpty($data);
 
-            return $result;
+            return $fd->isEmpty($data);
         }
+
+        return true;
     }
 
     /**

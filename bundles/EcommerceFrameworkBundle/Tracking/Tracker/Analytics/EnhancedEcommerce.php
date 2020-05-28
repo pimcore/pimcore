@@ -33,6 +33,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductViewInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackEventInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingCodeAwareInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Transaction;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EnhancedEcommerce extends AbstractAnalyticsTracker implements
@@ -339,7 +340,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
                 'category' => $item->getCategory(),
                 'brand' => $item->getBrand(),
                 'variant' => $item->getVariant(),
-                'price' => round($item->getPrice(), 2),
+                'price' => Decimal::fromNumeric($item->getPrice())->asString(),
                 'quantity' => $item->getQuantity() ?: 1,
                 'position' => $item->getPosition(),
                 'coupon' => $item->getCoupon()
@@ -363,7 +364,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
             'category' => $item->getCategory(),
             'brand' => $item->getBrand(),
             'variant' => $item->getVariant(),
-            'price' => round($item->getPrice(), 2),
+            'price' => Decimal::fromNumeric($item->getPrice())->asString(),
             'list' => $item->getList(),
             'position' => $item->getPosition()
         ], $item->getAdditionalAttributes()));

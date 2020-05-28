@@ -60,7 +60,7 @@ class IndexFieldSelectionField extends Textarea
     }
 
     /**
-     * @param mixed $data
+     * @param array|string|null $data
      *
      * @return bool
      */
@@ -68,7 +68,8 @@ class IndexFieldSelectionField extends Textarea
     {
         if (is_string($data)) {
             return strlen($data) < 1;
-        } elseif (is_array($data)) {
+        }
+        if (is_array($data)) {
             return empty($data);
         }
 
@@ -76,7 +77,7 @@ class IndexFieldSelectionField extends Textarea
     }
 
     /**
-     * @param string $data
+     * @param array|string $data
      * @param null|\Pimcore\Model\DataObject\AbstractObject $object
      * @param mixed $params
      *

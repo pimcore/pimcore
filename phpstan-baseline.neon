@@ -301,26 +301,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/Controller/AdminOrderController.php
 
 		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Controller\\\\AdminOrderController\\:\\:detailAction\\(\\) should return Symfony\\\\Component\\\\HttpFoundation\\\\Response but returns array\\<string, mixed\\>\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Controller/AdminOrderController.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Controller\\\\AdminOrderController\\:\\:itemCancelAction\\(\\) should return Symfony\\\\Component\\\\HttpFoundation\\\\Response but returns array\\<string, mixed\\>\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Controller/AdminOrderController.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Controller\\\\AdminOrderController\\:\\:itemEditAction\\(\\) should return Symfony\\\\Component\\\\HttpFoundation\\\\Response but returns array\\<string, mixed\\>\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Controller/AdminOrderController.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Controller\\\\AdminOrderController\\:\\:itemComplaintAction\\(\\) should return Symfony\\\\Component\\\\HttpFoundation\\\\Response but returns array\\<string, mixed\\>\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Controller/AdminOrderController.php
-
-		-
 			message: "#^Offset 2 does not exist on null\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/CoreExtensions/ClassDefinition/IndexFieldSelection.php

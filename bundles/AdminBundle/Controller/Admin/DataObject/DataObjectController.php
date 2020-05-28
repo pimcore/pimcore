@@ -24,6 +24,7 @@ use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -1546,11 +1547,16 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
      * @param GridHelperService $gridHelperService
+     * @param LocaleServiceInterface $localeService
      *
      * @return JsonResponse
      */
-    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService)
-    {
+    public function gridProxyAction(
+        Request $request,
+        EventDispatcherInterface $eventDispatcher,
+        GridHelperService $gridHelperService,
+        LocaleServiceInterface $localeService
+    ) {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [
@@ -1697,7 +1703,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                                     if ($localized instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                                         $field = $localized->getFieldDefinition($key);
                                         if ($field) {
-                                            $currentLocale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+                                            $currentLocale = $localeService->findLocale();
                                             if (!$allLanguagesAllowed && !in_array($currentLocale, $languagePermissions)) {
                                                 continue;
                                             }

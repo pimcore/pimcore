@@ -148,11 +148,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      */
     public function isEmpty()
     {
-        if (count($this->getItems()) < 1) {
-            return true;
-        }
-
-        return false;
+        return count($this->getItems()) < 1;
     }
 
     /**

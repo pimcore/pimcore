@@ -346,16 +346,12 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param DataObject\Data\ExternalImage $data
+     * @param DataObject\Data\ExternalImage|null $data
      *
      * @return bool
      */
     public function isEmpty($data)
     {
-        if ($data instanceof DataObject\Data\ExternalImage and $data->getUrl()) {
-            return false;
-        }
-
-        return true;
+        return !($data instanceof DataObject\Data\ExternalImage && $data->getUrl());
     }
 }

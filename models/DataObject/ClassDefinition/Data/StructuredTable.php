@@ -614,9 +614,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     {
         if ($data instanceof DataObject\Data\StructuredTable) {
             return $data->isEmpty();
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     /** True if change is allowed in edit mode.
