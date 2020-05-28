@@ -460,11 +460,13 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
                             $parentContainer = $parent;
 
                             if (isset($context['containerType']) && $context['containerType'] === 'objectbrick') {
-                                $brickContainerGetter = 'get' . ucfirst($context['fieldname']);
-                                $brickContainer = $parent->$brickContainerGetter();
-                                $brickGetter = 'get' . $context['containerKey'];
-                                $brickData = $brickContainer->$brickGetter();
-                                $parentContainer = $brickData;
+                                if (!empty($context['fieldname'])) {
+                                    $brickContainerGetter = 'get' . ucfirst($context['fieldname']);
+                                    $brickContainer = $parent->$brickContainerGetter();
+                                    $brickGetter = 'get' . $context['containerKey'];
+                                    $brickData = $brickContainer->$brickGetter();
+                                    $parentContainer = $brickData;
+                                }
                             }
 
                             if (method_exists($parentContainer, $method)) {
