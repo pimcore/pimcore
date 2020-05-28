@@ -217,7 +217,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @see Data::getDataForEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\Concrete $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return array

@@ -504,7 +504,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      *
      * @deprecated
      *
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
