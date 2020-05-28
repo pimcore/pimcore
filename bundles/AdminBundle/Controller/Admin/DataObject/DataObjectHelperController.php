@@ -2079,6 +2079,7 @@ class DataObjectHelperController extends AdminController
                         if (is_array($cellValue)) {
                             $cellValue = implode(',', $cellValue);
                         }
+
                         return $cellValue;
                     }
                 } elseif (substr($field, 0, 1) == '~') {
