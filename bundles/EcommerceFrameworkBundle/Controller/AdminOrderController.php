@@ -141,7 +141,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         if ($request->query->has('from') === false && $request->query->has('till') === false) {
             // als default, nehmen wir den ersten des aktuellen monats
             $from = new \DateTime('first day of this month');
-            $request->query->set('from', $from->format('d.m.Y'));
+            $request->query->set('from', $from->format('Y-m-d'));
         }
 
         $filterDate = new OrderDateTime();
