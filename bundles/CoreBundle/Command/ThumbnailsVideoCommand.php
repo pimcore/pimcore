@@ -92,7 +92,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         $thumbnails = [];
 
         $list = new Asset\Video\Thumbnail\Config\Listing();
-        $items = $list->load();
+        $items = $list->getThumbnails();
 
         foreach ($items as $item) {
             $thumbnails[] = $item->getName();
@@ -121,8 +121,8 @@ class ThumbnailsVideoCommand extends AbstractCommand
     }
 
     /**
-     * @param $videoId
-     * @param $thumbnail
+     * @param int $videoId
+     * @param string $thumbnail
      */
     protected function waitTillFinished($videoId, $thumbnail)
     {
