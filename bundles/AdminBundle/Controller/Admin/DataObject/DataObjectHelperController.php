@@ -2075,7 +2075,7 @@ class DataObjectHelperController extends AdminController
                     if ($helperDefinitions[$field]) {
                         $cellValue = DataObject\Service::calculateCellValue($object, $helperDefinitions, $field, ['language' => $requestedLanguage]);
 
-                        //'Operator Merge' management
+                        // Mimic grid concatenation behavior
                         if (is_array($cellValue)) {
                             $cellValue = implode(',', $cellValue);
                         }
