@@ -789,10 +789,8 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
             'crop' => $newValue->getCrop()
         ];
 
-        foreach ($oldValue as $key => $oValue) {
-            if (!$this->isEqualArray($oValue, $newValue[$key])) {
-                return false;
-            }
+        if (!$this->isEqualArray($oldValue, $newValue)) {
+            return false;
         }
 
         return true;

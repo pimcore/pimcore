@@ -1202,6 +1202,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      */
     public function isEqual($oldValue, $newValue)
     {
-        return $this->isEqualArray($oldValue, $newValue);
+        return false;
     }
 }

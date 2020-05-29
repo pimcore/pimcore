@@ -45,6 +45,6 @@ trait SimpleComparisonTrait
             return false;
         }
 
-        return serialize($array1) === serialize($array2);
+        return $array1 == $array2;
     }
 }
