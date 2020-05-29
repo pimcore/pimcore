@@ -65,6 +65,10 @@ class PermissionChecker
 
         /** @var User $user */
         foreach ($users as $user) {
+            if (!$user instanceof User) {
+                continue;
+            }
+
             $userPermission = [];
             $userPermission['userId'] = $user->getId();
             $userPermission['userName'] = $user->getName();
