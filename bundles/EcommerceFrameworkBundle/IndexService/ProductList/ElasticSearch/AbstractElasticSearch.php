@@ -567,7 +567,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $params = [];
         $params['index'] = $this->getIndexName();
         $params['type'] = $this->getTenantConfig()->getElasticSearchClientParams()['indexType'];
-        $params['body']['_source'] = false;
+        $params['body']['_source'] = true;
 
         if (is_integer($this->getLimit())) { // null not allowed
             $params['body']['size'] = $this->getLimit();
@@ -606,7 +606,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $params = $this->getQuery();
 
         $this->hitData = [];
-        $params['body']['_source'] = true;
 
         // send request
         $result = $this->sendRequest($params);
@@ -638,8 +637,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
         unset($params['body']['sort']);     // don't send the sort parameter, because it doesn't exist with offline sorting
         $params['body']['size'] = 10000;    // won't work with more than 10000 items in the result (elasticsearch limit)
         $params['body']['from'] = 0;
-        $params['body']['_source'] = ['system.priceSystemName'];
-        $params['body']['_source'] = true;
         $result = $this->sendRequest($params);
         $objectRaws = [];
         if ($result['hits']) {
