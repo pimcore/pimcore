@@ -666,8 +666,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $raws = [];
 
         foreach ($objectRaws as $raw) {
-            $id = $raw['o_id'];
-            $raws[] = $id;
+            $raws[] = $raw['o_id'];
         }
 
         return $raws;
