@@ -226,7 +226,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * @param int $classId
+     * @param string $classId
      *
      * @return $this
      */
@@ -236,7 +236,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
 
         if (!array_key_exists('product', $joins)) {
             $this->getQuery()->join(
-                ['product' => 'object_query_' . (int)$classId],
+                ['product' => 'object_query_' . $classId],
                 'product.oo_id = orderItem.product__id',
                 ''
             );

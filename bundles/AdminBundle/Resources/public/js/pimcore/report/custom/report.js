@@ -235,7 +235,10 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
             stripeRows: true,
             trackMouseOver: true,
             forceFit: false,
-            tbar: topBar
+            tbar: topBar,
+            viewConfig: {
+                enableTextSelection: true
+            }
         });
 
         return this.grid;

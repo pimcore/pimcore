@@ -77,7 +77,7 @@ provides following methods to set the current Assortment Tenant when working wit
     public function getCurrentAssortmentSubTenant();
 ```
 
-The current Assortment Tenant have to be set in the application controllers, e.g. after the login of a specific customer. 
+The current Assortment Tenant has to be set in the application controllers, e.g. after the login of a specific customer. 
 The Index Service provides the corresponding Product List implementation based on the current tenant.
 
 

@@ -30,7 +30,7 @@ If you're using pre-generation for your thumbnails, don't forget to run the comm
                 changePublishedState: save_version
     ```
 ## 6.5.2
-- Passing multiple relations(w/o multiple assignments check) in data objects is deprecated and will throw exception in Pimcore 7.
+- Passing multiple relations (w/o multiple assignments check) in data objects is deprecated and will throw exception in Pimcore 7.
 
 ## 6.5.0
 
@@ -54,10 +54,10 @@ foreach ($list as $class) {
 ```
 
 - [Data Objects] Relations are always lazy-loaded from now on
-  see https://github.com/pimcore/pimcore/issues/5772
+  see [5772](https://github.com/pimcore/pimcore/issues/5772)
 - [Data Objects] Relation Types DB Caching Layer is always turned on now. Removed support for non-cached alternative. 
-  All rows of the affected `object_relation_` table will be fetched in on go and cached together we with the object. 
-  see https://github.com/pimcore/pimcore/issues/5427
+  All rows of the affected `object_relation_` table will be fetched in one go and cached together with the object. 
+  see [5427](https://github.com/pimcore/pimcore/issues/5427)
 - [Data Objects] If you have custom lazy-loaded datatypes **not** extending `Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations`,
   implement the `Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface`
   The `method_exists('getLazyLoading')` calls will be removed in Pimcore 7.

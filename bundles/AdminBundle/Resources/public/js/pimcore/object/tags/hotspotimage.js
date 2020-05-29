@@ -235,8 +235,8 @@ pimcore.object.tags.hotspotimage = Class.create(pimcore.object.tags.image, {
             tbar: toolbar
         };
 
-        if (!this.additionalConfig.condensed) {
-            // conf.style = "padding-bottom: 10px;";
+        if (!this.additionalConfig.gallery) {
+             conf.style = "padding-bottom: 10px;";
         }
 
         this.component = new Ext.Panel(conf);
