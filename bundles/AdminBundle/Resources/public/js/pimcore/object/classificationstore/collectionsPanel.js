@@ -53,7 +53,7 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
             readerFields.push(columnConfig);
         }
 
-        var url = Routing.generate('pimcore_admin_dataobject_classificationstore_collectionrelations');
+        var route = 'pimcore_admin_dataobject_classificationstore_collectionrelations';
         var proxy = {
             batchActions: false,
             type: 'ajax',
@@ -62,10 +62,10 @@ pimcore.object.classificationstore.collectionsPanel = Class.create({
                 rootProperty: 'data'
             },
             api: {
-                create  : url + "xaction=create",
-                read    : url + "xaction=read",
-                update  : url + "xaction=update",
-                destroy : url + "xaction=destroy"
+                create  : Routing.generate(route, {'xaction': 'create'}),
+                read    : Routing.generate(route, {'xaction': 'read'}),
+                update  : Routing.generate(route, {'xaction': 'update'}),
+                destroy : Routing.generate(route, {'xaction': 'destroy'})
             },
             writer: {
                 type: 'json',

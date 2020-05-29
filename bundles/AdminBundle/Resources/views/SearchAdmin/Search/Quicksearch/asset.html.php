@@ -1,4 +1,5 @@
 <?php
+    /** @var \Pimcore\Templating\PhpEngine $view */
     /**
      * @var \Pimcore\Model\Asset\Image|\Pimcore\Model\Asset\Document|\Pimcore\Model\Asset\Video $element
      */
@@ -14,15 +15,13 @@
 
     try {
         if ($element instanceof \Pimcore\Model\Asset\Image) {
-             $previewImage =$this->generateUrl('pimcore_admin_asset_getimagethumbnail', $params);
+             $previewImage = $view->router()->path('pimcore_admin_asset_getimagethumbnail', $params);
         }
-
         elseif ($element instanceof \Pimcore\Model\Asset\Video && \Pimcore\Video::isAvailable()) {
-            $previewImage = $this->generateUrl('pimcore_admin_asset_getvideothumbnail', $params);
+            $previewImage = $view->router()->path('pimcore_admin_asset_getvideothumbnail', $params);
         }
-
         if ($element instanceof \Pimcore\Model\Asset\Document && \Pimcore\Document::isAvailable()) {
-            $previewImage = $this->generateUrl('pimcore_admin_asset_getdocumentthumbnail', $params);
+            $previewImage = $view->router()->path('pimcore_admin_asset_getdocumentthumbnail', $params);
         }
     } catch (\Exception $e) {
 

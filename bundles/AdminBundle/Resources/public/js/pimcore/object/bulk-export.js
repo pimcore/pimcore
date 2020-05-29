@@ -22,7 +22,7 @@ pimcore.object.bulkexport = Class.create(pimcore.object.bulkbase, {
     export: function() {
 
         Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_dataobject_class_bulkexportprepare'),
+            url: Routing.generate('pimcore_admin_dataobject_class_bulkexport'),
             method: "GET",
             success: function(transport){
                 var data = Ext.decode(transport.responseText);
