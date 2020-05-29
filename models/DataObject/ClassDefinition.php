@@ -560,15 +560,15 @@ class ClassDefinition extends Model\AbstractModel
         }
         File::put($classListFile, $cd);
 
-        // save definition as a php file
-        $definitionFile = $this->getDefinitionFile();
-        if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
-            throw new \Exception(
-                'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
-            );
-        }
-
         if ($generateDefinitionFile) {
+            // save definition as a php file
+            $definitionFile = $this->getDefinitionFile();
+            if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
+                throw new \Exception(
+                    'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
+                );
+            }
+
             $clone = clone $this;
             $clone->setDao(null);
             unset($clone->fieldDefinitions);
