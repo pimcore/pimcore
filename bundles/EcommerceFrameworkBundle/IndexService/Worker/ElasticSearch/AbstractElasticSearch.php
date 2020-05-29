@@ -539,6 +539,11 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         }
 
         //delete old indices
+        $this->cleanupUnusedEsIndices();
+    }
+
+    protected function cleanupUnusedEsIndices(): void {
+        $esClient = $this->getElasticSearchClient();
         $stats = $esClient->indices()->stats();
         foreach ($stats['indices'] as $key => $data) {
             preg_match('/'.$this->indexName.'-(\d+)/', $key, $matches);
@@ -546,7 +551,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                 $version = (int)$matches[1];
                 if ($version != $this->indexVersion) {
                     Logger::info('Index-Actions - Delete old Index ' . $this->indexName.'-'.$version);
-                    $esClient->indices()->delete(['index' => $this->indexName.'-'.$version]);
+                    $this->deleteEsIndexIfExisting($this->indexName.'-'.$version);
                 }
             }
         }
@@ -763,7 +768,10 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         $result = $esClient->indices()->exists(['index' => $indexName]);
         if ($result) {
             Logger::info('Deleted index '.$indexName.'.');
-            $esClient->indices()->delete(['index' => $indexName]);
+            $result = $esClient->indices()->delete(['index' => $indexName]);
+            if (!array_key_exists('acknowledged', $result) && !$result['acknowledged']) {
+                Logger::error("Could not delete index {$indexName} while cleanup. Please remove the index manually.");
+            }
         }
     }
 
