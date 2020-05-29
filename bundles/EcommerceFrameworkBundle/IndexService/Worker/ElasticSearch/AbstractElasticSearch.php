@@ -550,7 +550,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             if (is_array($matches) && count($matches) > 1) {
                 $version = (int)$matches[1];
                 if ($version != $this->indexVersion) {
-                    $indexNameVersion = $this->getIndexNameVersion();
+                    $indexNameVersion = $this->getIndexNameVersion($version);
                     Logger::info('Index-Actions - Delete old Index ' . $indexNameVersion);
                     $this->deleteEsIndexIfExisting($indexNameVersion);
                 }
