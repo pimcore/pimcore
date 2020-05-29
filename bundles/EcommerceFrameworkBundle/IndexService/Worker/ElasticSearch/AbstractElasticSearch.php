@@ -31,7 +31,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker implements Worker\BatchProcessingWorkerInterface
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store_elastic';
-    const MOCKUP_CACHE_PREFIX = 'ecommerce_mockup_elastic';
 
     const RELATION_FIELD = 'parentchildrelation';
 
