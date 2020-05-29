@@ -525,7 +525,6 @@ class Model extends AbstractDefinitionHelper
         $def->setName($name);
         $def->setLayoutDefinitions($layout);
         $def->setAllowInherit($inheritanceAllowed);
-        $def->setUseTypeHints(true);
         $json = ClassDefinition\Service::generateClassDefinitionJson($def);
         $cm->saveJson($filename, $json);
 
@@ -859,7 +858,6 @@ class Model extends AbstractDefinitionHelper
         $def = new Definition();
         $def->setKey($name);
         $def->setLayoutDefinitions($layout);
-        $def->setUseTypeHints(true);
         $json = ClassDefinition\Service::generateFieldCollectionJson($def);
         $cm->saveJson($filename, $json);
 
@@ -881,7 +879,6 @@ class Model extends AbstractDefinitionHelper
         $def->setKey($name);
         $def->setLayoutDefinitions($layout);
         $def->setClassDefinitions($classDefinitions);
-        $def->setUseTypeHints(true);
         $json = ClassDefinition\Service::generateObjectBrickJson($def);
         $cm->saveJson($filename, $json);
 
