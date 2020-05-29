@@ -862,6 +862,11 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     }
 
     /**
+     * @var int
+     */
+    protected $lastLockLogTimestamp = null;
+
+    /**
      * Verify if the index is currently locked.
      * @param bool $throwException if set to false then no exception will be thrown if index is locked
      * @return bool returns true if no exception is thrown and the index is locked
@@ -874,7 +879,11 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             if ($throwException) {
                 throw new \Exception($errorMessage);
             } else {
-                Logger::warning($errorMessage);
+                //only write log message once a minute to not spam up log file when running update index
+                if($this->lastLockLogTimestamp > time() + 60) {
+                    $this->lastLockLogTimestamp = time();
+                    Logger::warning($errorMessage . ' (will suppress subsequent log messages of same type for next 60 seconds)');
+                }
             }
 
             return true;
@@ -889,5 +898,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
     protected function releaseIndexLock() {
         Lock::release(self::REINDEXING_LOCK_KEY);
+        $this->lastLockLogTimestamp = null;
     }
 }
