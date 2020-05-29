@@ -164,6 +164,13 @@ class ClassDefinition extends Model\AbstractModel
      */
     public $compositeIndices = [];
 
+
+    /**
+     * @var bool
+     */
+    public $useTypeHints = false;
+
+
     /**
      * @var array
      */
@@ -1398,4 +1405,24 @@ class ClassDefinition extends Model\AbstractModel
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function getUseTypeHints()
+    {
+        return (bool) $this->useTypeHints;
+    }
+
+    /**
+     * @param bool $useTypeHints
+     *
+     * @return $this
+     */
+    public function setUseTypeHints($useTypeHints)
+    {
+        $this->useTypeHints = (bool) $useTypeHints;
+        return $this;
+    }
+
 }

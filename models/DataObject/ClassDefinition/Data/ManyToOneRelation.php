@@ -734,6 +734,14 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return true;
     }
 
+    public function getInputType() {
+        return '?\Pimcore\Model\Element\AbstractElement';
+    }
+
+    public function getReturnType() {
+        return '?\Pimcore\Model\Element\AbstractElement';
+    }
+
     /**
      * @param DataObject\Listing      $listing
      * @param Element\ElementInterface|array $data  comparison element or ['id' => <element ID>, 'type' => <element type>]

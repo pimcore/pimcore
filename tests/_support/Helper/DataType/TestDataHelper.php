@@ -2,6 +2,7 @@
 
 namespace Pimcore\Tests\Helper\DataType;
 
+use Carbon\Carbon;
 use Codeception\Module;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
@@ -411,7 +412,8 @@ class TestDataHelper extends Module
     public function fillDate(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
-        $date = new \DateTime();
+
+        $date = new \Carbon\Carbon();
         $date->setDate(2000, 12, 24);
 
         $object->$setter($date);

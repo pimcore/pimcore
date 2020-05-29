@@ -1189,4 +1189,18 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             }
         }
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getInputType() {
+        return '?array';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getReturnType() {
+        return '?array';
+    }
 }

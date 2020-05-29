@@ -655,6 +655,20 @@ abstract class Data
     }
 
     /**
+     * @return string
+     */
+    public function getInputType() {
+        return '?' . $this->getPhpdocType();
+    }
+
+    /**
+     * @return string
+     */
+    public function getReturnType() {
+        return '?' . $this->getPhpdocType();
+    }
+
+    /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
      * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
@@ -664,13 +678,22 @@ abstract class Data
     public function getGetterCode($class)
     {
         $key = $this->getName();
+
+
+        if ($class->getUseTypeHints() && $this->getReturnType()) {
+            $typehint = ': ' . $this->getReturnType();
+
+        } else {
+            $typehint = '';
+        }
+
         $code = '';
 
         $code .= '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " () {\n";
+        $code .= 'public function get' . ucfirst($key) . " ()" . $typehint . " {\n";
 
         $code .= $this->getPreGetValueHookCode($key);
 
@@ -719,14 +742,20 @@ abstract class Data
         }
 
         $key = $this->getName();
-        $code = '';
 
+        if ($class->getUseTypeHints() && $this->getInputType()) {
+            $typehint = $this->getInputType() . ' ';
+        } else {
+            $typehint = '';
+        }
+
+        $code = '';
         $code .= '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typehint . '$' . $key . ") {\n";
         $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -776,12 +805,19 @@ abstract class Data
     public function getGetterCodeObjectbrick($brickClass)
     {
         $key = $this->getName();
+
+        if ($brickClass->getUseTypeHints() && $this->getReturnType()) {
+            $typehint = ': ' . $this->getReturnType();
+        } else {
+            $typehint = '';
+        }
+
         $code = '';
         $code .= '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " () {\n";
+        $code .= 'public function get' . ucfirst($key) . " ()" . $typehint . " {\n";
 
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
@@ -820,13 +856,19 @@ abstract class Data
     {
         $key = $this->getName();
 
+        if ($brickClass->getUseTypeHints() && $this->getInputType()) {
+            $typehint = $this->getInputType() . ' ';
+        } else {
+            $typehint = '';
+        }
+
         $code = '';
         $code .= '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickClass->getKey()) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typehint . '$' . $key . ") {\n";
         $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -878,12 +920,18 @@ abstract class Data
     {
         $key = $this->getName();
 
+        if ($fieldcollectionDefinition->getUseTypeHints() && $this->getReturnType()) {
+            $typehint = ': ' . $this->getReturnType();
+        } else {
+            $typehint = '';
+        }
+
         $code = '';
         $code .= '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " () {\n";
+        $code .= 'public function get' . ucfirst($key) . " ()" . $typehint . " {\n";
 
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$container = $this;' . "\n";
@@ -913,14 +961,20 @@ abstract class Data
     public function getSetterCodeFieldcollection($fieldcollectionDefinition)
     {
         $key = $this->getName();
-        $code = '';
 
+        if ($fieldcollectionDefinition->getUseTypeHints() && $this->getInputType()) {
+            $typehint = $this->getInputType() . ' ';
+        } else {
+            $typehint = '';
+        }
+
+        $code = '';
         $code .= '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typehint . '$' . $key . ") {\n";
         $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -963,11 +1017,19 @@ abstract class Data
     public function getGetterCodeLocalizedfields($class)
     {
         $key = $this->getName();
+
+        if ($class->getUseTypeHints() && $this->getReturnType()) {
+            $typehint = ': ' . $this->getReturnType();
+
+        } else {
+            $typehint = '';
+        }
+
         $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . ' ($language = null) {' . "\n";
+        $code .= 'public function get' . ucfirst($key) . ' ($language = null)' . $typehint . ' {' . "\n";
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
@@ -1008,12 +1070,19 @@ abstract class Data
             $containerGetter = 'getClass';
         }
 
+        if ($class->getUseTypeHints() && $this->getInputType()) {
+            $typehint = $this->getInputType() . ' ';
+
+        } else {
+            $typehint = '';
+        }
+
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ', $language = null) {' . "\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typehint . '$' . $key . ', $language = null) {' . "\n";
         if ($this->supportsDirtyDetection()) {
             $code .= "\t" . '$fd = $this->' . $containerGetter . '()->getFieldDefinition("localizedfields")->getFieldDefinition("' . $key . '");' . "\n";
         }

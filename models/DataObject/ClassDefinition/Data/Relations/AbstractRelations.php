@@ -493,4 +493,18 @@ abstract class AbstractRelations extends Data implements
 
         return $data;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getInputType() {
+        return '?array';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getReturnType() {
+        return 'array';
+    }
 }

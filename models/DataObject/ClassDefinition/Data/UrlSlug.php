@@ -842,4 +842,12 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     {
         return null;
     }
+
+    public function getInputType() {
+        return '?array';
+    }
+
+    public function getReturnType() {
+        return '?array';
+    }
 }

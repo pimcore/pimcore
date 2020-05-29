@@ -55,11 +55,12 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $columnType = 'tinyint(1)';
 
     /**
-     * Type for the generated phpdoc
+     * Type for the generated phpdoc. Do not use boolean here because boolean is an alias for bool and
+     * aliases don't work in type hints.
      *
      * @var string
      */
-    public $phpdocType = 'boolean';
+    public $phpdocType = 'bool';
 
     /**
      * @return int|null

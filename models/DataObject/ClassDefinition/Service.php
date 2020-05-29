@@ -109,7 +109,7 @@ class Service
 
         foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'showVariants', 'parentClass',
                     'implementsInterfaces', 'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
-                    'linkGeneratorReference', 'compositeIndices'] as $importPropertyName) {
+                    'linkGeneratorReference', 'compositeIndices', 'useTypeHints'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $class->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
@@ -150,7 +150,7 @@ class Service
             $fieldCollection->setLayoutDefinitions($layout);
         }
 
-        foreach (['parentClass', 'implementsInterfaces', 'title', 'group'] as $importPropertyName) {
+        foreach (['parentClass', 'implementsInterfaces', 'title', 'group', 'useTypeHints'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $fieldCollection->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
@@ -229,6 +229,7 @@ class Service
         $objectBrick->setClassDefinitions($toAssignClassDefinitions);
         $objectBrick->setParentClass($importData['parentClass']);
         $objectBrick->setImplementsInterfaces($importData['implementsInterfaces'] ?? null);
+        $objectBrick->setUseTypeHints($importData['useTypeHints'] ?? null);
         if (isset($importData['title'])) {
             $objectBrick->setTitle($importData['title']);
         }

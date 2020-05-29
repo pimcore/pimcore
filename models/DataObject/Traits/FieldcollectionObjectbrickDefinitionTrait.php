@@ -55,6 +55,11 @@ trait FieldcollectionObjectbrickDefinitionTrait
     public $layoutDefinitions;
 
     /**
+     * @var bool
+     */
+    public $useTypeHints = false;
+
+    /**
      * @var Data[]
      */
     protected $fieldDefinitions = [];
@@ -258,4 +263,24 @@ trait FieldcollectionObjectbrickDefinitionTrait
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function getUseTypeHints()
+    {
+        return (bool) $this->useTypeHints;
+    }
+
+    /**
+     * @param bool $useTypeHints
+     *
+     * @return $this
+     */
+    public function setUseTypeHints($useTypeHints)
+    {
+        $this->useTypeHints = (bool) $useTypeHints;
+        return $this;
+    }
+
 }
