@@ -98,7 +98,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
      * @param array|null $data
      * @param array|null $metadata
      */
-    protected function doUpdateIndex($objectId, $data = null, $metadata = null)
+    public function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
         $xml = $this->createXMLElement();
 
@@ -289,7 +289,7 @@ SQL;
     /**
      * @return string
      */
-    protected function getStoreTableName()
+    public function getStoreTableName()
     {
         return self::STORE_TABLE_NAME;
     }

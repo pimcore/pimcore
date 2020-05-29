@@ -369,7 +369,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         }
     }
 
-    protected function doUpdateIndex($objectId, $data = null, $metadata = null)
+    public function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
         if (empty($data)) {
             $dataEntry = $this->db->fetchRow('SELECT data, metadata FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
@@ -507,7 +507,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
         return $entriesUpdated;
     }
 
-    protected function getStoreTableName()
+    public function getStoreTableName()
     {
         return self::STORE_TABLE_NAME;
     }

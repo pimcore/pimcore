@@ -154,7 +154,7 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
         return $this->mySqlHelper->getSystemAttributes();
     }
 
-    protected function getStoreTableName()
+    public function getStoreTableName()
     {
         return self::STORE_TABLE_NAME;
     }

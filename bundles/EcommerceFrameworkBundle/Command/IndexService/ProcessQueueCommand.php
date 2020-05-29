@@ -21,6 +21,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @deprecated
+ * Class ProcessQueueCommand
+ * @package Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService
+ */
 class ProcessQueueCommand extends AbstractIndexServiceCommand
 {
     /**

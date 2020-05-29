@@ -299,7 +299,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
      * @param array|null $data
      * @param array|null $metadata
      */
-    protected function doUpdateIndex($objectId, $data = null, $metadata = null)
+    public function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
         if (empty($data)) {
             $data = $this->db->fetchOne('SELECT data FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);

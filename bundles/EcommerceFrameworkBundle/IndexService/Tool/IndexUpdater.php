@@ -22,6 +22,11 @@ use Pimcore\Log\Simple;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Listing\Concrete;
 
+/**
+ * @deprecated - should be removed completely!
+ * Class IndexUpdater
+ * @package Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Tool
+ */
 class IndexUpdater
 {
     use CliTrait;

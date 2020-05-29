@@ -293,7 +293,7 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
      * @param array|null $data
      * @param array|null $metadata
      */
-    protected function doUpdateIndex($objectId, $data = null, $metadata = null)
+    public function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
     }
 
@@ -305,7 +305,7 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
     {
     }
 
-    protected function getStoreTableName()
+    public function getStoreTableName()
     {
         return self::STORE_TABLE_NAME;
     }

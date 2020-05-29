@@ -41,14 +41,14 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
      *
      * @return string
      */
-    abstract protected function getStoreTableName();
+    abstract public function getStoreTableName();
 
     /**
      * @param int $objectId
      * @param array|null $data
      * @param array|null $metadata
      */
-    abstract protected function doUpdateIndex($objectId, $data = null, $metadata = null);
+    abstract public function doUpdateIndex($objectId, $data = null, $metadata = null);
 
     /**
      * creates store table
