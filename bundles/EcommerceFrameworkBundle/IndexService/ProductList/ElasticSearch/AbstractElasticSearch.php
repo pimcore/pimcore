@@ -158,12 +158,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $scrollRequestKeepAlive = '30s';
 
     /**
-     * currently direct source loading is disabled, but can be activated.
-     * probably this should change in the future.
-     * @var bool
+     * @var array
      */
-    private $loadFromSource = false;
-
     private $hitData = [];
 
     /**
@@ -609,10 +605,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
     {
         $params = $this->getQuery();
 
-        if ($this->isLoadFromSource()) {
-            $this->hitData = [];
-            $params['body']['_source'] = true;
-        }
+        $this->hitData = [];
+        $params['body']['_source'] = true;
 
         // send request
         $result = $this->sendRequest($params);
@@ -622,9 +616,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
             $this->totalCount = $result['hits']['total'];
             foreach ($result['hits']['hits'] as $hit) {
                 $objectRaws[] = $hit['_id'];
-                if ($this->isLoadFromSource()) {
-                    $this->hitData[$hit['_id']] = $hit;
-                }
+                $this->hitData[$hit['_id']] = $hit;
             }
         }
 
@@ -641,14 +633,13 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected function loadWithoutPriceFilterWithPriceSorting()
     {
         $params = $this->getQuery();
+        $this->hitData = [];
+
         unset($params['body']['sort']);     // don't send the sort parameter, because it doesn't exist with offline sorting
         $params['body']['size'] = 10000;    // won't work with more than 10000 items in the result (elasticsearch limit)
         $params['body']['from'] = 0;
         $params['body']['_source'] = ['system.priceSystemName'];
-        if ($this->isLoadFromSource()) {
-            $this->hitData = [];
-            $params['body']['_source'] = true;
-        }
+        $params['body']['_source'] = true;
         $result = $this->sendRequest($params);
         $objectRaws = [];
         if ($result['hits']) {
@@ -656,9 +647,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
             foreach ($result['hits']['hits'] as $hit) {
                 $objectRaw = ['id' => $hit['_id'], 'priceSystemName' => $hit['_source']['system']['priceSystemName']];
                 $objectRaws[] = $objectRaw;
-                if ($this->isLoadFromSource()) {
-                    $this->hitData[$hit['_id']] = $hit;
-                }
+                $this->hitData[$hit['_id']] = $hit;
             }
         }
         $priceSystemArrays = [];
@@ -676,18 +665,10 @@ abstract class AbstractElasticSearch implements ProductListInterface
         }
 
         $raws = [];
-        if ($this->isLoadFromSource()) {
-            $hitDataFull = $this->hitData;
-            $this->hitData = [];
-        }
+
         foreach ($objectRaws as $raw) {
             $id = $raw['o_id'];
             $raws[] = $id;
-            if ($this->isLoadFromSource()) {
-                if (array_key_exists($id, $hitDataFull)) {
-                    $this->hitData[$id] = $hitDataFull[$id];
-                }
-            }
         }
 
         return $raws;
@@ -889,25 +870,23 @@ abstract class AbstractElasticSearch implements ProductListInterface
     {
         /** @var ElasticSearch $tenantConfig */
         $tenantConfig = $this->getTenantConfig();
-        if ($this->isLoadFromSource()) {
-            $mockup = null;
-            if (isset($this->hitData[$elementId])) {
-                $hitData = $this->hitData[$elementId];
-                $sourceData = $hitData['_source'];
+        $mockup = null;
+        if (isset($this->hitData[$elementId])) {
+            $hitData = $this->hitData[$elementId];
+            $sourceData = $hitData['_source'];
 
-                //mapping of relations
-                $relationFormatPimcore = [];
-                foreach ($sourceData['relations'] ?: [] as $name => $relation) {
-                    $relationFormatPimcore[] = ['fieldname' => $name, 'dest' => $relation[0], 'type' => 'object'];
-                }
-                $mergedAttributes = array_merge($sourceData['system'], $sourceData['attributes']);
-                $mockup = $tenantConfig->createMockupObject($elementId, $mergedAttributes, $relationFormatPimcore);
+            //mapping of relations
+            $relationFormatPimcore = [];
+            foreach ($sourceData['relations'] ?: [] as $name => $relation) {
+                $relationFormatPimcore[] = ['fieldname' => $name, 'dest' => $relation[0], 'type' => 'object'];
             }
-            return $mockup;
-        } else {
-            return $tenantConfig->getObjectMockupById($elementId);
+            $mergedAttributes = array_merge($sourceData['system'], $sourceData['attributes']);
+            $mockup = $tenantConfig->createMockupObject($elementId, $mergedAttributes, $relationFormatPimcore);
         }
+
+        return $mockup;
     }
+
     /**
      * prepares all group by values for given field names and cache them in local variable
      * considers both - normal values and relation values
@@ -1476,37 +1455,13 @@ abstract class AbstractElasticSearch implements ProductListInterface
     }
 
     /**
-     * @return bool
-     */
-    public function isLoadFromSource(): bool
-    {
-        return $this->loadFromSource;
-    }
-
-    /**
-     * Use this method to set whether Elastic Search data should be loaded directly from source or not.
-     * @param bool $loadFromSource
-     */
-    public function setLoadFromSource(bool $loadFromSource)
-    {
-        $this->loadFromSource = $loadFromSource;
-    }
-
-    /**
      * Get the score from a loaded product list based on a (Pimcore) product Id.
-     * Precondition: isLoadFromSource - mode must be set to true.
      * @param int $productId the Pimcore product Id.
      * @return float the score returned by Elastic Search.
      * @throws \Exception if loadFromSource mode is not true.
      */
     public function getScoreFromLoadedList(int $productId): float
     {
-        if (!$this->isLoadFromSource()) {
-            throw new \Exception("Querying a product's score is only allowed in conjunction with loaded source. " .
-                "Please use setLoadFromSource(true) to activate loading the original source."
-            );
-        }
-
         if (isset($this->hitData[$productId])) {
             return $this->hitData[$productId]['_score'];
         }
