@@ -864,7 +864,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     /**
      * @var int
      */
-    protected $lastLockLogTimestamp = null;
+    protected $lastLockLogTimestamp = 0;
 
     /**
      * Verify if the index is currently locked.
@@ -898,6 +898,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
 
     protected function releaseIndexLock() {
         Lock::release(self::REINDEXING_LOCK_KEY);
-        $this->lastLockLogTimestamp = null;
+        $this->lastLockLogTimestamp = 0;
     }
 }
