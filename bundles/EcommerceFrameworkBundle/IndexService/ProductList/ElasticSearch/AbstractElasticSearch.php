@@ -645,8 +645,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         if ($result['hits']) {
             $this->totalCount = $result['hits']['total'];
             foreach ($result['hits']['hits'] as $hit) {
-                $objectRaw = ['id' => $hit['_id'], 'priceSystemName' => $hit['_source']['system']['priceSystemName']];
-                $objectRaws[] = $objectRaw;
+                $objectRaws[] = ['id' => $hit['_id'], 'priceSystemName' => $hit['_source']['system']['priceSystemName']];
                 $this->hitData[$hit['_id']] = $hit;
             }
         }
