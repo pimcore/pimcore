@@ -14,15 +14,13 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService\AbstractIndexServiceCommand;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexUpdateService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\BatchProcessingWorkerInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Console\Traits\Timeout;
-use Pimcore\Logger;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -33,7 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class ProcessUpdateIndexQueueCommand
  * @package Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService
  */
-class ProcessUpdateIndexQueueCommand extends AbstractCommand
+class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
 {
     use Parallelization;
     use Timeout;
@@ -89,13 +87,13 @@ class ProcessUpdateIndexQueueCommand extends AbstractCommand
             $output->writeln(sprintf('Process ID="%s" for %d tenants (%s).', $id, count($openTenants), implode(",", $row['tenants'])));
         }
 
+        $env = Factory::getInstance()->getEnvironment();
+
         $workerList = $this->getTenantWorkers($openTenants);
         foreach ($workerList as $worker) {
             //if the data object remains the same, it will be loaded from cache
-            $indexableObject = $worker->getTenantConfig()->getObjectById($id);
-            if ($indexableObject instanceof BatchProcessingWorkerInterface) {
-                $worker->doUpdateIndex($id);
-            }
+            $env->setCurrentAssortmentTenant($worker->getTenantConfig()->getTenantName());
+            $worker->doUpdateIndex($id);
         }
     }
 

@@ -17,35 +17,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Db;
 use Pimcore\Logger;
 
 class IndexUpdateService
 {
-    /**
-     * @var EnvironmentInterface
-     */
-    private $environment;
-
-    /**
-     * @var IndexService
-     */
-    private $indexService;
-
-    /**
-     * @param EnvironmentInterface $environment
-     * @param WorkerInterface[] $tenantWorkers
-     * @param string $defaultTenant
-     */
-    public function __construct(EnvironmentInterface $environment, IndexService $indexService = null)
-    {
-        $this->environment = $environment;
-        $this->indexService = $indexService;
-    }
 
     /**
      * Fetch productIds and tenant information for all products that require product index preparation,
@@ -61,28 +40,10 @@ class IndexUpdateService
     public function fetchProductIdsForPreparation(array $tenantNameFilterList=[]) : array {
 
         $storeTableList = $this->getStoreTableList($tenantNameFilterList);
-
         $combinedRows = [];
-
         foreach ($storeTableList as $storeTableName) {
-
             $rows = $this->fetchProductIdsForPreparationForSingleStoreTable($storeTableName, $tenantNameFilterList);
-
-            //combine rows of different store tables into one joint assoc. array
-            foreach ($rows as $row) {
-                $id = $row['id'];
-                $combinedRow = $row;
-                if (array_key_exists($id, $combinedRows)) {
-                    $openTenantsExisting = $combinedRow[$id]['tenants'];
-                    $openTenantsNew = $row['tenants'];
-                    $mergedTenantNameList = array_unique(array_merge($openTenantsExisting, $openTenantsNew));
-                    $combinedRow['tenants'] = $mergedTenantNameList;
-                    $combinedRow['numTenants'] = count($mergedTenantNameList);
-                }
-                $combinedRows[$id] = $combinedRow;
-            }
-
-            Logger::debug('Total product IDs after adding the store table: '.count($combinedRows));
+            $combinedRows = $this->combineRowsAndTenants($combinedRows, $rows);
         }
 
         return $combinedRows;
@@ -102,29 +63,13 @@ class IndexUpdateService
      */
     protected function fetchProductIdsForPreparationForSingleStoreTable(string $storeTableName,array $tenantNameFilterList) : array {
 
-        $optionalTenantCondition = "";
-        if (!empty($tenantNameFilterList)) {
-            $optionalTenantCondition = sprintf(
-                ' AND tenant in(%s)',
-                implode(',', array_map(function($str) { return sprintf("'%s'", $str);},$tenantNameFilterList))
-            );
-
-        }
-
-        $sql = '('.
-            'SELECT SQL_CALC_FOUND_ROWS o_id as id, group_concat(tenant) as tenants, count(tenant) as numTenants '.
-            'FROM '.$storeTableName.' '.
-            'WHERE in_preparation_queue = 1 '.
-            $optionalTenantCondition.
-            ' group by o_id order by numTenants desc'.
-            ')'
-        ;
-
-        Logger::debug('Store table SQL:'.$sql);
-
-        $rows = Db::get()->fetchAll($sql, $tenantNameFilterList ? [$tenantNameFilterList]: []);
+        $qb = $this->createBasicStoreTableSelectQuery($storeTableName, $tenantNameFilterList);
+        $qb->andWhere('in_preparation = 1');
+        Logger::debug('Store table SQL:'.$qb->getSQL());
+        $rows = $qb->execute()->fetchAll();
 
         $result = [];
+
         foreach ($rows as $row) {
             $tenantNameList = explode_and_trim(",", $row['tenants']);
             $row['tenants'] = $tenantNameList;
@@ -149,26 +94,9 @@ class IndexUpdateService
         $storeTableList = $this->getStoreTableList($tenantNameFilterList);
 
         $combinedRows = [];
-
         foreach ($storeTableList as $storeTableName) {
-
             $rows = $this->fetchProductIdsIndexUpdateForSingleStoreTable($storeTableName, $tenantNameFilterList);
-
-            //combine rows of different store tables into one joint assoc. array
-            foreach ($rows as $row) {
-                $id = $row['id'];
-                $combinedRow = $row;
-                if (array_key_exists($id, $combinedRows)) {
-                    $openTenantsExisting = $combinedRow[$id]['tenants'];
-                    $openTenantsNew = $row['tenants'];
-                    $mergedTenantNameList = array_unique(array_merge($openTenantsExisting, $openTenantsNew));
-                    $combinedRow['tenants'] = $mergedTenantNameList;
-                    $combinedRow['numTenants'] = count($mergedTenantNameList);
-                }
-                $combinedRows[$id] = $combinedRow;
-            }
-
-            Logger::debug('Total product IDs after adding the store table: '.count($combinedRows));
+            $combinedRows = $this->combineRowsAndTenants($combinedRows, $rows);
         }
 
         return $combinedRows;
@@ -187,27 +115,10 @@ class IndexUpdateService
      */
     protected function fetchProductIdsIndexUpdateForSingleStoreTable(string $storeTableName,array $tenantNameFilterList) : array {
 
-        $optionalTenantCondition = "";
-        if (!empty($tenantNameFilterList)) {
-            $optionalTenantCondition = sprintf(
-                ' AND tenant in(%s)',
-                implode(',', array_map(function($str) { return sprintf("'%s'", $str);},$tenantNameFilterList))
-            );
-
-        }
-
-        $sql = '('.
-            'SELECT SQL_CALC_FOUND_ROWS o_id as id, group_concat(tenant) as tenants, count(tenant) as numTenants '.
-            'FROM '.$storeTableName.' '.
-            'WHERE (crc_current != crc_index OR ISNULL(crc_index)) '.
-            $optionalTenantCondition.
-            ' group by o_id order by numTenants desc'.
-            ')'
-        ;
-
-        Logger::debug('Update index SQL for store table:'.$sql);
-
-        $rows = Db::get()->fetchAll($sql, $tenantNameFilterList ? [$tenantNameFilterList]: []);
+        $qb = $this->createBasicStoreTableSelectQuery($storeTableName, $tenantNameFilterList);
+        $qb->andWhere('crc_current != crc_index OR ISNULL(crc_index)');
+        Logger::debug('Update index SQL for store table:'.$qb->getSQL());
+        $rows = $qb->execute()->fetchAll();
 
         $result = [];
         foreach ($rows as $row) {
@@ -217,6 +128,138 @@ class IndexUpdateService
         }
 
         return $result;
+    }
+
+    /**
+     * Reset a set of IDs from anyhwhere, in order to rebuild the preparation queue.
+     * @param int[] $idList the ID list to update
+     * @param string $triggerInfo optional text with info what triggered the update that will be saved in the store table.
+     *        useful for diagnosis. Recommended to set it!
+     * @param string[]|null optional list of tenant names for which the update should happen. If null, then the parameter
+     *        will be ignored. If the array is empty, then no update will take place.
+     */
+    public function resetIdsInPreparation(array $idList, string $triggerInfo, array $tenantNameList = null) {
+        return $this->resetIds($idList, $triggerInfo, false, $tenantNameList);
+    }
+
+    /**
+     * Reset a set of IDs from anyhwhere, in order to rebuild the (product) index.
+     * @param int[] $idList the ID list to update
+     * @param string $triggerInfo optional text with info what triggered the update that will be saved in the store table.
+     *        useful for diagnosis. Recommended to set it!
+     * @param string[]|null optional list of tenant names for which the update should happen. If null, then the parameter
+     *        will be ignored. If the array is empty, then no update will take place.
+     */
+    public function resetIdsUpdateIndex(array $idList, string $triggerInfo, array $tenantNameList = null) {
+        return $this->resetIds($idList, $triggerInfo, true, $tenantNameList);
+    }
+
+    /**
+     * resets the store table by marking all items as "in preparation" or "update-index", so items in store will be regenerated
+     * @param int[] $idList
+     * @param string $triggerInfo optional text with info what triggered the update that will be saved in the store table.
+     *        useful for diagnosis.
+     * @param bool $onlyResetUpdateIndex if set to true then only the update-index flag will be reset, but the preparation status
+     *        won't be reset.
+     * @param string[]|null optional list of tenant names for which the update should happen. If null, then the parameter
+     *        will be ignored. If the array is empty, then no update will take place.
+     */
+    protected function resetIds(array $idList, string $triggerInfo, bool $onlyResetUpdateIndex = false, array $tenantNameList = null)
+    {
+        if (count($idList) <= 0) {
+            return;
+        }
+
+        if ($tenantNameList == null) {
+            //null means "all"
+            $tenantNameList = Factory::getInstance()->getIndexService()->getTenants();
+        } elseif (count($tenantNameList) <= 0) {
+            return;
+        }
+
+        $storeTableNames = $this->getStoreTableList($tenantNameList);
+
+        foreach ($storeTableNames as $storeTableName) {
+            $idChunks = array_chunk($idList, 20000);
+            foreach ($idChunks as $idList) {
+                $qb = $this->createBasicStoreTableUpdateQuery($storeTableName, $tenantNameList);
+
+                if ($onlyResetUpdateIndex) {
+                    $qb ->set('crc_current', 0)
+                        ->set('trigger_info', ':triggerInfo')
+                    ;
+                } else {
+                    $qb
+                        ->set('in_preparation_queue', (int)true)
+                        ->set('preparation_error', 'null')
+                        ->set('crc_current', 0)
+                        ->set('crc_index', 0)
+                        ->set('preparation_status', 0)
+                        ->set('trigger_info', ':triggerInfo')
+                    ;
+                }
+
+                $qb->setParameter('triggerInfo', $triggerInfo);
+                $ids = implode(",", $idList);
+                $qb->where(sprintf("o_id in (%s)", $ids));
+
+                try {
+                    $qb->execute();
+                } catch (\Exception $e) {
+                    throw $e;
+                }
+            }
+        }
+    }
+
+    /**
+     * Create a query builder with the common precondition for store table queries.
+     * @param string[] $tenantNameFilterList
+     *      - an optional list of tenants that should be used for filtering.
+     *      - by default, all tenants will be used.
+     * @return QueryBuilder
+     */
+    protected function createBasicStoreTableSelectQuery(string $storeTableName, array $tenantNameFilterList) : QueryBuilder {
+        /** @var QueryBuilder $qb */
+        $qb = Db::get()->createQueryBuilder();
+        $qb
+            ->select('o_id as id')
+            ->addSelect('group_concat(tenant) as tenants')
+            ->addSelect('count(tenant) as numTenants')
+            ->from($storeTableName, 'storeTable')
+        ;
+
+        if (!empty($tenantNameFilterList)) {
+            $qb->andWhere( sprintf('tenant in(%s)', implode(',', array_map(function($str) { return sprintf("'%s'", $str);},
+                    $tenantNameFilterList))
+            ));
+        }
+
+        $qb->groupBy('o_id')
+            ->orderBy('numTenants', 'desc')
+        ;
+        return $qb;
+    }
+
+    /**
+     * Create a query builder with the common precondition for store table queries.
+     * @param string[] $tenantNameFilterList
+     *      - an optional list of tenants that should be used for filtering.
+     *      - by default, all tenants will be used.
+     * @return QueryBuilder
+     */
+    protected function createBasicStoreTableUpdateQuery(string $storeTableName, array $tenantNameFilterList) : QueryBuilder {
+         /** @var QueryBuilder $qb */
+        $qb = Db::get()->createQueryBuilder();
+        $qb->update($storeTableName);
+
+        if (!empty($tenantNameFilterList)) {
+            $qb->andWhere( sprintf('tenant in(%s)', implode(',', array_map(function($str) { return sprintf("'%s'", $str);},
+                    $tenantNameFilterList))
+            ));
+        }
+
+        return $qb;
     }
 
     /**
@@ -246,5 +289,30 @@ class IndexUpdateService
             }
         }
         return $storeTableList;
+    }
+
+    /**
+     * Combine the results of a fetchProductIdsForPreparation call, or a alike and merge tenants
+     * when the ID equals.
+     * @param array $combinedRows the combined rows.
+     * @param array $rows the rows that have to be added, typically coming from the DB:
+     * @return array the merged combined rows.
+     */
+    protected function combineRowsAndTenants(array $combinedRows, array $rows) : array {
+        //combine rows of different store tables into one joint assoc. array
+        foreach ($rows as $row) {
+            $id = $row['id'];
+            $combinedRow = $row;
+            if (array_key_exists($id, $combinedRows)) {
+                $openTenantsExisting = $combinedRow[$id]['tenants'];
+                $openTenantsNew = $row['tenants'];
+                $mergedTenantNameList = array_unique(array_merge($openTenantsExisting, $openTenantsNew));
+                $combinedRow['tenants'] = $mergedTenantNameList;
+                $combinedRow['numTenants'] = count($mergedTenantNameList);
+            }
+            $combinedRows[$id] = $combinedRow;
+        }
+        Logger::debug('Total product IDs after adding the store table: '.count($combinedRows));
+        return $combinedRows;
     }
 }

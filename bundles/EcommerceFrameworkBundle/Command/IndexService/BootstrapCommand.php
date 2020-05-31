@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
-use Pimcore\Console\AbstractCommand;
+use Pimcore\Console\AbstractIndexServiceCommand;
 use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Console\Traits\Timeout;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -30,11 +30,11 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class ParallelProcessPreparationQueueCommand
  * @package Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService
  */
-class BootstrapCommand extends AbstractCommand
+class BootstrapCommand extends AbstractIndexServiceCommand
 {
     use Parallelization;
-    use Timeout;
     use LockableTrait;
+    use Timeout;
 
     use Parallelization
     {
@@ -67,7 +67,6 @@ class BootstrapCommand extends AbstractCommand
 
     protected function fetchItems(InputInterface $input): array
     {
-
         $updateIndex = $input->getOption('update-index');
         $createOrUpdateIndexStructure = $input->getOption('create-or-update-index-structure');
 
@@ -124,16 +123,11 @@ class BootstrapCommand extends AbstractCommand
 
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
-        $this->parentRunAfterBatch($input, $output, $items);
+        $this->parentRunAfterBatch($input);
         $this->handleTimeout(function(string $abortMessage) use ($output) {
             $output->writeln($abortMessage);
             exit(0); //exit with success
         });
-    }
-
-    protected function runAfterLastCommand(InputInterface $input, OutputInterface $output): void
-    {
-        $this->release(); //release the lock
     }
 
     private function initIndexService(InputInterface $input) : IndexService {

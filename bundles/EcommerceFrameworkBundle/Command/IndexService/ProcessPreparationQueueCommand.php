@@ -19,7 +19,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexUpdateService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\BatchProcessingWorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Console\Traits\Timeout;
 use Symfony\Component\Console\Command\LockableTrait;
@@ -32,7 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class ProcessPreparationQueueCommand
  * @package Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService
  */
-class ProcessPreparationQueueCommand extends AbstractCommand
+class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
 {
     use Parallelization;
     use Timeout;
