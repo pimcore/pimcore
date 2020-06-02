@@ -26,6 +26,10 @@ trait ClearTempFilesTrait
 
     protected function recursiveDelete($dir, $thumbnail, &$matches = [])
     {
+        if (!is_dir($dir)) {
+            return [];
+        }
+
         $directoryIterator = new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS);
 
         /** @var \SplFileInfo $fileInfo */
