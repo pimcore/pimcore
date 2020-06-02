@@ -468,7 +468,7 @@ class Video extends Model\Document\Tag
         }
 
         $code = '
-        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video '.$options["class"].'">
+        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
             <div class="pimcore_tag_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight() - 1) . 'px; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
                 ' . $message . '
             </div>
