@@ -313,7 +313,7 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         $brickGetter = null;
 
         // for backwards compatibility
-        if (isset($this->object) && $this->object) {
+        if (isset($this->object) && $this->object && !$this->object instanceof  \__PHP_Incomplete_Class) {
             $this->objectId = $this->object->getId();
         }
 
