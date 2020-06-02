@@ -481,8 +481,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                                 json_decode($data['update_error'], true)
                                  );
                     $this->db->updateWhere($this->getStoreTableName(), $data,
-                        'tenantName = ' .$this->db->quote($tenantName)
-                        .' AND o_id = ' . $this->db->quote($objectId));
+                        'tenant = ' .$this->db->quote($tenantName) .' AND o_id = ' . $this->db->quote($objectId));
                 } else {
                     $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE o_id = ? and tenant = ?', [$objectId, $tenantName]);
                 }
