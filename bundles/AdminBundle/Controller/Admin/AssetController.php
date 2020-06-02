@@ -61,6 +61,7 @@ class AssetController extends ElementControllerBase implements EventedController
      * @Route("/tree-get-root", name="pimcore_admin_asset_treegetroot", methods={"GET"})
      *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function treeGetRootAction(Request $request)

@@ -93,7 +93,7 @@ class PrintpageController extends PrintpageControllerBase
         return parent::pdfDownloadAction($request);
     }
 
-     /**
+    /**
      * @Route("/start-pdf-generation", name="pimcore_admin_document_printpage_startpdfgeneration", methods={"POST"})
      *
      * {@inheritDoc}

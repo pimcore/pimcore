@@ -72,6 +72,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      * @Route("/tree-get-root", name="pimcore_admin_dataobject_dataobject_treegetroot", methods={"GET"})
      *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function treeGetRootAction(Request $request)

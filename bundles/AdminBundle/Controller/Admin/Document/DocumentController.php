@@ -58,6 +58,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
      * @Route("/tree-get-root", name="pimcore_admin_document_document_treegetroot", methods={"GET"})
      *
      * @param Request $request
+     *
      * @return JsonResponse
      */
     public function treeGetRootAction(Request $request)
