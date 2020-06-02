@@ -185,7 +185,7 @@ class IndexUpdateService
                 $qb = $this->createBasicStoreTableUpdateQuery($storeTableName, $tenantNameList);
 
                 if ($onlyResetUpdateIndex) {
-                    $qb ->set('crc_current', 0)
+                    $qb ->set('crc_index', 0)
                         ->set('trigger_info', ':triggerInfo')
                     ;
                 } else {

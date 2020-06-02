@@ -477,9 +477,15 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                     Logger::error('Failed to Index Object with Id:' . $response['index']['_id'],
                                 json_decode($data['update_error'], true)
                                  );
+                    $this->db->updateWhere($this->getStoreTableName(), $data,
+                        'tenantName = '
+                        .$this->db->quote($this->getTenantConfig()->getTenantName())
+                        .' AND o_id = ' . $this->db->quote($response['index']['_id']));
+                } else {
+                    $objectId = $response['index']['_id'];
+                    $tenantName = $this->getTenantConfig()->getTenantName();
+                    $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE o_id = ? and tenant = ?', [$objectId, $tenantName]);
                 }
-
-                $this->db->updateWhere($this->getStoreTableName(), $data, 'o_id = ' . $this->db->quote($response['index']['_id']));
             }
         }
 
