@@ -47,7 +47,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     private $indexUpdateService;
 
     /**
-     * @var IBatchProcessingWorker[] | null
+     * @var BatchProcessingWorkerInterface[] | null
      */
     private $childWorkerList = null;
 
