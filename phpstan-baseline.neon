@@ -36,9 +36,9 @@ parameters:
 			path: bundles/AdminBundle/Security/Guard/AdminAuthenticator.php
 
 		-
-            message: "#^Cannot call method getUser\\(\\) on string\\|Stringable\\|Symfony\\\\Component\\\\Security\\\\Core\\\\User\\\\UserInterface\\.$#"
-            count: 1
-            path: bundles/AdminBundle/Security/Guard/AdminAuthenticator.php
+			message: "#^Cannot call method getUser\\(\\) on string\\|Stringable\\|Symfony\\\\Component\\\\Security\\\\Core\\\\User\\\\UserInterface\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Security/Guard/AdminAuthenticator.php
 
 		-
 			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:setLocale\\(\\)\\.$#"
