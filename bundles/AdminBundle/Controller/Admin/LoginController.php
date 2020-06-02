@@ -115,7 +115,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     }
 
     /**
-     * @Route("/login/lostpassword")
+     * @Route("/login/lostpassword", name="pimcore_admin_login_lostpassword")
      * @TemplatePhp()
      */
     public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionListener $csrfProtectionListener, Config $config)
@@ -183,7 +183,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     }
 
     /**
-     * @Route("/login/deeplink")
+     * @Route("/login/deeplink", name="pimcore_admin_login_deeplink")
      * @TemplatePhp()
      */
     public function deeplinkAction(Request $request)

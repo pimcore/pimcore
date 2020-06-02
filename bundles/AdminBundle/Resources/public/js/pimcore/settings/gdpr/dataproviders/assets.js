@@ -16,8 +16,6 @@ pimcore.settings.gdpr.dataproviders.assets = Class.create({
 
     title: t("gdpr_dataSource_assets"),
     iconCls: "pimcore_icon_asset",
-    searchUrl: "/admin/gdpr/asset/search-assets",
-    downloadUrl: "/admin/gdpr/asset/export?id=",
 
     searchParams: [],
 
@@ -51,7 +49,7 @@ pimcore.settings.gdpr.dataproviders.assets = Class.create({
             pageSize: pimcore.helpers.grid.getDefaultPageSize(),
             proxy : {
                 type: 'ajax',
-                url: this.searchUrl,
+                url: Routing.generate('pimcore_admin_gdpr_asset_searchasset'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
@@ -87,7 +85,7 @@ pimcore.settings.gdpr.dataproviders.assets = Class.create({
                                 pimcore.helpers.showPermissionError("view");
                                 return;
                             }
-                            pimcore.helpers.download(this.downloadUrl + data.data.id);
+                            pimcore.helpers.download(Routing.generate('pimcore_admin_gdpr_asset_exportassets', {id: data.data.id}));
                         }.bind(this),
                         getClass: function (v, meta, rec) {
                             if (!rec.get("permissions").view) {

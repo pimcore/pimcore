@@ -415,7 +415,7 @@ pimcore.object.helpers.import.columnConfigurationTab = Class.create({
 
     getClassDefinitionTreePanel: function () {
         if (!this.classDefinitionTreePanel) {
-            this.classDefinitionTreePanel = this.getClassTree("/admin/class/get-class-definition-for-column-config",
+            this.classDefinitionTreePanel = this.getClassTree(Routing.generate('pimcore_admin_dataobject_class_getclassdefinitionforcolumnconfig'),
                 this.config.classId, 0);
         }
 

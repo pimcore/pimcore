@@ -33,7 +33,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     /**
      * Delete collection with the group-relations
      *
-     * @Route("/delete-collection", methods={"DELETE"})
+     * @Route("/delete-collection", name="pimcore_admin_dataobject_classificationstore_deletecollection", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -57,7 +57,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/delete-collection-relation", methods={"DELETE"})
+     * @Route("/delete-collection-relation", name="pimcore_admin_dataobject_classificationstore_deletecollectionrelation", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -78,7 +78,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/delete-relation", methods={"DELETE"})
+     * @Route("/delete-relation", name="pimcore_admin_dataobject_classificationstore_deleterelation", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -99,7 +99,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/delete-group", methods={"DELETE"})
+     * @Route("/delete-group", name="pimcore_admin_dataobject_classificationstore_deletegroup", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -116,7 +116,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/create-group", methods={"POST"})
+     * @Route("/create-group", name="pimcore_admin_dataobject_classificationstore_creategroup", methods={"POST"})
      *
      * @param Request $request
      *
@@ -141,7 +141,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/create-store", methods={"POST"})
+     * @Route("/create-store", name="pimcore_admin_dataobject_classificationstore_createstore", methods={"POST"})
      *
      * @param Request $request
      *
@@ -167,7 +167,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/create-collection", methods={"POST"})
+     * @Route("/create-collection", name="pimcore_admin_dataobject_classificationstore_createcollection", methods={"POST"})
      *
      * @param Request $request
      *
@@ -191,7 +191,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/collections", methods={"GET"})
+     * @Route("/collections", name="pimcore_admin_dataobject_classificationstore_collectionsactionget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -326,7 +326,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/collections", methods={"POST", "PUT"})
+     * @Route("/collections", name="pimcore_admin_dataobject_classificationstore_collections", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -357,7 +357,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/groups", methods={"GET"})
+     * @Route("/groups", name="pimcore_admin_dataobject_classificationstore_groupsactionget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -477,7 +477,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/groups", methods={"POST", "PUT"})
+     * @Route("/groups", name="pimcore_admin_dataobject_classificationstore_groupsactionget", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -508,7 +508,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/collection-relations", methods={"GET"})
+     * @Route("/collection-relations", name="pimcore_admin_dataobject_classificationstore_collectionrelationsget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -605,7 +605,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/collection-relations", methods={"POST", "PUT"})
+     * @Route("/collection-relations", name="pimcore_admin_dataobject_classificationstore_collectionrelations", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -643,7 +643,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/list-stores", methods={"GET"})
+     * @Route("/list-stores", name="pimcore_admin_dataobject_classificationstore_liststores", methods={"GET"})
      *
      * @param Request $request
      *
@@ -658,7 +658,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/search-relations", methods={"GET"})
+     * @Route("/search-relations", name="pimcore_admin_dataobject_classificationstore_searchrelations", methods={"GET"})
      *
      * @param Request $request
      *
@@ -774,7 +774,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/relations", methods={"GET"})
+     * @Route("/relations", name="pimcore_admin_dataobject_classificationstore_relationsactionget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -889,7 +889,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/relations", methods={"POST", "PUT"})
+     * @Route("/relations", name="pimcore_admin_dataobject_classificationstore_relations", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -922,7 +922,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/add-collections", methods={"POST"})
+     * @Route("/add-collections", name="pimcore_admin_dataobject_classificationstore_addcollections", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1032,7 +1032,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/add-groups", methods={"POST"})
+     * @Route("/add-groups", name="pimcore_admin_dataobject_classificationstore_addgroups", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1110,7 +1110,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/properties", methods={"GET"})
+     * @Route("/properties", name="pimcore_admin_dataobject_classificationstore_propertiesget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1261,7 +1261,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/properties", methods={"POST", "PUT"})
+     * @Route("/properties", name="pimcore_admin_dataobject_classificationstore_properties", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -1332,7 +1332,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/add-property", methods={"POST"})
+     * @Route("/add-property", name="pimcore_admin_dataobject_classificationstore_addproperty", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1365,7 +1365,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/delete-property", methods={"DELETE"})
+     * @Route("/delete-property", name="pimcore_admin_dataobject_classificationstore_deleteproperty", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -1384,7 +1384,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/edit-store", methods={"PUT"})
+     * @Route("/edit-store", name="pimcore_admin_dataobject_classificationstore_editstore", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1423,7 +1423,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/storetree", methods={"GET"})
+     * @Route("/storetree", name="pimcore_admin_dataobject_classificationstore_storetree", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1458,7 +1458,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/get-page", methods={"GET"})
+     * @Route("/get-page", name="pimcore_admin_dataobject_classificationstore_getpage", methods={"GET"})
      *
      * @param Request $request
      *

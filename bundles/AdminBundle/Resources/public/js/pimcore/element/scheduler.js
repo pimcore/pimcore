@@ -93,7 +93,7 @@ pimcore.element.scheduler = Class.create({
                     autoDestroy: true,
                     proxy: {
                         type: 'ajax',
-                        url: "/admin/element/get-versions",
+                        url: Routing.generate('pimcore_admin_element_getversions'),
                         extraParams: {
                             id: this.element.id,
                             elementType: this.type

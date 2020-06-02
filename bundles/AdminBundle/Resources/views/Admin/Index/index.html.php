@@ -95,6 +95,9 @@ $user      = $userProxy->getUser();
             window.localStorage.setItem(symfonyToolbarKey, 'none');
         }
     </script>
+
+    <script src="<?php echo $view->assets()->getUrl('bundles/fosjsrouting/js/router.js') ?>"></script>
+    <script src="<?php echo $view->router()->path('fos_js_routing_js', array('callback' => 'fos.Router.setData')) ?>"></script>
 </head>
 
 <body class="pimcore_version_6">
@@ -156,7 +159,7 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
     </div>
 
     <div id="pimcore_avatar" style="display:none;">
-        <img src="/admin/user/get-image" data-menu-tooltip="<?= $user->getName() ?> | <?= $this->translate('my_profile') ?>"/>
+        <img src="<?=$view->router()->path('pimcore_admin_user_getimage')?>" data-menu-tooltip="<?= $user->getName() ?> | <?= $this->translate('my_profile') ?>"/>
     </div>
     <a id="pimcore_logout" data-menu-tooltip="<?= $this->translate("logout") ?>" href="<?= $view->router()->path('pimcore_admin_logout') ?>" style="display: none">
         <img src="/bundles/pimcoreadmin/img/material-icons/outline-logout-24px.svg">
@@ -182,7 +185,7 @@ if ($disableMinifyJs) {
 }
 
 $styles = array(
-    "/admin/misc/admin-css",
+    $view->router()->path('pimcore_admin_misc_admincss'),
     "/bundles/pimcoreadmin/css/icons.css",
     "/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css",
     "/bundles/pimcoreadmin/js/lib/leaflet.draw/leaflet.draw.css",
@@ -738,9 +741,9 @@ $scripts = array(
     pimcore.settings = <?= json_encode($this->settings, JSON_PRETTY_PRINT) ?>;
 </script>
 
-<script src="/admin/misc/json-translations-system?language=<?= $language ?>&_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
+<script src="<?= $view->router()->path('pimcore_admin_misc_jsontranslationssystem', ['language' => $language, '_dc' => \Pimcore\Version::getRevision()])?>"></script>
 <script src="<?= $view->router()->path('pimcore_admin_user_getcurrentuser') ?>?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
-<script src="/admin/misc/available-languages?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
+<script src="<?= $view->router()->path('pimcore_admin_misc_availablelanguages', ['_dc' => \Pimcore\Version::getRevision()]) ?>"></script>
 
 
 <!-- library scripts -->

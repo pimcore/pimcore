@@ -5,49 +5,49 @@ pimcore.treenodelocator = function()
 
     /**
      * Private vars
-     */    
+     */
 
     // Holds the state
     var busy = false;
-    
+
     // The states hold current data for each phase of a tree location task.
     var globalState = null;
     var treeState = null;
     var pagingState = null;
-    
+
     // Holds the current button.
     var currentButton = null;
-    
+
     // Holds loading indicators type/ids.
     var loadingIndicators = [];
-    
-    
+
+
     /**
      * Private functions
      */
     var self = {
 
         /**
-         * Show tree node of given id and element type (document/asset/object) 
+         * Show tree node of given id and element type (document/asset/object)
          * in the first matching tree.
          */
-        showInTree: function (id, elementType, button) 
+        showInTree: function (id, elementType, button)
         {
-            // don't allow concurrent execution 
+            // don't allow concurrent execution
             if (busy) {
                 return;
             }
-            
+
             busy = true;
-            
+
             if (button) {
             	button.disable();
                 currentButton = button;
             }
             self.startShowInTree(id, elementType);
         },
-        
-        
+
+
         /**
          * Report final failure.
          */
@@ -56,8 +56,8 @@ pimcore.treenodelocator = function()
             // @todo: would it be nice to display an error message?
             self.cleanup();
         },
-        
-        
+
+
         /**
          * Report tree node location successful.
          */
@@ -70,8 +70,8 @@ pimcore.treenodelocator = function()
             }
             self.cleanup();
         },
-        
-        
+
+
         /**
          * Clean up after successful or failed tree node location.
          */
@@ -87,24 +87,24 @@ pimcore.treenodelocator = function()
             globalState = null;
             treeState = null;
             pagingState = null;
-            
+
             // there is a race timing condition when the loading indicator gets
-            // cleared before being added - this keeps spinning the indicator 
+            // cleared before being added - this keeps spinning the indicator
             // forever:
             window.setTimeout(self.clearLoadingIndicators, 200);
-            
+
             busy = false;
         },
 
-        
+
         /**
          * Start tree node location for given id and element type
          * (one of "document", "asset", "object").
          */
         startShowInTree: function(id, elementType) {
-            
+
             Ext.Ajax.request({
-                url: "/admin/element/type-path",
+                url: Routing.generate('pimcore_admin_element_typepath'),
                 params: {
                     id: id,
                     type: elementType
@@ -131,7 +131,7 @@ pimcore.treenodelocator = function()
                             currentTreeIndex: 0
                         };
                         self.processTree();
-                        
+
                     } else {
                         self.reportFailed();
                     }
@@ -141,10 +141,10 @@ pimcore.treenodelocator = function()
                 }
             });
         },
-        
-        
+
+
         /**
-         * Start tree node location in current tree state. 
+         * Start tree node location in current tree state.
          */
         processTree: function()
         {
@@ -152,7 +152,7 @@ pimcore.treenodelocator = function()
             var tree = locateConfig.tree;
             var rootNode = tree.tree.getRootNode();
             var rootNodeId = rootNode.getId();
-            
+
             // Tree root may be shifted to a subnode and the item to be shown
             // is out of tree scope - don't continue if this is the case:
             if (globalState.pathIds.indexOf(rootNodeId) == -1) {
@@ -166,20 +166,20 @@ pimcore.treenodelocator = function()
                  accordion.expand();
             }
             tree.tree.expand();
-            
+
             // We may have a tree with a shifted root defined by a custom view.
             // Let's create a state for current tree with adjusted values:
             var idPath = globalState.idPath;
-            
+
             // Create an array copy to not tamper the original:
             var pathIds = globalState.pathIds.slice();
-            
+
             var rootNodeIndex = pathIds.indexOf(rootNodeId);
             if (rootNodeIndex) {
                 pathIds.splice(0, rootNodeIndex);
                 idPath = "/" + pathIds.join("/");
             }
-            
+
             treeState = {
                 tree: tree.tree,
                 rootNode: rootNode,
@@ -188,16 +188,16 @@ pimcore.treenodelocator = function()
                 pathIds: pathIds,
                 reloaded: false
             };
-            
+
             try {
                 self.processFullPath();
             } catch (err) {
                 self.reportProcessTreeFailed();
             }
-    
+
         },
-        
-        
+
+
         /**
          * Tree node location has failed in the current tree.
          */
@@ -212,10 +212,10 @@ pimcore.treenodelocator = function()
                 self.reportFailed();
             }
         },
-        
-        
+
+
         /**
-         * Try to resolve the full path.  
+         * Try to resolve the full path.
          */
         processFullPath: function()
         {
@@ -227,12 +227,12 @@ pimcore.treenodelocator = function()
                 }
             });
         },
-        
-        
+
+
         /**
-         * Resolving the full path has failed. There may be several reasons, for the target 
+         * Resolving the full path has failed. There may be several reasons, for the target
          * node itself or any of its ancestors:
-         * 
+         *
          * - Tree paging is active, and the next child node is on another page
          * - Tree paging is active, and a search filter has blocked the next child node
          * - A custom view filters any of our nodes
@@ -251,7 +251,7 @@ pimcore.treenodelocator = function()
                 self.reloadTree(node);
                 return;
             }
-            
+
             // Next, if the last expanded node has tree paging, try to get to our child node.
             var pagingData = node.pagingData;
             if (pagingData) {
@@ -302,21 +302,21 @@ pimcore.treenodelocator = function()
                     elementKey: elementKey,
                     elementType: elementType
                 };
-                
+
                 self.processPaging();
-                
+
             } else {
-                
+
                 self.reportProcessTreeFailed();
-                
+
             }
         },
-        
-        
+
+
         /**
-         * Check if the next child node in current paging state is present. 
+         * Check if the next child node in current paging state is present.
          */
-        processPaging: function() 
+        processPaging: function()
         {
             var node = pagingState.node;
             var childNodes = node.childNodes;
@@ -335,7 +335,7 @@ pimcore.treenodelocator = function()
             var direction = 0;
             var firstelementChild = childNodes[0];
             var lastelementChild = childNodes[childCount-1];
-            
+
             if (globalState.elementType == "document") {
                 direction = self.getDirectionForElementsSortedByIndex(
                     pagingState.elementKey,
@@ -358,7 +358,7 @@ pimcore.treenodelocator = function()
                     );
                 }
             }
-            
+
             // switch to page depending on direction:
             if (direction == -1) {
                 pagingState.maxPage = pagingState.activePage - 1;
@@ -375,8 +375,8 @@ pimcore.treenodelocator = function()
                 self.reportProcessPagingFailed();
             }
         },
-        
-        
+
+
         /**
          * Resolving the child node in current paging state failed.
          */
@@ -385,8 +385,8 @@ pimcore.treenodelocator = function()
             pagingState = null;
             self.reportProcessTreeFailed();
         },
-        
-        
+
+
         /**
          * Resolving the child node in current paging state was succesful.
          */
@@ -395,8 +395,8 @@ pimcore.treenodelocator = function()
             pagingState = null;
             self.processFullPath();
         },
-        
-        
+
+
         /**
          * Switch to given page in current paging state.
          */
@@ -406,14 +406,14 @@ pimcore.treenodelocator = function()
                 self.reportProcessPagingFailed();
                 return;
             }
-            
+
             var node = pagingState.node;
             var store = node.getTreeStore();
             var proxy = store.getProxy();
-            
+
             pagingState.offset = pagingState.limit * (pageNumber - 1);
             pagingState.activePage = pageNumber;
-            
+
             proxy.setExtraParam("start", pagingState.offset);
             node.pagingData.offset = pagingState.offset;
 
@@ -422,8 +422,8 @@ pimcore.treenodelocator = function()
                 callback: self.processPaging
             });
         },
-        
-        
+
+
         /**
          * Reload the tree starting from given node.
          */
@@ -436,15 +436,15 @@ pimcore.treenodelocator = function()
                 callback: self.processFullPath
             });
         },
-        
-        
+
+
         /**
          * Returns the last expanded node of given tree.
          */
         getLastExpandedNode: function (pathIds, tree) {
             var lastNode = tree.getRootNode();
             var store = tree.getStore();
-            for (var i=0; i<pathIds.length; i++) {                
+            for (var i=0; i<pathIds.length; i++) {
                 var testNode = store.getNodeById(pathIds[i]);
                 if (testNode) {
                     lastNode = testNode;
@@ -454,8 +454,8 @@ pimcore.treenodelocator = function()
             }
             return lastNode;
         },
-        
-        
+
+
         /**
          * Returns the direction (-1/+1/0) for elements sorted by key.
          */
@@ -478,8 +478,8 @@ pimcore.treenodelocator = function()
 
             return 0;
         },
-        
-        
+
+
         /**
          * Returns the direction (-1/+1/0) for elements sorted by index.
          */
@@ -492,9 +492,9 @@ pimcore.treenodelocator = function()
             }
             return direction;
         },
-        
-        
-        
+
+
+
         /**
          * Add a loading indicator for given type (document/asset/object) and id.
          */
@@ -502,8 +502,8 @@ pimcore.treenodelocator = function()
             loadingIndicators.push({type:type, id:id});
             pimcore.helpers.addTreeNodeLoadingIndicator(type, id);
         },
-        
-        
+
+
         /**
          * Clear all loading indicators.
          */
@@ -513,9 +513,9 @@ pimcore.treenodelocator = function()
             }
             loadingIndicators = [];
         }
-        
+
     };
-    
+
 
     /**
      * Expose public functions
@@ -523,7 +523,7 @@ pimcore.treenodelocator = function()
     return {
         showInTree: self.showInTree
     };
-    
+
 }();
 
 

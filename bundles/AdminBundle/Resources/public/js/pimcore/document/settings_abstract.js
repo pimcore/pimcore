@@ -101,7 +101,7 @@ pimcore.document.settings_abstract = Class.create({
                                         Ext.getCmp("contentMasterDocumentPath_"
                                             + this.document.id).setValue("");
                                         Ext.Ajax.request({
-                                            url:"/admin/page/change-master-document",
+                                            url:Routing.generate('pimcore_admin_document_page_changemasterdocument'),
                                             method: 'PUT',
                                             params:{
                                                 id: this.document.id,
@@ -131,7 +131,7 @@ pimcore.document.settings_abstract = Class.create({
                                 function (buttonValue) {
                                     if (buttonValue == "yes") {
                                         Ext.Ajax.request({
-                                            url:"/admin/page/change-master-document",
+                                            url:Routing.generate('pimcore_admin_document_page_changemasterdocument'),
                                             method: 'PUT',
                                             params:{
                                                 id: this.document.id,
@@ -199,7 +199,7 @@ pimcore.document.settings_abstract = Class.create({
 
         var docTypeStore = new Ext.data.Store({
             proxy: {
-                url: '/admin/document/get-doc-types?type=' + this.document.getType(),
+                url: Routing.generate('pimcore_admin_document_document_getdoctypes', {type: this.document.getType()}),
                 type: 'ajax',
                 reader: {
                     type: 'json',
@@ -270,7 +270,7 @@ pimcore.document.settings_abstract = Class.create({
                         autoDestroy: true,
                         proxy: {
                             type: 'ajax',
-                            url: "/admin/misc/get-available-modules",
+                            url: Routing.generate('pimcore_admin_misc_getavailablemodules'),
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'
@@ -297,7 +297,7 @@ pimcore.document.settings_abstract = Class.create({
                         autoLoad: false,
                         proxy: {
                             type: 'ajax',
-                            url: "/admin/misc/get-available-controllers",
+                            url: Routing.generate('pimcore_admin_misc_getavailablecontrollers'),
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'
@@ -331,7 +331,7 @@ pimcore.document.settings_abstract = Class.create({
                         autoLoad: false,
                         proxy: {
                             type: 'ajax',
-                            url: "/admin/misc/get-available-actions",
+                            url: Routing.generate('pimcore_admin_misc_getavailableactions'),
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'
@@ -364,7 +364,7 @@ pimcore.document.settings_abstract = Class.create({
                         autoLoad: false,
                         proxy: {
                             type: 'ajax',
-                            url: "/admin/misc/get-available-templates",
+                            url: Routing.generate('pimcore_admin_misc_getavailabletemplates'),
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'

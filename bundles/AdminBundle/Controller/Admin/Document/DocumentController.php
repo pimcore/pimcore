@@ -55,7 +55,30 @@ class DocumentController extends ElementControllerBase implements EventedControl
     protected $_documentService;
 
     /**
-     * @Route("/get-data-by-id", methods={"GET"})
+     * @Route("/tree-get-root", name="pimcore_admin_document_document_treegetroot", methods={"GET"})
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function treeGetRootAction(Request $request)
+    {
+        return parent::treeGetRootAction($request);
+    }
+
+    /**
+     * @Route("/delete-info", name="pimcore_admin_document_document_deleteinfo", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteInfoAction(Request $request)
+    {
+        return parent::deleteInfoAction($request);
+    }
+
+    /**
+     * @Route("/get-data-by-id", name="pimcore_admin_document_document_getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -95,7 +118,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/tree-get-childs-by-id", methods={"GET"})
+     * @Route("/tree-get-childs-by-id", name="pimcore_admin_document_document_treegetchildsbyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -203,7 +226,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/add", methods={"POST"})
+     * @Route("/add", name="pimcore_admin_document_document_add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -347,7 +370,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/delete", methods={"DELETE"})
+     * @Route("/delete", name="pimcore_admin_document_document_delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -397,7 +420,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/update", methods={"PUT"})
+     * @Route("/update", name="pimcore_admin_document_document_update", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -613,7 +636,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/doc-types", methods={"GET"})
+     * @Route("/doc-types", name="pimcore_admin_document_document_doctypesget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -636,7 +659,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/doc-types", methods={"PUT", "POST","DELETE"})
+     * @Route("/doc-types", name="pimcore_admin_document_document_doctypes", methods={"PUT", "POST","DELETE"})
      *
      * @param Request $request
      *
@@ -682,7 +705,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/get-doc-types", methods={"GET"})
+     * @Route("/get-doc-types", name="pimcore_admin_document_document_getdoctypes", methods={"GET"})
      *
      * @param Request $request
      *
@@ -714,7 +737,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/version-to-session", methods={"POST"})
+     * @Route("/version-to-session", name="pimcore_admin_document_document_versiontosession", methods={"POST"})
      *
      * @param Request $request
      *
@@ -730,7 +753,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/publish-version", methods={"POST"})
+     * @Route("/publish-version", name="pimcore_admin_document_document_publishversion", methods={"POST"})
      *
      * @param Request $request
      *
@@ -763,7 +786,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/update-site", methods={"PUT"})
+     * @Route("/update-site", name="pimcore_admin_document_document_updatesite", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -792,7 +815,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/remove-site", methods={"DELETE"})
+     * @Route("/remove-site", name="pimcore_admin_document_document_removesite", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -807,7 +830,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/copy-info", methods={"GET"})
+     * @Route("/copy-info", name="pimcore_admin_document_document_copyinfo", methods={"GET"})
      *
      * @param Request $request
      *
@@ -827,7 +850,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
             // first of all the new parent
             $pasteJobs[] = [[
-                'url' => '/admin/document/copy',
+                'url' => $this->generateUrl('pimcore_admin_document_document_copy'),
                 'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
@@ -853,7 +876,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 if (count($childIds) > 0) {
                     foreach ($childIds as $id) {
                         $pasteJobs[] = [[
-                            'url' => '/admin/document/copy',
+                            'url' => $this->generateUrl('pimcore_admin_document_document_copy'),
                             'method' => 'POST',
                             'params' => [
                                 'sourceId' => $id,
@@ -873,7 +896,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($request->get('type') == 'recursive-update-references') {
                 for ($i = 0; $i < (count($childIds) + 1); $i++) {
                     $pasteJobs[] = [[
-                        'url' => '/admin/document/copy-rewrite-ids',
+                        'url' => $this->generateUrl('pimcore_admin_document_document_copyrewriteids'),
                         'method' => 'PUT',
                         'params' => [
                             'transactionId' => $transactionId,
@@ -886,7 +909,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         } elseif ($request->get('type') == 'child' || $request->get('type') == 'replace') {
             // the object itself is the last one
             $pasteJobs[] = [[
-                'url' => '/admin/document/copy',
+                'url' => $this->generateUrl('pimcore_admin_document_document_copyrewriteids'),
                 'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
@@ -906,7 +929,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/copy-rewrite-ids", methods={"PUT"})
+     * @Route("/copy-rewrite-ids", name="pimcore_admin_document_document_copyrewriteids", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -951,7 +974,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/copy", methods={"POST"})
+     * @Route("/copy", name="pimcore_admin_document_document_copy", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1030,7 +1053,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/diff-versions/from/{from}/to/{to}", requirements={"from": "\d+", "to": "\d+"}, methods={"GET"})
+     * @Route("/diff-versions/from/{from}/to/{to}", name="pimcore_admin_document_document_diffversions", requirements={"from": "\d+", "to": "\d+"}, methods={"GET"})
      *
      * @param Request $request
      * @param int $from
@@ -1091,7 +1114,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/diff-versions-image", methods={"GET"})
+     * @Route("/diff-versions-image", name="pimcore_admin_document_document_diffversionsimage", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1211,7 +1234,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/get-id-for-path", methods={"GET"})
+     * @Route("/get-id-for-path", name="pimcore_admin_document_document_getidforpath", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1234,7 +1257,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
      */
 
     /**
-     * @Route("/seopanel-tree-root", methods={"GET"})
+     * @Route("/seopanel-tree-root", name="pimcore_admin_document_document_seopaneltreeroot", methods={"GET"})
      *
      * @param DocumentRouteHandler $documentRouteHandler
      *
@@ -1259,7 +1282,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/seopanel-tree", methods={"GET"})
+     * @Route("/seopanel-tree", name="pimcore_admin_document_document_seopaneltree", methods={"GET"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
@@ -1331,7 +1354,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/language-tree", methods={"GET"})
+     * @Route("/language-tree", name="pimcore_admin_document_document_languagetree", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1354,7 +1377,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/language-tree-root", methods={"GET"})
+     * @Route("/language-tree-root", name="pimcore_admin_document_document_languagetreeroot", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1452,7 +1475,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/convert", methods={"PUT"})
+     * @Route("/convert", name="pimcore_admin_document_document_convert", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1490,7 +1513,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/translation-determine-parent", methods={"GET"})
+     * @Route("/translation-determine-parent", name="pimcore_admin_document_document_translationdetermineparent", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1521,7 +1544,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/translation-add", methods={"POST"})
+     * @Route("/translation-add", name="pimcore_admin_document_document_translationadd", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1554,7 +1577,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/translation-remove", methods={"DELETE"})
+     * @Route("/translation-remove", name="pimcore_admin_document_document_translationremove", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -1575,7 +1598,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @Route("/translation-check-language", methods={"GET"})
+     * @Route("/translation-check-language", name="pimcore_admin_document_document_translationchecklanguage", methods={"GET"})
      *
      * @param Request $request
      *

@@ -57,7 +57,7 @@ pimcore.settings.website = Class.create({
 
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
-        var url = '/admin/settings/website-settings?';
+        var url = Routing.generate('pimcore_admin_settings_websitesettings');
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url, ["id", 'name','type', "data", 'siteId', 'creationDate', 'modificationDate'],

@@ -58,7 +58,30 @@ class AssetController extends ElementControllerBase implements EventedController
     protected $_assetService;
 
     /**
-     * @Route("/get-data-by-id", methods={"GET"})
+     * @Route("/tree-get-root", name="pimcore_admin_asset_treegetroot", methods={"GET"})
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function treeGetRootAction(Request $request)
+    {
+        return parent::treeGetRootAction($request);
+    }
+
+    /**
+     * @Route("/delete-info", name="pimcore_admin_asset_deleteinfo", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteInfoAction(Request $request)
+    {
+        return parent::deleteInfoAction($request);
+    }
+
+    /**
+     * @Route("/get-data-by-id", name="pimcore_admin_asset_getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -121,10 +144,21 @@ class AssetController extends ElementControllerBase implements EventedController
         } elseif ($asset instanceof Asset\Image) {
             $imageInfo = [];
 
-            $imageInfo['previewUrl'] = sprintf('/admin/asset/get-image-thumbnail?id=%d&treepreview=true&hdpi=true&_dc=%d', $asset->getId(), time());
+            $previewUrl = $this->generateUrl('pimcore_admin_asset_getimagethumbnail', [
+                'id' => $asset->getId(),
+                'treepreview' => true,
+                'hdpi' => true,
+                '_dc' => time()
+            ]);
+
             if ($asset->isAnimated()) {
-                $imageInfo['previewUrl'] = sprintf('/admin/asset/get-asset?id=%d&_dc=%d', $asset->getId(), time());
+                $previewUrl = $this->generateUrl('pimcore_admin_asset_getasset', [
+                    'id' => $asset->getId(),
+                    '_dc' => time()
+                ]);
             }
+
+            $imageInfo['previewUrl'] = $previewUrl;
 
             if ($asset->getWidth() && $asset->getHeight()) {
                 $imageInfo['dimensions'] = [];
@@ -173,7 +207,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/tree-get-childs-by-id", methods={"GET"})
+     * @Route("/tree-get-childs-by-id", name="pimcore_admin_asset_treegetchildsbyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -284,7 +318,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/add-asset", methods={"POST"})
+     * @Route("/add-asset", name="pimcore_admin_asset_addasset", methods={"POST"})
      *
      * @param Request $request
      * @param Config $config
@@ -318,7 +352,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/add-asset-compatibility", methods={"POST"})
+     * @Route("/add-asset-compatibility", name="pimcore_admin_asset_addassetcompatibility", methods={"POST"})
      *
      * @param Request $request
      * @param Config $config
@@ -495,7 +529,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/replace-asset", methods={"POST", "PUT"})
+     * @Route("/replace-asset", name="pimcore_admin_asset_replaceasset", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -553,7 +587,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/add-folder", methods={"POST"})
+     * @Route("/add-folder", name="pimcore_admin_asset_addfolder", methods={"POST"})
      *
      * @param Request $request
      *
@@ -583,7 +617,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/delete", methods={"DELETE"})
+     * @Route("/delete", name="pimcore_admin_asset_delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -740,29 +774,42 @@ class AssetController extends ElementControllerBase implements EventedController
     /**
      * @param Asset $asset
      * @param bool $hdpi
+     * @param bool $grid
      *
      * @return null|string
      */
-    protected function getThumbnailUrl(Asset $asset, $hdpi = false)
+    protected function getThumbnailUrl(Asset $asset, $hdpi = false, $grid = false)
     {
-        $suffix = '';
+        $params = [
+            'id' => $asset->getId(),
+            'treepreview' => true
+        ];
+
         if ($hdpi) {
-            $suffix .= '&hdpi=true';
+            $params['hdpi'] = true;
+        }
+
+        if ($grid) {
+            $params['grid'] = true;
         }
 
         if ($asset instanceof Asset\Image) {
-            return '/admin/asset/get-image-thumbnail?id=' . $asset->getId() . '&treepreview=true' . $suffix;
-        } elseif ($asset instanceof Asset\Video && \Pimcore\Video::isAvailable()) {
-            return '/admin/asset/get-video-thumbnail?id=' . $asset->getId() . '&treepreview=true'. $suffix;
-        } elseif ($asset instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
-            return '/admin/asset/get-document-thumbnail?id=' . $asset->getId() . '&treepreview=true' . $suffix;
+            return $this->generateUrl('pimcore_admin_asset_getimagethumbnail', $params);
+        }
+
+        if ($asset instanceof Asset\Video && \Pimcore\Video::isAvailable()) {
+            return $this->generateUrl('pimcore_admin_asset_getvideothumbnail', $params);
+        }
+
+        if ($asset instanceof Asset\Document && \Pimcore\Document::isAvailable()) {
+            return $this->generateUrl('pimcore_admin_asset_getdocumentthumbnail', $params);
         }
 
         return null;
     }
 
     /**
-     * @Route("/update", methods={"PUT"})
+     * @Route("/update", name="pimcore_admin_asset_update", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -846,7 +893,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/webdav{path}", requirements={"path"=".*"}, name="pimcore_admin_webdav")
+     * @Route("/webdav{path}", name="pimcore_admin_webdav", requirements={"path"=".*"})
      *
      * @param Request $request
      */
@@ -858,7 +905,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $publicDir = new Asset\WebDAV\Folder($homeDir);
             $objectTree = new Asset\WebDAV\Tree($publicDir);
             $server = new \Sabre\DAV\Server($objectTree);
-            $server->setBaseUri('/admin/asset/webdav/');
+            $server->setBaseUri($this->generateUrl('pimcore_admin_webdav'));
 
             // lock plugin
             $lockBackend = new \Sabre\DAV\Locks\Backend\File(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/webdav-locks.dat');
@@ -880,7 +927,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/save", methods={"PUT","POST"})
+     * @Route("/save", name="pimcore_admin_asset_save", methods={"PUT","POST"})
      *
      * @param Request $request
      *
@@ -973,7 +1020,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/publish-version", methods={"POST"})
+     * @Route("/publish-version", name="pimcore_admin_asset_publishversion", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1002,7 +1049,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/show-version", methods={"GET"})
+     * @Route("/show-version", name="pimcore_admin_asset_showversion", methods={"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -1029,7 +1076,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/download", methods={"GET"})
+     * @Route("/download", name="pimcore_admin_asset_download", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1055,7 +1102,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/download-image-thumbnail", methods={"GET"})
+     * @Route("/download-image-thumbnail", name="pimcore_admin_asset_downloadimagethumbnail", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1173,7 +1220,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-asset", methods={"GET"})
+     * @Route("/get-asset", name="pimcore_admin_asset_getasset", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1200,7 +1247,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-image-thumbnail", methods={"GET"})
+     * @Route("/get-image-thumbnail", name="pimcore_admin_asset_getimagethumbnail", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1280,7 +1327,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-video-thumbnail", methods={"GET"})
+     * @Route("/get-video-thumbnail", name="pimcore_admin_asset_getvideothumbnail", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1344,7 +1391,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-document-thumbnail", methods={"GET"})
+     * @Route("/get-document-thumbnail", name="pimcore_admin_asset_getdocumentthumbnail", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1403,7 +1450,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-preview-document", methods={"GET"})
+     * @Route("/get-preview-document", name="pimcore_admin_asset_getpreviewdocument", methods={"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -1459,7 +1506,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-preview-video", methods={"GET"})
+     * @Route("/get-preview-video", name="pimcore_admin_asset_getpreviewvideo", methods={"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -1506,7 +1553,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/serve-video-preview", methods={"GET"})
+     * @Route("/serve-video-preview", name="pimcore_admin_asset_servevideopreview", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1539,7 +1586,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/image-editor", methods={"GET"})
+     * @Route("/image-editor", name="pimcore_admin_asset_imageeditor", methods={"GET"})
      *
      * @param Request $request
      * @TemplatePhp()
@@ -1558,7 +1605,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/image-editor-save", methods={"PUT"})
+     * @Route("/image-editor-save", name="pimcore_admin_asset_imageeditorsave", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1587,7 +1634,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-folder-content-preview", methods={"GET"})
+     * @Route("/get-folder-content-preview", name="pimcore_admin_asset_getfoldercontentpreview", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1665,7 +1712,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         'type' => $asset->getType(),
                         'filename' => $asset->getFilename(),
                         'filenameDisplay' => htmlspecialchars($filenameDisplay),
-                        'url' => '/admin/asset/get-' . $asset->getType() . '-thumbnail?id=' . $asset->getId() . '&treepreview=true&grid=true',
+                        'url' => $this->getThumbnailUrl($asset, true, true),
                         'idPath' => $data['idPath'] = Element\Service::getIdPath($asset)
                     ];
                 }
@@ -1687,7 +1734,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/copy-info", methods={"GET"})
+     * @Route("/copy-info", name="pimcore_admin_asset_copyinfo", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1711,7 +1758,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             // first of all the new parent
             $pasteJobs[] = [[
-                'url' => '/admin/asset/copy',
+                'url' => $this->generateUrl('pimcore_admin_asset_copy'),
                 'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
@@ -1733,7 +1780,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 if (count($childIds) > 0) {
                     foreach ($childIds as $id) {
                         $pasteJobs[] = [[
-                            'url' => '/admin/asset/copy',
+                            'url' => $this->generateUrl('pimcore_admin_asset_copy'),
                             'method' => 'POST',
                             'params' => [
                                 'sourceId' => $id,
@@ -1749,7 +1796,7 @@ class AssetController extends ElementControllerBase implements EventedController
         } elseif ($request->get('type') == 'child' || $request->get('type') == 'replace') {
             // the object itself is the last one
             $pasteJobs[] = [[
-                'url' => '/admin/asset/copy',
+                'url' => $this->generateUrl('pimcore_admin_asset_copy'),
                 'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
@@ -1766,7 +1813,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/copy", methods={"POST"})
+     * @Route("/copy", name="pimcore_admin_asset_copy", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1834,7 +1881,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/download-as-zip-jobs", methods={"GET"})
+     * @Route("/download-as-zip-jobs", name="pimcore_admin_asset_downloadaszipjobs", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1890,7 +1937,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             for ($i = 0; $i < ceil($assetList->getTotalCount() / $filesPerJob); $i++) {
                 $jobs[] = [[
-                    'url' => '/admin/asset/download-as-zip-add-files',
+                    'url' => $this->generateUrl('pimcore_admin_asset_downloadaszipaddfiles'),
                     'method' => 'GET',
                     'params' => [
                         'id' => $asset->getId(),
@@ -1911,7 +1958,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/download-as-zip-add-files", methods={"GET"})
+     * @Route("/download-as-zip-add-files", name="pimcore_admin_asset_downloadaszipaddfiles", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1990,7 +2037,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/download-as-zip", methods={"GET"})
+     * @Route("/download-as-zip", name="pimcore_admin_asset_downloadaszip", methods={"GET"})
      *
      * @param Request $request
      *
@@ -2019,7 +2066,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/import-zip", methods={"POST"})
+     * @Route("/import-zip", name="pimcore_admin_asset_importzip", methods={"POST"})
      *
      * @param Request $request
      *
@@ -2056,7 +2103,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $jobAmount = ceil($zip->numFiles / $filesPerJob);
             for ($i = 0; $i < $jobAmount; $i++) {
                 $jobs[] = [[
-                    'url' => '/admin/asset/import-zip-files',
+                    'url' => $this->generateUrl('pimcore_admin_asset_importzipfiles'),
                     'method' => 'POST',
                     'params' => [
                         'parentId' => $asset->getId(),
@@ -2083,7 +2130,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/import-zip-files", methods={"POST"})
+     * @Route("/import-zip-files", name="pimcore_admin_asset_importzipfiles", methods={"POST"})
      *
      * @param Request $request
      *
@@ -2152,7 +2199,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/import-server", methods={"POST"})
+     * @Route("/import-server", name="pimcore_admin_asset_importserver", methods={"POST"})
      *
      * @param Request $request
      *
@@ -2180,7 +2227,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 if (count($jobFiles) >= $filesPerJob || $i >= ($count - 1)) {
                     $relativeImportDirectory = preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', '', $importDirectory);
                     $jobs[] = [[
-                        'url' => '/admin/asset/import-server-files',
+                        'url' => $this->generateUrl('pimcore_admin_asset_importserverfiles'),
                         'method' => 'POST',
                         'params' => [
                             'parentId' => $request->get('parentId'),
@@ -2200,7 +2247,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/import-server-files", methods={"POST"})
+     * @Route("/import-server-files", name="pimcore_admin_asset_importserverfiles", methods={"POST"})
      *
      * @param Request $request
      *
@@ -2253,7 +2300,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/import-url", methods={"POST"})
+     * @Route("/import-url", name="pimcore_admin_asset_importurl", methods={"POST"})
      *
      * @param Request $request
      *
@@ -2300,7 +2347,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/clear-thumbnail", methods={"POST"})
+     * @Route("/clear-thumbnail", name="pimcore_admin_asset_clearthumbnail", methods={"POST"})
      *
      * @param Request $request
      *
@@ -2327,7 +2374,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/grid-proxy", methods={"GET", "POST", "PUT"})
+     * @Route("/grid-proxy", name="pimcore_admin_asset_gridproxy", methods={"GET", "POST", "PUT"})
      *
      * @param Request $request
      *
@@ -2460,7 +2507,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/get-text", methods={"GET"})
+     * @Route("/get-text", name="pimcore_admin_asset_gettext", methods={"GET"})
      *
      * @param Request $request
      *
@@ -2488,7 +2535,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/detect-image-features", methods={"GET"})
+     * @Route("/detect-image-features", name="pimcore_admin_asset_detectimagefeatures", methods={"GET"})
      *
      * @param Request $request
      *
@@ -2513,7 +2560,7 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @Route("/delete-image-features", methods={"GET"})
+     * @Route("/delete-image-features", name="pimcore_admin_asset_deleteimagefeatures", methods={"GET"})
      *
      * @param Request $request
      *
