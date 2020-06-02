@@ -471,6 +471,9 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                     'metadata' => $this->indexStoreMetaData[$response['index']['_id']]
                 ];
 
+                $objectId = $response['index']['_id'];
+                $tenantName = $this->getTenantConfig()->getTenantName();
+
                 if (isset($response['index']['error']) && $response['index']['error']) {
                     $data['update_error'] = json_encode($response['index']['error']);
                     $data['crc_index'] = 0;
@@ -478,12 +481,9 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                                 json_decode($data['update_error'], true)
                                  );
                     $this->db->updateWhere($this->getStoreTableName(), $data,
-                        'tenantName = '
-                        .$this->db->quote($this->getTenantConfig()->getTenantName())
-                        .' AND o_id = ' . $this->db->quote($response['index']['_id']));
+                        'tenantName = ' .$this->db->quote($tenantName)
+                        .' AND o_id = ' . $this->db->quote($objectId));
                 } else {
-                    $objectId = $response['index']['_id'];
-                    $tenantName = $this->getTenantConfig()->getTenantName();
                     $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE o_id = ? and tenant = ?', [$objectId, $tenantName]);
                 }
             }
