@@ -582,7 +582,7 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
      *
      * @throws \Exception
      */
-    protected function completeReindexMode()
+    public function completeReindexMode()
     {
         if ($this->isInReindexMode()) {
             Logger::info('Index-Actions - in completeReindexMode');

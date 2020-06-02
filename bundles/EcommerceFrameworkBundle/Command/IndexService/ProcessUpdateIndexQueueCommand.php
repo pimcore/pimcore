@@ -46,6 +46,11 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     /** @var IndexUpdateService */
     private $indexUpdateService;
 
+    /**
+     * @var IBatchProcessingWorker[] | null
+     */
+    private $childWorkerList = null;
+
     protected function configure()
     {
         parent::configure();
@@ -83,7 +88,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
         $id = $row['id'];
         $openTenants = $row['tenants'];
 
-        if ($output->isVerbose()) {
+        if ($output->isVeryVerbose()) {
             $output->writeln(sprintf('Process ID="%s" for %d tenants (%s).', $id, count($openTenants), implode(",", $row['tenants'])));
         }
 
@@ -99,6 +104,14 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
 
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
+        foreach ($this->childWorkerList as $worker) {
+            if ($worker instanceof AbstractElasticSearch) {
+                if ($output->isVerbose()) {
+                    $output->writeln('<info>Commit index update for worker '.get_class($worker).'.</info>');
+                }
+                $worker->commitUpdateIndex();
+            }
+        }
         $this->parentRunAfterBatch($input, $output, $items);
         $this->handleTimeout(function(string $abortMessage) use ($output) {
             $output->writeln($abortMessage);
@@ -144,7 +157,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
 
     protected function getSegmentSize(): int
     {
-        return 5000; // index updates per child process
+        return 500; // index updates per child process
     }
 
 }
