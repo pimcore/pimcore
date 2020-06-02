@@ -234,7 +234,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * @param string $pathinfo
-     *
+     * @param Request|null $request
      * @return array
      */
     protected function doMatch($pathinfo, Request $request = null)
