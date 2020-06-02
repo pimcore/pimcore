@@ -479,7 +479,11 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                                  );
                 }
 
-                $this->db->updateWhere($this->getStoreTableName(), $data, 'o_id = ' . $this->db->quote($response['index']['_id']));
+                $this->db->updateWhere(
+                    $this->getStoreTableName(),
+                    $data,
+                    'o_id = ' . $this->db->quote($response['index']['_id']) . ' AND tenant = ' . $this->db->quote($this->name)
+                );
             }
         }
 
