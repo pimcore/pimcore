@@ -82,6 +82,13 @@ $user      = $userProxy->getUser();
                 transform: scale(1.0);
             }
         }
+
+        #pimcore_panel_tabs-body {
+            background-image: url(<?=$this->router()->path('pimcore_settings_display_custom_logo')?>);
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 500px auto;
+        }
     </style>
 
     <title><?= htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8') ?> :: Pimcore</title>
@@ -766,10 +773,10 @@ $scripts = array(
             $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/" . $scriptUrl) . "\n\n\n";
         }
     }
-    $minimizedScriptPath = \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents);
+    $minimizedScriptParams = \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents, false);
 
 ?>
-    <script src="<?= $minimizedScriptPath ?>"></script>
+    <script src="<?= $this->router()->path('pimcore_admin_misc_scriptproxy', $minimizedScriptParams) ?>"></script>
 <?php } ?>
 
 
