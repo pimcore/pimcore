@@ -16,7 +16,6 @@ namespace Pimcore\Console\Traits;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
-use Symfony\Component\Console\Input\Input;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -38,7 +37,7 @@ trait Parallelization
             ->addArgument(
                 'item',
                 InputArgument::OPTIONAL,
-                'The item to process'
+                'The item to process. Can be used in commands where simple IDs are processed. Otherwise it is for internal use.'
             )
             ->addOption(
                 'processes',
@@ -52,7 +51,7 @@ trait Parallelization
                 'child',
                 null,
                 InputOption::VALUE_NONE,
-                'Set on child processes'
+                'Set on child processes. For internal use only.'
             )
         ;
     }
