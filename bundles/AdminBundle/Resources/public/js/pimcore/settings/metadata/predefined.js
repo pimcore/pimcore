@@ -137,11 +137,11 @@ pimcore.settings.metadata.predefined = Class.create({
             {text: t("description"), sortable: true, dataIndex: 'description',
                 getEditor: function() { return new Ext.form.TextArea({}); },
                 renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                                if(empty(value)) {
-                                    return "";
-                                }
-                                return nl2br(value);
-                           }
+                    if (empty(value)) {
+                        return "";
+                    }
+                    return nl2br(Ext.util.Format.htmlEncode(value));
+                }
             },
             {text: t("type"), width: 90, sortable: true,
                 dataIndex: 'type',
@@ -255,7 +255,12 @@ pimcore.settings.metadata.predefined = Class.create({
             stripeRows: true,
             bodyCls: "pimcore_editable_grid",
             trackMouseOver: true,
-            columns : metadataColumns,
+            columns: {
+                items: metadataColumns,
+                defaults: {
+                    renderer: Ext.util.Format.htmlEncode
+                },
+            },
             clicksToEdit: 1,
             selModel: Ext.create('Ext.selection.CellModel', {}),
             bbar: this.pagingtoolbar,
