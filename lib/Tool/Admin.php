@@ -106,7 +106,7 @@ class Admin
 
         if ($asUrl) {
             @trigger_error(
-                'Calling Pimcore\Tool::getMinimizedScriptPath with $asUrl true is deprecated and will be removed with Pimcore 7.1.0',
+                'Calling Pimcore\Tool::getMinimizedScriptPath with $asUrl true is deprecated and will be removed with Pimcore 7.0',
                 E_USER_DEPRECATED
             );
             return '/admin/misc/script-proxy?'.array_toquerystring($params);
