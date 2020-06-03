@@ -80,8 +80,10 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
         throw new \Exception('Unknown Type for mapping params');
     }
 
-    protected function doCreateOrUpdateIndexStructures($exceptionOnFailure = false)
+    protected function doCreateOrUpdateIndexStructures()
     {
+        $this->checkIndexLock(true);
+
         $this->createOrUpdateStoreTable();
 
         $esClient = $this->getElasticSearchClient();
@@ -97,22 +99,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
             //index didn't exist -> reset index queue to make sure all products get reindexed
             $this->resetIndexingQueue();
 
-            //create alias for new index if alias doesn't exist so far
-            $aliasExists = $esClient->indices()->existsAlias(['name' => $this->indexName]);
-            if (!$aliasExists) {
-                Logger::info("Index-Actions - create alias for index since it doesn't exist at all. Name: " . $this->indexName);
-                $params['body'] = [
-                    'actions' => [
-                        [
-                            'add' => [
-                                'index' => $this->getIndexNameVersion(),
-                                'alias' => $this->indexName,
-                            ]
-                        ]
-                    ]
-                ];
-                $result = $esClient->indices()->updateAliases($params);
-            }
+            $this->createEsAliasIfMissing();
         }
 
         foreach ([ProductListInterface::PRODUCT_TYPE_VARIANT, ProductListInterface::PRODUCT_TYPE_OBJECT] as $mappingType) {
@@ -123,13 +110,8 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                 Logger::info('Index-Actions - updated Mapping for Index: ' . $this->getIndexNameVersion());
             } catch (\Exception $e) {
                 Logger::info($e->getMessage());
-                if ($exceptionOnFailure) {
-                    throw new \Exception("Can't create Mapping - Exiting to prevent infinite loop");
-                } else {
-                    //when update mapping fails, start reindex mode
-                    $this->startReindexMode();
-                    $this->doCreateOrUpdateIndexStructures(true);
-                }
+
+                throw new \Exception("Can't create Mapping - Reindex might be necessary, see 'ecommerce:indexservice:elasticsearch-sync reindex' command. Message: " . $e->getMessage());
             }
         }
 
@@ -301,6 +283,12 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
      */
     protected function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
+        $isLocked = $this->checkIndexLock(false);
+
+        if($isLocked) {
+            return;
+        }
+
         if (empty($data)) {
             $data = $this->db->fetchOne('SELECT data FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$objectId, $this->name]);
             $data = json_decode($data, true);
