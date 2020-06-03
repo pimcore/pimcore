@@ -348,7 +348,11 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      */
     public function getObjectMockupById($objectId)
     {
-        return $this->getTenantWorker()->getMockupFromCache($objectId);
+        $listing = $this->getTenantWorker()->getProductList();
+        $listing->addCondition($objectId, 'o_id');
+        $listing->setLimit(1);
+        $product = $listing->current();
+        return $product ? $product : null;
     }
 
     /**
