@@ -42,18 +42,8 @@ class InstallController extends AdminController
             $profiler->disable();
         }
 
-        $checksPHP = Requirements::checkPhp();
-        $checksFS = Requirements::checkFilesystem();
-        $checksApps = Requirements::checkExternalApplications();
-        $checksMySQL = Requirements::checkMysql($db);
-
-        $viewParams = [
-            'checksApps' => $checksApps,
-            'checksPHP' => $checksPHP,
-            'checksMySQL' => $checksMySQL,
-            'checksFS' => $checksFS,
-            'headless' => (bool)$request->get('headless')
-        ];
+        $viewParams = Requirements::checkAll($db);
+        $viewParams['headless'] = (bool)$request->get('headless');
 
         return $this->render('PimcoreAdminBundle:Admin/Install:check.html.twig', $viewParams);
     }
