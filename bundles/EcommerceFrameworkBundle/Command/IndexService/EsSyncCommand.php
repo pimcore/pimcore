@@ -37,7 +37,8 @@ class EsSyncCommand extends AbstractIndexServiceCommand
                 'Refresh elastic search (ES) index settings, mappings via native ES-API.'
             )
             ->addArgument('mode', InputArgument::REQUIRED,
-                'reindex: Reindexes ES indices based on the their native reindexing API. Might be necessary when mapping has changed.'
+                'reindex: Reindexes ES indices based on the their native reindexing API. Might be necessary when mapping has changed.'.PHP_EOL.
+                'update-synonyms: Activate changes in synonym files, by closing and reopening the ES index.'
             )
             ->addOption('tenant', null, InputOption::VALUE_OPTIONAL,
                 'If a tenant name is provided (e.g. assortment_de), then only that specific tenant will be synced. '.
@@ -57,6 +58,11 @@ class EsSyncCommand extends AbstractIndexServiceCommand
         $indexService = Factory::getInstance()->getIndexService();
         $tenantList = $tenantName ? [$tenantName] : $indexService->getTenants();
 
+        if (!in_array($mode, ['reindex', 'update-synonyms'])){
+            $output->writeln("<error>Unknown mode \"{$mode}\")...</error>");
+            exit(1);
+        }
+
         $bar = new ProgressBar($output, count($tenantList));
 
         foreach ($tenantList as $tenantName) {
@@ -72,6 +78,8 @@ class EsSyncCommand extends AbstractIndexServiceCommand
 
             if ('reindex' == $mode) {
                 $elasticWorker->startReindexMode();
+            } elseif ('update-synonyms' == $mode) {
+                $elasticWorker->updateSynonyms();
             }
 
             $bar->advance(1);

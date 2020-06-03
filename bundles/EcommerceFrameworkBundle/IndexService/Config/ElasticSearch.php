@@ -119,6 +119,8 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $this->elasticSearchClientParams = $options['es_client_params'];
     }
 
+
+
     protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
     {
         $arrayFields = [
@@ -140,6 +142,78 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
 
         $resolver->setDefault('store', true);
         $resolver->setAllowedTypes('store', 'bool');
+    }
+
+    /**
+     * Current solution: preparse all analysis filters of type "synonym" and replace the "synonyms_path",
+     * which represents the path to a local synonym file, by the filter type "synonyms", where the synonym
+     * array is extracted from the file content of the local synonym file.
+     * @param array $indexSettings the original index settings, enhanced with synonyms.
+     * @throws \Exception
+     */
+    protected function preparseIndexSettings(array $indexSettings) {
+
+        $indexSettingsSynonymPart = $this->extractIndexSettingsSynonymFilterPart();
+        if (!empty($indexSettingsSynonymPart)) {
+            $filters = $indexSettings['analysis']['filter'];
+            foreach ($filters as $filterName => $filter) {
+
+                if ('synonym' === $filter['type']) {
+                    if (array_key_exists('synonyms_path', $filter)) {
+                        $localPath = $filter['synonyms_path'];
+                        if (!file_exists($localPath)) {
+                            throw new \Exception(sprintf('Synonym path "%s" does not exist.', $localPath));
+                        }
+                        $content = file_get_contents($localPath);
+                        $synonymLines = explode_and_trim(PHP_EOL, $content);
+
+                        $rewrittenFilter = $filter;
+                        unset($rewrittenFilter['synonyms_path']);
+                        $rewrittenFilter['synonyms'] = $synonymLines;
+
+                        $indexSettings['analysis']['filter'][$filterName] = $rewrittenFilter;
+                    }
+                }
+            }
+        }
+        return $indexSettings;
+    }
+
+    /**
+     * Extract that part of the ES analysis index settings that are related to synonym filters.
+     * @return array index settings only containing the part of the index settings analysis with
+     * synonym filters.
+     * @return array part of the index_settings that contains the synonym-related filters, including
+     *  the parent elements:
+     *      - analysis
+     *          - filter
+     *              - synonym_filter_1:
+     *                  - type: synonym/synonym_graph
+     *                  - ...
+     */
+    public function extractIndexSettingsSynonymFilterPart() : array {
+        $settings = $this->getIndexSettings();
+        $filters = isset($settings['analysis']['filter']) ? $settings['analysis']['filter'] : [];
+        $indexPart = [];
+        if ($filters) {
+            foreach ($filters as $name => $filter) {
+                if (in_array($filter['type'],['synonym', 'synonym_graph'])) {
+
+                    if (empty($indexPart)) {
+                        $indexPart = [
+                            'analysis' =>
+                                [
+                                    'filter' => []
+                                ]
+                        ];
+                    }
+
+                    $indexPart['analysis']['filter'][$name] = $filter;
+                }
+            }
+        }
+
+        return $indexPart;
     }
 
     /**
@@ -244,7 +318,8 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      */
     public function getIndexSettings()
     {
-        return $this->indexSettings;
+        $indexSettings = $this->preparseIndexSettings($this->indexSettings);
+        return $indexSettings;
     }
 
     /**

@@ -867,6 +867,40 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
     }
 
     /**
+     * Perform a synonym update on the currently active ES index.
+     * Attention: the index will be closed and opened, so it won't be available
+     * for a tiny moment (typically some milliseconds).
+     */
+    public function updateSynonyms() {
+        try {
+            $this->activateIndexLock(); //lock all other processes
+
+            $currentIndexName = $this->getIndexNameVersion();
+
+            $indexSettingsSynonymPart = $this->tenantConfig->extractIndexSettingsSynonymFilterPart();
+
+            if (empty($indexSettingsSynonymPart)) {
+                //nothing to sync.
+                return;
+            }
+
+            $esClient = $this->getElasticSearchClient();
+
+            $esClient->indices()->close(['index' => $currentIndexName]);
+            $esClient->indices()->putSettings([
+                'index' => $this->getIndexNameVersion(),
+                'body' => [
+                    'index' => $indexSettingsSynonymPart
+                ]
+            ]);
+            $esClient->indices()->open(['index' => $currentIndexName]);
+
+        } finally {
+            $this->releaseIndexLock();
+        }
+    }
+
+    /**
      * @var int
      */
     protected $lastLockLogTimestamp = 0;
