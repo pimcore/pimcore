@@ -117,6 +117,40 @@ class Service extends Model\AbstractModel
         return $path;
     }
 
+
+    /**
+     * @static
+     * @internal
+     *
+     * @param DataObject|Document $element
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public static function getSortIndexPath($element)
+    {
+        $path = '';
+        $parentElement = null;
+
+        if ($element instanceof ElementInterface) {
+            $elementType = self::getElementType($element);
+            $parentId = $element->getParentId();
+            $parentElement = self::getElementById($elementType, $parentId);
+        }
+
+        if ($parentElement) {
+            $path = self::getSortIndexPath($parentElement);
+        }
+
+        if ($element) {
+            $sortIndex = $element->getIndex() ? $element->getIndex() : 0;
+            $path .= '/' . $sortIndex;
+        }
+
+        return $path;
+    }
+
     /**
      * @static
      *

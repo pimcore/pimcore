@@ -492,6 +492,11 @@ class ElementController extends AdminController
         $data['typePath'] = $typePath;
         $data['fullpath'] = $element->getRealFullPath();
 
+        if ($type !== 'asset') {
+            $sortIndexPath = Element\Service::getSortIndexPath($element);
+            $data['sortIndexPath'] = $sortIndexPath;
+        }
+
         return $this->adminJson($data);
     }
 
