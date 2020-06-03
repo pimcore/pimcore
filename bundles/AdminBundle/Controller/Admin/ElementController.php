@@ -779,6 +779,7 @@ class ElementController extends AdminController
             $userList = [$user];
         } else {
             $userList = new Model\User\Listing();
+            $userList->setCondition('type = ?', ['user']);
             $userList = $userList->load();
         }
 
