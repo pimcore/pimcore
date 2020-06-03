@@ -374,7 +374,7 @@ class CustomReportController extends ReportsControllerBase
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return JsonResponse
      */
     public function createCsvAction(Request $request){
         $this->checkPermission('reports');
