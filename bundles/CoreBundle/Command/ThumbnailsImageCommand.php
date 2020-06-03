@@ -132,7 +132,7 @@ class ThumbnailsImageCommand extends AbstractCommand
             $thumbnail = $image->getThumbnail($thumbnailConfig);
             $path = $thumbnail->getPath(false);
 
-            if ($output->isVeryVerbose()) {
+            if ($output->isVerbose()) {
                 $output->writeln(
                     sprintf(
                         'generated thumbnail for image [%d] | file: %s',
