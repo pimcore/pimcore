@@ -114,7 +114,9 @@ class ThumbnailsVideoCommand extends AbstractCommand
         }
 
         if ($input->getOption('system')) {
-            $this->output->writeln('generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: System Preview : ' . formatBytes(memory_get_usage()));
+            if ($output->isVerbose()) {
+                $this->output->writeln('generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: System Preview : ' . formatBytes(memory_get_usage()));
+            }
             $thumbnail = Asset\Video\Thumbnail\Config::getPreviewConfig();
             $video->getThumbnail($thumbnail);
             $this->waitTillFinished($video->getId(), $thumbnail);
