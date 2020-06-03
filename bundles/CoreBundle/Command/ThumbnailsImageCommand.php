@@ -15,16 +15,22 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Model\Asset;
-use Symfony\Component\Console\Helper\ProgressBar;
+use Pimcore\Model\Asset\Image;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ThumbnailsImageCommand extends AbstractCommand
 {
+    use Parallelization;
+
     protected function configure()
     {
+        parent::configure();
+        self::configureParallelization($this);
+
         $this
             ->setName('pimcore:thumbnails:image')
             ->setAliases(['thumbnails:image'])
@@ -74,10 +80,75 @@ class ThumbnailsImageCommand extends AbstractCommand
             );
     }
 
+    protected function fetchItems(InputInterface $input): array
+    {
+        // get only images
+        $conditions = ["type = 'image'"];
+
+        if ($input->getOption('parent')) {
+            $parent = Asset::getById($input->getOption('parent'));
+            if ($parent instanceof Asset\Folder) {
+                $conditions[] = "path LIKE '".$parent->getRealFullPath()."/%'";
+            } else {
+                $this->writeError($input->getOption('parent').' is not a valid asset folder ID!');
+                exit(1);
+            }
+        }
+
+        if ($ids = $input->getOption('id')) {
+            $conditions[] = sprintf('id in (%s)', implode(',', $ids));
+        }
+
+        $list = new Asset\Listing();
+        $list->setCondition(implode(' AND ', $conditions));
+
+        return $list->loadIdList();
+    }
+
+    protected function runSingleCommand(string $assetId, InputInterface $input, OutputInterface $output): void
+    {
+        $image = Image::getById($assetId);
+        if (!$image) {
+            $this->writeError('No image with ID=' . $assetId . ' found. Has the image been deleted or is the asset of another type?</error>');
+            return;
+        }
+
+        $thumbnailsToGenerate = $this->fetchThumbnailConfigs($input);
+
+        if ($input->getOption('force')) {
+
+            $thumbnailConfigNames = array_unique(
+                array_map(function($thumbnailConfig) {
+                    return $thumbnailConfig->getName();
+                }, $thumbnailsToGenerate)
+            );
+
+            foreach ($thumbnailConfigNames as $thumbnailConfigName) {
+                $image->clearThumbnail($thumbnailConfigName);
+            }
+        }
+
+        foreach ($thumbnailsToGenerate as $thumbnailConfig) {
+            $thumbnail = $image->getThumbnail($thumbnailConfig);
+            $path = $thumbnail->getPath(false);
+
+            if ($output->isVerbose()) {
+                $output->writeln(
+                    sprintf(
+                        'generated thumbnail for image [%d] | file: %s',
+                        $image->getId(),
+                        $path
+                    )
+                );
+            }
+        }
+    }
+
     /**
-     * @inheritDoc
+     * @param InputInterface $input
+     * @return Asset\Image\Thumbnail\Config[]
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    private function fetchThumbnailConfigs(InputInterface $input) : array
     {
         $list = new Asset\Image\Thumbnail\Config\Listing();
         $thumbnailConfigList = $list->getThumbnails();
@@ -134,79 +205,11 @@ class ThumbnailsImageCommand extends AbstractCommand
             $thumbnailsToGenerate[] = Asset\Image\Thumbnail\Config::getPreviewConfig();
         }
 
-        $thumbnailConfigNames = [];
-        foreach ($thumbnailsToGenerate as $thumbnailConfig) {
-            $thumbnailConfigNames[] = $thumbnailConfig->getName();
-        }
-        $thumbnailConfigNames = array_unique($thumbnailConfigNames);
+        return $thumbnailsToGenerate;
+    }
 
-        // get only images
-        $conditions = ["type = 'image'"];
-
-        if ($input->getOption('parent')) {
-            $parent = Asset::getById($input->getOption('parent'));
-            if ($parent instanceof Asset\Folder) {
-                $conditions[] = "path LIKE '".$parent->getRealFullPath()."/%'";
-            } else {
-                $this->writeError($input->getOption('parent').' is not a valid asset folder ID!');
-                exit;
-            }
-        }
-
-        if ($ids = $input->getOption('id')) {
-            $conditions[] = sprintf('id in (%s)', implode(',', $ids));
-        }
-
-        $list = new Asset\Listing();
-        $list->setCondition(implode(' AND ', $conditions));
-        $total = $list->getTotalCount();
-        $perLoop = 10;
-
-        $totalToGenerate = $total * count($thumbnailsToGenerate);
-
-        $progress = new ProgressBar($output, $totalToGenerate);
-        $progress->setFormat(
-            ' %current%/%max% [%bar%] %percent:3s%% (%elapsed:6s%/%estimated:-6s%) %memory:6s%: %message%'
-        );
-        $progress->start();
-
-        for ($i = 0; $i < (ceil($total / $perLoop)); $i++) {
-            $list->setLimit($perLoop);
-            $list->setOffset($i * $perLoop);
-            $images = $list->load();
-
-            foreach ($images as $image) {
-                if (!$image instanceof Asset\Image) {
-                    continue;
-                }
-
-                if ($input->getOption('force')) {
-                    foreach ($thumbnailConfigNames as $thumbnailConfigName) {
-                        $image->clearThumbnail($thumbnailConfigName);
-                    }
-                }
-
-                foreach ($thumbnailsToGenerate as $thumbnailConfig) {
-                    $thumbnail = $image->getThumbnail($thumbnailConfig);
-
-                    $progress->setMessage(
-                        sprintf(
-                            'generated thumbnail for image [%d] | file: %s',
-                            $image->getId(),
-                            $thumbnail->getPath(false)
-                        )
-                    );
-
-                    $progress->advance(1);
-                }
-            }
-            \Pimcore::collectGarbage();
-        }
-
-        $progress->finish();
-
-        $output->writeln('');
-
-        return 0;
+    protected function getItemName(int $count): string
+    {
+        return $count == 1 ? 'image' : 'images';
     }
 }
