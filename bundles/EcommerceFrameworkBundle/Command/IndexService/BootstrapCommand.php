@@ -20,7 +20,6 @@ use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Console\Traits\Timeout;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Listing;
-use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,7 +31,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class BootstrapCommand extends AbstractIndexServiceCommand
 {
     use Parallelization;
-    use LockableTrait;
     use Timeout;
 
     use Parallelization
