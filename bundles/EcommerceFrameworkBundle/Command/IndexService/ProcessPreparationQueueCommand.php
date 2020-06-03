@@ -23,7 +23,6 @@ use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Console\Traits\Timeout;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -33,9 +32,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
 {
-    use Parallelization;
     use Timeout;
-    use LockableTrait;
 
     use Parallelization
     {

@@ -33,9 +33,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
 {
-    use Parallelization;
     use Timeout;
-    use LockableTrait;
 
     use Parallelization
     {
