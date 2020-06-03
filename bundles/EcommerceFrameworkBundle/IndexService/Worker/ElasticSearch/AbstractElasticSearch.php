@@ -130,20 +130,25 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
             $this->indexVersion = 0;
             $esClient = $this->getElasticSearchClient();
 
-            $result = $esClient->indices()->getAlias([
-                'name' => $this->indexName
-            ]);
+            try {
+                $result = $esClient->indices()->getAlias([
+                    'name' => $this->indexName
+                ]);
 
-            if(is_array($result)) {
-                $aliasIndexName = array_key_first($result);
-                preg_match('/'.$this->indexName.'-(\d+)/', $aliasIndexName, $matches);
-                if (is_array($matches) && count($matches) > 1) {
-                    $version = (int)$matches[1];
-                    if ($version > $this->indexVersion) {
-                        $this->indexVersion = $version;
+                if(is_array($result)) {
+                    $aliasIndexName = array_key_first($result);
+                    preg_match('/'.$this->indexName.'-(\d+)/', $aliasIndexName, $matches);
+                    if (is_array($matches) && count($matches) > 1) {
+                        $version = (int)$matches[1];
+                        if ($version > $this->indexVersion) {
+                            $this->indexVersion = $version;
+                        }
                     }
                 }
+            } catch (Missing404Exception $e) {
+                $this->indexVersion = 0;
             }
+
         }
 
         return $this->indexVersion;
