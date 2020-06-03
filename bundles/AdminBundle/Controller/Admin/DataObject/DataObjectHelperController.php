@@ -55,7 +55,7 @@ class DataObjectHelperController extends AdminController
     const SYSTEM_COLUMNS = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname'];
 
     /**
-     * @Route("/load-object-data", methods={"GET"})
+     * @Route("/load-object-data", name="pimcore_admin_dataobject_dataobjecthelper_loadobjectdata", methods={"GET"})
      *
      * @param Request $request
      *
@@ -139,7 +139,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/import-export-config", methods={"POST"})
+     * @Route("/import-export-config", name="pimcore_admin_dataobject_dataobjecthelper_importexportconfig", methods={"POST"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -240,7 +240,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-export-configs", methods={"GET"})
+     * @Route("/get-export-configs", name="pimcore_admin_dataobject_dataobjecthelper_getexportconfigs", methods={"GET"})
      *
      * @param Request $request
      *
@@ -275,7 +275,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/delete-import-config", methods={"DELETE"})
+     * @Route("/delete-import-config", name="pimcore_admin_dataobject_dataobjecthelper_deleteimportconfig", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -303,7 +303,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-delete-column-config", methods={"DELETE"})
+     * @Route("/grid-delete-column-config", name="pimcore_admin_dataobject_dataobjecthelper_griddeletecolumnconfig", methods={"DELETE"})
      *
      * @param Request $request
      * @param Config $config
@@ -335,7 +335,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-get-column-config", methods={"GET"})
+     * @Route("/grid-get-column-config", name="pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig", methods={"GET"})
      *
      * @param Request $request
      * @param Config $config
@@ -835,7 +835,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/prepare-helper-column-configs", methods={"POST"})
+     * @Route("/prepare-helper-column-configs", name="pimcore_admin_dataobject_dataobjecthelper_preparehelpercolumnconfigs", methods={"POST"})
      *
      * @param Request $request
      *
@@ -869,7 +869,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-config-apply-to-all", methods={"POST"})
+     * @Route("/grid-config-apply-to-all", name="pimcore_admin_dataobject_dataobjecthelper_gridconfigapplytoall", methods={"POST"})
      *
      * @param Request $request
      *
@@ -899,7 +899,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-mark-favourite-column-config", methods={"POST"})
+     * @Route("/grid-mark-favourite-column-config", name="pimcore_admin_dataobject_dataobjecthelper_gridmarkfavouritecolumnconfig", methods={"POST"})
      *
      * @param Request $request
      *
@@ -992,7 +992,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/import-save-config", methods={"POST"})
+     * @Route("/import-save-config", name="pimcore_admin_dataobject_dataobjecthelper_importsaveconfig", methods={"POST"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -1054,7 +1054,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-save-column-config", methods={"POST"})
+     * @Route("/grid-save-column-config", name="pimcore_admin_dataobject_dataobjecthelper_gridsavecolumnconfig", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1296,7 +1296,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/prepare-import-preview", methods={"POST"})
+     * @Route("/prepare-import-preview", name="pimcore_admin_dataobject_dataobjecthelper_prepareimportpreview", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1324,7 +1324,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/import-preview", methods={"GET"})
+     * @Route("/import-preview", name="pimcore_admin_dataobject_dataobjecthelper_importpreview", methods={"GET"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -1470,7 +1470,7 @@ class DataObjectHelperController extends AdminController
      */
 
     /**
-     * @Route("/import-upload", methods={"POST"})
+     * @Route("/import-upload", name="pimcore_admin_dataobject_dataobjecthelper_importupload", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1501,7 +1501,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/import-get-file-info", methods={"GET"})
+     * @Route("/import-get-file-info", name="pimcore_admin_dataobject_dataobjecthelper_importgetfileinfo", methods={"GET"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -1638,7 +1638,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/import-process", methods={"POST"})
+     * @Route("/import-process", name="pimcore_admin_dataobject_dataobjecthelper_importprocess", methods={"POST"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -1779,7 +1779,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-export-jobs", methods={"GET"})
+     * @Route("/get-export-jobs", name="pimcore_admin_dataobject_dataobjecthelper_getexportjobs", methods={"GET"})
      *
      * @param Request $request
      * @param GridHelperService $gridHelperService
@@ -1804,7 +1804,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/do-export", methods={"POST"})
+     * @Route("/do-export", name="pimcore_admin_dataobject_dataobjecthelper_doexport", methods={"POST"})
      *
      * @param Request $request
      * @param LocaleServiceInterface $localeService
@@ -1877,7 +1877,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/download-csv-file", methods={"GET"})
+     * @Route("/download-csv-file", name="pimcore_admin_dataobject_dataobjecthelper_downloadcsvfile", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1900,7 +1900,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/download-xlsx-file", methods={"GET"})
+     * @Route("/download-xlsx-file", name="pimcore_admin_dataobject_dataobjecthelper_downloadxlsxfile", methods={"GET"})
      *
      * @param Request $request
      *
@@ -2214,7 +2214,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-batch-jobs", methods={"GET"})
+     * @Route("/get-batch-jobs", name="pimcore_admin_dataobject_dataobjecthelper_getbatchjobs", methods={"GET"})
      *
      * @param Request $request
      *
@@ -2235,7 +2235,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/batch", methods={"PUT"})
+     * @Route("/batch", name="pimcore_admin_dataobject_dataobjecthelper_batch", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -2423,7 +2423,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-available-visible-vields", methods={"GET"})
+     * @Route("/get-available-visible-vields", name="pimcore_admin_dataobject_dataobjecthelper_getavailablevisiblefields", methods={"GET"})
      *
      * @param Request $request
      *

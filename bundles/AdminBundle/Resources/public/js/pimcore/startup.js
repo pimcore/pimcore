@@ -279,7 +279,6 @@ Ext.onReady(function () {
     var user = new pimcore.user(pimcore.currentuser);
     pimcore.globalmanager.add("user", user);
 
-    var docTypesUrl = '/admin/document/doc-types?';
     // document types
     Ext.define('pimcore.model.doctypes', {
         extend: 'Ext.data.Model',
@@ -317,10 +316,10 @@ Ext.onReady(function () {
                 encode: 'true'
             },
             api: {
-                create: docTypesUrl + "xaction=create",
-                read: docTypesUrl + "xaction=read",
-                update: docTypesUrl + "xaction=update",
-                destroy: docTypesUrl + "xaction=destroy"
+                create: Routing.generate('pimcore_admin_document_document_doctypesget', {xaction: "create"}),
+                read: Routing.generate('pimcore_admin_document_document_doctypesget', {xaction: "read"}),
+                update: Routing.generate('pimcore_admin_document_document_doctypesget', {xaction: "update"}),
+                destroy: Routing.generate('pimcore_admin_document_document_doctypesget', {xaction: "destroy"}),
             }
         }
     });
@@ -361,7 +360,7 @@ Ext.onReady(function () {
         fields: objectClassFields,
         proxy: {
             type: 'ajax',
-            url: '/admin/class/get-tree',
+            url: Routing.generate('pimcore_admin_dataobject_class_gettree'),
             reader: {
                 type: 'json'
             }
@@ -383,7 +382,7 @@ Ext.onReady(function () {
         fields: objectClassFields,
         proxy: {
             type: 'ajax',
-            url: '/admin/class/get-tree?createAllowed=true',
+            url: Routing.generate('pimcore_admin_dataobject_class_gettree', {createAllowed: true}),
             reader: {
                 type: 'json'
             }
@@ -410,7 +409,7 @@ Ext.onReady(function () {
         ],
         proxy: {
             type: 'ajax',
-            url: '/admin/settings/get-available-admin-languages',
+            url: Routing.generate('pimcore_admin_settings_getavailableadminlanguages'),
             reader: {
                 type: 'json'
             }
@@ -429,7 +428,7 @@ Ext.onReady(function () {
         fields: ["id", "domains", "rootId", "rootPath", "domain"],
         proxy: {
             type: 'ajax',
-            url: '/admin/settings/get-available-sites',
+            url: Routing.generate('pimcore_admin_settings_getavailablesites'),
             reader: {
                 type: 'json'
             }
@@ -455,7 +454,7 @@ Ext.onReady(function () {
         model: "pimcore.model.target_groups",
         proxy: {
             type: 'ajax',
-            url: '/admin/targeting/target-group/list',
+            url: Routing.generate('pimcore_admin_targeting_targetgrouplist'),
             reader: {
                 type: 'json'
             }
@@ -521,7 +520,7 @@ Ext.onReady(function () {
 
                 if (data.pushStatistics) {
                     var request = new XMLHttpRequest();
-                    request.open('GET', "/admin/index/statistics", false);
+                    request.open('GET', Routing.generate('pimcore_admin_index_statistics'), false);
 
                     request.onload = function () {
                         if (this.status >= 200 && this.status < 400) {
@@ -859,7 +858,7 @@ Ext.onReady(function () {
     var quicksearchStore = new Ext.data.Store({
         proxy: {
             type: 'ajax',
-            url: '/admin/search/search/quicksearch',
+            url: Routing.generate('pimcore_admin_searchadmin_search_quicksearch'),
             reader: {
                 type: 'json',
                 rootProperty: 'data'
@@ -971,7 +970,7 @@ pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function
         pimcore.globalmanager.add("translations_admin_missing", restMissingTranslations);
         Ext.Ajax.request({
             method: "POST",
-            url: "/admin/translation/add-admin-translation-keys",
+            url: Routing.generate('pimcore_admin_translation_addadmintranslationkeys'),
             params: {keys: params}
         });
     }
@@ -980,7 +979,7 @@ pimcore["intervals"]["translations_admin_missing"] = window.setInterval(function
 // session renew
 pimcore["intervals"]["ping"] = window.setInterval(function () {
     Ext.Ajax.request({
-        url: "/admin/misc/ping",
+        url: Routing.generate('pimcore_admin_misc_ping'),
         success: function (response) {
 
             var data;
@@ -994,7 +993,7 @@ pimcore["intervals"]["ping"] = window.setInterval(function () {
             } catch (e) {
                 data = false;
                 pimcore.settings.showCloseConfirmation = false;
-                window.location.href = "/admin/login?session_expired=true";
+                window.location.href = Routing.generate('pimcore_admin_login', {session_expired: true});
             }
 
             if (pimcore.maintenanceWindow) {
@@ -1012,7 +1011,8 @@ pimcore["intervals"]["ping"] = window.setInterval(function () {
         failure: function (response) {
             if (response.status != 503) {
                 pimcore.settings.showCloseConfirmation = false;
-                window.location.href = "/admin/login?session_expired=true&server_error=true";
+                window.location.href = Routing.generate('pimcore_admin_login', {session_expired: true, server_error: true});
+
             }
         }
     });

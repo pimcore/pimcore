@@ -26,8 +26,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class ImageController extends AbstractRestController
 {
     /**
-     * @Route("/image-thumbnail/id/{id}", methods={"GET"})
-     * @Route("/image-thumbnail", methods={"GET"})
+     * @Route("/image-thumbnail/id/{id}", name="pimcore_api_rest_image_imagethumbnail", methods={"GET"})
+     * @Route("/image-thumbnail", name="pimcore_api_rest_image_imagethumbnail_1", methods={"GET"})
      *
      * @param Request     $request
      * @param string|null $id
@@ -53,7 +53,7 @@ class ImageController extends AbstractRestController
     }
 
     /**
-     * @Route("/image-thumbnails", methods={"GET"})
+     * @Route("/image-thumbnails", name="pimcore_api_rest_image_imagethumbnails", methods={"GET"})
      */
     public function imageThumbnailsAction()
     {

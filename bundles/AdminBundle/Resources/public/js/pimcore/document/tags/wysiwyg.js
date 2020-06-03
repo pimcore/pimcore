@@ -212,7 +212,15 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 var additionalAttributes = "";
 
                 if(typeof data.imageWidth != "undefined") {
-                    uri = "/admin/asset/get-image-thumbnail?id=" + id + "&width=" + defaultWidth + "&aspectratio=true";
+                    var route = 'pimcore_admin_asset_getimagethumbnail';
+                    var params = {
+                        id: id,
+                        width: defaultWidth,
+                        aspectratio: true
+                    };
+
+                    uri = Routing.generate(route, params);
+
                     if(data.imageWidth < defaultWidth
                             && in_arrayi(pimcore.helpers.getFileExtension(data.text),
                                         browserPossibleExtensions)) {

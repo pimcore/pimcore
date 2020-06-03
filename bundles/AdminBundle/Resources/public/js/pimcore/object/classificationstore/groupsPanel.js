@@ -54,7 +54,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         readerFields.push({name: 'mandatory', type: 'bool'});
 
         var proxy = {
-            url: "/admin/classificationstore/relations",
+            url: Routing.generate('pimcore_admin_dataobject_classificationstore_relationsactionget'),
             type: 'ajax',
             batchActions: false,
             reader: {
@@ -144,7 +144,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                         var groupId = data.data.groupId;
 
                         Ext.Ajax.request({
-                            url: "/admin/classificationstore/delete-relation",
+                            url: Routing.generate('pimcore_admin_dataobject_classificationstore_deleterelation'),
                             method: 'DELETE',
                             params: {
                                 keyId: keyId,
@@ -227,7 +227,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         }
 
         var proxy = {
-            url: "/admin/classificationstore/groups",
+            url: Routing.generate('pimcore_admin_dataobject_classificationstore_groupsactionget'),
             type: 'ajax',
             batchActions: false,
             reader: {
@@ -313,7 +313,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
                         this.relationsPanel.disable();
 
                         Ext.Ajax.request({
-                            url: "/admin/classificationstore/delete-group",
+                            url: Routing.generate('pimcore_admin_dataobject_classificationstore_deletegroup'),
                             method: 'DELETE',
                             params: {
                                 id: id
@@ -403,7 +403,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         value = value.trim();
         if (button == "ok" && value.length > 1) {
             Ext.Ajax.request({
-                url: "/admin/classificationstore/create-group",
+                url: Routing.generate('pimcore_admin_dataobject_classificationstore_creategroup'),
                 method: 'POST',
                 params: {
                     name: value,
@@ -505,7 +505,7 @@ pimcore.object.classificationstore.groupsPanel = Class.create({
         this.groupsStore.clearFilter(true);
 
         Ext.Ajax.request({
-            url: "/admin/classificationstore/get-page",
+            url: Routing.generate('pimcore_admin_dataobject_classificationstore_getpage'),
             params: params,
             success: function(response) {
                 try {

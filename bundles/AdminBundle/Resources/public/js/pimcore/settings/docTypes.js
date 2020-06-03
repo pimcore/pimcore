@@ -84,7 +84,7 @@ pimcore.settings.document.doctypes = Class.create({
                         autoDestroy: true,
                         proxy: {
                             type: 'ajax',
-                            url: "/admin/misc/get-available-modules",
+                            url: Routing.generate('pimcore_admin_misc_getavailablemodules'),
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'
@@ -106,7 +106,7 @@ pimcore.settings.document.doctypes = Class.create({
                         autoDestroy: true,
                         proxy: {
                             type: 'ajax',
-                            url: "/admin/misc/get-available-controllers",
+                            url: Routing.generate('pimcore_admin_misc_getavailablecontrollers'),
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'
@@ -147,7 +147,7 @@ pimcore.settings.document.doctypes = Class.create({
                         autoDestroy: true,
                         proxy: {
                             type: 'ajax',
-                            url: "/admin/misc/get-available-actions",
+                            url: Routing.generate('pimcore_admin_misc_getavailableactions'),
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'
@@ -189,7 +189,7 @@ pimcore.settings.document.doctypes = Class.create({
                         autoDestroy: true,
                         proxy: {
                             type: 'ajax',
-                            url: "/admin/misc/get-available-templates",
+                            url: Routing.generate('pimcore_admin_misc_getavailabletemplates'),
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'

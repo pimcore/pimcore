@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ClassController extends AbstractRestController
 {
     /**
-     * @Route("/class/id/{id}", methods={"GET"})
+     * @Route("/class/id/{id}", name="pimcore_api_rest_class_class", methods={"GET"})
      *
      * end point for the class definition
      *
@@ -58,7 +58,7 @@ class ClassController extends AbstractRestController
     }
 
     /**
-     * @Route("/classes", methods={"GET"})
+     * @Route("/classes", name="pimcore_api_rest_class_classes", methods={"GET"})
      *
      * @return JsonResponse
      */
@@ -84,7 +84,7 @@ class ClassController extends AbstractRestController
     }
 
     /**
-     * @Route("/object-brick/id/{id}", methods={"GET"})
+     * @Route("/object-brick/id/{id}", name="pimcore_api_rest_class_objectbrick", methods={"GET"})
      *
      * end point for the object-brick definition
      *
@@ -113,7 +113,7 @@ class ClassController extends AbstractRestController
     }
 
     /**
-     * @Route("/object-bricks", methods={"GET"})
+     * @Route("/object-bricks", name="pimcore_api_rest_class_objectbricks", methods={"GET"})
      *
      * Returns a list of all object brick definitions.
      */
@@ -140,7 +140,7 @@ class ClassController extends AbstractRestController
     }
 
     /**
-     * @Route("/field-collection/id/{id}", methods={"GET"})
+     * @Route("/field-collection/id/{id}", name="pimcore_api_rest_class_fieldcollection", methods={"GET"})
      *
      * end point for the field collection definition
      *
@@ -169,7 +169,7 @@ class ClassController extends AbstractRestController
     }
 
     /**
-     * @Route("/field-collections", methods={"GET"})
+     * @Route("/field-collections", name="pimcore_api_rest_class_fieldcollections", methods={"GET"})
      *
      * Returns a list of all field collection definitions.
      */
@@ -196,7 +196,7 @@ class ClassController extends AbstractRestController
     }
 
     /**
-     * @Route("/quantity-value-unit-definition", methods={"GET"})
+     * @Route("/quantity-value-unit-definition", name="pimcore_api_rest_class_quantityvalueunitdefinition", methods={"GET"})
      *
      * Returns the classification store feature definition as JSON. Could be useful to provide separate endpoints
      * for the various sub-configs.
@@ -233,7 +233,7 @@ class ClassController extends AbstractRestController
     }
 
     /**
-     * @Route("/classificationstore-definition", methods={"GET"})
+     * @Route("/classificationstore-definition", name="pimcore_api_rest_class_classificationstoredefinition", methods={"GET"})
      *
      * Returns the classification store feature definition as JSON. Could be useful to provide separate endpoints
      * for the various sub-configs.

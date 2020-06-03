@@ -40,13 +40,28 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
                 }
 
                 if (value && value.id) {
-                    var baseUrl = '<img src="/admin/asset/get-image-thumbnail?id=' + value.id;
+
                     if (forGridConfigPreview) {
-                        return baseUrl + '&width=88&height=20&frame=true" />';
-                    } else {
-                        return baseUrl + '&width=88&height=88&frame=true" style="width:88px; height:88px;" />';
+                        var params = {
+                            id: value.id,
+                            width: 88,
+                            height: 20,
+                            frame: true
+                        };
+                        var path = Routing.generate('pimcore_admin_asset_getimagethumbnail', params);
+                        return '<img src="'+path+'" />';
                     }
 
+                    var params = {
+                        id: value.id,
+                        width: 88,
+                        height: 88,
+                        frame: true
+                    };
+
+                    var path = Routing.generate('pimcore_admin_asset_getimagethumbnail', params);
+
+                    return '<img src="'+path+'" style="width:88px; height:88px;"  />';
                 }
             }.bind(this, field.key)
         };
@@ -259,8 +274,12 @@ pimcore.object.tags.image = Class.create(pimcore.object.tags.abstract, {
             var width = body.getWidth() - 10;
             var height = this.fieldConfig.height - 60; // strage body.getHeight() returns 2? so we use the config instead
 
-            var path = "/admin/asset/get-image-thumbnail?id=" + this.data.id + "&width=" + width + "&height=" + height
-                + "&contain=true";
+            var path = Routing.generate('pimcore_admin_asset_getimagethumbnail', {
+                id: this.data.id,
+                width: width,
+                height: height,
+                contain: true
+            });
 
             body.removeCls("pimcore_droptarget_image");
             var innerBody = body.down('.x-autocontainer-innerCt');

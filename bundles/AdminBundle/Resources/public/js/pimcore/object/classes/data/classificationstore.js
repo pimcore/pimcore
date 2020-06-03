@@ -87,7 +87,7 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
         var  store = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
-                url: "/admin/classificationstore/list-stores"
+                url: Routing.generate('pimcore_admin_dataobject_classificationstore_liststores')
             },
             autoDestroy: false,
             autoLoad: true,

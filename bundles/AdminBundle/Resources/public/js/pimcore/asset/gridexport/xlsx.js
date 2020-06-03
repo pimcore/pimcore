@@ -16,7 +16,10 @@ pimcore.asset.gridexport.xlsx = Class.create(pimcore.element.gridexport.abstract
     name: "xlsx",
     text: t("export_xlsx"),
     warningText: t('asset_export_warning'),
-    downloadUrl: "/admin/asset-helper/download-xlsx-file",
+
+    getDownloadUrl: function(fileHandle) {
+         return Routing.generate('pimcore_admin_asset_assethelper_downloadxlsxfile', {fileHandle: fileHandle});
+    }
 });
 
 pimcore.globalmanager.get("pimcore.asset.gridexport").push(new pimcore.asset.gridexport.xlsx());

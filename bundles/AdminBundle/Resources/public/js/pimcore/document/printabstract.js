@@ -13,14 +13,12 @@
 
 pimcore.registerNS("pimcore.document.printabstract");
 pimcore.document.printabstract = Class.create(pimcore.document.page_snippet, {
-
-    urlprefix: "/admin/",
     type: "printabstract",
 
     initialize: function(id, options) {
         this.id = intval(id);
         this.options = options;
-        
+
         pimcore.plugin.broker.fireEvent("preOpenDocument", this, this.getType());
 
         this.addLoadingPanel();
@@ -62,7 +60,7 @@ pimcore.document.printabstract = Class.create(pimcore.document.page_snippet, {
         parameters.id = this.id;
 
 
-        // save all data allowed		
+        // save all data allowed
         if (this.isAllowed("properties")) {
             // properties
             try {

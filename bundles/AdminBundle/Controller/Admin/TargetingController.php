@@ -35,7 +35,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     /* RULES */
 
     /**
-     * @Route("/rule/list", methods={"GET"})
+     * @Route("/rule/list", name="pimcore_admin_targeting_rulelist", methods={"GET"})
      *
      * @param Request $request
      *
@@ -63,7 +63,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/rule/add", methods={"POST"})
+     * @Route("/rule/add", name="pimcore_admin_targeting_ruleadd", methods={"POST"})
      *
      * @param Request $request
      *
@@ -79,7 +79,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/rule/delete", methods={"DELETE"})
+     * @Route("/rule/delete", name="pimcore_admin_targeting_ruledelete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -99,7 +99,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/rule/get", methods={"GET"})
+     * @Route("/rule/get", name="pimcore_admin_targeting_ruleget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -113,7 +113,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/rule/save", methods={"PUT"})
+     * @Route("/rule/save", name="pimcore_admin_targeting_rulesave", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -134,7 +134,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/rule/order", methods={"POST"})
+     * @Route("/rule/order", name="pimcore_admin_targeting_ruleorder", methods={"POST"})
      *
      * @param Request $request
      *
@@ -181,7 +181,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     /* TARGET GROUPS */
 
     /**
-     * @Route("/target-group/list", methods={"GET"})
+     * @Route("/target-group/list", name="pimcore_admin_targeting_targetgrouplist", methods={"GET"})
      *
      * @param Request $request
      *
@@ -217,7 +217,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/target-group/add", methods={"POST"})
+     * @Route("/target-group/add", name="pimcore_admin_targeting_targetgroupadd", methods={"POST"})
      *
      * @param Request $request
      * @param CoreHandlerInterface $cache
@@ -240,7 +240,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/target-group/delete", methods={"DELETE"})
+     * @Route("/target-group/delete", name="pimcore_admin_targeting_targetgroupdelete", methods={"DELETE"})
      *
      * @param Request $request
      * @param CoreHandlerInterface $cache
@@ -267,7 +267,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/target-group/get", methods={"GET"})
+     * @Route("/target-group/get", name="pimcore_admin_targeting_targetgroupget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -282,7 +282,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @Route("/target-group/save", methods={"PUT"})
+     * @Route("/target-group/save", name="pimcore_admin_targeting_targetgroupsave", methods={"PUT"})
      *
      * @param Request $request
      * @param CoreHandlerInterface $cache

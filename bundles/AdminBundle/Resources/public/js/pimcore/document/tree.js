@@ -26,10 +26,10 @@ Ext.define('documentreemodel', {
 pimcore.registerNS("pimcore.document.tree");
 pimcore.document.tree = Class.create({
 
-    treeDataUrl: "/admin/document/tree-get-childs-by-id",
+    treeDataUrl: null,
 
     initialize: function(config, perspectiveCfg) {
-
+        this.treeDataUrl = Routing.generate('pimcore_admin_document_document_treegetchildsbyid');
         this.perspectiveCfg = perspectiveCfg;
         if (!perspectiveCfg) {
             this.perspectiveCfg = {
@@ -59,7 +59,7 @@ pimcore.document.tree = Class.create({
 
         // get root node config
         Ext.Ajax.request({
-            url: "/admin/document/tree-get-root",
+            url: Routing.generate('pimcore_admin_document_document_treegetroot'),
             params: {
                 id: this.config.rootId,
                 view: this.config.customViewId,
@@ -869,7 +869,7 @@ pimcore.document.tree = Class.create({
 
     pasteLanguageDocument: function (tree, record, type, enableInheritance) {
         Ext.Ajax.request({
-            url: "/admin/document/translation-check-language",
+            url: Routing.generate('pimcore_admin_document_document_translationchecklanguage'),
             params: {
                 path: pimcore.cachedDocument.data.path
             },
@@ -1086,7 +1086,7 @@ pimcore.document.tree = Class.create({
         }
 
         Ext.Ajax.request({
-            url: "/admin/document/copy-info",
+            url: Routing.generate('pimcore_admin_document_document_copyinfo'),
             params: {
                 targetId: record.data.id,
                 sourceId: pimcore.cachedDocumentId,
@@ -1173,7 +1173,7 @@ pimcore.document.tree = Class.create({
 
     removeSite: function (tree, record) {
         Ext.Ajax.request({
-            url: "/admin/document/remove-site",
+            url: Routing.generate('pimcore_admin_document_document_removesite'),
             method: 'DELETE',
             params: {
                 id: record.data.id
@@ -1285,7 +1285,7 @@ pimcore.document.tree = Class.create({
                     data["id"] = record.id;
 
                     Ext.Ajax.request({
-                        url: "/admin/document/update-site",
+                        url: Routing.generate('pimcore_admin_document_document_updatesite'),
                         method: 'PUT',
                         params: data,
                         success: function (response) {
@@ -1482,7 +1482,7 @@ pimcore.document.tree = Class.create({
             params["key"] = pimcore.helpers.getValidFilename(params["key"], "document");
             params["index"] = record.childNodes.length;
             params["parentId"] = record.id;
-            params["url"] = "/admin/document/add";
+            params["url"] = Routing.generate('pimcore_admin_document_document_add');
             pimcore.elementservice.addDocument(params);
         }
     },
@@ -1521,7 +1521,7 @@ pimcore.document.tree = Class.create({
                     }
 
                     Ext.Ajax.request({
-                        url: "/admin/document/convert",
+                        url: Routing.generate('pimcore_admin_document_document_convert'),
                         method: "PUT",
                         params: {
                             id: record.data.id,

@@ -34,7 +34,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ElementController extends AdminController
 {
     /**
-     * @Route("/element/lock-element", methods={"PUT"})
+     * @Route("/element/lock-element", name="pimcore_admin_element_lockelement", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -48,7 +48,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/unlock-element", methods={"PUT"})
+     * @Route("/element/unlock-element", name="pimcore_admin_element_unlockelement", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -64,7 +64,7 @@ class ElementController extends AdminController
     /**
      * Returns the element data denoted by the given type and ID or path.
      *
-     * @Route("/element/get-subtype", methods={"GET"})
+     * @Route("/element/get-subtype", name="pimcore_admin_element_getsubtype", methods={"GET"})
      *
      * @param Request $request
      *
@@ -132,7 +132,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/note-types", methods={"GET"})
+     * @Route("/element/note-types", name="pimcore_admin_element_notetypes", methods={"GET"})
      *
      * @param Request $request
      *
@@ -154,7 +154,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/note-list", methods={"POST"})
+     * @Route("/element/note-list", name="pimcore_admin_element_notelist", methods={"POST"})
      *
      * @param Request $request
      *
@@ -273,7 +273,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/note-add", methods={"POST"})
+     * @Route("/element/note-add", name="pimcore_admin_element_noteadd", methods={"POST"})
      *
      * @param Request $request
      *
@@ -298,7 +298,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/find-usages", methods={"GET"})
+     * @Route("/element/find-usages", name="pimcore_admin_element_findusages", methods={"GET"})
      *
      * @param Request $request
      *
@@ -367,7 +367,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/get-replace-assignments-batch-jobs", methods={"GET"})
+     * @Route("/element/get-replace-assignments-batch-jobs", name="pimcore_admin_element_getreplaceassignmentsbatchjobs", methods={"GET"})
      *
      * @param Request $request
      *
@@ -394,7 +394,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/replace-assignments", methods={"POST"})
+     * @Route("/element/replace-assignments", name="pimcore_admin_element_replaceassignments", methods={"POST"})
      *
      * @param Request $request
      *
@@ -442,7 +442,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/unlock-propagate", methods={"PUT"})
+     * @Route("/element/unlock-propagate", name="pimcore_admin_element_unlockpropagate", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -464,7 +464,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/type-path", methods={"GET"})
+     * @Route("/element/type-path", name="pimcore_admin_element_typepath", methods={"GET"})
      *
      * @param Request $request
      *
@@ -496,7 +496,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/version-update", methods={"PUT"})
+     * @Route("/element/version-update", name="pimcore_admin_element_versionupdate", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -515,7 +515,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/get-nice-path", methods={"POST"})
+     * @Route("/element/get-nice-path", name="pimcore_admin_element_getnicepath", methods={"POST"})
      *
      * @param Request $request
      *
@@ -572,7 +572,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/get-versions", methods={"GET"})
+     * @Route("/element/get-versions", name="pimcore_admin_element_getversions", methods={"GET"})
      *
      * @param Request $request
      *
@@ -621,7 +621,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/delete-version", methods={"DELETE"})
+     * @Route("/element/delete-version", name="pimcore_admin_element_deleteversion", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -636,7 +636,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/delete-all-versions", methods={"DELETE"})
+     * @Route("/element/delete-all-versions", name="pimcore_admin_element_deleteallversion", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -658,7 +658,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/get-requires-dependencies", methods={"GET"})
+     * @Route("/element/get-requires-dependencies", name="pimcore_admin_element_getrequiresdependencies", methods={"GET"})
      *
      * @param Request $request
      *
@@ -691,7 +691,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/get-required-by-dependencies", methods={"GET"})
+     * @Route("/element/get-required-by-dependencies", name="pimcore_admin_element_getrequiredbydependencies", methods={"GET"})
      *
      * @param Request $request
      *
@@ -724,7 +724,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/get-predefined-properties", methods={"GET"})
+     * @Route("/element/get-predefined-properties", name="pimcore_admin_element_getpredefinedproperties", methods={"GET"})
      *
      * @param Request $request
      *
@@ -760,7 +760,7 @@ class ElementController extends AdminController
     }
 
     /**
-     * @Route("/element/analyze-permissions", methods={"POST"})
+     * @Route("/element/analyze-permissions", name="pimcore_admin_element_analyzepermissions", methods={"POST"})
      *
      * @param Request $request
      *

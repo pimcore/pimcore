@@ -307,7 +307,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
 
             // get class definition
             Ext.Ajax.request({
-                url: "/admin/object-helper/grid-get-column-config",
+                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
                 params: {
                     id: this.classId,
                     objectId: this.object.id,
@@ -335,7 +335,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         }
 
         this.itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
-        var gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, "/admin/search/search/find", null, true);
+        var gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, Routing.generate('pimcore_admin_searchadmin_search_find'), null, true);
         gridHelper.limit = this.itemsPerPage;
         this.store = gridHelper.getStore();
         this.store.setPageSize(this.itemsPerPage);
@@ -364,7 +364,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             pageSize: this.itemsPerPage,
             proxy : {
                 type: 'ajax',
-                url: "/admin/search/search/find",
+                url: Routing.generate('pimcore_admin_searchadmin_search_find'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
@@ -512,7 +512,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             }.bind(this),
             function() {
                 Ext.Ajax.request({
-                    url: "/admin/object-helper/grid-get-column-config",
+                    url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
                     params: {
                         id: this.classId,
                         objectId: this.object.id,
@@ -614,7 +614,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         } else {
             // get class definition
             Ext.Ajax.request({
-                url: "/admin/object-helper/grid-get-column-config",
+                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
                 params: {
                     id: this.classId,
                     objectId: this.object.id,
@@ -641,7 +641,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     deleteGridConfigConfirmed: function (btn) {
         if (btn == 'ok') {
             Ext.Ajax.request({
-                url: "/admin/object-helper/grid-delete-column-config",
+                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_griddeletecolumnconfig'),
                 params: {
                     id: this.classId,
                     objectId:

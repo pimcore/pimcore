@@ -553,7 +553,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                 if ($i === $maxTries) {
                     throw $e;
                 }
-                sleep($sleep);
+                usleep($sleep * 1000000);
             }
         }
 

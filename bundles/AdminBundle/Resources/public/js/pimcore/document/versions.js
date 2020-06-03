@@ -60,7 +60,7 @@ pimcore.document.versions = Class.create({
                     }],
                 proxy: {
                     type: 'ajax',
-                    url: "/admin/element/get-versions",
+                    url: Routing.generate('pimcore_admin_element_getversions'),
                     extraParams: {
                         id: this.document.id,
                         elementType: "document"
@@ -207,7 +207,7 @@ pimcore.document.versions = Class.create({
     },
 
     compareVersions: function (id1, id2) {
-        var url = "/admin/document/diff-versions/from/" + id1 + "/to/" + id2;
+        var url = Routing.generate('pimcore_admin_document_document_diffversions', {from: id1, to: id2});;
         Ext.get(this.frameId).dom.src = url;
     },
 
@@ -262,7 +262,7 @@ pimcore.document.versions = Class.create({
         var versionId = data.id;
 
         Ext.Ajax.request({
-            url: "/admin/element/delete-version",
+            url: Routing.generate('pimcore_admin_element_deleteversion'),
             method: 'DELETE',
             params: {id: versionId}
         });
@@ -280,7 +280,7 @@ pimcore.document.versions = Class.create({
                     var modificationDate = this.document.data.modificationDate;
 
                     Ext.Ajax.request({
-                        url: "/admin/element/delete-all-versions",
+                        url: Routing.generate('pimcore_admin_element_deleteallversion'),
                         method: 'DELETE',
                         params: {id: elememntId, date: modificationDate}
                     });
@@ -308,7 +308,7 @@ pimcore.document.versions = Class.create({
         var versionId = data.id;
 
         Ext.Ajax.request({
-            url: "/admin/document/version-to-session",
+            url: Routing.generate('pimcore_admin_document_document_versiontosession'),
             method: 'POST',
             params: {id: versionId},
             success: this.reloadEdit.bind(this)
@@ -320,7 +320,7 @@ pimcore.document.versions = Class.create({
         var versionId = data.id;
 
         Ext.Ajax.request({
-            url: "/admin/document/publish-version",
+            url: Routing.generate('pimcore_admin_document_document_publishversion'),
             method: "POST",
             params: {id: versionId},
             success: function(response) {
@@ -341,7 +341,7 @@ pimcore.document.versions = Class.create({
         if (operation == "edit") {
             Ext.Ajax.request({
                 method: "post",
-                url: "/admin/element/version-update",
+                url: Routing.generate('pimcore_admin_element_versionupdate'),
                 method: 'PUT',
                 params: {
                     data: Ext.encode(record.data)

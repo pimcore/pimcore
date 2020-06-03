@@ -39,7 +39,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ClassController extends AdminController implements EventedControllerInterface
 {
     /**
-     * @Route("/get-document-types", methods={"GET"})
+     * @Route("/get-document-types", name="pimcore_admin_dataobject_class_getdocumenttypes", methods={"GET"})
      *
      * @param Request $request
      *
@@ -59,7 +59,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/get-asset-types", methods={"GET"})
+     * @Route("/get-asset-types", name="pimcore_admin_dataobject_class_getassettypes", methods={"GET"})
      *
      * @param Request $request
      *
@@ -79,7 +79,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/get-tree", methods={"GET", "POST"})
+     * @Route("/get-tree", name="pimcore_admin_dataobject_class_gettree", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -201,7 +201,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/get", methods={"GET"})
+     * @Route("/get", name="pimcore_admin_dataobject_class_get", methods={"GET"})
      *
      * @param Request $request
      *
@@ -216,7 +216,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/get-custom-layout", methods={"GET"})
+     * @Route("/get-custom-layout", name="pimcore_admin_dataobject_class_getcustomlayout", methods={"GET"})
      *
      * @param Request $request
      *
@@ -230,7 +230,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/add", methods={"POST"})
+     * @Route("/add", name="pimcore_admin_dataobject_class_add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -260,7 +260,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/add-custom-layout", methods={"POST"})
+     * @Route("/add-custom-layout", name="pimcore_admin_dataobject_class_addcustomlayout", methods={"POST"})
      *
      * @param Request $request
      *
@@ -290,7 +290,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/delete", methods={"DELETE"})
+     * @Route("/delete", name="pimcore_admin_dataobject_class_delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -305,7 +305,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/delete-custom-layout", methods={"DELETE"})
+     * @Route("/delete-custom-layout", name="pimcore_admin_dataobject_class_deletecustomlayout", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -322,7 +322,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/save-custom-layout", methods={"PUT"})
+     * @Route("/save-custom-layout", name="pimcore_admin_dataobject_class_savecustomlayout", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -362,7 +362,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/save", methods={"PUT"})
+     * @Route("/save", name="pimcore_admin_dataobject_class_save", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -452,7 +452,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/import-class", methods={"POST", "PUT"})
+     * @Route("/import-class", name="pimcore_admin_dataobject_class_importclass", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -476,7 +476,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/import-custom-layout-definition", methods={"POST", "PUT"})
+     * @Route("/import-custom-layout-definition", name="pimcore_admin_dataobject_class_importcustomlayoutdefinition", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -514,7 +514,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/get-custom-layout-definitions", methods={"GET"})
+     * @Route("/get-custom-layout-definitions", name="pimcore_admin_dataobject_class_getcustomlayoutdefinitions", methods={"GET"})
      *
      * @param Request $request
      *
@@ -541,7 +541,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/get-all-layouts", methods={"GET"})
+     * @Route("/get-all-layouts", name="pimcore_admin_dataobject_class_getalllayouts", methods={"GET"})
      *
      * @param Request $request
      *
@@ -589,7 +589,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/export-class", methods={"GET"})
+     * @Route("/export-class", name="pimcore_admin_dataobject_class_exportclass", methods={"GET"})
      *
      * @param Request $request
      *
@@ -616,7 +616,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/export-custom-layout-definition", methods={"GET"})
+     * @Route("/export-custom-layout-definition", name="pimcore_admin_dataobject_class_exportcustomlayoutdefinition", methods={"GET"})
      *
      * @param Request $request
      *
@@ -659,7 +659,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
 
     /**
-     * @Route("/fieldcollection-get", methods={"GET"})
+     * @Route("/fieldcollection-get", name="pimcore_admin_dataobject_class_fieldcollectionget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -673,7 +673,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/fieldcollection-update", methods={"PUT", "POST"})
+     * @Route("/fieldcollection-update", name="pimcore_admin_dataobject_class_fieldcollectionupdate", methods={"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -730,7 +730,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/import-fieldcollection", methods={"POST"})
+     * @Route("/import-fieldcollection", name="pimcore_admin_dataobject_class_importfieldcollection", methods={"POST"})
      *
      * @param Request $request
      *
@@ -756,7 +756,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/export-fieldcollection", methods={"GET"})
+     * @Route("/export-fieldcollection", name="pimcore_admin_dataobject_class_exportfieldcollection", methods={"GET"})
      *
      * @param Request $request
      *
@@ -781,7 +781,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/fieldcollection-delete", methods={"DELETE"})
+     * @Route("/fieldcollection-delete", name="pimcore_admin_dataobject_class_fieldcollectiondelete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -796,7 +796,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/fieldcollection-tree", methods={"GET", "POST"})
+     * @Route("/fieldcollection-tree", name="pimcore_admin_dataobject_class_fieldcollectiontree", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -901,7 +901,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/fieldcollection-list", methods={"GET"})
+     * @Route("/fieldcollection-list", name="pimcore_admin_dataobject_class_fieldcollectionlist", methods={"GET"})
      *
      * @param Request $request
      *
@@ -955,7 +955,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/get-class-definition-for-column-config", methods={"GET"})
+     * @Route("/get-class-definition-for-column-config", name="pimcore_admin_dataobject_class_getclassdefinitionforcolumnconfig", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1022,7 +1022,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
 
     /**
-     * @Route("/objectbrick-get", methods={"GET"})
+     * @Route("/objectbrick-get", name="pimcore_admin_dataobject_class_objectbrickget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1036,7 +1036,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/objectbrick-update", methods={"PUT", "POST"})
+     * @Route("/objectbrick-update", name="pimcore_admin_dataobject_class_objectbrickupdate", methods={"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -1102,7 +1102,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/import-objectbrick", methods={"POST"})
+     * @Route("/import-objectbrick", name="pimcore_admin_dataobject_class_importobjectbrick", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1127,7 +1127,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/export-objectbrick", methods={"GET"})
+     * @Route("/export-objectbrick", name="pimcore_admin_dataobject_class_exportobjectbrick", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1152,7 +1152,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/objectbrick-delete", methods={"DELETE"})
+     * @Route("/objectbrick-delete", name="pimcore_admin_dataobject_class_objectbrickdelete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -1167,7 +1167,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/objectbrick-tree", methods={"GET", "POST"})
+     * @Route("/objectbrick-tree", name="pimcore_admin_dataobject_class_objectbricktree", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -1293,7 +1293,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/objectbrick-list", methods={"GET"})
+     * @Route("/objectbrick-list", name="pimcore_admin_dataobject_class_objectbricklist", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1363,7 +1363,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
 
     /**
-     * @Route("/bulk-import", methods={"POST"})
+     * @Route("/bulk-import", name="pimcore_admin_dataobject_class_bulkimport", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1428,7 +1428,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
 
     /**
-     * @Route("/bulk-commit", methods={"POST"})
+     * @Route("/bulk-commit", name="pimcore_admin_dataobject_class_bulkcommit", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1534,7 +1534,7 @@ class ClassController extends AdminController implements EventedControllerInterf
      */
 
     /**
-     * @Route("/bulk-export-prepare", methods={"POST"})
+     * @Route("/bulk-export-prepare", name="pimcore_admin_dataobject_class_bulkexportprepare", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1552,7 +1552,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/bulk-export", methods={"GET"})
+     * @Route("/bulk-export", name="pimcore_admin_dataobject_class_bulkexport", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1622,7 +1622,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/do-bulk-export", methods={"GET"})
+     * @Route("/do-bulk-export", name="pimcore_admin_dataobject_class_dobulkexport", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1700,7 +1700,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/get-fieldcollection-usages", methods={"GET"})
+     * @Route("/get-fieldcollection-usages", name="pimcore_admin_dataobject_class_getfieldcollectionusages", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1732,7 +1732,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/get-bricks-usages", methods={"GET"})
+     * @Route("/get-bricks-usages", name="pimcore_admin_dataobject_class_getbrickusages", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1763,7 +1763,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/get-icons", methods={"GET"})
+     * @Route("/get-icons", name="pimcore_admin_dataobject_class_geticons", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1803,7 +1803,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/suggest-class-identifier")
+     * @Route("/suggest-class-identifier", name="pimcore_admin_dataobject_class_suggestclassidentifier")
      *
      * @return Response
      */
@@ -1823,7 +1823,7 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/suggest-custom-layout-identifier")
+     * @Route("/suggest-custom-layout-identifier", name="pimcore_admin_dataobject_class_suggestcustomlayoutidentifier")
      *
      * @param Request $request
      *
