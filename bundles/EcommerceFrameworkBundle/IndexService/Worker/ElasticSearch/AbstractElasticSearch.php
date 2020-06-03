@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchCon
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
@@ -31,10 +32,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * @property ElasticSearch $tenantConfig
  */
-abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker implements Worker\BatchProcessingWorkerInterface
+abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker implements Worker\BatchProcessingWorkerInterface
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store_elastic';
-    const MOCKUP_CACHE_PREFIX = 'ecommerce_mockup_elastic';
 
     const RELATION_FIELD = 'parentchildrelation';
 
@@ -426,8 +426,9 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
             $this->bulkIndexData[] = $bulkIndexData;
             $this->indexStoreMetaData[$objectId] = $routingId;
 
-            //save new indexed element to mockup cache
-            $this->saveToMockupCache($objectId, $data);
+
+            //update crc sums in store table to mark element as indexed
+            $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE o_id = ? and tenant = ?', [$objectId, $this->name]);
         }
     }
 
@@ -503,11 +504,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
     protected function getStoreTableName()
     {
         return self::STORE_TABLE_NAME;
-    }
-
-    protected function getMockupCachePrefix()
-    {
-        return self::MOCKUP_CACHE_PREFIX;
     }
 
     /**
@@ -607,7 +603,6 @@ abstract class AbstractElasticSearch extends Worker\AbstractMockupCacheWorker im
                 }
             }
             $this->deleteFromStoreTable($objectId);
-            $this->deleteFromMockupCache($objectId);
         }
     }
 

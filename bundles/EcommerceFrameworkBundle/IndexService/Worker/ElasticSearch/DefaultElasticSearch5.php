@@ -206,12 +206,10 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                 $esClient->delete($params);
 
                 $this->deleteFromStoreTable($objectId);
-                $this->deleteFromMockupCache($objectId);
             } catch (\Exception $e) {
                 $check = json_decode($e->getMessage(), true);
                 if (!$check['found']) { //not in es index -> we can delete it from store table
                     $this->deleteFromStoreTable($objectId);
-                    $this->deleteFromMockupCache($objectId);
                 } else {
                     Logger::emergency('Could not delete item form ES index: ID: ' . $objectId.' Message: ' . $e->getMessage());
                 }
@@ -229,7 +227,6 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
             // So this might produce an invalid index.
 
             $this->deleteFromStoreTable($objectId);
-            $this->deleteFromMockupCache($objectId);
         }
     }
 
@@ -332,8 +329,9 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
             }
             $this->bulkIndexData[] = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
 
-            //save new indexed element to mockup cache
-            $this->saveToMockupCache($objectId, $data);
+
+            //update crc sums in store table to mark element as indexed
+            $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE o_id = ? and tenant = ?', [$objectId, $this->name]);
         }
     }
 
