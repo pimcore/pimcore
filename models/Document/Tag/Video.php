@@ -374,7 +374,7 @@ class Video extends Model\Document\Tag
                 $image = $this->getPosterThumbnailImage($asset);
 
                 if ($inAdmin && isset($options['editmodeImagePreview']) && $options['editmodeImagePreview']) {
-                    $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">';
+                    $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video '.$options["class"].'">';
                     $code .= '<img width="' . $this->getWidth() . '" src="' . $image . '" />';
                     $code .= '</div>';
 
@@ -604,7 +604,7 @@ class Video extends Model\Document\Tag
             }
         }
 
-        $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
+        $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video '.$options["class"].'">
             <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $youtubeId . '?wmode=transparent' . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
@@ -679,7 +679,7 @@ class Video extends Model\Document\Tag
                 }
             }
 
-            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video '.$options["class"].'">
                 <iframe src="https://player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0'. $additional_params .'" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
             </div>';
 
@@ -756,7 +756,7 @@ class Video extends Model\Document\Tag
                 }
             }
 
-            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video '.$options["class"].'">
                 <iframe src="https://www.dailymotion.com/embed/video/' . $dailymotionId . '?' . $additional_params .'" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
             </div>';
 
