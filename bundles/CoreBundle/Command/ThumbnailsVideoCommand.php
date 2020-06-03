@@ -105,7 +105,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
 
         foreach ($thumbnails as $thumbnail) {
             if ((empty($allowedThumbs) && !$input->getOption('system')) || in_array($thumbnail, $allowedThumbs)) {
-                if ($output->isVeryVerbose()) {
+                if ($output->isVerbose()) {
                     $this->output->writeln('generating thumbnail for video: ' . $video->getRealFullPath() . ' | ' . $video->getId() . ' | Thumbnail: ' . $thumbnail . ' : ' . formatBytes(memory_get_usage()));
                 }
                 $video->getThumbnail($thumbnail);
