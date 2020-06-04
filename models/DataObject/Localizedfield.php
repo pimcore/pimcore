@@ -484,7 +484,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         // check for fallback value
         if ($fieldDefinition->isEmpty($data) && !$ignoreFallbackLanguage && self::doGetFallbackValues()) {
             foreach (Tool::getFallbackLanguagesFor($language) as $l) {
-                if ($this->languageExists($l)) {
+                // fallback-language may not exist yet for lazy-loaded field (relation)
+                if ($this->languageExists($l) || ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading())) {
                     if ($data = $this->getLocalizedValue($name, $l)) {
                         break;
                     }

@@ -33,7 +33,37 @@ class PageController extends DocumentControllerBase
     use ElementEditLockHelperTrait;
 
     /**
-     * @Route("/get-data-by-id", methods={"GET"})
+     * @Route("/save-to-session", name="pimcore_admin_document_page_savetosession", methods={"POST"})
+     *
+     * {@inheritDoc}
+     */
+    public function saveToSessionAction(Request $request)
+    {
+        return parent::saveToSessionAction($request);
+    }
+
+    /**
+     * @Route("/remove-from-session", name="pimcore_admin_document_page_removefromsession", methods={"DELETE"})
+     *
+     * {@inheritDoc}
+     */
+    public function removeFromSessionAction(Request $request)
+    {
+        return parent::removeFromSessionAction($request);
+    }
+
+    /**
+     * @Route("/change-master-document", name="pimcore_admin_document_page_changemasterdocument", methods={"PUT"})
+     *
+     * {@inheritDoc}
+     */
+    public function changeMasterDocumentAction(Request $request)
+    {
+        return parent::changeMasterDocumentAction($request);
+    }
+
+    /**
+     * @Route("/get-data-by-id", name="pimcore_admin_document_page_getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -89,7 +119,7 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/save", methods={"PUT", "POST"})
+     * @Route("/save", name="pimcore_admin_document_page_save", methods={"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -173,7 +203,7 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/get-list", methods={"GET"})
+     * @Route("/get-list", name="pimcore_admin_document_page_getlist", methods={"GET"})
      *
      * @param Request $request
      *
@@ -192,7 +222,7 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/generate-screenshot", methods={"POST"})
+     * @Route("/generate-screenshot", name="pimcore_admin_document_page_generatescreenshot", methods={"POST"})
      *
      * @param Request $request
      *
@@ -230,7 +260,7 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/check-pretty-url", methods={"POST"})
+     * @Route("/check-pretty-url", name="pimcore_admin_document_page_checkprettyurl", methods={"POST"})
      *
      * @param Request $request
      *
@@ -286,7 +316,7 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/clear-editable-data", methods={"PUT"})
+     * @Route("/clear-editable-data", name="pimcore_admin_document_page_cleareditabledata", methods={"PUT"})
      *
      * @param Request $request
      *

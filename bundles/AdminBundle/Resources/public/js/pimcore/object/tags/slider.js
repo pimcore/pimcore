@@ -138,7 +138,7 @@ pimcore.object.tags.slider = Class.create(pimcore.object.tags.abstract, {
 
     updateStyle: function(newStyle) {
 
-        if(this.context.cellEditing || !this.getObject() || !this.getObject().data.general.allowInheritance) {
+        if ((this.context && this.context.cellEditing) || !this.getObject() || !this.getObject().data.general.allowInheritance) {
             return;
         }
 

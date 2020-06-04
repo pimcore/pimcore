@@ -69,8 +69,7 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
             autoLoad: true,
             proxy: {
                 type: 'ajax',
-                url: '/admin/settings/get-available-sites',
-                extraParams: {excludeMainSite: 1}
+                url: Routing.generate('pimcore_admin_settings_getavailablesites', {excludeMainSite: 1}),
             },
             fields: ['id', 'domain']
         });
@@ -117,15 +116,7 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
                 store: sitesStore,
                 width: 600,
                 disabled: this.isInCustomLayoutEditor()
-            }),
-            {
-                xtype: 'textfield',
-                width: 600,
-                fieldLabel: t("default_value_generator"),
-                labelWidth: 140,
-                name: 'defaultValueGenerator',
-                value: datax.defaultValueGenerator
-            },
+            })
         ];
 
         return specificItems;

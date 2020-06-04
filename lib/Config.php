@@ -523,14 +523,11 @@ class Config implements \ArrayAccess
     {
         $systemConfig = null;
 
-        //try {
         if (\Pimcore\Cache\Runtime::isRegistered('pimcore_config_system')) {
             $systemConfig = \Pimcore\Cache\Runtime::get('pimcore_config_system');
-        } else {
-            if ($config = self::getSystemConfiguration()) {
-                $systemConfig = self::mapLegacyConfiguration($config);
-                self::setSystemConfig($systemConfig);
-            }
+        } elseif ($config = self::getSystemConfiguration()) {
+            $systemConfig = self::mapLegacyConfiguration($config);
+            self::setSystemConfig($systemConfig);
         }
 
         return $systemConfig;

@@ -100,7 +100,7 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
         var classesStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
-                url: '/admin/class/get-tree'
+                url: Routing.generate('pimcore_admin_dataobject_class_gettree')
             },
             autoDestroy: true,
             fields: ["text"]
@@ -119,7 +119,7 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
         var documentTypeStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
-                url: '/admin/class/get-document-types'
+                url: Routing.generate('pimcore_admin_dataobject_class_getdocumenttypes')
             },
             autoDestroy: true,
             fields: ["text"]
@@ -135,7 +135,7 @@ pimcore.object.classes.data.manyToManyRelation = Class.create(pimcore.object.cla
         var assetTypeStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
-                url: '/admin/class/get-asset-types'
+                url: Routing.generate('pimcore_admin_dataobject_class_getassettypes')
             },
             autoDestroy: true,
             fields: ["text"]

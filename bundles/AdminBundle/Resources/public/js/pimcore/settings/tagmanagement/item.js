@@ -309,7 +309,7 @@ pimcore.settings.tagmanagement.item = Class.create({
         var formValues = this.panel.getForm().getFieldValues();
         formValues.name = this.data.name;
         Ext.Ajax.request({
-            url: "/admin/settings/tag-management-update",
+            url: Routing.generate('pimcore_admin_settings_tagmanagementupdate'),
             method: "PUT",
             params: {
                 configuration: Ext.encode(formValues),

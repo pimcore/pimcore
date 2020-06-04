@@ -117,7 +117,6 @@ class Processor
 
             if (!is_dir(dirname($fsPath))) {
                 File::mkdir(dirname($fsPath));
-                @chmod($thumbDir, File::getDefaultMode());
             }
 
             if (is_file($fsPath)) {

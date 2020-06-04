@@ -22,6 +22,7 @@ use Pimcore\Config;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
@@ -84,7 +85,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/upload-custom-logo", methods={"POST"})
+     * @Route("/upload-custom-logo", name="pimcore_admin_settings_uploadcustomlogo", methods={"POST"})
      *
      * @param Request $request
      *
@@ -113,7 +114,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/delete-custom-logo", methods={"DELETE"})
+     * @Route("/delete-custom-logo", name="pimcore_admin_settings_deletecustomlogo", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -134,7 +135,7 @@ class SettingsController extends AdminController
     /**
      * Used by the predefined metadata grid
      *
-     * @Route("/predefined-metadata", methods={"POST"})
+     * @Route("/predefined-metadata", name="pimcore_admin_settings_metadata", methods={"POST"})
      *
      * @param Request $request
      *
@@ -223,7 +224,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-predefined-metadata", methods={"GET"})
+     * @Route("/get-predefined-metadata", name="pimcore_admin_settings_getpredefinedmetadata", methods={"GET"})
      *
      * @param Request $request
      *
@@ -245,7 +246,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/properties", methods={"POST"})
+     * @Route("/properties", name="pimcore_admin_settings_properties", methods={"POST"})
      *
      * @param Request $request
      *
@@ -327,7 +328,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-system", methods={"GET"})
+     * @Route("/get-system", name="pimcore_admin_settings_getsystem", methods={"GET"})
      *
      * @param Request $request
      *
@@ -412,13 +413,14 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/set-system", methods={"PUT"})
+     * @Route("/set-system", name="pimcore_admin_settings_setsystem", methods={"PUT"})
      *
      * @param Request $request
+     * @param LocaleServiceInterface $localeService
      *
      * @return JsonResponse
      */
-    public function setSystemAction(Request $request)
+    public function setSystemAction(Request $request, LocaleServiceInterface $localeService)
     {
         $this->checkPermission('system_settings');
 
@@ -442,7 +444,7 @@ class SettingsController extends AdminController
                 $fallbackLanguages[$language] = str_replace(' ', '', $values['general.fallbackLanguages.' . $language]);
             }
 
-            if (\Pimcore::getContainer()->get('pimcore.locale')->isLocale($language)) {
+            if ($localeService->isLocale($language)) {
                 $filteredLanguages[] = $language;
             }
         }
@@ -635,7 +637,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-web2print", methods={"GET"})
+     * @Route("/get-web2print", name="pimcore_admin_settings_getweb2print", methods={"GET"})
      *
      * @param Request $request
      *
@@ -668,7 +670,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/set-web2print", methods={"PUT"})
+     * @Route("/set-web2print", name="pimcore_admin_settings_setweb2print", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -701,7 +703,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/clear-cache", methods={"DELETE"})
+     * @Route("/clear-cache", name="pimcore_admin_settings_clearcache", methods={"DELETE"})
      *
      * @param Request $request
      * @param KernelInterface $kernel
@@ -810,7 +812,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/clear-output-cache", methods={"DELETE"})
+     * @Route("/clear-output-cache", name="pimcore_admin_settings_clearoutputcache", methods={"DELETE"})
      *
      * @param EventDispatcherInterface $eventDispatcher
      *
@@ -832,7 +834,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/clear-temporary-files", methods={"DELETE"})
+     * @Route("/clear-temporary-files", name="pimcore_admin_settings_cleartemporaryfiles", methods={"DELETE"})
      *
      * @param EventDispatcherInterface $eventDispatcher
      *
@@ -858,7 +860,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/staticroutes", methods={"POST"})
+     * @Route("/staticroutes", name="pimcore_admin_settings_staticroutes", methods={"POST"})
      *
      * @param Request $request
      *
@@ -946,7 +948,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-available-admin-languages", methods={"GET"})
+     * @Route("/get-available-admin-languages", name="pimcore_admin_settings_getavailableadminlanguages", methods={"GET"})
      *
      * @param Request $request
      *
@@ -975,7 +977,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/glossary", methods={"POST"})
+     * @Route("/glossary", name="pimcore_admin_settings_glossary", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1086,7 +1088,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-available-sites", methods={"GET"})
+     * @Route("/get-available-sites", name="pimcore_admin_settings_getavailablesites", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1130,15 +1132,15 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-available-countries", methods={"GET"})
+     * @Route("/get-available-countries", name="pimcore_admin_settings_getavailablecountries", methods={"GET"})
      *
-     * @param Request $request
+     * @param LocaleServiceInterface $localeService
      *
      * @return JsonResponse
      */
-    public function getAvailableCountriesAction(Request $request)
+    public function getAvailableCountriesAction(LocaleServiceInterface $localeService)
     {
-        $countries = \Pimcore::getContainer()->get('pimcore.locale')->getDisplayRegions();
+        $countries = $localeService->getDisplayRegions();
         asort($countries);
 
         $options = [];
@@ -1158,7 +1160,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/thumbnail-adapter-check", methods={"GET"})
+     * @Route("/thumbnail-adapter-check", name="pimcore_admin_settings_thumbnailadaptercheck", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1179,7 +1181,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/thumbnail-tree", methods={"GET", "POST"})
+     * @Route("/thumbnail-tree", name="pimcore_admin_settings_thumbnailtree", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -1235,7 +1237,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/thumbnail-downloadable", methods={"GET"})
+     * @Route("/thumbnail-downloadable", name="pimcore_admin_settings_thumbnaildownloadable", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1263,7 +1265,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/thumbnail-add", methods={"POST"})
+     * @Route("/thumbnail-add", name="pimcore_admin_settings_thumbnailadd", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1289,7 +1291,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/thumbnail-delete", methods={"DELETE"})
+     * @Route("/thumbnail-delete", name="pimcore_admin_settings_thumbnaildelete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -1306,7 +1308,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/thumbnail-get", methods={"GET"})
+     * @Route("/thumbnail-get", name="pimcore_admin_settings_thumbnailget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1322,7 +1324,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/thumbnail-update", methods={"PUT"})
+     * @Route("/thumbnail-update", name="pimcore_admin_settings_thumbnailupdate", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1369,7 +1371,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/video-thumbnail-adapter-check", methods={"GET"})
+     * @Route("/video-thumbnail-adapter-check", name="pimcore_admin_settings_videothumbnailadaptercheck", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1389,7 +1391,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/video-thumbnail-tree", methods={"GET", "POST"})
+     * @Route("/video-thumbnail-tree", name="pimcore_admin_settings_videothumbnailtree", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -1445,7 +1447,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/video-thumbnail-add", methods={"POST"})
+     * @Route("/video-thumbnail-add", name="pimcore_admin_settings_videothumbnailadd", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1471,7 +1473,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/video-thumbnail-delete", methods={"DELETE"})
+     * @Route("/video-thumbnail-delete", name="pimcore_admin_settings_videothumbnaildelete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -1488,7 +1490,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/video-thumbnail-get", methods={"GET"})
+     * @Route("/video-thumbnail-get", name="pimcore_admin_settings_videothumbnailget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1504,7 +1506,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/video-thumbnail-update", methods={"PUT"})
+     * @Route("/video-thumbnail-update", name="pimcore_admin_settings_videothumbnailupdate", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1544,7 +1546,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/robots-txt", methods={"GET"})
+     * @Route("/robots-txt", name="pimcore_admin_settings_robotstxtget", methods={"GET"})
      *
      * @return JsonResponse
      */
@@ -1563,7 +1565,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/robots-txt", methods={"PUT"})
+     * @Route("/robots-txt", name="pimcore_admin_settings_robotstxtput", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1589,7 +1591,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/tag-management-tree", methods={"GET", "POST"})
+     * @Route("/tag-management-tree", name="pimcore_admin_settings_tagmanagementtree", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -1615,7 +1617,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/tag-management-add", methods={"POST"})
+     * @Route("/tag-management-add", name="pimcore_admin_settings_tagmanagementadd", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1641,7 +1643,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/tag-management-delete", methods={"DELETE"})
+     * @Route("/tag-management-delete", name="pimcore_admin_settings_tagmanagementdelete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -1658,7 +1660,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/tag-management-get", methods={"GET"})
+     * @Route("/tag-management-get", name="pimcore_admin_settings_tagmanagementget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1674,7 +1676,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/tag-management-update", methods={"PUT"})
+     * @Route("/tag-management-update", name="pimcore_admin_settings_tagmanagementupdate", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1742,7 +1744,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/website-settings", methods={"POST"})
+     * @Route("/website-settings", name="pimcore_admin_settings_websitesettings", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1899,7 +1901,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/get-available-algorithms", methods={"GET"})
+     * @Route("/get-available-algorithms", name="pimcore_admin_settings_getavailablealgorithms", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1949,7 +1951,7 @@ class SettingsController extends AdminController
     }
 
     /**
-     * @Route("/test-web2print", methods={"GET"})
+     * @Route("/test-web2print", name="pimcore_admin_settings_testweb2print", methods={"GET"})
      *
      * @param Request $request
      *

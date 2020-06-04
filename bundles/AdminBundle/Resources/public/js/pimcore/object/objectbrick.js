@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.object.objectbrick");
 pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
 
     getTabPanel: function () {
-  
+
         if (!this.panel) {
             this.panel = new Ext.Panel({
                 id: "pimcore_objectbricks",
@@ -49,7 +49,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
                 autoSync: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/class/objectbrick-tree',
+                    url: Routing.generate('pimcore_admin_dataobject_class_objectbricktree'),
                     reader: {
                         type: 'json'
 
@@ -116,7 +116,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
         }
 
         Ext.Ajax.request({
-            url: "/admin/class/objectbrick-get",
+            url: Routing.generate('pimcore_admin_dataobject_class_objectbrickget'),
             params: {
                 id: id
             },
@@ -129,7 +129,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
         var data = Ext.decode(response.responseText);
         var fieldPanel = new pimcore.object.objectbricks.field(data, this, this.openBrick.bind(this, data.key), "pimcore_objectbrick_editor_panel_");
         pimcore.layout.refresh();
-        
+
     },
 
 
@@ -146,7 +146,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
 
         if (button == "ok" && value.length > 2 && regresult == value && !in_arrayi(value, forbiddennames)) {
             Ext.Ajax.request({
-                url: "/admin/class/objectbrick-update",
+                url: Routing.generate('pimcore_admin_dataobject_class_objectbrickupdate'),
                 method: 'POST',
                 params: {
                     key: value,
@@ -179,7 +179,7 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
         Ext.Msg.confirm(t('delete'), t('delete_message'), function(btn){
             if (btn == 'yes'){
                 Ext.Ajax.request({
-                    url: "/admin/class/objectbrick-delete",
+                    url: Routing.generate('pimcore_admin_dataobject_class_objectbrickdelete'),
                     method: 'DELETE',
                     params: {
                         id: record.data.id

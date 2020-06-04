@@ -639,10 +639,12 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
             return $result;
         }
+
+        return null;
     }
 
     /**
-     * @param DataObject\Concrete $data
+     * @param DataObject\Data\ImageGallery|null $data
      *
      * @return bool
      */

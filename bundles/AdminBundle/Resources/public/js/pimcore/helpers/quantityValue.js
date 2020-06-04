@@ -30,7 +30,7 @@ pimcore.helpers.quantityValue.initUnitStore = function(callback, filters) {
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/quantity-value/unit-list',
+                    url: Routing.generate('pimcore_admin_dataobject_quantityvalue_unitlist'),
                     reader: {
                         type: 'json',
                         rootProperty: 'data'
@@ -80,7 +80,7 @@ pimcore.helpers.quantityValue.getClassDefinitionStore = function() {
             autoLoad: true,
             proxy: {
                 type: 'ajax',
-                url: '/admin/quantity-value/unit-list',
+                url: Routing.generate('pimcore_admin_dataobject_quantityvalue_unitlist'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'

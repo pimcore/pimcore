@@ -24,7 +24,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController
 {
     /**
-     * @Route("/get-data-providers", methods={"GET"})
+     * @Route("/get-data-providers", name="pimcore_admin_gdpr_admin_getdataproviders", methods={"GET"})
      */
     public function getDataProvidersAction(Manager $manager)
     {

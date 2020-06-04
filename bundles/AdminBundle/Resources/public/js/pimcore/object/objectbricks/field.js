@@ -23,8 +23,8 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         "objectbricks",
         "objectsMetadata"
     ],
-    uploadUrl: '/admin/class/import-objectbrick',
-    exportUrl: "/admin/class/export-objectbrick",
+    uploadRoute: 'pimcore_admin_dataobject_class_importobjectbrick',
+    exportRoute: "pimcore_admin_dataobject_class_exportobjectbrick",
     context: "objectbrick",
     baseStore: {},
     classStores: {},
@@ -191,7 +191,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         var fieldComboStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
-                url: '/admin/object-helper/grid-get-column-config',
+                url: Routing.generate('pimcore_admin_asset_assethelper_gridgetcolumnconfig'),
                 extraParams: {
                     types: 'objectbricks',
                     gridtype: "all",
@@ -323,7 +323,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
         if (this.getDataSuccess) {
             Ext.Ajax.request({
-                url: "/admin/class/objectbrick-update",
+                url: Routing.generate('pimcore_admin_dataobject_class_objectbrickupdate'),
                 method: "PUT",
                 params: {
                     configuration: m,
@@ -357,7 +357,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
     upload: function () {
         pimcore.helpers.uploadDialog(this.getUploadUrl(), "Filedata", function () {
             Ext.Ajax.request({
-                url: "/admin/class/objectbrick-get",
+                url: Routing.generate('pimcore_admin_dataobject_class_objectbrickget'),
                 params: {
                     id: this.getId()
                 },

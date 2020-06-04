@@ -55,11 +55,11 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
 
     getLayout: function ($super) {
         $super();
-        
+
         this.store = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
-                url: "/admin/class/fieldcollection-list",
+                url: Routing.generate('pimcore_admin_dataobject_class_fieldcollectionlist'),
                 reader: {
                     type: 'json',
                     rootProperty: 'fieldcollections',
@@ -73,12 +73,12 @@ pimcore.object.classes.data.fieldcollections = Class.create(pimcore.object.class
             }
         });
         this.store.load();
-        
+
         this.specificPanel.removeAll();
 
         return this.layout;
     },
-    
+
     initSelection: function () {
         this.specificPanel.add([
             new Ext.ux.form.MultiSelect({

@@ -98,7 +98,7 @@ pimcore.asset.document = Class.create(pimcore.asset.asset, {
             var date = new Date();
 
             var content = '<iframe src="'
-                + '/admin/asset/get-preview-document?id=' + this.id + '&_dc=' + date.getTime()
+                + Routing.generate('pimcore_admin_asset_getpreviewdocument', {id: this.id, '_dc': date.getTime()})
                 + '" frameborder="0" style="width: 100%;" id="' + frameId + '"></iframe>';
 
             this.editPanel = new Ext.Panel({

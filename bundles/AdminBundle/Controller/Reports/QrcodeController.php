@@ -30,7 +30,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class QrcodeController extends ReportsControllerBase implements EventedControllerInterface
 {
     /**
-     * @Route("/tree", methods={"GET", "POST"})
+     * @Route("/tree", name="pimcore_admin_reports_qrcode_tree", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -54,7 +54,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
     }
 
     /**
-     * @Route("/add", methods={"POST"})
+     * @Route("/add", name="pimcore_admin_reports_qrcode_add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -78,7 +78,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
     }
 
     /**
-     * @Route("/delete", methods={"DELETE"})
+     * @Route("/delete", name="pimcore_admin_reports_qrcode_delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -93,7 +93,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
     }
 
     /**
-     * @Route("/get", methods={"GET"})
+     * @Route("/get", name="pimcore_admin_reports_qrcode_get", methods={"GET"})
      *
      * @param Request $request
      *
@@ -107,7 +107,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
     }
 
     /**
-     * @Route("/update", methods={"PUT"})
+     * @Route("/update", name="pimcore_admin_reports_qrcode_update", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -131,7 +131,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
     }
 
     /**
-     * @Route("/code", methods={"GET"})
+     * @Route("/code", name="pimcore_admin_reports_qrcode_code", methods={"GET"})
      *
      * @param Request $request
      *

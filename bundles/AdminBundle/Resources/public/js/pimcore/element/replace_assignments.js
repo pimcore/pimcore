@@ -28,7 +28,7 @@ pimcore.element.replace_assignments = Class.create({
                 pageSize: pimcore.helpers.grid.getDefaultPageSize(),
                 proxy: {
                     type: 'ajax',
-                    url: "/admin/element/find-usages",
+                    url: Routing.generate('pimcore_admin_element_findusages'),
                     reader: {
                         type: 'json',
                         rootProperty: 'data',
@@ -303,7 +303,7 @@ pimcore.element.replace_assignments = Class.create({
 
         for (var i = 0; i < selectedRows.length; i++) {
             jobs.push({
-                url: "/admin/element/replace-assignments",
+                url: Routing.generate('pimcore_admin_element_replaceassignments'),
                 method: 'POST',
                 params: array_merge(params, {
                     id: selectedRows[i].get("id"),
@@ -322,7 +322,7 @@ pimcore.element.replace_assignments = Class.create({
         params["sourceId"] = params["id"];
 
         Ext.Ajax.request({
-            url: '/admin/element/get-replace-assignments-batch-jobs',
+            url: Routing.generate('pimcore_admin_element_getreplaceassignmentsbatchjobs'),
             params: params,
             success: function (params, response) {
                 var rdata = Ext.decode(response.responseText);

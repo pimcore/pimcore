@@ -30,7 +30,6 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 class ElementControllerBase extends AdminController
 {
@@ -45,8 +44,6 @@ class ElementControllerBase extends AdminController
     }
 
     /**
-     * @Route("/tree-get-root", methods={"GET"})
-     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -73,8 +70,6 @@ class ElementControllerBase extends AdminController
     }
 
     /**
-     * @Route("/delete-info", methods={"GET"})
-     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -147,7 +142,7 @@ class ElementControllerBase extends AdminController
                 ];
 
                 $deleteJobs[] = [[
-                    'url' => '/admin/recyclebin/add',
+                    'url' => $this->generateUrl('pimcore_admin_recyclebin_add'),
                     'method' => 'POST',
                     'params' => [
                         'type' => $type,
@@ -173,7 +168,7 @@ class ElementControllerBase extends AdminController
                         $deleteObjectsPerRequest = 5;
                         for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
                             $deleteJobs[] = [[
-                                'url' => '/admin/' . $type . '/delete',
+                                'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/' . $type . '/delete',
                                 'method' => 'DELETE',
                                 'params' => [
                                     'step' => $i,
@@ -188,7 +183,7 @@ class ElementControllerBase extends AdminController
 
                 // the asset itself is the last one
                 $deleteJobs[] = [[
-                    'url' => '/admin/' . $type . '/delete',
+                    'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/' . $type . '/delete',
                     'method' => 'DELETE',
                     'params' => [
                         'id' => $element->getId()

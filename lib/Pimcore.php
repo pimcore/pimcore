@@ -20,7 +20,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 class Pimcore
 {
     /**
-     * @var bool
+     * @var bool|null
      */
     public static $adminMode;
 
@@ -156,7 +156,7 @@ class Pimcore
     }
 
     /**
-     * @return \Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher
+     * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface
      */
     public static function getEventDispatcher()
     {

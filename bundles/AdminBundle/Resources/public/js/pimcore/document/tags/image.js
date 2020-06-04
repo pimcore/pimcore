@@ -321,7 +321,7 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         });
         this.reload();
     },
-    
+
     updateImage: function () {
 
         var path = "";
@@ -337,18 +337,27 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         if (!this.options["thumbnail"]) {
             if(!this.originalDimensions["width"] && !this.originalDimensions["height"]) {
-                path = "/admin/asset/get-image-thumbnail?width=" + this.element.getWidth()
-                    + "&aspectratio=true&" + Ext.urlEncode(this.datax);
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', Ext.merge(this.datax, {
+                    'width': this.element.getWidth(),
+                    'aspectratio': true
+                }));
             } else if (this.originalDimensions["width"]) {
-                path = "/admin/asset/get-image-thumbnail?width=" + this.originalDimensions["width"]
-                    + "&aspectratio=true&" + Ext.urlEncode(this.datax);
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', Ext.merge(this.datax, {
+                    'width': this.originalDimensions["width"],
+                    'aspectratio': true
+                }));
             } else if (this.originalDimensions["height"]) {
-                path = "/admin/asset/get-image-thumbnail?height="
-                + this.originalDimensions["height"] + "&aspectratio=true&" + Ext.urlEncode(this.datax);
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', Ext.merge(this.datax, {
+                    'height': this.originalDimensions["height"],
+                    'aspectratio': true
+                }));
             }
         } else if (typeof this.options.thumbnail == "string" || typeof this.options.thumbnail == "object") {
-                path = "/admin/asset/get-image-thumbnail?thumbnail=" + this.options.thumbnail
-                    + "&" + Ext.urlEncode(this.datax) + "&pimcore_editmode=1";
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', Ext.merge(this.datax, {
+                    'height': this.originalDimensions["height"],
+                    'thumbnail': this.options.thumbnail,
+                    'pimcore_editmode': '1'
+                }));
         }
 
         var image = document.createElement("img");

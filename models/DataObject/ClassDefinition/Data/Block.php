@@ -583,17 +583,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param DataObject\Data\ExternalImage $data
+     * @param DataObject\Data\BlockElement[][]|null $data
      *
      * @return bool
      */
     public function isEmpty($data)
     {
-        if (is_null($data) || count($data) == 0) {
-            return true;
-        }
-
-        return false;
+        return is_null($data) || count($data) === 0;
     }
 
     /**

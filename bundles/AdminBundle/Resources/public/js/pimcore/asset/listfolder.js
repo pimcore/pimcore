@@ -21,7 +21,9 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
     object: {},
     gridType: 'asset',
 
-    initialize: function (element, searchType) {
+    initialize: function ($super, element, searchType) {
+        $super();
+
         this.element = element;
         this.searchType = searchType;
         this.classId = element.id;
@@ -59,7 +61,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
     getGrid: function () {
         Ext.Ajax.request({
-            url: "/admin/asset-helper/grid-get-column-config",
+            url: Routing.generate('pimcore_admin_asset_assethelper_gridgetcolumnconfig'),
             params: {
                 id: this.element.data.id,
                 type: "asset",
@@ -120,7 +122,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
         var gridHelper = new pimcore.asset.helpers.grid(
             fields,
-            "/admin/asset/grid-proxy",
+            Routing.generate('pimcore_admin_asset_gridproxy'),
             {
                 language: this.gridLanguage,
                 // limit: itemsPerPage
