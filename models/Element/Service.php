@@ -32,9 +32,13 @@ use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
 use Pimcore\Model\Tool\TmpStore;
+use Pimcore\Model\Version\PimcoreClassDefinitionMatcher;
+use Pimcore\Model\Version\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Session;
@@ -112,6 +116,40 @@ class Service extends Model\AbstractModel
                 }
             }
             $path .= '/' . $type;
+        }
+
+        return $path;
+    }
+
+    /**
+     * @static
+     *
+     * @internal
+     *
+     * @param DataObject|Document $element
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public static function getSortIndexPath($element)
+    {
+        $path = '';
+        $parentElement = null;
+
+        if ($element instanceof ElementInterface) {
+            $elementType = self::getElementType($element);
+            $parentId = $element->getParentId();
+            $parentElement = self::getElementById($elementType, $parentId);
+        }
+
+        if ($parentElement) {
+            $path = self::getSortIndexPath($parentElement);
+        }
+
+        if ($element) {
+            $sortIndex = $element->getIndex() ? $element->getIndex() : 0;
+            $path .= '/' . $sortIndex;
         }
 
         return $path;
@@ -1315,6 +1353,21 @@ class Service extends Model\AbstractModel
                     new Model\Version\UnmarshalMatcher()
                 );
 
+                if ($element instanceof Concrete) {
+                    $copier->addFilter(
+                        new PimcoreClassDefinitionReplaceFilter(
+                            function (Concrete $object, Data $fieldDefinition, $property, $currentValue) {
+                                if ($fieldDefinition instanceof Data\CustomVersionMarshalInterface) {
+                                    return $fieldDefinition->unmarshalVersion($object, $currentValue);
+                                }
+
+                                return $currentValue;
+                            }
+                        ),
+                        new PimcoreClassDefinitionMatcher(Data\CustomVersionMarshalInterface::class)
+                    );
+                }
+
                 return $copier->copy($element);
             }
         }
@@ -1349,6 +1402,22 @@ class Service extends Model\AbstractModel
                 ),
                 new Model\Version\MarshalMatcher($sourceType, $sourceId)
             );
+
+            if ($element instanceof Concrete) {
+                $copier->addFilter(
+                    new PimcoreClassDefinitionReplaceFilter(
+                        function (Concrete $object, Data $fieldDefinition, $property, $currentValue) {
+                            if ($fieldDefinition instanceof Data\CustomVersionMarshalInterface) {
+                                return $fieldDefinition->marshalVersion($object, $currentValue);
+                            }
+
+                            return $currentValue;
+                        }
+                    ),
+                    new PimcoreClassDefinitionMatcher(Data\CustomVersionMarshalInterface::class)
+                );
+            }
+
             $element = $copier->copy($element);
         }
 

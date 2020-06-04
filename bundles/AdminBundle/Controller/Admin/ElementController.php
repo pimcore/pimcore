@@ -492,6 +492,11 @@ class ElementController extends AdminController
         $data['typePath'] = $typePath;
         $data['fullpath'] = $element->getRealFullPath();
 
+        if ($type !== 'asset') {
+            $sortIndexPath = Element\Service::getSortIndexPath($element);
+            $data['sortIndexPath'] = $sortIndexPath;
+        }
+
         return $this->adminJson($data);
     }
 
@@ -774,6 +779,7 @@ class ElementController extends AdminController
             $userList = [$user];
         } else {
             $userList = new Model\User\Listing();
+            $userList->setCondition('type = ?', ['user']);
             $userList = $userList->load();
         }
 

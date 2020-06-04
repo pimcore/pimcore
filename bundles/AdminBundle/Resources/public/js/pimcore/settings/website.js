@@ -451,7 +451,7 @@ pimcore.settings.website = Class.create({
             }
         }
 
-        return value;
+        return Ext.util.Format.htmlEncode(value);
     },
 
     cellMousedown: function (grid, cell, rowIndex, cellIndex, e) {
