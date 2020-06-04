@@ -528,6 +528,8 @@ $scripts = array(
     "pimcore/object/classes/layout/tabpanel.js",
     "pimcore/object/classes/layout/button.js",
     "pimcore/object/classes/layout/iframe.js",
+    "pimcore/object/fieldlookup/filterdialog.js",
+    "pimcore/object/fieldlookup/helper.js",
     "pimcore/object/classes/layout/text.js",
     "pimcore/object/fieldcollection.js",
     "pimcore/object/fieldcollections/field.js",
