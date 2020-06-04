@@ -77,9 +77,21 @@ pimcore.element.helpers.gridColumnConfig = {
     },
 
     deleteGridConfigConfirmed: function (btn) {
-        if (btn == 'ok') {
+        var route = null;
+
+        if (this.gridType === 'asset') {
+            route = 'pimcore_admin_asset_assethelper_griddeletecolumnconfig';
+        }
+        else if(this.gridType === 'object') {
+            route = 'pimcore_admin_dataobject_dataobjecthelper_griddeletecolumnconfig';
+        }
+        else {
+            throw new Error('Type unknown');
+        }
+
+        if (btn === 'ok') {
             Ext.Ajax.request({
-                url: "/admin/" + this.gridType + "-helper/grid-delete-column-config",
+                url: Routing.generate(route),
                 method: "DELETE",
                 params: {
                     id: this.classId,
@@ -643,7 +655,7 @@ pimcore.element.helpers.gridColumnConfig = {
                 }
                 Ext.Msg.alert(t("error"), t("error_jobs") + ": " + jobErrors.join(","));
             } else {
-                pimcore.helpers.download(exportType.downloadUrl + "?fileHandle=" + fileHandle);
+                pimcore.helpers.download(exportType.getDownloadUrl(fileHandle));
             }
 
             return;

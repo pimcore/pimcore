@@ -358,14 +358,14 @@ pimcore.report.piwik.settings = Class.create({
         buttonStateHandler(); // trigger initial state
 
         createButton.setHandler(createHandler(
-            '/admin/reports/piwik/api/site/' + key,
+            Routing.generate('pimcore_admin_reports_piwik_apisiteupdate', {configKey: key}),
             'POST',
             t("piwik_api_create_site_success"),
             t("piwik_api_create_site_failure")
         ));
 
         updateButton.setHandler(createHandler(
-            '/admin/reports/piwik/api/site/' + key,
+            Routing.generate('pimcore_admin_reports_piwik_apisiteupdate', {configKey: key}),
             'PUT',
             t("piwik_api_update_site_success"),
             t("piwik_api_update_site_failure")

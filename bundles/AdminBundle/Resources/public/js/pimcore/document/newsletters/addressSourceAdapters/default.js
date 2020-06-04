@@ -51,7 +51,7 @@ pimcore.document.newsletters.addressSourceAdapters.default = Class.create({
                             autoDestroy: true,
                             proxy: {
                                 type: 'ajax',
-                                url: "/admin/newsletter/get-available-classes",
+                                url: Routing.generate('pimcore_admin_document_newsletter_getavailableclasses'),
                                 reader: {
                                     type: 'json',
                                     rootProperty: 'data'
@@ -74,7 +74,7 @@ pimcore.document.newsletters.addressSourceAdapters.default = Class.create({
                             keyup: function (el) {
 
                                 Ext.Ajax.request({
-                                    url: "/admin/newsletter/checksql",
+                                    url: Routing.generate('pimcore_admin_document_newsletter_checksql'),
                                     method: "POST",
                                     params: this.layout.getForm().getFieldValues(),
                                     success: function (response) {

@@ -8,7 +8,13 @@ displayed.
 
 Moreover, maintenance scripts and headless executions of Pimcore will be prevented.  
 The Maintenance Mode is also activated by Pimcore during Pimcore Update.
- 
+
+In addition, you can enable or disable the maintenance mode via the following console command:
+
+```shell script
+bin/console pimcore:maintenance-mode --enable
+bin/console pimcore:maintenance-mode --disable
+``` 
 
 ## Customize Maintenance Page
 

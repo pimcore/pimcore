@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.elementservice.x");
 
 pimcore.elementservice.deleteElement = function (options) {
     var elementType = options.elementType;
-    var url = "/admin/"  + elementType + "/delete-info?";
+    var url = Routing.getBaseUrl() + "/admin/"  + elementType + "/delete-info?";
     // check for dependencies
     Ext.Ajax.request({
         url: url,
@@ -157,7 +157,7 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
 
             this.deleteWindow.show();
         }
-        
+
         var pj = new pimcore.tool.paralleljobs({
             success: function (id, successHandler) {
                 var refreshParentNodes = [];
@@ -240,7 +240,7 @@ pimcore.elementservice.updateAsset = function (id, data, callback) {
     data.id = id;
 
     Ext.Ajax.request({
-        url: "/admin/asset/update",
+        url: Routing.generate('pimcore_admin_asset_update'),
         method: "PUT",
         params: data,
         success: callback
@@ -257,7 +257,7 @@ pimcore.elementservice.updateDocument = function (id, data, callback) {
     data.id = id;
 
     Ext.Ajax.request({
-        url: "/admin/document/update",
+        url: Routing.generate('pimcore_admin_document_document_update'),
         method: "PUT",
         params: data,
         success: callback
@@ -272,7 +272,7 @@ pimcore.elementservice.updateObject = function (id, values, callback) {
     }
 
     Ext.Ajax.request({
-        url: "/admin/object/update",
+        url: Routing.generate('pimcore_admin_dataobject_dataobject_update'),
         method: "PUT",
         params: {
             id: id,
@@ -822,7 +822,7 @@ pimcore.elementservice.lockElement = function(options) {
 pimcore.elementservice.unlockElement = function(options) {
     try {
         Ext.Ajax.request({
-            url: "/admin/element/unlock-propagate",
+            url: Routing.generate('pimcore_admin_element_unlockpropagate'),
             method: 'PUT',
             params: {
                 id: options.id,
@@ -1027,7 +1027,7 @@ pimcore.elementservice.getWorkflowActionsButton = function(workflows, elementTyp
 
 
 pimcore.elementservice.replaceAsset = function (id, callback) {
-    pimcore.helpers.uploadDialog('/admin/asset/replace-asset?id=' + id, "Filedata", function() {
+    pimcore.helpers.uploadDialog(Routing.generate('pimcore_admin_asset_replaceasset', {id: id}), "Filedata", function() {
         if(typeof callback == "function") {
             callback();
         }
@@ -1056,7 +1056,7 @@ pimcore.elementservice.downloadAssetFolderAsZip = function (id, selectedIds) {
     }
 
     Ext.Ajax.request({
-        url: "/admin/asset/download-as-zip-jobs",
+        url: Routing.generate('pimcore_admin_asset_downloadaszipjobs'),
         params: {
             id: id,
             selectedIds: idsParam
@@ -1091,7 +1091,7 @@ pimcore.elementservice.downloadAssetFolderAsZip = function (id, selectedIds) {
                     that.downloadProgressBar = null;
                     that.downloadProgressWin = null;
 
-                    pimcore.helpers.download('/admin/asset/download-as-zip?jobId='+ res.jobId + "&id=" + id);
+                    pimcore.helpers.download(Routing.generate('pimcore_admin_asset_downloadaszipaddfiles', {jobId: res.jobId, id: id}));
                 },
                 update: function (currentStep, steps, percent) {
                     if(that.downloadProgressBar) {

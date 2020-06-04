@@ -32,7 +32,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
         protected $adminerHome = '';
 
         /**
-         * @Route("/external_adminer/adminer")
+         * @Route("/external_adminer/adminer", name="pimcore_admin_external_adminer_adminer")
          *
          * @param Request $request
          * @param Profiler $profiler
@@ -62,9 +62,9 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
         }
 
         /**
-         * @Route("/external_adminer/{path}", requirements={"path"=".*"})
-         * @Route("/adminer/{path}", requirements={"path"=".*"})
-         * @Route("/externals/{path}", requirements={"path"=".*"}, defaults={"type": "external"})
+         * @Route("/external_adminer/{path}", name="pimcore_admin_external_adminer_proxy", requirements={"path"=".*"})
+         * @Route("/adminer/{path}", name="pimcore_admin_external_adminer_proxy_1", requirements={"path"=".*"})
+         * @Route("/externals/{path}", name="pimcore_admin_external_adminer_proxy_2", requirements={"path"=".*"}, defaults={"type": "external"})
          *
          * @param Request $request
          *

@@ -64,7 +64,7 @@ pimcore.notification.panel = Class.create({
     getGrid: function () {
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         this.store = pimcore.helpers.grid.buildDefaultStore(
-            '/admin/notification/find-all?',
+            Routing.generate('pimcore_admin_notification_findall'),
             ["id", "title", "sender", "date", "read"],
             itemsPerPage
         );

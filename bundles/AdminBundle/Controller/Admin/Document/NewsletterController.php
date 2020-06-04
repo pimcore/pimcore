@@ -41,7 +41,37 @@ class NewsletterController extends DocumentControllerBase
     use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 
     /**
-     * @Route("/get-data-by-id", methods={"GET"})
+     * @Route("/save-to-session", name="pimcore_admin_document_newsletter_savetosession", methods={"POST"})
+     *
+     * {@inheritDoc}
+     */
+    public function saveToSessionAction(Request $request)
+    {
+        return parent::saveToSessionAction($request);
+    }
+
+    /**
+     * @Route("/remove-from-session", name="pimcore_admin_document_newsletter_removefromsession", methods={"DELETE"})
+     *
+     * {@inheritDoc}
+     */
+    public function removeFromSessionAction(Request $request)
+    {
+        return parent::removeFromSessionAction($request);
+    }
+
+    /**
+     * @Route("/change-master-document", name="pimcore_admin_document_newsletter_changemasterdocument", methods={"PUT"})
+     *
+     * {@inheritDoc}
+     */
+    public function changeMasterDocumentAction(Request $request)
+    {
+        return parent::changeMasterDocumentAction($request);
+    }
+
+    /**
+     * @Route("/get-data-by-id", name="pimcore_admin_document_newsletter_getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -90,7 +120,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/save", methods={"PUT", "POST"})
+     * @Route("/save", name="pimcore_admin_document_newsletter_save", methods={"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -163,7 +193,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/checksql", methods={"POST"})
+     * @Route("/checksql", name="pimcore_admin_document_newsletter_checksql", methods={"POST"})
      *
      * @param Request $request
      *
@@ -197,7 +227,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/get-available-classes", methods={"GET"})
+     * @Route("/get-available-classes", name="pimcore_admin_document_newsletter_getavailableclasses", methods={"GET"})
      *
      * @return JsonResponse
      */
@@ -225,7 +255,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/get-available-reports", methods={"GET"})
+     * @Route("/get-available-reports", name="pimcore_admin_document_newsletter_getavailablereports", methods={"GET"})
      *
      * @param Request $request
      *
@@ -265,7 +295,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/get-send-status", methods={"GET"})
+     * @Route("/get-send-status", name="pimcore_admin_document_newsletter_getsendstatus", methods={"GET"})
      *
      * @param Request $request
      *
@@ -284,7 +314,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/stop-send", methods={"POST"})
+     * @Route("/stop-send", name="pimcore_admin_document_newsletter_stopsend", methods={"POST"})
      *
      * @param Request $request
      *
@@ -302,7 +332,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/send", methods={"POST"})
+     * @Route("/send", name="pimcore_admin_document_newsletter_send", methods={"POST"})
      *
      * @param Request $request
      *
@@ -340,7 +370,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/calculate", methods={"POST"})
+     * @Route("/calculate", name="pimcore_admin_document_newsletter_calculate", methods={"POST"})
      *
      * @param Request $request
      *
@@ -370,7 +400,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/send-test", methods={"POST"})
+     * @Route("/send-test", name="pimcore_admin_document_newsletter_sendtest", methods={"POST"})
      *
      * @param Request $request
      *

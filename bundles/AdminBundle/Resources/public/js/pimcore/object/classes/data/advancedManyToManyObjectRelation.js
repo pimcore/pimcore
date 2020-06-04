@@ -115,7 +115,7 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
         this.fieldStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
-                url: '/admin/object-helper/grid-get-column-config',
+                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
                 extraParams: {
                     no_brick_columns: "true",
                     gridtype: 'all',

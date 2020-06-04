@@ -58,7 +58,7 @@ pimcore.settings.thumbnail.panel = Class.create({
                 autoSync: true,
                 proxy: {
                     type: 'ajax',
-                    url: "/admin/settings/thumbnail-tree",
+                    url: Routing.generate('pimcore_admin_settings_thumbnailtree'),
                     reader: {
                         type: 'json'
                     }
@@ -151,7 +151,7 @@ pimcore.settings.thumbnail.panel = Class.create({
         }
 
         Ext.Ajax.request({
-            url: "/admin/settings/thumbnail-get",
+            url: Routing.generate('pimcore_admin_settings_thumbnailget'),
             params: {
                 name: id
             },
@@ -204,7 +204,7 @@ pimcore.settings.thumbnail.panel = Class.create({
             }
 
             Ext.Ajax.request({
-                url: "/admin/settings/thumbnail-add",
+                url: Routing.generate('pimcore_admin_settings_thumbnailadd'),
                 method: "POST",
                 params: {
                     name: value
@@ -232,7 +232,7 @@ pimcore.settings.thumbnail.panel = Class.create({
 
     deleteField: function (tree, record) {
         Ext.Ajax.request({
-            url: "/admin/settings/thumbnail-delete",
+            url: Routing.generate('pimcore_admin_settings_thumbnaildelete'),
             method: 'DELETE',
             params: {
                 name: record.data.id

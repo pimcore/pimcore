@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class QuantityValueController extends AdminController
 {
     /**
-     * @Route("/quantity-value/unit-proxy", methods={"GET"})
+     * @Route("/quantity-value/unit-proxy", name="pimcore_admin_dataobject_quantityvalue_unitproxyget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -83,7 +83,7 @@ class QuantityValueController extends AdminController
     }
 
     /**
-     * @Route("/quantity-value/unit-proxy", methods={"POST", "PUT"})
+     * @Route("/quantity-value/unit-proxy", name="pimcore_admin_dataobject_quantityvalue_unitproxy", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -153,7 +153,7 @@ class QuantityValueController extends AdminController
     }
 
     /**
-     * @Route("/quantity-value/unit-list", methods={"GET"})
+     * @Route("/quantity-value/unit-list", name="pimcore_admin_dataobject_quantityvalue_unitlist", methods={"GET"})
      *
      * @param Request $request
      *
@@ -197,7 +197,7 @@ class QuantityValueController extends AdminController
     }
 
     /**
-     * @Route("/quantity-value/convert", methods={"GET"})
+     * @Route("/quantity-value/convert", name="pimcore_admin_dataobject_quantityvalue_convert", methods={"GET"})
      *
      * @param Request $request
      *
@@ -226,7 +226,7 @@ class QuantityValueController extends AdminController
     }
 
     /**
-     * @Route("/quantity-value/convert-all", methods={"GET"})
+     * @Route("/quantity-value/convert-all", name="pimcore_admin_dataobject_quantityvalue_convertall", methods={"GET"})
      *
      * @param Request $request
      *

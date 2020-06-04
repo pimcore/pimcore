@@ -49,7 +49,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
     /**
      * Returns a JSON of the available workflow actions to the admin panel
      *
-     * @Route("/get-workflow-form")
+     * @Route("/get-workflow-form", name="pimcore_admin_workflow_getworkflowform")
      *
      * @param Request $request
      *
@@ -98,7 +98,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
     }
 
     /**
-     * @Route("/submit-workflow-transition", methods={"POST"})
+     * @Route("/submit-workflow-transition", name="pimcore_admin_workflow_submitworkflowtransition", methods={"POST"})
      *
      * @param Request $request
      *
@@ -150,7 +150,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
     }
 
     /**
-     * @Route("/submit-global-action", methods={"POST"})
+     * @Route("/submit-global-action", name="pimcore_admin_workflow_submitglobal", methods={"POST"})
      *
      * @param Request $request
      *
@@ -196,7 +196,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
     /**
      * Returns the JSON needed by the workflow elements detail tab store
      *
-     * @Route("/get-workflow-details")
+     * @Route("/get-workflow-details", name="pimcore_admin_workflow_getworkflowdetailsstore")
      *
      * @param Request $request
      * @param Manager $workflowManager

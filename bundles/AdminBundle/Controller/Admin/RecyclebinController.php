@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class RecyclebinController extends AdminController implements EventedControllerInterface
 {
     /**
-     * @Route("/recyclebin/list", methods={"POST"})
+     * @Route("/recyclebin/list", name="pimcore_admin_recyclebin_list", methods={"POST"})
      *
      * @param Request $request
      *
@@ -130,7 +130,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/recyclebin/restore", methods={"POST"})
+     * @Route("/recyclebin/restore", name="pimcore_admin_recyclebin_restore", methods={"POST"})
      *
      * @param Request $request
      *
@@ -145,7 +145,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/recyclebin/flush", methods={"DELETE"})
+     * @Route("/recyclebin/flush", name="pimcore_admin_recyclebin_flush", methods={"DELETE"})
      *
      * @return JsonResponse
      */
@@ -158,7 +158,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/recyclebin/add", methods={"POST"})
+     * @Route("/recyclebin/add", name="pimcore_admin_recyclebin_add", methods={"POST"})
      *
      * @param Request $request
      *
