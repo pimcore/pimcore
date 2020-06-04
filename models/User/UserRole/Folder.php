@@ -18,6 +18,7 @@
 namespace Pimcore\Model\User\UserRole;
 
 use Pimcore\Model;
+use Pimcore\Model\User\Role;
 
 /**
  * @method \Pimcore\Model\User\UserRole\Dao getDao()
@@ -25,6 +26,11 @@ use Pimcore\Model;
 class Folder extends Model\User\AbstractUser
 {
     use Model\Element\ChildsCompatibilityTrait;
+
+    /**
+     * @var array
+     */
+    public $children = [];
 
     /**
      * @var bool
@@ -55,5 +61,37 @@ class Folder extends Model\User\AbstractUser
         }
 
         return $this->getDao()->hasChildren();
+    }
+
+    /**
+     * @return array
+     */
+    public function getChildren()
+    {
+        if (empty($this->children)) {
+            $list = new Role\Listing();
+            $list->setCondition("parentId = ?", $this->getId());
+
+            $this->children = $list->getRoles();
+        }
+
+        return $this->children;
+    }
+
+    /**
+     * @param array $children
+     *
+     * @return $this
+     */
+    public function setChildren($children)
+    {
+        $this->children = $children;
+        if (is_array($children) and count($children) > 0) {
+            $this->hasChilds = true;
+        } else {
+            $this->hasChilds = false;
+        }
+
+        return $this;
     }
 }
