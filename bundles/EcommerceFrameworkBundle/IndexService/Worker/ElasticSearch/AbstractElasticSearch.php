@@ -22,7 +22,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchCon
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
@@ -32,7 +31,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * @property ElasticSearch $tenantConfig
  */
-abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker implements Worker\BatchProcessingWorkerInterface
+abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessingWorker implements Worker\BatchProcessingWorkerInterface
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store_elastic';
 
@@ -355,7 +354,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
         }
 
         if (count($subObjectIds) > 0) {
-            $this->commitUpdateIndex();
+            $this->commitBatchToIndex();
             $this->fillupPreparationQueue($object);
         }
     }
@@ -453,7 +452,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
     /**
      * actually sending data to elastic search
      */
-    protected function commitUpdateIndex()
+    public function commitBatchToIndex(): void
     {
         if (sizeof($this->bulkIndexData)) {
             $esClient = $this->getElasticSearchClient();
@@ -502,7 +501,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
     {
         $entriesUpdated = parent::processUpdateIndexQueue($limit);
         Logger::info('Entries updated:' . $entriesUpdated);
-        $this->commitUpdateIndex();
+        $this->commitBatchToIndex();
 
         return $entriesUpdated;
     }
