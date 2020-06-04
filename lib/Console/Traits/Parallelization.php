@@ -16,11 +16,16 @@ namespace Pimcore\Console\Traits;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Terminal;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Webmozart\Assert\Assert;
 use Webmozarts\Console\Parallelization\Parallelization as WebmozartParallelization;
+use Webmozarts\Console\Parallelization\ProcessLauncher;
 
 trait Parallelization
 {
@@ -102,5 +107,197 @@ trait Parallelization
     {
         return \Pimcore::getKernel()->getContainer();
     }
+
+
+    // ----------- temporary fix for quoting options ----------------------
+
+
+    protected function singleQuoteRequired($value) {
+        return 0 < preg_match('/[ \s \\ \' " \: \{ \} \[ \] , & \* \# \? \- ? | < > = ! % @ ` ]/x', $value);
+    }
+
+    protected function quoteOptionValue($value) {
+
+        if($this->singleQuoteRequired($value)) {
+            return sprintf("'%s'", str_replace('\'', '\'\'', $value));
+        }
+
+        return $value;
+    }
+
+
+    /**
+     * @param string[] $blackListParams
+     * @return string[]
+     */
+    private function serializeInputOptions(InputInterface $input, array $blackListParams) : array {
+        $options = array_diff_key(
+            array_filter($input->getOptions()),
+            array_fill_keys($blackListParams, '')
+        );
+
+        $preparedOptionList = [];
+        foreach ($options as $name => $value) {
+            $definition = $this->getDefinition();
+            $option = $definition->getOption($name);
+
+            $optionString  = "";
+            if (!$option->acceptValue()) {
+                $optionString .= ' --' . $name;
+            } elseif ($option->isArray()) {
+                foreach ($value as $arrayValue) {
+                    $optionString .= ' --'.$name.'="'.$this->quoteOptionValue($arrayValue).'"';
+                }
+            } else {
+                $optionString .= ' --'.$name.'="'.$this->quoteOptionValue($value).'"';
+            }
+
+            $preparedOptionList[] = $optionString;
+        }
+        return $preparedOptionList;
+    }
+
+
+    /**
+     * Executes the master process.
+     *
+     * The master process spawns as many child processes as set in the
+     * "--processes" option. Each of the child processes receives a segment of
+     * items of the processed data set and terminates. As long as there is data
+     * left to process, new child processes are spawned automatically.
+     */
+    protected function executeMasterProcess(InputInterface $input, OutputInterface $output): void
+    {
+        $this->runBeforeFirstCommand($input, $output);
+
+        $numberOfProcessesDefined = null !== $input->getOption('processes');
+        $numberOfProcesses = $numberOfProcessesDefined ? (int) $input->getOption('processes') : 1;
+        $hasItem = (bool) $input->getArgument('item');
+        $items = $hasItem ? [$input->getArgument('item')] : $this->fetchItems($input);
+        $count = count($items);
+        $segmentSize = 1 === $numberOfProcesses && !$numberOfProcessesDefined ? $count : $this->getSegmentSize();
+        $batchSize = $this->getBatchSize();
+        $rounds = 1 === $numberOfProcesses ? 1 : ceil($count * 1.0 / $segmentSize);
+        $batches = ceil($segmentSize * 1.0 / $batchSize) * $rounds;
+
+        Assert::greaterThan(
+            $numberOfProcesses,
+            0,
+            sprintf(
+                'Requires at least one process. Got "%s"',
+                $input->getOption('processes')
+            )
+        );
+
+        if (!$hasItem && 1 !== $numberOfProcesses) {
+            // Shouldn't check this when only one item has been specified or
+            // when no child processes is used
+            Assert::greaterThanEq(
+                $segmentSize,
+                $batchSize,
+                sprintf(
+                    'The segment size should always be greater or equal to '
+                    .'the batch size. Got respectively "%d" and "%d"',
+                    $segmentSize,
+                    $batchSize
+                )
+            );
+        }
+
+        $output->writeln(sprintf(
+            'Processing %d %s in segments of %d, batches of %d, %d %s, %d %s in %d %s',
+            $count,
+            $this->getItemName($count),
+            $segmentSize,
+            $batchSize,
+            $rounds,
+            1 === $rounds ? 'round' : 'rounds',
+            $batches,
+            1 === $batches ? 'batch' : 'batches',
+            $numberOfProcesses,
+            1 === $numberOfProcesses ? 'process' : 'processes'
+        ));
+        $output->writeln('');
+
+        $progressBar = new ProgressBar($output, $count);
+        $progressBar->setFormat('debug');
+        $progressBar->start();
+
+        if ($count <= $segmentSize || (1 === $numberOfProcesses && !$numberOfProcessesDefined)) {
+            // Run in the master process
+
+            $itemsChunks = array_chunk(
+                $items,
+                $this->getBatchSize(),
+                false
+            );
+
+            foreach ($itemsChunks as $items) {
+                $this->runBeforeBatch($input, $output, $items);
+
+                foreach ($items as $item) {
+                    $this->runTolerantSingleCommand((string) $item, $input, $output);
+
+                    $progressBar->advance();
+                }
+
+                $this->runAfterBatch($input, $output, $items);
+            }
+        } else {
+            // Distribute if we have multiple segments
+            $consolePath = realpath(getcwd().'/bin/console');
+            Assert::fileExists(
+                $consolePath,
+                sprintf('The bin/console file could not be found at %s', getcwd()))
+            ;
+
+            $commandTemplate = implode(
+                ' ',
+                array_merge(
+                    array_filter([
+                        self::detectPhpExecutable(),
+                        $consolePath,
+                        $this->getName(),
+                        implode(' ', array_slice($input->getArguments(), 1)),
+                        '--child',
+                    ]),
+                    $this->serializeInputOptions($input, ['child', 'processes'])
+                )
+            );
+            $terminalWidth = (new Terminal())->getWidth();
+
+            $processLauncher = new ProcessLauncher(
+                $commandTemplate,
+                self::getWorkingDirectory($this->getContainer()),
+                self::getEnvironmentVariables($this->getContainer()),
+                $numberOfProcesses,
+                $segmentSize,
+                $this->getContainer()->get('logger', ContainerInterface::NULL_ON_INVALID_REFERENCE),
+                function (string $type, string $buffer) use ($progressBar, $output, $terminalWidth) {
+                    $this->processChildOutput($buffer, $progressBar, $output, $terminalWidth);
+                }
+            );
+
+            $processLauncher->run($items);
+        }
+
+        $progressBar->finish();
+
+        $output->writeln('');
+        $output->writeln('');
+        $output->writeln(sprintf(
+            'Processed %d %s.',
+            $count,
+            $this->getItemName($count)
+        ));
+
+        $this->runAfterLastCommand($input, $output);
+    }
+
+
+
+
+
+
 
 }
