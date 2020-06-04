@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 
-class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;

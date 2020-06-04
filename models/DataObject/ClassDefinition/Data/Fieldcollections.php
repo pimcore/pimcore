@@ -987,12 +987,4 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     {
         return false;
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function isEqual($oldValue, $newValue)
-    {
-        return false;
-    }
 }

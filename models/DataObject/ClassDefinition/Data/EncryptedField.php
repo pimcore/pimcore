@@ -29,7 +29,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
  *
  * How to generate a key: vendor/bin/generate-defuse-key
  */
-class EncryptedField extends Data implements ResourcePersistenceAwareInterface
+class EncryptedField extends Data implements ResourcePersistenceAwareInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
 
@@ -629,7 +629,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     public function getDataForSearchIndex($object, $params = [])
     {
         // encrypted data shouldn't be in search index
-        return '';
         return '';
     }
 

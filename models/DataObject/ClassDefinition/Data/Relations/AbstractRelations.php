@@ -26,7 +26,8 @@ use Pimcore\Model\Element;
 abstract class AbstractRelations extends Data implements
     CustomResourcePersistingInterface,
     DataObject\ClassDefinition\PathFormatterAwareInterface,
-    Data\LazyLoadingSupportInterface
+    Data\LazyLoadingSupportInterface,
+    Data\EqualComparisonInterface
 {
     use DataObject\Traits\ContextPersistenceTrait;
 

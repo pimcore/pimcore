@@ -24,7 +24,6 @@ use ProxyManager\Proxy\LazyLoadingInterface;
 abstract class Data
 {
     use DataObject\ClassDefinition\Helper\VarExport;
-    use Model\DataObject\Traits\SimpleComparisonTrait;
 
     /**
      * @var string
@@ -1561,6 +1560,20 @@ abstract class Data
      */
     public function supportsDirtyDetection()
     {
+        return false;
+    }
+
+    /**
+     * @param mixed $oldValue
+     * @param mixed $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue)
+    {
+        @trigger_error('Calling '.__METHOD__.' is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+            'Implement `' . DataObject\ClassDefinition\Data\EqualComparisonInterface::class . '` instead.', E_USER_DEPRECATED);
+
         return false;
     }
 

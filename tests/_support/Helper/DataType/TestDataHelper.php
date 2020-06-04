@@ -1425,7 +1425,7 @@ class TestDataHelper extends Module
     private function assertIsEqual($object, $field, $expected, $value)
     {
         $fd = $object->getClass()->getFieldDefinition($field);
-        if ($fd instanceof DataObject\ClassDefinition\Data) {
+        if ($fd instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
             $this->assertTrue($fd->isEqual($expected, $value), sprintf("Expected isEqual() returns true for data type: %s", ucfirst($field)));
         }
     }

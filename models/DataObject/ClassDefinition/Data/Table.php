@@ -21,8 +21,9 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool\Serialize;
 
-class Table extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Table extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 

@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool\Serialize;
 
-class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;

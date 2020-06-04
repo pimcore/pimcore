@@ -23,7 +23,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Redirect;
 
-class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface
+class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, EqualComparisonInterface
 {
     use Model\DataObject\Traits\DefaultValueTrait;
 

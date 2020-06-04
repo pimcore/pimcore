@@ -1193,15 +1193,4 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             }
         }
     }
-
-    /**
-     * @param array|null $oldValue
-     * @param array|null $newValue
-     *
-     * @return bool
-     */
-    public function isEqual($oldValue, $newValue)
-    {
-        return false;
-    }
 }

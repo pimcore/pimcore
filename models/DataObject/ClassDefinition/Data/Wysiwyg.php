@@ -22,8 +22,9 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Text;
 
-class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
+    use DataObject\Traits\SimpleComparisonTrait;
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Extension\ColumnType;
     use Extension\QueryColumnType;

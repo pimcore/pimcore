@@ -19,9 +19,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
+    use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
