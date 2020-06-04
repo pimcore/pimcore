@@ -155,7 +155,7 @@ See sub-pages of this page for detail documentation of different data types.
 
 ### Default values
 
-For datatypes which support default values (currently these are Input, Date, Datetime, Numeric, Checkbox, Select, Url Slug and Quantity Value) you can either specify a fixed default (not supported for slugs as values have to be unique) value or you can specify a default value generator service or class which can generate a dynamic default value. 
+For datatypes which support default values (currently these are Input, Date, Datetime, Numeric, Checkbox, Select and Quantity Value) you can either specify a fixed default value or you can specify a default value generator service or class which can generate a dynamic default value. 
 
 The data is persisted according to the following rules.
 
