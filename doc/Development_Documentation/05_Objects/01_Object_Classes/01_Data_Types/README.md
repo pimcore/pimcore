@@ -155,7 +155,23 @@ See sub-pages of this page for detail documentation of different data types.
 
 ### Default values
 
-For datatypes which support default values (currently these are Input, Date, Datetime, Numeric, Checkbox, Select, Url Slug and Quantity Value) you can either specify a fixed default (not supported for slugs as values have to be unique) value or you can specify a default value generator service or class which can generate a dynamic default value. Default values only get used if the field is empty and in case of [inheritance](../05_Class_Settings/25_Inheritance.md) being enabled also the parent's field is empty.
+For datatypes which support default values (currently these are Input, Date, Datetime, Numeric, Checkbox, Select, Url Slug and Quantity Value) you can either specify a fixed default (not supported for slugs as values have to be unique) value or you can specify a default value generator service or class which can generate a dynamic default value. 
+
+The data is persisted according to the following rules.
+
+1. ***No [inheritance](../05_Class_Settings/25_Inheritance.md)***: default value is persisted to store/query table on create
+2. ***With inheritance and NO parent value***: default value is persisted to store/query table on create
+3. ***With inheritance and existing parent value***: no value is persisted to store table, 
+inherited value is persisted to query table, inheritance is active
 
 A default value generator is a class which implements `\Pimcore\Model\DataObject\ClassDefinition\DefaultValueGeneratorInterface`. This class can generate a value based on the current data of an object.
 Have a look at [Calculated Value](./10_Calculated_Value_Type.md) for an overview of contextual information.
+
+If a default value generator is defined then it has a higher priority than a configured static default value.
+
+The decisions are made in the following order:
+1. default value generator. if defined the process stops here
+2. parent value if inheritance is enabled
+3. fixed default value
+
+ 
