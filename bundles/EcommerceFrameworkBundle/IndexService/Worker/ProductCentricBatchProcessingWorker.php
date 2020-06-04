@@ -25,7 +25,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
 
     public function updateItemInIndex($objectId): void
     {
-        return $this->doUpdateIndex($objectId);
+        $this->doUpdateIndex($objectId);
     }
 
     public function commitBatchToIndex(): void

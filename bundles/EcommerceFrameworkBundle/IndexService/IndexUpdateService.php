@@ -20,6 +20,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ProductCentricBatchProcessingWorker;
 use Pimcore\Db;
 use Pimcore\Logger;
 
@@ -271,6 +272,7 @@ class IndexUpdateService
      */
     public function getStoreTableList(array $tenantNameFilterList= []) : array {
         //get all store tables and join the results...
+        //TODO get via DI
         $indexService = Factory::getInstance()->getIndexService();
         $tenants = $indexService->getTenants();
         $storeTableList = [];
@@ -281,14 +283,12 @@ class IndexUpdateService
             }
 
             $worker = $indexService->getTenantWorker($tenantName);
-            if ($worker instanceof AbstractBatchProcessingWorker) {
-                $storeTableName = $worker->getStoreTableName();
-                if (!in_array($storeTableName, $storeTableList)) {
-                    $storeTableList[] = $storeTableName;
-                }
+            if ($worker instanceof ProductCentricBatchProcessingWorker) {
+                $storeTableName = $worker->getBatchProcessingStoreTableName();
+                $storeTableList[$storeTableName] = true;
             }
         }
-        return $storeTableList;
+        return array_keys($storeTableList);
     }
 
     /**

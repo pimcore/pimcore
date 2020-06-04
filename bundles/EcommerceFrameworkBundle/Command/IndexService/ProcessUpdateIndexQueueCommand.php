@@ -14,65 +14,81 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService\AbstractIndexServiceCommand;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexUpdateService;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\BatchProcessingWorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ProductCentricBatchProcessingWorker;
 use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Console\Traits\Timeout;
-use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * Class ProcessUpdateIndexQueueCommand
- * @package Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService
- */
 class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
 {
     use Timeout;
-
     use Parallelization
     {
         Parallelization::runBeforeFirstCommand as parentRunBeforeFirstCommand;
         Parallelization::runAfterBatch as parentRunAfterBatch;
     }
 
-    /** @var IndexUpdateService */
-    private $indexUpdateService;
+    /**
+     * @var IndexUpdateService
+     */
+    protected $indexUpdateService;
+
+    /**
+     * @var IndexService
+     */
+    protected $indexService;
 
     /**
      * @var ProductCentricBatchProcessingWorker[] | null
      */
-    private $childWorkerList = null;
+    protected $childWorkerList = null;
 
+    /**
+     * @param IndexUpdateService $indexUpdateService
+     * @param IndexService $indexService
+     * @param string|null $name
+     */
+    public function __construct(IndexUpdateService $indexUpdateService, IndexService $indexService, string $name = null)
+    {
+        parent::__construct($name);
+        $this->indexUpdateService = $indexUpdateService;
+        $this->indexService = $indexService;
+    }
+
+
+    /**
+     * @inheritDoc
+     */
     protected function configure()
     {
         parent::configure();
 
-        //method must be registered before options as it contains arguments
         self::configureParallelization($this);
+        self::configureTimeout($this);
 
-        //options must be added after the argument
         $this
             ->setName('ecommerce:indexservice:process-update-queue')
             ->setDescription('Processes the ecommerce queue / store table and updates the (search) index.')
             ->addOption('tenant', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Tenant to perform action on (defaults to all)')
         ;
-
-        self::configureTimeout($this);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
         $this->parentRunBeforeFirstCommand($input, $output);
         $this->initTimeout($input);
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function fetchItems(InputInterface $input): array
     {
         $tenantNameFilterList = $input->getOption('tenant');
@@ -81,6 +97,9 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
         return $rowsWithSerializedItems;
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function runSingleCommand(string $serializedRow, InputInterface $input, OutputInterface $output): void
     {
         $row = unserialize($serializedRow);
@@ -91,24 +110,28 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
             $output->writeln(sprintf('Process ID="%s" for %d tenants (%s).', $id, count($openTenants), implode(",", $row['tenants'])));
         }
 
-        $env = Factory::getInstance()->getEnvironment();
-
         $workerList = $this->getTenantWorkers($openTenants);
         foreach ($workerList as $worker) {
             //if the data object remains the same, it will be loaded from cache
-            $env->setCurrentAssortmentTenant($worker->getTenantConfig()->getTenantName());
             $worker->updateItemInIndex($id);
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
-        foreach ($this->childWorkerList as $worker) {
-            if ($output->isVerbose()) {
-                $output->writeln('<info>Commit index update for worker '.get_class($worker).'.</info>');
+
+        if($this->childWorkerList) {
+            foreach ($this->childWorkerList as $worker) {
+                if ($output->isVerbose()) {
+                    $output->writeln('<info>Commit index update for worker '.get_class($worker).'.</info>');
+                }
+                $worker->commitBatchToIndex();
             }
-            $worker->commitBatchToIndex();
         }
+
         $this->parentRunAfterBatch($input, $output, $items);
         $this->handleTimeout(function(string $abortMessage) use ($output) {
             $output->writeln($abortMessage);
@@ -122,28 +145,22 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
      */
     private function getTenantWorkers(array $openTenantList) : array {
         $workerList = [];
-        $indexService = Factory::getInstance()->getIndexService();
-        $tenants = $indexService->getTenants();
+
+        $tenants = $this->indexService->getTenants();
         foreach ($tenants as $tenant) {
 
             if (in_array($tenant, $openTenantList)) {
 
-                $worker = $indexService->getTenantWorker($tenant);
+                $worker = $this->indexService->getTenantWorker($tenant);
                 if ($worker instanceof ProductCentricBatchProcessingWorker) {
                     $workerList[] = $worker;
                 }
 
             }
         }
-        return $workerList;
-    }
 
-    /**
-     * @required
-     */
-    public function setIndexUpdateService(IndexUpdateService $indexUpdateService)
-    {
-        $this->indexUpdateService = $indexUpdateService;
+        $this->childWorkerList = $workerList;
+        return $workerList;
     }
 
 
