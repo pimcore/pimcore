@@ -116,18 +116,10 @@ trait Parallelization
         return 0 < preg_match('/[\s \\\\ \' " & | < > = ! @]/x', $value);
     }
 
-    protected function needsDoubleQuote($value) {
-        return 0 < preg_match('/[\']/x', $value);
-    }
-
     protected function quoteOptionValue($value) {
 
         if($this->needsQuote($value)) {
-            if($this->needsDoubleQuote($value)) {
-                return sprintf('"%s"', $value);
-            } else {
-                return sprintf("'%s'", $value);
-            }
+            return sprintf('"%s"', str_replace('"', '\"', $value));
         }
 
         return $value;
