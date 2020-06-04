@@ -112,14 +112,22 @@ trait Parallelization
     // ----------- temporary fix for quoting options ----------------------
 
 
-    protected function singleQuoteRequired($value) {
-        return 0 < preg_match('/[ \s \\ \' " \: \{ \} \[ \] , & \* \# \? \- ? | < > = ! % @ ` ]/x', $value);
+    protected function needsQuote($value) {
+        return 0 < preg_match('/[\s \\\\ \' " & | < > = ! @]/x', $value);
+    }
+
+    protected function needsDoubleQuote($value) {
+        return 0 < preg_match('/[\']/x', $value);
     }
 
     protected function quoteOptionValue($value) {
 
-        if($this->singleQuoteRequired($value)) {
-            return sprintf("'%s'", str_replace('\'', '\'\'', $value));
+        if($this->needsQuote($value)) {
+            if($this->needsDoubleQuote($value)) {
+                return sprintf('"%s"', $value);
+            } else {
+                return sprintf("'%s'", $value);
+            }
         }
 
         return $value;
@@ -146,10 +154,10 @@ trait Parallelization
                 $optionString .= ' --' . $name;
             } elseif ($option->isArray()) {
                 foreach ($value as $arrayValue) {
-                    $optionString .= ' --'.$name.'="'.$this->quoteOptionValue($arrayValue).'"';
+                    $optionString .= ' --'.$name.'='.$this->quoteOptionValue($arrayValue);
                 }
             } else {
-                $optionString .= ' --'.$name.'="'.$this->quoteOptionValue($value).'"';
+                $optionString .= ' --'.$name.'='.$this->quoteOptionValue($value);
             }
 
             $preparedOptionList[] = $optionString;
