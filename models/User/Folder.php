@@ -26,4 +26,20 @@ class Folder extends UserRole\Folder
      * @var string
      */
     public $type = 'userfolder';
+
+
+    /**
+     * @return array
+     */
+    public function getChildren()
+    {
+        if (empty($this->children)) {
+            $list = new Listing();
+            $list->setCondition("parentId = ?", $this->getId());
+
+            $this->children = $list->getUsers();
+        }
+
+        return $this->children;
+    }
 }
