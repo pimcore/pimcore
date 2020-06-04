@@ -119,7 +119,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
 
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
-        $this->parentRunAfterBatch($input);
+        $this->parentRunAfterBatch($input, $output, $items);
         $this->handleTimeout(function(string $abortMessage) use ($output) {
             $output->writeln($abortMessage);
             exit(0); //exit with success
