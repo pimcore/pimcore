@@ -313,8 +313,12 @@ class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
         $brickGetter = null;
 
         // for backwards compatibility
-        if (isset($this->object) && $this->object && !$this->object instanceof  \__PHP_Incomplete_Class) {
-            $this->objectId = $this->object->getId();
+        if (isset($this->object) && $this->object) {
+            if($this->object instanceof  \__PHP_Incomplete_Class) {
+                Logger::error('Parent object of '.$brickGetter.' could not be unserialized (probably its class does not exist anymore)');
+            } else {
+                $this->objectId = $this->object->getId();
+            }
         }
 
         // sanity check, remove data requiring non-existing (deleted) brick definitions
