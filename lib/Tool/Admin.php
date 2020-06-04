@@ -109,6 +109,7 @@ class Admin
                 'Calling Pimcore\Tool::getMinimizedScriptPath with $asUrl true is deprecated and will be removed with Pimcore 7.0',
                 E_USER_DEPRECATED
             );
+
             return '/admin/misc/script-proxy?'.array_toquerystring($params);
         }
 
