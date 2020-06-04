@@ -19,6 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexUpdateService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\BatchProcessingWorkerInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ProductCentricBatchProcessingWorker;
 use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Console\Traits\Timeout;
 use Symfony\Component\Console\Command\LockableTrait;
@@ -45,7 +46,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     private $indexUpdateService;
 
     /**
-     * @var BatchProcessingWorkerInterface[] | null
+     * @var ProductCentricBatchProcessingWorker[] | null
      */
     private $childWorkerList = null;
 
@@ -96,19 +97,17 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
         foreach ($workerList as $worker) {
             //if the data object remains the same, it will be loaded from cache
             $env->setCurrentAssortmentTenant($worker->getTenantConfig()->getTenantName());
-            $worker->doUpdateIndex($id);
+            $worker->updateItemInIndex($id);
         }
     }
 
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
         foreach ($this->childWorkerList as $worker) {
-            if ($worker instanceof AbstractElasticSearch) {
-                if ($output->isVerbose()) {
-                    $output->writeln('<info>Commit index update for worker '.get_class($worker).'.</info>');
-                }
-                $worker->commitUpdateIndex();
+            if ($output->isVerbose()) {
+                $output->writeln('<info>Commit index update for worker '.get_class($worker).'.</info>');
             }
+            $worker->commitBatchToIndex();
         }
         $this->parentRunAfterBatch($input, $output, $items);
         $this->handleTimeout(function(string $abortMessage) use ($output) {
@@ -119,7 +118,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
 
     /**
      * @param string[] $openTenantList a list of tenants for which the workers should be retrieved
-     * @return AbstractBatchProcessingWorker[]
+     * @return ProductCentricBatchProcessingWorker[]
      */
     private function getTenantWorkers(array $openTenantList) : array {
         $workerList = [];
@@ -130,7 +129,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
             if (in_array($tenant, $openTenantList)) {
 
                 $worker = $indexService->getTenantWorker($tenant);
-                if ($worker instanceof BatchProcessingWorkerInterface) {
+                if ($worker instanceof ProductCentricBatchProcessingWorker) {
                     $workerList[] = $worker;
                 }
 
