@@ -16,12 +16,11 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch;
-use Pimcore\Model\Asset;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Helper\ProgressBar;
 
 class EsSyncCommand extends AbstractIndexServiceCommand
 {
@@ -60,7 +59,6 @@ class EsSyncCommand extends AbstractIndexServiceCommand
         $bar = new ProgressBar($output, count($tenantList));
 
         foreach ($tenantList as $tenantName) {
-
             $elasticWorker = $indexService->getTenantWorker($tenantName); //e.g., 'AT_de_elastic'
 
             if (!$elasticWorker instanceof AbstractElasticSearch) {
@@ -78,6 +76,7 @@ class EsSyncCommand extends AbstractIndexServiceCommand
         }
 
         $bar->finish();
+
         return 0;
     }
 }

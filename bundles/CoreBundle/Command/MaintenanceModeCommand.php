@@ -31,8 +31,8 @@ class MaintenanceModeCommand extends AbstractCommand
         $this
             ->setName('pimcore:maintenance-mode')
             ->setDescription('Enable or disable maintenance mode')
-            ->addOption('enable', null, InputOption::VALUE_NONE, "Enable maintenance mode (default)")
-            ->addOption('disable', null, InputOption::VALUE_NONE, "Disable maintenance mode")
+            ->addOption('enable', null, InputOption::VALUE_NONE, 'Enable maintenance mode (default)')
+            ->addOption('disable', null, InputOption::VALUE_NONE, 'Disable maintenance mode')
         ;
     }
 
@@ -47,6 +47,7 @@ class MaintenanceModeCommand extends AbstractCommand
 
     /**
      * @inheritDoc
+     *
      * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -59,14 +60,14 @@ class MaintenanceModeCommand extends AbstractCommand
             if ($output->isVerbose()) {
                 $output->writeln('Maintenance mode has been disabled');
             }
-        }
-        else {
+        } else {
             Admin::activateMaintenanceMode('command-line-dummy-session-id');
             if ($output->isVerbose()) {
                 $output->writeln('Maintenance mode is now enabled');
                 $output->writeln('You can run commands only with the --ignore-maintenance-mode option');
             }
         }
+
         return 0;
     }
 }
