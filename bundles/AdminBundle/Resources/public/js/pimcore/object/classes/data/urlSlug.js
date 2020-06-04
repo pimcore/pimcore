@@ -116,15 +116,7 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
                 store: sitesStore,
                 width: 600,
                 disabled: this.isInCustomLayoutEditor()
-            }),
-            {
-                xtype: 'textfield',
-                width: 600,
-                fieldLabel: t("default_value_generator"),
-                labelWidth: 140,
-                name: 'defaultValueGenerator',
-                value: datax.defaultValueGenerator
-            },
+            })
         ];
 
         return specificItems;
