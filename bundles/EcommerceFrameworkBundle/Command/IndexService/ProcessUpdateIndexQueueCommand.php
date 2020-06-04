@@ -143,7 +143,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
      * @param string[] $openTenantList a list of tenants for which the workers should be retrieved
      * @return ProductCentricBatchProcessingWorker[]
      */
-    private function getTenantWorkers(array $openTenantList) : array {
+    protected function getTenantWorkers(array $openTenantList) : array {
         $workerList = [];
 
         $tenants = $this->indexService->getTenants();
@@ -163,12 +163,17 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
         return $workerList;
     }
 
-
+    /**
+     * @inheritDoc
+     */
     protected function getItemName(int $count): string
     {
         return 'combined product ID rows in store table index';
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getSegmentSize(): int
     {
         return 500; // index updates per child process
