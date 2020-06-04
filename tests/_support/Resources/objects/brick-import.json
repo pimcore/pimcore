@@ -3,6 +3,10 @@
         {
             "classname": "unittest",
             "fieldname": "mybricks"
+        },
+        {
+            "classname": "inheritance",
+            "fieldname": "mybricks"
         }
     ],
     "title": "",
@@ -51,6 +55,31 @@
                         "unique": false,
                         "showCharCount": false,
                         "name": "brickinput",
+                        "title": "",
+                        "tooltip": "",
+                        "mandatory": false,
+                        "noteditable": false,
+                        "index": false,
+                        "locked": false,
+                        "style": "",
+                        "permissions": "",
+                        "datatype": "data",
+                        "relationType": false,
+                        "invisible": false,
+                        "visibleGridView": false,
+                        "visibleSearch": false
+                    },
+                    {
+                        "fieldtype": "input",
+                        "width": null,
+                        "queryColumnType": "varchar",
+                        "columnType": "varchar",
+                        "columnLength": 255,
+                        "phpdocType": "string",
+                        "regex": "",
+                        "unique": false,
+                        "showCharCount": false,
+                        "name": "brickinput2",
                         "title": "",
                         "tooltip": "",
                         "mandatory": false,
