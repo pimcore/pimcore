@@ -287,7 +287,7 @@ pimcore.treenodelocator = function()
                         let sortIndexPath = sortIndexParts[pos];
                         var elementKey = sortIndexPath;
                     } else {
-                        var pathKeys = globalState.fullPath.replace(/^\//, "").split("/");
+                        var pathKeys = escape(globalState.fullPath).replace(/^\//, "").split("/");
                         var elementKey = pathKeys[pos-1];
                     }
                 }
