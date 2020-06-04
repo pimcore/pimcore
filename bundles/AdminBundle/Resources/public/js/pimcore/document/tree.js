@@ -358,7 +358,7 @@ pimcore.document.tree = Class.create({
             var pasteInheritanceMenu = [];
             var childSupportedDocument = (record.data.type == "page" || record.data.type == "folder"
                 || record.data.type == "link" || record.data.type == "hardlink"
-                || record.data.type == "printpage" || record.data.type == "printcontainer");
+                || record.data.type == "printcontainer");
 
             if (childSupportedDocument && record.data.permissions.create) {
 
