@@ -27,7 +27,6 @@ class Folder extends UserRole\Folder
      */
     public $type = 'userfolder';
 
-
     /**
      * @return array
      */
@@ -35,7 +34,7 @@ class Folder extends UserRole\Folder
     {
         if (empty($this->children)) {
             $list = new Listing();
-            $list->setCondition("parentId = ?", $this->getId());
+            $list->setCondition('parentId = ?', $this->getId());
 
             $this->children = $list->getUsers();
         }

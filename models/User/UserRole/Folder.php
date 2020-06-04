@@ -70,7 +70,7 @@ class Folder extends Model\User\AbstractUser
     {
         if (empty($this->children)) {
             $list = new Role\Listing();
-            $list->setCondition("parentId = ?", $this->getId());
+            $list->setCondition('parentId = ?', $this->getId());
 
             $this->children = $list->getRoles();
         }

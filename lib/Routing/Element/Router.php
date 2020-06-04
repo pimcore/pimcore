@@ -118,7 +118,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
                 }
             }
 
-            $qs= http_build_query($parameters);
+            $qs = http_build_query($parameters);
             if ($qs) {
                 $qs = '?' . $qs;
             }

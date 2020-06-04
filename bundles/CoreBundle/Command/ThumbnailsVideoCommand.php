@@ -85,6 +85,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         $video = Asset\Video::getById($assetId);
         if (!$video) {
             $this->writeError('No video with ID=' . $assetId . ' found. Has the video been deleted or is the asset of another type?</error>');
+
             return;
         }
 
@@ -121,7 +122,6 @@ class ThumbnailsVideoCommand extends AbstractCommand
             $video->getThumbnail($thumbnail);
             $this->waitTillFinished($video->getId(), $thumbnail);
         }
-
     }
 
     /**

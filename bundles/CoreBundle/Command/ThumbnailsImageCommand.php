@@ -110,15 +110,15 @@ class ThumbnailsImageCommand extends AbstractCommand
         $image = Image::getById($assetId);
         if (!$image) {
             $this->writeError('No image with ID=' . $assetId . ' found. Has the image been deleted or is the asset of another type?</error>');
+
             return;
         }
 
         $thumbnailsToGenerate = $this->fetchThumbnailConfigs($input);
 
         if ($input->getOption('force')) {
-
             $thumbnailConfigNames = array_unique(
-                array_map(function($thumbnailConfig) {
+                array_map(function ($thumbnailConfig) {
                     return $thumbnailConfig->getName();
                 }, $thumbnailsToGenerate)
             );
@@ -146,9 +146,10 @@ class ThumbnailsImageCommand extends AbstractCommand
 
     /**
      * @param InputInterface $input
+     *
      * @return Asset\Image\Thumbnail\Config[]
      */
-    private function fetchThumbnailConfigs(InputInterface $input) : array
+    private function fetchThumbnailConfigs(InputInterface $input): array
     {
         $list = new Asset\Image\Thumbnail\Config\Listing();
         $thumbnailConfigList = $list->getThumbnails();
