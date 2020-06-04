@@ -129,7 +129,7 @@ trait DefaultValueTrait
                     try {
                         $data = $owner->getValueFromParent($this->getName(), $params);
                         if (!$this->isEmpty($data)) {
-                            return $data;
+                            return null;
                         }
                     } catch (InheritanceParentNotFoundException $e) {
                         // no data from parent available, use the default value

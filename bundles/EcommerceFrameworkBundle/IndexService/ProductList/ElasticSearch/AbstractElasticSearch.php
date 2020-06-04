@@ -158,6 +158,11 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected $scrollRequestKeepAlive = '30s';
 
     /**
+     * @var array
+     */
+    private $hitData = [];
+
+    /**
      * @return array
      */
     public function getSearchAggregation()
@@ -562,7 +567,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $params = [];
         $params['index'] = $this->getIndexName();
         $params['type'] = $this->getTenantConfig()->getElasticSearchClientParams()['indexType'];
-        $params['body']['_source'] = false;
+        $params['body']['_source'] = true;
 
         if (is_integer($this->getLimit())) { // null not allowed
             $params['body']['size'] = $this->getLimit();
@@ -599,6 +604,9 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected function loadWithoutPriceFilterWithoutPriceSorting()
     {
         $params = $this->getQuery();
+
+        $this->hitData = [];
+
         // send request
         $result = $this->sendRequest($params);
 
@@ -607,6 +615,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
             $this->totalCount = $result['hits']['total'];
             foreach ($result['hits']['hits'] as $hit) {
                 $objectRaws[] = $hit['_id'];
+                $this->hitData[$hit['_id']] = $hit;
             }
         }
 
@@ -623,16 +632,18 @@ abstract class AbstractElasticSearch implements ProductListInterface
     protected function loadWithoutPriceFilterWithPriceSorting()
     {
         $params = $this->getQuery();
+        $this->hitData = [];
+
         unset($params['body']['sort']);     // don't send the sort parameter, because it doesn't exist with offline sorting
         $params['body']['size'] = 10000;    // won't work with more than 10000 items in the result (elasticsearch limit)
         $params['body']['from'] = 0;
-        $params['body']['_source'] = ['system.priceSystemName'];
         $result = $this->sendRequest($params);
         $objectRaws = [];
         if ($result['hits']) {
             $this->totalCount = $result['hits']['total'];
             foreach ($result['hits']['hits'] as $hit) {
                 $objectRaws[] = ['id' => $hit['_id'], 'priceSystemName' => $hit['_source']['system']['priceSystemName']];
+                $this->hitData[$hit['_id']] = $hit;
             }
         }
         $priceSystemArrays = [];
@@ -648,7 +659,9 @@ abstract class AbstractElasticSearch implements ProductListInterface
         } else {
             throw new \Exception('Not implemented yet - multiple pricing systems are not supported yet');
         }
+
         $raws = [];
+
         foreach ($objectRaws as $raw) {
             $raws[] = $raw['o_id'];
         }
@@ -850,7 +863,23 @@ abstract class AbstractElasticSearch implements ProductListInterface
      */
     protected function loadElementById($elementId)
     {
-        return $this->tenantConfig->getObjectMockupById($elementId);
+        /** @var ElasticSearch $tenantConfig */
+        $tenantConfig = $this->getTenantConfig();
+        $mockup = null;
+        if (isset($this->hitData[$elementId])) {
+            $hitData = $this->hitData[$elementId];
+            $sourceData = $hitData['_source'];
+
+            //mapping of relations
+            $relationFormatPimcore = [];
+            foreach ($sourceData['relations'] ?: [] as $name => $relation) {
+                $relationFormatPimcore[] = ['fieldname' => $name, 'dest' => $relation[0], 'type' => 'object'];
+            }
+            $mergedAttributes = array_merge($sourceData['system'], $sourceData['attributes']);
+            $mockup = $tenantConfig->createMockupObject($elementId, $mergedAttributes, $relationFormatPimcore);
+        }
+
+        return $mockup;
     }
 
     /**
@@ -1418,5 +1447,20 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $var = $this->current() !== false;
 
         return $var;
+    }
+
+    /**
+     * Get the score from a loaded product list based on a (Pimcore) product Id.
+     * @param int $productId the Pimcore product Id.
+     * @return float the score returned by Elastic Search.
+     * @throws \Exception if loadFromSource mode is not true.
+     */
+    public function getScoreFromLoadedList(int $productId): float
+    {
+        if (isset($this->hitData[$productId])) {
+            return $this->hitData[$productId]['_score'];
+        }
+
+        return 0.0;
     }
 }
