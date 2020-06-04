@@ -69,7 +69,7 @@ pimcore.element.tag.tree = Class.create({
                 autoLoad: false,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/tags/tree-get-children-by-id',
+                    url: Routing.generate('pimcore_admin_tags_treegetchildrenbyid'),
                     extraParams: {
                         showSelection: this.showSelection,
                         assignmentCId: this.assignmentCId,
@@ -130,7 +130,7 @@ pimcore.element.tag.tree = Class.create({
                             overModel.set('expandable', true);
 
                             Ext.Ajax.request({
-                                url: "/admin/tags/update",
+                                url: Routing.generate('pimcore_admin_tags_update'),
                                 method: 'PUT',
                                 params: {
                                     id: data.records[0].id,
@@ -254,7 +254,7 @@ pimcore.element.tag.tree = Class.create({
                     Ext.Msg.confirm(t('delete'), t('delete_message'), function (btn) {
                         if (btn == 'yes') {
                             Ext.Ajax.request({
-                                url: "/admin/tags/delete",
+                                url: Routing.generate('pimcore_admin_tags_delete'),
                                 method: 'DELETE',
                                 params: {
                                     id: record.data.id
@@ -279,7 +279,7 @@ pimcore.element.tag.tree = Class.create({
                         value = strip_tags(trim(value));
                         if (button == "ok" && value.length > 0) {
                             Ext.Ajax.request({
-                                url: "/admin/tags/update",
+                                url: Routing.generate('pimcore_admin_tags_update'),
                                 method: 'PUT',
                                 params: {
                                     id: record.id,
@@ -316,7 +316,7 @@ pimcore.element.tag.tree = Class.create({
         value = strip_tags(trim(value));
         if (button == "ok" && value.length > 0) {
             Ext.Ajax.request({
-                url: "/admin/tags/add",
+                url: Routing.generate('pimcore_admin_tags_add'),
                 method: 'POST',
                 params: {
                     parentId: record.data.id,

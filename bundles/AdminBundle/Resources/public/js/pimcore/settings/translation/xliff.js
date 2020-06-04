@@ -288,7 +288,7 @@ pimcore.settings.translation.xliff = Class.create({
         }
 
         Ext.Ajax.request({
-            url: "/admin/translation/content-export-jobs",
+            url: Routing.generate('pimcore_admin_translation_contentexportjobs'),
             method: 'POST',
             params: {
                 source: this.exportSourceLanguageSelector.getValue(),
@@ -326,7 +326,7 @@ pimcore.settings.translation.xliff = Class.create({
                         this.exportProgressbar = null;
                         this.exportProgressWin = null;
 
-                        pimcore.helpers.download('/admin/translation/xliff-export-download?id='+ id);
+                        pimcore.helpers.download(Routing.generate('pimcore_admin_translation_xliffexportdownload', {id: id}));
                     }.bind(this, res.id),
                     update: function (currentStep, steps, percent) {
                         if(this.exportProgressbar) {
@@ -355,7 +355,7 @@ pimcore.settings.translation.xliff = Class.create({
                 text: t("select_a_file") + " (.xlf / .xliff)",
                 iconCls: "pimcore_icon_file pimcore_icon_overlay_add",
                 handler: function () {
-                    pimcore.helpers.uploadDialog('/admin/translation/xliff-import-upload', "file", function(res) {
+                    pimcore.helpers.uploadDialog(Routing.generate('pimcore_admin_translation_xliffimportupload'), "file", function(res) {
 
                         var res = Ext.decode(res["response"]["responseText"]);
 

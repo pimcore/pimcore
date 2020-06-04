@@ -56,6 +56,7 @@
     "doctrine/inflector": "^1.3.0",
     "egulias/email-validator": "^2.1.5",
     "endroid/qr-code": "^3.4.4",
+    "friendsofsymfony/jsrouting-bundle": "^2.5",
     "geoip2/geoip2": "^2.9",
     "google/apiclient": "^2.0",
     "guzzlehttp/guzzle": "^6.3",
@@ -93,7 +94,8 @@
     "zendframework/zend-servicemanager": "^3.2",
     "scheb/two-factor-bundle": "^3.26",
     "phpoffice/phpspreadsheet": "^1.9",
-    "html2text/html2text": "^4.2.1"
+    "html2text/html2text": "^4.2.1",
+    "webmozarts/console-parallelization": "^1.0.0"
   },
   "conflict": {
     "monolog/monolog": ">=2"
@@ -105,7 +107,7 @@
     "phpstan/phpstan-symfony": "^0.12",
     "heidelpay/heidelpay-php": "^1.2.5.1",
     "klarna/checkout": "^3.0.0",
-    "elasticsearch/elasticsearch": "2.0.0",
+    "elasticsearch/elasticsearch": "^6",
     "paypal/paypal-checkout-sdk": "^1",
     "mpay24/mpay24-php": "^4.2",
     "composer/composer": "*"
@@ -170,7 +172,7 @@
     "symfony-tests-dir": "tests",
     "symfony-assets-install": "relative",
     "branch-alias": {
-      "dev-master": "6.6-dev"
+      "dev-master": "6.7-dev"
     }
   },
   "bin": ["bin/pimcore-install"]

@@ -52,23 +52,20 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
 
                         var item = value[i];
 
-                        var baseUrl = '<img style="padding-left: 3px" src="/admin/asset/get-image-thumbnail?id=' + item.id;
+                        var route = 'pimcore_admin_asset_getimagethumbnail';
                         var params = {
                             width: 88,
                             height: 88,
-                            frame: true
+                            frame: true,
+                            id: item.id
                         };
-
-                        var url = Ext.String.urlAppend(baseUrl, Ext.Object.toQueryString(params));
-
                         if (item.crop) {
-                            var cropParams = Ext.Object.toQueryString(item.crop);
-                            url = Ext.String.urlAppend(url, cropParams);
+                            params = Ext.merge(params, item.crop);
                         }
+                        var url = Routing.generate(route, params);
+                        var tag = '<img style="padding-left: 3px" src="'+url+'">';
 
-                        url = url + '" />';
-
-                        content += url;
+                        content += tag;
                     }
 
                 }

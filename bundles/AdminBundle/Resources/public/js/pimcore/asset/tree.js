@@ -14,10 +14,10 @@
 pimcore.registerNS("pimcore.asset.tree");
 pimcore.asset.tree = Class.create({
 
-    treeDataUrl: "/admin/asset/tree-get-childs-by-id",
+    treeDataUrl: null,
 
     initialize: function(config, perspectiveCfg) {
-
+        this.treeDataUrl = Routing.generate('pimcore_admin_asset_treegetchildsbyid');
         this.perspectiveCfg = perspectiveCfg;
         if (!perspectiveCfg) {
             this.perspectiveCfg = {
@@ -47,7 +47,7 @@ pimcore.asset.tree = Class.create({
 
         // get root node config
         Ext.Ajax.request({
-            url: "/admin/asset/tree-get-root",
+            url: Routing.generate('pimcore_admin_asset_treegetroot'),
             params: {
                 id: this.config.rootId,
                 view: this.config.customViewId,
@@ -265,7 +265,7 @@ pimcore.asset.tree = Class.create({
             }.bind(this);
 
             pimcore.helpers.uploadAssetFromFileObject(file,
-                "/admin/asset/add-asset?parentId=" + parentNode.id + "&dir=" + path,
+                Routing.generate('pimcore_admin_asset_addasset', {parentId: parentNode.id, dir: path}),
                 finishedErrorHandler,
                 function (evt) {
                     //progress
@@ -678,7 +678,7 @@ pimcore.asset.tree = Class.create({
                         text: t('download'),
                         iconCls: "pimcore_icon_download",
                         handler: function () {
-                            pimcore.helpers.download("/admin/asset/download?id=" + record.data.id);
+                            pimcore.helpers.download(Routing.generate('pimcore_admin_asset_download', {id: record.data.id}));
                         }
                     }));
                 }
@@ -834,7 +834,7 @@ pimcore.asset.tree = Class.create({
         pimcore.helpers.addTreeNodeLoadingIndicator("asset", record.id);
 
         Ext.Ajax.request({
-            url: "/admin/asset/copy-info",
+            url: Routing.generate('pimcore_admin_asset_copyinfo'),
             params: {
                 targetId: record.id,
                 sourceId: pimcore.cachedAssetId,
@@ -930,7 +930,7 @@ pimcore.asset.tree = Class.create({
             }
 
             Ext.Ajax.request({
-                url: "/admin/asset/add-folder",
+                url: Routing.generate('pimcore_admin_asset_addfolder'),
                 method: "POST",
                 params: {
                     parentId: record.data.id,
@@ -975,7 +975,8 @@ pimcore.asset.tree = Class.create({
     },
 
     uploadZip: function (tree, record) {
-        pimcore.helpers.uploadDialog("/admin/asset/import-zip?parentId=" + record.id, "Filedata", function (response) {
+
+        pimcore.helpers.uploadDialog(Routing.generate('pimcore_admin_asset_importzipfiles', {parentId: record.id}), "Filedata", function (response) {
             // this.attributes.reference
             var res = Ext.decode(response.response.responseText);
             pimcore.helpers.addTreeNodeLoadingIndicator("asset", record.get("id"));
@@ -1082,7 +1083,7 @@ pimcore.asset.tree = Class.create({
         var store = Ext.create('Ext.data.TreeStore', {
             proxy: {
                 type: 'ajax',
-                url: "/admin/misc/fileexplorer-tree"
+                url: Routing.generate('pimcore_admin_misc_fileexplorertree')
             },
             folderSort: true,
             sorters: [{
@@ -1141,7 +1142,7 @@ pimcore.asset.tree = Class.create({
                         this.uploadWindow.updateLayout();
 
                         Ext.Ajax.request({
-                            url: "/admin/asset/import-server",
+                            url: Routing.generate('pimcore_admin_asset_importserver'),
                             method: 'POST',
                             params: {
                                 parentId: record.id,
@@ -1225,7 +1226,7 @@ pimcore.asset.tree = Class.create({
                 win.show();
 
                 Ext.Ajax.request({
-                    url: "/admin/asset/import-url",
+                    url: Routing.generate('pimcore_admin_asset_importurl'),
                     method: 'POST',
                     params: {
                         id: record.data.id,

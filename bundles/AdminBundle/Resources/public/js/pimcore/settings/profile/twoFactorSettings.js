@@ -43,7 +43,7 @@ pimcore.settings.profile.twoFactorSettings = Class.create({
                 hidden: this.data['required'] || !this.data['isActive'],
                 handler: function () {
                     Ext.Ajax.request({
-                        url: "/admin/user/disable-2fa",
+                        url: Routing.generate('pimcore_admin_user_disable2fasecret'),
                         method: 'DELETE',
                         success: function (response) {
                             window.location.reload();
@@ -72,7 +72,7 @@ pimcore.settings.profile.twoFactorSettings = Class.create({
             items: [
                 {
                     xtype: "container",
-                    html: '<img src="/admin/user/renew-2fa-qr-secret"/>',
+                    html: '<img src="'+Routing.generate('pimcore_admin_user_renew2fasecret')+'"/>',
                     width: 230,
                     height: 230
                 },

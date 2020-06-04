@@ -29,7 +29,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class AssetController extends AbstractElementController
 {
     /**
-     * @Route("/asset/id/{id}", requirements={"id": "\d+"}, methods={"GET"})
+     * @Route("/asset/id/{id}", name="pimcore_api_rest_element_asset_get", requirements={"id": "\d+"}, methods={"GET"})
      *
      * @api {get} /asset Get asset
      * @apiParamExample {json} Request-Example:
@@ -93,7 +93,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Route("/asset", methods={"POST", "PUT"})
+     * @Route("/asset", name="pimcore_api_rest_element_asset_create", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -118,7 +118,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Route("/asset/id/{id}", requirements={"id": "\d+"}, methods={"POST", "PUT"})
+     * @Route("/asset/id/{id}", name="pimcore_api_rest_element_asset_update", requirements={"id": "\d+"}, methods={"POST", "PUT"})
      *
      * @param Request  $request
      * @param int|null $id
@@ -139,7 +139,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Route("/asset/id/{id}", requirements={"id": "\d+"}, methods={"DELETE"})
+     * @Route("/asset/id/{id}", name="pimcore_api_rest_element_asset_delete", requirements={"id": "\d+"}, methods={"DELETE"})
      *
      * @api {delete} /asset Delete asset
      * @apiName deleteAsset
@@ -183,7 +183,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Route("/asset-list", methods={"GET"})
+     * @Route("/asset-list", name="pimcore_api_rest_element_asset_list", methods={"GET"})
      *
      * Returns a list of assets id/type pairs matching the given criteria.
      *  Example:
@@ -224,7 +224,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Route("/asset-count", methods={"GET"})
+     * @Route("/asset-count", name="pimcore_api_rest_element_asset_count", methods={"GET"})
      *
      * Returns the total number of assets matching the given condition
      *  GET http://[YOUR-DOMAIN]/webservice/rest/asset-count?apikey=[API-KEY]&q={"type":%20"folder"}
@@ -267,7 +267,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Route("/asset-inquire", methods={"GET", "POST"})
+     * @Route("/asset-inquire", name="pimcore_api_rest_element_asset_inquire", methods={"GET", "POST"})
      *
      * Checks for existence of the given asset IDs
      *

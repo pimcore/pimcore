@@ -199,7 +199,7 @@ class LibreOffice extends Ghostscript
 
                 return $text;
             } else {
-                $message = "Couldn't convert document to PDF: " . $path . " with the command: '" . $cmd . "' - now trying to get the text out of the PDF ...";
+                $message = "Couldn't convert document to Text: " . $path . " with the command: '" . $cmd . "' - now trying to get the text out of the PDF with ghostscript...";
                 Logger::error($message);
 
                 return parent::getText(null, $this->getPdf($path));

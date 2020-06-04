@@ -48,7 +48,7 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
             var store = Ext.create('Ext.data.TreeStore', {
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/user/role-tree-get-childs-by-id'
+                    url: Routing.generate('pimcore_admin_user_roletreegetchildsbyid')
                 }
             });
 
@@ -172,7 +172,7 @@ pimcore.settings.user.role.panel = Class.create(pimcore.settings.user.panels.abs
     update: function (userId, values) {
 
         Ext.Ajax.request({
-            url: "/admin/user/update",
+            url: Routing.generate('pimcore_admin_user_update'),
             method: "PUT",
             params: {
                 id: userId,

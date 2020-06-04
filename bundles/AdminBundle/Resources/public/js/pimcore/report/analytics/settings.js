@@ -179,7 +179,7 @@ pimcore.report.analytics.settings = Class.create({
                             autoLoad: false,
                             proxy: {
                                 type: 'ajax',
-                                url: "/admin/reports/analytics/get-profiles",
+                                url: Routing.generate('pimcore_admin_reports_analytics_getprofiles'),
                                 reader: {
                                     type: 'json',
                                     rootProperty: "data"

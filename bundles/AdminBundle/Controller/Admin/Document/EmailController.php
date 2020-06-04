@@ -30,7 +30,37 @@ class EmailController extends DocumentControllerBase
     use ElementEditLockHelperTrait;
 
     /**
-     * @Route("/get-data-by-id", methods={"GET"})
+     * @Route("/save-to-session", name="pimcore_admin_document_email_savetosession", methods={"POST"})
+     *
+     * {@inheritDoc}
+     */
+    public function saveToSessionAction(Request $request)
+    {
+        return parent::saveToSessionAction($request);
+    }
+
+    /**
+     * @Route("/remove-from-session", name="pimcore_admin_document_email_removefromsession", methods={"DELETE"})
+     *
+     * {@inheritDoc}
+     */
+    public function removeFromSessionAction(Request $request)
+    {
+        return parent::removeFromSessionAction($request);
+    }
+
+    /**
+     * @Route("/change-master-document", name="pimcore_admin_document_email_changemasterdocument", methods={"PUT"})
+     *
+     * {@inheritDoc}
+     */
+    public function changeMasterDocumentAction(Request $request)
+    {
+        return parent::changeMasterDocumentAction($request);
+    }
+
+    /**
+     * @Route("/get-data-by-id", name="pimcore_admin_document_email_getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -79,7 +109,7 @@ class EmailController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/save", methods={"PUT", "POST"})
+     * @Route("/save", name="pimcore_admin_document_email_save", methods={"PUT", "POST"})
      *
      * @param Request $request
      *

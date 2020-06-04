@@ -17,12 +17,12 @@ pimcore.settings.metadata.predefined = Class.create({
     initialize: function () {
         this.getTabPanel();
     },
-    
+
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         tabPanel.setActiveItem("predefined_metadata");
     },
-    
+
     getTabPanel: function () {
 
         if (!this.panel) {
@@ -52,7 +52,7 @@ pimcore.settings.metadata.predefined = Class.create({
     },
 
     getRowEditor: function () {
-        var url =  '/admin/settings/predefined-metadata?';
+        var url = Routing.generate('pimcore_admin_settings_metadata');
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url,

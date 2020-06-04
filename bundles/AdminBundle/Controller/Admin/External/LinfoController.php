@@ -33,7 +33,7 @@ class LinfoController extends AdminController implements EventedControllerInterf
     protected $linfoHome = '';
 
     /**
-     * @Route("/external_linfo/")
+     * @Route("/external_linfo/", name="pimcore_admin_external_linfo_index")
      *
      * @param Request $request
      * @param Profiler $profiler
@@ -61,7 +61,7 @@ class LinfoController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @Route("/external_linfo/layout/{anything}", defaults={"anything" = null}, requirements={"anything"=".+"})
+     * @Route("/external_linfo/layout/{anything}", name="pimcore_admin_external_linfo_layout", defaults={"anything" = null}, requirements={"anything"=".+"})
      *
      * @param Request $request
      *

@@ -188,7 +188,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             // assemble the route / url in Staticroute::assemble()
             $url = $route->assemble($parameters, $reset, $encode);
             $port = '';
-            $scheme = $this->context->getScheme() ;
+            $scheme = $this->context->getScheme();
 
             if ('http' === $scheme && 80 !== $this->context->getHttpPort()) {
                 $port = ':'.$this->context->getHttpPort();
@@ -212,7 +212,8 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             return $url;
         }
 
-        throw new RouteNotFoundException(sprintf('Could not generate URL for route %s as the static route wasn\'t found', $name));
+        throw new RouteNotFoundException(sprintf('Could not generate URL for route %s as the static route wasn\'t found',
+            $name));
     }
 
     /**
@@ -220,7 +221,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     public function matchRequest(Request $request)
     {
-        return $this->doMatch($request->getPathInfo());
+        return $this->doMatch($request->getPathInfo(), $request);
     }
 
     /**
@@ -233,10 +234,10 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * @param string $pathinfo
-     *
+     * @param Request|null $request
      * @return array
      */
-    protected function doMatch($pathinfo)
+    protected function doMatch($pathinfo, Request $request = null)
     {
         $pathinfo = urldecode($pathinfo);
 
@@ -244,6 +245,14 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         $params = array_merge(Tool::getRoutingDefaults(), $params);
 
         foreach ($this->getStaticRoutes() as $route) {
+            if (null !== $request && null !== $route->getMethods() && 0 !== count($route->getMethods())) {
+                $method = $request->getMethod();
+
+                if (!in_array($method, $route->getMethods(), true)) {
+                    continue;
+                }
+            }
+
             if ($routeParams = $route->match($pathinfo, $params)) {
                 Staticroute::setCurrentRoute($route);
 
@@ -273,7 +282,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         $keys = [
             'module',
             'controller',
-            'action'
+            'action',
         ];
 
         $controllerParams = [];

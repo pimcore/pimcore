@@ -12,7 +12,7 @@ that delivers the solution.
 ### Following Coding Standards & Best Practices
 To minimize the risk of security issues, we follow established and proven php coding standards as well as industry best 
 practises. The coding standards are based on so called PSRs (PHP Standards Recommendations) developed by the 
-PHP Framework Interop Group (PHP-FIG) and are enforced during our continues integration process at Github. 
+PHP Framework Interop Group (PHP-FIG) and are enforced during our continuous integration process at Github. 
 
 Pimcore is also a voting member of the PHP-FIG.
  
