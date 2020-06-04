@@ -124,3 +124,14 @@ Install facedetect for [image thumbnails focal point](../../04_Assets/03_Working
 ```bash
 apt-get install facedetect
 ```
+
+
+# Check your installation
+
+You can check system requirements via Admin UI `Tools` / `System Info & Tools` / `System-Requirements Check` menu.
+
+Or via following CLI command:
+
+```bash
+bin/console pimcore:system:requirements:check
+```

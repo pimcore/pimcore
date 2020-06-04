@@ -91,7 +91,39 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
     {
         if ($name instanceof Document || $name instanceof Asset) {
-            return $name->getFullPath();
+            $schemeAuthority = '';
+            $host = $this->context->getHost();
+            $scheme = $this->context->getScheme();
+            $path = $name->getFullPath();
+            $needsHostname = self::ABSOLUTE_URL === $referenceType || self::NETWORK_PATH === $referenceType;
+
+            if (strpos($path, '://') !== false) {
+                $host = parse_url($path, PHP_URL_HOST);
+                $scheme = parse_url($path, PHP_URL_SCHEME);
+                $path = parse_url($path, PHP_URL_PATH);
+                $needsHostname = true;
+            }
+
+            if ($needsHostname) {
+                if ('' !== $host || ('' !== $scheme && 'http' !== $scheme && 'https' !== $scheme)) {
+                    $port = '';
+                    if ('http' === $scheme && 80 !== $this->context->getHttpPort()) {
+                        $port = ':'.$this->context->getHttpPort();
+                    } elseif ('https' === $scheme && 443 !== $this->context->getHttpsPort()) {
+                        $port = ':'.$this->context->getHttpsPort();
+                    }
+
+                    $schemeAuthority = self::NETWORK_PATH === $referenceType || '' === $scheme ? '//' : "$scheme://";
+                    $schemeAuthority .= $host.$port;
+                }
+            }
+
+            $qs= http_build_query($parameters);
+            if ($qs) {
+                $qs = '?' . $qs;
+            }
+
+            return $schemeAuthority . $this->context->getBaseUrl() . $path . $qs;
         }
         if ($name instanceof Concrete) {
             $linkGenerator = $name->getClass()->getLinkGenerator();
