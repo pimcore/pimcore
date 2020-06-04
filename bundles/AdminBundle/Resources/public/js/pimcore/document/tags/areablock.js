@@ -815,7 +815,12 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         }
 
         if(typeof this.options["limits"][type] != "undefined" && this.elementCounter[type] >= this.options["limits"][type]) {
-            Ext.MessageBox.alert(t("error"), t("brick_limit_reached", null ,{bricklimit: this.options["limits"][type], brickname: t(type)}));
+            let brickName = type;
+            let brickIndex = this.allowedTypes.indexOf(brickName);
+            if (brickIndex >= 0 && typeof this.options.types[brickIndex].name != "undefined") {
+                brickName = this.options.types[brickIndex].name;
+            }
+            Ext.MessageBox.alert(t("error"), t("brick_limit_reached", null ,{bricklimit: this.options["limits"][type], brickname: brickName}));
             return;
         }
 
