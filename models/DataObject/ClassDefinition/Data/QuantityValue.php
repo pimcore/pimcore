@@ -648,7 +648,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     protected function doGetDefaultValue($object, $context = [])
     {
-        if ($this->getDefaultValue() || $this->getDefaultUnit()) {
+        if ($this->getDefaultValue() && $this->getDefaultUnit()) {
             return new Model\DataObject\Data\QuantityValue($this->getDefaultValue(), $this->getDefaultUnit());
         }
 
