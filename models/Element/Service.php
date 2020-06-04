@@ -121,9 +121,9 @@ class Service extends Model\AbstractModel
         return $path;
     }
 
-
     /**
      * @static
+     *
      * @internal
      *
      * @param DataObject|Document $element
@@ -1367,7 +1367,6 @@ class Service extends Model\AbstractModel
                         new PimcoreClassDefinitionMatcher(Data\CustomVersionMarshalInterface::class)
                     );
                 }
-
 
                 return $copier->copy($element);
             }

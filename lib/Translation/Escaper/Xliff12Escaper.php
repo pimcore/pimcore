@@ -110,10 +110,9 @@ class Xliff12Escaper
     {
         $node = simplexml_load_string($content, null, LIBXML_NOCDATA);
 
-        if(empty($node->children())) {
+        if (empty($node->children())) {
             return (string) $node;
         }
-
 
         $content = $node->asXml();
 

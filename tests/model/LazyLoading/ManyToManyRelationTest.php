@@ -14,15 +14,15 @@ use Pimcore\Model\DataObject\Service;
 
 class ManyToManyRelationTest extends AbstractLazyLoadingTest
 {
-
-    public function testUnpublished() {
+    public function testUnpublished()
+    {
         $preservedState = Concrete::getHideUnpublished();
         $folder = Service::createFolderByPath('/rel-test');
 
         $unpub = new RelationTest();
         $unpub->setParent($folder);
         $unpub->setPublished(false);
-        $unpub->setKey("unpub");
+        $unpub->setKey('unpub');
         $unpub->save();
 
         $source = new Lazyloading();
@@ -34,10 +34,10 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
 
         $source = LazyLoading::getById($source->getId(), true);
 
-        $this->assertEquals(0, count($source->getRelations()), "expected 0 items");
+        $this->assertEquals(0, count($source->getRelations()), 'expected 0 items');
 
         Concrete::setHideUnpublished(false);
-        $this->assertEquals(1, count($source->getRelations()), "expected 1 items");
+        $this->assertEquals(1, count($source->getRelations()), 'expected 1 items');
 
         Concrete::setHideUnpublished(true);
         $source->setRelations([]);
@@ -45,11 +45,10 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         $source = LazyLoading::getById($source->getId(), true);
 
         Concrete::setHideUnpublished(false);
-        $this->assertEquals(0, count($source->getRelations()), "expected 0 items");
+        $this->assertEquals(0, count($source->getRelations()), 'expected 0 items');
 
         Concrete::setHideUnpublished($preservedState);
     }
-
 
     public function testClassAttributes()
     {

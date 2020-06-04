@@ -49,5 +49,4 @@ class Version20200529121630 extends AbstractPimcoreMigration
     {
         $this->writeMessage('Please execute bin/console pimcore:deployment:classes-rebuild afterwards.');
     }
-
 }
