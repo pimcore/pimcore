@@ -30,6 +30,8 @@ use Pimcore\Model\DataObject\Localizedfield;
  * Provides worker functionality for batch preparing data and updating index
  *
  * @property AbstractConfig $tenantConfig
+ *
+ * @deprecated will be removed in Pimcore 7.0 use ProductCentricBatchProcessing instead
  */
 abstract class AbstractBatchProcessingWorker extends AbstractWorker implements BatchProcessingWorkerInterface
 {
@@ -41,14 +43,14 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
      *
      * @return string
      */
-    abstract public function getStoreTableName();
+    abstract protected function getStoreTableName();
 
     /**
      * @param int $objectId
      * @param array|null $data
      * @param array|null $metadata
      */
-    abstract public function doUpdateIndex($objectId, $data = null, $metadata = null);
+    abstract protected function doUpdateIndex($objectId, $data = null, $metadata = null);
 
     /**
      * creates store table
@@ -392,6 +394,8 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     }
 
     /**
+     * @deprecated will be removed in Pimcore 7.0
+     *
      * processes elements in the queue for preparation of index data
      * can be run in parallel since each thread marks the entries it is working on and only processes these entries
      *
@@ -435,6 +439,8 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     }
 
     /**
+     * @deprecated will be removed in Pimcore 7.0
+     *
      * processes the update index queue - updates all elements where current_crc != index_crc
      * can be run in parallel since each thread marks the entries it is working on and only processes these entries
      *

@@ -278,7 +278,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
      * @param array|null $data
      * @param array|null $metadata
      */
-    public function doUpdateIndex($objectId, $data = null, $metadata = null)
+    protected function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
         $isLocked = $this->checkIndexLock(false);
 

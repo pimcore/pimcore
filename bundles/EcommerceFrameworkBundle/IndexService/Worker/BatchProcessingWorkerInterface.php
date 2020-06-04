@@ -29,6 +29,8 @@ interface BatchProcessingWorkerInterface extends WorkerInterface
     public function fillupPreparationQueue(IndexableInterface $object);
 
     /**
+     * @deprecated will be removed in Pimcore 7.0
+     *
      * processes elements in the queue for preparation of index data
      * can be run in parallel since each thread marks the entries it is working on and only processes these entries
      *
@@ -39,6 +41,8 @@ interface BatchProcessingWorkerInterface extends WorkerInterface
     public function processPreparationQueue($limit = 200);
 
     /**
+     * @deprecated will be removed in Pimcore 7.0
+     *
      * processes the update index queue - updates all elements where current_crc != index_crc
      * can be run in parallel since each thread marks the entries it is working on and only processes these entries
      *

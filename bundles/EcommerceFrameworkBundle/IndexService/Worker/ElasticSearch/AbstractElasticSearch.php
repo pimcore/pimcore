@@ -360,7 +360,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
         }
     }
 
-    public function doUpdateIndex($objectId, $data = null, $metadata = null)
+    protected function doUpdateIndex($objectId, $data = null, $metadata = null)
     {
         $isLocked = $this->checkIndexLock(false);
 
@@ -507,7 +507,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
         return $entriesUpdated;
     }
 
-    public function getStoreTableName()
+    protected function getStoreTableName()
     {
         return self::STORE_TABLE_NAME;
     }
