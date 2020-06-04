@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
+use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Console\Traits\Parallelization;
 use Pimcore\Console\Traits\Timeout;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -24,20 +24,31 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * Class ParallelProcessPreparationQueueCommand
- * @package Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService
- */
 class BootstrapCommand extends AbstractIndexServiceCommand
 {
     use Timeout;
-
     use Parallelization
     {
         Parallelization::runBeforeFirstCommand as parentRunBeforeFirstCommand;
         Parallelization::runAfterBatch as parentRunAfterBatch;
     }
 
+    /**
+     * @var IndexService
+     */
+    protected $indexService;
+
+    public function __construct(IndexService $indexService, string $name = null)
+    {
+        parent::__construct($name);
+        $this->indexService = $indexService;
+    }
+
+
+
+    /**
+     * @inheritDoc
+     */
     protected function configure()
     {
         parent::configure();
@@ -54,13 +65,18 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         ;
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function runBeforeFirstCommand(InputInterface $input, OutputInterface $output): void
     {
         $this->parentRunBeforeFirstCommand($input, $output);
         $this->initTimeout($input);
     }
 
-
+    /**
+     * @inheritDoc
+     */
     protected function fetchItems(InputInterface $input): array
     {
         $updateIndex = $input->getOption('update-index');
@@ -83,7 +99,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
             $objectListClass = $input->getOption('object-list-class');
             $listCondition = $input->getOption('list-condition');
 
-            /** @var Listing $products */
+            /** @var Listing\Concrete $products */
             $products = new $objectListClass();
             $products->setUnpublished(true);
             $products->setObjectTypes(['object', 'folder', 'variant']);
@@ -96,7 +112,9 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         return $fullIdList;
     }
 
-
+    /**
+     * @inheritDoc
+     */
     protected function runSingleCommand(string $productId, InputInterface $input, OutputInterface $output): void
     {
         $productId = (int)$productId;
@@ -111,12 +129,20 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         }
 
         if ($object = AbstractObject::getById($productId)) {
-            $indexService->updateIndex($object);
+            if($object instanceof IndexableInterface) {
+                $indexService->updateIndex($object);
+            } else {
+                $output->writeln("<error>Object ID $productId is not indexable.</error>");
+            }
+
         } else {
-            $output->writeln('<error>'.$this->getItemName(1).' object not existing anymore.</error>');
+            $output->writeln("<error>Object $productId does not exist anymore.</error>");
         }
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
         $this->parentRunAfterBatch($input, $output, $items);
@@ -126,30 +152,29 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         });
     }
 
-    private function initIndexService(InputInterface $input) : IndexService {
-        $indexService = Factory::getInstance()->getIndexService();
-
+    /**
+     * @param InputInterface $input
+     * @return IndexService
+     */
+    protected function initIndexService(InputInterface $input) : IndexService {
         //set active tenant workers.
         $tenants = count($input->getOption('tenant')) ? $input->getOption('tenant') : null;
         if (!empty($tenants)) {
             $tenantWorkerList = [];
             foreach ($tenants as $tenantName) {
-                $tenantWorkerList[] = $indexService->getTenantWorker($tenantName);
+                $tenantWorkerList[] = $this->indexService->getTenantWorker($tenantName);
             }
-            $indexService->setTenantWorkers($tenantWorkerList);
+            $this->indexService->setTenantWorkers($tenantWorkerList);
         }
-        return $indexService;
+        return $this->indexService;
     }
 
-
+    /**
+     * @inheritDoc
+     */
     protected function getItemName(int $count): string
     {
-        return $count <= 1 ? 'Product' : 'Products';
-    }
-
-    protected function getSegmentSize(): int
-    {
-        return 50; // products per child process
+        return $count == 1 ? 'Product' : 'Products';
     }
 
 }
