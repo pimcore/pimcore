@@ -65,7 +65,7 @@ class IndexUpdateService
     protected function fetchProductIdsForPreparationForSingleStoreTable(string $storeTableName,array $tenantNameFilterList) : array {
 
         $qb = $this->createBasicStoreTableSelectQuery($storeTableName, $tenantNameFilterList);
-        $qb->andWhere('in_preparation = 1');
+        $qb->andWhere('in_preparation_queue = 1');
         Logger::debug('Store table SQL:'.$qb->getSQL());
         $rows = $qb->execute()->fetchAll();
 
