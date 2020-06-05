@@ -751,6 +751,7 @@ class Configuration implements ConfigurationInterface
                     ->cannotBeEmpty()
                     ->defaultValue(IndexService::class)
                 ->end()
+                // @TODO Pimcore 7 - remove this
                 ->enumNode('worker_mode')
                     ->values([ProductCentricBatchProcessingWorker::WORKER_MODE_PRODUCT_CENTRIC, ProductCentricBatchProcessingWorker::WORKER_MODE_LEGACY])
                     ->cannotBeEmpty()

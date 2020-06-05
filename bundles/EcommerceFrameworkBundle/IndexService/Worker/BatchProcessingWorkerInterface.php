@@ -30,6 +30,7 @@ interface BatchProcessingWorkerInterface extends WorkerInterface
 
     /**
      * @deprecated will be removed in Pimcore 7.0
+     * @TODO Pimcore 7 - remove this
      *
      * processes elements in the queue for preparation of index data
      * can be run in parallel since each thread marks the entries it is working on and only processes these entries
@@ -42,6 +43,7 @@ interface BatchProcessingWorkerInterface extends WorkerInterface
 
     /**
      * @deprecated will be removed in Pimcore 7.0
+     * @TODO Pimcore 7 - remove this
      *
      * processes the update index queue - updates all elements where current_crc != index_crc
      * can be run in parallel since each thread marks the entries it is working on and only processes these entries

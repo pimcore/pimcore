@@ -506,6 +506,8 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     }
 
     /**
+     * @deprecated
+     *
      * first run processUpdateIndexQueue of trait and then commit updated entries
      *
      * @param int $limit

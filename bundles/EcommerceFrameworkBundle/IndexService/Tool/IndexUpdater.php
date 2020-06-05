@@ -23,9 +23,8 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Listing\Concrete;
 
 /**
- * @deprecated - should be removed completely!
- * Class IndexUpdater
- * @package Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Tool
+ * @deprecated - use commands instead
+ * @TODO Pimcore 7 - remove this
  */
 class IndexUpdater
 {
@@ -52,6 +51,8 @@ class IndexUpdater
     }
 
     /**
+     * @deprecated will be removed in Pimcore 7. Use ecommerce:indexservice:bootstrap command instead.
+     *
      * Runs update index for all tenants
      *  - but does not run processPreparationQueue or processUpdateIndexQueue
      *
@@ -62,6 +63,12 @@ class IndexUpdater
      */
     public static function updateIndex($objectListClass, $condition = '', $updateIndexStructures = false, $loggername = 'indexupdater')
     {
+        @trigger_error(
+            'Method IndexUpdater::updateIndex is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+            'Use ecommerce:indexservice:bootstrap command instead.',
+            E_USER_DEPRECATED
+        );
+
         $updater = Factory::getInstance()->getIndexService();
         if ($updateIndexStructures) {
             $updater->createOrUpdateIndexStructures();
@@ -105,6 +112,9 @@ class IndexUpdater
     }
 
     /**
+     * @deprecated will be removed in Pimcore 7. Use ecommerce:indexservice:process-preparation-queue command instead.
+     *
+     *
      * Runs processPreparationQueue for given tenants or for all tenants
      *
      * @param array $tenants
@@ -118,6 +128,12 @@ class IndexUpdater
      */
     public static function processPreparationQueue($tenants = null, $maxRounds = null, $loggername = 'indexupdater', $preparationItemsPerRound = 200, $timeout = -1)
     {
+        @trigger_error(
+            'Method IndexUpdater::processPreparationQueue is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+            'Use ecommerce:indexservice:process-preparation-queue command instead.',
+            E_USER_DEPRECATED
+        );
+
         $startTime = microtime(true);
 
         if ($tenants == null) {
@@ -166,6 +182,8 @@ class IndexUpdater
     }
 
     /**
+     * @deprecated will be removed in Pimcore 7. Use ecommerce:indexservice:process-update-queue command instead.
+     *
      * Runs processUpdateIndexQueue for given tenants or for all tenants
      *
      * @param array|null $tenants
@@ -179,6 +197,12 @@ class IndexUpdater
      */
     public static function processUpdateIndexQueue($tenants = null, $maxRounds = null, $loggername = 'indexupdater', $indexItemsPerRound = 200, $timeout = -1)
     {
+        @trigger_error(
+            'Method IndexUpdater::processPreparationQueue is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+            'Use ecommerce:indexservice:process-update-queue command instead.',
+            E_USER_DEPRECATED
+        );
+
         $startTime = microtime(true);
 
         if ($tenants == null) {

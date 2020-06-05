@@ -24,6 +24,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
 {
     /**
      * @deprecated
+     * @TODO Pimcore 7 - remove this
      */
     CONST WORKER_MODE_LEGACY = 'legacy';
     CONST WORKER_MODE_PRODUCT_CENTRIC = 'product_centric';
@@ -38,6 +39,14 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher);
         $this->workerMode = $workerMode;
+
+        if($workerMode == self::WORKER_MODE_LEGACY) {
+            @trigger_error(
+                'Worker_mode "LEGACY" is deprecated since version 6.7.0 and will be removed in 7.0.0. Default will be "PRODUCT_CENTRIC"',
+                E_USER_DEPRECATED
+            );
+        }
+
     }
 
     public function getBatchProcessingStoreTableName(): string
@@ -86,6 +95,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
 
         } else {
+            //@TODO Pimcore 7 - remove this
             parent::createOrUpdateStoreTable();
         }
 
@@ -116,6 +126,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
                 });
             }
         } else {
+            // @TODO Pimcore 7 - remove this
             parent::insertDataToIndex($data, $subObjectId);
         }
 
@@ -123,6 +134,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
 
     /**
      * @inheritDoc
+     * @TODO Pimcore 7 - remove this
      */
     public function processPreparationQueue($limit = 200){
         if($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
@@ -133,6 +145,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
 
     /**
      * @inheritDoc
+     * @TODO Pimcore 7 - remove this
      */
     public function processUpdateIndexQueue($limit = 200) {
         if($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
@@ -159,6 +172,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
                 $this->name
             ]);
         } else {
+            // @TODO Pimcore 7 - remove this
             parent::resetPreparationQueue();
         }
 
@@ -181,6 +195,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
                 $this->name
             ]);
         } else {
+            // @TODO Pimcore 7 - remove this
             parent::resetIndexingQueue();
         }
     }

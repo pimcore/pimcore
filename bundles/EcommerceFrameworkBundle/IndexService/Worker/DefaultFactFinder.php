@@ -90,6 +90,10 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
         $primaryIdColumnType = $this->tenantConfig->getIdColumnType(true);
         $idColumnType = $this->tenantConfig->getIdColumnType(false);
 
+        /**
+         * @TODO Pimcore 7 - remove worker columns
+         */
+
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $this->getStoreTableName() . "` (
           `o_id` $primaryIdColumnType,
           `o_virtualProductId` $idColumnType,
@@ -256,6 +260,8 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
     }
 
     /**
+     * @deprecated
+     *
      * first run processUpdateIndexQueue of trait and then commit updated entries if there are some
      *
      * @param int $limit
