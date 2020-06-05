@@ -140,7 +140,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
         if($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
             throw new \Exception("Not supported anymore in " . self::WORKER_MODE_PRODUCT_CENTRIC . " mode. Use ecommerce:indexservice:process-preparation-queue command instead.");
         }
-        parent::processPreparationQueue($limit);
+        return parent::processPreparationQueue($limit);
     }
 
     /**
@@ -151,7 +151,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
         if($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
             throw new \Exception("Not supported anymore in " . self::WORKER_MODE_PRODUCT_CENTRIC . " mode. Use ecommerce:indexservice:process-update-queue command instead.");
         }
-        parent::processUpdateIndexQueue($limit);
+        return parent::processUpdateIndexQueue($limit);
     }
 
     /**

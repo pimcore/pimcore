@@ -148,7 +148,7 @@ class IndexUpdateService
      * @param int[] $idList the ID list to update
      * @param string $triggerInfo optional text with info what triggered the update that will be saved in the store table.
      *        useful for diagnosis. Recommended to set it!
-     * @param string[]|null optional list of tenant names for which the update should happen. If null, then the parameter
+     * @param string[]|null $tenantNameList optional list of tenant names for which the update should happen. If null, then the parameter
      *        will be ignored. If the array is empty, then no update will take place.
      */
     public function resetIdsInPreparation(array $idList, string $triggerInfo, array $tenantNameList = null) {
@@ -160,7 +160,7 @@ class IndexUpdateService
      * @param int[] $idList the ID list to update
      * @param string $triggerInfo optional text with info what triggered the update that will be saved in the store table.
      *        useful for diagnosis. Recommended to set it!
-     * @param string[]|null optional list of tenant names for which the update should happen. If null, then the parameter
+     * @param string[]|null $tenantNameList optional list of tenant names for which the update should happen. If null, then the parameter
      *        will be ignored. If the array is empty, then no update will take place.
      */
     public function resetIdsUpdateIndex(array $idList, string $triggerInfo, array $tenantNameList = null) {
@@ -174,7 +174,7 @@ class IndexUpdateService
      *        useful for diagnosis.
      * @param bool $onlyResetUpdateIndex if set to true then only the update-index flag will be reset, but the preparation status
      *        won't be reset.
-     * @param string[]|null optional list of tenant names for which the update should happen. If null, then the parameter
+     * @param string[]|null $tenantNameList optional list of tenant names for which the update should happen. If null, then the parameter
      *        will be ignored. If the array is empty, then no update will take place.
      */
     protected function resetIds(array $idList, string $triggerInfo, bool $onlyResetUpdateIndex = false, array $tenantNameList = null)
