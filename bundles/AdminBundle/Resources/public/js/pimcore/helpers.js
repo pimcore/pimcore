@@ -3182,7 +3182,7 @@ pimcore.helpers.getProgressWindowListeners = function () {
 };
 
 pimcore.helpers.reloadUserImage = function (userId) {
-    var image = "/admin/user/get-image?id=" + userId + "&_dc=" + Ext.Date.now();
+    var image = Routing.generate('pimcore_admin_user_getimage', {id: userId, '_dc': Ext.Date.now()});
 
     if (pimcore.currentuser.id == userId) {
         Ext.get("pimcore_avatar").query('img')[0].src = image;
