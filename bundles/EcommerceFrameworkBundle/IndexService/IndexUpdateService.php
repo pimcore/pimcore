@@ -28,6 +28,20 @@ class IndexUpdateService
 {
 
     /**
+     * @var IndexService
+     */
+    protected $indexService;
+
+    /**
+     * @param IndexService $indexService
+     */
+    public function __construct(IndexService $indexService)
+    {
+        $this->indexService = $indexService;
+    }
+
+
+    /**
      * Fetch productIds and tenant information for all products that require product index preparation,
      * and for all tenants with store table support.
      * @param array $tenantNameFilterList
@@ -66,7 +80,6 @@ class IndexUpdateService
 
         $qb = $this->createBasicStoreTableSelectQuery($storeTableName, $tenantNameFilterList);
         $qb->andWhere('in_preparation_queue = 1');
-        Logger::debug('Store table SQL:'.$qb->getSQL());
         $rows = $qb->execute()->fetchAll();
 
         $result = [];
@@ -118,7 +131,6 @@ class IndexUpdateService
 
         $qb = $this->createBasicStoreTableSelectQuery($storeTableName, $tenantNameFilterList);
         $qb->andWhere('crc_current != crc_index OR ISNULL(crc_index)');
-        Logger::debug('Update index SQL for store table:'.$qb->getSQL());
         $rows = $qb->execute()->fetchAll();
 
         $result = [];
@@ -172,8 +184,7 @@ class IndexUpdateService
         }
 
         if ($tenantNameList == null) {
-            //null means "all"
-            $tenantNameList = Factory::getInstance()->getIndexService()->getTenants();
+            $tenantNameList = $this->indexService->getTenants();
         } elseif (count($tenantNameList) <= 0) {
             return;
         }
@@ -204,11 +215,7 @@ class IndexUpdateService
                 $ids = implode(",", $idList);
                 $qb->where(sprintf("o_id in (%s)", $ids));
 
-                try {
-                    $qb->execute();
-                } catch (\Exception $e) {
-                    throw $e;
-                }
+                $qb->execute();
             }
         }
     }
@@ -272,9 +279,7 @@ class IndexUpdateService
      */
     public function getStoreTableList(array $tenantNameFilterList= []) : array {
         //get all store tables and join the results...
-        //TODO get via DI
-        $indexService = Factory::getInstance()->getIndexService();
-        $tenants = $indexService->getTenants();
+        $tenants = $this->indexService->getTenants();
         $storeTableList = [];
         foreach ($tenants as $tenantName) {
 
@@ -282,7 +287,7 @@ class IndexUpdateService
                 continue;
             }
 
-            $worker = $indexService->getTenantWorker($tenantName);
+            $worker = $this->indexService->getTenantWorker($tenantName);
             if ($worker instanceof ProductCentricBatchProcessingWorker) {
                 $storeTableName = $worker->getBatchProcessingStoreTableName();
                 $storeTableList[$storeTableName] = true;
