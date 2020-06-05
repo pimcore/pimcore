@@ -286,21 +286,11 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                 }
 
                 $crc = crc32($jsonData);
-                if (count($attributeErrors) <= 0 && count($generalErrors) <= 0) {
-                    $processedSubObjects[$subObjectId] = $object;
-                    $insertData = [
-                        'o_id' => $subObjectId,
-                        'o_virtualProductId' => $data['o_virtualProductId'],
-                        'tenant' => $this->name,
-                        'data' => $jsonData,
-                        'crc_current' => $crc,
-                        'preparation_worker_timestamp' => 0,
-                        'preparation_worker_id' => $this->db->quote(null),
-                        'in_preparation_queue' => (int)false,
-                        'preparation_status' => self::INDEX_STATUS_PREPARATION_STATUS_DONE,
-                        'preparation_error' => ''
-                    ];
-                } else {
+
+                $preparationErrorDb = '';
+                $hasError = !(count($attributeErrors) <= 0 && count($generalErrors) <= 0);
+
+                if($hasError) {
                     $preparationError = '';
                     if (count($generalErrors) > 0) {
                         $preparationError = implode(', ', $generalErrors);
@@ -313,21 +303,25 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                     if (strlen($preparationErrorDb) > 255) {
                         $preparationErrorDb = substr($preparationErrorDb, 0, 252).'...';
                     }
-                    $insertData = [
-                        'o_id' => $subObjectId,
-                        'o_virtualProductId' => $data['o_virtualProductId'],
-                        'tenant' => $this->name,
-                        'data' => $jsonData,
-                        'crc_current' => time(), //force update by setting crc_current to timestamp. If empty, no update will take place.
-                        //'preparation_worker_timestamp' => 0,
-                        //'preparation_worker_id' => $this->db->quote(null),
-                        'in_preparation_queue' => (int)true,
-                        'preparation_status' => self::INDEX_STATUS_PREPARATION_STATUS_ERROR,
-                        'preparation_error' => $preparationErrorDb
-                    ];
+                }
+
+                $insertData = [
+                    'o_id' => $subObjectId,
+                    'o_virtualProductId' => $data['o_virtualProductId'],
+                    'tenant' => $this->name,
+                    'data' => $jsonData,
+                    'crc_current' => $crc,
+                    'in_preparation_queue' => $hasError ? (int)true : (int)false,
+                    'preparation_status' => $hasError ? self::INDEX_STATUS_PREPARATION_STATUS_ERROR : self::INDEX_STATUS_PREPARATION_STATUS_DONE,
+                    'preparation_error' => $preparationErrorDb
+                ];
+
+                if ($hasError) {
                     Logger::alert(sprintf('Mark product "%s" with preparation error.', $subObjectId),
                         array_merge($generalErrors, $attributeErrors)
                     );
+                } else {
+                    $processedSubObjects[$subObjectId] = $object;
                 }
                 $this->insertDataToIndex($insertData, $subObjectId);
             } else {
@@ -355,9 +349,15 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             $this->db->insert($this->getStoreTableName(), $data);
         } elseif ($currentEntry['crc_current'] != $data['crc_current']) {
             $this->executeTransactionalQuery(function () use ($data, $subObjectId) {
+
+                $data['preparation_worker_timestamp'] = 0;
+                $data['preparation_worker_id'] = $this->db->quote(null);
+
                 $this->db->updateWhere($this->getStoreTableName(), $data, 'o_id = ' . $this->db->quote((string)$subObjectId) . ' AND tenant = ' . $this->db->quote($this->name));
             });
         } elseif ($currentEntry['in_preparation_queue']) {
+
+            //since no data has changed, just update flags, not data
             $this->executeTransactionalQuery(function () use ($subObjectId) {
                 $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 0, preparation_worker_timestamp = 0, preparation_worker_id = null WHERE o_id = ? AND tenant = ?', [$subObjectId, $this->name]);
             });
@@ -377,6 +377,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
      * fills queue based on path
      *
      * @param IndexableInterface $object
+     * @throws \Exception
      */
     public function fillupPreparationQueue(IndexableInterface $object)
     {

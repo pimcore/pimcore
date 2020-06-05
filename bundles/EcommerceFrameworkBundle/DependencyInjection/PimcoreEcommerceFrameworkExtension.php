@@ -414,6 +414,9 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $container->setParameter('pimcore_ecommerce.index_service.default_tenant', $config['default_tenant']);
 
+        //TODO remove this in Pimcore 7
+        $container->setParameter('pimcore_ecommerce.index_service.worker_mode', $config['worker_mode']);
+
         $getterIds = [];
         $interpreterIds = [];
 
