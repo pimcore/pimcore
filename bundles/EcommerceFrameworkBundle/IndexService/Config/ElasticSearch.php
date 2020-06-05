@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider\SynonymProviderInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch as DefaultElasticSearchWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
@@ -73,6 +74,25 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      */
     protected $environment;
 
+    /** @var SynonymProviderInterface[] */
+    protected  $synonymProviders = [];
+
+    /**
+     * @inheritDoc
+     * @param $synonymProviders SynonymProviderInterface[]
+     */
+    public function __construct(
+        string $tenantName,
+        array $attributes,
+        array $searchAttributes,
+        array $filterTypes,
+        array $options = [],
+        iterable $synonymProviders = []
+    ) {
+        $this->synonymProviders = $synonymProviders;
+        parent::__construct($tenantName, $attributes, $searchAttributes, $filterTypes, $options);
+    }
+
     protected function addAttribute(Attribute $attribute)
     {
         parent::addAttribute($attribute);
@@ -119,6 +139,76 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $this->elasticSearchClientParams = $options['es_client_params'];
     }
 
+    /**
+     * Current solution: preparse all analysis filters of type "synonym" and replace the "synonyms_path",
+     * which represents the path to a local synonym file, by the filter type "synonyms", where the synonym
+     * array is extracted from the file content of the local synonym file.
+     * @param array $indexSettings the original index settings, enhanced with synonyms.
+     * @throws \Exception
+     */
+    protected function replaceSynonymProvidersInIndexSettings(array $indexSettings) {
+
+        $indexSettingsSynonymPart = $this->extractSynonymFiltersTreeFromIndexSettings($indexSettings);
+        if (!empty($indexSettingsSynonymPart)) {
+            $filters = $indexSettings['analysis']['filter'];
+            foreach ($filters as $filterName => $filter) {
+
+                if (isset($filter['synonym_provider'])) {
+                    $providerConfigName = $filter['synonym_provider'];
+                    if (!array_key_exists($providerConfigName, $this->synonymProviders)) {
+                        throw new \Exception(sprintf(
+                            'Unknown synonym provider "%s" in use. You must configure the synonym provider, compare Pimcore documentation.',
+                            $providerConfigName));
+                    }
+                    $synonymLines = $this->synonymProviders[$providerConfigName]->getSynonyms();
+                    $rewrittenFilter = $filter;
+                    unset($rewrittenFilter['synonym_provider']);
+                    $rewrittenFilter['synonyms'] = $synonymLines;
+                    $indexSettings['analysis']['filter'][$filterName] = $rewrittenFilter;
+                }
+
+            }
+        }
+        return $indexSettings;
+    }
+
+    /**
+     * Extract that part of the ES analysis index settings that are related to synonym filters.
+     * @param array $indexSettings the index settings
+     * @return array index settings only containing the part of the index settings analysis with
+     * synonym filters.
+     * @return array part of the index_settings that contains the synonym-related filters, including
+     *  the parent elements:
+     *      - analysis
+     *          - filter
+     *              - synonym_filter_1:
+     *                  - type: synonym/synonym_graph
+     *                  - ...
+     */
+    public function extractSynonymFiltersTreeFromIndexSettings(array $indexSettings) : array {
+        $filters = isset($indexSettings['analysis']['filter']) ? $indexSettings['analysis']['filter'] : [];
+        $indexPart = [];
+        if ($filters) {
+            foreach ($filters as $name => $filter) {
+
+                if (stripos($filter['type'], 'synonym') === 0) {
+
+                    if (empty($indexPart)) {
+                        $indexPart = [
+                            'analysis' =>
+                                [
+                                    'filter' => []
+                                ]
+                        ];
+                    }
+
+                    $indexPart['analysis']['filter'][$name] = $filter;
+                }
+            }
+        }
+
+        return $indexPart;
+    }
 
 
     protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
@@ -139,6 +229,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $resolver->setAllowedTypes('mapper', 'string');
 
         $resolver->setDefined('analyzer');
+        $resolver->setDefined('synonym_providers');
 
         $resolver->setDefault('store', true);
         $resolver->setAllowedTypes('store', 'bool');
@@ -314,11 +405,20 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     }
 
     /**
+     * @var bool
+     */
+    protected $hasSynonymProviderReplacedLazy = false;
+
+    /**
      * @return array
      */
     public function getIndexSettings()
     {
-        $indexSettings = $this->preparseIndexSettings($this->indexSettings);
+        if (!$this->hasSynonymProviderReplacedLazy) {
+            //lazy replacement (superior than processing in rocessOptions()).
+            $indexSettings = $this->replaceSynonymProvidersInIndexSettings($this->indexSettings);
+            $this->hasSynonymProviderReplacedLazy = true;
+        }
         return $indexSettings;
     }
 

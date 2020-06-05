@@ -877,7 +877,9 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
 
             $currentIndexName = $this->getIndexNameVersion();
 
-            $indexSettingsSynonymPart = $this->tenantConfig->extractIndexSettingsSynonymFilterPart();
+            $indexSettingsSynonymPart = $this->tenantConfig->extractSynonymFiltersTreeFromIndexSettings(
+                $this->tenantConfig->getIndexSettings()
+            );
 
             if (empty($indexSettingsSynonymPart)) {
                 //nothing to sync.
