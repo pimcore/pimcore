@@ -430,9 +430,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             $this->bulkIndexData[] = $bulkIndexData;
             $this->indexStoreMetaData[$objectId] = $routingId;
 
-
-            //update crc sums in store table to mark element as indexed
-            $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE o_id = ? and tenant = ?', [$objectId, $this->name]);
         }
     }
 
@@ -462,26 +459,44 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
             // save update status
             foreach ($responses['items'] as $response) {
-                $data = [
-                    'update_status' => $response['index']['status'],
-                    'update_error' => null,
-                    'metadata' => $this->indexStoreMetaData[$response['index']['_id']]
-                ];
 
-                $objectId = $response['index']['_id'];
-                $tenantName = $this->getTenantConfig()->getTenantName();
 
-                if (isset($response['index']['error']) && $response['index']['error']) {
-                    $data['update_error'] = json_encode($response['index']['error']);
-                    $data['crc_index'] = 0;
-                    Logger::error('Failed to Index Object with Id:' . $response['index']['_id'],
-                                json_decode($data['update_error'], true)
-                                 );
-                    $this->db->updateWhere($this->getStoreTableName(), $data,
-                        'tenant = ' .$this->db->quote($tenantName) .' AND o_id = ' . $this->db->quote($objectId));
-                } else {
-                    $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE o_id = ? and tenant = ?', [$objectId, $tenantName]);
+                if(isset($response['index'])) {
+                    $index = 'index';
+                } else if(isset($response['delete'])) {
+                    $index = 'delete';
                 }
+
+
+                $data = [
+                    'update_status' => $response[$index]['status'],
+                    'update_error' => null,
+                    'metadata' => $this->indexStoreMetaData[$response[$index]['_id']]
+                ];
+                if (isset($response[$index]['error']) && $response[$index]['error']) {
+                    $data['update_error'] = json_encode($response[$index]['error']);
+                    $data['crc_index'] = 0;
+                    Logger::error(
+                        'Failed to Index Object with Id:' . $response[$index]['_id'],
+                        json_decode($data['update_error'], true)
+                     );
+
+                    $this->db->updateWhere(
+                        $this->getStoreTableName(),
+                        $data,
+                        'o_id = ' . $this->db->quote($response[$index]['_id']) . ' AND tenant = ' . $this->db->quote($this->name)
+                    );
+
+                } else {
+
+                    //update crc sums in store table to mark element as indexed
+                    $this->db->query(
+                        'UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current, update_status = ?, update_error = ?, metadata = ? WHERE o_id = ? and tenant = ?',
+                        [$data['update_status'], $data['update_error'], $data['metadata'], $response[$index]['_id'], $this->name]
+                    );
+
+                }
+
             }
         }
 
