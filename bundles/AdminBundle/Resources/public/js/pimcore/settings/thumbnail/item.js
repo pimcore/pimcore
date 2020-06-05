@@ -82,12 +82,15 @@ pimcore.settings.thumbnail.item = Class.create({
         this.settings = new Ext.form.FormPanel({
             border: false,
             labelWidth: 150,
+            defaults: {
+                renderer: Ext.util.Format.htmlEncode
+            },
             items: [{
                 xtype: "panel",
                 autoHeight: true,
                 border: false,
                 loader: {
-                    url: "/admin/settings/thumbnail-adapter-check",
+                    url: Routing.generate('pimcore_admin_settings_thumbnailadaptercheck'),
                     autoLoad: true
                 }
             }, {
@@ -304,7 +307,7 @@ pimcore.settings.thumbnail.item = Class.create({
         }
 
         Ext.Ajax.request({
-            url: "/admin/settings/thumbnail-update",
+            url: Routing.generate('pimcore_admin_settings_thumbnailupdate'),
             method: "PUT", params: this.getData(),
             success: this.saveOnComplete.bind(this, reload)
 

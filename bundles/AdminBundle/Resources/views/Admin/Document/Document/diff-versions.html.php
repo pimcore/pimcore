@@ -1,3 +1,6 @@
+<?php
+/** @var \Pimcore\Templating\PhpEngine $view */
+?>
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -39,13 +42,19 @@
 <body>
 
     <?php if($this->image) { ?>
-        <img src="/admin/document/diff-versions-image?id=<?= $this->image ?>">
+        <img src="<?=$view->router()->path('pimcore_admin_document_document_diffversionsimage', [
+            'id' => $this->image
+        ])?>">
     <?php } else { ?>
         <div id="left">
-            <img src="/admin/document/diff-versions-image?id=<?= $this->image1 ?>">
+            <img src="<?=$view->router()->path('pimcore_admin_document_document_diffversionsimage', [
+                'id' => $this->image1
+            ])?>">
         </div>
         <div id="right">
-            <img src="/admin/document/diff-versions-image?id=<?= $this->image2 ?>">
+            <img src="<?=$view->router()->path('pimcore_admin_document_document_diffversionsimage', [
+                'id' => $this->image2
+            ])?>">
         </div>
     <?php } ?>
 

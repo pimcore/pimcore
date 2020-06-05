@@ -32,7 +32,7 @@ pimcore.layout.portlets.modificationStatistic = Class.create(pimcore.layout.port
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
-                url: '/admin/portal/portlet-modification-statistics',
+                url: Routing.generate('pimcore_admin_portal_portletmodificationstatistics'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'

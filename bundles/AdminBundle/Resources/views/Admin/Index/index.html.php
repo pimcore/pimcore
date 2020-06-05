@@ -82,6 +82,13 @@ $user      = $userProxy->getUser();
                 transform: scale(1.0);
             }
         }
+
+        #pimcore_panel_tabs-body {
+            background-image: url(<?=$this->router()->path('pimcore_settings_display_custom_logo')?>);
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: 500px auto;
+        }
     </style>
 
     <title><?= htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8') ?> :: Pimcore</title>
@@ -95,6 +102,9 @@ $user      = $userProxy->getUser();
             window.localStorage.setItem(symfonyToolbarKey, 'none');
         }
     </script>
+
+    <script src="<?php echo $view->assets()->getUrl('bundles/fosjsrouting/js/router.js') ?>"></script>
+    <script src="<?php echo $view->router()->path('fos_js_routing_js', array('callback' => 'fos.Router.setData')) ?>"></script>
 </head>
 
 <body class="pimcore_version_6">
@@ -156,7 +166,7 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
     </div>
 
     <div id="pimcore_avatar" style="display:none;">
-        <img src="/admin/user/get-image" data-menu-tooltip="<?= $user->getName() ?> | <?= $this->translate('my_profile') ?>"/>
+        <img src="<?=$view->router()->path('pimcore_admin_user_getimage')?>" data-menu-tooltip="<?= $user->getName() ?> | <?= $this->translate('my_profile') ?>"/>
     </div>
     <a id="pimcore_logout" data-menu-tooltip="<?= $this->translate("logout") ?>" href="<?= $view->router()->path('pimcore_admin_logout') ?>" style="display: none">
         <img src="/bundles/pimcoreadmin/img/material-icons/outline-logout-24px.svg">
@@ -182,7 +192,7 @@ if ($disableMinifyJs) {
 }
 
 $styles = array(
-    "/admin/misc/admin-css",
+    $view->router()->path('pimcore_admin_misc_admincss'),
     "/bundles/pimcoreadmin/css/icons.css",
     "/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css",
     "/bundles/pimcoreadmin/js/lib/leaflet.draw/leaflet.draw.css",
@@ -406,11 +416,24 @@ $scripts = array(
     "pimcore/document/customviews/tree.js",
 
     // assets
+    "pimcore/asset/metadata/data/data.js",
+    "pimcore/asset/metadata/data/input.js",
+    "pimcore/asset/metadata/data/textarea.js",
+    "pimcore/asset/metadata/data/asset.js",
+    "pimcore/asset/metadata/data/document.js",
+    "pimcore/asset/metadata/data/object.js",
+    "pimcore/asset/metadata/data/date.js",
+    "pimcore/asset/metadata/data/checkbox.js",
+    "pimcore/asset/metadata/data/select.js",
+
     "pimcore/asset/metadata/tags/abstract.js",
     "pimcore/asset/metadata/tags/checkbox.js",
     "pimcore/asset/metadata/tags/date.js",
     "pimcore/asset/metadata/tags/input.js",
     "pimcore/asset/metadata/tags/manyToOneRelation.js",
+    "pimcore/asset/metadata/tags/asset.js",
+    "pimcore/asset/metadata/tags/document.js",
+    "pimcore/asset/metadata/tags/object.js",
     "pimcore/asset/metadata/tags/select.js",
     "pimcore/asset/metadata/tags/textarea.js",
     "pimcore/asset/asset.js",
@@ -505,6 +528,8 @@ $scripts = array(
     "pimcore/object/classes/layout/tabpanel.js",
     "pimcore/object/classes/layout/button.js",
     "pimcore/object/classes/layout/iframe.js",
+    "pimcore/object/fieldlookup/filterdialog.js",
+    "pimcore/object/fieldlookup/helper.js",
     "pimcore/object/classes/layout/text.js",
     "pimcore/object/fieldcollection.js",
     "pimcore/object/fieldcollections/field.js",
@@ -725,9 +750,9 @@ $scripts = array(
     pimcore.settings = <?= json_encode($this->settings, JSON_PRETTY_PRINT) ?>;
 </script>
 
-<script src="/admin/misc/json-translations-system?language=<?= $language ?>&_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
+<script src="<?= $view->router()->path('pimcore_admin_misc_jsontranslationssystem', ['language' => $language, '_dc' => \Pimcore\Version::getRevision()])?>"></script>
 <script src="<?= $view->router()->path('pimcore_admin_user_getcurrentuser') ?>?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
-<script src="/admin/misc/available-languages?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
+<script src="<?= $view->router()->path('pimcore_admin_misc_availablelanguages', ['_dc' => \Pimcore\Version::getRevision()]) ?>"></script>
 
 
 <!-- library scripts -->
@@ -750,10 +775,10 @@ $scripts = array(
             $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/" . $scriptUrl) . "\n\n\n";
         }
     }
-    $minimizedScriptPath = \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents);
+    $minimizedScriptParams = \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents, false);
 
 ?>
-    <script src="<?= $minimizedScriptPath ?>"></script>
+    <script src="<?= $this->router()->path('pimcore_admin_misc_scriptproxy', $minimizedScriptParams) ?>"></script>
 <?php } ?>
 
 

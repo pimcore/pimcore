@@ -28,7 +28,7 @@ pimcore.layout.portal = Class.create({
 
     loadConfiguration: function () {
         Ext.Ajax.request({
-            url: "/admin/portal/get-configuration",
+            url: Routing.generate('pimcore_admin_portal_getconfiguration'),
             params: {
                 key: this.key
             },
@@ -149,7 +149,7 @@ pimcore.layout.portal = Class.create({
                                         tabPanel.remove("pimcore_portal_" + this.key);
 
                                         Ext.Ajax.request({
-                                            url: "/admin/portal/delete-dashboard",
+                                            url: Routing.generate('pimcore_admin_portal_deletedashboard'),
                                             method: "DELETE",
                                             params: {
                                                 key: this.key
@@ -194,7 +194,7 @@ pimcore.layout.portal = Class.create({
 
             this.panel.on('drop', function(e) {
                 Ext.Ajax.request({
-                    url: "/admin/portal/reorder-widget",
+                    url: Routing.generate('pimcore_admin_portal_reorderwidget'),
                     method: 'PUT',
                     params: {
                         key: this.key,
@@ -226,7 +226,7 @@ pimcore.layout.portal = Class.create({
         if (dynClass) {
 
             Ext.Ajax.request({
-                url: "/admin/portal/add-widget",
+                url: Routing.generate('pimcore_admin_portal_addwidget'),
                 method: 'POST',
                 params: {
                     key: this.key,

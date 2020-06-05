@@ -54,7 +54,7 @@ pimcore.object.versions = Class.create({
                     }],
                 proxy: {
                     type: 'ajax',
-                    url: "/admin/element/get-versions",
+                    url: Routing.generate('pimcore_admin_element_getversions'),
                     extraParams: {
                         id: this.object.id,
                         elementType: "object"
@@ -187,7 +187,7 @@ pimcore.object.versions = Class.create({
 
             var selections = grid.getSelectionModel().getSelection();
 
-            var url = "/admin/object/diff-versions/from/" + selections[0].data.id + "/to/" + selections[1].data.id;
+            var url = Routing.generate('pimcore_admin_dataobject_dataobject_diffversions', {from: selections[0].data.id, to: selections[1].data.id});
             Ext.get(this.iframeId).dom.src = url;
         }
     },
@@ -198,7 +198,7 @@ pimcore.object.versions = Class.create({
         var data = store.getAt(rowIndex).data;
         var versionId = data.id;
 
-        var url = "/admin/object/preview-version?id=" + versionId;
+        var url = Routing.generate('pimcore_admin_dataobject_dataobject_previewversion', {id: versionId});
         Ext.get(this.iframeId).dom.src = url;
     },
 
@@ -236,7 +236,7 @@ pimcore.object.versions = Class.create({
         var versionId = data.id;
 
         Ext.Ajax.request({
-            url: "/admin/element/delete-version",
+            url: Routing.generate('pimcore_admin_element_deleteversion'),
             method: 'DELETE',
             params: {id: versionId}
         });
@@ -254,7 +254,7 @@ pimcore.object.versions = Class.create({
                     var modificationDate = this.object.data.general.o_modificationDate;
 
                     Ext.Ajax.request({
-                        url: "/admin/element/delete-all-versions",
+                        url: Routing.generate('pimcore_admin_element_deleteallversion'),
                         method: 'DELETE',
                         params: {id: elememntId, date: modificationDate}
                     });
@@ -275,7 +275,7 @@ pimcore.object.versions = Class.create({
         var versionId = data.id;
 
         Ext.Ajax.request({
-            url: "/admin/object/publish-version",
+            url: Routing.generate('pimcore_admin_dataobject_dataobject_publishversion'),
             method: "POST",
             params: {id: versionId},
             success: function (response) {
@@ -301,7 +301,7 @@ pimcore.object.versions = Class.create({
 
         if (operation == "edit") {
             Ext.Ajax.request({
-                url: "/admin/element/version-update",
+                url: Routing.generate('pimcore_admin_element_versionupdate'),
                 method: 'PUT',
                 params: {
                     data: Ext.encode(record.data)

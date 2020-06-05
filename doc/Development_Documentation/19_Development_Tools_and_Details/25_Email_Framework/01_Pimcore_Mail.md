@@ -19,8 +19,6 @@ to the html with a `<style>` tag because the image paths are also normalised.
 Optionally, you can use `html2text` from [Martin Bayer](http://www.mbayer.de/html2text/index.shtml) 
 for the generation of the text version by calling `enableHtml2textBinary()`. (replaced with `Html2Text\Html2Text` library since 6.6.0)
  
-On Debian/Ubuntu you can install it with: `apt-get install html2text` (replaced with `Html2Text\Html2Text` library since 6.6.0)
-
 ## Useful Methods
 
 | Method                            | Description                                                                                                                                                                                                |

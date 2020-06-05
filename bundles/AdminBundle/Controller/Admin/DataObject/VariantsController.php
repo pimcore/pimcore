@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class VariantsController extends AdminController
 {
     /**
-     * @Route("/update-key", methods={"PUT"})
+     * @Route("/update-key", name="pimcore_admin_dataobject_variants_updatekey", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -54,7 +54,7 @@ class VariantsController extends AdminController
     }
 
     /**
-     * @Route("/get-variants", methods={"GET", "POST"})
+     * @Route("/get-variants", name="pimcore_admin_dataobject_variants_getvariants", methods={"GET", "POST"})
      *
      * @param Request $request
      * @param GridHelperService $gridHelperService

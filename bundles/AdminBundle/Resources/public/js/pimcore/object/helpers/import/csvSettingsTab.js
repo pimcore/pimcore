@@ -47,7 +47,7 @@ pimcore.object.helpers.import.csvSettingsTab = Class.create({
 
     updateColumnConfig: function (isReload, dialect) {
         Ext.Ajax.request({
-            url: "/admin/object-helper/import-get-file-info",
+            url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_importgetfileinfo'),
             params: {
                 impotConfigId: this.callback.config.importConfigId,
                 importId: this.callback.uniqueImportId,

@@ -17,8 +17,10 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
     allowedInType: 'fieldcollection',
     disallowedDataTypes: ["reverseManyToManyObjectRelation", "user", "fieldcollections", "localizedfields", "objectbricks",
         "objectsMetadata"],
-    uploadUrl: '/admin/class/import-fieldcollection',
-    exportUrl: "/admin/class/export-fieldcollection",
+
+    uploadRoute: 'pimcore_admin_dataobject_class_importfieldcollection',
+    exportRoute: 'pimcore_admin_dataobject_class_exportfieldcollection',
+
     context: "fieldcollection",
 
     getId: function () {
@@ -29,7 +31,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
 
         this.usagesStore = new Ext.data.ArrayStore({
             proxy: {
-                url: '/admin/class/get-fieldcollection-usages',
+                url: Routing.generate('pimcore_admin_dataobject_class_getfieldcollectionusages'),
                 type: 'ajax',
                 reader: {
                     type: 'json'
@@ -126,7 +128,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
 
         if (this.getDataSuccess) {
             Ext.Ajax.request({
-                url: "/admin/class/fieldcollection-update",
+                url: Routing.generate('pimcore_admin_dataobject_class_fieldcollectionupdate'),
                 method: 'PUT',
                 params: {
                     configuration: m,
@@ -168,7 +170,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
 
         pimcore.helpers.uploadDialog(this.getUploadUrl(), "Filedata", function () {
             Ext.Ajax.request({
-                url: "/admin/class/fieldcollection-get",
+                url: Routing.generate('pimcore_admin_dataobject_class_fieldcollectionget'),
                 params: {
                     id: this.getId()
                 },

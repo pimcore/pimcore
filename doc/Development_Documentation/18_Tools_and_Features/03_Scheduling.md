@@ -7,7 +7,9 @@ tasks like:
 * Publish
 * Unpublish
 * Delete
-* Publish version (You can read more about Versions in [the Versioning section](./01_Versioning.md))
+* Publish version - Publish a specific version (You can read more about Versions in [the Versioning section](./01_Versioning.md))
+
+Important: If object is already published, then using `Publish` option will not publish latest version(unpublished) so it is recommended to use `Publish version` option in that case.
 
 **Note:** To use scheduler you have to configure "cronjobs". You can find more in the [System setup section](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/README.md).
 

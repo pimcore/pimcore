@@ -32,7 +32,7 @@ pimcore.registerNS("pimcore.analytics.piwik.WidgetStoreProvider");
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/reports/piwik/config/configured-sites',
+                    url: Routing.generate('pimcore_admin_reports_piwik_sites'),
                     reader: {
                         type: 'json',
                         rootProperty: 'data'
@@ -61,7 +61,7 @@ pimcore.registerNS("pimcore.analytics.piwik.WidgetStoreProvider");
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/reports/piwik/portal-widgets/' + siteConfigKey,
+                    url: Routing.generate('pimcore_admin_reports_piwik_portalwidgets', {configKey: siteConfigKey}),
                     reader: {
                         type: 'json',
                         rootProperty: 'data'

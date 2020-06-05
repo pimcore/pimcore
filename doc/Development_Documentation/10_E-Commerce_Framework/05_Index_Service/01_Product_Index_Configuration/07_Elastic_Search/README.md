@@ -11,13 +11,17 @@ See [Configuration Details](01_Configuration_Details.md) for more information.
 
 ## Reindexing Mode
 It is possible that Elastic Search cannot update the mapping, e.g. if data types of attributes change on the fly. 
-For this case, a reindex is necessary. If it is necessary, the E-Commerce Framework automatically switches into a 
-reindex mode. When in reindex mode, all queries go to the current index but in parallel a new index is created based 
-on the data in the store table. The current index is read only and all data changes that take place go directly into 
-the new index. As a result, during reindex the results delivered by Product Lists can contain old data. 
- 
-As soon the reindex is finished, the current index is switched to the newly created index and the old index is deleted.  
+For this case, a reindex is necessary. If it is necessary, a native ES reindex is executed automatically during
+`bin/console ecommerce:indexservice:bootstrap --create-or-update-index-structure`.
 
+While reindex is executed, no updates are written to the ES index. The changes remain in store table and are transferred
+to index during next execution of `bin/console ecommerce:indexservice:process-queue update-index` after reindex is finished. 
+
+All queries that take place during reindex go to the old index. As soon the reindex is finished, the current index is switched 
+to the newly created index and the old index is deleted.  
+As a result, during reindex the results delivered by Product Lists can contain old data. 
+
+To manually start a reindex, following command can be used: `bin/console ecommerce:indexservice:elasticsearch-sync reindex`. 
 
 ## Indexing of Classification Store Attributes
 

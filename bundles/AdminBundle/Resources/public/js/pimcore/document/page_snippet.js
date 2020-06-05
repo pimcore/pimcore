@@ -41,7 +41,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         // remove this instance when the panel is closed
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
-                url: "/admin/element/unlock-element",
+                url: Routing.generate('pimcore_admin_element_unlockelement'),
                 method: 'PUT',
                 params: {
                     id: this.data.id,
@@ -337,7 +337,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         }
 
         Ext.Ajax.request({
-            url: this.urlprefix + this.getType() + '/save-to-session',
+            url: Routing.getBaseUrl() + '/admin/' + this.getType() + '/save-to-session',
             method: "post",
             params: this.getSaveData(),
             success: onComplete
@@ -346,7 +346,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
     removeFromSession: function () {
         Ext.Ajax.request({
-            url: this.urlprefix + this.getType() + '/remove-from-session',
+            url: Routing.getBaseUrl() + '/admin/' + this.getType() + '/remove-from-session',
             method: 'DELETE',
             params: {id: this.data.id}
         });
@@ -447,21 +447,21 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             pimcore.globalmanager.add("new_notifications", new pimcore.notification.modal(elementData));        }
     },
 
-    publish: function($super, only) {
+    publish: function($super, only, callback) {
         /* It is needed to have extra validateRequiredEditables check here
          * so as to stop propagating Admin UI changes in case of required content = true */
         if (this.validateRequiredEditables()) {
             return false;
         }
 
-        $super(only);
+        $super(only, callback);
     },
 
-    save : function ($super, task, only) {
+    save : function ($super, task, only, callback) {
         if(task !== "publish") {
             this.validateRequiredEditables(true);
         }
-        $super(task, only);
+        $super(task, only, callback);
     },
 
     validateRequiredEditables: function (dismissAlert) {

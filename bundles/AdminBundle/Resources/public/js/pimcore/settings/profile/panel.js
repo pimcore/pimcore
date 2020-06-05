@@ -233,7 +233,7 @@ pimcore.settings.profile.panel = Class.create({
                     items: [{
                         xtype: "image",
                         id: "pimcore_profile_image_" + this.currentUser.id,
-                        src: "/admin/user/get-image?id=" + this.currentUser.id  + "&_dc=" + Ext.Date.now(),
+                        src: Routing.generate('pimcore_admin_user_getimage', {id: this.currentUser.id, '_dc': Ext.Date.now()}),
                         width: 45,
                         height: 45
                     }],
@@ -243,11 +243,15 @@ pimcore.settings.profile.panel = Class.create({
                     xtype: "button",
                     text: t("upload"),
                     handler: function () {
-                        pimcore.helpers.uploadDialog("/admin/user/upload-current-user-image?id=" + this.currentUser.id, null, function () {
-                            Ext.getCmp("pimcore_profile_delete_image_" + this.currentUser.id).setVisible(true);
-                            pimcore.helpers.reloadUserImage(this.currentUser.id);
-                            this.currentUser.hasImage = true;
-                        }.bind(this));
+                        pimcore.helpers.uploadDialog(
+                            Routing.generate('pimcore_admin_user_uploadcurrentuserimage', {id: this.currentUser.id}),
+                            null,
+                            function () {
+                                Ext.getCmp("pimcore_profile_delete_image_" + this.currentUser.id).setVisible(true);
+                                pimcore.helpers.reloadUserImage(this.currentUser.id);
+                                this.currentUser.hasImage = true;
+                            }.bind(this)
+                        );
                     }.bind(this)
                 },
                 {
@@ -258,7 +262,7 @@ pimcore.settings.profile.panel = Class.create({
                     hidden: !this.currentUser.hasImage,
                     handler: function () {
                         Ext.Ajax.request({
-                            url: "/admin/user/delete-image?id=" + this.currentUser.id,
+                            url: Routing.generate('pimcore_admin_user_deleteimage', {id: this.currentUser.id}),
                             method: 'DELETE',
                             success: function() {
                                 Ext.getCmp("pimcore_profile_delete_image_" + this.currentUser.id).setVisible(false);
@@ -325,7 +329,7 @@ pimcore.settings.profile.panel = Class.create({
 
 
         Ext.Ajax.request({
-            url: "/admin/user/update-current-user",
+            url: Routing.generate('pimcore_admin_user_updatecurrentuser'),
             method: "PUT",
             params: {
                 id: this.currentUser.id,
