@@ -34,6 +34,8 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
 {
     use OptionsResolverTrait;
 
+    const SYNONYM_PROVIDER_LINK_NAME = 'synonym_provider';
+
     /**
      * @var array
      */
@@ -140,21 +142,21 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     }
 
     /**
-     * Current solution: preparse all analysis filters of type "synonym" and replace the "synonyms_path",
-     * which represents the path to a local synonym file, by the filter type "synonyms", where the synonym
-     * array is extracted from the file content of the local synonym file.
-     * @param array $indexSettings the original index settings, enhanced with synonyms.
-     * @throws \Exception
+     * Preparse the analysis/filter part of the ES index configuration and replace
+     * add the actual synonym content to those synonym filters, where a Pimcore synonym provider has been linked.
+     * @param array $indexSettings the original index settings.
+     * @return the replaced index settings
+     * @throws \Exception is thrown if config or parsing errors occur.
      */
-    protected function replaceSynonymProvidersInIndexSettings(array $indexSettings) {
+    protected function replaceSynonymProvidersInIndexSettings(array $indexSettings) : array  {
 
         $indexSettingsSynonymPart = $this->getTenantWorker()->extractSynonymFiltersTreeFromIndexSettings($indexSettings);
         if (!empty($indexSettingsSynonymPart)) {
             $filters = $indexSettings['analysis']['filter'];
             foreach ($filters as $filterName => $filter) {
 
-                if (isset($filter['synonym_provider'])) {
-                    $providerConfigName = $filter['synonym_provider'];
+                if (isset($filter[static::SYNONYM_PROVIDER_LINK_NAME])) {
+                    $providerConfigName = $filter[static::SYNONYM_PROVIDER_LINK_NAME];
                     if (!array_key_exists($providerConfigName, $this->synonymProviders)) {
                         throw new \Exception(sprintf(
                             'Unknown synonym provider "%s" in use. You must configure the synonym provider, compare Pimcore documentation.',
@@ -171,6 +173,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         }
         return $indexSettings;
     }
+
 
 
     protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
@@ -195,41 +198,6 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
 
         $resolver->setDefault('store', true);
         $resolver->setAllowedTypes('store', 'bool');
-    }
-
-    /**
-     * Current solution: preparse all analysis filters of type "synonym" and replace the "synonyms_path",
-     * which represents the path to a local synonym file, by the filter type "synonyms", where the synonym
-     * array is extracted from the file content of the local synonym file.
-     * @param array $indexSettings the original index settings, enhanced with synonyms.
-     * @throws \Exception
-     */
-    protected function preparseIndexSettings(array $indexSettings) {
-
-        $indexSettingsSynonymPart = $this->extractIndexSettingsSynonymFilterPart();
-        if (!empty($indexSettingsSynonymPart)) {
-            $filters = $indexSettings['analysis']['filter'];
-            foreach ($filters as $filterName => $filter) {
-
-                if ('synonym' === $filter['type']) {
-                    if (array_key_exists('synonyms_path', $filter)) {
-                        $localPath = $filter['synonyms_path'];
-                        if (!file_exists($localPath)) {
-                            throw new \Exception(sprintf('Synonym path "%s" does not exist.', $localPath));
-                        }
-                        $content = file_get_contents($localPath);
-                        $synonymLines = explode_and_trim(PHP_EOL, $content);
-
-                        $rewrittenFilter = $filter;
-                        unset($rewrittenFilter['synonyms_path']);
-                        $rewrittenFilter['synonyms'] = $synonymLines;
-
-                        $indexSettings['analysis']['filter'][$filterName] = $rewrittenFilter;
-                    }
-                }
-            }
-        }
-        return $indexSettings;
     }
 
     /**
