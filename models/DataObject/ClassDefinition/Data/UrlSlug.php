@@ -25,7 +25,6 @@ use Pimcore\Model\Redirect;
 
 class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface
 {
-
     use Extension\ColumnType;
 
     use Model\DataObject\Traits\ContextPersistenceTrait;
@@ -822,5 +821,4 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
         return $result;
     }
-
 }
