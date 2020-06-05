@@ -877,7 +877,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
 
             $currentIndexName = $this->getIndexNameVersion();
 
-            $indexSettingsSynonymPart = $this->tenantConfig->extractSynonymFiltersTreeFromIndexSettings(
+            $indexSettingsSynonymPart = $this->extractSynonymFiltersTreeFromIndexSettings(
                 $this->tenantConfig->getIndexSettings()
             );
 
@@ -900,6 +900,45 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
         } finally {
             $this->releaseIndexLock();
         }
+    }
+
+
+    /**
+     * Extract that part of the ES analysis index settings that are related to synonym filters.
+     * @param array $indexSettings the index settings
+     * @return array index settings only containing the part of the index settings analysis with
+     * synonym filters.
+     * @return array part of the index_settings that contains the synonym-related filters, including
+     *  the parent elements:
+     *      - analysis
+     *          - filter
+     *              - synonym_filter_1:
+     *                  - type: synonym/synonym_graph
+     *                  - ...
+     */
+    public function extractSynonymFiltersTreeFromIndexSettings(array $indexSettings) : array {
+        $filters = isset($indexSettings['analysis']['filter']) ? $indexSettings['analysis']['filter'] : [];
+        $indexPart = [];
+        if ($filters) {
+            foreach ($filters as $name => $filter) {
+
+                if (stripos($filter['type'], 'synonym') === 0) {
+
+                    if (empty($indexPart)) {
+                        $indexPart = [
+                            'analysis' =>
+                                [
+                                    'filter' => []
+                                ]
+                        ];
+                    }
+
+                    $indexPart['analysis']['filter'][$name] = $filter;
+                }
+            }
+        }
+
+        return $indexPart;
     }
 
     /**

@@ -148,7 +148,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      */
     protected function replaceSynonymProvidersInIndexSettings(array $indexSettings) {
 
-        $indexSettingsSynonymPart = $this->extractSynonymFiltersTreeFromIndexSettings($indexSettings);
+        $indexSettingsSynonymPart = $this->getTenantWorker()->extractSynonymFiltersTreeFromIndexSettings($indexSettings);
         if (!empty($indexSettingsSynonymPart)) {
             $filters = $indexSettings['analysis']['filter'];
             foreach ($filters as $filterName => $filter) {
@@ -170,44 +170,6 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
             }
         }
         return $indexSettings;
-    }
-
-    /**
-     * Extract that part of the ES analysis index settings that are related to synonym filters.
-     * @param array $indexSettings the index settings
-     * @return array index settings only containing the part of the index settings analysis with
-     * synonym filters.
-     * @return array part of the index_settings that contains the synonym-related filters, including
-     *  the parent elements:
-     *      - analysis
-     *          - filter
-     *              - synonym_filter_1:
-     *                  - type: synonym/synonym_graph
-     *                  - ...
-     */
-    public function extractSynonymFiltersTreeFromIndexSettings(array $indexSettings) : array {
-        $filters = isset($indexSettings['analysis']['filter']) ? $indexSettings['analysis']['filter'] : [];
-        $indexPart = [];
-        if ($filters) {
-            foreach ($filters as $name => $filter) {
-
-                if (stripos($filter['type'], 'synonym') === 0) {
-
-                    if (empty($indexPart)) {
-                        $indexPart = [
-                            'analysis' =>
-                                [
-                                    'filter' => []
-                                ]
-                        ];
-                    }
-
-                    $indexPart['analysis']['filter'][$name] = $filter;
-                }
-            }
-        }
-
-        return $indexPart;
     }
 
 
