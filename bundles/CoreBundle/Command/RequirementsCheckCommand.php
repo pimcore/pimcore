@@ -59,10 +59,10 @@ class RequirementsCheckCommand extends AbstractCommand
 
         $allChecks = Requirements::checkAll(Db::get());
 
-        $this->display($allChecks['checksPHP'], "PHP");
-        $this->display($allChecks['checksMySQL'], "MySQL");
-        $this->display($allChecks['checksFS'], "Filesystem");
-        $this->display($allChecks['checksApps'], "CLI Tools & Applications");
+        $this->display($allChecks['checksPHP'], 'PHP');
+        $this->display($allChecks['checksMySQL'], 'MySQL');
+        $this->display($allChecks['checksFS'], 'Filesystem');
+        $this->display($allChecks['checksApps'], 'CLI Tools & Applications');
 
         return 0;
     }
@@ -70,6 +70,7 @@ class RequirementsCheckCommand extends AbstractCommand
     /**
      * @param Requirements\Check[] $checks
      * @param string $title
+     *
      * @return void
      */
     protected function display(array $checks, string $title = ''): void
@@ -84,12 +85,13 @@ class RequirementsCheckCommand extends AbstractCommand
         }
 
         if (!empty($checksTab)) {
-            $this->io->table(["<options=bold>$title</>", ""], $checksTab);
+            $this->io->table(["<options=bold>$title</>", ''], $checksTab);
         }
     }
 
     /**
      * @param string $state
+     *
      * @return string
      */
     protected function displayState(string $state): string
@@ -102,7 +104,7 @@ class RequirementsCheckCommand extends AbstractCommand
                 $displayState = '<fg=yellow>warning</>';
                 break;
             case Requirements\Check::STATE_ERROR:
-            default;
+            default:
                 $displayState = '<fg=red>error</>';
                 break;
         }

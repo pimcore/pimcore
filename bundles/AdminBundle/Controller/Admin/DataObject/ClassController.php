@@ -975,6 +975,8 @@ class ClassController extends AdminController implements EventedControllerInterf
 
         $result = [];
 
+        DataObject\Service::enrichLayoutDefinition($layoutDefinitions);
+
         $result['objectColumns']['childs'] = $layoutDefinitions->getChilds();
         $result['objectColumns']['nodeLabel'] = 'object_columns';
         $result['objectColumns']['nodeType'] = 'object';
@@ -1004,10 +1006,18 @@ class ClassController extends AdminController implements EventedControllerInterf
 
                         $key = $brickDefinition->getKey();
 
+                        $brickLayoutDefinitions = $brickDefinition->getLayoutDefinitions();
+                        $context = [
+                            'containerType' => 'objectbrick',
+                            'containerKey' => $key,
+                            'outerFieldname' => $fieldName
+                        ];
+                        DataObject\Service::enrichLayoutDefinition($brickLayoutDefinitions, null, $context);
+
                         $result[$key]['nodeLabel'] = $key;
                         $result[$key]['brickField'] = $fieldName;
                         $result[$key]['nodeType'] = 'objectbricks';
-                        $result[$key]['childs'] = $brickDefinition->getLayoutDefinitions()->getChildren();
+                        $result[$key]['childs'] = $brickLayoutDefinitions->getChildren();
                         break;
                     }
                 }

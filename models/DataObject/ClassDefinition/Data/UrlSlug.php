@@ -25,8 +25,6 @@ use Pimcore\Model\Redirect;
 
 class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface
 {
-    use Model\DataObject\Traits\DefaultValueTrait;
-
     use Extension\ColumnType;
 
     use Model\DataObject\Traits\ContextPersistenceTrait;
@@ -247,14 +245,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
 
         $data = $this->getDataFromObjectParam($object, $params);
-
-        if (!is_array($data) || count($data) === 0) {
-            $container = $object instanceof Model\DataObject\Concrete ? $object : $object->getObject();
-            $data = $this->handleDefaultValue($data, $container, $params);
-            if ($data instanceof Model\DataObject\Data\UrlSlug) {
-                $data = [$data];
-            }
-        }
 
         $slugs = $this->prepareDataForPersistence($data, $object, $params);
         $db = Db::get();
@@ -830,16 +820,5 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
 
         return $result;
-    }
-
-    /**
-     * @param \Pimcore\Model\DataObject\Concrete $object
-     * @param array $context
-     *
-     * @return null|string
-     */
-    protected function doGetDefaultValue($object, $context = [])
-    {
-        return null;
     }
 }

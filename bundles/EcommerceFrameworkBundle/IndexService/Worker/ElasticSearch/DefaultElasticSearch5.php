@@ -282,7 +282,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
     {
         $isLocked = $this->checkIndexLock(false);
 
-        if($isLocked) {
+        if ($isLocked) {
             return;
         }
 
@@ -328,6 +328,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                 $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $indexSystemData['o_type'], '_id' => $objectId]];
             }
             $this->bulkIndexData[] = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
+
         }
     }
 

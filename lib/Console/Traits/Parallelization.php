@@ -30,7 +30,7 @@ use Webmozarts\Console\Parallelization\ProcessLauncher;
 trait Parallelization
 {
     use LockableTrait;
-    
+
     use WebmozartParallelization
     {
         WebmozartParallelization::configureParallelization as parentConfigureParallelization;
@@ -75,6 +75,7 @@ trait Parallelization
     /**
      * Default behavior in commands: clean up garbage after each batch run, if there is only
      * one master process in place.
+     *
      * @param array $items
      */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
@@ -108,8 +109,8 @@ trait Parallelization
         return \Pimcore::getKernel()->getContainer();
     }
 
-
-    // ----------- temporary fix for quoting options ----------------------
+  
+  // ----------- temporary fix for quoting options ----------------------
 
 
     protected function needsQuote($value) {
@@ -293,11 +294,5 @@ trait Parallelization
 
         $this->runAfterLastCommand($input, $output);
     }
-
-
-
-
-
-
 
 }

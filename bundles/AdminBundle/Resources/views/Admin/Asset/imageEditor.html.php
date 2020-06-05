@@ -73,7 +73,7 @@
 
 <?php
     $imageFileExtension = \Pimcore\File::getFileExtension($this->asset->getFilename());
-    $imageUrl = $this->asset->getFullPath();
+    $imageUrl = $view->router()->path('pimcore_admin_asset_getasset', ['id' => $this->asset->getId()]);
     if(!in_array($imageFileExtension, ['png', 'jpg', 'jpeg'])) {
         $imageUrl = $view->router()->path('pimcore_admin_asset_getimagethumbnail', [
             'id' => $this->asset->getId(),

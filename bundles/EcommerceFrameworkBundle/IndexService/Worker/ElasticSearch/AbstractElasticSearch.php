@@ -39,7 +39,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
     const REINDEXING_LOCK_KEY = 'elasticsearch_reindexing_lock';
 
-
     /**
      * Default value for the mapping of custom attributes
      *
@@ -112,11 +111,13 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      * the versioned index-name
      *
      * @param int $indexVersionOverride if set, then the index name for a specific index version is built. example. 13
+     *
      * @return string the name of the index, such as at_de_elastic_13
      */
     public function getIndexNameVersion(int $indexVersionOverride = null)
     {
         $indexVersion = $indexVersionOverride ?? $this->getIndexVersion();
+
         return $this->indexName . '-' . $indexVersion;
     }
 
@@ -125,7 +126,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      */
     public function getIndexVersion()
     {
-        if($this->indexVersion === null) {
+        if ($this->indexVersion === null) {
             $this->indexVersion = 0;
             $esClient = $this->getElasticSearchClient();
 
@@ -134,7 +135,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                     'name' => $this->indexName
                 ]);
 
-                if(is_array($result)) {
+                if (is_array($result)) {
                     $aliasIndexName = array_key_first($result);
                     preg_match('/'.$this->indexName.'-(\d+)/', $aliasIndexName, $matches);
                     if (is_array($matches) && count($matches) > 1) {
@@ -147,7 +148,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             } catch (Missing404Exception $e) {
                 $this->indexVersion = 0;
             }
-
         }
 
         return $this->indexVersion;
@@ -284,6 +284,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      * can be overwritten in order to consider additional mappings for sub tenants
      *
      * @param bool $includeTypes
+     *
      * @return array
      */
     public function getSystemAttributes($includeTypes = false)
@@ -313,6 +314,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      * deletes given element from index
      *
      * @param IndexableInterface $object
+     *
      * @throws \Exception
      */
     public function deleteFromIndex(IndexableInterface $object)
@@ -336,6 +338,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      * updates given element in index
      *
      * @param IndexableInterface $object
+     *
      * @throws \Throwable
      */
     public function updateIndex(IndexableInterface $object)
@@ -363,7 +366,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     {
         $isLocked = $this->checkIndexLock(false);
 
-        if($isLocked) {
+        if ($isLocked) {
             return;
         }
 
@@ -564,7 +567,8 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         $this->cleanupUnusedEsIndices();
     }
 
-    protected function cleanupUnusedEsIndices(): void {
+    protected function cleanupUnusedEsIndices(): void
+    {
         $esClient = $this->getElasticSearchClient();
         $stats = $esClient->indices()->stats();
         foreach ($stats['indices'] as $key => $data) {
@@ -597,6 +601,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     /**
      * @param int $objectId
      * @param IndexableInterface|null $object
+     *
      * @throws \Exception
      */
     protected function doDeleteFromIndex($objectId, IndexableInterface $object = null)
@@ -605,10 +610,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
         $storeEntry = \Pimcore\Db::get()->fetchRow('SELECT * FROM ' . $this->getStoreTableName() . ' WHERE  o_id=? AND tenant=? ', [$objectId, $this->getTenantConfig()->getTenantName()]);
         if ($storeEntry) {
-
             $isLocked = $this->checkIndexLock(false);
-            if($isLocked) {
-                throw new \Exception("Delete not possible due to product index lock. Please re-try later.");
+            if ($isLocked) {
+                throw new \Exception('Delete not possible due to product index lock. Please re-try later.');
             }
 
             try {
@@ -661,7 +665,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             $currentSettings = $currentSettings[$this->getIndexNameVersion()]['settings']['index'];
 
             $settingsIntersection = array_intersect_key($currentSettings, $configuredSettings);
-            if($settingsIntersection != $configuredSettings) {
+            if ($settingsIntersection != $configuredSettings) {
                 $esClient->indices()->putSettings([
                     'index' => $this->getIndexNameVersion(),
                     'body' => [
@@ -779,13 +783,13 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         }
     }
 
-
     /**
      * Delete an ES index if existing.
      *
      * @param string $indexName the name of the index.
      */
-    protected function deleteEsIndexIfExisting(string $indexName) {
+    protected function deleteEsIndexIfExisting(string $indexName)
+    {
         $esClient = $this->getElasticSearchClient();
         $result = $esClient->indices()->exists(['index' => $indexName]);
         if ($result) {
@@ -799,10 +803,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
     /**
      * Get the next index version, e.g. if currently 13, then 14 will be returned.
+     *
      * @return int
      */
-    protected function getNextIndexVersion() : int {
-        return $this->getIndexVersion()+1;
+    protected function getNextIndexVersion(): int
+    {
+        return $this->getIndexVersion() + 1;
     }
 
     /**
@@ -811,11 +817,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @param string $sourceIndexName the name of the source index in ES.
      * @param string $targetIndexName the name of the target index in ES. If existing, will be deleted
+     *
      * @throws BadRequest400Exception
      * @throws NoNodesAvailableException
      */
-    protected function performReindex(string $sourceIndexName, string $targetIndexName) {
-
+    protected function performReindex(string $sourceIndexName, string $targetIndexName)
+    {
         $esClient = $this->getElasticSearchClient();
 
         $sourceIndexName = strtolower($sourceIndexName);
@@ -860,8 +867,8 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      * @throws BadRequest400Exception
      * @throws NoNodesAvailableException
      */
-    public function startReindexMode() {
-
+    public function startReindexMode()
+    {
         try {
             $this->activateIndexLock(); //lock all other processes
 
@@ -877,7 +884,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             $this->indexVersion = $nextIndex;
 
             $this->switchIndexAlias();
-
         } finally {
             $this->releaseIndexLock();
         }
@@ -890,19 +896,23 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
     /**
      * Verify if the index is currently locked.
+     *
      * @param bool $throwException if set to false then no exception will be thrown if index is locked
+     *
      * @return bool returns true if no exception is thrown and the index is locked
+     *
      * @throws \Exception
      */
-    protected function checkIndexLock(bool $throwException = true) : bool {
-        if (Lock::isLocked(self::REINDEXING_LOCK_KEY, 60*10)) {  #lock expires after 10 minutes.
+    protected function checkIndexLock(bool $throwException = true): bool
+    {
+        if (Lock::isLocked(self::REINDEXING_LOCK_KEY, 60 * 10)) {  //lock expires after 10 minutes.
 
             $errorMessage = sprintf('Index is currently locked by "%s" as reindex is in progress.', self::REINDEXING_LOCK_KEY);
             if ($throwException) {
                 throw new \Exception($errorMessage);
             } else {
                 //only write log message once a minute to not spam up log file when running update index
-                if($this->lastLockLogTimestamp < time() - 60) {
+                if ($this->lastLockLogTimestamp < time() - 60) {
                     $this->lastLockLogTimestamp = time();
                     Logger::warning($errorMessage . ' (will suppress subsequent log messages of same type for next 60 seconds)');
                 }
@@ -914,11 +924,13 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         return false;
     }
 
-    protected function activateIndexLock() {
+    protected function activateIndexLock()
+    {
         Lock::lock(self::REINDEXING_LOCK_KEY);
     }
 
-    protected function releaseIndexLock() {
+    protected function releaseIndexLock()
+    {
         Lock::release(self::REINDEXING_LOCK_KEY);
         $this->lastLockLogTimestamp = 0;
     }

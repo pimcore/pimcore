@@ -183,7 +183,12 @@ pimcore.settings.glossary = Class.create({
         this.grid = Ext.create('Ext.grid.Panel', {
             autoScroll: true,
             store: this.store,
-            columns : typesColumns,
+            columns: {
+                items: typesColumns,
+                defaults: {
+                    renderer: Ext.util.Format.htmlEncode
+                },
+            },
             selModel: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
                 this.cellEditing

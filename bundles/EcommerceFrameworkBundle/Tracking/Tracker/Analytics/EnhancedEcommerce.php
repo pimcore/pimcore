@@ -340,7 +340,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
                 'category' => $item->getCategory(),
                 'brand' => $item->getBrand(),
                 'variant' => $item->getVariant(),
-                'price' => Decimal::fromNumeric($item->getPrice())->asString(),
+                'price' => $item->getPrice() ? Decimal::fromNumeric($item->getPrice())->asString() : '',
                 'quantity' => $item->getQuantity() ?: 1,
                 'position' => $item->getPosition(),
                 'coupon' => $item->getCoupon()
@@ -364,7 +364,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
             'category' => $item->getCategory(),
             'brand' => $item->getBrand(),
             'variant' => $item->getVariant(),
-            'price' => Decimal::fromNumeric($item->getPrice())->asString(),
+            'price' => $item->getPrice() ? Decimal::fromNumeric($item->getPrice())->asString() : '',
             'list' => $item->getList(),
             'position' => $item->getPosition()
         ], $item->getAdditionalAttributes()));
