@@ -38,9 +38,9 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
      */
     protected $_sqlChangeLog = [];
 
-    public function __construct(FactFinderConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
+    public function __construct(FactFinderConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
-        parent::__construct($tenantConfig, $db, $eventDispatcher);
+        parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
     }
 
     protected function getSystemAttributes()
@@ -195,8 +195,6 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
                 $data = $this->getDefaultDataForIndex($object, $subObjectId);
                 $data['categoryPaths'] = implode('|', (array)$data['categoryPaths']);
                 $data['crc_current'] = '';
-                $data['preparation_worker_timestamp'] = 0;
-                $data['preparation_worker_id'] = $this->db->quote(null);
                 $data['in_preparation_queue'] = 0;
 
                 foreach ($this->tenantConfig->getAttributes() as $attribute) {

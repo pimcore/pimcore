@@ -35,9 +35,9 @@ class OptimizedMysql extends AbstractMockupCacheWorker implements BatchProcessin
      */
     protected $mySqlHelper;
 
-    public function __construct(OptimizedMysqlConfig $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
+    public function __construct(OptimizedMysqlConfig $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
-        parent::__construct($tenantConfig, $db, $eventDispatcher);
+        parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
 
         $this->mySqlHelper = new Helper\MySql($tenantConfig, $db);
     }
