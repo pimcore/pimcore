@@ -38,7 +38,8 @@ class Service
      */
     public static function generateClassDefinitionJson($class)
     {
-        $data = Webservice\Data\Mapper::map($class, '\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out', 'out');
+        $class = clone $class;
+        $data = json_decode(json_encode($class));
         unset($data->name);
         unset($data->creationDate);
         unset($data->modificationDate);
@@ -48,12 +49,7 @@ class Service
 
         self::removeDynamicOptionsFromLayoutDefinition($data->layoutDefinitions);
 
-        //add propertyVisibility to export data
-        $data->propertyVisibility = $class->propertyVisibility;
-
-        $json = json_encode($data, JSON_PRETTY_PRINT);
-
-        return $json;
+        return json_encode($data, JSON_PRETTY_PRINT);
     }
 
     public static function removeDynamicOptionsFromLayoutDefinition(&$layout)

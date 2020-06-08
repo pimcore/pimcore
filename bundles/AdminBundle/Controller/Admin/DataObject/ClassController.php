@@ -1654,7 +1654,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $result['fieldcollection'][] = $fieldCollectionJson;
             } elseif ($item['type'] == 'class') {
                 $class = DataObject\ClassDefinition::getByName($item['name']);
-                $data = Model\Webservice\Data\Mapper::map($class, '\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out', 'out');
+                $data = json_decode(json_encode($class));
                 unset($data->fieldDefinitions);
                 $result['class'][] = $data;
             } elseif ($item['type'] == 'objectbrick') {
