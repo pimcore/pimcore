@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Reports;
 
 use Pimcore\Model\Tool\CustomReport;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -369,14 +370,13 @@ class CustomReportController extends ReportsControllerBase
     }
 
     /**
-     * @Route("/download-csv", name="pimcore_admin_reports_customreport_downloadcsv", methods={"GET"})
+     * @Route("/create-csv", name="pimcore_admin_reports_customreport_createcsv", methods={"GET"})
      *
      * @param Request $request
      *
-     * @return BinaryFileResponse
+     * @return JsonResponse
      */
-    public function downloadCsvAction(Request $request)
-    {
+    public function createCsvAction(Request $request){
         $this->checkPermission('reports');
 
         set_time_limit(300);
@@ -391,11 +391,9 @@ class CustomReportController extends ReportsControllerBase
 
         $columns = $config->getColumnConfiguration();
         $fields = [];
-        $headers = [];
         foreach ($columns as $column) {
             if ($column['export']) {
                 $fields[] = $column['name'];
-                $headers[] = !empty($column['label']) ? $column['label'] : $column['name'];
             }
         }
 
@@ -406,28 +404,58 @@ class CustomReportController extends ReportsControllerBase
             : $configuration;
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
-        $result = $adapter->getData($filters, $sort, $dir, null, null, $fields, $drillDownFilters);
 
-        $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
-        @unlink($exportFile);
+        $offset = $request->get("offset", 0);
+        $limit = 5000;
+        $tempData = [];
+        $result = $adapter->getData($filters, $sort, $dir, $offset * $limit, $limit, $fields, $drillDownFilters);
+        ++$offset;
 
-        $fp = fopen($exportFile, 'w');
-
-        if ($includeHeaders) {
-            fputcsv($fp, $headers, ';');
+        if(!($exportFile = $request->get("exportFile"))){
+            $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
+            @unlink($exportFile);
         }
 
-        foreach ($result['data'] as $row) {
+        $fp = fopen($exportFile, 'a');
+
+        if ($includeHeaders) {
+            fputcsv($fp, $fields, ';');
+        }
+
+        foreach ($result["data"] as $row) {
             fputcsv($fp, array_values($row), ';');
         }
 
         fclose($fp);
 
-        $response = new BinaryFileResponse($exportFile);
-        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.csv');
-        $response->deleteFileAfterSend(true);
+        $progress = $result["total"] ? ($offset * $limit) / $result["total"] : 1;
+        $progress = $progress > 1 ? 1 : $progress;
+        return new JsonResponse([
+            "exportFile" => $exportFile,
+            "offset" => $offset,
+            "progress" => $progress,
+            "finished" => empty($result["data"]) || sizeof($result["data"]) < $limit,
+        ]);
+    }
 
-        return $response;
+    /**
+     * @Route("/download-csv", name="pimcore_admin_reports_customreport_downloadcsv", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return BinaryFileResponse
+     */
+    public function downloadCsvAction(Request $request)
+    {
+        $this->checkPermission('reports');
+        if($exportFile = $request->get("exportFile")){
+            $response = new BinaryFileResponse($exportFile);
+            $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+            $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.csv');
+            $response->deleteFileAfterSend(true);
+
+            return $response;
+        }
+        throw new FileNotFoundException("File \"$exportFile\" not found!");
     }
 }
