@@ -376,7 +376,8 @@ class CustomReportController extends ReportsControllerBase
      *
      * @return JsonResponse
      */
-    public function createCsvAction(Request $request){
+    public function createCsvAction(Request $request)
+    {
         $this->checkPermission('reports');
 
         set_time_limit(300);
@@ -405,13 +406,13 @@ class CustomReportController extends ReportsControllerBase
 
         $adapter = CustomReport\Config::getAdapter($configuration, $config);
 
-        $offset = $request->get("offset", 0);
+        $offset = $request->get('offset', 0);
         $limit = 5000;
         $tempData = [];
         $result = $adapter->getData($filters, $sort, $dir, $offset * $limit, $limit, $fields, $drillDownFilters);
         ++$offset;
 
-        if(!($exportFile = $request->get("exportFile"))){
+        if (!($exportFile = $request->get('exportFile'))) {
             $exportFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/report-export-' . uniqid() . '.csv';
             @unlink($exportFile);
         }
@@ -422,19 +423,20 @@ class CustomReportController extends ReportsControllerBase
             fputcsv($fp, $fields, ';');
         }
 
-        foreach ($result["data"] as $row) {
+        foreach ($result['data'] as $row) {
             fputcsv($fp, array_values($row), ';');
         }
 
         fclose($fp);
 
-        $progress = $result["total"] ? ($offset * $limit) / $result["total"] : 1;
+        $progress = $result['total'] ? ($offset * $limit) / $result['total'] : 1;
         $progress = $progress > 1 ? 1 : $progress;
+
         return new JsonResponse([
-            "exportFile" => $exportFile,
-            "offset" => $offset,
-            "progress" => $progress,
-            "finished" => empty($result["data"]) || sizeof($result["data"]) < $limit,
+            'exportFile' => $exportFile,
+            'offset' => $offset,
+            'progress' => $progress,
+            'finished' => empty($result['data']) || sizeof($result['data']) < $limit,
         ]);
     }
 
@@ -448,7 +450,7 @@ class CustomReportController extends ReportsControllerBase
     public function downloadCsvAction(Request $request)
     {
         $this->checkPermission('reports');
-        if($exportFile = $request->get("exportFile")){
+        if ($exportFile = $request->get('exportFile')) {
             $response = new BinaryFileResponse($exportFile);
             $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
             $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, 'export.csv');

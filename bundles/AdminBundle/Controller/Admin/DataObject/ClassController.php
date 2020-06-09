@@ -20,7 +20,6 @@ use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
-use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
