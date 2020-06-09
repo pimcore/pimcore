@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 
 /**
