@@ -282,6 +282,7 @@ class EditmodeListener implements EventSubscriberInterface
         ]);
 
         $headHtml .= '<script src="'.$path.'"></script>' . "\n";
+        $headHtml .= '<script src="' . $this->router->generate('fos_js_routing_js', array('callback' => 'fos.Router.setData')) . '"></script>' . "\n";
         $headHtml .= "\n\n";
 
         // set var for editable configurations which is filled by Document\Tag::admin()
