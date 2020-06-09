@@ -7,7 +7,7 @@ notifications:
 branches:
   only:
     - master
-    - /^v\d+\..*/
+    - /^\d+\..*/
     - /.*_travis$/
 
 sudo: false
