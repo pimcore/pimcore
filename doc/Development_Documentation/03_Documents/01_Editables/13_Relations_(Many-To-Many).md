@@ -96,11 +96,11 @@ For example:
 ```php
 <?= $this->relations("objectPaths", [
     "types" => ["asset","object"],
-        "subtypes" => [
-            "asset" => ["video","image"],
-            "object" => ["object"]
-         ],
-        "classes" => ["person"]
+    "subtypes" => [
+        "asset" => ["video","image"],
+        "object" => ["object"]
+     ],
+    "classes" => ["person"]
 ]); ?>
 ```
 ```twig
@@ -114,5 +114,5 @@ For example:
 }) }}
 ```
 </div>
-Now, a user is not able to add elements other elements then specified in the types configuration part.
+Now, a user is not able to add other elements than specified in the types configuration part.
 
