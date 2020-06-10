@@ -45,7 +45,7 @@ class ObjectbrickTest extends ModelTestCase
 
         //set brick field input on one(parent)
         $myBrick = new DataObject\Objectbrick\Data\UnittestBrick($one);
-        $myBrick->setBrickinput("parenttext");
+        $myBrick->setBrickinput('parenttext');
         $one->getMybricks()->setUnittestBrick($myBrick);
 
         $one->save();
@@ -57,7 +57,7 @@ class ObjectbrickTest extends ModelTestCase
         $two->setPublished(true);
 
         //set brick field input2 on two(child)
-        $two->getMybricks()->getUnittestBrick()->setBrickinput2("childtext");
+        $two->getMybricks()->getUnittestBrick()->setBrickinput2('childtext');
         $two->save();
 
         /** @var Inheritance $three */
@@ -88,7 +88,7 @@ class ObjectbrickTest extends ModelTestCase
         $this->assertEquals(10, count($three->getMybricks()->getUnittestBrick()->getBrickLazyRelation()));
 
         // change parent brick input value
-        $one->getMybricks()->getUnittestBrick()->setBrickinput("parenttextnew");
+        $one->getMybricks()->getUnittestBrick()->setBrickinput('parenttextnew');
         $one->save();
 
         //get inherited brick value(updated) from first & second level child
