@@ -1551,7 +1551,7 @@ class DataObjectHelperController extends AdminController
         }
 
         $csv = new \SplFileObject($originalFile);
-        $csv->setFlags(\SplFileObject::READ_CSV);
+        $csv->setFlags(\SplFileObject::READ_CSV | \SplFileObject::READ_AHEAD | \SplFileObject::SKIP_EMPTY | \SplFileObject::DROP_NEW_LINE);
         $csv->setCsvControl($dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
         $rows = 0;
         $nbFields = 0;
