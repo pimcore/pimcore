@@ -135,7 +135,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array

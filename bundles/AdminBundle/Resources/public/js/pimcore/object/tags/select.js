@@ -269,6 +269,7 @@ pimcore.object.tags.select = Class.create(pimcore.object.tags.abstract, {
             triggerAction: "all",
             editable: true,
             queryMode: 'local',
+            anyMatch: true,
             autoComplete: false,
             forceSelection: true,
             selectOnFocus: true,

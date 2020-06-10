@@ -373,6 +373,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $listing->addCondition($objectId, 'o_id');
         $listing->setLimit(1);
         $product = $listing->current();
+
         return $product ? $product : null;
     }
 

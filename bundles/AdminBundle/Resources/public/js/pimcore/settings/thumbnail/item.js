@@ -82,6 +82,9 @@ pimcore.settings.thumbnail.item = Class.create({
         this.settings = new Ext.form.FormPanel({
             border: false,
             labelWidth: 150,
+            defaults: {
+                renderer: Ext.util.Format.htmlEncode
+            },
             items: [{
                 xtype: "panel",
                 autoHeight: true,

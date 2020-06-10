@@ -166,24 +166,26 @@ class RecyclebinController extends AdminController implements EventedControllerI
      */
     public function addAction(Request $request)
     {
-        $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
+        try {
+            $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
 
-        if ($element) {
-            $type = Element\Service::getElementType($element);
-            $baseClass = Element\Service::getBaseClassNameForElement($type);
-            $listClass = '\\Pimcore\\Model\\' . $baseClass . '\\Listing';
-            $list = new $listClass();
-            $list->setCondition((($type == 'object') ? 'o_' : '') . 'path LIKE ' . $list->quote($element->getRealFullPath() . '/%'));
-            $children = $list->getTotalCount();
+            if ($element) {
+                $type = Element\Service::getElementType($element);
+                $baseClass = Element\Service::getBaseClassNameForElement($type);
+                $listClass = '\\Pimcore\\Model\\' . $baseClass . '\\Listing';
+                $list = new $listClass();
+                $list->setCondition((($type == 'object') ? 'o_' : '') . 'path LIKE ' . $list->quote($element->getRealFullPath() . '/%'));
+                $children = $list->getTotalCount();
 
-            if ($children <= 100) {
-                Recyclebin\Item::create($element, $this->getAdminUser());
+                if ($children <= 100) {
+                    Recyclebin\Item::create($element, $this->getAdminUser());
+                }
             }
-
-            return $this->adminJson(['success' => true]);
-        } else {
-            return $this->adminJson(['success' => false]);
+        } catch (\Exception $e) {
+            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
         }
+
+        return $this->adminJson(['success' => true]);
     }
 
     /**

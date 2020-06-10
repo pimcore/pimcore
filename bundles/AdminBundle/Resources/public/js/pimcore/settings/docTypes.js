@@ -62,10 +62,7 @@ pimcore.settings.document.doctypes = Class.create({
                 flex: 100,
                 sortable: true,
                 dataIndex: 'name',
-                editor: new Ext.form.TextField({}),
-                renderer: function(d) {
-                    return Ext.util.Format.htmlEncode(d);
-                }
+                editor: new Ext.form.TextField({})
             },
             {
                 text: t("group"),
@@ -313,7 +310,12 @@ pimcore.settings.document.doctypes = Class.create({
             autoScroll: true,
             bodyCls: "pimcore_editable_grid",
             store: this.store,
-            columns: typesColumns,
+            columns: {
+                items: typesColumns,
+                defaults: {
+                    renderer: Ext.util.Format.htmlEncode
+                },
+            },
             columnLines: true,
             trackMouseOver: true,
             stripeRows: true,

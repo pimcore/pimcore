@@ -165,6 +165,11 @@ class ClassDefinition extends Model\AbstractModel
     public $compositeIndices = [];
 
     /**
+     * @var bool
+     */
+    public $showFieldLookup = false;
+
+    /**
      * @var array
      */
     public $propertyVisibility = [
@@ -1311,6 +1316,26 @@ class ClassDefinition extends Model\AbstractModel
     public function setShowAppLoggerTab($showAppLoggerTab)
     {
         $this->showAppLoggerTab = (bool) $showAppLoggerTab;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getShowFieldLookup()
+    {
+        return $this->showFieldLookup;
+    }
+
+    /**
+     * @param bool $showFieldLookup
+     *
+     * @return $this
+     */
+    public function setShowFieldLookup($showFieldLookup)
+    {
+        $this->showFieldLookup = (bool) $showFieldLookup;
 
         return $this;
     }

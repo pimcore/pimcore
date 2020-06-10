@@ -107,12 +107,12 @@ pimcore.settings.properties.predefined = Class.create({
         var propertiesColumns = [
             {text: t("name"), flex: 100, sortable: true, dataIndex: 'name', editor: new Ext.form.TextField({})},
             {text: t("description"), sortable: true, dataIndex: 'description', editor: new Ext.form.TextArea({}),
-                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                                    if(empty(value)) {
-                                        return "";
-                                    }
-                                    return nl2br(value);
-                               }
+                renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                    if(empty(value)) {
+                        return "";
+                    }
+                    return nl2br(Ext.util.Format.htmlEncode(value));
+               }
             },
             {text: t("key"), flex: 50, sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({})},
             {text: t("type"), flex: 50, sortable: true, dataIndex: 'type', editor: new Ext.form.ComboBox({
@@ -203,7 +203,12 @@ pimcore.settings.properties.predefined = Class.create({
             bodyCls: "pimcore_editable_grid",
             stripeRows: true,
             trackMouseOver: true,
-            columns : propertiesColumns,
+            columns: {
+                items: propertiesColumns,
+                defaults: {
+                    renderer: Ext.util.Format.htmlEncode
+                },
+            },
             selModel: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
                 this.cellEditing

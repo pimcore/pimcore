@@ -17,6 +17,10 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
     drillDownFilters: {},
     drillDownStores: [],
 
+    progressBar: {},
+    progressWindow: {},
+    progressStop: false,
+
     matchType: function (type) {
         var types = ["global"];
         if (pimcore.report.abstract.prototype.matchTypeValidate(type, types)) {
@@ -181,33 +185,27 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
         //export button
         var exportBtnHandler = function (btn) {
-            var query = "";
-            var filterData = this.store.getFilters().items;
-
-            if(filterData.length > 0) {
-                query = "filter=" + encodeURIComponent(proxy.encodeFilters(filterData));
-            } else {
-                query = "filter=";
-            }
-
-            query += "&name=" + this.config.name;
-
-            if (btn.getItemId() === 'exportWithHeaders') {
-                query += '&headers=1';
-            }
-
-            if(this.drillDownFilters) {
-                var fieldnames = Object.getOwnPropertyNames(this.drillDownFilters);
-                for(var j = 0; j < fieldnames.length; j++) {
-                    if(this.drillDownFilters[fieldnames[j]] !== null) {
-                        query += "&" + 'drillDownFilters[' + fieldnames[j] + ']='
-                            + this.drillDownFilters[fieldnames[j]];
-                    }
-                }
-            }
-
-            var downloadUrl = Routing.generate('pimcore_admin_reports_customreport_downloadcsv') + '?' + query;
-            pimcore.helpers.download(downloadUrl);
+            this.progressBar = Ext.create('Ext.ProgressBar', {
+                renderTo: Ext.getBody(),
+                width: 300
+            });
+            this.progressWindow = new Ext.Window({
+                modal: true,
+                title: "Progress",
+                width: 300,
+                height: 120,
+                closable: false,
+                items: [this.progressBar],
+                buttons: [{
+                    text: t("cancel"),
+                    handler: function () {
+                        this.progressStop = true;
+                        this.progressWindow.close();
+                    }.bind(this)
+                }]
+            });
+            this.progressWindow.show();
+            this.createCsv(btn, "", 0);
         };
 
         topBar.push("->");
@@ -537,7 +535,33 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
         }
 
         return this.panel;
-    }
+    },
 
-
+    createCsv: function (btn, exportFile, offset) {
+        let filterData = this.store.getFilters().items;
+        Ext.Ajax.request({
+            url: Routing.generate('pimcore_admin_reports_customreport_createcsv'),
+            params: {
+                exportFile: exportFile,
+                offset: offset,
+                name: this.config.name,
+                filter: filterData.length > 0 ? encodeURIComponent(proxy.encodeFilters(filterData)) : "",
+                headers: btn.getItemId() === 'exportWithHeaders' ? "1" : "",
+            },
+            success: function (response) {
+                response = JSON.parse(response["responseText"]);
+                if(response["finished"]) {
+                    this.progressBar.updateProgress(1,"100%");
+                    this.progressWindow.close();
+                    var downloadUrl = Routing.generate('pimcore_admin_reports_customreport_downloadcsv') + '?exportFile=' + response["exportFile"];
+                    pimcore.helpers.download(downloadUrl);
+                }else{
+                    this.progressBar.updateProgress(response["progress"],Number.parseFloat(response["progress"]*100).toFixed(0)+"%");
+                    if(!this.progressStop){
+                        this.createCsv(btn, response["exportFile"], response["offset"]);
+                    }
+                }
+            }.bind(this)
+        });
+    },
 });

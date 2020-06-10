@@ -217,7 +217,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @see Data::getDataForEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return array
@@ -256,7 +256,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -306,7 +306,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
     /**
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -1052,7 +1052,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -1085,7 +1085,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed

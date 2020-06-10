@@ -677,14 +677,15 @@ class Requirements
 
     /**
      * @param ConnectionInterface $db
+     *
      * @return array
      */
-    public static function checkAll(ConnectionInterface $db) : array
+    public static function checkAll(ConnectionInterface $db): array
     {
         return [
-            'checksPHP'   => static::checkPhp(),
-            'checksFS'    => static::checkFilesystem(),
-            'checksApps'  => static::checkExternalApplications(),
+            'checksPHP' => static::checkPhp(),
+            'checksFS' => static::checkFilesystem(),
+            'checksApps' => static::checkExternalApplications(),
             'checksMySQL' => static::checkMysql($db)
         ];
     }
