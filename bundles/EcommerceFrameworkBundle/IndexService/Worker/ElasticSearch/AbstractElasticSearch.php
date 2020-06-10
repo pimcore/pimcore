@@ -77,10 +77,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     protected $indexStoreMetaData = [];
 
     /**
-     * @param ElasticSearch|ElasticSearchConfigInterface $tenantConfig
+     * @param ElasticSearchConfigInterface $tenantConfig
      * @param ConnectionInterface $db
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param string|null $workerMode
      */
-    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode)
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
 

@@ -38,6 +38,12 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
      */
     protected $_sqlChangeLog = [];
 
+    /**
+     * @param FactFinderConfigInterface $tenantConfig
+     * @param ConnectionInterface $db
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param string|null $workerMode
+     */
     public function __construct(FactFinderConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);

@@ -35,7 +35,13 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
      */
     protected $workerMode;
 
-    public function __construct(ConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode)
+    /**
+     * @param ConfigInterface $tenantConfig
+     * @param ConnectionInterface $db
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param string|null $workerMode
+     */
+    public function __construct(ConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher);
         $this->workerMode = $workerMode;
