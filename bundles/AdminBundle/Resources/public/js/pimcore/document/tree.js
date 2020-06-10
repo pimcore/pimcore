@@ -297,12 +297,9 @@ pimcore.document.tree = Class.create({
             this.nodesToMove.push(data);
             // ask the user if redirects should be created, if node was moved to a new parent
             Ext.MessageBox.confirm("", t("create_redirects"), function (buttonValue) {
-                let redirectParam = [];
-                if (buttonValue == "yes") {
-                    redirectParam['create_redirects'] = 'true';
-                }
                 for (let nodeIdx in this.nodesToMove) {
-                    pimcore.elementservice.updateDocument(this.nodesToMove[nodeIdx].id, Ext.merge(this.nodesToMove[nodeIdx].params, redirectParam), this.nodesToMove[nodeIdx].moveCallback);
+                    this.nodesToMove[nodeIdx]['params']['create_redirects'] = (buttonValue == "yes");
+                    pimcore.elementservice.updateDocument(this.nodesToMove[nodeIdx].id, this.nodesToMove[nodeIdx].params, this.nodesToMove[nodeIdx].moveCallback);
                 }
             }.bind(this));
         } else {
