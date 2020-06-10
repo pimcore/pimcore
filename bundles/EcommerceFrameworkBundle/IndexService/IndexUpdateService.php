@@ -309,7 +309,7 @@ class IndexUpdateService
             $id = $row['id'];
             $combinedRow = $row;
             if (array_key_exists($id, $combinedRows)) {
-                $openTenantsExisting = $combinedRow[$id]['tenants'];
+                $openTenantsExisting = $combinedRows[$id]['tenants'];
                 $openTenantsNew = $row['tenants'];
                 $mergedTenantNameList = array_unique(array_merge($openTenantsExisting, $openTenantsNew));
                 $combinedRow['tenants'] = $mergedTenantNameList;
