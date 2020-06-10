@@ -123,7 +123,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Hotspotimage $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return array
@@ -160,7 +160,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return DataObject\Data\Hotspotimage|null
@@ -224,7 +224,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\Hotspotimage $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -238,7 +238,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @see Data::getDataForEditmode
      *
      * @param DataObject\Data\Hotspotimage $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -290,7 +290,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Hotspotimage
@@ -330,7 +330,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
     /**
      * @param DataObject\Data\Hotspotimage $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Hotspotimage
@@ -504,7 +504,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      *
      * @deprecated
      *
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -701,7 +701,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -732,7 +732,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
