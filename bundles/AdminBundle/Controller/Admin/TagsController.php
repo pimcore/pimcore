@@ -133,7 +133,7 @@ class TagsController extends AdminController
     }
 
     /**
-     * @Route("/tree-get-children-by-id", methods={"GET"})
+     * @Route("/tree-get-children-by-id", name="pimcore_admin_tags_treegetchildrenbyid", methods={"GET"})
      *
      * @param Request $request
      *
