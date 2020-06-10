@@ -288,13 +288,12 @@ pimcore.document.tree = Class.create({
             (node.data.type === 'page' || node.data.type === 'hardlink') &&
             pimcore.globalmanager.get("user").isAllowed('redirects')
         ) {
-            var data = {
+            this.nodesToMove.push({
                 "id": node.data.id,
                 "params": params,
                 "moveCallback": moveCallback,
-            };
+            });
 
-            this.nodesToMove.push(data);
             // ask the user if redirects should be created, if node was moved to a new parent
             Ext.MessageBox.confirm("", t("create_redirects"), function (buttonValue) {
                 for (let nodeIdx in this.nodesToMove) {
