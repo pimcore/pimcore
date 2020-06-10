@@ -516,6 +516,10 @@ class Video extends Model\Document\Tag
     {
         if ($this->type == 'youtube') {
             if ($youtubeId = $this->parseYoutubeId()) {
+                if (strpos($youtubeId, 'PL') === 0) {
+                    $youtubeId .= sprintf('videoseries?list=%s', $youtubeId);
+                }
+
                 return 'https://www.youtube-nocookie.com/embed/'.$youtubeId;
             }
         }
@@ -548,6 +552,13 @@ class Video extends Model\Document\Tag
         $height = '300';
         if (array_key_exists('height', $options)) {
             $height = $options['height'];
+        }
+
+        $wmode = '?wmode=transparent';
+        $seriesPrefix = '';
+        if (strpos($youtubeId, 'PL') === 0) {
+            $wmode = '';
+            $seriesPrefix = 'videoseries?list=';
         }
 
         $valid_youtube_prams = [ 'autohide',
@@ -605,7 +616,7 @@ class Video extends Model\Document\Tag
         }
 
         $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video '.$options['class'].'">
-            <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $youtubeId . '?wmode=transparent' . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+            <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $seriesPrefix . $youtubeId . $wmode . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
         return $code;
