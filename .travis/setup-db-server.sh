@@ -19,7 +19,7 @@ fi
 
 
 if [ $DATABASE_SERVER = "mariadb-10.1" ]; then
-    sudo add-apt-repository 'deb [arch=amd64,arm64,i386,ppc64el] http://mirror.rackspace.com/mariadb/repo/10.1/ubuntu xenial main'
+    sudo add-apt-repository 'deb [arch=amd64,arm64,i386,ppc64el] http://mirror.netcologne.de/mariadb/repo/10.1/ubuntu xenial main'
     sudo apt-get update
     sudo apt-get install -y mariadb-server-10.1
     sudo systemctl start mysql
@@ -27,21 +27,21 @@ if [ $DATABASE_SERVER = "mariadb-10.1" ]; then
 fi
 
 if [ $DATABASE_SERVER = "mariadb-10.2" ]; then
-    sudo add-apt-repository 'deb [arch=amd64,arm64,i386,ppc64el] http://mirror.rackspace.com/mariadb/repo/10.2/ubuntu xenial main'
+    sudo add-apt-repository 'deb [arch=amd64,arm64,i386,ppc64el] http://mirror.netcologne.de/mariadb/repo/10.2/ubuntu xenial main'
     sudo apt-get update
     sudo apt-get install -y mariadb-server-10.2
     sudo systemctl start mysql
 fi
 
 if [ $DATABASE_SERVER = "mariadb-10.3" ]; then
-    sudo add-apt-repository 'deb [arch=amd64,arm64,i386,ppc64el] http://mirror.rackspace.com/mariadb/repo/10.3/ubuntu xenial main'
+    sudo add-apt-repository 'deb [arch=amd64,arm64,i386,ppc64el] http://mirror.netcologne.de/mariadb/repo/10.3/ubuntu xenial main'
     sudo apt-get update
     sudo apt-get install -y mariadb-server-10.3
     sudo systemctl start mysql
 fi
 
 if [ $DATABASE_SERVER = "mariadb-10.4" ]; then
-    sudo add-apt-repository 'deb [arch=amd64,arm64,i386,ppc64el] http://mirror.rackspace.com/mariadb/repo/10.4/ubuntu xenial main'
+    sudo add-apt-repository 'deb [arch=amd64,arm64,i386,ppc64el] http://mirror.netcologne.de/mariadb/repo/10.4/ubuntu xenial main'
     sudo apt-get update
     sudo apt-get install -y mariadb-server-10.4
     sudo systemctl start mysql
