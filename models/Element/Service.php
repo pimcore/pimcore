@@ -1023,14 +1023,14 @@ class Service extends Model\AbstractModel
             $key = preg_replace('/[<>]/', '-', $key);
         } elseif ($type === 'document') {
             // replace URL reserved characters with a hyphen
-            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;]/', '-', $key);
+            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;\+]/', '-', $key);
         } elseif ($type === 'asset') {
             // keys shouldn't start with a "." (=hidden file) *nix operating systems
             // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
             $key = trim($key, '. ');
 
             // windows forbidden filenames + URL reserved characters (at least the ones which are problematic)
-            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%]/', '-', $key);
+            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%\+]/', '-', $key);
         } else {
             $key = ltrim($key, '. ');
         }
