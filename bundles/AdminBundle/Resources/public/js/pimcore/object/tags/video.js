@@ -196,7 +196,11 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
 
             content = '<img src="'+path+'" />';
         } else if (this.data.type == "youtube") {
-            content = '<iframe width="' + width + '" height="' + height + '" src="https://www.youtube-nocookie.com/embed/' + this.data.data + '" frameborder="0" allowfullscreen></iframe>';
+            if (this.data.data.indexOf('PL') === 0) {
+                content = '<iframe width="' + width + '" height="' + height + '" src="https://www.youtube-nocookie.com/embed/videoseries?list=' + this.data.data + '" frameborder="0" allowfullscreen></iframe>';
+            } else {
+                content = '<iframe width="' + width + '" height="' + height + '" src="https://www.youtube-nocookie.com/embed/' + this.data.data + '" frameborder="0" allowfullscreen></iframe>';
+            }
         } else if (this.data.type == "vimeo") {
             content = '<iframe src="https://player.vimeo.com/video/' + this.data.data + '?title=0&amp;byline=0&amp;portrait=0" width="' + width + '" height="' + height + '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>';
         } else if (this.data.type == "dailymotion") {
