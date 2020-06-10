@@ -27,6 +27,7 @@ pimcore.registerNS("pimcore.document.tree");
 pimcore.document.tree = Class.create({
 
     treeDataUrl: null,
+    nodesToMove: [],
 
     initialize: function(config, perspectiveCfg) {
         this.treeDataUrl = Routing.generate('pimcore_admin_document_document_treegetchildsbyid');
@@ -135,7 +136,10 @@ pimcore.document.tree = Class.create({
                     ddGroup: "element"
                 },
                 listeners: {
-                    nodedragover: this.onTreeNodeOver.bind(this)
+                    nodedragover: this.onTreeNodeOver.bind(this),
+                    beforedrop: function (node, data, overModel, dropPosition, dropHandlers, eOpts) {
+                        this.nodesToMove = [];
+                    }.bind(this)
                 },
                 xtype: 'pimcoretreeview'
             },
@@ -284,12 +288,22 @@ pimcore.document.tree = Class.create({
             (node.data.type === 'page' || node.data.type === 'hardlink') &&
             pimcore.globalmanager.get("user").isAllowed('redirects')
         ) {
+            var data = {
+                "id": node.data.id,
+                "params": params,
+                "moveCallback": moveCallback,
+            };
+
+            this.nodesToMove.push(data);
             // ask the user if redirects should be created, if node was moved to a new parent
             Ext.MessageBox.confirm("", t("create_redirects"), function (buttonValue) {
+                let redirectParam = [];
                 if (buttonValue == "yes") {
-                    params['create_redirects'] = 'true';
+                    redirectParam['create_redirects'] = 'true';
                 }
-                pimcore.elementservice.updateDocument(node.data.id, params, moveCallback);
+                for (let nodeIdx in this.nodesToMove) {
+                    pimcore.elementservice.updateDocument(this.nodesToMove[nodeIdx].id, Ext.merge(this.nodesToMove[nodeIdx].params, redirectParam), this.nodesToMove[nodeIdx].moveCallback);
+                }
             }.bind(this));
         } else {
             pimcore.elementservice.updateDocument(node.data.id, params, moveCallback);
