@@ -34,8 +34,6 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
 {
     use OptionsResolverTrait;
 
-    const SYNONYM_PROVIDER_LINK_NAME = 'synonym_provider';
-
     /**
      * @var array
      */
@@ -141,41 +139,6 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $this->elasticSearchClientParams = $options['es_client_params'];
     }
 
-    /**
-     * Preparse the analysis/filter part of the ES index configuration and replace
-     * add the actual synonym content to those synonym filters, where a Pimcore synonym provider has been linked.
-     * @param array $indexSettings the original index settings.
-     * @return the replaced index settings
-     * @throws \Exception is thrown if config or parsing errors occur.
-     */
-    protected function replaceSynonymProvidersInIndexSettings(array $indexSettings) : array  {
-
-        $indexSettingsSynonymPart = $this->getTenantWorker()->extractSynonymFiltersTreeFromIndexSettings($indexSettings);
-        if (!empty($indexSettingsSynonymPart)) {
-            $filters = $indexSettings['analysis']['filter'];
-            foreach ($filters as $filterName => $filter) {
-
-                if (isset($filter[static::SYNONYM_PROVIDER_LINK_NAME])) {
-                    $providerConfigName = $filter[static::SYNONYM_PROVIDER_LINK_NAME];
-                    if (!array_key_exists($providerConfigName, $this->synonymProviders)) {
-                        throw new \Exception(sprintf(
-                            'Unknown synonym provider "%s" in use. You must configure the synonym provider, compare Pimcore documentation.',
-                            $providerConfigName));
-                    }
-                    $synonymLines = $this->synonymProviders[$providerConfigName]->getSynonyms();
-                    $rewrittenFilter = $filter;
-                    unset($rewrittenFilter['synonym_provider']);
-                    $rewrittenFilter['synonyms'] = $synonymLines;
-                    $indexSettings['analysis']['filter'][$filterName] = $rewrittenFilter;
-                }
-
-            }
-        }
-        return $indexSettings;
-    }
-
-
-
     protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
     {
         $arrayFields = [
@@ -198,43 +161,6 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
 
         $resolver->setDefault('store', true);
         $resolver->setAllowedTypes('store', 'bool');
-    }
-
-    /**
-     * Extract that part of the ES analysis index settings that are related to synonym filters.
-     * @return array index settings only containing the part of the index settings analysis with
-     * synonym filters.
-     * @return array part of the index_settings that contains the synonym-related filters, including
-     *  the parent elements:
-     *      - analysis
-     *          - filter
-     *              - synonym_filter_1:
-     *                  - type: synonym/synonym_graph
-     *                  - ...
-     */
-    public function extractIndexSettingsSynonymFilterPart() : array {
-        $settings = $this->getIndexSettings();
-        $filters = isset($settings['analysis']['filter']) ? $settings['analysis']['filter'] : [];
-        $indexPart = [];
-        if ($filters) {
-            foreach ($filters as $name => $filter) {
-                if (in_array($filter['type'],['synonym', 'synonym_graph'])) {
-
-                    if (empty($indexPart)) {
-                        $indexPart = [
-                            'analysis' =>
-                                [
-                                    'filter' => []
-                                ]
-                        ];
-                    }
-
-                    $indexPart['analysis']['filter'][$name] = $filter;
-                }
-            }
-        }
-
-        return $indexPart;
     }
 
     /**
@@ -335,21 +261,11 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     }
 
     /**
-     * @var bool
-     */
-    protected $hasSynonymProviderReplacedLazy = false;
-
-    /**
      * @return array
      */
     public function getIndexSettings()
     {
-        if (!$this->hasSynonymProviderReplacedLazy) {
-            //lazy replacement (superior than processing in rocessOptions()).
-            $indexSettings = $this->replaceSynonymProvidersInIndexSettings($this->indexSettings);
-            $this->hasSynonymProviderReplacedLazy = true;
-        }
-        return $indexSettings;
+        return $this->indexSettings;
     }
 
     /**
@@ -468,5 +384,17 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     public function setEnvironment(EnvironmentInterface $environment)
     {
         $this->environment = $environment;
+    }
+
+    /**
+     * Get an associative array of configured synonym providers.
+     *  - key: the name of the synonym provider configuration, which is equivalent to the name of the configured filter
+     *  - value: the synonym provider
+     *
+     * @return SynonymProviderInterface[]
+     */
+    public function getSynonymProviders(): array
+    {
+        return $this->synonymProviders;
     }
 }
