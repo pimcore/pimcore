@@ -223,7 +223,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param Model\DataObject\Data\QuantityValue $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -249,7 +249,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Model\DataObject\Data\QuantityValue|null
@@ -273,7 +273,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param Model\DataObject\Data\QuantityValue $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -287,7 +287,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @see Data::getDataForEditmode
      *
      * @param float $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -404,7 +404,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @abstract
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -475,7 +475,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @deprecated
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return array|null
@@ -501,7 +501,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @deprecated
      *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -537,7 +537,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -572,7 +572,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
