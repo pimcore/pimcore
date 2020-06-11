@@ -26,22 +26,4 @@ class Item extends AbstractBlockItem
     {
         return 'areablock';
     }
-
-    /**
-     * @param string $func
-     * @param array $args
-     *
-     * @return Document\Tag|null
-     */
-    public function __call($func, $args)
-    {
-        $element = $this->getElement($args[0]);
-        $class = 'Pimcore\\Model\\Document\\Tag\\' . str_replace('get', '', $func);
-
-        if ($element !== null && !strcasecmp(get_class($element), $class)) {
-            return $element;
-        }
-
-        return null;
-    }
 }
