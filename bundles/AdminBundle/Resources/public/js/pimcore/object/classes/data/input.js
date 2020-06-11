@@ -172,7 +172,7 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
                     inheritable: source.datax.inheritable,
                     defaultValue: source.datax.defaultValue,
                     defaultValueGenerator: source.datax.defaultValueGenerator,
-                    showCharCount : source.datax.showCharCount,
+                    showCharCount : source.datax.showCharCount
                 });
         }
     },
