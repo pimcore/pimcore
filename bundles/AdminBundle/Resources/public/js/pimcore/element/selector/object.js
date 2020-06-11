@@ -386,7 +386,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             {text: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: true},
             {text: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath', renderer: Ext.util.Format.htmlEncode},
             {text: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true, renderer: Ext.util.Format.htmlEncode},
-            {text: t("class"), width: 200, sortable: false, dataIndex: 'classname'}
+            {text: t("class"), width: 200, sortable: true, dataIndex: 'classname'}
         ];
 
 
