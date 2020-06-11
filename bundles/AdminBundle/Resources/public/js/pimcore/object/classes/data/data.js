@@ -96,21 +96,6 @@ pimcore.object.classes.data.data = Class.create({
             disabled: !in_array("mandatory",this.availableSettingsFields) || this.isInCustomLayoutEditor()
         });
 
-        if (this.supportsUnique()) {
-            this.uniqueCheckbox = new Ext.form.field.Checkbox({
-                fieldLabel: t("unique"),
-                name: "unique",
-                itemId: "unique",
-                checked: this.datax.unique,
-                autoEl: {
-                    tag: 'div',
-                    'data-qtip': t('unique_qtip')
-                },
-                hidden: true
-            });
-        }
-
-
         var standardSettings = [
             {
                 xtype: "textfield",
@@ -178,6 +163,20 @@ pimcore.object.classes.data.data = Class.create({
                 }
             });
             standardSettings.push(this.uniqueCheckbox);
+        }
+
+        if (this.supportsInheritance()) {
+            this.inheritableCheckbox = new Ext.form.field.Checkbox({
+                fieldLabel: t("inheritable"),
+                name: "inheritable",
+                itemId: "inheritable",
+                checked: this.datax.inheritable,
+                autoEl: {
+                    tag: 'div',
+                    'data-qtip': t('inheritable_field')
+                }
+            });
+            standardSettings.push(this.inheritableCheckbox);
         }
 
         standardSettings.push({
@@ -374,6 +373,10 @@ pimcore.object.classes.data.data = Class.create({
     },
 
     supportsUnique: function () {
+        return false;
+    },
+
+    supportsInheritance: function () {
         return false;
     }
 });

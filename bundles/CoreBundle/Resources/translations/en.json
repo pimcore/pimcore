@@ -427,6 +427,7 @@
   "please_wait": "Please wait ...",
   "download": "Download",
   "inheritable": "Inheritable",
+  "inheritable_field": "Only matters if inheritance for this class is enabled",
   "redirects": "Redirects",
   "source": "Source",
   "link": "Link",

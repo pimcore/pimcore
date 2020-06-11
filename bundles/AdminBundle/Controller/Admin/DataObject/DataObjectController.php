@@ -668,7 +668,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $this->objectData[$key] = $value;
                 $this->metaData[$key]['inherited'] = $isInheritedValue;
 
-                if ($isInheritedValue && !$fielddefinition->isEmpty($fieldData) && !$fielddefinition->supportsInheritance()) {
+                if ($isInheritedValue && !$fielddefinition->isEmpty($fieldData) && (!$fielddefinition->supportsInheritance() || !$fielddefinition->getInheritable())) {
                     $this->objectData[$key] = null;
                     $this->metaData[$key]['inherited'] = false;
                     $this->metaData[$key]['hasParentValue'] = true;

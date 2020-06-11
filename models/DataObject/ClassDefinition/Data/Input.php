@@ -85,6 +85,11 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @var bool
      */
+    public $inheritable = true;
+
+    /**
+     * @var bool
+     */
     public $showCharCount;
 
     /**
@@ -243,6 +248,22 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function setUnique($unique)
     {
         $this->unique = $unique;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getInheritable()
+    {
+        return $this->inheritable;
+    }
+
+    /**
+     * @param bool $inheritable
+     */
+    public function setInheritable($inheritable)
+    {
+        $this->inheritable = $inheritable;
     }
 
     /**

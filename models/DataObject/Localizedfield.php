@@ -435,7 +435,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         // check for inherited value
         $doGetInheritedValues = AbstractObject::doGetInheritedValues();
 
-        $allowInheritance = $fieldDefinition->supportsInheritance();
+        $allowInheritance = $fieldDefinition->supportsInheritance() && $fieldDefinition->getInheritable();
         if (isset($context['containerType']) && ($context['containerType'] === 'block' || $context['containerType'] === 'fieldcollection')) {
             $allowInheritance = false;
         }

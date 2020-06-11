@@ -162,20 +162,26 @@ pimcore.object.classes.data.input = Class.create(pimcore.object.classes.data.dat
             if (!this.datax) {
                 this.datax =  {};
             }
+
             Ext.apply(this.datax,
                 {
                     width: source.datax.width,
                     columnLength: source.datax.columnLength,
                     regex: source.datax.regex,
                     unique: source.datax.unique,
+                    inheritable: source.datax.inheritable,
                     defaultValue: source.datax.defaultValue,
                     defaultValueGenerator: source.datax.defaultValueGenerator,
-                    showCharCount : source.datax.showCharCount
+                    showCharCount : source.datax.showCharCount,
                 });
         }
     },
 
     supportsUnique: function() {
+        return true;
+    },
+
+    supportsInheritance: function() {
         return true;
     }
 });
