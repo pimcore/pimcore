@@ -475,7 +475,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                     $data = [
                         'update_status' => $response[$operation]['status'],
                         'update_error' => null,
-                        'metadata' => isset($this->indexStoreMetaData[$response['index']['_id']]) ? $this->indexStoreMetaData[$response['index']['_id']] : null
+                        'metadata' => isset($this->indexStoreMetaData[$response[$operation]['_id']]) ? $this->indexStoreMetaData[$response[$operation]['_id']] : null
                     ];
                     if (isset($response[$operation]['error']) && $response[$operation]['error']) {
                         $data['update_error'] = json_encode($response[$operation]['error']);
