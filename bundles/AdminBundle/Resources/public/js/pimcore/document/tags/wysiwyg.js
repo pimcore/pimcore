@@ -82,7 +82,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
             // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible
             // is also Basic
-            if (!this.options["toolbarGroups"] && !this.options.customConfig) {
+            if (!this.options["toolbarGroups"]) {
                 eConfig.toolbarGroups = [
                     { name: 'basicstyles', groups: [ 'undo', "find", 'basicstyles', 'list'] },
                     '/',
@@ -96,6 +96,10 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 ];
             }
 
+            if(this.options.toolbarGroups === false){
+                delete eConfig.toolbarGroups;
+            }
+            
             delete specificConfig.width;
 
             eConfig.language = pimcore.settings["language"];
