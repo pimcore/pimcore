@@ -329,8 +329,6 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
             }
             $this->bulkIndexData[] = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
 
-            //update crc sums in store table to mark element as indexed
-            $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE o_id = ? and tenant = ?', [$objectId, $this->name]);
         }
     }
 
