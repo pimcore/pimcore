@@ -16,11 +16,16 @@ namespace Pimcore\Console\Traits;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Terminal;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Webmozart\Assert\Assert;
 use Webmozarts\Console\Parallelization\Parallelization as WebmozartParallelization;
+use Webmozarts\Console\Parallelization\ProcessLauncher;
 
 trait Parallelization
 {
@@ -91,16 +96,27 @@ trait Parallelization
         $this->release(); //release the lock
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getItemName(int $count): string
     {
         return $count <= 1 ? 'item' : 'items';
     }
 
     /**
-     * @return \Symfony\Component\DependencyInjection\ContainerInterface|null
+     * @inheritDoc
      */
     protected function getContainer()
     {
         return \Pimcore::getKernel()->getContainer();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getConsolePath() : string {
+        return PIMCORE_PROJECT_ROOT . '/bin/console';
+    }
+
 }

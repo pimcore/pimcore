@@ -15,7 +15,7 @@ For this case, a reindex is necessary. If it is necessary, a native ES reindex i
 `bin/console ecommerce:indexservice:bootstrap --create-or-update-index-structure`.
 
 While reindex is executed, no updates are written to the ES index. The changes remain in store table and are transferred
-to index during next execution of `bin/console ecommerce:indexservice:process-queue update-index` after reindex is finished. 
+to index during next execution of `bin/console ecommerce:indexservice:process-update-queue` after reindex is finished. 
 
 All queries that take place during reindex go to the old index. As soon the reindex is finished, the current index is switched 
 to the newly created index and the old index is deleted.  
