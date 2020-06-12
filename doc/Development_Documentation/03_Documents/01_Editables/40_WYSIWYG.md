@@ -61,7 +61,7 @@ If you have a look at the editmode, you will see that our WYSIWYG is rendered wi
 The complete list of configuration options you can find in the [CKEditor toolbar documentation](http://docs.ckeditor.com/#!/guide/dev_toolbar).
 
 The WYSIWYG editable allows us to specify the toolbar. 
-If you have to limit styling options (for example only basic styles like `<b>` tag and lists would be allowed), just use `toolbarGroups` option.
+If you have to limit styling options (for example only basic styles like `<b>` tag and lists would be allowed), just use `toolbarGroups` option.  
 There is also the option to disable the pimcore generated default toolbar by setting the option `toolbarGroups` explicitly to `false`. In this case,
 either the configuration from the customConfig-file or if absent the ckeditor default will be loaded.
 <div class="code-section">
