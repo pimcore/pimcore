@@ -22,7 +22,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchCon
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
@@ -32,7 +31,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * @property ElasticSearch $tenantConfig
  */
-abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker implements Worker\BatchProcessingWorkerInterface
+abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessingWorker implements Worker\BatchProcessingWorkerInterface
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store_elastic';
 
@@ -78,12 +77,14 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
     protected $indexStoreMetaData = [];
 
     /**
-     * @param ElasticSearch|ElasticSearchConfigInterface $tenantConfig
+     * @param ElasticSearchConfigInterface $tenantConfig
      * @param ConnectionInterface $db
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param string|null $workerMode
      */
-    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
-        parent::__construct($tenantConfig, $db, $eventDispatcher);
+        parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
 
         $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
     }
@@ -358,7 +359,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
         }
 
         if (count($subObjectIds) > 0) {
-            $this->commitUpdateIndex();
+            $this->commitBatchToIndex();
             $this->fillupPreparationQueue($object);
         }
     }
@@ -434,8 +435,6 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
             $this->bulkIndexData[] = $bulkIndexData;
             $this->indexStoreMetaData[$objectId] = $routingId;
 
-            //update crc sums in store table to mark element as indexed
-            $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE o_id = ? and tenant = ?', [$objectId, $this->name]);
         }
     }
 
@@ -455,7 +454,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
     /**
      * actually sending data to elastic search
      */
-    protected function commitUpdateIndex()
+    public function commitBatchToIndex(): void
     {
         if (sizeof($this->bulkIndexData)) {
             $esClient = $this->getElasticSearchClient();
@@ -465,25 +464,47 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
 
             // save update status
             foreach ($responses['items'] as $response) {
-                $data = [
-                    'update_status' => $response['index']['status'],
-                    'update_error' => null,
-                    'metadata' => $this->indexStoreMetaData[$response['index']['_id']]
-                ];
 
-                if (isset($response['index']['error']) && $response['index']['error']) {
-                    $data['update_error'] = json_encode($response['index']['error']);
-                    $data['crc_index'] = 0;
-                    Logger::error('Failed to Index Object with Id:' . $response['index']['_id'],
-                                json_decode($data['update_error'], true)
-                                 );
+                $operation = null;
+                if(isset($response['index'])) {
+                    $operation = 'index';
+                } else if(isset($response['delete'])) {
+                    $operation = 'delete';
                 }
 
-                $this->db->updateWhere(
-                    $this->getStoreTableName(),
-                    $data,
-                    'o_id = ' . $this->db->quote($response['index']['_id']) . ' AND tenant = ' . $this->db->quote($this->name)
-                );
+                if($operation) {
+                    $data = [
+                        'update_status' => $response[$operation]['status'],
+                        'update_error' => null,
+                        'metadata' => $this->indexStoreMetaData[$response[$operation]['_id']]
+                    ];
+                    if (isset($response[$operation]['error']) && $response[$operation]['error']) {
+                        $data['update_error'] = json_encode($response[$operation]['error']);
+                        $data['crc_index'] = 0;
+                        Logger::error(
+                            'Failed to Index Object with Id:' . $response[$operation]['_id'],
+                            json_decode($data['update_error'], true)
+                        );
+
+                        $this->db->updateWhere(
+                            $this->getStoreTableName(),
+                            $data,
+                            'o_id = ' . $this->db->quote($response[$operation]['_id']) . ' AND tenant = ' . $this->db->quote($this->name)
+                        );
+
+                    } else {
+
+                        //update crc sums in store table to mark element as indexed
+                        $this->db->query(
+                            'UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current, update_status = ?, update_error = ?, metadata = ? WHERE o_id = ? and tenant = ?',
+                            [$data['update_status'], $data['update_error'], $data['metadata'], $response[$operation]['_id'], $this->name]
+                        );
+
+                    }
+                } else {
+                    throw new \Exception("Unkown operation in response: " . print_r($response, true));
+                }
+
             }
         }
 
@@ -493,6 +514,8 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
     }
 
     /**
+     * @deprecated
+     *
      * first run processUpdateIndexQueue of trait and then commit updated entries
      *
      * @param int $limit
@@ -503,7 +526,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
     {
         $entriesUpdated = parent::processUpdateIndexQueue($limit);
         Logger::info('Entries updated:' . $entriesUpdated);
-        $this->commitUpdateIndex();
+        $this->commitBatchToIndex();
 
         return $entriesUpdated;
     }
