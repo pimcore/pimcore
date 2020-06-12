@@ -910,7 +910,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         } elseif ($request->get('type') == 'child' || $request->get('type') == 'replace') {
             // the object itself is the last one
             $pasteJobs[] = [[
-                'url' => $this->generateUrl('pimcore_admin_document_document_copyrewriteids'),
+                'url' => $this->generateUrl('pimcore_admin_document_document_copy'),
                 'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
