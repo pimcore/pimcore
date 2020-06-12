@@ -468,7 +468,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
                 $data = [
                     'update_status' => $response['index']['status'],
                     'update_error' => null,
-                    'metadata' => $this->indexStoreMetaData[$response['index']['_id']]
+                    'metadata' => isset($this->indexStoreMetaData[$response['index']['_id']]) ? $this->indexStoreMetaData[$response['index']['_id']] : null
                 ];
 
                 if (isset($response['index']['error']) && $response['index']['error']) {
@@ -634,11 +634,8 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
             $this->createEsAliasIfMissing();
         }
 
-        $params = $this->getMappingParams();
-
         try {
-            $result = $esClient->indices()->putMapping($params);
-            Logger::info('Index-Actions - updated Mapping for Index: ' . $this->getIndexNameVersion());
+            $this->putIndexMapping($this->getIndexNameVersion());
 
             $configuredSettings = $this->tenantConfig->getIndexSettings();
             $currentSettings = $esClient->indices()->getSettings([
@@ -755,14 +752,26 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
         if (!$result['acknowledged']) {
             throw new \Exception('Index creation failed. IndexName: ' . $indexName);
         }
+    }
+
+    /**
+     * puts current mapping to index with given name
+     *
+     * @param string $indexName
+     * @throws \Exception
+     */
+    protected function putIndexMapping(string $indexName) {
+        $esClient = $this->getElasticSearchClient();
 
         $params = $this->getMappingParams();
-        $params['index'] = $indexName; //important
+        $params['index'] = $indexName;
         $result = $esClient->indices()->putMapping($params);
 
         if (!$result['acknowledged']) {
-            throw new \Exception('Index creation failed. IndexName: ' . $indexName);
+            throw new \Exception('Putting mapping to index failed. IndexName: ' . $indexName);
         }
+
+        Logger::info('Index-Actions - updated Mapping for Index: ' . $indexName);
     }
 
     /**
@@ -860,6 +869,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
 
             $this->deleteEsIndexIfExisting($nextIndexName);
             $this->createEsIndex($nextIndexName);
+            $this->putIndexMapping($nextIndexName);
 
             $this->performReindex($currentIndexName, $nextIndexName);
 
