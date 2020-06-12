@@ -910,7 +910,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
                 $indexSettingsCurrentEs = $esClient->indices()->getSettings(['index' => $indexName])[$indexName]['settings']['index'];
                 $indexSettingsSynonymPartEs = $this->extractMinimalSynonymFiltersTreeFromIndexSettings($indexSettingsCurrentEs);
 
-                if (json_encode($indexSettingsSynonymPartEs) == json_encode($indexSettingsSynonymPartLocalConfig)) {
+                if ($indexSettingsSynonymPartEs == $indexSettingsSynonymPartLocalConfig) {
                     Logger::info(sprintf('The synonyms in ES index "%s" are identical with those of the local configuration. '.
                         'No update required.', $indexName));
                     return;
