@@ -18,6 +18,9 @@ services:
             - []
             - '%pimcore_ecommerce.index_service.default_tenant%'
 
+    # index update service
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexUpdateService: ~
+
     # auto-register all core getters as service
     Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\:
         resource: '../../IndexService/Getter'
