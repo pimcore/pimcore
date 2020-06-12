@@ -240,7 +240,7 @@ class SearchController extends AdminController
             if (array_key_exists($sortingSettings['orderKey'], $sortMapping)) {
                 $sort = $sortMapping[$sortingSettings['orderKey']];
             }
-            $searcherList->setOrderKey($sortingSettings['orderKey']);
+            $searcherList->setOrderKey($sort);
         }
         if ($sortingSettings['order']) {
             $searcherList->setOrder($sortingSettings['order']);
