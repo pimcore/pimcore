@@ -37,7 +37,7 @@ parameters:
             message: '#Using \$this outside a class\.#'
             path: '**/*.html.php'
         -
-            message: '#Undefined variable: \$(this|view|app)#'
+            message: '#Variable \$(this|view|app) might not be defined.#'
             path: '**/*.html.php'
         -
             message: '#Using \$this outside a class\.#'
