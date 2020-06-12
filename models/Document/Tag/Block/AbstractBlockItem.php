@@ -73,7 +73,7 @@ abstract class AbstractBlockItem
         $element = $this->getElement($args[0]);
         $class = 'Pimcore\\Model\\Document\\Tag\\' . str_replace('get', '', $func);
 
-        if (!strcasecmp(get_class($element), $class)) {
+        if ($element !== null && !strcasecmp(get_class($element), $class)) {
             return $element;
         }
 
