@@ -932,7 +932,7 @@ pimcore.helpers.openMemorizedTabs = function () {
 pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure, context) {
 
     var params = {};
-    params['parent' . ucfirst(parentType)] = parent;
+    params['parent' + ucfirst(parentType)] = parent;
 
     var url = Routing.generate('pimcore_admin_asset_addassetcompatibility', params);
     if (context) {
