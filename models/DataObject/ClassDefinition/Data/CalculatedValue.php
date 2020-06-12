@@ -145,7 +145,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param float $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float
@@ -265,7 +265,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @deprecated
      *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *

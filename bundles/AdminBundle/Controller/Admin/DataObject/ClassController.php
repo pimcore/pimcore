@@ -20,7 +20,6 @@ use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
-use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
@@ -1656,7 +1655,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $result['fieldcollection'][] = $fieldCollectionJson;
             } elseif ($item['type'] == 'class') {
                 $class = DataObject\ClassDefinition::getByName($item['name']);
-                $data = Model\Webservice\Data\Mapper::map($class, '\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out', 'out');
+                $data = json_decode(json_encode($class));
                 unset($data->fieldDefinitions);
                 $result['class'][] = $data;
             } elseif ($item['type'] == 'objectbrick') {

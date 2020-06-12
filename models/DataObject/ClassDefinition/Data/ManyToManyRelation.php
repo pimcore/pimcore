@@ -280,7 +280,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @throws \Exception
@@ -316,7 +316,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @see Data::getDataForEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -351,7 +351,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -386,7 +386,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /**
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -887,7 +887,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -913,7 +913,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed

@@ -527,9 +527,17 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                     if ($class->getAllowInherit()) {
                         $cd .= "\t" . 'if(!$this->' . $brickKey . ' && \\Pimcore\\Model\\DataObject\\AbstractObject::doGetInheritedValues($this->getObject())) { ' . "\n";
                         $cd .= "\t\t" . 'try {' . "\n";
-                        $cd .= "\t\t\t" . '$brick = $this->getObject()->getValueFromParent("' . $fieldname . '");' . "\n";
-                        $cd .= "\t\t\t" . 'if(!empty($brick)) {' . "\n";
-                        $cd .= "\t\t\t\t" . 'return $this->getObject()->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "(); \n";
+                        $cd .= "\t\t\t" . '$brickContainer = $this->getObject()->getValueFromParent("' . $fieldname . '");' . "\n";
+                        $cd .= "\t\t\t" . 'if(!empty($brickContainer)) {' . "\n";
+                        $cd .= "\t\t\t\t" . '//check if parent object has brick, and if so, create an empty brick to enable inheritance' . "\n";
+                        $cd .= "\t\t\t\t" . '$parentBrick = $this->getObject()->getValueFromParent("' . $fieldname . '")->get' . ucfirst($brickKey) . "(); \n";
+                        $cd .= "\t\t\t\t" . 'if (!empty($parentBrick)) {' . "\n";
+                        $cd .= "\t\t\t\t\t" . '$brickType = "\\\Pimcore\\\Model\\\DataObject\\\Objectbrick\\\Data\\\" . ucfirst($parentBrick->getType());' . "\n";
+                        $cd .= "\t\t\t\t\t" . '$brick = new $brickType($this->getObject());' . "\n";
+                        $cd .= "\t\t\t\t\t" . '$brick->setFieldname("' . $fieldname . '");' . "\n";
+                        $cd .= "\t\t\t\t\t" . '$this->set'. ucfirst($brickKey) . '($brick);' . "\n";
+                        $cd .= "\t\t\t\t\t" . 'return $brick;' . "\n";
+                        $cd .= "\t\t\t\t" . '}' . "\n";
                         $cd .= "\t\t\t" . "}\n";
                         $cd .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
                         $cd .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";

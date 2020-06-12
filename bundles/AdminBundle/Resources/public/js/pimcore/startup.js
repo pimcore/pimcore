@@ -757,6 +757,12 @@ Ext.onReady(function () {
                         if (user.isAllowed(treetype + "s")) {
                             treepanel = Ext.getCmp("pimcore_panel_tree_" + side);
 
+                            // Do not add pimcore_icon_material class to non-material icons
+                            let iconTypeClass = '';
+                            if (treeConfig.icon.match('flat-white')) {
+                                iconTypeClass += 'pimcore_icon_material';
+                            }
+
                             var treeCls = window.pimcore[treetype].customviews.tree;
 
                             tree = new treeCls({
@@ -766,7 +772,7 @@ Ext.onReady(function () {
                                 rootId: treeConfig.rootId,
                                 rootVisible: treeConfig.showroot,
                                 treeId: "pimcore_panel_tree_" + treetype + "_" + treeConfig.id,
-                                treeIconCls: "pimcore_" + treetype + "_customview_icon_" + treeConfig.id + " pimcore_icon_material",
+                                treeIconCls: "pimcore_" + treetype + "_customview_icon_" + treeConfig.id + " " + iconTypeClass,
                                 treeTitle: t(treeConfig.name),
                                 parentPanel: treepanel,
                                 loaderBaseParams: {}

@@ -17,13 +17,15 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Model\DataObject\Concrete;
+
 interface QueryResourcePersistenceAwareInterface
 {
     /**
      * Returns the data which should be stored in the query columns
      *
      * @param mixed $data
-     * @param null|\Pimcore\Model\DataObject\AbstractObject $object
+     * @param null|Concrete $object
      * @param mixed $params
      *
      * @return mixed

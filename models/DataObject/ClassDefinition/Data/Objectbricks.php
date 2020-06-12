@@ -95,7 +95,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return array
@@ -495,7 +495,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     /**
      * @deprecated
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed

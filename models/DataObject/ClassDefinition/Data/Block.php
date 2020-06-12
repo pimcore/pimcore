@@ -112,8 +112,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param null|DataObject\Concrete $object
+     * @param array $params
      *
      * @return string
      */
@@ -243,7 +243,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array

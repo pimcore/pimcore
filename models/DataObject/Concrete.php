@@ -163,7 +163,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                 if ($e instanceof Model\Element\ValidationException) {
                     $subItems = $e->getSubItems();
-                    if (is_array($subItems)) {
+                    if (is_array($subItems) && count($subItems)) {
                         $msg .= ' (';
                         $subItemParts = [];
                         /** @var \Exception $subItem */
