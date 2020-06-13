@@ -59,7 +59,6 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
         $this->indexService = $indexService;
     }
 
-
     /**
      * @inheritDoc
      */
@@ -93,7 +92,10 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     {
         $tenantNameFilterList = $input->getOption('tenant');
         $combinedRows = $this->indexUpdateService->fetchProductIdsForIndexUpdate($tenantNameFilterList);
-        $rowsWithSerializedItems = array_map(function($row) { return serialize($row);}, $combinedRows);
+        $rowsWithSerializedItems = array_map(function ($row) {
+            return serialize($row);
+        }, $combinedRows);
+
         return $rowsWithSerializedItems;
     }
 
@@ -107,7 +109,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
         $openTenants = $row['tenants'];
 
         if ($output->isVeryVerbose()) {
-            $output->writeln(sprintf('Process ID="%s" for %d tenants (%s).', $id, count($openTenants), implode(",", $row['tenants'])));
+            $output->writeln(sprintf('Process ID="%s" for %d tenants (%s).', $id, count($openTenants), implode(',', $row['tenants'])));
         }
 
         $workerList = $this->getTenantWorkers($openTenants);
@@ -122,8 +124,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
      */
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
-
-        if($this->childWorkerList) {
+        if ($this->childWorkerList) {
             foreach ($this->childWorkerList as $worker) {
                 if ($output->isVerbose()) {
                     $output->writeln('<info>Commit index update for worker '.get_class($worker).'.</info>');
@@ -133,7 +134,7 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
         }
 
         $this->parentRunAfterBatch($input, $output, $items);
-        $this->handleTimeout(function(string $abortMessage) use ($output) {
+        $this->handleTimeout(function (string $abortMessage) use ($output) {
             $output->writeln($abortMessage);
             exit(0); //exit with success
         });
@@ -141,25 +142,25 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
 
     /**
      * @param string[] $openTenantList a list of tenants for which the workers should be retrieved
+     *
      * @return ProductCentricBatchProcessingWorker[]
      */
-    protected function getTenantWorkers(array $openTenantList) : array {
+    protected function getTenantWorkers(array $openTenantList): array
+    {
         $workerList = [];
 
         $tenants = $this->indexService->getTenants();
         foreach ($tenants as $tenant) {
-
             if (in_array($tenant, $openTenantList)) {
-
                 $worker = $this->indexService->getTenantWorker($tenant);
                 if ($worker instanceof ProductCentricBatchProcessingWorker) {
                     $workerList[] = $worker;
                 }
-
             }
         }
 
         $this->childWorkerList = $workerList;
+
         return $workerList;
     }
 
@@ -178,5 +179,4 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
     {
         return 500; // index updates per child process
     }
-
 }

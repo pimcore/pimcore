@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 
-
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
@@ -26,11 +25,12 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
      * @deprecated
      * @TODO Pimcore 7 - remove this
      */
-    CONST WORKER_MODE_LEGACY = 'legacy';
-    CONST WORKER_MODE_PRODUCT_CENTRIC = 'product_centric';
+    const WORKER_MODE_LEGACY = 'legacy';
+    const WORKER_MODE_PRODUCT_CENTRIC = 'product_centric';
 
     /**
      * @deprecated Will be removed in Pimcore 7
+     *
      * @var string
      */
     protected $workerMode;
@@ -46,13 +46,12 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
         parent::__construct($tenantConfig, $db, $eventDispatcher);
         $this->workerMode = $workerMode;
 
-        if($workerMode == self::WORKER_MODE_LEGACY) {
+        if ($workerMode == self::WORKER_MODE_LEGACY) {
             @trigger_error(
                 'Worker_mode "LEGACY" is deprecated since version 6.7.0 and will be removed in 7.0.0. Default will be "PRODUCT_CENTRIC"',
                 E_USER_DEPRECATED
             );
         }
-
     }
 
     public function getBatchProcessingStoreTableName(): string
@@ -75,8 +74,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
      */
     protected function createOrUpdateStoreTable()
     {
-        if($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
-
+        if ($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
             $primaryIdColumnType = $this->tenantConfig->getIdColumnType(true);
             $idColumnType = $this->tenantConfig->getIdColumnType(false);
 
@@ -99,12 +97,10 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
               KEY `preparation_status_index` (`tenant`,`preparation_status`),
               KEY `in_preparation_queue_index` (`tenant`,`in_preparation_queue`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
-
         } else {
             //@TODO Pimcore 7 - remove this
             parent::createOrUpdateStoreTable();
         }
-
     }
 
     /**
@@ -115,8 +111,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
      */
     protected function insertDataToIndex($data, $subObjectId)
     {
-
-        if($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
+        if ($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
             $currentEntry = $this->db->fetchRow('SELECT crc_current, in_preparation_queue FROM ' . $this->getStoreTableName() . ' WHERE o_id = ? AND tenant = ?', [$subObjectId, $this->name]);
             if (!$currentEntry) {
                 $this->db->insert($this->getStoreTableName(), $data);
@@ -135,17 +130,18 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
             // @TODO Pimcore 7 - remove this
             parent::insertDataToIndex($data, $subObjectId);
         }
-
     }
 
     /**
      * @inheritDoc
      * @TODO Pimcore 7 - remove this
      */
-    public function processPreparationQueue($limit = 200){
-        if($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
-            throw new \Exception("Not supported anymore in " . self::WORKER_MODE_PRODUCT_CENTRIC . " mode. Use ecommerce:indexservice:process-preparation-queue command instead.");
+    public function processPreparationQueue($limit = 200)
+    {
+        if ($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
+            throw new \Exception('Not supported anymore in ' . self::WORKER_MODE_PRODUCT_CENTRIC . ' mode. Use ecommerce:indexservice:process-preparation-queue command instead.');
         }
+
         return parent::processPreparationQueue($limit);
     }
 
@@ -153,10 +149,12 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
      * @inheritDoc
      * @TODO Pimcore 7 - remove this
      */
-    public function processUpdateIndexQueue($limit = 200) {
-        if($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
-            throw new \Exception("Not supported anymore in " . self::WORKER_MODE_PRODUCT_CENTRIC . " mode. Use ecommerce:indexservice:process-update-queue command instead.");
+    public function processUpdateIndexQueue($limit = 200)
+    {
+        if ($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
+            throw new \Exception('Not supported anymore in ' . self::WORKER_MODE_PRODUCT_CENTRIC . ' mode. Use ecommerce:indexservice:process-update-queue command instead.');
         }
+
         return parent::processUpdateIndexQueue($limit);
     }
 
@@ -165,7 +163,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
      */
     public function resetPreparationQueue()
     {
-        if($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
+        if ($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
             Logger::info('Index-Actions - Resetting preparation queue');
             $className = (new \ReflectionClass($this))->getShortName();
             $query = 'UPDATE '. $this->getStoreTableName() ." SET
@@ -181,8 +179,6 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
             // @TODO Pimcore 7 - remove this
             parent::resetPreparationQueue();
         }
-
-
     }
 
     /**
@@ -190,7 +186,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
      */
     public function resetIndexingQueue()
     {
-        if($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
+        if ($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
             Logger::info('Index-Actions - Resetting index queue');
             $className = (new \ReflectionClass($this))->getShortName();
             $query = 'UPDATE '. $this->getStoreTableName() .' SET 
@@ -205,5 +201,4 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
             parent::resetIndexingQueue();
         }
     }
-
 }

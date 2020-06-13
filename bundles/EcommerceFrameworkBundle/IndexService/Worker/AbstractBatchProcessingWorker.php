@@ -291,7 +291,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                 $preparationErrorDb = '';
                 $hasError = !(count($attributeErrors) <= 0 && count($generalErrors) <= 0);
 
-                if($hasError) {
+                if ($hasError) {
                     $preparationError = '';
                     if (count($generalErrors) > 0) {
                         $preparationError = implode(', ', $generalErrors);
@@ -350,7 +350,6 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             $this->db->insert($this->getStoreTableName(), $data);
         } elseif ($currentEntry['crc_current'] != $data['crc_current']) {
             $this->executeTransactionalQuery(function () use ($data, $subObjectId) {
-
                 $data['preparation_worker_timestamp'] = 0;
                 $data['preparation_worker_id'] = $this->db->quote(null);
 
@@ -378,6 +377,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
      * fills queue based on path
      *
      * @param IndexableInterface $object
+     *
      * @throws \Exception
      */
     public function fillupPreparationQueue(IndexableInterface $object)
@@ -465,7 +465,6 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             'Use ecommerce:indexservice:process-update-queue command instead.',
             E_USER_DEPRECATED
         );
-
 
         $workerId = uniqid();
         $workerTimestamp = time();

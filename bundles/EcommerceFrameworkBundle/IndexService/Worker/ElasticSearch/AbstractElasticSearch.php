@@ -434,7 +434,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             }
             $this->bulkIndexData[] = $bulkIndexData;
             $this->indexStoreMetaData[$objectId] = $routingId;
-
         }
     }
 
@@ -465,13 +464,13 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             // save update status
             foreach ($responses['items'] as $response) {
                 $operation = null;
-                if(isset($response['index'])) {
+                if (isset($response['index'])) {
                     $operation = 'index';
-                } else if(isset($response['delete'])) {
+                } elseif (isset($response['delete'])) {
                     $operation = 'delete';
                 }
 
-                if($operation) {
+                if ($operation) {
                     $data = [
                         'update_status' => $response[$operation]['status'],
                         'update_error' => null,
@@ -490,7 +489,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                             $data,
                             'o_id = ' . $this->db->quote($response[$operation]['_id']) . ' AND tenant = ' . $this->db->quote($this->name)
                         );
-
                     } else {
 
                         //update crc sums in store table to mark element as indexed
@@ -498,12 +496,10 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                             'UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current, update_status = ?, update_error = ?, metadata = ? WHERE o_id = ? and tenant = ?',
                             [$data['update_status'], $data['update_error'], $data['metadata'], $response[$operation]['_id'], $this->name]
                         );
-
                     }
                 } else {
-                    throw new \Exception("Unkown operation in response: " . print_r($response, true));
+                    throw new \Exception('Unkown operation in response: ' . print_r($response, true));
                 }
-
             }
         }
 
@@ -780,9 +776,11 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      * puts current mapping to index with given name
      *
      * @param string $indexName
+     *
      * @throws \Exception
      */
-    protected function putIndexMapping(string $indexName) {
+    protected function putIndexMapping(string $indexName)
+    {
         $esClient = $this->getElasticSearchClient();
 
         $params = $this->getMappingParams();
