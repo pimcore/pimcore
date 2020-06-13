@@ -114,9 +114,6 @@ class IndexUpdater
     /**
      * @deprecated will be removed in Pimcore 7. Use ecommerce:indexservice:process-preparation-queue command instead.
      *
-     *
-     * Runs processPreparationQueue for given tenants or for all tenants
-     *
      * @param array $tenants
      * @param int $maxRounds - max rounds after process returns. null for infinite run until no work is left
      * @param string $loggername

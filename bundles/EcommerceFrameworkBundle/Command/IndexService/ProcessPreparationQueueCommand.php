@@ -14,11 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Command\IndexService;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexUpdateService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\BatchProcessingWorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ProductCentricBatchProcessingWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Console\Traits\Parallelization;
@@ -58,7 +56,6 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
         $this->indexService = $indexService;
     }
 
-
     /**
      * @inheritDoc
      */
@@ -74,7 +71,6 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
             ->setDescription('Processes the ecommerce preparation queue based on the store table(s).')
             ->addOption('tenant', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Tenant to perform action on (defaults to all)')
         ;
-
     }
 
     /**
@@ -93,7 +89,10 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
     {
         $tenantNameFilterList = $input->getOption('tenant');
         $combinedRows = $this->indexUpdateService->fetchProductIdsForPreparation($tenantNameFilterList);
-        $rowsWithSerializedItems = array_map(function($row) { return serialize($row);}, $combinedRows);
+        $rowsWithSerializedItems = array_map(function ($row) {
+            return serialize($row);
+        }, $combinedRows);
+
         return $rowsWithSerializedItems;
     }
 
@@ -107,7 +106,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
         $openTenants = $row['tenants'];
 
         if ($output->isVerbose()) {
-            $output->writeln(sprintf('Process ID="%s" for %d tenants (%s).', $id, count($openTenants), implode(",", $row['tenants'])));
+            $output->writeln(sprintf('Process ID="%s" for %d tenants (%s).', $id, count($openTenants), implode(',', $row['tenants'])));
         }
 
         $workerList = $this->getTenantWorkers($openTenants);
@@ -125,7 +124,7 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
         $this->parentRunAfterBatch($input, $output, $items);
-        $this->handleTimeout(function(string $abortMessage) use ($output) {
+        $this->handleTimeout(function (string $abortMessage) use ($output) {
             $output->writeln($abortMessage);
             exit(0); //exit with success
         });
@@ -133,21 +132,20 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
 
     /**
      * @param string[] $openTenantList a list of tenants for which the workers should be retrieved
+     *
      * @return AbstractBatchProcessingWorker[]
      */
-    private function getTenantWorkers(array $openTenantList) : array {
+    private function getTenantWorkers(array $openTenantList): array
+    {
         $workerList = [];
 
         $tenants = $this->indexService->getTenants();
         foreach ($tenants as $tenant) {
-
             if (in_array($tenant, $openTenantList)) {
-
                 $worker = $this->indexService->getTenantWorker($tenant);
                 if ($worker instanceof ProductCentricBatchProcessingWorker) {
                     $workerList[] = $worker;
                 }
-
             }
         }
 
@@ -163,5 +161,4 @@ class ProcessPreparationQueueCommand extends AbstractIndexServiceCommand
     {
         return 50; // products per child process
     }
-
 }

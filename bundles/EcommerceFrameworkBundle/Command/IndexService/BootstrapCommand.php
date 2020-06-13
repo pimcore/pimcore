@@ -44,8 +44,6 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         $this->indexService = $indexService;
     }
 
-
-
     /**
      * @inheritDoc
      */
@@ -92,10 +90,8 @@ class BootstrapCommand extends AbstractIndexServiceCommand
             $indexService->createOrUpdateIndexStructures();
         }
 
-
         $fullIdList = [];
         if ($updateIndex) {
-
             $objectListClass = $input->getOption('object-list-class');
             $listCondition = $input->getOption('list-condition');
 
@@ -122,19 +118,18 @@ class BootstrapCommand extends AbstractIndexServiceCommand
         $indexService = $this->initIndexService($input);
 
         if ($output->isVerbose()) {
-            $activeTenantNameList =$indexService->getTenants();
+            $activeTenantNameList = $indexService->getTenants();
             $output->writeln(sprintf('Process product ID="%d" for %d tenants (%s).', $productId,
-                    count($activeTenantNameList), implode(",",$activeTenantNameList))
+                    count($activeTenantNameList), implode(',', $activeTenantNameList))
             );
         }
 
         if ($object = AbstractObject::getById($productId)) {
-            if($object instanceof IndexableInterface) {
+            if ($object instanceof IndexableInterface) {
                 $indexService->updateIndex($object);
             } else {
                 $output->writeln("<error>Object ID $productId is not indexable.</error>");
             }
-
         } else {
             $output->writeln("<error>Object $productId does not exist anymore.</error>");
         }
@@ -146,7 +141,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     protected function runAfterBatch(InputInterface $input, OutputInterface $output, array $items): void
     {
         $this->parentRunAfterBatch($input, $output, $items);
-        $this->handleTimeout(function(string $abortMessage) use ($output) {
+        $this->handleTimeout(function (string $abortMessage) use ($output) {
             $output->writeln($abortMessage);
             exit(0); //exit with success
         });
@@ -154,9 +149,11 @@ class BootstrapCommand extends AbstractIndexServiceCommand
 
     /**
      * @param InputInterface $input
+     *
      * @return IndexService
      */
-    protected function initIndexService(InputInterface $input) : IndexService {
+    protected function initIndexService(InputInterface $input): IndexService
+    {
         //set active tenant workers.
         $tenants = count($input->getOption('tenant')) ? $input->getOption('tenant') : null;
         if (!empty($tenants)) {
@@ -166,6 +163,7 @@ class BootstrapCommand extends AbstractIndexServiceCommand
             }
             $this->indexService->setTenantWorkers($tenantWorkerList);
         }
+
         return $this->indexService;
     }
 
@@ -176,5 +174,4 @@ class BootstrapCommand extends AbstractIndexServiceCommand
     {
         return $count == 1 ? 'Product' : 'Products';
     }
-
 }

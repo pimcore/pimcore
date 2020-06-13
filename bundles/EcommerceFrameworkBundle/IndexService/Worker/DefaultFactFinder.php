@@ -99,7 +99,6 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
         /**
          * @TODO Pimcore 7 - remove worker columns
          */
-
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $this->getStoreTableName() . "` (
           `o_id` $primaryIdColumnType,
           `o_virtualProductId` $idColumnType,
