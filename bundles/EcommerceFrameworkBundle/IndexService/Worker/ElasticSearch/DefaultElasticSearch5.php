@@ -52,9 +52,11 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
      * puts current mapping to index with given name
      *
      * @param string $indexName
+     *
      * @throws \Exception
      */
-    protected function putIndexMapping(string $indexName) {
+    protected function putIndexMapping(string $indexName)
+    {
         $esClient = $this->getElasticSearchClient();
         foreach ([ProductListInterface::PRODUCT_TYPE_VARIANT, ProductListInterface::PRODUCT_TYPE_OBJECT] as $mappingType) {
             $params = $this->getMappingParams($mappingType);
@@ -346,7 +348,6 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                 $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $indexSystemData['o_type'], '_id' => $objectId]];
             }
             $this->bulkIndexData[] = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
-
         }
     }
 
