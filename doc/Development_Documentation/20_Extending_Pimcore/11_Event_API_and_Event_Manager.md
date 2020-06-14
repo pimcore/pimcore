@@ -30,6 +30,7 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [Workflows](https://github.com/pimcore/pimcore/blob/master/lib/Event/WorkflowEvents.php)
 - [Elements](https://github.com/pimcore/pimcore/blob/master/lib/Event/ElementEvents.php)
 - [Mail](https://github.com/pimcore/pimcore/blob/master/lib/Event/MailEvents.php)
+- [Notifications](https://github.com/pimcore/pimcore/blob/master/lib/Event/NotificationEvents.php)
 - [Redirect](https://github.com/pimcore/pimcore/blob/master/lib/Event/RedirectEvents.php)
 - [Admin](https://github.com/pimcore/pimcore/blob/master/lib/Event/AdminEvents.php)
 - [Frontend](https://github.com/pimcore/pimcore/blob/master/lib/Event/FrontendEvents.php)
