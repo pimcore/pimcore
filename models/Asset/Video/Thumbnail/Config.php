@@ -153,7 +153,7 @@ class Config extends Model\AbstractModel
     /**
      * @param string $name
      * @param array $parameters
-     * @param $media
+     * @param string $media
      *
      * @return bool
      */

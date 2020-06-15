@@ -207,13 +207,17 @@ class ImageThumbnail
      * @param string $name
      * @param int $highRes
      *
-     * @return Thumbnail
+     * @return Image\Thumbnail|null
      *
      * @throws \Exception
      */
     public function getMedia($name, $highRes = 1)
     {
         $thumbConfig = $this->getConfig();
+        //return null if image thumbnail config does not exist
+        if ($thumbConfig) {
+            return null;
+        }
         $mediaConfigs = $thumbConfig->getMedias();
 
         if (isset($mediaConfigs[$name])) {
@@ -221,9 +225,14 @@ class ImageThumbnail
             $thumbConfigRes->selectMedia($name);
             $thumbConfigRes->setHighResolution($highRes);
             $thumbConfigRes->setMedias([]);
-            $thumb = $this->getAsset()->getThumbnail($thumbConfigRes);
+            $imgId = $this->asset->getCustomSetting('image_thumbnail_asset');
+            $img = Model\Asset::getById($imgId);
 
-            return $thumb;
+            if ($img instanceof Image) {
+                $thumb = $img->getThumbnail($thumbConfigRes);
+            }
+
+            return $thumb ?? null;
         } else {
             throw new \Exception("Media query '" . $name . "' doesn't exist in thumbnail configuration: " . $thumbConfig->getName());
         }
