@@ -80,6 +80,18 @@ class Processor
         $instance->setAssetId($asset->getId());
         $instance->setConfig($config);
 
+        //create media query formats
+        $medias = $config->getMedias();
+        if(count($medias) > 0) {
+            $mediaFormats = [];
+            foreach ($medias as $mediaKey => $media) {
+                foreach ($formats as $f) {
+                    $mediaFormats[] = $f . '-media-' . $mediaKey;
+                }
+            }
+            $formats = array_merge($formats, $mediaFormats);
+        }
+
         // check for running or already created thumbnails
         $customSetting = $asset->getCustomSetting('thumbnails');
         $existingFormats = [];
@@ -91,8 +103,17 @@ class Processor
             } elseif ($customSetting[$config->getName()]['status'] == 'finished') {
                 // check if the files are there
                 $formatsToConvert = [];
-                foreach ($formats as $f) {
-                    if (!is_file($asset->getVideoThumbnailSavePath() . $customSetting[$config->getName()]['formats'][$f])) {
+                foreach ($formats as $fkey => $f) {
+                    if (strpos($f, '-media-') !== false) {
+                        $mediaParts = explode('-media-', $f);
+                        $format = $mediaParts[0];
+                        $media = $mediaParts[1];
+                        if (!is_file($asset->getVideoThumbnailSavePath() . ($customSetting[$config->getName()]['formats']['medias'][$format][$media] ?? null))) {
+                            $formatsToConvert[] = $f;
+                        } else {
+                            $existingFormats['medias'][$format][$media] = $customSetting[$config->getName()]['formats']['medias'][$format][$media];
+                        }
+                    } else if (!is_file($asset->getVideoThumbnailSavePath() . ($customSetting[$config->getName()]['formats'][$f] ?? null))) {
                         $formatsToConvert[] = $f;
                     } else {
                         $existingFormats[$f] = $customSetting[$config->getName()]['formats'][$f];
@@ -110,8 +131,21 @@ class Processor
         }
 
         foreach ($formats as $format) {
+            $media = null;
             $thumbDir = $asset->getVideoThumbnailSavePath() . '/video-thumb__' . $asset->getId() . '__' . $config->getName();
-            $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '/', '', $asset->getFilename()) . '.' . $format;
+            $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '/', '', $asset->getFilename());
+
+            // add custom suffix for media specific format
+            if (strpos($format, '-media-') !== false) {
+                $formatParts = explode('-media-', trim($format));
+                $format = $formatParts[0];
+                $media = $formatParts[1];
+                $config->selectMedia($media);
+                $filename .= '~-~' . $media . '.' . $formatParts[0];
+            } else {
+                $filename .= '.' . $format;
+            }
+
             $fsPath = $thumbDir . '/' . $filename;
             $tmpPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-converter-' . $filename;
 
@@ -128,6 +162,7 @@ class Processor
             $converter->setAudioBitrate($config->getAudioBitrate());
             $converter->setVideoBitrate($config->getVideoBitrate());
             $converter->setFormat($format);
+            $converter->setMedia($media);
             $converter->setDestinationFile($tmpPath);
             $converter->setStorageFile($fsPath);
 
@@ -212,7 +247,11 @@ class Processor
                 @chmod($converter->getStorageFile(), File::getDefaultMode());
 
                 if ($success) {
-                    $formats[$converter->getFormat()] = str_replace($asset->getVideoThumbnailSavePath(), '', $converter->getStorageFile());
+                    if($converter->getMedia()) {
+                        $formats['medias'][$converter->getFormat()][$converter->getMedia()] = str_replace($asset->getVideoThumbnailSavePath(), '', $converter->getStorageFile());
+                    } else {
+                        $formats[$converter->getFormat()] = str_replace($asset->getVideoThumbnailSavePath(), '', $converter->getStorageFile());
+                    }
                 } else {
                     $conversionStatus = 'error';
                 }

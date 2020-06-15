@@ -44,6 +44,36 @@ if($asset instanceof Asset\Video) {
 }
 ```
 
+##### Media Queries in Thumbnail Configuration
+```php
+// list all available medias in "myVideoThumbnail" thumbnail configuration
+p_r(array_keys(Asset\Video\Thumbnail\Config::getByName("myVideoThumbnail")->getMedias()));
+
+$asset = Asset::getById(123);
+if($asset instanceof Asset\Video) {
+ 
+   $thumbnail = $asset->getThumbnail("myVideoThumbnail"); // returns an array
+   if($thumbnail["status"] == "finished") {
+      p_r($thumbnail["formats"]); // transcoding finished, print the paths to the different formats
+      /*
+         OUTPUTS:
+         Array(
+             "mp4" => "/website/var/tmp/video.....mp4",
+             "medias" => array:1 [
+                "mp4" => array:2 [  
+                    "(min-width: 576px)" => "/website/var/tmp/video..~-~%28min-width%3A%20576px%29.mp4"
+                    "(min-width: 800px)" => "/website/var/tmp/video..~-~%28min-width%3A%20800px%29.mp4"
+                
+         )
+      */
+      $thumbnail["formats"]["medias"]["mp4"]["(min-width: 576px)"]; //get thumbnail path for a media query
+   } else if ($thumbnail["status"] == "inprogress")  {
+      echo "transcoding in progress, please wait ...";
+   } else {
+      echo "transcoding failed :(";
+   }
+}
+```
 --- 
 
 ### Using with the Video Editable

@@ -202,4 +202,30 @@ class ImageThumbnail
 
         return $config;
     }
+
+    /**
+     * @param string $name
+     * @param int $highRes
+     *
+     * @return Thumbnail
+     *
+     * @throws \Exception
+     */
+    public function getMedia($name, $highRes = 1)
+    {
+        $thumbConfig = $this->getConfig();
+        $mediaConfigs = $thumbConfig->getMedias();
+
+        if (isset($mediaConfigs[$name])) {
+            $thumbConfigRes = clone $thumbConfig;
+            $thumbConfigRes->selectMedia($name);
+            $thumbConfigRes->setHighResolution($highRes);
+            $thumbConfigRes->setMedias([]);
+            $thumb = $this->getAsset()->getThumbnail($thumbConfigRes);
+
+            return $thumb;
+        } else {
+            throw new \Exception("Media query '" . $name . "' doesn't exist in thumbnail configuration: " . $thumbConfig->getName());
+        }
+    }
 }
