@@ -94,22 +94,26 @@ class Video extends Model\Asset
             // clear the thumbnail custom settings
             $this->setCustomSetting('thumbnails', null);
 
-            $directoryIterator = new \DirectoryIterator($this->getImageThumbnailSavePath());
-            $filterIterator = new \CallbackFilterIterator($directoryIterator, function (\SplFileInfo $fileInfo) {
-                return strpos($fileInfo->getFilename(), 'image-thumb__' . $this->getId()) === 0 || strpos($fileInfo->getFilename(), 'video-image-cache__' . $this->getId() . '__thumbnail_') === 0;
-            });
-            /** @var \SplFileInfo $fileInfo */
-            foreach ($filterIterator as $fileInfo) {
-                recursiveDelete($fileInfo->getPathname());
+            if (is_dir($this->getImageThumbnailSavePath())) {
+                $directoryIterator = new \DirectoryIterator($this->getImageThumbnailSavePath());
+                $filterIterator = new \CallbackFilterIterator($directoryIterator, function (\SplFileInfo $fileInfo) {
+                    return strpos($fileInfo->getFilename(), 'image-thumb__' . $this->getId()) === 0 || strpos($fileInfo->getFilename(), 'video-image-cache__' . $this->getId() . '__thumbnail_') === 0;
+                });
+                /** @var \SplFileInfo $fileInfo */
+                foreach ($filterIterator as $fileInfo) {
+                    recursiveDelete($fileInfo->getPathname());
+                }
             }
 
-            $directoryIterator = new \DirectoryIterator($this->getVideoThumbnailSavePath());
-            $filterIterator = new \CallbackFilterIterator($directoryIterator, function (\SplFileInfo $fileInfo) {
-                return strpos($fileInfo->getFilename(), 'video-thumb__' . $this->getId()) === 0;
-            });
-            /** @var \SplFileInfo $fileInfo */
-            foreach ($filterIterator as $fileInfo) {
-                recursiveDelete($fileInfo->getPathname());
+            if (is_dir($this->getVideoThumbnailSavePath())) {
+                $directoryIterator = new \DirectoryIterator($this->getVideoThumbnailSavePath());
+                $filterIterator = new \CallbackFilterIterator($directoryIterator, function (\SplFileInfo $fileInfo) {
+                    return strpos($fileInfo->getFilename(), 'video-thumb__' . $this->getId()) === 0;
+                });
+                /** @var \SplFileInfo $fileInfo */
+                foreach ($filterIterator as $fileInfo) {
+                    recursiveDelete($fileInfo->getPathname());
+                }
             }
         }
     }
