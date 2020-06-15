@@ -871,7 +871,16 @@ class Video extends Model\Document\Tag
             $code .= '<video' . $attributesString . '>' . "\n";
 
             foreach ($urls as $type => $url) {
-                $code .= '<source type="video/' . $type . '" src="' . $url . '" />' . "\n";
+                if($type == 'medias') {
+                    foreach ($url as $format => $medias) {
+                        foreach ($medias as $media => $mediaUrl) {
+                            $code .= '<source type="video/' . $format . '" src="' . $mediaUrl . '" media="' . $media . '"  />' . "\n";
+                        }
+                    }
+                } else {
+                    $code .= '<source type="video/' . $type . '" src="' . $url . '" />' . "\n";
+                }
+
             }
 
             $code .= '</video>' . "\n";
