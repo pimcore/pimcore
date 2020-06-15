@@ -246,8 +246,6 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             } else {
                 $classes[] = (string)$editableOptions['class'];
             }
-
-            $classes[] = (string)$editableOptions['class'];
         }
 
         return $classes;

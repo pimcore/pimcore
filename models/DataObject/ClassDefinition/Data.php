@@ -744,7 +744,12 @@ abstract class Data
                 $code .= "\t" . '$inheritValues = self::getGetInheritedValues();'."\n";
                 $code .= "\t" . 'self::setGetInheritedValues(false);'."\n";
             }
+
+            $code .= "\t" . '$hideUnpublished = \\Pimcore\\Model\\DataObject\\Concrete::getHideUnpublished();' . "\n";
+            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";
+
             if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
                 $code .= "\t" . 'self::setGetInheritedValues($inheritValues);'."\n";
             }
@@ -845,7 +850,12 @@ abstract class Data
             $code .= "\t\t" . '$inheritValues = $this->getObject()::getGetInheritedValues();'."\n";
             $code .= "\t\t" . '$this->getObject()::setGetInheritedValues(false);'."\n";
             $code .= "\t" . '}'."\n";
+
+            $code .= "\t" . '$hideUnpublished = \\Pimcore\\Model\\DataObject\\Concrete::getHideUnpublished();' . "\n";
+            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";
+
             $code .= "\t" . 'if($class && $class->getAllowInherit()) {' . "\n";
             $code .= "\t\t" . '$this->getObject()::setGetInheritedValues($inheritValues);'."\n";
             $code .= "\t" . '}' . "\n";
@@ -934,7 +944,11 @@ abstract class Data
         }
 
         if ($this->supportsDirtyDetection()) {
+            $code .= "\t" . '$hideUnpublished = \\Pimcore\\Model\\DataObject\\Concrete::getHideUnpublished();' . "\n";
+            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '();' . "\n";
+            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";
+
             $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
             $code .= "\t" . 'if (!$isEqual) {' . "\n";
             $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
@@ -1033,7 +1047,12 @@ abstract class Data
                 $code .= "\t" . '$inheritValues = self::getGetInheritedValues();'."\n";
                 $code .= "\t" . 'self::setGetInheritedValues(false);'."\n";
             }
+
+            $code .= "\t" . '$hideUnpublished = \\Pimcore\\Model\\DataObject\\Concrete::getHideUnpublished();' . "\n";
+            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished(false);' . "\n";
             $code .= "\t" . '$currentData = $this->get' . ucfirst($this->getName()) . '($language);' . "\n";
+            $code .= "\t" . '\\Pimcore\\Model\\DataObject\\Concrete::setHideUnpublished($hideUnpublished);' . "\n";
+
             if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit()) {
                 $code .= "\t" . 'self::setGetInheritedValues($inheritValues);'."\n";
             }

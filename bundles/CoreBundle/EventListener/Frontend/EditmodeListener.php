@@ -274,7 +274,7 @@ class EditmodeListener implements EventSubscriberInterface
                 $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $scriptUrl) . "\n\n\n";
             }
 
-            $headHtml .= '<script src="' . \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents) . '"></script>' . "\n";
+            $headHtml .= '<script src="' . $this->router->generate('pimcore_admin_misc_scriptproxy', \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents, false)) . '"></script>' . "\n";
         }
         $path = $this->router->generate('pimcore_admin_misc_jsontranslationssystem', [
             'language' => $language,
@@ -282,6 +282,7 @@ class EditmodeListener implements EventSubscriberInterface
         ]);
 
         $headHtml .= '<script src="'.$path.'"></script>' . "\n";
+        $headHtml .= '<script src="' . $this->router->generate('fos_js_routing_js', ['callback' => 'fos.Router.setData']) . '"></script>' . "\n";
         $headHtml .= "\n\n";
 
         // set var for editable configurations which is filled by Document\Tag::admin()

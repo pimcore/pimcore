@@ -246,6 +246,27 @@
                                 "invisible":false,
                                 "visibleGridView":false,
                                 "visibleSearch":false
+                            },
+                            {
+                                "fieldtype":"objectbricks",
+                                "phpdocType":"\\Pimcore\\Model\\DataObject\\Objectbrick",
+                                "allowedTypes":[
+
+                                ],
+                                "name":"mybricks",
+                                "title":"",
+                                "tooltip":"",
+                                "mandatory":false,
+                                "noteditable":false,
+                                "index":"",
+                                "locked":false,
+                                "style":"",
+                                "permissions":"",
+                                "datatype":"data",
+                                "relationType":false,
+                                "invisible":false,
+                                "visibleGridView":false,
+                                "visibleSearch":false
                             }
                         ],
                         "locked":false

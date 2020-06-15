@@ -132,7 +132,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
                 pimcore.helpers.download(this.getExportConfigUrl());
             }.bind(this)
         });
-        
+
         this.loadButton = new Ext.button.Split({
 
                 text: t("load"),
@@ -255,9 +255,12 @@ pimcore.object.helpers.import.configDialog = Class.create({
             } else {
                 this.showWindow(data);
             }
-        }
-        else {
-            Ext.MessageBox.alert(t("error"), t("unsupported_filetype"));
+        } else {
+            if (data.message) {
+                Ext.MessageBox.alert(t('error'), t('unsupported_filetype') + ':<br>' + data.message);
+            } else {
+                Ext.MessageBox.alert(t('error'), t('unsupported_filetype'));
+            }
         }
     },
 
@@ -796,15 +799,15 @@ pimcore.object.helpers.import.configDialog = Class.create({
             }.bind(this)
         });
     },
-    
+
     getExportConfigUrl: function(){
         this.commitEverything();
         var config = this.prepareSaveData();
         config = Ext.encode(config);
-        
+
         return "/admin/object-helper/export-csv-import-config-as-json?classId="+this.classId+"&config="+config;
     },
-    
+
     getImportConfigUrl: function(){
         return '/admin/object-helper/import-csv-import-config-from-json?importId=' + this.uniqueImportId + "&importConfigId="+this.importConfigId + "&classId=" + this.classId;
     }

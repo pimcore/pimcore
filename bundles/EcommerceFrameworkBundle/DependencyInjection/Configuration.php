@@ -33,6 +33,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexService;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ProductCentricBatchProcessingWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OfferTool\DefaultService as DefaultOfferToolService;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\AgentFactory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing;
@@ -749,6 +750,14 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('index_service_id')
                     ->cannotBeEmpty()
                     ->defaultValue(IndexService::class)
+                ->end()
+                // @TODO Pimcore 7 - remove this
+                ->enumNode('worker_mode')
+                    ->values([ProductCentricBatchProcessingWorker::WORKER_MODE_PRODUCT_CENTRIC, ProductCentricBatchProcessingWorker::WORKER_MODE_LEGACY])
+                    ->cannotBeEmpty()
+                    ->setDeprecated('will be removed in Pimcore 7 as then ' . ProductCentricBatchProcessingWorker::WORKER_MODE_PRODUCT_CENTRIC . ' will be default mode.')
+                    ->info('Worker mode for ' . ProductCentricBatchProcessingWorker::class . ' workers.')
+                    ->defaultValue(ProductCentricBatchProcessingWorker::WORKER_MODE_LEGACY)
                 ->end()
                 ->scalarNode('default_tenant')
                     ->cannotBeEmpty()

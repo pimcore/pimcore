@@ -2,12 +2,12 @@
 
 ## Description
 
-The image editable adds an placeholder for images out of the assets module.
+The image editable adds a placeholder for images out of the assets module.
 The biggest advantages of using that instead of (for example) the relation editable:
 
 * You are able to specify generated thumbnail properties (including high-res)
-* There is a image preview rendered in the administration panel
-* You can specify additional attribute for generated `<img>` or `<picture>`
+* There is an image preview rendered in the administration panel
+* You can specify additional attributes for generated `<img>` or `<picture>`
 * You can crop the image directly inline
 * You can put hotspots and markers on the actual image 
 
@@ -25,11 +25,11 @@ The biggest advantages of using that instead of (for example) the relation edita
 | `minHeight`                    | integer | Min. height of the image (in pixel)                                                                                                                                                                                                      |
 | `ratioX`                       | integer | Set width in pixel to make sure a fixed aspect ratio size is choosen in the crop tool. Must be used with ratioY.                                                                                                                         |
 | `ratioY`                       | integer | Set height in pixel to make sure a fixed aspect ratio size is choosen in the crop tool. Must be used with ratioX.                                                                                                                        |
-| `attributes`                   | array   | Custom attributes for the <img /> tag - this can be used to pass custom attributes (not w3c)                                                                                                                                             |
+| `attributes`                   | array   | Custom attributes for the `<img />` tag - this can be used to pass custom attributes (not w3c)                                                                                                                                             |
 | `removeAttributes`             | array   | You can remove standard attributes using this configuration, e.g. `"removeAttributes" => ["controls","poster"]`                                                                                                                          |
 | `uploadPath`                   | string  | Target path for (inline) uploaded images                                                                                                                                                                                                 |
 | `disableInlineUpload`          | boolean | Disable the inline upload. If set to true, the inline upload functionality will be disabled.                                                                                                                                             |
-| `highResolution`               | float   | Factor the thumbnail dimensions should be multiplied with (html attributes width and height contain the original dimensions ... used for **Retina* displays, print, ...)                                                                 |
+| `highResolution`               | float   | Factor the thumbnail dimensions should be multiplied with (html attributes width and height contain the original dimensions ... used for *Retina* displays, print, ...)                                                                 |
 | `disableWidthHeightAttributes` | bool    | Width & height attributes are set automatically by Pimcore, to avoid this set this option (eg. to true => isset check)                                                                                                                   |
 | `disableAutoTitle`             | bool    | Set to true, to disable the automatically generated title attribute (containing title and copyright from the origin image)                                                                                                               |
 | `disableAutoAlt`               | bool    | Set to true, to disable the automatically generated alt attribute                                                                                                                                                                        |

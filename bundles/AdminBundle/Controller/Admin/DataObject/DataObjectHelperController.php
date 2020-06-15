@@ -1551,7 +1551,7 @@ class DataObjectHelperController extends AdminController
         }
 
         $csv = new \SplFileObject($originalFile);
-        $csv->setFlags(\SplFileObject::READ_CSV);
+        $csv->setFlags(\SplFileObject::READ_CSV | \SplFileObject::SKIP_EMPTY | \SplFileObject::READ_AHEAD | \SplFileObject::DROP_NEW_LINE);
         $csv->setCsvControl($dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
         $rows = 0;
         $nbFields = 0;
@@ -1559,8 +1559,15 @@ class DataObjectHelperController extends AdminController
             if (0 === $rows) {
                 $nbFields = count($fields);
                 $rows++;
-            } elseif ($nbFields == count($fields)) {
+            } elseif ($nbFields === count($fields)) {
                 $rows++;
+            } else {
+                $translator = $this->get('translator');
+
+                return $this->adminJson([
+                    'success' => false,
+                    'message' => $translator->trans('different_number_of_columns', [], 'admin'),
+                ]);
             }
         }
 
@@ -1854,13 +1861,19 @@ class DataObjectHelperController extends AdminController
         $fp = fopen($this->getCsvFile($fileHandle), 'a');
 
         $firstLine = true;
-        foreach ($csv as $line) {
+        $lineCount = count($csv);
+
+        for ($i = 0; $i < $lineCount; $i++) {
+            $line = $csv[$i];
             if ($addTitles && $firstLine) {
                 $firstLine = false;
-                $line = implode($delimiter, $line) . "\r\n";
+                $line = implode($delimiter, $line);
                 fwrite($fp, $line);
             } else {
-                fputs($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)) . "\r\n");
+                fputs($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)));
+            }
+            if ($i < $lineCount - 1) {
+                fwrite($fp, "\r\n");
             }
         }
 

@@ -191,7 +191,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Model\DataObject\Data\EncryptedField|null
@@ -220,7 +220,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -242,7 +242,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Model\DataObject\Data\EncryptedField|null
@@ -325,7 +325,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      *
      * @deprecated
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
@@ -405,7 +405,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -432,7 +432,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -460,7 +460,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      *
      * @abstract
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string
