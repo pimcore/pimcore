@@ -931,13 +931,12 @@ class AssetController extends ElementControllerBase implements EventedController
      * @Route("/save", name="pimcore_admin_asset_save", methods={"PUT","POST"})
      *
      * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function saveAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function saveAction(Request $request)
     {
         $asset = Asset::getById($request->get('id'));
 
@@ -949,18 +948,8 @@ class AssetController extends ElementControllerBase implements EventedController
             // metadata
             if ($request->get('metadata')) {
                 $metadata = $this->decodeJson($request->get('metadata'));
-
-                $metadataEvent = new GenericEvent($this, [
-                    "id" => $asset->getId(),
-                    'metadata' => $metadata
-                ]);
-                $eventDispatcher->dispatch(AdminEvents::ASSET_METADATA_PRE_SET, $metadataEvent);
-
-                $metadata = $metadataEvent->getArgument('metadata');
-                $metadataValues = $metadata['values'];
-
-                $metadataValues = Asset\Service::minimizeMetadata($metadataValues);
-                $asset->setMetadata($metadataValues);
+                $metadata = Asset\Service::minimizeMetadata($metadata);
+                $asset->setMetadata($metadata);
             }
 
             // properties
@@ -1649,7 +1638,6 @@ class AssetController extends ElementControllerBase implements EventedController
      * @Route("/get-folder-content-preview", name="pimcore_admin_asset_getfoldercontentpreview", methods={"GET"})
      *
      * @param Request $request
-     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
