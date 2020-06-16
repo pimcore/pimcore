@@ -655,7 +655,13 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         try {
             $this->putIndexMapping($this->getIndexNameVersion());
 
+
             $configuredSettings = $this->tenantConfig->getIndexSettings();
+            $synonymSettings = $this->extractMinimalSynonymFiltersTreeFromTenantConfig();
+            if(isset($synonymSettings['analysis'])) {
+                $configuredSettings['analysis']['filter'] = array_replace_recursive($configuredSettings['analysis']['filter'], $synonymSettings['analysis']['filter']);
+            }
+
             $currentSettings = $esClient->indices()->getSettings([
                 'index' => $this->getIndexNameVersion(),
             ]);
@@ -669,9 +675,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                         'index' => $this->tenantConfig->getIndexSettings()
                     ]
                 ]);
+                Logger::info('Index-Actions - updated settings for Index: ' . $this->getIndexNameVersion());
+            } else {
+                Logger::info('Index-Actions - no settings update necessary for Index: ' . $this->getIndexNameVersion());
             }
 
-            Logger::info('Index-Actions - updated settings for Index: ' . $this->getIndexNameVersion());
+
         } catch (\Exception $e) {
             Logger::info("Index-Actions - can't create Mapping - trying reindexing " . $e->getMessage());
             Logger::info('Index-Actions - Perform native reindexing for Index: ' . $this->getIndexNameVersion());
@@ -679,10 +688,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             $this->startReindexMode();
         }
 
-        // index created return "true" and mapping creation returns array
-        if ((is_array($result) && !$result['acknowledged']) || (is_bool($result) && !$result)) {
-            throw new \Exception('Index creation failed');
-        }
     }
 
     // type will be removed in ES 7
@@ -770,6 +775,8 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         if (!$result['acknowledged']) {
             throw new \Exception('Index creation failed. IndexName: ' . $indexName);
         }
+
+        $this->updateSynonyms($indexName, true, true);
     }
 
     /**
@@ -899,6 +906,135 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         } finally {
             $this->releaseIndexLock();
         }
+    }
+
+
+    /**
+     *
+     * Perform a synonym update on the currently selected ES index, if necessary.
+     *
+     * Attention: the current index will be closed and opened, so it won't be available for a tiny moment (typically some milliseconds).
+     *
+     * @param string $indexNameOverride if given, then that index will be used instead of the current index.
+     * @param bool $skipComparison if explicitly set to true, then the comparison whether the synonyms between the current index settings
+     *        and the local index settings vary, will be skipped, and the index settings will be updated regardless.
+     * @param bool $skipLocking if explictly set to true, then no global lock will be activated / released.
+     *
+     * @throws \Exception is thrown if the synonym transmission fails.
+     */
+    public function updateSynonyms(string $indexNameOverride = "", bool $skipComparison = false, bool $skipLocking = true) {
+        try {
+
+            if (!$skipLocking) {
+                $this->activateIndexLock(); //lock all other processes
+            }
+
+            $indexName = $indexNameOverride ? : $this->getIndexNameVersion();
+
+            $indexSettingsSynonymPartLocalConfig = $this->extractMinimalSynonymFiltersTreeFromTenantConfig();
+            if (empty($indexSettingsSynonymPartLocalConfig)) {
+                Logger::info('No index update required, as no synonym providers are configured. '.
+                    'If filters have been removed, then reindexing will help to get rid of old configurations.'
+                );
+                return;
+            }
+
+            $esClient = $this->getElasticSearchClient();
+
+            if (!$skipComparison) {
+                $indexSettingsCurrentEs = $esClient->indices()->getSettings(['index' => $indexName])[$indexName]['settings']['index'];
+                $indexSettingsSynonymPartEs = $this->extractMinimalSynonymFiltersTreeFromIndexSettings($indexSettingsCurrentEs);
+
+                if ($indexSettingsSynonymPartEs == $indexSettingsSynonymPartLocalConfig) {
+                    Logger::info(sprintf('The synonyms in ES index "%s" are identical with those of the local configuration. '.
+                        'No update required.', $indexName));
+                    return;
+                }
+            }
+
+            Logger::info(sprintf('Update synonyms in "%s"...', $indexName));
+            $esClient->indices()->close(['index' => $indexName]);
+
+            $result = $esClient->indices()->putSettings([
+                'index' => $indexName,
+                'body' => [
+                    'index' => $indexSettingsSynonymPartLocalConfig
+                ]
+            ]);
+
+            $esClient->indices()->open(['index' => $indexName]);
+
+            if (!$result['acknowledged']) {
+                //exception must be thrown after re-opening the index!
+                throw new \Exception('Index synonym settings update failed. IndexName: ' . $indexName);
+            }
+
+
+        } finally {
+            if (!$skipLocking) {
+                $this->releaseIndexLock();
+            }
+        }
+    }
+
+    /**
+     * Extract the minimal synonym filters tree based on the tenant config's synonym provider configuration.
+     * @return array the index tree settings ready to be pushed into the index, or an empty array, if no configuration exists.
+     */
+    protected function extractMinimalSynonymFiltersTreeFromTenantConfig() : array {
+        $indexPart = [];
+        foreach ($this->tenantConfig->getSynonymProviders() as $filterName => $synonymProvider) {
+            $synonymLines = $synonymProvider->getSynonyms();
+            if (empty($indexPart)) {
+                $indexPart = [
+                    'analysis' =>
+                        [
+                            'filter' => []
+                        ]
+                ];
+            }
+
+            $indexPart['analysis']['filter'][$filterName] = ['synonyms' => $synonymLines];
+        }
+
+        return $indexPart;
+    }
+
+
+    /**
+     * Extract that part of the ES analysis index settings that are related to synonym (provider) filters.
+     * @param array $indexSettings the index settings
+     * @return array part of the index_settings that contains the synonym-related filters, including
+     *  the parent elements:
+     *      - analysis
+     *          - filter
+     *              - synonym_filter_1:
+     *                  - type: synonym/synonym_graph
+     *                  - ...
+     */
+    public function extractMinimalSynonymFiltersTreeFromIndexSettings(array $indexSettings) : array {
+        $filters = isset($indexSettings['analysis']['filter']) ? $indexSettings['analysis']['filter'] : [];
+        $indexPart = [];
+        if ($filters) {
+            $synonymProviderMap = $this->tenantConfig->getSynonymProviders();
+            foreach ($filters as $filterName => $filter) {
+
+                if (array_key_exists($filterName, $synonymProviderMap)) {
+                    if (empty($indexPart)) {
+                        $indexPart = [
+                            'analysis' =>
+                                [
+                                    'filter' => []
+                                ]
+                        ];
+                    }
+
+                    $indexPart['analysis']['filter'][$filterName]['synonyms'] = $filter['synonyms'];
+                }
+            }
+        }
+
+        return $indexPart;
     }
 
     /**

@@ -453,6 +453,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
             if (!empty($tenantConfig['config_options'])) {
                 $config->setArgument('$options', $tenantConfig['config_options']);
+                $this->registerIndexServiceElasticSearchSynonymProviders($tenantConfig['config_options'], $config, $container);
             }
 
             $worker = new ChildDefinition($tenantConfig['worker_id']);
@@ -465,6 +466,32 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $this->setupServiceLocator($container, 'index_service.getters', $getterIds);
         $this->setupServiceLocator($container, 'index_service.interpreters', $interpreterIds);
+    }
+
+    /**
+     * Register synonym providers and their options per tenant config.
+     * @param array $tenantConfigOptions
+     * @param Definition $config
+     * @param ContainerBuilder $container
+     */
+    private function registerIndexServiceElasticSearchSynonymProviders(array $tenantConfigOptions,
+                                                                       Definition $config,
+                                                                       ContainerBuilder $container) {
+
+        if (!isset($tenantConfigOptions['synonym_providers'])) {
+            return;
+        }
+
+        $providers = [];
+        foreach ($tenantConfigOptions['synonym_providers'] as $name => $synonymProviderConfig) {
+            $synonymProvider = new ChildDefinition($synonymProviderConfig['provider_id']);
+            $synonymProvider->setArgument('$options', $synonymProviderConfig['options'] ?? []);
+            $synonymProviderServiceId = self::SERVICE_ID_INDEX_SERVICE.'.synonym_provider.'.$name;
+            $container->setDefinition($synonymProviderServiceId, $synonymProvider);
+            $providers[$name] = $synonymProvider;
+        }
+
+        $config->setArgument('$synonymProviders', $providers);
     }
 
     private function registerFilterServiceConfig(ContainerBuilder $container, array $config)
