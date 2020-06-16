@@ -14,22 +14,5 @@
 pimcore.registerNS("pimcore.asset.metadata.data.textarea");
 pimcore.asset.metadata.data.textarea = Class.create(pimcore.asset.metadata.data.data, {
 
-    type: "textarea",
-
-
-    initialize: function (treeNode, initData) {
-        this.type = "textarea";
-
-        this.initData(initData);
-
-        this.treeNode = treeNode;
-    },
-
-    getTypeName: function () {
-        return t("textarea");
-    },
-
-    getIconClass: function () {
-        return "pimcore_icon_textarea";
-    }
+    type: "textarea"
 });

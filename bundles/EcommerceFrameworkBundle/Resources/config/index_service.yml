@@ -1,4 +1,5 @@
 imports:
+    - { resource: index_service_synonym_providers.yml }
     - { resource: index_service_configs_workers.yml }
 
 services:
@@ -17,6 +18,9 @@ services:
             - '@pimcore_ecommerce.environment'
             - []
             - '%pimcore_ecommerce.index_service.default_tenant%'
+
+    # index update service
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\IndexUpdateService: ~
 
     # auto-register all core getters as service
     Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\:

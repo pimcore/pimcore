@@ -130,7 +130,8 @@ class Snippet extends Model\Document\Tag
 
         // check if output-cache is enabled, if so, we're also using the cache here
         $cacheKey = null;
-        if ($cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled()) {
+        $cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled();
+        if ((isset($params['cache']) && $params['cache'] === true) || $cacheConfig) {
 
             // cleanup params to avoid serializing Element\ElementInterface objects
             $cacheParams = $params;
@@ -166,7 +167,9 @@ class Snippet extends Model\Document\Tag
         );
 
         // write contents to the cache, if output-cache is enabled
-        if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
+        if (isset($params['cache']) && $params['cache'] === true) {
+            Cache::save($content, $cacheKey, ['output']);
+        } elseif ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
             Cache::save($content, $cacheKey, ['output', 'output_inline'], $cacheConfig['lifetime']);
         }
 

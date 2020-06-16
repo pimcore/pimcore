@@ -232,7 +232,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
         $params = [];
         $params['index'] = $this->getIndexName();
         $params['type'] = $this->getQueryType();
-        $params['body']['_source'] = false;
+        $params['body']['_source'] = true;
         $params['body']['size'] = $this->getLimit();
         $params['body']['from'] = $this->getOffset();
 

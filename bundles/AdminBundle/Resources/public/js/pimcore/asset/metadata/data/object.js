@@ -14,21 +14,5 @@
 pimcore.registerNS("pimcore.asset.metadata.data.object");
 pimcore.asset.metadata.data.object = Class.create(pimcore.asset.metadata.data.data, {
 
-    type: "object",
-
-    initialize: function (treeNode, initData) {
-        this.type = "object";
-
-        this.initData(initData);
-
-        this.treeNode = treeNode;
-    },
-
-    getTypeName: function () {
-        return t("object");
-    },
-
-    getIconClass: function () {
-        return "pimcore_icon_object";
-    }
+    type: "object"
 });

@@ -43,12 +43,12 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
     }
 
     /**
+     * @Route("/search-users", name="pimcore_admin_gdpr_pimcoreusers_searchusers", methods={"GET"})
+     *
      * @param Request $request
      * @param PimcoreUsers $pimcoreUsers
      *
      * @return JsonResponse
-     *
-     * @Route("/search-users", methods={"GET"})
      */
     public function searchUsersAction(Request $request, PimcoreUsers $pimcoreUsers)
     {
@@ -68,9 +68,10 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
     }
 
     /**
+     * @Route("/export-user-data", name="pimcore_admin_gdpr_pimcoreusers_exportuserdata", methods={"GET"})
+     *
      * @param Request $request
      * @param PimcoreUsers $pimcoreUsers
-     * @Route("/export-user-data", methods={"GET"})
      *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */

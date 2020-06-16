@@ -47,9 +47,9 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
      */
     protected $batchData;
 
-    public function __construct(FindologicConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
+    public function __construct(FindologicConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
-        parent::__construct($tenantConfig, $db, $eventDispatcher);
+        parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
     }
 
     /**

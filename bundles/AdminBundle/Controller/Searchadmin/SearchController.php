@@ -35,7 +35,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SearchController extends AdminController
 {
     /**
-     * @Route("/find", methods={"GET", "POST"})
+     * @Route("/find", name="pimcore_admin_searchadmin_search_find", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -240,7 +240,7 @@ class SearchController extends AdminController
             if (array_key_exists($sortingSettings['orderKey'], $sortMapping)) {
                 $sort = $sortMapping[$sortingSettings['orderKey']];
             }
-            $searcherList->setOrderKey($sortingSettings['orderKey']);
+            $searcherList->setOrderKey($sort);
         }
         if ($sortingSettings['order']) {
             $searcherList->setOrder($sortingSettings['order']);
@@ -417,7 +417,7 @@ class SearchController extends AdminController
     }
 
     /**
-     * @Route("/quicksearch", methods={"GET"})
+     * @Route("/quicksearch", name="pimcore_admin_searchadmin_search_quicksearch", methods={"GET"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher

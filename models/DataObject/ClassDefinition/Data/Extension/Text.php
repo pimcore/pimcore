@@ -36,7 +36,7 @@ trait Text
     }
 
     /**
-     * @param string $data
+     * @param string|null $data
      *
      * @return bool
      */

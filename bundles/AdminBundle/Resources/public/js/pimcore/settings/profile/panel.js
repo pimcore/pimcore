@@ -220,7 +220,8 @@ pimcore.settings.profile.panel = Class.create({
 
         var date = new Date();
 
-        var image = "/admin/user/get-image?id=" + this.currentUser.id + "&_dc=" + date.getTime();
+        var image = Routing.generate('pimcore_admin_user_getimage', {id: this.currentUser.id, '_dc': date.getTime()});
+
         generalItems.push({
             xtype: "fieldset",
             title: t("image"),
@@ -236,12 +237,12 @@ pimcore.settings.profile.panel = Class.create({
                 xtype: "button",
                 text: t("upload"),
                 handler: function () {
-                    pimcore.helpers.uploadDialog("/admin/user/upload-current-user-image?id="
-                        + this.currentUser.id, null, function () {
+                    pimcore.helpers.uploadDialog(Routing.generate('pimcore_admin_user_uploadcurrentuserimage', {id: this.currentUser.id}), null, function () {
                         var cont = Ext.getCmp("pimcore_profile_image_" + this.currentUser.id);
                         var date = new Date();
-                        cont.update('<img src="/admin/user/get-image?id=' + this.currentUser.id + '&_dc='
-                            + date.getTime() + '" />');
+                        var image = Routing.generate('pimcore_admin_user_getimage', {id: this.currentUser.id, '_dc': date.getTime()});
+
+                        cont.update('<img src="'+image+'" />');
                     }.bind(this));
                 }.bind(this)
             }]
@@ -301,7 +302,7 @@ pimcore.settings.profile.panel = Class.create({
 
 
         Ext.Ajax.request({
-            url: "/admin/user/update-current-user",
+            url: Routing.generate('pimcore_admin_user_updatecurrentuser'),
             method: "PUT",
             params: {
                 id: this.currentUser.id,

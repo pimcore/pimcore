@@ -15,8 +15,7 @@ website triggers a save action.
 ## Content Localization 
 
 ### Language Configuration
-The available languages for content are configured centrally in system settings (*Settings* > *System Settings*
-> *Localization & Internationalization (i18n/l10n)*). 
+The available languages for content are configured centrally in system settings (*Settings* > *System Settings* > *Localization & Internationalization (i18n/l10n)*). 
 
 ![Localization Settings](../img/localization-settings.png)
 

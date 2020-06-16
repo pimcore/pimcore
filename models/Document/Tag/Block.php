@@ -71,6 +71,7 @@ class Block extends Model\Document\Tag implements BlockInterface
     public function admin()
     {
         // nothing to do
+        return '';
     }
 
     /**
@@ -79,7 +80,7 @@ class Block extends Model\Document\Tag implements BlockInterface
     public function frontend()
     {
         // nothing to do
-        return null;
+        return '';
     }
 
     /**

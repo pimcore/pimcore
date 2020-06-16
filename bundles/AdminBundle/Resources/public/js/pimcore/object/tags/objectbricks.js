@@ -40,7 +40,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     loadFieldDefinitions: function () {
 
         Ext.Ajax.request({
-            url: "/admin/class/objectbrick-tree",
+            url: Routing.generate('pimcore_admin_dataobject_class_objectbricktree'),
             params: {
                 class_id: this.object.data.general.o_classId,
                 object_id: this.object.id,

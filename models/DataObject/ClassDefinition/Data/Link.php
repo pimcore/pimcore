@@ -61,7 +61,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Link $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -99,7 +99,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Link
@@ -128,7 +128,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\Link $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -142,7 +142,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -159,7 +159,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     /**
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -173,7 +173,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Link|null
@@ -192,7 +192,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     /**
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string

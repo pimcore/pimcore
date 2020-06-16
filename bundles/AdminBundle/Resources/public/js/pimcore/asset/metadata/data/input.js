@@ -14,22 +14,5 @@
 pimcore.registerNS("pimcore.asset.metadata.data.input");
 pimcore.asset.metadata.data.input = Class.create(pimcore.asset.metadata.data.data, {
 
-    type: "input",
-
-
-    initialize: function (treeNode, initData) {
-        this.type = "input";
-
-        this.initData(initData);
-
-        this.treeNode = treeNode;
-    },
-
-    getTypeName: function () {
-        return t("input");
-    },
-
-    getIconClass: function () {
-        return "pimcore_icon_input";
-    }
+    type: "input"
 });

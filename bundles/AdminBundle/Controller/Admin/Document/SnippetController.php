@@ -30,7 +30,37 @@ class SnippetController extends DocumentControllerBase
     use ElementEditLockHelperTrait;
 
     /**
-     * @Route("/get-data-by-id", methods={"GET"})
+     * @Route("/save-to-session", name="pimcore_admin_document_snippet_savetosession", methods={"POST"})
+     *
+     * {@inheritDoc}
+     */
+    public function saveToSessionAction(Request $request)
+    {
+        return parent::saveToSessionAction($request);
+    }
+
+    /**
+     * @Route("/remove-from-session", name="pimcore_admin_document_snippet_removefromsession", methods={"DELETE"})
+     *
+     * {@inheritDoc}
+     */
+    public function removeFromSessionAction(Request $request)
+    {
+        return parent::removeFromSessionAction($request);
+    }
+
+    /**
+     * @Route("/change-master-document", name="pimcore_admin_document_snippet_changemasterdocument", methods={"PUT"})
+     *
+     * {@inheritDoc}
+     */
+    public function changeMasterDocumentAction(Request $request)
+    {
+        return parent::changeMasterDocumentAction($request);
+    }
+
+    /**
+     * @Route("/get-data-by-id", name="pimcore_admin_document_snippet_getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -84,7 +114,7 @@ class SnippetController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/save", methods={"POST","PUT"})
+     * @Route("/save", name="pimcore_admin_document_snippet_save", methods={"POST","PUT"})
      *
      * @param Request $request
      *

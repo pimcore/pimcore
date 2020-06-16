@@ -29,7 +29,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class TagsController extends AdminController
 {
     /**
-     * @Route("/add", methods={"POST"})
+     * @Route("/add", name="pimcore_admin_tags_add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -46,7 +46,7 @@ class TagsController extends AdminController
     }
 
     /**
-     * @Route("/delete", methods={"DELETE"})
+     * @Route("/delete", name="pimcore_admin_tags_delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -67,7 +67,7 @@ class TagsController extends AdminController
     }
 
     /**
-     * @Route("/update", methods={"PUT"})
+     * @Route("/update", name="pimcore_admin_tags_update", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -96,7 +96,7 @@ class TagsController extends AdminController
     }
 
     /**
-     * @Route("/tree-get-children-by-id", methods={"GET"})
+     * @Route("/tree-get-children-by-id", name="pimcore_admin_tags_treegetchildrenbyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -193,7 +193,7 @@ class TagsController extends AdminController
     }
 
     /**
-     * @Route("/load-tags-for-element", methods={"GET"})
+     * @Route("/load-tags-for-element", name="pimcore_admin_tags_loadtagsforelement", methods={"GET"})
      *
      * @param Request $request
      *
@@ -217,7 +217,7 @@ class TagsController extends AdminController
     }
 
     /**
-     * @Route("/add-tag-to-element", methods={"PUT"})
+     * @Route("/add-tag-to-element", name="pimcore_admin_tags_addtagtoelement", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -240,7 +240,7 @@ class TagsController extends AdminController
     }
 
     /**
-     * @Route("/remove-tag-from-element", methods={"DELETE"})
+     * @Route("/remove-tag-from-element", name="pimcore_admin_tags_removetagfromelement", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -263,7 +263,7 @@ class TagsController extends AdminController
     }
 
     /**
-     * @Route("/get-batch-assignment-jobs", methods={"GET"})
+     * @Route("/get-batch-assignment-jobs", name="pimcore_admin_tags_getbatchassignmentjobs", methods={"GET"})
      *
      * @param Request $request
      * @param EventDispatcherInterface $eventDispatcher
@@ -405,7 +405,7 @@ class TagsController extends AdminController
     }
 
     /**
-     * @Route("/do-batch-assignment", methods={"PUT"})
+     * @Route("/do-batch-assignment", name="pimcore_admin_tags_dobatchassignment", methods={"PUT"})
      *
      * @param Request $request
      *

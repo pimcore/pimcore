@@ -123,7 +123,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
         } else {
             var columnsPostData = Ext.encode(this.data.columns);
             Ext.Ajax.request({
-                url: "/admin/object-helper/prepare-helper-column-configs",
+                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_preparehelpercolumnconfigs'),
                 method: 'POST',
                 params: {
                     columns: columnsPostData
@@ -156,7 +156,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
         }
 
         Ext.Ajax.request({
-            url: "/admin/object/grid-proxy?classId=" + this.previewSettings.classId + "&folderId=" + this.previewSettings.objectId,
+            url: Routing.generate('pimcore_admin_dataobject_dataobject_gridproxy', {classId: this.previewSettings.classId, folderId: this.previewSettings.objectId}),
             method: 'POST',
             params: {
                 "fields[]": keys,
@@ -501,7 +501,7 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
     getClassDefinitionTreePanel: function () {
         if (!this.classDefinitionTreePanel) {
             this.brickKeys = [];
-            this.classDefinitionTreePanel = this.getClassTree("/admin/class/get-class-definition-for-column-config",
+            this.classDefinitionTreePanel = this.getClassTree(Routing.generate('pimcore_admin_dataobject_class_getclassdefinitionforcolumnconfig'),
                 this.config.classid, this.config.objectId);
         }
 

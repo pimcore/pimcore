@@ -48,7 +48,7 @@ pimcore.element.notes = Class.create({
 
             var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
-                '/admin/element/note-list?',
+                Routing.generate('pimcore_admin_element_notelist'),
                 ['id', 'type', 'title', 'description',"user","date","data","cpath","cid","ctype"],
                 itemsPerPage,
                 {autoLoad: false, remoteFilter: false}
@@ -321,7 +321,7 @@ pimcore.element.notes = Class.create({
             fields: ["name"],
             proxy: {
                 type: 'ajax',
-                url: '/admin/element/note-types?ctype=' + this.type,
+                url: Routing.generate('pimcore_admin_element_notetypes', {ctype: this.type}),
                 reader: {
                     type: 'json',
                     rootProperty: "noteTypes"
@@ -376,7 +376,7 @@ pimcore.element.notes = Class.create({
                     var values = formPanel.getForm().getFieldValues();
 
                     Ext.Ajax.request({
-                        url: "/admin/element/note-add",
+                        url: Routing.generate('pimcore_admin_element_noteadd'),
                         method: "post",
                         params: values
                     });

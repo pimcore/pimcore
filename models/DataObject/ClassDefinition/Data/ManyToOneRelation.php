@@ -254,7 +254,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param Asset|Document|DataObject\AbstractObject $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -300,7 +300,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Asset|Document|DataObject\AbstractObject|null
@@ -316,7 +316,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     /**
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Asset|Document|DataObject\AbstractObject
@@ -677,7 +677,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -697,7 +697,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed

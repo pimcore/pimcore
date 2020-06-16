@@ -42,19 +42,12 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
         return this.leftPanel;
     },
 
-    getConfigPanel: function() {
-        this.configPanel = new Ext.Panel({
-            layout: "border",
-            iconCls: "pimcore_icon_table",
-            title: t("grid_configuration"),
-            items: [/* this.getLanguageSelection(), */ this.getSelectionPanel(), this.getLeftPanel()]
-        });
-        return this.configPanel;
-    },
-
     commitData: function (save, preview) {
 
         this.data = {};
+        if (this.languageField) {
+            this.data.language = this.languageField.getValue();
+        }
 
         if (this.itemsPerPage) {
             this.data.pageSize = this.itemsPerPage.getValue();
@@ -162,6 +155,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
     },
 
     requestPreview: function () {
+        var language = this.languageField.getValue();
         var fields = this.data.columns;
         var count = fields.length;
         var i;
@@ -176,6 +170,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
             params: {
                 "folderId": this.previewSettings.folderId,
                 "fields[]": keys,
+                language: language,
                 limit: 1
             },
             success: function (response) {
@@ -563,7 +558,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
 
     getMetadataTreePanel: function () {
         if (!this.metadataTreePanel) {
-            let url = "/admin/asset-helper/get-metadata-for-column-config";
+            let url = Routing.generate('pimcore_admin_asset_assethelper_getmetadataforcolumnconfig');
 
             if (this.additionalConfig["treeUrl"]) {
                 url = this.additionalConfig["treeUrl"];

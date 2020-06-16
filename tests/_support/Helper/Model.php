@@ -563,6 +563,13 @@ class Model extends AbstractDefinitionHelper
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+
+            $lFields->addChild($this->createDataChild('Input', 'linput'));
+
+            $panel->addChild($lFields);
+
             $root->addChild($rootPanel);
             $definition = $this->createFieldcollection($name, $root, $filename);
         }
@@ -824,14 +831,16 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('input', 'brickinput'));
 
+            $panel->addChild($this->createDataChild('input', 'brickinput2'));
+
             $panel->addChild($this->createDataChild('manyToManyRelation', 'brickLazyRelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
             $root->addChild($rootPanel);
             $definition = $this->createObjectbrick($name, $root, $filename, [
-                ['classname' => 'unittest', 'fieldname' => 'mybricks']
-
+                ['classname' => 'unittest', 'fieldname' => 'mybricks'],
+                ['classname' => 'inheritance', 'fieldname' => 'mybricks']
             ]);
         }
 
