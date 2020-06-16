@@ -50,7 +50,7 @@ class NotificationEvent extends Event implements ElementEventInterface
     /**
      * @param Notification $notification
      */
-    public function setObject($notification)
+    public function setNotification($notification)
     {
         $this->notification = $notification;
     }
