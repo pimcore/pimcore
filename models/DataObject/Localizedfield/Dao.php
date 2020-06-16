@@ -157,17 +157,14 @@ class Dao extends Model\Dao\AbstractDao
                     }
 
                     $isUpdate = isset($params['isUpdate']) && $params['isUpdate'];
-                    $childParams = $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $isUpdate, 'context' => $context]);
+                    $childParams = $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $isUpdate]);
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
-                        if ((isset($params['saveRelationalData'])
-                                && isset($params['saveRelationalData']['saveLocalizedRelations'])
-                                && $params['saveRelationalData']['saveLocalizedRelations']
-                                && $container instanceof DataObject\Fieldcollection\Definition
-                            )
+                        $saveLocalizedRelations = $params['saveRelationalData']['saveLocalizedRelations'] ?? false;
+                        if (($saveLocalizedRelations && $container instanceof DataObject\Fieldcollection\Definition)
                             || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
                                     && $this->model->isLanguageDirty($language))
-                                || ($params['saveRelationalData']['saveLocalizedRelations'] ?? false))) {
+                                || $saveLocalizedRelations)) {
                             $fd->save($this->model, $childParams);
                         }
                     } else {
@@ -477,7 +474,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($this->model->allLanguagesAreDirty() ||
             ($container instanceof DataObject\Fieldcollection\Definition)
-            ) {
+        ) {
             $dirtyLanguageCondition = '';
         } elseif ($this->model->hasDirtyLanguages()) {
             $languageList = [];
