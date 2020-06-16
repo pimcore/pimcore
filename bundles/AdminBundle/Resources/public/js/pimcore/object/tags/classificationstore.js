@@ -189,7 +189,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
                 }
                 var title = this.frontendLanguages[i];
                 if (title != "default") {
-                    var title = pimcore.available_languages[title];
+                    var title = t(pimcore.available_languages[title]);
                     var icon = "pimcore_icon_language_" + this.frontendLanguages[i].toLowerCase();
                 } else {
                     var title = t(title);
