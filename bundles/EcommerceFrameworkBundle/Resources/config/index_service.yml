@@ -1,4 +1,5 @@
 imports:
+    - { resource: index_service_synonym_providers.yml }
     - { resource: index_service_configs_workers.yml }
 
 services:

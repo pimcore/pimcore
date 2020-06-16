@@ -30,3 +30,7 @@ data without defining an attribute for each single classification store key.
 
 For details see [Filter Classification Store](../../../07_Filter_Service/03_Elastic_Search/01_Filter_Classification_Store.md) 
 in Filter Service documentation. 
+
+## Synonyms 
+Pimcore provides an out-of-the box integration for synonyms in elastic search. 
+See [Synonyms](./02_Synonyms.md) for details. 
