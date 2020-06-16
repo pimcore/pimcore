@@ -568,6 +568,10 @@ class Model extends AbstractDefinitionHelper
 
             $lFields->addChild($this->createDataChild('Input', 'linput'));
 
+            $lFields->addChild($this->createDataChild('manyToOneRelation', 'lrelation')
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
             $panel->addChild($lFields);
 
             $root->addChild($rootPanel);
