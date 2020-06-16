@@ -157,7 +157,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
 
                     $isUpdate = isset($params['isUpdate']) && $params['isUpdate'];
-                    $childParams = $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $isUpdate]);
+                    $childParams = $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $isUpdate, 'context' => $context]);
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                         if ((isset($params['saveRelationalData'])
@@ -167,7 +167,7 @@ class Dao extends Model\Dao\AbstractDao
                             )
                             || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
                                     && $this->model->isLanguageDirty($language))
-                                || $params['saveRelationalData']['saveLocalizedRelations'])) {
+                                || ($params['saveRelationalData']['saveLocalizedRelations'] ?? false))) {
                             $fd->save($this->model, $childParams);
                         }
                     } else {
