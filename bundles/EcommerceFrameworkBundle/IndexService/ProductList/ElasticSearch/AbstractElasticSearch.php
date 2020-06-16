@@ -160,7 +160,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * @var array
      */
-    private $hitData = [];
+    protected $hitData = [];
 
     /**
      * @return array
