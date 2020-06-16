@@ -34,14 +34,7 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
             };
         }
 
-        this.configPanel = new Ext.Panel({
-            layout: "border",
-            iconCls: "pimcore_icon_table",
-            title: t("grid_configuration"),
-            items: [this.getLanguageSelection(), this.getSelectionPanel(), this.getLeftPanel()]
-
-        });
-
+        this.getConfigPanel();
 
         var tabs = [this.configPanel];
 
@@ -128,6 +121,16 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
 
         this.window.show();
         this.updatePreview();
+    },
+
+    getConfigPanel: function() {
+        this.configPanel = new Ext.Panel({
+            layout: "border",
+            iconCls: "pimcore_icon_table",
+            title: t("grid_configuration"),
+            items: [this.getLanguageSelection(), this.getSelectionPanel(), this.getLeftPanel()]
+        });
+        return this.configPanel;
     },
 
     getLeftPanel: function () {
