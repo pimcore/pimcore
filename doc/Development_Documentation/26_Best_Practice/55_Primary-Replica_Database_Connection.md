@@ -5,6 +5,8 @@ for a primary/replica server setup! Due to the extensive multi-layered, consiste
 it is necessary that Pimcore always has access to the latest data in the database. Due to the asynchronous nature 
 of the primary/replica setup, this isn't ensured for that.
 
+Note: Doctrine\DBAL versions older than 2.11 uses master/slave terminology.
+
 ### Create a Project specific Database Connection Class 
 
 Create a new class at `src\AppBundle\Db\Connection.php`, with the following content: 
