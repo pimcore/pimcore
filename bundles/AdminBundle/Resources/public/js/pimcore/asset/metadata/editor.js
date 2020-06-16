@@ -17,7 +17,10 @@ pimcore.asset.metadata.editor = Class.create({
     initialize: function(asset) {
         this.asset = asset;
 
+        var dataProvider = new pimcore.asset.metadata.dataProvider();
+
         var eventData = {
+            dataProvider: dataProvider,
             asset: asset,
             implementation: null
         };
@@ -31,7 +34,8 @@ pimcore.asset.metadata.editor = Class.create({
         if (!this.implementation) {
             // if no panel has been defined by event handler then use the standard grid
             this.implementation = new pimcore.asset.metadata.grid({
-                asset: this.asset
+                asset: this.asset,
+                dataProvider: eventData.dataProvider
             });
         }
     },
@@ -41,7 +45,7 @@ pimcore.asset.metadata.editor = Class.create({
     },
 
     getValues: function() {
-        var values = this.implementation.getValues();;
+        var values = this.implementation.getValues();
         return values;
     }
 });
