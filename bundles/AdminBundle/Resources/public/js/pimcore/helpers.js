@@ -221,6 +221,10 @@ pimcore.helpers.updateTreeElementStyle = function (type, id, treeData) {
                     record.set("icon", treeData.icon);
                 }
 
+                if (typeof treeData.cls !== "undefined") {
+                    record.set("cls", treeData.cls);
+                }
+
                 if (typeof treeData.iconCls !== "undefined") {
                     record.set("iconCls", treeData.iconCls);
                 }
