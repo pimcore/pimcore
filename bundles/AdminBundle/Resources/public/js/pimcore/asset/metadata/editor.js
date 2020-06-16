@@ -22,18 +22,18 @@ pimcore.asset.metadata.editor = Class.create({
         var eventData = {
             dataProvider: dataProvider,
             asset: asset,
-            implementation: null
+            instance: null
         };
 
         // hook for providing a custom implementation of the asset metadata tab
         // e.g. https://github.com/pimcore/asset-metadata-class-definitions
 
         pimcore.plugin.broker.fireEvent("preCreateAssetMetadataEditor", this, eventData);
-        this.implementation = eventData.implementation;
+        this.editorInstance = eventData.instance;
 
-        if (!this.implementation) {
+        if (!this.editorInstance) {
             // if no panel has been defined by event handler then use the standard grid
-            this.implementation = new pimcore.asset.metadata.grid({
+            this.editorInstance = new pimcore.asset.metadata.grid({
                 asset: this.asset,
                 dataProvider: eventData.dataProvider
             });
@@ -41,7 +41,7 @@ pimcore.asset.metadata.editor = Class.create({
     },
 
     getLayout: function() {
-        return this.implementation.getLayout();
+        return this.editorInstance.getLayout();
     },
 
     getValues: function() {

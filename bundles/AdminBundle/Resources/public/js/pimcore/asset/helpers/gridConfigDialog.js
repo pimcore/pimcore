@@ -558,13 +558,11 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
 
     getMetadataTreePanel: function () {
         if (!this.metadataTreePanel) {
-            let defaultUrl = "/admin/asset-helper/get-metadata-for-column-config";
-            let eventData = {
-                url: defaultUrl
-            };
+            let url = "/admin/asset-helper/get-metadata-for-column-config";
 
-            pimcore.plugin.broker.fireEvent("prepareAssetMetadataGridConfigurator",  eventData);
-            let url = eventData.url;
+            if (this.additionalConfig["treeUrl"]) {
+                url = this.additionalConfig["treeUrl"];
+            }
 
             this.metadataTreePanel = this.getMetadataTree(url);
         }
