@@ -655,7 +655,13 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         try {
             $this->putIndexMapping($this->getIndexNameVersion());
 
+
             $configuredSettings = $this->tenantConfig->getIndexSettings();
+            $synonymSettings = $this->extractMinimalSynonymFiltersTreeFromTenantConfig();
+            if(isset($synonymSettings['analysis'])) {
+                $configuredSettings['analysis']['filter'] = array_replace_recursive($configuredSettings['analysis']['filter'], $synonymSettings['analysis']['filter']);
+            }
+
             $currentSettings = $esClient->indices()->getSettings([
                 'index' => $this->getIndexNameVersion(),
             ]);
@@ -669,9 +675,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                         'index' => $this->tenantConfig->getIndexSettings()
                     ]
                 ]);
+                Logger::info('Index-Actions - updated settings for Index: ' . $this->getIndexNameVersion());
+            } else {
+                Logger::info('Index-Actions - no settings update necessary for Index: ' . $this->getIndexNameVersion());
             }
 
-            Logger::info('Index-Actions - updated settings for Index: ' . $this->getIndexNameVersion());
+
         } catch (\Exception $e) {
             Logger::info("Index-Actions - can't create Mapping - trying reindexing " . $e->getMessage());
             Logger::info('Index-Actions - Perform native reindexing for Index: ' . $this->getIndexNameVersion());
@@ -679,10 +688,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             $this->startReindexMode();
         }
 
-        // index created return "true" and mapping creation returns array
-        if ((is_array($result) && !$result['acknowledged']) || (is_bool($result) && !$result)) {
-            throw new \Exception('Index creation failed');
-        }
     }
 
     // type will be removed in ES 7
@@ -770,6 +775,8 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         if (!$result['acknowledged']) {
             throw new \Exception('Index creation failed. IndexName: ' . $indexName);
         }
+
+        $this->updateSynonyms($indexName, true, true);
     }
 
     /**
@@ -782,8 +789,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     protected function putIndexMapping(string $indexName)
     {
         $esClient = $this->getElasticSearchClient();
-
-        $this->updateSynonyms($indexName, true, true);
 
         $params = $this->getMappingParams();
         $params['index'] = $indexName;
