@@ -91,16 +91,27 @@ trait Parallelization
         $this->release(); //release the lock
     }
 
+    /**
+     * @inheritDoc
+     */
     protected function getItemName(int $count): string
     {
         return $count <= 1 ? 'item' : 'items';
     }
 
     /**
-     * @return \Symfony\Component\DependencyInjection\ContainerInterface|null
+     * @inheritDoc
      */
     protected function getContainer()
     {
         return \Pimcore::getKernel()->getContainer();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getConsolePath(): string
+    {
+        return PIMCORE_PROJECT_ROOT . '/bin/console';
     }
 }

@@ -755,7 +755,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      */
     public function getCheckoutData($key)
     {
-        $entry = $this->checkoutData[$key];
+        $entry = $this->checkoutData[$key] ?? null;
         if ($entry) {
             return $this->checkoutData[$key]->getData();
         } else {
