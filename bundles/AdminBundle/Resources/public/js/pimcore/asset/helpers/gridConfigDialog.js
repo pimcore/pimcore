@@ -166,7 +166,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
         }
 
         Ext.Ajax.request({
-            url: "/admin/asset/grid-proxy",
+            url: Routing.generate('pimcore_admin_asset_gridproxy'),
             params: {
                 "folderId": this.previewSettings.folderId,
                 "fields[]": keys,

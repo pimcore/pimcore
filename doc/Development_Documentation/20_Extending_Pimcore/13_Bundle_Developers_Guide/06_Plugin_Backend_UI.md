@@ -61,7 +61,6 @@ corresponding method to the javascript plugin class.
 | postAddObjectTree                    | after the object is successfully created in the tree, object id is passed as parameter                          |          |
 | preCreateMenuOption                  | called before navigation menu is created                                                                         |          |
 | preCreateAssetMetadataEditor         | fired when asset metadata editor tab is created                                                                 | internal |
-| postAssetMetadataChange              | fired after an asset metadata item has changed                                                                  | internal |
 | prepareAssetMetadataGridConfigurator | before opening the grid config dialog, url returning the metadata definitions is passed as parameter            |          |
 | prepareAssetTreeContextMenu          | before context menu is opened, menu, tree class and asset record are passed as parameters                       |          |
 | prepareObjectTreeContextMenu         | before context menu is opened, menu, tree class and object record are passed as parameters                      |          |
