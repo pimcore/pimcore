@@ -22,7 +22,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
 class EsSyncCommand extends AbstractIndexServiceCommand
 {
     /**
@@ -58,7 +57,7 @@ class EsSyncCommand extends AbstractIndexServiceCommand
         $indexService = Factory::getInstance()->getIndexService();
         $tenantList = $tenantName ? [$tenantName] : $indexService->getTenants();
 
-        if (!in_array($mode, ['reindex', 'update-synonyms'])){
+        if (!in_array($mode, ['reindex', 'update-synonyms'])) {
             $output->writeln("<error>Unknown mode \"{$mode}\")...</error>");
             exit(1);
         }
@@ -66,7 +65,6 @@ class EsSyncCommand extends AbstractIndexServiceCommand
         $bar = new ProgressBar($output, count($tenantList));
 
         foreach ($tenantList as $tenantName) {
-
             $elasticWorker = $indexService->getTenantWorker($tenantName); //e.g., 'AT_de_elastic'
 
             if (!$elasticWorker instanceof AbstractElasticSearch) {
@@ -86,6 +84,7 @@ class EsSyncCommand extends AbstractIndexServiceCommand
         }
 
         $bar->finish();
+
         return 0;
     }
 }

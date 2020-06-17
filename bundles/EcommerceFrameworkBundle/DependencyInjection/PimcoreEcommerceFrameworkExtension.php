@@ -470,14 +470,15 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
     /**
      * Register synonym providers and their options per tenant config.
+     *
      * @param array $tenantConfigOptions
      * @param Definition $config
      * @param ContainerBuilder $container
      */
     private function registerIndexServiceElasticSearchSynonymProviders(array $tenantConfigOptions,
                                                                        Definition $config,
-                                                                       ContainerBuilder $container) {
-
+                                                                       ContainerBuilder $container)
+    {
         if (!isset($tenantConfigOptions['synonym_providers'])) {
             return;
         }

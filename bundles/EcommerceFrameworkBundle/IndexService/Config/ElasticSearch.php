@@ -75,10 +75,11 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     protected $environment;
 
     /** @var SynonymProviderInterface[] */
-    protected  $synonymProviders = [];
+    protected $synonymProviders = [];
 
     /**
      * @inheritDoc
+     *
      * @param SynonymProviderInterface[] $synonymProviders
      */
     public function __construct(
