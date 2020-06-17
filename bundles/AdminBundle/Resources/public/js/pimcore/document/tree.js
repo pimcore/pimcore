@@ -374,13 +374,18 @@ pimcore.document.tree = Class.create({
 
 
                 var addDocuments = perspectiveCfg.inTreeContextMenu("document.add");
-                var addBlankDocument = perspectiveCfg.inTreeContextMenu("document.addBlankDocument");
                 var addPrintDocuments = perspectiveCfg.inTreeContextMenu("document.addPrintPage");
                 var addEmail = perspectiveCfg.inTreeContextMenu("document.addEmail");
                 var addSnippet = perspectiveCfg.inTreeContextMenu("document.addSnippet");
                 var addLink = perspectiveCfg.inTreeContextMenu("document.addLink");
                 var addNewsletter = perspectiveCfg.inTreeContextMenu("document.addNewsletter");
                 var addHardlink = perspectiveCfg.inTreeContextMenu("document.addHardlink");
+
+                var addBlankDocument = perspectiveCfg.inTreeContextMenu("document.addBlankDocument");
+                var addBlankPrintDocuments = perspectiveCfg.inTreeContextMenu("document.addBlankPrintPage");
+                var addBlankEmail = perspectiveCfg.inTreeContextMenu("document.addBlankEmail");
+                var addBlankSnippet = perspectiveCfg.inTreeContextMenu("document.addBlankSnippet");
+                var addBlankNewsletter = perspectiveCfg.inTreeContextMenu("document.addBlankNewsletter");
 
                 if (addDocuments || addPrintDocuments) {
 
@@ -404,7 +409,21 @@ pimcore.document.tree = Class.create({
                         });
                     }
 
-                    if (addSnippet) {
+                    if (addBlankPrintDocuments) {
+                        // empty print pages
+                        documentMenu.printPage.push({
+                            text: "&gt; " + t("add_printpage"),
+                            iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
+                            handler: this.addDocument.bind(this, tree, record, "printpage")
+                        });
+                        documentMenu.printPage.push({
+                            text: "&gt; " + t("add_printcontainer"),
+                            iconCls: "pimcore_icon_printcontainer pimcore_icon_overlay_add",
+                            handler: this.addDocument.bind(this, tree, record, "printcontainer")
+                        });
+                    }
+
+                    if (addBlankSnippet) {
                         // empty snippet
                         documentMenu.snippet.push({
                             text: "&gt; " + t("blank"),
@@ -413,7 +432,7 @@ pimcore.document.tree = Class.create({
                         });
                     }
 
-                    if (addEmail) {
+                    if (addBlankEmail) {
                         // empty email
                         documentMenu.email.push({
                             text: "&gt; " + t("blank"),
@@ -422,7 +441,7 @@ pimcore.document.tree = Class.create({
                         });
                     }
 
-                    if (addNewsletter) {
+                    if (addBlankNewsletter) {
                         // empty newsletter
                         documentMenu.newsletter.push({
                             text: "&gt; " + t("blank"),
@@ -442,18 +461,6 @@ pimcore.document.tree = Class.create({
                     }
 
                     if (addPrintDocuments && record.data.type != "email" && record.data.type != "newsletter" && record.data.type != "link") {
-                        //print pages
-                        documentMenu.printPage.push({
-                            text: "&gt; " + t("add_printpage"),
-                            iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
-                            handler: this.addDocument.bind(this, tree, record, "printpage")
-                        });
-                        documentMenu.printPage.push({
-                            text: "&gt; " + t("add_printcontainer"),
-                            iconCls: "pimcore_icon_printcontainer pimcore_icon_overlay_add",
-                            handler: this.addDocument.bind(this, tree, record, "printcontainer")
-                        });
-
                         menu.add(new Ext.menu.Item({
                             text: t('add_printpage'),
                             iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
