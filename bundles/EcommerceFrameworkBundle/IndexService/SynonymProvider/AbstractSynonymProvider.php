@@ -15,8 +15,6 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider\SynonymProviderInterface;
-
 abstract class AbstractSynonymProvider implements SynonymProviderInterface
 {
     /**
@@ -36,5 +34,4 @@ abstract class AbstractSynonymProvider implements SynonymProviderInterface
     {
         return $this->options;
     }
-
 }

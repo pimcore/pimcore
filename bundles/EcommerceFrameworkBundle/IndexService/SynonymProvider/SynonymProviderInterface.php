@@ -14,15 +14,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchConfigInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 
-interface SynonymProviderInterface {
-
+interface SynonymProviderInterface
+{
     /**
      * Get synonyms, depending on the format that is specified in the filter.
      * Typically Solr is used, compare https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-synonym-tokenfilter.html.
@@ -30,14 +25,16 @@ interface SynonymProviderInterface {
      *      - line 1: i-pod, i pod => ipod
      *      - line 2: sea biscuit, sea biscit => seabiscuit
      *      - ...
+     *
      * @return string[] an array, where each array element corresponds to one line of related synonyms.
      */
-    public function getSynonyms() : array;
+    public function getSynonyms(): array;
 
     /**
      * return a list of options that can be configured per options provider and can be used for the
      * implementation of the synonym provider.
+     *
      * @return array
      */
-    public function getOptions() : array;
+    public function getOptions(): array;
 }
