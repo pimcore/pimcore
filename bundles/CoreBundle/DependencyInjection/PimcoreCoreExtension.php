@@ -56,6 +56,10 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
      */
     public function loadInternal(array $config, ContainerBuilder $container)
     {
+        // on container build the shutdown handler shouldn't be called
+        // for details please see https://github.com/pimcore/pimcore/issues/4709
+        \Pimcore::disableShutdown();
+
         // performance improvement, see https://github.com/symfony/symfony/pull/26276/files
         if (!$container->hasParameter('container.dumper.inline_class_loader')) {
             $container->setParameter('container.dumper.inline_class_loader', true);
