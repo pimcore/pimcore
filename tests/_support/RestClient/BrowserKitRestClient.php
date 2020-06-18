@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Tests\Rest;
+namespace Pimcore\Tests\RestClient;
 
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;

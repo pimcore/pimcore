@@ -1,6 +1,6 @@
 <?php
 
-namespace Pimcore\Tests\Model\Datatype\ClassificationStore;
+namespace Pimcore\Tests\Model\DataType\ClassificationStore;
 
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Classificationstore;
