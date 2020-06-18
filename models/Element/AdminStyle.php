@@ -25,7 +25,7 @@ class AdminStyle
     /**
      * @var string
      */
-    protected $elementCssClass;
+    protected $elementCssClass = '';
 
     /**
      * @var string
@@ -110,6 +110,10 @@ class AdminStyle
                     $this->elementIconClass = 'pimcore_icon_folder';
                 }
             }
+
+            if ($element->getProperty('navigation_exclude')) {
+                $this->appendElementCssClass('pimcore_navigation_exclude');
+            }
         }
     }
 
@@ -121,6 +125,18 @@ class AdminStyle
     public function setElementCssClass($elementCssClass)
     {
         $this->elementCssClass = $elementCssClass;
+
+        return $this;
+    }
+
+    /**
+     * @param string $elementCssClass
+     *
+     * @return $this
+     */
+    public function appendElementCssClass($elementCssClass)
+    {
+        $this->elementCssClass .= ' ' . $elementCssClass;
 
         return $this;
     }

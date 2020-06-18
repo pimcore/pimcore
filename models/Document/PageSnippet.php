@@ -469,8 +469,6 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @return Document|null
-     *
-     * @throws \Exception
      */
     public function getContentMasterDocument()
     {

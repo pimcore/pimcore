@@ -181,8 +181,11 @@ class PageController extends DocumentControllerBase
             $page->save();
             $this->saveToSession($page);
 
+            $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
             return $this->adminJson([
                 'success' => true,
+                'treeData' => $treeData,
                 'data' => [
                     'versionDate' => $page->getModificationDate(),
                     'versionCount' => $page->getVersionCount(),

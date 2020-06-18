@@ -477,7 +477,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/groups", name="pimcore_admin_dataobject_classificationstore_groupsactionget", methods={"POST", "PUT"})
+     * @Route("/groups", name="pimcore_admin_dataobject_classificationstore_groupsaction", methods={"POST", "PUT"})
      *
      * @param Request $request
      *

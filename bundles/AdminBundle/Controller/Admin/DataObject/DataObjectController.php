@@ -1908,7 +1908,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         } elseif ($request->get('type') == 'child' || $request->get('type') == 'replace') {
             // the object itself is the last one
             $pasteJobs[] = [[
-                'url' => $this->generateUrl('pimcore_admin_dataobject_dataobject_copyrewriteids'),
+                'url' => $this->generateUrl('pimcore_admin_dataobject_dataobject_copy'),
                 'method' => 'POST',
                 'params' => [
                     'sourceId' => $request->get('sourceId'),
