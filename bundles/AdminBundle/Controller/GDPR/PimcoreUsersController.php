@@ -82,7 +82,7 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
 
         $json = $this->encodeJson($userData, [], JsonResponse::DEFAULT_ENCODING_OPTIONS | JSON_PRETTY_PRINT);
         $jsonResponse = new JsonResponse($json, 200, [
-            'Content-Disposition' => 'attachment; filename="export-userdata-' . $userData['id'] . '.json"'
+            'Content-Disposition' => 'attachment; filename="export-userdata-' . $userData['id'] . '.json"',
         ], true);
 
         return $jsonResponse;

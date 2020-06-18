@@ -44,7 +44,7 @@ class CacheClearer
     {
         $resolver = new OptionsResolver();
         $resolver->setDefaults([
-            'processTimeout' => 300
+            'processTimeout' => 300,
         ]);
 
         $resolver->setAllowedTypes('processTimeout', 'int');
@@ -115,7 +115,7 @@ class CacheClearer
         $arguments = array_merge([
             Console::getPhpCli(),
             'bin/console',
-            $command
+            $command,
         ], $arguments);
 
         $partsBuilder = new PartsBuilder($arguments, $options);

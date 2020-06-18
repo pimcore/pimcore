@@ -113,7 +113,7 @@ abstract class AbstractElementController extends AbstractRestController
             'get' => 'view',
             'delete' => 'delete',
             'update' => 'publish',
-            'create' => 'create'
+            'create' => 'create',
         ];
 
         if (!isset($map[$type])) {
@@ -133,7 +133,7 @@ abstract class AbstractElementController extends AbstractRestController
             );
 
             throw new ResponseException($this->createErrorResponse([
-                'msg' => sprintf('Not allowed: permission %s is needed', $permission)
+                'msg' => sprintf('Not allowed: permission %s is needed', $permission),
             ]));
         }
     }

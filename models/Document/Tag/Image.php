@@ -109,7 +109,7 @@ class Image extends Model\Document\Tag
             'cropTop' => $this->cropTop,
             'cropLeft' => $this->cropLeft,
             'hotspots' => $this->hotspots,
-            'marker' => $this->marker
+            'marker' => $this->marker,
         ];
     }
 
@@ -127,7 +127,7 @@ class Image extends Model\Document\Tag
             'cropTop' => $this->cropTop,
             'cropLeft' => $this->cropLeft,
             'hotspots' => $this->hotspots,
-            'marker' => $this->marker
+            'marker' => $this->marker,
         ];
     }
 
@@ -257,7 +257,7 @@ class Image extends Model\Document\Tag
 
             $attributes = array_merge($this->options, [
                 'alt' => $this->alt,
-                'title' => $this->alt
+                'title' => $this->alt,
             ]);
 
             $removeAttributes = [];
@@ -488,7 +488,7 @@ class Image extends Model\Document\Tag
             'width' => $this->cropWidth,
             'height' => $this->cropHeight,
             'y' => $this->cropTop,
-            'x' => $this->cropLeft
+            'x' => $this->cropLeft,
         ];
 
         $thumbConfig->addItemAt(0, 'cropPercent', $cropConfig);
@@ -573,7 +573,7 @@ class Image extends Model\Document\Tag
 
             $dependencies[$key] = [
                 'id' => $image->getId(),
-                'type' => 'asset'
+                'type' => 'asset',
             ];
         }
 
@@ -588,7 +588,7 @@ class Image extends Model\Document\Tag
                         if ($metaData['value'] instanceof Element\ElementInterface) {
                             $dependencies[$metaData['type'] . '_' . $metaData['value']->getId()] = [
                                 'id' => $metaData['value']->getId(),
-                                'type' => $metaData['type']
+                                'type' => $metaData['type'],
                             ];
                         }
                     }

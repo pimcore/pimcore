@@ -144,7 +144,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                         'data' => $collectionData,
                         'type' => $item->getType(),
                         'oIndex' => $idx,
-                        'title' => $collectionDef->getTitle()
+                        'title' => $collectionDef->getTitle(),
                     ];
                 }
             }
@@ -200,8 +200,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                                 'containerKey' => $collectionKey,
                                 'fieldname' => $fieldname,
                                 'index' => $count,
-                                'oIndex' => $oIndex
-                            ]
+                                'oIndex' => $oIndex,
+                            ],
                         ];
 
                         $collectionData[$fd->getName()] = $fd->getDataFromEditmode(
@@ -318,8 +318,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             $params = [
                 'context' => [
                     'containerType' => 'fieldcollection',
-                    'fieldname' => $this->getName()
-                ]
+                    'fieldname' => $this->getName(),
+                ],
             ];
 
             $container->save($object, $params);
@@ -486,8 +486,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                                     'containerType' => 'fieldcollection',
                                     'containerKey' => $fieldcollection,
                                     'fieldname' => $fd->getName(),
-                                    'index' => $count
-                                ]];
+                                    'index' => $count,
+                                ], ];
 
                             $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $object, $params, $idMapper);
                             break;

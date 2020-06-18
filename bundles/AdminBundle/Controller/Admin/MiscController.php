@@ -50,14 +50,14 @@ class MiscController extends AdminController
 
         $result = array_map(function (BundleInterface $bundle) {
             return [
-                'name' => $bundle->getName()
+                'name' => $bundle->getName(),
             ];
         }, $bundles);
 
         sort($result);
 
         return $this->adminJson([
-            'data' => $result
+            'data' => $result,
         ]);
     }
 
@@ -77,14 +77,14 @@ class MiscController extends AdminController
 
         $result = array_map(function ($controller) {
             return [
-                'name' => $controller
+                'name' => $controller,
             ];
         }, $controllers);
 
         sort($result);
 
         return $this->adminJson([
-            'data' => $result
+            'data' => $result,
         ]);
     }
 
@@ -113,14 +113,14 @@ class MiscController extends AdminController
 
         $result = array_map(function ($action) {
             return [
-                'name' => $action
+                'name' => $action,
             ];
         }, $actions);
 
         sort($result);
 
         return $this->adminJson([
-            'data' => $result
+            'data' => $result,
         ]);
     }
 
@@ -137,14 +137,14 @@ class MiscController extends AdminController
 
         $result = array_map(function ($template) {
             return [
-                'path' => $template
+                'path' => $template,
             ];
         }, $templates);
 
         sort($result);
 
         return $this->adminJson([
-            'data' => $result
+            'data' => $result,
         ]);
     }
 
@@ -256,7 +256,7 @@ class MiscController extends AdminController
     public function pingAction(Request $request)
     {
         $response = [
-            'success' => true
+            'success' => true,
         ];
 
         return $this->adminJson($response);
@@ -288,7 +288,7 @@ class MiscController extends AdminController
     public function getValidFilenameAction(Request $request)
     {
         return $this->adminJson([
-            'filename' => \Pimcore\Model\Element\Service::getValidKey($request->get('value'), $request->get('type'))
+            'filename' => \Pimcore\Model\Element\Service::getValidKey($request->get('value'), $request->get('type')),
         ]);
     }
 
@@ -322,7 +322,7 @@ class MiscController extends AdminController
                     'id' => '/fileexplorer' . str_replace(PIMCORE_PROJECT_ROOT, '', $file),
                     'text' => $item,
                     'leaf' => true,
-                    'writeable' => is_writable($file)
+                    'writeable' => is_writable($file),
                 ];
 
                 if (is_dir($file)) {
@@ -371,7 +371,7 @@ class MiscController extends AdminController
             'content' => $content,
             'writeable' => $writeable,
             'filename' => basename($file),
-            'path' => preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', '', $file)
+            'path' => preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', '', $file),
         ]);
     }
 
@@ -398,7 +398,7 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
@@ -434,7 +434,7 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
@@ -470,7 +470,7 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
@@ -495,7 +495,7 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
@@ -519,7 +519,7 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
@@ -563,7 +563,7 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 
@@ -615,7 +615,7 @@ class MiscController extends AdminController
         return $this->adminJson([
             'items' => $logs,
             'total' => $total,
-            'success' => true
+            'success' => true,
         ]);
     }
 
@@ -634,7 +634,7 @@ class MiscController extends AdminController
         $db->query('TRUNCATE TABLE http_error_log');
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 
@@ -680,7 +680,7 @@ class MiscController extends AdminController
             if (strlen($short) == 2) {
                 $options[] = [
                     'name' => $translation,
-                    'code' => $short
+                    'code' => $short,
                 ];
             }
         }
@@ -703,7 +703,7 @@ class MiscController extends AdminController
         foreach ($locales as $short => $translation) {
             $options[] = [
                 'name' => $translation,
-                'code' => $short
+                'code' => $short,
             ];
         }
 

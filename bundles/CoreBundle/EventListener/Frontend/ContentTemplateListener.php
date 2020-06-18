@@ -51,7 +51,7 @@ class ContentTemplateListener implements EventSubscriberInterface
         return [
             // this must run after the TemplateControllerListener set a potential template and before the TemplateListener
             // renders the view
-            KernelEvents::VIEW => ['onKernelView', 16]
+            KernelEvents::VIEW => ['onKernelView', 16],
         ];
     }
 

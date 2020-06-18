@@ -60,7 +60,7 @@ class DebugStopwatchPass implements CompilerPassInterface
                         new Reference(
                             'debug.stopwatch',
                             ContainerInterface::IGNORE_ON_INVALID_REFERENCE
-                        )
+                        ),
                     ]);
             }
         }

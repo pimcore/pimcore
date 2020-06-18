@@ -132,7 +132,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
         if ($document instanceof Document\Page) {
             $data = [
                 'title' => $document->getTitle(),
-                'description' => $document->getDescription()
+                'description' => $document->getDescription(),
             ];
 
             foreach ($data as $key => $content) {
@@ -156,7 +156,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
                     'navigation_parameters',
                     'navigation_relation',
                     'navigation_accesskey',
-                    'navigation_tabindex'
+                    'navigation_tabindex',
                 ]);
     }
 }

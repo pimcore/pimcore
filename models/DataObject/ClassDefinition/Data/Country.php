@@ -49,7 +49,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
             if (strlen($short) == 2) {
                 $options[] = [
                     'key' => $translation,
-                    'value' => $short
+                    'value' => $short,
                 ];
             }
         }

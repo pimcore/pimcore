@@ -195,7 +195,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $childsList,
-                'context' => $allParams
+                'context' => $allParams,
             ]);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
             /** @var DataObject\Listing $childsList */
@@ -234,7 +234,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'nodes' => $objects,
                 'fromPaging' => intval($request->get('fromPaging')),
                 'filter' => $request->get('filter') ? $request->get('filter') : '',
-                'inSearch' => intval($request->get('inSearch'))
+                'inSearch' => intval($request->get('inSearch')),
             ]);
         }
 
@@ -260,7 +260,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             'basePath' => $child->getRealPath(),
             'elementType' => 'object',
             'locked' => $child->isLocked(),
-            'lockOwner' => $child->getLocked() ? true : false
+            'lockOwner' => $child->getLocked() ? true : false,
         ];
 
         $allowedTypes = [DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER];
@@ -349,7 +349,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $total = $list->getTotalCount();
 
             $info = [
-                'total' => $total
+                'total' => $total,
             ];
 
             if ($total > $limit) {
@@ -428,7 +428,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['general']['o_locked'] = $objectFromDatabase->isLocked();
             $objectData['general']['php'] = [
                 'classes' => array_merge([get_class($objectFromDatabase)], array_values(class_parents($objectFromDatabase))),
-                'interfaces' => array_values(class_implements($objectFromDatabase))
+                'interfaces' => array_values(class_implements($objectFromDatabase)),
             ];
             $objectData['general']['allowInheritance'] = $objectFromDatabase->getClass()->getAllowInherit();
             $objectData['general']['allowVariants'] = $objectFromDatabase->getClass()->getAllowVariants();
@@ -882,12 +882,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'success' => $success,
                 'id' => $object->getId(),
                 'type' => $object->getType(),
-                'message' => $message
+                'message' => $message,
             ]);
         } else {
             return $this->adminJson([
                 'success' => $success,
-                'message' => $message
+                'message' => $message,
             ]);
         }
     }
@@ -912,7 +912,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     'o_userOwner' => $this->getAdminUser()->getId(),
                     'o_userModification' => $this->getAdminUser()->getId(),
                     'o_key' => $request->get('key'),
-                    'o_published' => true
+                    'o_published' => true,
                 ]);
 
                 $folder->setCreationDate(time());
@@ -1152,7 +1152,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         "','", [
                             DataObject\AbstractObject::OBJECT_TYPE_OBJECT,
                             DataObject\AbstractObject::OBJECT_TYPE_VARIANT,
-                            DataObject\AbstractObject::OBJECT_TYPE_FOLDER
+                            DataObject\AbstractObject::OBJECT_TYPE_FOLDER,
                         ]
                     ).'\')
                             ORDER BY o_index, o_id=?
@@ -1164,7 +1164,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                         $newIndex,
                         $updatedObject->getId(),
                         $updatedObject->getParentId(),
-                        $updatedObject->getId()
+                        $updatedObject->getId(),
                     ]
                 );
 
@@ -1310,9 +1310,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'success' => true,
                 'general' => ['o_modificationDate' => $object->getModificationDate(),
                     'versionDate' => $newObject->getModificationDate(),
-                    'versionCount' => $newObject->getVersionCount()
+                    'versionCount' => $newObject->getVersionCount(),
                 ],
-                'treeData' => $treeData
+                'treeData' => $treeData,
             ]);
         } elseif ($request->get('task') == 'session') {
             DataObject\Service::saveElementToSession($object);
@@ -1339,9 +1339,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 'success' => true,
                 'general' => ['o_modificationDate' => $object->getModificationDate(),
                     'versionDate' => $newObject->getModificationDate(),
-                    'versionCount' => $newObject->getVersionCount()
+                    'versionCount' => $newObject->getVersionCount(),
                 ],
-                'treeData' => $treeData
+                'treeData' => $treeData,
             ]);
         }
 
@@ -1484,7 +1484,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     [
                         'success' => true,
                         'general' => ['o_modificationDate' => $object->getModificationDate() ],
-                        'treeData' => $treeData]
+                        'treeData' => $treeData, ]
                 );
             } catch (\Exception $e) {
                 return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
@@ -1556,7 +1556,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if ($object1->isAllowed('versions') && $object2->isAllowed('versions')) {
                 return [
                     'object1' => $object1,
-                    'object2' => $object2
+                    'object2' => $object2,
                 ];
             } else {
                 throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
@@ -1585,7 +1585,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [
-            'requestParams' => $allParams
+            'requestParams' => $allParams,
         ]);
         $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
@@ -1764,7 +1764,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $list,
-                'context' => $allParams
+                'context' => $allParams,
             ]);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
             /** @var DataObject\Listing\Concrete $list */
@@ -1785,7 +1785,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $afterListLoadEvent = new GenericEvent($this, [
                 'list' => $result,
-                'context' => $allParams
+                'context' => $allParams,
             ]);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
             $result = $afterListLoadEvent->getArgument('list');
@@ -1862,8 +1862,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     'targetId' => $request->get('targetId'),
                     'type' => 'child',
                     'transactionId' => $transactionId,
-                    'saveParentId' => true
-                ]
+                    'saveParentId' => true,
+                ],
             ]];
 
             if ($object->hasChildren([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_VARIANT])) {
@@ -1885,8 +1885,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                                 'targetParentId' => $request->get('targetId'),
                                 'sourceParentId' => $request->get('sourceId'),
                                 'type' => 'child',
-                                'transactionId' => $transactionId
-                            ]
+                                'transactionId' => $transactionId,
+                            ],
                         ]];
                     }
                 }
@@ -1899,8 +1899,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                             'method' => 'PUT',
                             'params' => [
                                 'transactionId' => $transactionId,
-                                '_dc' => uniqid()
-                            ]
+                                '_dc' => uniqid(),
+                            ],
                         ]];
                     }
                 }
@@ -1914,13 +1914,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                     'sourceId' => $request->get('sourceId'),
                     'targetId' => $request->get('targetId'),
                     'type' => $request->get('type'),
-                    'transactionId' => $transactionId
-                ]
+                    'transactionId' => $transactionId,
+                ],
             ]];
         }
 
         return $this->adminJson([
-            'pastejobs' => $pasteJobs
+            'pastejobs' => $pasteJobs,
         ]);
     }
 
@@ -1963,7 +1963,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
         return $this->adminJson([
             'success' => true,
-            'id' => $id
+            'id' => $id,
         ]);
     }
 

@@ -49,12 +49,12 @@ class SubrequestExtension extends AbstractExtension
         // as helpers are invokablem, we can pass them directly as callable
         return [
             new TwigFunction('pimcore_inc', $this->incHelper, [
-                'is_safe' => ['html']
+                'is_safe' => ['html'],
             ]),
 
             new TwigFunction('pimcore_action', $this->actionHelper, [
-                'is_safe' => ['html']
-            ])
+                'is_safe' => ['html'],
+            ]),
         ];
     }
 }

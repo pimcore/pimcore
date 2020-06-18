@@ -30,7 +30,7 @@ class InternalWysiwygHtmlAttributeFilterListener implements EventSubscriberInter
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::RESPONSE => 'onKernelResponse'
+            KernelEvents::RESPONSE => 'onKernelResponse',
         ];
     }
 

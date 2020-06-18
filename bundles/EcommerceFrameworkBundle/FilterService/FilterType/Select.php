@@ -30,7 +30,7 @@ class Select extends AbstractFilterType
             'values' => $productList->getGroupByValues($field, true),
             'fieldname' => $field,
             'metaData' => $filterDefinition->getMetaData(),
-            'resultCount' => $productList->count()
+            'resultCount' => $productList->count(),
         ]);
     }
 

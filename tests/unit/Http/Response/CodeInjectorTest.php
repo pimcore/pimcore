@@ -320,7 +320,7 @@ EOF
             '.non-existing',
             CodeInjector::POSITION_END,
             $domSource,
-            $domSource
+            $domSource,
         ];
 
         return $data;

@@ -135,7 +135,7 @@ abstract class PageSnippet extends Model\Document
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_UPDATE, new DocumentEvent($this, [
-                    'saveVersionOnly' => true
+                    'saveVersionOnly' => true,
                 ]));
             }
 
@@ -162,7 +162,7 @@ abstract class PageSnippet extends Model\Document
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, new DocumentEvent($this, [
-                    'saveVersionOnly' => true
+                    'saveVersionOnly' => true,
                 ]));
             }
 
@@ -170,7 +170,7 @@ abstract class PageSnippet extends Model\Document
         } catch (\Exception $e) {
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE_FAILURE, new DocumentEvent($this, [
                 'saveVersionOnly' => true,
-                'exception' => $e
+                'exception' => $e,
             ]));
 
             throw $e;
@@ -241,7 +241,7 @@ abstract class PageSnippet extends Model\Document
             $key = 'document_' . $this->getContentMasterDocument()->getId();
             $dependencies[$key] = [
                 'id' => $this->getContentMasterDocument()->getId(),
-                'type' => 'document'
+                'type' => 'document',
             ];
         }
 

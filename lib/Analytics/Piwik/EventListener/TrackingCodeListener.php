@@ -51,7 +51,7 @@ class TrackingCodeListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::RESPONSE => ['onKernelResponse', -110]
+            KernelEvents::RESPONSE => ['onKernelResponse', -110],
         ];
     }
 

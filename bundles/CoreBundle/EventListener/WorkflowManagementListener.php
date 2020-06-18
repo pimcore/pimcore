@@ -149,7 +149,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
                 'name' => $workflow->getName(),
                 'label' => $workflowConfig->getLabel(),
                 'allowedTransitions' => $allowedTransitions,
-                'globalActions' => $globalActions
+                'globalActions' => $globalActions,
             ];
 
             $marking = $workflow->getMarking($element);

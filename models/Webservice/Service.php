@@ -244,7 +244,7 @@ class Service
                 'orderKey' => $orderKey,
                 'offset' => $offset,
                 'limit' => $limit,
-                'groupBy' => $groupBy
+                'groupBy' => $groupBy,
             ]);
             $list->setUnpublished(1);
 

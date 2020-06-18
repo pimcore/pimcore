@@ -95,31 +95,31 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                 $aggregations[$fieldname] = [
                     'filter' => [
                         'bool' => [
-                            'must' => $specificFilters
-                        ]
+                            'must' => $specificFilters,
+                        ],
                     ],
                     'aggs' => [
                         $fieldname => [
-                            'terms' => ['field' => $fieldname, 'size' => self::INTEGER_MAX_VALUE, 'order' => ['_term' => 'asc' ]]
-                        ]
-                    ]
+                            'terms' => ['field' => $fieldname, 'size' => self::INTEGER_MAX_VALUE, 'order' => ['_term' => 'asc' ]],
+                        ],
+                    ],
                 ];
 
                 //necessary to calculate correct counts of search results for filter values
                 if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     $aggregations[$fieldname]['aggs'][$fieldname]['aggs'] = [
-                        'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']]
+                        'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']],
                     ];
                 }
             } else {
                 $aggregations[$fieldname] = [
-                    'terms' => ['field' => $fieldname, 'size' => self::INTEGER_MAX_VALUE, 'order' => ['_term' => 'asc' ]]
+                    'terms' => ['field' => $fieldname, 'size' => self::INTEGER_MAX_VALUE, 'order' => ['_term' => 'asc' ]],
                 ];
 
                 //necessary to calculate correct counts of search results for filter values
                 if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     $aggregations[$fieldname]['aggs'] = [
-                        'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']]
+                        'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']],
                     ];
                 }
             }

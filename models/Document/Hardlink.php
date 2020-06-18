@@ -76,7 +76,7 @@ class Hardlink extends Document
 
             $dependencies[$key] = [
                 'id' => $this->getSourceDocument()->getId(),
-                'type' => 'document'
+                'type' => 'document',
             ];
         }
 

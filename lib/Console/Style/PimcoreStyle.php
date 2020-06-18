@@ -83,7 +83,7 @@ class PimcoreStyle extends SymfonyStyle
             '',
             $message,
             $underline,
-            ''
+            '',
         ]);
     }
 }

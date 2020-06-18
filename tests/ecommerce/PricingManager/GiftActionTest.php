@@ -17,18 +17,18 @@ class GiftActionTest extends AbstractRuleTest
     protected $productDefinitions1 = [
         'singleProduct' => [
             'id' => 4,
-            'price' => 100
+            'price' => 100,
         ],
         'cart' => [
             [
                 'id' => 4,
-                'price' => 100
+                'price' => 100,
             ],
             [
                 'id' => 5,
-                'price' => 40
-            ]
-        ]
+                'price' => 40,
+            ],
+        ],
 
     ];
 
@@ -39,28 +39,28 @@ class GiftActionTest extends AbstractRuleTest
         'cartGrandTotal' => 140,
         'cartSubTotalModificators' => 140,
         'cartGrandTotalModificators' => 150,
-        'giftItemCount' => 0
+        'giftItemCount' => 0,
     ];
 
     protected $productDefinitions2 = [
         'singleProduct' => [
             'id' => 4,
-            'price' => 100
+            'price' => 100,
         ],
         'cart' => [
             [
                 'id' => 4,
-                'price' => 100
+                'price' => 100,
             ],
             [
                 'id' => 5,
-                'price' => 40
+                'price' => 40,
             ],
             [
                 'id' => 6,
-                'price' => 80
-            ]
-        ]
+                'price' => 80,
+            ],
+        ],
     ];
 
     public function testOneGift()
@@ -73,14 +73,14 @@ class GiftActionTest extends AbstractRuleTest
                 'actions' => [
                     [
                         'class' => Gift::class,
-                        'product' => $gift1
-                    ]
+                        'product' => $gift1,
+                    ],
                 ],
                 'condition' => [
                     'class' => CartAmount::class,
-                    'limit' => 200
-                ]
-            ]
+                    'limit' => 200,
+                ],
+            ],
         ];
 
         $this->doAssertionsWithShippingCosts($ruleDefinitions, $this->productDefinitions1, $this->tests1, false);
@@ -92,7 +92,7 @@ class GiftActionTest extends AbstractRuleTest
             'cartGrandTotal' => 220,
             'cartSubTotalModificators' => 220,
             'cartGrandTotalModificators' => 230,
-            'giftItemCount' => 1
+            'giftItemCount' => 1,
         ];
 
         $this->doAssertionsWithShippingCosts($ruleDefinitions, $this->productDefinitions2, $tests, false);
@@ -109,18 +109,18 @@ class GiftActionTest extends AbstractRuleTest
                 'actions' => [
                     [
                         'class' => Gift::class,
-                        'product' => $gift1
+                        'product' => $gift1,
                     ],
                     [
                         'class' => Gift::class,
-                        'product' => $gift2
-                    ]
+                        'product' => $gift2,
+                    ],
                 ],
                 'condition' => [
                     'class' => CartAmount::class,
-                    'limit' => 200
-                ]
-            ]
+                    'limit' => 200,
+                ],
+            ],
         ];
 
         $this->doAssertionsWithShippingCosts($ruleDefinitions, $this->productDefinitions1, $this->tests1, false);
@@ -132,7 +132,7 @@ class GiftActionTest extends AbstractRuleTest
             'cartGrandTotal' => 220,
             'cartSubTotalModificators' => 220,
             'cartGrandTotalModificators' => 230,
-            'giftItemCount' => 2
+            'giftItemCount' => 2,
         ];
 
         $this->doAssertionsWithShippingCosts($ruleDefinitions, $this->productDefinitions2, $tests, false);

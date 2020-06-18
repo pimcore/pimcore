@@ -104,7 +104,7 @@ class GeoIp implements DataProviderInterface
 
         if (isset($overrides['country']) && !empty($overrides['country'])) {
             $result['country'] = array_merge($result['country'] ?? [], [
-                'iso_code' => $overrides['country']
+                'iso_code' => $overrides['country'],
             ]);
         }
 

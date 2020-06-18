@@ -68,7 +68,7 @@ final class VersionsCleanupTask implements TaskInterface
             if ($versioningType) {
                 $elementTypes[] = [
                     'elementType' => $elementType,
-                    $versioningType => $value
+                    $versioningType => $value,
                 ];
             }
         }

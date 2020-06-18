@@ -165,7 +165,7 @@ class Version extends \Doctrine\DBAL\Migrations\Version
 
         $data = [
             $setColumn => $this->configuration->getMigrationSet(),
-            $versionColumn => $this->getVersion()
+            $versionColumn => $this->getVersion(),
         ];
 
         $dataTypes = [

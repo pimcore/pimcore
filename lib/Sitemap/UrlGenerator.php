@@ -51,7 +51,7 @@ class UrlGenerator implements UrlGeneratorInterface
         $options->setDefaults([
             'scheme' => $this->requestContext->getScheme(),
             'host' => $this->requestContext->getHost(),
-            'base_url' => $this->requestContext->getBaseUrl()
+            'base_url' => $this->requestContext->getBaseUrl(),
         ]);
 
         $options->setDefault('port', function (Options $options) {

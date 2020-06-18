@@ -138,7 +138,7 @@ class Frontend
         if ($cacheService && $cacheService->isEnabled()) {
             return [
                 'enabled' => true,
-                'lifetime' => $cacheService->getLifetime()
+                'lifetime' => $cacheService->getLifetime(),
             ];
         }
 

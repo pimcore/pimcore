@@ -30,7 +30,7 @@ class HelpersExtension extends AbstractExtension
         return [
             new TwigTest('instanceof', function ($object, $class) {
                 return is_object($object) && $object instanceof $class;
-            })
+            }),
         ];
     }
 }

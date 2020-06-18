@@ -35,7 +35,7 @@ class BlockStateTest extends TestCase
 
         $blockNames = [
             new BlockName('A', 'realA'),
-            new BlockName('B', 'realB')
+            new BlockName('B', 'realB'),
         ];
 
         $state->pushBlock($blockNames[0]);

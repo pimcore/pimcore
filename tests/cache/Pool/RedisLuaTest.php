@@ -11,7 +11,7 @@ class RedisLuaTest extends RedisTest
     protected function getRedisOptions(): array
     {
         return [
-            'use_lua' => true
+            'use_lua' => true,
         ];
     }
 }

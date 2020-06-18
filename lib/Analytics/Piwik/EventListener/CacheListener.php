@@ -40,7 +40,7 @@ class CacheListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ReportEvents::SAVE_SETTINGS => 'onSaveSettings'
+            ReportEvents::SAVE_SETTINGS => 'onSaveSettings',
         ];
     }
 

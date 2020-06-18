@@ -48,7 +48,7 @@ class PermissionChecker
         $tableDesc = $db->fetchAll('describe '.$tableName);
 
         $result = [
-            'columns' => []
+            'columns' => [],
         ];
 
         foreach ($tableDesc as $column) {
@@ -172,7 +172,7 @@ class PermissionChecker
             'c' => $c,
             'd' => $d,
             'e' => $e,
-            'f' => $f
+            'f' => $f,
 
         ];
 

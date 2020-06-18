@@ -65,7 +65,7 @@ final class Executor implements ExecutorInterface
 
             if (count($excludedJobs) > 0 && in_array($name, $excludedJobs)) {
                 $this->logger->info('Skipped job with ID {id} because it has been excluded', [
-                    'id' => $name
+                    'id' => $name,
                 ]);
 
                 continue;
@@ -76,7 +76,7 @@ final class Executor implements ExecutorInterface
 
             if ($isLocked && !$force) {
                 $this->logger->info('Skipped job with ID {id} because it already being executed', [
-                    'id' => $name
+                    'id' => $name,
                 ]);
 
                 continue;
@@ -88,12 +88,12 @@ final class Executor implements ExecutorInterface
                 $task->execute();
 
                 $this->logger->info('Finished job with ID {id}', [
-                    'id' => $name
+                    'id' => $name,
                 ]);
             } catch (\Exception $e) {
                 $this->logger->error('Failed to execute job with ID {id}: {exception}', [
                     'id' => $name,
-                    'exception' => $e
+                    'exception' => $e,
                 ]);
             }
 

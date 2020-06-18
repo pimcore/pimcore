@@ -241,7 +241,7 @@ class GeneralTest extends ModelTestCase
         $table = 'object_' . $one->getClassId();
 
         $relationobjectsString = $db->fetchColumn('SELECT relationobjects FROM ' . $table . ' WHERE oo_id = ?', [
-            $two->getId()
+            $two->getId(),
         ]);
 
         $this->assertEquals(
@@ -304,7 +304,7 @@ class GeneralTest extends ModelTestCase
         $table = 'object_' . $one->getClassId();
 
         $relationobjectsString = $db->fetchColumn('SELECT relationobjects FROM ' . $table . ' WHERE oo_id = ?', [
-            $two->getId()
+            $two->getId(),
         ]);
 
         $this->assertEquals(

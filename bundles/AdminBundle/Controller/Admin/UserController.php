@@ -74,8 +74,8 @@ class UserController extends AdminController implements EventedControllerInterfa
             'elementType' => 'user',
             'type' => $user->getType(),
             'qtipCfg' => [
-                'title' => 'ID: ' . $user->getId()
-            ]
+                'title' => 'ID: ' . $user->getId(),
+            ],
         ];
 
         // set type specific settings
@@ -120,7 +120,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                 'parentId' => intval($request->get('parentId')),
                 'name' => trim($request->get('name')),
                 'password' => '',
-                'active' => $request->get('active')
+                'active' => $request->get('active'),
             ]);
 
             if ($request->get('rid')) {
@@ -187,7 +187,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
             return $this->adminJson([
                 'success' => true,
-                'id' => $user->getId()
+                'id' => $user->getId(),
             ]);
         } catch (\Exception $e) {
             return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
@@ -442,7 +442,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                 $userObjectData[] = [
                     'path' => $o->getRealFullPath(),
                     'id' => $o->getId(),
-                    'subtype' => $o->getClass()->getName()
+                    'subtype' => $o->getClass()->getName(),
                 ];
             } else {
                 $hasHidden = true;
@@ -486,8 +486,8 @@ class UserController extends AdminController implements EventedControllerInterfa
             'validLanguages' => Tool::getValidLanguages(),
             'objectDependencies' => [
                 'hasHidden' => $hasHidden,
-                'dependencies' => $userObjectData
-            ]
+                'dependencies' => $userObjectData,
+            ],
         ]);
     }
 
@@ -692,8 +692,8 @@ class UserController extends AdminController implements EventedControllerInterfa
             'text' => $role->getName(),
             'elementType' => 'role',
             'qtipCfg' => [
-                'title' => 'ID: ' . $role->getId()
-            ]
+                'title' => 'ID: ' . $role->getId(),
+            ],
         ];
 
         // set type specific settings
@@ -756,7 +756,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             'docTypes' => $role->getDocTypes(),
             'availablePermissions' => $availableUserPermissions,
             'availablePerspectives' => $availablePerspectives,
-            'validLanguages' => Tool::getValidLanguages()
+            'validLanguages' => Tool::getValidLanguages(),
         ]);
     }
 
@@ -858,7 +858,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
@@ -881,7 +881,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $user->save();
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
@@ -955,7 +955,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         return $this->adminJson([
             'success' => true,
-            'link' => $link
+            'link' => $link,
         ]);
     }
 
@@ -993,7 +993,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         return $this->adminJson([
             'success' => true,
-            'users' => $users
+            'users' => $users,
         ]);
     }
 
@@ -1011,7 +1011,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $unrestrictedActions = [
             'getCurrentUserAction', 'updateCurrentUserAction', 'getAvailablePermissionsAction', 'getMinimalAction',
             'getImageAction', 'uploadCurrentUserImageAction', 'disable2FaSecretAction', 'renew2FaSecretAction',
-            'getUsersForSharingAction', 'getRolesForSharingAction'
+            'getUsersForSharingAction', 'getRolesForSharingAction',
         ];
 
         $this->checkActionPermission($event, 'users', $unrestrictedActions);
@@ -1082,7 +1082,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             if (!$request->get('permission') || $user->isAllowed($request->get('permission'))) {
                 $users[] = [
                     'id' => $user->getId(),
-                    'label' => $user->getUsername()
+                    'label' => $user->getUsername(),
                 ];
             }
         }
@@ -1111,7 +1111,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             if (!$request->get('permission') || in_array($request->get('permission'), $role->getPermissions())) {
                 $roles[] = [
                     'id' => $role->getId(),
-                    'label' => $role->getName()
+                    'label' => $role->getName(),
                 ];
             }
         }
@@ -1172,7 +1172,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                 $token = Tool\Authentication::generateToken($user->getName());
                 $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
                     'token' => $token,
-                    'reset' => 'true'
+                    'reset' => 'true',
                 ], UrlGeneratorInterface::ABSOLUTE_URL);
 
                 try {
@@ -1191,7 +1191,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         return $this->adminJson([
             'success' => $success,
-            'message' => $message
+            'message' => $message,
         ]);
     }
 }

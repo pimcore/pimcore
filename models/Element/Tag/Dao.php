@@ -155,7 +155,7 @@ class Dao extends Model\Dao\AbstractDao
         $data = [
             'tagid' => $tagId,
             'ctype' => $cType,
-            'cid' => $cId
+            'cid' => $cId,
         ];
         $this->db->insertOrUpdate('tags_assignment', $data);
     }
@@ -169,7 +169,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete('tags_assignment', [
             'tagid' => $this->model->getId(),
             'ctype' => $cType,
-            'cid' => $cId
+            'cid' => $cId,
         ]);
     }
 

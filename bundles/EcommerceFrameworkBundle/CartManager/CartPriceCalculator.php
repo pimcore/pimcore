@@ -146,7 +146,7 @@ class CartPriceCalculator implements CartPriceCalculatorInterface
         $resolver->setAllowedTypes('class', 'string');
 
         $resolver->setDefaults([
-            'options' => []
+            'options' => [],
         ]);
     }
 

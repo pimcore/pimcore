@@ -175,7 +175,7 @@ class Block extends Model\Document\Tag implements BlockInterface
 
         $attributes = array_merge($attributes, [
             'name' => $this->getName(),
-            'type' => $this->getType()
+            'type' => $this->getType(),
         ]);
 
         return $attributes;
@@ -243,7 +243,7 @@ class Block extends Model\Document\Tag implements BlockInterface
         $attr = $this->getBlockAttributes();
 
         $outerAttributes = [
-            'key' => $this->indices[$this->current]
+            'key' => $this->indices[$this->current],
         ];
         $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
 

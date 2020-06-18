@@ -30,7 +30,7 @@ final class Runtime extends \ArrayObject
      */
     private static $blockedIndexes = [
         'pimcore_tag_block_current' => 'Index "%s" is now handled via "pimcore.document.tag.block_state_stack" service',
-        'pimcore_tag_block_numeration' => 'Index "%s" is now handled via "pimcore.document.tag.block_state_stack" service'
+        'pimcore_tag_block_numeration' => 'Index "%s" is now handled via "pimcore.document.tag.block_state_stack" service',
     ];
 
     /**

@@ -58,7 +58,7 @@ class Sales extends AbstractOrder implements ConditionInterface
     {
         // basic
         $json = [
-            'type' => 'Sales', 'amount' => $this->getAmount()
+            'type' => 'Sales', 'amount' => $this->getAmount(),
         ];
 
         return json_encode($json);

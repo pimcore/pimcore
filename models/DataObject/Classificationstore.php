@@ -416,7 +416,7 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
             $data = $fieldDefinition->preGetData($this, [
                 'data' => $data,
                 'language' => $language,
-                'name' => $groupId . '-' . $keyId
+                'name' => $groupId . '-' . $keyId,
             ]);
         }
 
