@@ -264,11 +264,6 @@ class AssetHelperController extends AdminController
             return ($a['position'] < $b['position']) ? -1 : 1;
         });
 
-//        $language = 'default';
-//        if (!empty($gridConfig) && !empty($gridConfig['language'])) {
-//            $language = $gridConfig['language'];
-//        }
-
         $availableConfigs = $classId ? $this->getMyOwnGridColumnConfigs($userId, $classId, $searchType) : [];
         $sharedConfigs = $classId ? $this->getSharedGridColumnConfigs($this->getAdminUser(), $classId, $searchType) : [];
         $settings = $this->getShareSettings((int)$gridConfigId);
@@ -280,7 +275,6 @@ class AssetHelperController extends AdminController
 
         return [
             'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
-//            'language' => $language,
             'availableFields' => $availableFields,
             'settings' => $settings,
             'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,
