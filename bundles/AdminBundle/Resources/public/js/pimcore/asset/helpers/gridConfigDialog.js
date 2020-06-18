@@ -42,12 +42,19 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
         return this.leftPanel;
     },
 
+    getConfigPanel: function () {
+        this.configPanel = new Ext.Panel({
+            layout: "border",
+            iconCls: "pimcore_icon_table",
+            title: t("grid_configuration"),
+            items: [this.getSelectionPanel(), this.getLeftPanel()]
+        });
+        return this.configPanel;
+    },
+
     commitData: function (save, preview) {
 
         this.data = {};
-        if (this.languageField) {
-            this.data.language = this.languageField.getValue();
-        }
 
         if (this.itemsPerPage) {
             this.data.pageSize = this.itemsPerPage.getValue();
@@ -70,21 +77,20 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                     obj.attributes = attributes;
 
                 } else {
-                    obj.label =  child.data.text;
-                    if(child.data.dataType == "system") {
+                    obj.label = child.data.text;
+                    if (child.data.dataType == "system") {
                         obj.key = child.data.text + '~system';
                     } else {
                         obj.key = child.data.layout.name;
                     }
 
-                    if(child.data.dataType == "asset" || child.data.dataType == "object" || child.data.dataType == "document") {
+                    if (child.data.dataType == "asset" || child.data.dataType == "object" || child.data.dataType == "document") {
                         child.data.layout.subtype = child.data.dataType;
                         child.data.layout.fieldtype = 'manyToOneRelation';
                     }
 
-                    if(child.data.language) {
+                    if (child.data.language) {
                         obj.key = child.data.layout.name + '~' + child.data.language;
-                        obj.label = child.data.layout.title = child.data.text + ' (' + child.data.language + ')';
                     }
 
                     obj.language = child.data.language;
@@ -155,12 +161,10 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
     },
 
     requestPreview: function () {
-        var language = this.languageField.getValue();
         var fields = this.data.columns;
         var count = fields.length;
-        var i;
         var keys = [];
-        for (i = 0; i < count; i++) {
+        for (let i = 0; i < count; i++) {
             var item = fields[i];
             keys.push(item.key);
         }
@@ -170,7 +174,6 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
             params: {
                 "folderId": this.previewSettings.folderId,
                 "fields[]": keys,
-                language: language,
                 limit: 1
             },
             success: function (response) {
@@ -217,15 +220,17 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                     }
                     child = child[0];
                 } else {
-                    if(nodeConf.layout) {
-                        var text = nodeConf.layout.name;
-                        var subType = nodeConf.layout.subtype;
-                    } else {
-                        var text = nodeConf.label;
-                    }
-
-                    if (nodeConf.dataType !== "system" && subType) {
-                        text = text + " (" + subType + ")";
+                    let text = nodeConf.label;
+                    if (!text) {
+                        if (nodeConf.layout) {
+                            text = nodeConf.layout.name;
+                            let subType = nodeConf.layout.subtype;
+                            if (nodeConf.dataType !== "system" && subType) {
+                                text = text + " (" + subType + ")";
+                            }
+                        } else {
+                            text = nodeConf.key;
+                        }
                     }
 
                     var child = {
@@ -253,7 +258,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
             this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit: 1,
                 listeners: {
-                    beforeedit: function(editor, context, eOpts) {
+                    beforeedit: function (editor, context, eOpts) {
                         //need to clear cached editors of cell-editing editor in order to
                         //enable different editors per row
                         editor.editors.each(function (e) {
@@ -304,8 +309,8 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                 }
             ];
 
-            var languagestore = [["",t("default")],["none",t("none")]];
-            for (var i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
+            var languagestore = [];
+            for (let i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
                 languagestore.push([pimcore.settings.websiteLanguages[i],
                     pimcore.available_languages[pimcore.settings.websiteLanguages[i]]]);
             }
@@ -314,7 +319,13 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                 text: t('language'),
                 sortable: true,
                 dataIndex: "language",
-                getEditor: function() {
+                renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                    if (record.data.dataType == "system" || record.data.layout && record.data.layout.isUnlocalized) {
+                        return "-";
+                    }
+                    return value;
+                },
+                getEditor: function () {
                     return new Ext.form.ComboBox({
                         name: "language",
                         store: languagestore,
@@ -322,9 +333,11 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                         triggerAction: 'all',
                         mode: "local",
                         listeners: {
-                            focusenter: function ( combo, event, eOpts ) {
-                                var currentRecord =  this.selectionPanel.getSelection();
-                                if(currentRecord[0].data.dataType == "system") {
+                            focusenter: function (combo, event, eOpts) {
+                                let selection = this.selectionPanel.getSelection();
+                                let currentRecord = selection[0];
+
+                                if (currentRecord.data.dataType == "system" || currentRecord.data.layout && currentRecord.data.layout.isUnlocalized) {
                                     combo.disable();
                                 } else {
                                     combo.expand();
@@ -389,6 +402,47 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                 });
             }
 
+
+            let additionalItem =  {
+                xtype: "button",
+                style: {
+                    marginLeft: "10px",
+                    marginRight: "50px"
+                },
+                text: t("apply"),
+                iconCls: "pimcore_icon_apply",
+                handler: function() {
+                    store.each(function(record, id) {
+                        let value = this.languageField.getValue();
+                        if (record.data.dataType != "system"  && !(record.data.layout && record.data.layout.isUnlocalized)) {
+                            record.set("language", value);
+                            this.updatePreview();
+                        }
+                        }.bind(this)
+                    );
+                }.bind(this)
+            };
+
+            this.languageSelection = this.getLanguageSelection({
+                omitDefault: true,
+                additionalItem: additionalItem,
+                emptyText: t("batch_change_language"),
+                disablePreviewUpdate: true
+            });
+
+            let tbarItems = Ext.create('Ext.form.FieldContainer', {
+                layout: 'vbox',
+                items:
+                    [
+                        this.languageSelection,
+                        {
+                            xtype: "tbtext",
+                            text: t('selected_grid_columns'),
+                            cls: "x-panel-header-title-default"
+                        }
+                    ]
+            });
+
             this.selectionPanel = new Ext.tree.Panel({
                 store: store,
                 plugins: [this.cellEditing],
@@ -435,7 +489,8 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                                     if (record.data.dataType == "system" && this.selectionPanel.getRootNode().findChild("text", record.data.key)) {
                                         dropHandlers.cancelDrop();
                                     } else {
-                                        var copy = Ext.apply({}, record.data);
+                                        let copy = Ext.apply({}, record.data);
+                                        copy.text = record.data.copyText;
                                         delete copy.id;
                                         copy = record.createNode(copy);
 
@@ -531,9 +586,8 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                         }
                     }
                 },
-                id: 'tree',
                 region: 'east',
-                title: t('selected_grid_columns'),
+                tbar: [tbarItems],
                 layout: 'fit',
                 width: 640,
                 split: true,
@@ -578,8 +632,9 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
             if (!record.data.root && record.data.type != "layout") {
                 if (record.data.dataType == "system" && this.selectionPanel.getRootNode().findChild("text", record.data.key)) {
                     dropHandlers.cancelDrop();
-                } else {
+                } else if (record.data.dataType != "localizedfields") {
                     var copy = Ext.apply({}, record.data);
+                    copy.text = record.data.copyText;
 
                     delete copy.id;
                     this.selectionPanel.getRootNode().appendChild(copy);

@@ -236,11 +236,6 @@ class AssetHelperController extends AdminController
             }
         }
 
-        $language = 'default';
-        if (!empty($gridConfig) && !empty($gridConfig['language'])) {
-            $language = $gridConfig['language'];
-        }
-
         $availableFields = [];
 
         if (empty($gridConfig)) {
@@ -269,10 +264,10 @@ class AssetHelperController extends AdminController
             return ($a['position'] < $b['position']) ? -1 : 1;
         });
 
-        $language = 'default';
-        if (!empty($gridConfig) && !empty($gridConfig['language'])) {
-            $language = $gridConfig['language'];
-        }
+//        $language = 'default';
+//        if (!empty($gridConfig) && !empty($gridConfig['language'])) {
+//            $language = $gridConfig['language'];
+//        }
 
         $availableConfigs = $classId ? $this->getMyOwnGridColumnConfigs($userId, $classId, $searchType) : [];
         $sharedConfigs = $classId ? $this->getSharedGridColumnConfigs($this->getAdminUser(), $classId, $searchType) : [];
@@ -285,7 +280,7 @@ class AssetHelperController extends AdminController
 
         return [
             'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
-            'language' => $language,
+//            'language' => $language,
             'availableFields' => $availableFields,
             'settings' => $settings,
             'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,

@@ -45,7 +45,7 @@ pimcore.asset.metadata.editor = Class.create({
     },
 
     getValues: function() {
-        var values = this.implementation.getValues();
+        var values = this.editorInstance.getValues();
         return values;
     }
 });
