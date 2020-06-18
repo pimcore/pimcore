@@ -99,14 +99,14 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         $data['php'] = [
             'classes' => array_merge([get_class($document)], array_values(class_parents($document))),
-            'interfaces' => array_values(class_implements($document))
+            'interfaces' => array_values(class_implements($document)),
         ];
 
         $this->addAdminStyle($document, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
         $event = new GenericEvent($this, [
             'data' => $data,
-            'document' => $document
+            'document' => $document,
         ]);
         $eventDispatcher->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
         $data = $event->getArgument('data');
@@ -188,7 +188,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $list,
-                'context' => $allParams
+                'context' => $allParams,
             ]);
 
             $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
@@ -219,7 +219,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'total' => $document->getChildAmount($this->getAdminUser()),
                 'nodes' => $documents,
                 'filter' => $request->get('filter') ? $request->get('filter') : '',
-                'inSearch' => intval($request->get('inSearch'))
+                'inSearch' => intval($request->get('inSearch')),
             ]);
         } else {
             return $this->adminJson($documents);
@@ -248,7 +248,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $createValues = [
                     'userOwner' => $this->getAdminUser()->getId(),
                     'userModification' => $this->getAdminUser()->getId(),
-                    'published' => false
+                    'published' => false,
                 ];
 
                 $createValues['key'] = \Pimcore\Model\Element\Service::getValidKey($request->get('key'), 'document');
@@ -360,13 +360,13 @@ class DocumentController extends ElementControllerBase implements EventedControl
             return $this->adminJson([
                 'success' => $success,
                 'id' => $document->getId(),
-                'type' => $document->getType()
+                'type' => $document->getType(),
             ]);
         }
 
         return $this->adminJson([
             'success' => $success,
-            'message' => $errorMessage
+            'message' => $errorMessage,
         ]);
     }
 
@@ -552,7 +552,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     if ($document->hasChildren()) {
                         $list = new Document\Listing();
                         $list->setCondition('path LIKE :path', [
-                            'path' => $document->getRealFullPath() . '/%'
+                            'path' => $document->getRealFullPath() . '/%',
                         ]);
 
                         $childrenList = $list->loadIdPathList();
@@ -801,7 +801,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         if (!$site = Site::getByRootId(intval($request->get('id')))) {
             $site = Site::create([
-                'rootId' => intval($request->get('id'))
+                'rootId' => intval($request->get('id')),
             ]);
         }
 
@@ -861,8 +861,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     'enableInheritance' => $request->get('enableInheritance'),
                     'transactionId' => $transactionId,
                     'saveParentId' => true,
-                    'resetIndex' => true
-                ]
+                    'resetIndex' => true,
+                ],
             ]];
 
             $childIds = [];
@@ -886,8 +886,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
                                 'type' => 'child',
                                 'language' => $request->get('language'),
                                 'enableInheritance' => $request->get('enableInheritance'),
-                                'transactionId' => $transactionId
-                            ]
+                                'transactionId' => $transactionId,
+                            ],
                         ]];
                     }
                 }
@@ -902,8 +902,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
                         'params' => [
                             'transactionId' => $transactionId,
                             'enableInheritance' => $request->get('enableInheritance'),
-                            '_dc' => uniqid()
-                        ]
+                            '_dc' => uniqid(),
+                        ],
                     ]];
                 }
             }
@@ -919,13 +919,13 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     'language' => $request->get('language'),
                     'enableInheritance' => $request->get('enableInheritance'),
                     'transactionId' => $transactionId,
-                    'resetIndex' => ($request->get('type') == 'child')
-                ]
+                    'resetIndex' => ($request->get('type') == 'child'),
+                ],
             ]];
         }
 
         return $this->adminJson([
-            'pastejobs' => $pasteJobs
+            'pastejobs' => $pasteJobs,
         ]);
     }
 
@@ -956,7 +956,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $rewriteConfig = ['document' => $idStore['idMapping']];
 
             $document = Document\Service::rewriteIds($document, $rewriteConfig, [
-                'enableInheritance' => ($request->get('enableInheritance') == 'true') ? true : false
+                'enableInheritance' => ($request->get('enableInheritance') == 'true') ? true : false,
             ]);
 
             $document->setUserModification($this->getAdminUser()->getId());
@@ -970,7 +970,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         return $this->adminJson([
             'success' => true,
-            'id' => $id
+            'id' => $id,
         ]);
     }
 
@@ -1164,8 +1164,8 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'rename' => $childDocument->isAllowed('rename'),
                 'publish' => $childDocument->isAllowed('publish'),
                 'unpublish' => $childDocument->isAllowed('unpublish'),
-                'create' => $childDocument->isAllowed('create')
-            ]
+                'create' => $childDocument->isAllowed('create'),
+            ],
         ];
 
         // add icon
@@ -1246,7 +1246,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         if ($doc = Document::getByPath($request->get('path'))) {
             return $this->adminJson([
                 'id' => $doc->getId(),
-                'type' => $doc->getType()
+                'type' => $doc->getType(),
             ]);
         } else {
             return $this->adminJson(false);
@@ -1299,7 +1299,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filterPrepareEvent = new GenericEvent($this, [
-            'requestParams' => $allParams
+            'requestParams' => $allParams,
         ]);
         $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
@@ -1321,7 +1321,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $list,
-                'context' => $allParams
+                'context' => $allParams,
             ]);
             $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
             /** @var Document\Listing $list */
@@ -1346,7 +1346,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         $afterListLoadEvent = new GenericEvent($this, [
             'list' => $result,
-            'context' => $allParams
+            'context' => $allParams,
         ]);
         $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
         $result = $afterListLoadEvent->getArgument('list');
@@ -1392,7 +1392,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         if (!$document) {
             return $this->adminJson([
-                'success' => false
+                'success' => false,
             ]);
         }
         $service = new Document\Service();
@@ -1440,7 +1440,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         return $this->adminJson([
             'root' => $this->getTranslationTreeNodeConfig($document, array_keys($translations), $translations),
             'columns' => $columns,
-            'languages' => array_keys($translations)
+            'languages' => array_keys($translations),
         ]);
     }
 
@@ -1462,12 +1462,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     'fullPath' => $languageDocument->getFullPath(),
                     'published' => $languageDocument->getPublished(),
                     'itemType' => 'document',
-                    'permissions' => $languageDocument->getUserPermissions()
+                    'permissions' => $languageDocument->getUserPermissions(),
                 ];
             } elseif (!$document instanceof Document\Folder) {
                 $config[$language] = [
                     'text' => '--',
-                    'itemType' => 'empty'
+                    'itemType' => 'empty',
                 ];
             }
         }
@@ -1540,7 +1540,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         return $this->adminJson([
             'success' => $success,
             'targetPath' => $targetDocument ? $targetDocument->getRealFullPath() : null,
-            'targetId' => $targetDocument ? $targetDocument->getid() : null
+            'targetId' => $targetDocument ? $targetDocument->getid() : null,
         ]);
     }
 
@@ -1573,7 +1573,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         }
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 
@@ -1594,7 +1594,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         }
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 
@@ -1625,7 +1625,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         return $this->adminJson([
             'success' => $success,
             'language' => $language,
-            'translationLinks' => $translationLinks
+            'translationLinks' => $translationLinks,
         ]);
     }
 

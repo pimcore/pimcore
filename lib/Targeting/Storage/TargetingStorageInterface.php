@@ -30,7 +30,7 @@ interface TargetingStorageInterface
 
     const VALID_SCOPES = [
         self::SCOPE_SESSION,
-        self::SCOPE_VISITOR
+        self::SCOPE_VISITOR,
     ];
 
     /**

@@ -103,7 +103,7 @@ class PimcoreUrl extends Helper
                     'route' => $name,
                     'parameters' => $parameters,
                     'context' => $this,
-                    'referenceType' => $referenceType
+                    'referenceType' => $referenceType,
                 ]);
 
                 return $path;

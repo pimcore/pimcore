@@ -72,7 +72,7 @@ class Scheduledblock extends Block implements BlockInterface
         if (empty($this->indices)) {
             $this->indices[] = [
                 'key' => 0,
-                'date' => time()
+                'date' => time(),
             ];
         }
 
@@ -216,7 +216,7 @@ class Scheduledblock extends Block implements BlockInterface
 
         $outerAttributes = [
             'key' => $this->indices[$this->current]['key'],
-            'date' => $this->indices[$this->current]['date']
+            'date' => $this->indices[$this->current]['date'],
         ];
 
         $attr = HtmlUtils::assembleAttributeString($attributes);

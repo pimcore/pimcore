@@ -189,7 +189,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
                             $regexes = [
                                 '/image-thumb__([0-9]+)__/',
                                 '/([0-9]+)\/thumb__/',
-                                '/thumb_([0-9]+)__/'
+                                '/thumb_([0-9]+)__/',
                             ];
 
                             foreach ($regexes as $regex) {

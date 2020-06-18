@@ -54,7 +54,7 @@ class TagController extends AbstractElementController
             $item = [
                 'id' => $tag->getId(),
                 'parentId' => $tag->getParentId(),
-                'name' => $tag->getName()
+                'name' => $tag->getName(),
             ];
 
             $result[] = $item;
@@ -103,7 +103,7 @@ class TagController extends AbstractElementController
         if (!$element) {
             return $this->createErrorResponse([
                 'msg' => 'Element does not exist',
-                'code' => static::ELEMENT_DOES_NOT_EXIST
+                'code' => static::ELEMENT_DOES_NOT_EXIST,
             ], Response::HTTP_NOT_FOUND);
         }
 
@@ -116,7 +116,7 @@ class TagController extends AbstractElementController
             $item = [
                 'id' => $tag->getId(),
                 'parentId' => $tag->getParentId(),
-                'name' => $tag->getName()
+                'name' => $tag->getName(),
             ];
 
             $result[] = $item;
@@ -158,7 +158,7 @@ class TagController extends AbstractElementController
         if (!$tag) {
             return $this->createErrorResponse([
                 'msg' => 'Tag does not exist',
-                'code' => static::TAG_DOES_NOT_EXIST
+                'code' => static::TAG_DOES_NOT_EXIST,
             ], Response::HTTP_NOT_FOUND);
         }
 
@@ -170,7 +170,7 @@ class TagController extends AbstractElementController
         foreach ($elementsForTag as $element) {
             $item = [
                 'id' => $element->getId(),
-                'type' => $element->getType()
+                'type' => $element->getType(),
             ];
 
             if (method_exists($element, 'getPublished')) {

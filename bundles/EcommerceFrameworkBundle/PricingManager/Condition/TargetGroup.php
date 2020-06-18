@@ -79,7 +79,7 @@ class TargetGroup implements ConditionInterface
     {
         // basic
         $json = [
-            'type' => 'TargetGroup', 'targetGroupId' => $this->targetGroupId, 'threshold' => (int) $this->threshold
+            'type' => 'TargetGroup', 'targetGroupId' => $this->targetGroupId, 'threshold' => (int) $this->threshold,
         ];
 
         return json_encode($json);

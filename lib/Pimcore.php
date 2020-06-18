@@ -247,8 +247,8 @@ class Pimcore
         $longRunningHelper = self::getContainer()->get(\Pimcore\Helper\LongRunningHelper::class);
         $longRunningHelper->cleanUp([
             'pimcoreRuntimeCache' => [
-                'keepItems' => $keepItems
-            ]
+                'keepItems' => $keepItems,
+            ],
         ]);
     }
 

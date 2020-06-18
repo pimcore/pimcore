@@ -198,7 +198,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
 
         $data = [
             'value' => null,
-            'tags' => []
+            'tags' => [],
         ];
 
         try {

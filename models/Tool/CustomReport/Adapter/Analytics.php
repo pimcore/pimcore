@@ -88,7 +88,7 @@ class Analytics extends AbstractAdapter
                     $compMapping = [
                         'lt' => '<',
                         'gt' => '>',
-                        'eq' => '=='
+                        'eq' => '==',
                     ];
                     if ($compMapping[$filter['comparison']]) {
                         $gaFilters[] = "{$filter['field']}{$compMapping[$filter['comparison']]}{$value}";
@@ -278,7 +278,7 @@ class Analytics extends AbstractAdapter
                         && in_array($matches[3], ['d', 'm', 'y'])
                     ) {
                         $applyModifiers[] = ['sign' => $matches[1], 'number' => $matches[2],
-                            'type' => $matches[3]];
+                            'type' => $matches[3], ];
                     }
                 }
             }

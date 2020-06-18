@@ -98,7 +98,7 @@ class Service
                         $foundRelations[Element\Service::getType($child) . '_' . $child->getId()] = [
                             'elementType' => Element\Service::getType($child),
                             'element' => $child->getId(),
-                            'recursive' => $recursive
+                            'recursive' => $recursive,
                         ];
                     }
                 }

@@ -226,32 +226,32 @@ class Configuration implements ConfigurationInterface
                     ->example([
                         '_defaults' => [
                             'cart' => [
-                                'factory_id' => 'CartFactory'
-                            ]
+                                'factory_id' => 'CartFactory',
+                            ],
                         ],
                         'default' => [
                             'cart' => [
                                 'factory_options' => [
-                                    'cart_class_name' => 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart'
-                                ]
+                                    'cart_class_name' => 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart',
+                                ],
                             ],
                             'price_calculator' => [
                                 'modificators' => [
                                     'shipping' => [
                                         'class' => 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator\Shipping',
                                         'options' => [
-                                            'charge' => '5.90'
-                                        ]
-                                    ]
-                                ]
-                            ]
+                                            'charge' => '5.90',
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
                         'noShipping' => [
                             'price_calculator' => [
                                 'factory_id' => 'PriceCalculatorFactory',
-                                'modificators' => '~'
-                            ]
-                        ]
+                                'modificators' => '~',
+                            ],
+                        ],
                     ])
                     ->useAttributeAsKey('name')
                     ->validate()
@@ -287,7 +287,7 @@ class Configuration implements ConfigurationInterface
                                     ->append($this->buildOptionsNode('factory_options', [
                                         'cart_class_name' => Cart::class,
                                         'guest_cart_class_name' => SessionCart::class,
-                                        'cart_readonly_mode' => AbstractCart::CART_READ_ONLY_MODE_STRICT
+                                        'cart_readonly_mode' => AbstractCart::CART_READ_ONLY_MODE_STRICT,
                                     ]))
                                 ->end()
                             ->end()
@@ -301,7 +301,7 @@ class Configuration implements ConfigurationInterface
                                     ->append($this->buildOptionsNode(
                                         'factory_options',
                                         [
-                                            'class' => CartPriceCalculator::class
+                                            'class' => CartPriceCalculator::class,
                                         ],
                                         "'class' defines a class name of the price calculator, which the factory instantiates. If you wish to replace or extend price calculation routine shipped with e-commerce framework provide your custom class name here."
                                     ))
@@ -860,8 +860,8 @@ class Configuration implements ConfigurationInterface
                                 ->info('Placeholder values in this tenant attributes definition (locale: "%%locale%%") will be replaced by the given placeholder value (eg. "de_AT")')
                                 ->example([
                                     'placeholders' => [
-                                        '%%locale%%' => 'de_AT'
-                                    ]
+                                        '%%locale%%' => 'de_AT',
+                                    ],
                                 ])
                                 ->defaultValue([])
                                 ->beforeNormalization()
@@ -909,7 +909,7 @@ class Configuration implements ConfigurationInterface
                                                 'getter' => 'getter_id',
                                                 'interpreter' => 'interpreter_id',
                                                 'config' => 'options',
-                                                'hideInFieldlistDatatype' => 'hide_in_fieldlist_datatype'
+                                                'hideInFieldlistDatatype' => 'hide_in_fieldlist_datatype',
                                             ]);
 
                                             // this option was never properly supported
@@ -990,7 +990,7 @@ class Configuration implements ConfigurationInterface
 
                                             return $this->remapProperties($v, [
                                                 'class' => 'filter_type_id',
-                                                'script' => 'template'
+                                                'script' => 'template',
                                             ]);
                                         })
                                     ->end()

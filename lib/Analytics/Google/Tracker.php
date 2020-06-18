@@ -160,7 +160,7 @@ class Tracker extends AbstractTracker
             $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/gtagTrackingCode.html.twig';
 
             $data['gtagConfig'] = $this->getTrackerConfigurationFromJson($siteConfig->get('universal_configuration') ?? null, [
-                'anonymize_ip' => true
+                'anonymize_ip' => true,
             ]);
         } elseif ($siteConfig->get('asynchronouscode') || $siteConfig->get('retargetingcode')) {
             $template = '@PimcoreCore/Analytics/Tracking/Google/Analytics/asynchronousTrackingCode.html.twig';
@@ -185,7 +185,7 @@ class Tracker extends AbstractTracker
                 $config = $jsonConfig;
             } else {
                 $this->logger->warning('Failed to parse analytics tracker custom configuration: {error}', [
-                    'error' => json_last_error_msg() ?? 'not an array'
+                    'error' => json_last_error_msg() ?? 'not an array',
                 ]);
             }
         }

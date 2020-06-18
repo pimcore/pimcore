@@ -46,7 +46,7 @@ class DefaultFactFinder extends AbstractConfig implements FactFinderConfigInterf
     protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'client_config' => []
+            'client_config' => [],
         ]);
 
         $resolver->setAllowedTypes('client_config', 'array');

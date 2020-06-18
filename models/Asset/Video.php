@@ -158,7 +158,7 @@ class Video extends Model\Asset
 
                         $event = new GenericEvent($this, [
                             'filesystemPath' => $fullPath,
-                            'frontendPath' => $path
+                            'frontendPath' => $path,
                         ]);
                         \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_VIDEO_THUMBNAIL, $event);
                         $path = $event->getArgument('frontendPath');
@@ -274,7 +274,7 @@ class Video extends Model\Asset
         } else {
             $dimensions = [
                 'width' => $width,
-                'height' => $height
+                'height' => $height,
             ];
         }
 

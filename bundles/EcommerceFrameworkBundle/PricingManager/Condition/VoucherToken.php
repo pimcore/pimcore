@@ -78,14 +78,14 @@ class VoucherToken implements ConditionInterface
         $json = [
             'type' => 'VoucherToken',
             'whiteList' => [],
-            'error_messages' => $this->getErrorMessagesRaw()
+            'error_messages' => $this->getErrorMessagesRaw(),
         ];
 
         // add categories
         foreach ($this->getWhiteList() as $series) {
             $json['whiteList'][] = [
                 $series->id,
-                $series->path
+                $series->path,
             ];
         }
 

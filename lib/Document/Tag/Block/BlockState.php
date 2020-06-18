@@ -107,7 +107,7 @@ final class BlockState implements \JsonSerializable
     {
         return [
             'blocks' => $this->blocks,
-            'indexes' => $this->indexes
+            'indexes' => $this->indexes,
         ];
     }
 }

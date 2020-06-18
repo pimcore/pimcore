@@ -70,7 +70,7 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
             'worker_id',
             'in_preparation_queue',
             'preparation_worker_timestamp',
-            'preparation_worker_id'];
+            'preparation_worker_id', ];
     }
 
     protected function dbexec($sql)

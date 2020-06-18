@@ -168,7 +168,7 @@ class DataObjectHelperController extends AdminController
                 $fieldConfig = [
                     'key' => $column['key'],
                     'label' => $column['label'],
-                    'type' => $column['type']
+                    'type' => $column['type'],
                 ];
 
                 $column['fieldConfig'] = $fieldConfig;
@@ -231,7 +231,7 @@ class DataObjectHelperController extends AdminController
             foreach ($list as $config) {
                 $result[] = [
                     'id' => $config->getId(),
-                    'name' => $config->getName()
+                    'name' => $config->getName(),
                 ];
             }
         }
@@ -258,7 +258,7 @@ class DataObjectHelperController extends AdminController
 
         $result[] = [
             'id' => -1,
-            'name' => '--default--'
+            'name' => '--default--',
         ];
 
         if ($list) {
@@ -266,7 +266,7 @@ class DataObjectHelperController extends AdminController
             foreach ($list as $config) {
                 $result[] = [
                     'id' => $config->getId(),
-                    'name' => $config->getName()
+                    'name' => $config->getName(),
                 ];
             }
         }
@@ -501,7 +501,7 @@ class DataObjectHelperController extends AdminController
                             'type' => 'system',
                             'label' => $key,
                             'locked' => $sc['locked'],
-                            'position' => $sc['position']];
+                            'position' => $sc['position'], ];
                         if (isset($sc['width'])) {
                             $colConfig['width'] = $sc['width'];
                         }
@@ -654,7 +654,7 @@ class DataObjectHelperController extends AdminController
             'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,
             'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false,
             'availableConfigs' => $availableConfigs,
-            'sharedConfigs' => $sharedConfigs
+            'sharedConfigs' => $sharedConfigs,
 
         ];
     }
@@ -689,7 +689,7 @@ class DataObjectHelperController extends AdminController
                         'key' => $sc,
                         'type' => 'system',
                         'label' => $sc,
-                        'position' => $count];
+                        'position' => $count, ];
                     $count++;
                 }
             }
@@ -762,7 +762,7 @@ class DataObjectHelperController extends AdminController
 
                     $context = [
                         'containerKey' => $brickType,
-                        'fieldname' => $field->getName()
+                        'fieldname' => $field->getName(),
                     ];
 
                     $this->appendBrickFields($bf, $localizedFieldDefinitions, $availableFields, $gridType, $count, $brickType, $class, $objectId, $context);
@@ -968,7 +968,7 @@ class DataObjectHelperController extends AdminController
     {
         $result = [
             'sharedUserIds' => [],
-            'sharedRoleIds' => []
+            'sharedRoleIds' => [],
         ];
 
         $db = Db::get();
@@ -1045,7 +1045,7 @@ class DataObjectHelperController extends AdminController
 
             return $this->adminJson(['success' => true,
                     'importConfigId' => $importConfig->getId(),
-                    'availableConfigs' => $this->getImportConfigs($importService, $this->getAdminUser(), $classId)
+                    'availableConfigs' => $this->getImportConfigs($importService, $this->getAdminUser(), $classId),
                 ]
             );
         } catch (\Exception $e) {
@@ -1282,7 +1282,7 @@ class DataObjectHelperController extends AdminController
                 'label' => $title,
                 'config' => $config,
                 'layout' => $field,
-                'position' => $position
+                'position' => $position,
             ];
 
             if ($field instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -1317,7 +1317,7 @@ class DataObjectHelperController extends AdminController
         }
 
         $response = $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
 
         return $response;
@@ -1490,7 +1490,7 @@ class DataObjectHelperController extends AdminController
         File::put($importFileOriginal, $data);
 
         $response = $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
@@ -1608,9 +1608,9 @@ class DataObjectHelperController extends AdminController
                 'rows' => $rows,
                 'cols' => $cols ?? null,
                 'classId' => $classId,
-                'isShared' => $importConfig && $importConfig->getOwnerId() != $this->getAdminUser()->getId()
+                'isShared' => $importConfig && $importConfig->getOwnerId() != $this->getAdminUser()->getId(),
             ],
-            'availableConfigs' => $availableConfigs
+            'availableConfigs' => $availableConfigs,
         ]);
     }
 
@@ -2069,7 +2069,7 @@ class DataObjectHelperController extends AdminController
             'modificationDate' => 'getModificationDate',
             'filename' => 'getKey',
             'key' => 'getKey',
-            'classname' => 'getClassname'
+            'classname' => 'getClassname',
         ];
         if (in_array($field, array_keys($systemFieldMap))) {
             $getter = $systemFieldMap[$field];
@@ -2124,7 +2124,7 @@ class DataObjectHelperController extends AdminController
                                     'fieldname' => $fieldname,
                                     'groupId' => $groupId,
                                     'keyId' => $keyId,
-                                    'language' => $csLanguage
+                                    'language' => $csLanguage,
                                 ]]
                             );
                         }
@@ -2165,8 +2165,8 @@ class DataObjectHelperController extends AdminController
                                     'context' => [
                                         'containerType' => 'objectbrick',
                                         'containerKey' => $brickType,
-                                        'fieldname' => $brickKey
-                                    ]
+                                        'fieldname' => $brickKey,
+                                    ],
 
                                 ];
 
@@ -2553,7 +2553,7 @@ class DataObjectHelperController extends AdminController
             }
 
             $jsonResponse = new JsonResponse(json_encode($configData), 200, [
-                'Content-Disposition' => 'attachment; filename="'.$configName.'.json"'
+                'Content-Disposition' => 'attachment; filename="'.$configName.'.json"',
             ], true);
 
             return $jsonResponse;
@@ -2619,9 +2619,9 @@ class DataObjectHelperController extends AdminController
                 'rows' => $configData['rows'],
                 'cols' => $configData['cols'] ?? null,
                 'classId' => $classId,
-                'isShared' => $configData['isShared']
+                'isShared' => $configData['isShared'],
             ],
-            'availableConfigs' => $availableConfigs
+            'availableConfigs' => $availableConfigs,
         ]);
     }
 }

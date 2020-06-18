@@ -185,8 +185,8 @@ class PageController extends DocumentControllerBase
                 'success' => true,
                 'data' => [
                     'versionDate' => $page->getModificationDate(),
-                    'versionCount' => $page->getVersionCount()
-                ]
+                    'versionCount' => $page->getVersionCount(),
+                ],
             ]);
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);
@@ -217,7 +217,7 @@ class PageController extends DocumentControllerBase
 
         return $this->adminJson([
             'success' => true,
-            'data' => $data
+            'data' => $data,
         ]);
     }
 
@@ -301,7 +301,7 @@ class PageController extends DocumentControllerBase
         $list = new Document\Listing();
         $list->setCondition('(CONCAT(path, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
             AND id != ?', [
-            $path, $path, $docId
+            $path, $path, $docId,
         ]);
 
         if ($list->getTotalCount() > 0) {
@@ -350,7 +350,7 @@ class PageController extends DocumentControllerBase
         $this->saveToSession($doc, true);
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 

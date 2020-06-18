@@ -91,7 +91,7 @@ class DateRange implements DateRangeInterface
         return json_encode([
             'type' => 'DateRange',
             'starting' => $this->getStarting()->getTimestamp(),
-            'ending' => $this->getEnding()->getTimestamp()
+            'ending' => $this->getEnding()->getTimestamp(),
         ]);
     }
 

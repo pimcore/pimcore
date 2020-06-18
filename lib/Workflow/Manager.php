@@ -285,7 +285,7 @@ class Manager
         $this->notesSubscriber->setAdditionalData($additionalData);
 
         $event = new GlobalActionEvent($workflow, $subject, $globalActionObj, [
-            'additionalData' => $additionalData
+            'additionalData' => $additionalData,
         ]);
 
         $this->eventDispatcher->dispatch(WorkflowEvents::PRE_GLOBAL_ACTION, $event);

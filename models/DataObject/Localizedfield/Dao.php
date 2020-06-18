@@ -377,17 +377,17 @@ class Dao extends Model\Dao\AbstractDao
                     if ($context['containerType'] === 'objectbrick') {
                         $inheritanceRelationContext = [
                             'ownertype' => 'localizedfield',
-                            'ownername' => '/objectbrick~' . $context['fieldname'] . '//localizedfield~localizedfield'
+                            'ownername' => '/objectbrick~' . $context['fieldname'] . '//localizedfield~localizedfield',
                         ];
                     } else {
                         $inheritanceRelationContext = [
                             'ownertype' => 'localizedfield',
-                            'ownername' => 'localizedfield'
+                            'ownername' => 'localizedfield',
                         ];
                     }
                     $this->inheritanceHelper->doUpdate($object->getId(), true, [
                         'language' => $language,
-                        'inheritanceRelationContext' => $inheritanceRelationContext
+                        'inheritanceRelationContext' => $inheritanceRelationContext,
                     ]);
                 }
                 $this->inheritanceHelper->resetFieldsToCheck();
@@ -450,7 +450,7 @@ class Dao extends Model\Dao\AbstractDao
                     if ($fd instanceof CustomResourcePersistingInterface) {
                         $params = [
                             'context' => $this->model->getContext() ? $this->model->getContext() : [],
-                            'isUpdate' => $isUpdate
+                            'isUpdate' => $isUpdate,
                         ];
                         if (isset($params['context']['containerType']) && ($params['context']['containerType'] === 'fieldcollection' || $params['context']['containerType'] === 'objectbrick')) {
                             $params['context']['subContainerType'] = 'localizedfield';

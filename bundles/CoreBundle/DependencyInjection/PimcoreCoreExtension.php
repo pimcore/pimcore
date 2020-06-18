@@ -195,20 +195,20 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $services = [
             'pimcore.implementation_loader.document.tag' => [
                 'config' => $config['documents']['tags'],
-                'prefixLoader' => DocumentTagPrefixLoader::class
+                'prefixLoader' => DocumentTagPrefixLoader::class,
             ],
             'pimcore.implementation_loader.object.data' => [
                 'config' => $config['objects']['class_definitions']['data'],
-                'prefixLoader' => PrefixLoader::class
+                'prefixLoader' => PrefixLoader::class,
             ],
             'pimcore.implementation_loader.object.layout' => [
                 'config' => $config['objects']['class_definitions']['layout'],
-                'prefixLoader' => PrefixLoader::class
+                'prefixLoader' => PrefixLoader::class,
             ],
             'pimcore.implementation_loader.asset.metadata.data' => [
                 'config' => $config['assets']['metadata']['class_definitions']['data'],
-                'prefixLoader' => PrefixLoader::class
-            ]
+                'prefixLoader' => PrefixLoader::class,
+            ],
         ];
 
         // read config and add map/prefix loaders if configured - makes sure only needed objects are built
@@ -437,7 +437,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $configurations = [];
         foreach ($config['sets'] as $identifier => $set) {
             $configurations[] = array_merge([
-                'identifier' => $identifier
+                'identifier' => $identifier,
             ], $set);
         }
 
@@ -457,7 +457,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     {
         $services = [
             AnalyticsGoogleTracker::class,
-            SiteConfigProvider::class
+            SiteConfigProvider::class,
         ];
 
         $mapping = [];

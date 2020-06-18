@@ -462,7 +462,7 @@ class Link implements OwnerAwareFieldInterface
             } elseif ($this->getObject() instanceof Concrete) {
                 if ($linkGenerator = $this->getObject()->getClass()->getLinkGenerator()) {
                     $path = $linkGenerator->generate($this->getObject(), [
-                        'context' => $this
+                        'context' => $this,
                     ]);
                 }
             }

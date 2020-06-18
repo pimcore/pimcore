@@ -32,7 +32,7 @@ class JsonResponse extends BaseJsonResponse
         $serializer = Serialize::getAdminSerializer();
 
         $json = $serializer->serialize($data, 'json', [
-            'json_encode_options' => $this->encodingOptions
+            'json_encode_options' => $this->encodingOptions,
         ]);
 
         return $this->setJson($json);

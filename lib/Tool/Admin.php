@@ -101,7 +101,7 @@ class Admin
 
         $params = [
             'scripts' => basename($scriptPath),
-            '_dc' => \Pimcore\Version::getRevision()
+            '_dc' => \Pimcore\Version::getRevision(),
         ];
 
         if ($asUrl) {
@@ -180,7 +180,7 @@ class Admin
         }
 
         File::putPhpFile(self::getMaintenanceModeFile(), to_php_data_file_format([
-            'sessionId' => $sessionId
+            'sessionId' => $sessionId,
         ]));
 
         @chmod(self::getMaintenanceModeFile(), 0666); // so it can be removed also via FTP, ...
@@ -238,7 +238,7 @@ class Admin
     public static function scheduleMaintenanceModeOnLogin()
     {
         File::putPhpFile(self::getMaintenanceModeScheduleLoginFile(), to_php_data_file_format([
-            'schedule' => true
+            'schedule' => true,
         ]));
 
         @chmod(self::getMaintenanceModeScheduleLoginFile(), 0666); // so it can be removed also via FTP, ...

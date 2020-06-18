@@ -110,7 +110,7 @@ class User extends Model\DataObject\ClassDefinition\Data\Select
                     }
                     $options[] = [
                         'value' => $user->getId(),
-                        'key' => $value
+                        'key' => $value,
                     ];
                 }
             }

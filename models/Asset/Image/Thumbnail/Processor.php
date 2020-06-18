@@ -50,7 +50,7 @@ class Processor
         'sharpen' => ['radius', 'sigma', 'amount', 'threshold'],
         'gaussianBlur' => ['radius', 'sigma'],
         'brightnessSaturation' => ['brightness', 'saturation', 'hue'],
-        'mirror' => ['mode']
+        'mirror' => ['mode'],
     ];
 
     /**
@@ -69,7 +69,7 @@ class Processor
     {
         $typeMappings = [
             'jpg' => 'jpeg',
-            'tif' => 'tiff'
+            'tif' => 'tiff',
         ];
 
         if (isset($typeMappings[$format])) {
@@ -234,8 +234,8 @@ class Processor
                             array_unshift($transformations, [
                                 'method' => 'rotate',
                                 'arguments' => [
-                                    'angle' => $angleMappings[$orientation]
-                                ]
+                                    'angle' => $angleMappings[$orientation],
+                                ],
                             ]);
                         }
 
@@ -244,15 +244,15 @@ class Processor
                             2 => 'vertical',
                             4 => 'horizontal',
                             5 => 'vertical',
-                            7 => 'horizontal'
+                            7 => 'horizontal',
                         ];
 
                         if (array_key_exists($orientation, $mirrorMappings)) {
                             array_unshift($transformations, [
                                 'method' => 'mirror',
                                 'arguments' => [
-                                    'mode' => $mirrorMappings[$orientation]
-                                ]
+                                    'mode' => $mirrorMappings[$orientation],
+                                ],
                             ]);
                         }
                     }
@@ -330,7 +330,7 @@ class Processor
                                     if ($transformation['method'] == 'cover' && $key == 'positioning' && $asset->getCustomSetting('focalPointX')) {
                                         $value = [
                                             'x' => $asset->getCustomSetting('focalPointX'),
-                                            'y' => $asset->getCustomSetting('focalPointY')
+                                            'y' => $asset->getCustomSetting('focalPointY'),
                                         ];
                                     }
 

@@ -96,7 +96,7 @@ class HeadScript extends CacheBusterAware
      * @var array
      */
     protected $_optionalAttributes = [
-        'charset', 'defer', 'language', 'src', 'type'
+        'charset', 'defer', 'language', 'src', 'type',
     ];
 
     /**
@@ -557,7 +557,7 @@ class HeadScript extends CacheBusterAware
             }
 
             \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::VIEW_HELPER_HEAD_SCRIPT, new GenericEvent($this, [
-                'item' => $item
+                'item' => $item,
             ]));
 
             if (isset($item->attributes) && is_array($item->attributes)) {

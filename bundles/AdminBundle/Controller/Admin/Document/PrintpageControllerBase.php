@@ -124,9 +124,9 @@ class PrintpageControllerBase extends DocumentControllerBase
                 'success' => true,
                 'data' => [
                     'versionDate' => $page->getModificationDate(),
-                    'versionCount' => $page->getVersionCount()
+                    'versionCount' => $page->getVersionCount(),
                 ],
-                'treeData' => $treeData
+                'treeData' => $treeData,
             ]);
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);
@@ -181,7 +181,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             'date' => $date,
             'message' => $document->getLastGenerateMessage(),
             'downloadAvailable' => file_exists($document->getPdfFileName()),
-            'statusUpdate' => $statusUpdate
+            'statusUpdate' => $statusUpdate,
         ]);
     }
 
@@ -290,7 +290,7 @@ class PrintpageControllerBase extends DocumentControllerBase
                 'label' => $option['name'],
                 'value' => $value,
                 'type' => $option['type'],
-                'values' => isset($option['values']) ? $option['values'] : null
+                'values' => isset($option['values']) ? $option['values'] : null,
             ];
         }
 

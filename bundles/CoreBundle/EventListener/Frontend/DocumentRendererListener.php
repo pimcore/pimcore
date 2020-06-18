@@ -40,7 +40,7 @@ class DocumentRendererListener implements EventSubscriberInterface
     {
         return [
             DocumentEvents::RENDERER_PRE_RENDER => 'onPreRender',
-            DocumentEvents::RENDERER_POST_RENDER => 'onPostRender'
+            DocumentEvents::RENDERER_POST_RENDER => 'onPostRender',
         ];
     }
 

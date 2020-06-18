@@ -37,15 +37,15 @@ class WebDebugToolbarListenerPass implements CompilerPassInterface
         $definition->setClass(WebDebugToolbarListener::class);
 
         $definition->addMethodCall('setRequestHelper', [
-            new Reference('Pimcore\Http\RequestHelper')
+            new Reference('Pimcore\Http\RequestHelper'),
         ]);
 
         $definition->addMethodCall('setRequestMatcherFactory', [
-            new Reference('Pimcore\Http\RequestMatcherFactory')
+            new Reference('Pimcore\Http\RequestMatcherFactory'),
         ]);
 
         $definition->addMethodCall('setExcludeRoutes', [
-            $container->getParameter('pimcore.web_profiler.toolbar.excluded_routes')
+            $container->getParameter('pimcore.web_profiler.toolbar.excluded_routes'),
         ]);
     }
 }

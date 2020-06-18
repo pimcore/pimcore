@@ -483,8 +483,8 @@ class DataObjectController extends AbstractElementController
             'objectTypes' => [
                 DataObject\AbstractObject::OBJECT_TYPE_FOLDER,
                 DataObject\AbstractObject::OBJECT_TYPE_OBJECT,
-                DataObject\AbstractObject::OBJECT_TYPE_VARIANT
-            ]
+                DataObject\AbstractObject::OBJECT_TYPE_VARIANT,
+            ],
         ];
 
         if (!empty($condition)) {
@@ -506,7 +506,7 @@ class DataObjectController extends AbstractElementController
         $count = $listClassName::getTotalCount($params);
 
         return $this->createSuccessResponse([
-            'totalCount' => $count
+            'totalCount' => $count,
         ]);
     }
 
@@ -550,7 +550,7 @@ class DataObjectController extends AbstractElementController
 
         throw $this->createNotFoundResponseException([
             'msg' => sprintf('Object %d does not exist', (int)$id),
-            'code' => static::ELEMENT_DOES_NOT_EXIST
+            'code' => static::ELEMENT_DOES_NOT_EXIST,
         ]);
     }
 
@@ -584,7 +584,7 @@ class DataObjectController extends AbstractElementController
 
         if (null !== $id) {
             return $this->createSuccessResponse([
-                'id' => $id
+                'id' => $id,
             ], false);
         } else {
             return $this->createErrorResponse();

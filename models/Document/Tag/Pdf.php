@@ -113,7 +113,7 @@ class Pdf extends Model\Document\Tag
             $key = 'asset_' . $asset->getId();
             $dependencies[$key] = [
                 'id' => $asset->getId(),
-                'type' => 'asset'
+                'type' => 'asset',
             ];
         }
 

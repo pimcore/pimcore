@@ -50,8 +50,8 @@ class ListCommand extends AbstractBundleCommand
                 $input->hasOption('json') ? 'Installable' : 'I?',
                 $input->hasOption('json') ? 'Uninstallable' : 'UI?',
                 $input->hasOption('json') ? 'Updatable' : 'UP?',
-                'Priority'
-            ]
+                'Priority',
+            ],
         ];
 
         foreach ($this->bundleManager->getAvailableBundles() as $bundleClass) {

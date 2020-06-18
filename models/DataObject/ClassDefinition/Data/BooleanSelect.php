@@ -42,16 +42,16 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     const DEFAULT_OPTIONS = [
         [
             'key' => 'empty',
-            'value' => self::EMPTY_VALUE_EDITMODE
+            'value' => self::EMPTY_VALUE_EDITMODE,
         ],
         [
             'key' => 'yes',
-            'value' => self::YES_VALUE
+            'value' => self::YES_VALUE,
         ],
         [
             'key' => 'no',
-            'value' => self::NO_VALUE
-        ]
+            'value' => self::NO_VALUE,
+        ],
     ];
     /**
      * Static type of this element
@@ -313,8 +313,8 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
         if (!is_array($this->options)) {
             $this->options = [
                 ['key' => $label,
-                'value' => $value
-                ]
+                'value' => $value,
+                ],
 
             ];
         } else {

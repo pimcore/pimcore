@@ -52,7 +52,7 @@ class CodeSnippet implements ActionHandlerInterface, ResponseTransformingActionH
             'scope' => VisitorInfo::ACTION_SCOPE_RESPONSE,
             'code' => $code,
             'selector' => $selector,
-            'position' => $position
+            'position' => $position,
         ]);
     }
 

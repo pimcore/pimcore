@@ -116,7 +116,7 @@ class GridHelperService
                             $filter['value'],
                             $operator,
                             [
-                                'name' => $mappedKey]
+                                'name' => $mappedKey, ]
                         );
 
                         $featureConditions[$mappedKey] = $featureCondition;
@@ -148,7 +148,7 @@ class GridHelperService
                         $filter['value'],
                         $operator,
                         [
-                            'name' => $slugKey]
+                            'name' => $slugKey, ]
                     );
 
                     $slugConditions[$mappedKey] = $slugCondition;
@@ -160,7 +160,7 @@ class GridHelperService
             'featureJoins' => $featureJoins,
             'slugJoins' => $slugJoins,
             'featureConditions' => $featureConditions,
-            'slugConditions' => $slugConditions
+            'slugConditions' => $slugConditions,
         ];
 
         return $result;
@@ -416,7 +416,7 @@ class GridHelperService
                         . ' and ' . $mappedKey . '.language = ' . $db->quote($featureJoin['language'])
                         . ')',
                         [
-                            $mappedKey => 'value'
+                            $mappedKey => 'value',
                         ]
                     );
                 }
@@ -460,7 +460,7 @@ class GridHelperService
                         . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
                         . ')',
                         [
-                            $mappedKey => 'slug'
+                            $mappedKey => 'slug',
                         ]
                     );
                 }
@@ -491,7 +491,7 @@ class GridHelperService
             'id' => 'oo_id',
             'published' => 'o_published',
             'modificationDate' => 'o_modificationDate',
-            'creationDate' => 'o_creationDate'
+            'creationDate' => 'o_creationDate',
         ];
 
         $start = 0;

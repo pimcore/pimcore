@@ -134,7 +134,7 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
                 sprintf('Document <comment>%s</comment> (ID: %d)', $document->getRealFullPath(), $document->getId()),
                 ['colspan' => 2]
             )],
-            ['Legacy', 'Nested']
+            ['Legacy', 'Nested'],
         ]);
 
         $mapping = [];
@@ -149,7 +149,7 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
 
             $table->addRow([
                 $element->getName(),
-                $mapping[$element->getName()]
+                $mapping[$element->getName()],
             ]);
         }
 
@@ -164,7 +164,7 @@ class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
     private function addDocumentElements(ElementTree $tree, Document\PageSnippet $document, bool $inherited = false): array
     {
         $result = $this->db->fetchAll('SELECT name, type, data FROM documents_elements WHERE documentId = :documentId', [
-            'documentId' => $document->getId()
+            'documentId' => $document->getId(),
         ]);
 
         foreach ($result as $row) {

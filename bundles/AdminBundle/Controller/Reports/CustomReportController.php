@@ -234,7 +234,7 @@ class CustomReportController extends ReportsControllerBase
         return $this->adminJson([
             'success' => $success,
             'columns' => $result,
-            'errorMessage' => $errorMessage
+            'errorMessage' => $errorMessage,
         ]);
     }
 
@@ -263,13 +263,13 @@ class CustomReportController extends ReportsControllerBase
                 'group' => $report->getGroup(),
                 'groupIconClass' => $report->getGroupIconClass(),
                 'menuShortcut' => $report->getMenuShortcut(),
-                'reportClass' => $report->getReportClass()
+                'reportClass' => $report->getReportClass(),
             ];
         }
 
         return $this->adminJson([
             'success' => true,
-            'reports' => $reports
+            'reports' => $reports,
         ]);
     }
 
@@ -308,7 +308,7 @@ class CustomReportController extends ReportsControllerBase
         return $this->adminJson([
             'success' => true,
             'data' => $result['data'],
-            'total' => $result['total']
+            'total' => $result['total'],
         ]);
     }
 
@@ -365,7 +365,7 @@ class CustomReportController extends ReportsControllerBase
         return $this->adminJson([
             'success' => true,
             'data' => $result['data'],
-            'total' => $result['total']
+            'total' => $result['total'],
         ]);
     }
 

@@ -386,7 +386,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
                                                 'lg' => $key,
                                                 'key' => $textKey,
                                                 'text' => $t->getTranslation($key),
-                                                'csv' => $value
+                                                'csv' => $value,
                                             ];
                                     }
                                 }
