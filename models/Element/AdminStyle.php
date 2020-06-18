@@ -111,8 +111,8 @@ class AdminStyle
                 }
             }
 
-            if ( $element->getProperty('navigation_exclude')) {
-                $this->appendElementCssClass("pimcore_navigation_exclude");
+            if ($element->getProperty('navigation_exclude')) {
+                $this->appendElementCssClass('pimcore_navigation_exclude');
             }
         }
     }

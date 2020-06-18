@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document\Tag\Areablock;
 
-use Pimcore\Model\Document;
 use Pimcore\Model\Document\Tag\Block\AbstractBlockItem;
 
 class Item extends AbstractBlockItem

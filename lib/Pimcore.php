@@ -283,14 +283,16 @@ class Pimcore
     /**
      * @internal
      */
-    public static function disableShutdown() {
+    public static function disableShutdown()
+    {
         self::$shutdownEnabled = false;
     }
 
     /**
      * @internal
      */
-    public static function enableShutdown() {
+    public static function enableShutdown()
+    {
         self::$shutdownEnabled = true;
     }
 
