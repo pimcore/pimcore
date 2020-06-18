@@ -8,7 +8,7 @@ sudo chmod 0755 /home/travis
 .travis/setup-db-server.sh
 
 # install apache
-sudo apt-get update
+sudo apt-get update --allow-unauthenticated
 sudo apt-get install apache2 libapache2-mod-fastcgi
 sudo a2enmod rewrite actions fastcgi alias env
 sudo rm -f /etc/apache2/sites-available/*
