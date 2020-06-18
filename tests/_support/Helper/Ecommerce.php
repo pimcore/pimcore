@@ -24,7 +24,7 @@ class Ecommerce extends Module
     public function __construct(ModuleContainer $moduleContainer, $config = null)
     {
         $this->config = array_merge($this->config, [
-            'run_installer' => true
+            'run_installer' => true,
         ]);
 
         parent::__construct($moduleContainer, $config);

@@ -54,7 +54,7 @@ class IndexSettingsListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            AdminEvents::INDEX_SETTINGS => 'addIndexSettings'
+            AdminEvents::INDEX_SETTINGS => 'addIndexSettings',
         ];
     }
 
@@ -90,7 +90,7 @@ class IndexSettingsListener implements EventSubscriberInterface
         foreach ($this->reportBroker->getReports() as $report) {
             $reports[$report->getId()] = [
                 'id' => $report->getId(),
-                'title' => $report->getTitle()
+                'title' => $report->getTitle(),
             ];
         }
 

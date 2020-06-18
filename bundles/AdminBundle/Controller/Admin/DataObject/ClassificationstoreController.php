@@ -306,7 +306,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'storeId' => $config->getStoreId(),
                 'id' => $config->getId(),
                 'name' => $name,
-                'description' => $config->getDescription()
+                'description' => $config->getDescription(),
             ];
             if ($config->getCreationDate()) {
                 $item['creationDate'] = $config->getCreationDate();
@@ -457,7 +457,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'storeId' => $config->getStoreId(),
                 'id' => $config->getId(),
                 'name' => $name,
-                'description' => $config->getDescription()
+                'description' => $config->getDescription(),
             ];
             if ($config->getCreationDate()) {
                 $item['creationDate'] = $config->getCreationDate();
@@ -593,7 +593,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'groupName' => $config->getName(),
                 'groupDescription' => $config->getDescription(),
                 'id' => $config->getColId() . '-' . $config->getGroupId(),
-                'sorter' => (int) $config->getSorter()
+                'sorter' => (int) $config->getSorter(),
             ];
             $data[] = $item;
         }
@@ -673,7 +673,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $mapping = [
             'groupName' => DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS .'.name',
             'keyName' => DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS .'.name',
-            'keyDescription' => DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS. '.description'];
+            'keyDescription' => DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS. '.description', ];
 
         $start = 0;
         $limit = 15;
@@ -756,7 +756,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'keyName' => $config->getName(),
                 'keyDescription' => $config->getDescription(),
                 'id' => $config->getGroupId() . '-' . $config->getKeyId(),
-                'sorter' => $config->getSorter()
+                'sorter' => $config->getSorter(),
             ];
 
             $groupConfig = Classificationstore\GroupConfig::getById($config->getGroupId());
@@ -876,7 +876,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'id' => $config->getGroupId() . '-' . $config->getKeyId(),
                 'sorter' => (int) $config->getSorter(),
                 'layout' => $definition,
-                'mandatory' => $config->isMandatory()
+                'mandatory' => $config->isMandatory(),
             ];
 
             $data[] = $item;
@@ -990,7 +990,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                         'id' => $groupData->getId(),
                         'description' => $groupData->getDescription(),
                         'keys' => [],
-                        'collectionId' => $mappedData[$groupId]['colId']
+                        'collectionId' => $mappedData[$groupId]['colId'],
                     ];
                 }
 
@@ -1021,7 +1021,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                         'name' => $keyData->getName(),
                         'id' => $keyData->getKeyId(),
                         'description' => $keyData->getDescription(),
-                        'definition' => $definition
+                        'definition' => $definition,
                     ];
                     $data[$groupId]['keys'] = $keyList;
                 }
@@ -1070,7 +1070,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'name' => $groupData->getName(),
                 'id' => $groupData->getId(),
                 'description' => $groupData->getDescription(),
-                'keys' => []
+                'keys' => [],
             ];
         }
 
@@ -1101,7 +1101,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'name' => $keyData->getName(),
                 'id' => $keyData->getKeyId(),
                 'description' => $keyData->getDescription(),
-                'definition' => $definition
+                'definition' => $definition,
             ];
             $data[$groupId]['keys'] = $keyList;
         }
@@ -1310,7 +1310,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
             'name' => $name,
             'description' => $config->getDescription(),
             'type' => $config->getType() ? $config->getType() : 'input',
-            'definition' => $config->getDefinition()
+            'definition' => $config->getDefinition(),
         ];
 
         if ($config->getDefinition()) {
@@ -1349,7 +1349,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'fieldtype' => 'input',
                 'name' => $name,
                 'title' => $name,
-                'datatype' => 'data'
+                'datatype' => 'data',
             ];
             $config = new Classificationstore\KeyConfig();
             $config->setName($name);
@@ -1443,7 +1443,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'leaf' => true,
                 'expanded' => true,
                 'description' => $item->getDescription(),
-                'iconCls' => 'pimcore_icon_classificationstore'
+                'iconCls' => 'pimcore_icon_classificationstore',
             ];
 
             $resultItem['qtitle'] = 'ID: ' . $item->getId();

@@ -134,7 +134,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
             try {
                 $result = $esClient->indices()->getAlias([
-                    'name' => $this->indexName
+                    'name' => $this->indexName,
                 ]);
 
                 if (is_array($result)) {
@@ -243,7 +243,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 } else {
                     $mapping = [
                         'type' => $type,
-                        'store' => $this->getStoreCustomAttributes()
+                        'store' => $this->getStoreCustomAttributes(),
                     ];
 
                     if (!empty($attribute->getOption('analyzer'))) {
@@ -303,7 +303,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             'parentCategoryIds' => 'long',
             'priceSystemName' => 'keyword',
             'active' => 'boolean',
-            'inProductList' => 'boolean'];
+            'inProductList' => 'boolean', ];
 
         if ($includeTypes) {
             return $systemAttributes;
@@ -458,7 +458,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         if (sizeof($this->bulkIndexData)) {
             $esClient = $this->getElasticSearchClient();
             $responses = $esClient->bulk([
-                'body' => $this->bulkIndexData
+                'body' => $this->bulkIndexData,
             ]);
 
             // save update status
@@ -474,7 +474,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                     $data = [
                         'update_status' => $response[$operation]['status'],
                         'update_error' => null,
-                        'metadata' => isset($this->indexStoreMetaData[$response[$operation]['_id']]) ? $this->indexStoreMetaData[$response[$operation]['_id']] : null
+                        'metadata' => isset($this->indexStoreMetaData[$response[$operation]['_id']]) ? $this->indexStoreMetaData[$response[$operation]['_id']] : null,
                     ];
                     if (isset($response[$operation]['error']) && $response[$operation]['error']) {
                         $data['update_error'] = json_encode($response[$operation]['error']);
@@ -553,9 +553,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                     'add' => [
                         'index' => $this->getIndexNameVersion(),
                         'alias' => $this->indexName,
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
         $result = $esClient->indices()->updateAliases($params);
         if (!$result['acknowledged']) {
@@ -620,7 +620,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                     'index' => $this->getIndexNameVersion(),
                     'type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'],
                     'id' => $objectId,
-                    'routing' => $storeEntry['o_virtualProductId']
+                    'routing' => $storeEntry['o_virtualProductId'],
                 ]);
             } catch (\Exception $e) {
                 //if \Elasticsearch\Common\Exceptions\Missing404Exception <- the object is not in the index so its ok.
@@ -671,8 +671,8 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 $esClient->indices()->putSettings([
                     'index' => $this->getIndexNameVersion(),
                     'body' => [
-                        'index' => $this->tenantConfig->getIndexSettings()
-                    ]
+                        'index' => $this->tenantConfig->getIndexSettings(),
+                    ],
                 ]);
                 Logger::info('Index-Actions - updated settings for Index: ' . $this->getIndexNameVersion());
             } else {
@@ -693,8 +693,8 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             'index' => $this->getIndexNameVersion(),
             'type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'],
             'body' => [
-                'properties' => $this->createMappingAttributes()
-            ]
+                'properties' => $this->createMappingAttributes(),
+            ],
         ];
 
         return $params;
@@ -740,9 +740,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                         'add' => [
                             'index' => $this->getIndexNameVersion(),
                             'alias' => $this->indexName,
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ];
             $result = $esClient->indices()->updateAliases($params);
             if (!$result) {
@@ -765,7 +765,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         Logger::info('Index-Actions - creating new Index. Name: ' . $indexName);
         $result = $esClient->indices()->create([
             'index' => $indexName,
-            'body' => ['settings' => $this->tenantConfig->getIndexSettings()]
+            'body' => ['settings' => $this->tenantConfig->getIndexSettings()],
         ]);
 
         if (!$result['acknowledged']) {
@@ -845,12 +845,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         $body =
             [
                 'source' => [
-                    'index' => $sourceIndexName
+                    'index' => $sourceIndexName,
 
                 ],
                 'dest' => [
                     'index' => $targetIndexName,
-                ]
+                ],
             ];
 
         $startTime = time();
@@ -859,11 +859,11 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             'targetIndexName' => $targetIndexName,
             'method' => 'POST',
             'uri' => '/_reindex',
-            'body' => $body
+            'body' => $body,
         ]);
 
         $esClient->reindex([
-            'body' => $body
+            'body' => $body,
         ]);
 
         Logger::info(sprintf('Completed re-index in %.02f seconds.', (time() - $startTime)));
@@ -955,8 +955,8 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             $result = $esClient->indices()->putSettings([
                 'index' => $indexName,
                 'body' => [
-                    'index' => $indexSettingsSynonymPartLocalConfig
-                ]
+                    'index' => $indexSettingsSynonymPartLocalConfig,
+                ],
             ]);
 
             $esClient->indices()->open(['index' => $indexName]);
@@ -986,8 +986,8 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 $indexPart = [
                     'analysis' =>
                         [
-                            'filter' => []
-                        ]
+                            'filter' => [],
+                        ],
                 ];
             }
 
@@ -1022,8 +1022,8 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                         $indexPart = [
                             'analysis' =>
                                 [
-                                    'filter' => []
-                                ]
+                                    'filter' => [],
+                                ],
                         ];
                     }
 

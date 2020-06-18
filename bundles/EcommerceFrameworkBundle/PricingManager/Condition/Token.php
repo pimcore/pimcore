@@ -43,7 +43,7 @@ class Token implements ConditionInterface
     {
         // basic
         $json = [
-            'type' => 'Token', 'token' => $this->getToken()
+            'type' => 'Token', 'token' => $this->getToken(),
         ];
 
         return json_encode($json);

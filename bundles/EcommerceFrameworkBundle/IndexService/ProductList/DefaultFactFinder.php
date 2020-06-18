@@ -749,7 +749,7 @@ class DefaultFactFinder implements ProductListInterface
 
             foreach ($field['elements'] as $item) {
                 $groups[] = [
-                    'value' => $item['name'], 'count' => $item['recordCount']
+                    'value' => $item['name'], 'count' => $item['recordCount'],
                 ];
             }
         }

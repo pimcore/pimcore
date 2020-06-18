@@ -223,7 +223,7 @@ class PimcoreBundleManager
                 $bundles[$item->getBundleIdentifier()] = $this->stateConfig->normalizeOptions([
                     'enabled' => in_array($item->getBundleIdentifier(), $enabledBundles),
                     'priority' => $item->getPriority(),
-                    'environments' => $item->getEnvironments()
+                    'environments' => $item->getEnvironments(),
                 ]);
             }
 
@@ -402,7 +402,7 @@ class PimcoreBundleManager
     public function enable($bundle, array $state = [])
     {
         $state = array_merge($state, [
-            'enabled' => true
+            'enabled' => true,
         ]);
 
         $this->setState($bundle, $state);

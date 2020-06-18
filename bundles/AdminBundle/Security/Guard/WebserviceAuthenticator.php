@@ -59,18 +59,18 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
         if ($apiKey = $request->headers->get('x_api-key')) {
             // check for API key header
             return [
-                'apiKey' => $apiKey
+                'apiKey' => $apiKey,
             ];
         } elseif ($apiKey = $request->get('apikey')) {
             // check for API key parameter
             return [
-                'apiKey' => $apiKey
+                'apiKey' => $apiKey,
             ];
         } else {
             // check for existing session user
             if (null !== $pimcoreUser = Authentication::authenticateSession()) {
                 return [
-                    'user' => $pimcoreUser
+                    'user' => $pimcoreUser,
                 ];
             }
         }
@@ -159,7 +159,7 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         $this->logger->warning('Failed to authenticate for webservice request {path}', [
-            'path' => $request->getPathInfo()
+            'path' => $request->getPathInfo(),
         ]);
 
         throw $this->createAccessDeniedException($exception);
@@ -172,7 +172,7 @@ class WebserviceAuthenticator extends AbstractGuardAuthenticator implements Logg
     {
         $this->logger->debug('Successfully authenticated user {user} for webservice request {path}', [
             'user' => $token->getUser()->getUsername(),
-            'path' => $request->getPathInfo()
+            'path' => $request->getPathInfo(),
         ]);
 
         return null;

@@ -81,7 +81,7 @@ class PDFreactor
                 'max_redirects' => 0,
                 'method' => 'POST',
                 'content' => json_encode($config),
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -160,7 +160,7 @@ class PDFreactor
                 'max_redirects' => 0,
                 'method' => 'POST',
                 'content' => json_encode($config),
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -246,7 +246,7 @@ class PDFreactor
                 'max_redirects' => 0,
                 'method' => 'POST',
                 'content' => json_encode($config),
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -342,7 +342,7 @@ class PDFreactor
                 'follow_location' => false,
                 'max_redirects' => 0,
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -408,7 +408,7 @@ class PDFreactor
                 'follow_location' => false,
                 'max_redirects' => 0,
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -479,7 +479,7 @@ class PDFreactor
                 'follow_location' => false,
                 'max_redirects' => 0,
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -556,7 +556,7 @@ class PDFreactor
                 'follow_location' => false,
                 'max_redirects' => 0,
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -622,7 +622,7 @@ class PDFreactor
                 'follow_location' => false,
                 'max_redirects' => 0,
                 'method' => 'DELETE',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -683,7 +683,7 @@ class PDFreactor
                 'follow_location' => false,
                 'max_redirects' => 0,
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -744,7 +744,7 @@ class PDFreactor
                 'follow_location' => false,
                 'max_redirects' => 0,
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);

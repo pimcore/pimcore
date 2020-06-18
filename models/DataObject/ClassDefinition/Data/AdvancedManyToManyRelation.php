@@ -106,7 +106,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     {
         $list = [
             'dirty' => false,
-            'data' => []
+            'data' => [],
         ];
 
         if (is_array($data) && count($data) > 0) {
@@ -1114,7 +1114,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                         'title' => $item['path'],
                         'raw' => $raw,
                         'gridrow' => $item,
-                        'unique' => $unique
+                        'unique' => $unique,
                     ];
                 }
                 $data['data'] = $newItems;
@@ -1124,14 +1124,14 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                 'type' => 'grid',
                 'columnConfig' => [
                     'id' => [
-                        'width' => 60
+                        'width' => 60,
                     ],
                     'path' => [
-                        'flex' => 2
-                    ]
+                        'flex' => 2,
+                    ],
 
                 ],
-                'html' => $this->getVersionPreview($originalData, $object, $params)
+                'html' => $this->getVersionPreview($originalData, $object, $params),
             ];
 
             $newData = [];

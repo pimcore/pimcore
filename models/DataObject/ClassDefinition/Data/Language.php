@@ -50,7 +50,7 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
 
             $options[] = [
                 'key' => $translation,
-                'value' => $short
+                'value' => $short,
             ];
         }
 

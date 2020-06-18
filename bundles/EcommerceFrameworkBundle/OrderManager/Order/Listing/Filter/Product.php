@@ -41,11 +41,11 @@ class Product implements OrderListFilterInterface
     {
         $db = \Pimcore\Db::get();
         $ids = [
-            $db->quote($this->product->getId())
+            $db->quote($this->product->getId()),
         ];
 
         $variants = $this->product->getChildren([
-            \Pimcore\Model\DataObject\Concrete::OBJECT_TYPE_VARIANT
+            \Pimcore\Model\DataObject\Concrete::OBJECT_TYPE_VARIANT,
         ]);
 
         /** @var \Pimcore\Model\DataObject\Concrete $variant */

@@ -40,7 +40,7 @@ class UUIDListener implements EventSubscriberInterface
             DataObjectEvents::POST_DELETE => 'onPostDelete',
             DocumentEvents::POST_DELETE => 'onPostDelete',
             AssetEvents::POST_DELETE => 'onPostDelete',
-            DataObjectClassDefinitionEvents::POST_DELETE => 'onPostDelete'
+            DataObjectClassDefinitionEvents::POST_DELETE => 'onPostDelete',
         ];
     }
 

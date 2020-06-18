@@ -55,7 +55,7 @@ class TargetingController extends AdminController implements EventedControllerIn
                 'id' => $target->getId(),
                 'text' => $target->getName(),
                 'active' => $target->getActive(),
-                'qtip' => 'ID: ' . $target->getId()
+                'qtip' => 'ID: ' . $target->getId(),
             ];
         }
 
@@ -144,7 +144,7 @@ class TargetingController extends AdminController implements EventedControllerIn
     {
         $return = [
             'success' => false,
-            'message' => ''
+            'message' => '',
         ];
 
         $rules = $this->decodeJson($request->get('rules'));
@@ -199,7 +199,7 @@ class TargetingController extends AdminController implements EventedControllerIn
                 'id' => 0,
                 'text' => 'default',
                 'active' => true,
-                'qtip' => 0
+                'qtip' => 0,
             ];
         }
 
@@ -209,7 +209,7 @@ class TargetingController extends AdminController implements EventedControllerIn
                 'id' => $targetGroup->getId(),
                 'text' => $targetGroup->getName(),
                 'active' => $targetGroup->getActive(),
-                'qtip' => $targetGroup->getId()
+                'qtip' => $targetGroup->getId(),
             ];
         }
 

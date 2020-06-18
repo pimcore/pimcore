@@ -116,7 +116,7 @@ class MultiCartManager implements CartManagerInterface
                     // cart is already committed - cleanup cart and environment
                     $this->logger->warning('Deleting cart with id {cartId} because linked order {orderId} is already committed.', [
                         'cartId' => $cart->getId(),
-                        'orderId' => $order->getId()
+                        'orderId' => $order->getId(),
                     ]);
 
                     $cart->delete();
@@ -296,7 +296,7 @@ class MultiCartManager implements CartManagerInterface
 
         if (empty($cart)) {
             $cartKey = $this->createCart([
-                'name' => $name
+                'name' => $name,
             ]);
             $cart = $this->getCart($cartKey);
         }

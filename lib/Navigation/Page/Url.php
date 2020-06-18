@@ -111,7 +111,7 @@ class Url extends Page
         return array_merge(
             parent::toArray(),
             [
-                'uri' => $this->getUri()
+                'uri' => $this->getUri(),
             ]
         );
     }

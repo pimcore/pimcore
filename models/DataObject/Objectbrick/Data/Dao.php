@@ -120,7 +120,7 @@ class Dao extends Model\Dao\AbstractDao
                         'context' => [
                             'containerType' => 'objectbrick',
                             'containerKey' => $this->model->getType(),
-                            'fieldname' => $this->model->getFieldname()
+                            'fieldname' => $this->model->getFieldname(),
                         ],
                         'isUpdate' => $isBrickUpdate,
                     ]));
@@ -134,8 +134,8 @@ class Dao extends Model\Dao\AbstractDao
                         'context' => [
                             'containerType' => 'objectbrick',
                             'containerKey' => $this->model->getType(),
-                            'fieldname' => $this->model->getFieldname()
-                        ]
+                            'fieldname' => $this->model->getFieldname(),
+                        ],
                     ]);
                     $data = array_merge($data, $insertDataArray);
                 } else {
@@ -145,8 +145,8 @@ class Dao extends Model\Dao\AbstractDao
                         'context' => [
                             'containerType' => 'objectbrick',
                             'containerKey' => $this->model->getType(),
-                            'fieldname' => $this->model->getFieldname()
-                        ]
+                            'fieldname' => $this->model->getFieldname(),
+                        ],
                     ]);
                     $data[$key] = $insertData;
                 }
@@ -271,7 +271,7 @@ class Dao extends Model\Dao\AbstractDao
         if ($inheritanceEnabled) {
             $this->inheritanceHelper->doUpdate($object->getId(), true,
                 ['inheritanceRelationContext' => [
-                    'ownertype' => 'objectbrick'
+                    'ownertype' => 'objectbrick',
                 ]]);
         }
         $this->inheritanceHelper->resetFieldsToCheck();
@@ -300,7 +300,7 @@ class Dao extends Model\Dao\AbstractDao
             'src_id' => $object->getId(),
             'ownertype' => 'objectbrick',
             'ownername' => $this->model->getFieldname(),
-            'position' => $this->model->getType()
+            'position' => $this->model->getType(),
         ]);
 
         $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($object->getClassId(), 'o_id', $storeTable, $queryTable);
@@ -321,7 +321,7 @@ class Dao extends Model\Dao\AbstractDao
                     $fakeModel->setContext([
                         'containerType' => 'objectbrick',
                         'containerKey' => $this->model->getType(),
-                        'fieldname' => $this->model->getFieldname()
+                        'fieldname' => $this->model->getFieldname(),
                     ]);
                     $localizedFieldDao->setModel($fakeModel);
                     $localizedFieldDao->delete();

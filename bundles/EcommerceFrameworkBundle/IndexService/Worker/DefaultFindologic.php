@@ -39,7 +39,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
      * @var array
      */
     protected $supportedFields = [
-        'id', 'ordernumber', 'name', 'summary', 'description', 'price'
+        'id', 'ordernumber', 'name', 'summary', 'description', 'price',
     ];
 
     /**
@@ -282,7 +282,7 @@ VALUES (:id, :shop_key, :data, now())
 ON DUPLICATE KEY UPDATE `data` = VALUES(`data`), `last_update` = VALUES(`last_update`)
 SQL;
         $this->db->query($query, [
-            'id' => $objectId, 'shop_key' => $this->getTenantConfig()->getClientConfig('shopKey'), 'data' => str_replace('<?xml version="1.0"?>', '', $item->saveXML())
+            'id' => $objectId, 'shop_key' => $this->getTenantConfig()->getClientConfig('shopKey'), 'data' => str_replace('<?xml version="1.0"?>', '', $item->saveXML()),
         ]);
     }
 

@@ -49,7 +49,7 @@ class Helper
             $op = 'AND';
         }
         $mappingTable = ['$gt' => '>', '$gte' => '>=', '$lt' => '<', '$lte' => '<=', '$like' => 'LIKE', '$notlike' => 'NOT LIKE', '$notnull' => 'IS NOT NULL',
-                '$not' => 'NOT'];
+                '$not' => 'NOT', ];
         $ops = array_keys($mappingTable);
 
         $db = Db::get();

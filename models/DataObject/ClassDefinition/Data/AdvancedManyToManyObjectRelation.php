@@ -93,7 +93,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         'dest_id' => $object->getId(),
                         'type' => 'object',
                         'fieldname' => $this->getName(),
-                        'index' => $counter
+                        'index' => $counter,
                     ];
                 }
                 $counter++;
@@ -116,7 +116,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     {
         $list = [
             'dirty' => false,
-            'data' => []
+            'data' => [],
         ];
 
         if (is_array($data) && count($data) > 0) {
@@ -149,7 +149,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                             ->build(DataObject\Data\ObjectMetadata::class, [
                                 'fieldname' => $this->getName(),
                                 'columns' => $this->getColumnKeys(),
-                                'object' => null
+                                'object' => null,
                             ]);
 
                         $metaData->setOwner($container, $this->getName());
@@ -278,7 +278,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                             'fieldname' => $this->getName(),
                             'columns' => $this->getColumnKeys(),
-                            'object' => $o
+                            'object' => $o,
                         ]);
                     $metaData->setOwner($object, $this->getName());
 
@@ -453,7 +453,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                     ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                         'fieldname' => $this->getName(),
                         'columns' => $this->getColumnKeys(),
-                        'object' => $el
+                        'object' => $el,
                     ]);
                 $metaObject->setOwner($object, $this->getName());
 
@@ -479,7 +479,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                 if ($o instanceof DataObject\AbstractObject) {
                     $dependencies['object_' . $o->getId()] = [
                         'id' => $o->getId(),
-                        'type' => 'object'
+                        'type' => 'object',
                     ];
                 }
             }
@@ -565,7 +565,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                             'fieldname' => $this->getName(),
                             'columns' => $this->getColumnKeys(),
-                            'object' => $dest
+                            'object' => $dest,
                         ]);
                     $metaObject->setOwner($object, $this->getName());
 
@@ -773,7 +773,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         } else {
             $deleteConditions = [
                 'o_id' => $object->getId(),
-                'fieldname' => $this->getName()
+                'fieldname' => $this->getName(),
             ];
             if ($context) {
                 if (!empty($context['fieldname'])) {
@@ -924,7 +924,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         /** @var DataObject\Data\ObjectMetadata $temp */
         $temp = \Pimcore::getContainer()->get('pimcore.model.factory')
             ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
-                'fieldname' => null
+                'fieldname' => null,
             ]);
 
         $temp->getDao()->createOrUpdateTable($class);
@@ -1075,11 +1075,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                 $result[] = [
                     'element' => [
                         'type' => $type,
-                        'id' => $id
+                        'id' => $id,
                     ],
                     'fieldname' => $elementMetadata->getFieldname(),
                     'columns' => $elementMetadata->getColumns(),
-                    'data' => $elementMetadata->getData()];
+                    'data' => $elementMetadata->getData(), ];
             }
 
             return $result;
@@ -1153,7 +1153,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         'title' => $item['fullpath'],
                         'raw' => $raw,
                         'gridrow' => $item,
-                        'unique' => $unique
+                        'unique' => $unique,
                     ];
                 }
                 $data['data'] = $newItems;
@@ -1163,14 +1163,14 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                 'type' => 'grid',
                 'columnConfig' => [
                     'id' => [
-                        'width' => 60
+                        'width' => 60,
                     ],
                     'fullpath' => [
-                        'flex' => 2
-                    ]
+                        'flex' => 2,
+                    ],
 
                 ],
-                'html' => $this->getVersionPreview($originalData, $object, $params)
+                'html' => $this->getVersionPreview($originalData, $object, $params),
             ];
 
             $newData = [];

@@ -80,7 +80,7 @@ class Dao extends Model\Element\Dao
         $this->db->insert('assets', [
             'filename' => $this->model->getFilename(),
             'path' => $this->model->getRealPath(),
-            'parentId' => $this->model->getParentId()
+            'parentId' => $this->model->getParentId(),
         ]);
 
         $this->model->setId($this->db->lastInsertId());
@@ -129,7 +129,7 @@ class Dao extends Model\Element\Dao
             $this->db->insert('tree_locks', [
                 'id' => $this->model->getId(),
                 'type' => 'asset',
-                'locked' => $this->model->getLocked()
+                'locked' => $this->model->getLocked(),
             ]);
         }
     }
@@ -142,9 +142,9 @@ class Dao extends Model\Element\Dao
     public function updateWorkspaces()
     {
         $this->db->update('users_workspaces_asset', [
-            'cpath' => $this->model->getRealFullPath()
+            'cpath' => $this->model->getRealFullPath(),
         ], [
-            'cid' => $this->model->getId()
+            'cid' => $this->model->getId(),
         ]);
     }
 

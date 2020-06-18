@@ -61,7 +61,7 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
 
         $json = $this->encodeJson($sentMailArray, [], JsonResponse::DEFAULT_ENCODING_OPTIONS | JSON_PRETTY_PRINT);
         $jsonResponse = new JsonResponse($json, 200, [
-            'Content-Disposition' => 'attachment; filename="export-mail-' . $sentMail->getId() . '.json"'
+            'Content-Disposition' => 'attachment; filename="export-mail-' . $sentMail->getId() . '.json"',
         ], true);
 
         return $jsonResponse;

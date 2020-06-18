@@ -57,7 +57,7 @@ class SearchBackendReindexCommand extends AbstractCommand
                 $list->setObjectTypes([
                     AbstractObject::OBJECT_TYPE_OBJECT,
                     AbstractObject::OBJECT_TYPE_FOLDER,
-                    AbstractObject::OBJECT_TYPE_VARIANT
+                    AbstractObject::OBJECT_TYPE_VARIANT,
                 ]);
             }
 

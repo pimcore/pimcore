@@ -142,7 +142,7 @@ class TranslationController extends AdminController
             'config' => [
                 'tmpFile' => $filename,
                 'csvSettings' => $dialect,
-            ]
+            ],
         ]);
     }
 
@@ -377,7 +377,7 @@ class TranslationController extends AdminController
                 $return = array_merge(
                     ['key' => $t->getKey(),
                         'creationDate' => $t->getCreationDate(),
-                        'modificationDate' => $t->getModificationDate()],
+                        'modificationDate' => $t->getModificationDate(), ],
                     $this->prefixTranslations($t->getTranslations())
                 );
 
@@ -466,7 +466,7 @@ class TranslationController extends AdminController
                     $this->prefixTranslations($t->getTranslations()),
                     ['key' => $t->getKey(),
                         'creationDate' => $t->getCreationDate(),
-                        'modificationDate' => $t->getModificationDate()]
+                        'modificationDate' => $t->getModificationDate(), ]
                 );
             }
 
@@ -709,7 +709,7 @@ class TranslationController extends AdminController
                         $list->setObjectTypes(
                             [DataObject\AbstractObject::OBJECT_TYPE_VARIANT,
                                 DataObject\AbstractObject::OBJECT_TYPE_OBJECT,
-                                DataObject\AbstractObject::OBJECT_TYPE_FOLDER]
+                                DataObject\AbstractObject::OBJECT_TYPE_FOLDER, ]
                         );
                     }
                     $list->setCondition(
@@ -813,7 +813,7 @@ class TranslationController extends AdminController
         $exportService->exportTranslationItems($translationItems, $source, [$target], $id);
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 
@@ -863,15 +863,15 @@ class TranslationController extends AdminController
                 'method' => 'POST',
                 'params' => [
                     'id' => $id,
-                    'step' => $i
-                ]
+                    'step' => $i,
+                ],
             ]];
         }
 
         $response = $this->adminJson([
             'success' => true,
             'jobs' => $jobs,
-            'id' => $id
+            'id' => $id,
         ]);
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
         // Ext.form.Action.Submit and mark the submission as failed
@@ -908,12 +908,12 @@ class TranslationController extends AdminController
 
             return $this->adminJson([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ]);
         }
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 

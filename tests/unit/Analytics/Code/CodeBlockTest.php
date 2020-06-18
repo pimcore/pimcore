@@ -28,7 +28,7 @@ class CodeBlockTest extends TestCase
     private $defaultParts = [
         'foo;',
         'bar?',
-        'bazinga!' . "\n" . '!!!'
+        'bazinga!' . "\n" . '!!!',
     ];
 
     /**

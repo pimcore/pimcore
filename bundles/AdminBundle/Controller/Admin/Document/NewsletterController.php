@@ -160,9 +160,9 @@ class NewsletterController extends DocumentControllerBase
                 'success' => true,
                 'data' => [
                     'versionDate' => $page->getModificationDate(),
-                    'versionCount' => $page->getVersionCount()
+                    'versionCount' => $page->getVersionCount(),
                 ],
-                'treeData' => $treeData
+                'treeData' => $treeData,
             ]);
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);
@@ -222,7 +222,7 @@ class NewsletterController extends DocumentControllerBase
 
         return $this->adminJson([
             'count' => $count,
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
@@ -309,7 +309,7 @@ class NewsletterController extends DocumentControllerBase
 
         return $this->adminJson([
             'data' => $data ? $data->getData() : null,
-            'success' => true
+            'success' => true,
         ]);
     }
 
@@ -327,7 +327,7 @@ class NewsletterController extends DocumentControllerBase
         Tool\TmpStore::delete($document->getTmpStoreId());
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 
@@ -357,7 +357,7 @@ class NewsletterController extends DocumentControllerBase
             'addressSourceAdapterName' => $request->get('addressAdapterName'),
             'adapterParams' => json_decode($request->get('adapterParams'), true),
             'inProgress' => false,
-            'progress' => 0
+            'progress' => 0,
         ], 'newsletter');
 
         Console::runPhpScriptInBackground(
@@ -418,7 +418,7 @@ class NewsletterController extends DocumentControllerBase
         if (empty($testMailAddress)) {
             return $this->adminJson([
                 'success' => false,
-                'message' => 'Please provide a valid email address to send test newsletter'
+                'message' => 'Please provide a valid email address to send test newsletter',
             ]);
         }
 
@@ -430,7 +430,7 @@ class NewsletterController extends DocumentControllerBase
                 'error' => sprintf(
                     'Cannot send newsletters because Address Source Adapter with identifier %s could not be found',
                     $addressSourceAdapterName
-                )
+                ),
             ]);
         }
 

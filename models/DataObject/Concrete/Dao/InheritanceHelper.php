@@ -230,7 +230,7 @@ class InheritanceHelper
             $result = $this->db->fetchRow('SELECT ' . $this->idField . ' AS id' . $fields . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
             $o = [
                 'id' => $result['id'],
-                'values' => $result ?? null
+                'values' => $result ?? null,
             ];
 
             $o['children'] = $this->buildTree($result['id'], $fields, null, $params);
@@ -316,7 +316,7 @@ class InheritanceHelper
 
         $o = [
             'id' => $objectId,
-            'children' => $this->buildTree($objectId, $fields, null, $params)
+            'children' => $this->buildTree($objectId, $fields, null, $params),
         ];
 
         if (!empty($this->fields)) {
@@ -475,7 +475,7 @@ class InheritanceHelper
                 $o = [
                     'id' => $id,
                     'children' => $this->buildTree($id, $fields, $parentIdGroups, $params),
-                    'values' => $rowData
+                    'values' => $rowData,
                 ];
 
                 $objects[] = $o;

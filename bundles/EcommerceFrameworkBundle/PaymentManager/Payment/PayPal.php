@@ -157,7 +157,7 @@ class PayPal extends AbstractPayment
             'ReturnURL' => null,
             'CancelURL' => null,
             'OrderDescription' => null,
-            'InvoiceID' => null
+            'InvoiceID' => null,
         ];
 
         $config = array_intersect_key($config, $required);
@@ -225,12 +225,12 @@ class PayPal extends AbstractPayment
             'PayerID' => null,
             'InvoiceID' => null,
             'amount' => null,
-            'currency' => null
+            'currency' => null,
         ];
 
         $authorizedData = [
             'token' => null,
-            'PayerID' => null
+            'PayerID' => null,
         ];
 
         // check fields
@@ -303,7 +303,7 @@ class PayPal extends AbstractPayment
                 [
                     'paypal_TransactionType' => $paymentInfo->TransactionType,
                     'paypal_PaymentType' => $paymentInfo->PaymentType,
-                    'paypal_amount' => (string)$price
+                    'paypal_amount' => (string)$price,
                 ]
             );
         } else {

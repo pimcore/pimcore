@@ -31,7 +31,7 @@ class LongRunningHelper
         'pimcore_editmode',
         'pimcore_error_document',
         'pimcore_site',
-        'Pimcore_Db'
+        'Pimcore_Db',
     ];
     protected $monologHandlers = [];
 

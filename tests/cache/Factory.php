@@ -39,7 +39,7 @@ class Factory
     public function createRedisItemPool($defaultLifetime, array $connectionOptions = [], array $options = [])
     {
         $connectionOptions = array_merge([
-            'server' => 'localhost'
+            'server' => 'localhost',
         ], $connectionOptions);
 
         $database = isset($connectionOptions['database']) ? $connectionOptions['database'] : null;

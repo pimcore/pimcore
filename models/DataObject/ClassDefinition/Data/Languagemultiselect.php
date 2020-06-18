@@ -48,7 +48,7 @@ class Languagemultiselect extends Model\DataObject\ClassDefinition\Data\Multisel
 
             $options[] = [
                 'key' => $translation,
-                'value' => $short
+                'value' => $short,
             ];
         }
 

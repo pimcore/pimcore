@@ -128,7 +128,7 @@ class Folder extends DAV\Collection
                 'filename' => Element\Service::getValidKey($name, 'asset'),
                 'sourcePath' => $tmpFile,
                 'userModification' => $user->getId(),
-                'userOwner' => $user->getId()
+                'userOwner' => $user->getId(),
             ]);
 
             unlink($tmpFile);
@@ -153,7 +153,7 @@ class Folder extends DAV\Collection
                 'filename' => Element\Service::getValidKey($name, 'asset'),
                 'type' => 'folder',
                 'userModification' => $user->getId(),
-                'userOwner' => $user->getId()
+                'userOwner' => $user->getId(),
             ]);
         } else {
             throw new DAV\Exception\Forbidden();

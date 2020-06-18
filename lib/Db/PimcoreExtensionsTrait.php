@@ -147,7 +147,7 @@ trait PimcoreExtensionsTrait
 
             Db::getLogger()->debug('QueryBuilder instance was normalized to string.', [
                 'query' => $query,
-                'params' => $params
+                'params' => $params,
             ]);
         }
 

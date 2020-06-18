@@ -50,7 +50,7 @@ class Dao extends Model\Dao\AbstractDao
             'name' => $this->model->getName(),
             'type' => $this->model->getType(),
             'inheritable' => (int)$this->model->getInheritable(),
-            'data' => $data
+            'data' => $data,
         ];
 
         $this->db->insertOrUpdate('properties', $saveData);

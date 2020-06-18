@@ -928,7 +928,7 @@ class Imagick extends Adapter
                     'PS3',
                     'SVG',
                     'SVGZ',
-                    'MVG'
+                    'MVG',
                 ];
 
                 if (in_array(strtoupper($type), $vectorTypes)) {
@@ -953,7 +953,7 @@ class Imagick extends Adapter
 
         return [
             'width' => $this->resource->getImageWidth(),
-            'height' => $this->resource->getImageHeight()
+            'height' => $this->resource->getImageHeight(),
         ];
     }
 
@@ -973,7 +973,7 @@ class Imagick extends Adapter
                 if (preg_match('/%ImageData: ([0-9]+) ([0-9]+)/i', $eps_line, $matches)) {
                     return [
                         'width' => $matches[1],
-                        'height' => $matches[2]
+                        'height' => $matches[2],
                     ];
                 }
                 $i++;

@@ -313,7 +313,7 @@ class DocumentController extends AbstractElementController
         $count = Document::getTotalCount($params);
 
         return $this->createSuccessResponse([
-            'totalCount' => $count
+            'totalCount' => $count,
         ]);
     }
 
@@ -357,7 +357,7 @@ class DocumentController extends AbstractElementController
 
         throw $this->createNotFoundResponseException([
             'msg' => sprintf('Document %d does not exist', (int)$id),
-            'code' => static::ELEMENT_DOES_NOT_EXIST
+            'code' => static::ELEMENT_DOES_NOT_EXIST,
         ]);
     }
 
@@ -389,7 +389,7 @@ class DocumentController extends AbstractElementController
 
         if (null !== $id) {
             return $this->createSuccessResponse([
-                'id' => $id
+                'id' => $id,
             ], false);
         } else {
             return $this->createErrorResponse();

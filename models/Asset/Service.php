@@ -101,7 +101,7 @@ class Service extends Model\Element\Service
 
         // triggers actions after the complete asset cloning
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_COPY, new AssetEvent($new, [
-            'base_element' => $source // the element used to make a copy
+            'base_element' => $source, // the element used to make a copy
         ]));
 
         return $new;
@@ -142,7 +142,7 @@ class Service extends Model\Element\Service
 
         // triggers actions after the complete asset cloning
         \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_COPY, new AssetEvent($new, [
-            'base_element' => $source // the element used to make a copy
+            'base_element' => $source, // the element used to make a copy
         ]));
 
         return $new;

@@ -29,12 +29,12 @@ trait ElementEditLockHelperTrait
 
         if ($user) {
             $editLock['user'] = [
-                'name' => $user->getName()
+                'name' => $user->getName(),
             ];
         }
 
         return $this->adminJson([
-            'editlock' => $editLock
+            'editlock' => $editLock,
         ]);
     }
 }

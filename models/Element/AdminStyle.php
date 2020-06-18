@@ -53,7 +53,7 @@ class AdminStyle
             if ($element->getType() == 'folder') {
                 $this->elementIconClass = 'pimcore_icon_folder';
                 $this->elementQtipConfig = [
-                    'title' => 'ID: ' . $element->getId()
+                    'title' => 'ID: ' . $element->getId(),
                 ];
             } else {
                 if ($element->getClass()->getIcon()) {
@@ -64,12 +64,12 @@ class AdminStyle
 
                 $this->elementQtipConfig = [
                     'title' => 'ID: ' . $element->getId(),
-                    'text' => 'Type: ' . $element->getClass()->getName()
+                    'text' => 'Type: ' . $element->getClass()->getName(),
                 ];
             }
         } elseif ($element instanceof Model\Asset) {
             $this->elementQtipConfig = [
-                'title' => 'ID: ' . $element->getId()
+                'title' => 'ID: ' . $element->getId(),
             ];
 
             if ($element->getType() == 'folder') {
@@ -85,7 +85,7 @@ class AdminStyle
         } elseif ($element instanceof Model\Document) {
             $this->elementQtipConfig = [
                 'title' => 'ID: ' . $element->getId(),
-                'text' => 'Type: ' . $element->getType()
+                'text' => 'Type: ' . $element->getType(),
             ];
 
             $this->elementIconClass = 'pimcore_icon_' . $element->getType();

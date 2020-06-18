@@ -88,28 +88,28 @@ trait DefaultValueTrait
                     if ($owner instanceof Concrete) {
                         $params['context'] = array_merge($params['context'], [
                             'ownerType' => 'object',
-                            'fieldname' => $this->getName()
+                            'fieldname' => $this->getName(),
                         ]);
                     } elseif ($owner instanceof Localizedfield) {
                         $params['context'] = array_merge($params['context'], [
                             'ownerType' => 'localizedfield',
                             'ownerName' => 'localizedfields',
                             'position' => $params['language'],
-                            'fieldname' => $this->getName()
+                            'fieldname' => $this->getName(),
                         ]);
                     } elseif ($owner instanceof \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData) {
                         $params['context'] = array_merge($params['context'], [
                             'ownerType' => 'fieldcollection',
                             'ownerName' => $owner->getFieldname(),
                             'fieldname' => $this->getName(),
-                            'index' => $owner->getIndex()
+                            'index' => $owner->getIndex(),
                         ]);
                     } elseif ($owner instanceof AbstractData) {
                         $params['context'] = array_merge($params['context'], [
                             'ownerType' => 'objectbrick',
                             'ownerName' => $owner->getFieldname(),
                             'fieldname' => $this->getName(),
-                            'index' => $owner->getType()
+                            'index' => $owner->getType(),
                         ]);
                     }
 

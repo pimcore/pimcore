@@ -50,7 +50,7 @@ class CodeCollector
      */
     private $validActions = [
         self::ACTION_PREPEND,
-        self::ACTION_APPEND
+        self::ACTION_APPEND,
     ];
 
     public function __construct(array $validBlocks, string $defaultBlock)

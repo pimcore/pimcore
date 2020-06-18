@@ -121,7 +121,7 @@ class PimcoreUsers implements DataProviderInterface
                 'firstname' => $user->getFirstname(),
                 'lastname' => $user->getLastname(),
                 'email' => $user->getEmail(),
-                '__gdprIsDeletable' => $user->getId() != $currentUser->getId()
+                '__gdprIsDeletable' => $user->getId() != $currentUser->getId(),
 
             ];
         }

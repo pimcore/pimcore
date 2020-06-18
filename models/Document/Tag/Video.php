@@ -138,7 +138,7 @@ class Video extends Model\Document\Tag
             'title' => $this->title,
             'description' => $this->description,
             'path' => $path,
-            'poster' => $poster ? $poster->getFullPath() : ''
+            'poster' => $poster ? $poster->getFullPath() : '',
         ];
     }
 
@@ -152,7 +152,7 @@ class Video extends Model\Document\Tag
             'type' => $this->type,
             'title' => $this->title,
             'description' => $this->description,
-            'poster' => $this->poster
+            'poster' => $this->poster,
         ];
     }
 
@@ -199,7 +199,7 @@ class Video extends Model\Document\Tag
                 $key = 'asset_' . $asset->getId();
                 $dependencies[$key] = [
                     'id' => $asset->getId(),
-                    'type' => 'asset'
+                    'type' => 'asset',
                 ];
             }
         }
@@ -208,7 +208,7 @@ class Video extends Model\Document\Tag
             $key = 'asset_' . $poster->getId();
             $dependencies[$key] = [
                 'id' => $poster->getId(),
-                'type' => 'asset'
+                'type' => 'asset',
             ];
         }
 
@@ -584,7 +584,7 @@ class Video extends Model\Document\Tag
             'rel',
             'showinfo',
             'start',
-            'theme'
+            'theme',
             ];
         $additional_params = '';
 
@@ -658,7 +658,7 @@ class Video extends Model\Document\Tag
                 'autoplay',
                 'background',
                 'loop',
-                'muted'
+                'muted',
                 ];
 
             $additional_params = '';
@@ -736,7 +736,7 @@ class Video extends Model\Document\Tag
             $valid_dailymotion_prams = [
                 'autoplay',
                 'loop',
-                'mute'];
+                'mute', ];
 
             $additional_params = '';
 
@@ -850,7 +850,7 @@ class Video extends Model\Document\Tag
                 'height' => $this->getHeight(),
                 'poster' => $thumbnail,
                 'controls' => 'controls',
-                'class' => 'pimcore_video'
+                'class' => 'pimcore_video',
             ];
 
             if (array_key_exists('attributes', $this->getOptions())) {

@@ -107,7 +107,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                     $resultItem = [
                         'slug' => $slug->getSlug(),
                         'siteId' => $slug->getSiteId(),
-                        'domain' => $site ? $site->getMainDomain() : null
+                        'domain' => $site ? $site->getMainDomain() : null,
                     ];
 
                     $result[] = $resultItem;
@@ -261,7 +261,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
         // delete rows first
         $deleteDescriptor = [
-            'fieldname' => $this->getName()
+            'fieldname' => $this->getName(),
         ];
         $this->enrichDataRow($object, $params, $classId, $deleteDescriptor, 'objectId');
         $conditionParts = Model\DataObject\Service::buildConditionPartsFromDescriptor($deleteDescriptor);
@@ -375,7 +375,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                         'classId' => $object->getClassId(),
                         'fieldname' => $this->getName(),
                         'slug' => $slugItem->getSlug(),
-                        'siteId' => $slugItem->getSiteId() ?? 0
+                        'siteId' => $slugItem->getSiteId() ?? 0,
                     ];
                 } else {
                     throw new \Exception('expected instance of UrlSlug');

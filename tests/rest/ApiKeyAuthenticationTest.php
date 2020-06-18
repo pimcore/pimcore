@@ -33,8 +33,8 @@ class ApiKeyAuthenticationTest extends RestTestCase
                 'type' => 'user',
                 'admin' => true,
                 'active' => true,
-                'name' => $username
-            ]
+                'name' => $username,
+            ],
         ]);
     }
 }

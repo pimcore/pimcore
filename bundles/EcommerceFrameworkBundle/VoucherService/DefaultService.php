@@ -62,12 +62,12 @@ class DefaultService implements VoucherServiceInterface
     {
         $resolver->setRequired([
             'reservation_minutes_threshold',
-            'statistics_days_threshold'
+            'statistics_days_threshold',
         ]);
 
         $resolver->setDefaults([
             'reservation_minutes_threshold' => 5,
-            'statistics_days_threshold' => 30
+            'statistics_days_threshold' => 30,
         ]);
 
         $resolver->setAllowedTypes('reservation_minutes_threshold', 'int');

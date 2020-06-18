@@ -191,7 +191,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                 if ($domain == 'admin') {
                     $jsonFiles = [
                         $locale . '.json' => 'en.json',
-                        $locale . '.extended.json' => 'en.extended.json'
+                        $locale . '.extended.json' => 'en.extended.json',
                     ];
 
                     foreach ($jsonFiles as $sourceFile => $fallbackFile) {
@@ -365,7 +365,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
     {
         $backends = [
             'messages' => 'website',
-            'admin' => 'admin'
+            'admin' => 'admin',
         ];
 
         if (isset($backends[$domain])) {
