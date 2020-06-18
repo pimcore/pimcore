@@ -484,9 +484,10 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                                             configWindow.focus();
                                         }, 250);
                                     }
-
                                 } else {
-                                    if (record.data.dataType == "system" && this.selectionPanel.getRootNode().findChild("text", record.data.key)) {
+                                    let onlySingle =  (record.data.dataType == "system" || record.data.layout && record.data.layout.isUnlocalized);
+
+                                    if (onlySingle && this.selectionPanel.getRootNode().findChild("text", record.data.key)) {
                                         dropHandlers.cancelDrop();
                                     } else {
                                         let copy = Ext.apply({}, record.data);
@@ -630,8 +631,9 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
 
         tree.addListener("itemdblclick", function (tree, record, item, index, e, eOpts) {
             if (!record.data.root && record.data.type != "layout") {
-                if (record.data.dataType == "system" && this.selectionPanel.getRootNode().findChild("text", record.data.key)) {
-                    dropHandlers.cancelDrop();
+                let onlySingle =  (record.data.dataType == "system" || record.data.layout && record.data.layout.isUnlocalized);
+                if (onlySingle && this.selectionPanel.getRootNode().findChild("text", record.data.key)) {
+                    // only allow single occurence
                 } else if (record.data.dataType != "localizedfields") {
                     var copy = Ext.apply({}, record.data);
                     copy.text = record.data.copyText;
