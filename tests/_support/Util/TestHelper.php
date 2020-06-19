@@ -661,6 +661,49 @@ class TestHelper
 
     /**
      * @param string $keyPrefix
+     * @param string|null $data
+     * @param bool $save
+     *
+     * @return Asset\Video
+     */
+    public static function createVideoAsset($keyPrefix = '', $data = null, $save = true)
+    {
+        if (!$data) {
+            $path = static::resolveFilePath('assets/video/example.mp4');
+            if (!file_exists($path)) {
+                throw new \RuntimeException(sprintf('Path %s was not found', $path));
+            }
+
+            $data = file_get_contents($path);
+        }
+
+        $asset = new Asset\Video();
+        $asset->setParentId(1);
+        $asset->setUserOwner(1);
+        $asset->setUserModification(1);
+        $asset->setCreationDate(time());
+        $asset->setData($data);
+        $asset->setType('video');
+
+        $property = new Property();
+        $property->setName('propname');
+        $property->setType('text');
+        $property->setData('bla');
+
+        $properties = [$property];
+        $asset->setProperties($properties);
+
+        $asset->setFilename($keyPrefix . uniqid() . rand(10, 99) . '.mp4');
+
+        if ($save) {
+            $asset->save();
+        }
+
+        return $asset;
+    }
+
+    /**
+     * @param string $keyPrefix
      * @param bool   $save
      *
      * @return Asset\Folder

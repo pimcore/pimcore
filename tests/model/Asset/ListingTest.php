@@ -26,9 +26,8 @@ class ListingTest extends ModelTestCase
             TestHelper::createImageAsset();
         }
 
-        for ($i = 0; $i < 2; $i++) {
-            TestHelper::createDocumentAsset();
-        }
+        TestHelper::createDocumentAsset();
+        TestHelper::createVideoAsset();
 
         $count = $db->fetchOne('SELECT count(*) from assets');
         $this->assertEquals(6, $count, 'expected 6 assets');
