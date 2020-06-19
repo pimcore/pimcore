@@ -245,7 +245,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof \DateTimeInterface) {
-            return $data->format('Y-m-d H:i:s');
+            return $data->format('Y-m-d H:i');
         }
 
         return null;
