@@ -443,6 +443,11 @@ class TestDataHelper extends Module
         $expected = new \DateTime();
         $expected->setDate(2000, 12, 24);
 
+        //set time for datetime isEqual comparison
+        if($field == 'datetime') {
+            $expected->setTime($value->format('H'), $value->format('i'), $value->format('s'));
+        }
+
         $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals(
             $expected->format('Y-m-d'),
