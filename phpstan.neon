@@ -37,8 +37,10 @@ parameters:
             message: '#Using \$this outside a class\.#'
             path: '**/*.html.php'
         -
-            message: '#Undefined variable: \$(this|view|app)#'
-            path: '**/*.html.php'
+            message: '#Variable \$(this|view|app) might not be defined.#'
+            paths:
+                - '**/*.html.php'
+                - '**/EcommerceFrameworkBundle/Resources/views/**/*.js.php'
         -
             message: '#Using \$this outside a class\.#'
             path: '**/*.js.php'
