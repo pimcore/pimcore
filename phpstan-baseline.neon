@@ -51,7 +51,7 @@ parameters:
 			path: bundles/AdminBundle/Resources/views/Admin/Login/twoFactorAuthentication.html.php
 
 		-
-			message: "#^Cannot call method getUser\\(\\) on _HumbugBoxe251c92b00d9\\\\Stringable\\|string\\|Symfony\\\\Component\\\\Security\\\\Core\\\\User\\\\UserInterface\\.$#"
+			message: "#^Cannot call method getUser\\(\\) on string\\|Stringable\\|Symfony\\\\Component\\\\Security\\\\Core\\\\User\\\\UserInterface\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Security/Guard/AdminAuthenticator.php
 
@@ -1352,16 +1352,6 @@ parameters:
 
 		-
 			message: "#^Method Pimcore\\\\Cache\\\\Pool\\\\Redis\\:\\:doClear\\(\\) should return bool but returns Credis_Client\\|string\\.$#"
-			count: 1
-			path: lib/Cache/Pool/Redis.php
-
-		-
-			message: "#^Function lzf_compress not found\\.$#"
-			count: 1
-			path: lib/Cache/Pool/Redis.php
-
-		-
-			message: "#^Function lzf_decompress not found\\.$#"
 			count: 1
 			path: lib/Cache/Pool/Redis.php
 
