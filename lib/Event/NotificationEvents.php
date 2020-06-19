@@ -35,20 +35,6 @@ final class NotificationEvents
      *
      * @var string
      */
-    const PRE_UPDATE = 'pimcore.notification.preUpdate';
-
-    /**
-     * @Event("Pimcore\Event\Model\NotificationEvent")
-     *
-     * @var string
-     */
-    const POST_UPDATE = 'pimcore.notification.postUpdate';
-
-    /**
-     * @Event("Pimcore\Event\Model\NotificationEvent")
-     *
-     * @var string
-     */
     const PRE_DELETE = 'pimcore.notification.preDelete';
 
     /**
