@@ -50,7 +50,7 @@ CREATE TABLE `assets_metadata` (
   `name` varchar(190) NOT NULL,
   `language` varchar(10) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
-  `data` text,
+  `data` longtext,
   PRIMARY KEY (`cid`, `name`, `language`),
 	INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
