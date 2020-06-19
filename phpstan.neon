@@ -21,6 +21,8 @@ parameters:
         - '**/simple_html_dom.php'
         - '**/PDFreactor.class.php'
         - '**/Document/MigrateTagNamingStrategyCommand.php'
+        - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
+        - '**/bundles/AdminBundle/Security/Guard/WebserviceAuthenticator.php'
 
     ignoreErrors:
         - '/(snappy|lz4)_(un)?compress/'
