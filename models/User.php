@@ -542,7 +542,7 @@ class User extends User\UserRole
     }
 
     /**
-     * @param string $path
+     * @param string|null $path
      */
     public function setImage($path)
     {
@@ -554,8 +554,11 @@ class User extends User\UserRole
         $thumb = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/user-thumbnail-' . $this->getId() . '.png';
         @unlink($destFile);
         @unlink($thumb);
-        copy($path, $destFile);
-        @chmod($destFile, File::getDefaultMode());
+
+        if ($path) {
+            copy($path, $destFile);
+            @chmod($destFile, File::getDefaultMode());
+        }
     }
 
     /**
@@ -587,7 +590,7 @@ class User extends User\UserRole
             return $thumb;
         }
 
-        return PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/avatar.png';
+        return $this->getFallbackImage();
     }
 
     /**
@@ -1050,5 +1053,19 @@ class User extends User\UserRole
 
             $this->twoFactorAuthentication[$key] = $value;
         }
+    }
+
+    public function hasImage()
+    {
+        if ($this->getImage() == $this->getFallbackImage()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function getFallbackImage()
+    {
+        return PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/avatar.png';
     }
 }
