@@ -19,6 +19,10 @@ also [Elastic Search Docs](https://www.elastic.co/guide/en/elasticsearch/client/
 - `hosts`: Array of hosts of the Elastic Search cluster to use. 
 - `indexType`: Necessary for Elastic Search 6 - defines the type name of products in index. 
 
+##### `synonym_providers`
+Specify synonym providers for synonym filters defined in filter section of index settings. 
+For details see [Synonyms](./02_Synonyms.md).
+
 #### Sample Config
 ```yml 
 pimcore_ecommerce_framework:

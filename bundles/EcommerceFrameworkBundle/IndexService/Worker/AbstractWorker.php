@@ -75,7 +75,7 @@ abstract class AbstractWorker implements WorkerInterface
     {
         if (null === $this->indexColumns) {
             $indexColumns = [
-                'categoryIds' => 'categoryIds'
+                'categoryIds' => 'categoryIds',
             ];
 
             foreach ($this->tenantConfig->getAttributes() as $attribute) {

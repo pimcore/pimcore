@@ -114,7 +114,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->insertOrUpdate('documents_translations', [
             'id' => $translation->getId(),
             'sourceId' => $sourceId,
-            'language' => $language
+            'language' => $language,
         ]);
     }
 

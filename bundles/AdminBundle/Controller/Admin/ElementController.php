@@ -104,11 +104,11 @@ class ElementController extends AdminController
                 'subtype' => $subtype,
                 'id' => $el->getId(),
                 'type' => $type,
-                'success' => true
+                'success' => true,
             ]);
         } else {
             return $this->adminJson([
-                'success' => false
+                'success' => false,
             ]);
         }
     }
@@ -124,7 +124,7 @@ class ElementController extends AdminController
         $result = [];
         foreach ($config as $configEntry) {
             $result[] = [
-                'name' => $configEntry
+                'name' => $configEntry,
             ];
         }
 
@@ -268,7 +268,7 @@ class ElementController extends AdminController
         return $this->adminJson([
             'data' => $notes,
             'success' => true,
-            'total' => $list->getTotalCount()
+            'total' => $list->getTotalCount(),
         ]);
     }
 
@@ -293,7 +293,7 @@ class ElementController extends AdminController
         $note->save();
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 
@@ -362,7 +362,7 @@ class ElementController extends AdminController
             'data' => $results,
             'total' => $total,
             'hasHidden' => $hasHidden,
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
@@ -386,7 +386,7 @@ class ElementController extends AdminController
         if ($element instanceof Element\AbstractElement) {
             return $this->adminJson([
                 'success' => true,
-                'jobs' => $element->getDependencies()->getRequiredBy()
+                'jobs' => $element->getDependencies()->getRequiredBy(),
             ]);
         } else {
             return $this->adminJson(['success' => false], Response::HTTP_NOT_FOUND);
@@ -415,8 +415,8 @@ class ElementController extends AdminController
         ) {
             $rewriteConfig = [
                 $request->get('sourceType') => [
-                    $sourceEl->getId() => $targetEl->getId()
-                ]
+                    $sourceEl->getId() => $targetEl->getId(),
+                ],
             ];
 
             if ($element instanceof Document) {
@@ -437,7 +437,7 @@ class ElementController extends AdminController
 
         return $this->adminJson([
             'success' => $success,
-            'message' => $message
+            'message' => $message,
         ]);
     }
 
@@ -459,7 +459,7 @@ class ElementController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
@@ -793,7 +793,7 @@ class ElementController extends AdminController
         return $this->adminJson(
             [
                 'data' => $result,
-                'success' => true
+                'success' => true,
             ]
         );
     }
@@ -871,7 +871,7 @@ class ElementController extends AdminController
                 if ($pathFormatter instanceof DataObject\ClassDefinition\PathFormatterInterface) {
                     $result = $pathFormatter->formatPath($result, $source, $targets, [
                         'fd' => $fd,
-                        'context' => $context
+                        'context' => $context,
                     ]);
                 } elseif (method_exists($formatter, 'formatPath')) {
                     @trigger_error(
@@ -889,7 +889,7 @@ class ElementController extends AdminController
                         $targets,
                         [
                             'fd' => $fd,
-                            'context' => $context
+                            'context' => $context,
                         ]
                     );
                 }

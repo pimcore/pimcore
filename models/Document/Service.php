@@ -176,7 +176,7 @@ class Service extends Model\Element\Service
 
         // triggers actions after the complete document cloning
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
-            'base_element' => $source // the element used to make a copy
+            'base_element' => $source, // the element used to make a copy
         ]));
 
         return $new;
@@ -243,7 +243,7 @@ class Service extends Model\Element\Service
 
         // triggers actions after the complete document cloning
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
-            'base_element' => $source // the element used to make a copy
+            'base_element' => $source, // the element used to make a copy
         ]));
 
         return $new;

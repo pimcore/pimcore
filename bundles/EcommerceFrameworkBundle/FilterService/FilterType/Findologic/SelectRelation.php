@@ -65,7 +65,7 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
             'values' => $values,
             'objects' => $objects,
             'fieldname' => $field,
-            'resultCount' => $productList->count()
+            'resultCount' => $productList->count(),
         ]);
     }
 

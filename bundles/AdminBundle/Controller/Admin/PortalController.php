@@ -255,7 +255,7 @@ class PortalController extends AdminController implements EventedControllerInter
             'limit' => 10,
             'order' => 'DESC',
             'orderKey' => 'modificationDate',
-            'condition' => "userModification = '".$this->getAdminUser()->getId()."'"
+            'condition' => "userModification = '".$this->getAdminUser()->getId()."'",
         ]);
 
         $response = [];
@@ -270,7 +270,7 @@ class PortalController extends AdminController implements EventedControllerInter
                     'id' => $doc->getId(),
                     'type' => $doc->getType(),
                     'path' => $doc->getRealFullPath(),
-                    'date' => $doc->getModificationDate()
+                    'date' => $doc->getModificationDate(),
                 ];
             }
         }
@@ -291,7 +291,7 @@ class PortalController extends AdminController implements EventedControllerInter
             'limit' => 10,
             'order' => 'DESC',
             'orderKey' => 'modificationDate',
-            'condition' => "userModification = '".$this->getAdminUser()->getId()."'"
+            'condition' => "userModification = '".$this->getAdminUser()->getId()."'",
         ]);
 
         $response = [];
@@ -306,7 +306,7 @@ class PortalController extends AdminController implements EventedControllerInter
                     'id' => $doc->getId(),
                     'type' => $doc->getType(),
                     'path' => $doc->getRealFullPath(),
-                    'date' => $doc->getModificationDate()
+                    'date' => $doc->getModificationDate(),
                 ];
             }
         }
@@ -327,7 +327,7 @@ class PortalController extends AdminController implements EventedControllerInter
             'limit' => 10,
             'order' => 'DESC',
             'orderKey' => 'o_modificationDate',
-            'condition' => "o_userModification = '".$this->getAdminUser()->getId()."'"
+            'condition' => "o_userModification = '".$this->getAdminUser()->getId()."'",
         ]);
 
         $response = [];
@@ -342,7 +342,7 @@ class PortalController extends AdminController implements EventedControllerInter
                     'id' => $object->getId(),
                     'type' => $object->getType(),
                     'path' => $object->getRealFullPath(),
-                    'date' => $object->getModificationDate()
+                    'date' => $object->getModificationDate(),
                 ];
             }
         }
@@ -383,7 +383,7 @@ class PortalController extends AdminController implements EventedControllerInter
                 'datetext' => $date->format('Y-m-d'),
                 'objects' => (int) $o,
                 'documents' => (int) $d,
-                'assets' => (int) $a
+                'assets' => (int) $a,
             ];
         }
 
@@ -408,8 +408,8 @@ class PortalController extends AdminController implements EventedControllerInter
         $data = [
             [
                 'id' => 0,
-                'site' => $translator->trans('main_site', [], 'admin')
-            ]
+                'site' => $translator->trans('main_site', [], 'admin'),
+            ],
         ];
 
         /** @var Site $site */
@@ -417,7 +417,7 @@ class PortalController extends AdminController implements EventedControllerInter
             if ($siteConfigProvider->isSiteReportingConfigured($site)) {
                 $data[] = [
                     'id' => $site->getId(),
-                    'site' => $site->getMainDomain()
+                    'site' => $site->getMainDomain(),
                 ];
             }
         }

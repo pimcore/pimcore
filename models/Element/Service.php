@@ -244,7 +244,7 @@ class Service extends Model\AbstractModel
                 'id' => $element->getId(),
                 'path' => $element->getRealFullPath(),
                 'type' => self::getElementType($element),
-                'subtype' => $element->getType()
+                'subtype' => $element->getType(),
             ];
         }
     }
@@ -597,7 +597,7 @@ class Service extends Model\AbstractModel
                 'id',
                 'o_id',
                 'o_type',
-                'type'
+                'type',
             ];
 
             if ($p->getData() instanceof Document || $p->getData() instanceof Asset || $p->getData() instanceof DataObject\AbstractObject) {
@@ -673,7 +673,7 @@ class Service extends Model\AbstractModel
             'subtype' => $element->getType(),
             'filename' => self::getFilename($element),
             'creationDate' => $element->getCreationDate(),
-            'modificationDate' => $element->getModificationDate()
+            'modificationDate' => $element->getModificationDate(),
         ];
 
         if (method_exists($element, 'isPublished')) {
@@ -1008,7 +1008,7 @@ class Service extends Model\AbstractModel
     {
         $event = new GenericEvent(null, [
             'key' => $key,
-            'type' => $type
+            'type' => $type,
         ]);
         \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SERVICE_PRE_GET_VALID_KEY, $event);
         $key = $event->getArgument('key');
@@ -1023,14 +1023,14 @@ class Service extends Model\AbstractModel
             $key = preg_replace('/[<>]/', '-', $key);
         } elseif ($type === 'document') {
             // replace URL reserved characters with a hyphen
-            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;]/', '-', $key);
+            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%&@=;\+]/', '-', $key);
         } elseif ($type === 'asset') {
             // keys shouldn't start with a "." (=hidden file) *nix operating systems
             // keys shouldn't end with a "." - Windows issue: filesystem API trims automatically . at the end of a folder name (no warning ... et al)
             $key = trim($key, '. ');
 
             // windows forbidden filenames + URL reserved characters (at least the ones which are problematic)
-            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%]/', '-', $key);
+            $key = preg_replace('/[#\?\*\:\\\\<\>\|"%\+]/', '-', $key);
         } else {
             $key = ltrim($key, '. ');
         }
@@ -1252,7 +1252,7 @@ class Service extends Model\AbstractModel
             'cpath' => $cpath,
             'date' => $note->getDate(),
             'title' => $note->getTitle(),
-            'description' => $note->getDescription()
+            'description' => $note->getDescription(),
         ];
 
         // prepare key-values
@@ -1267,7 +1267,7 @@ class Service extends Model\AbstractModel
                         $data = [
                             'id' => $d['data']->getId(),
                             'path' => $d['data']->getRealFullPath(),
-                            'type' => $d['data']->getType()
+                            'type' => $d['data']->getType(),
                         ];
                     }
                 } elseif ($type == 'date') {
@@ -1279,7 +1279,7 @@ class Service extends Model\AbstractModel
                 $keyValue = [
                     'type' => $type,
                     'name' => $name,
-                    'data' => $data
+                    'data' => $data,
                 ];
 
                 $keyValues[] = $keyValue;
@@ -1294,7 +1294,7 @@ class Service extends Model\AbstractModel
             if ($user) {
                 $e['user'] = [
                     'id' => $user->getId(),
-                    'name' => $user->getName()
+                    'name' => $user->getName(),
                 ];
             } else {
                 $e['user'] = '';

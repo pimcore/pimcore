@@ -411,7 +411,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 'Not saving {key} to cache as it did not fit into the save queue (max items on queue: {maxItems})',
                 [
                     'key' => $item->getKey(),
-                    'maxItems' => $this->maxWriteToCacheItems
+                    'maxItems' => $this->maxWriteToCacheItems,
                 ]
             );
         }
@@ -490,7 +490,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 [
                     'class' => get_class($data),
                     'id' => $data->getId(),
-                    'tags' => $tags
+                    'tags' => $tags,
                 ]
             );
         }
@@ -509,7 +509,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             if (isset($this->clearedTags[$tag])) {
                 $this->logger->debug('Aborted caching for key {key} because tag {tag} is in the cleared tags list', [
                     'key' => $cacheItem->getKey(),
-                    'tag' => $tag
+                    'tag' => $tag,
                 ]);
 
                 return null;
@@ -520,7 +520,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                     'key' => $cacheItem->getKey(),
                     'tag' => $tag,
                     'tags' => $tags,
-                    'tagsIgnoredOnSave' => $this->tagsIgnoredOnSave
+                    'tagsIgnoredOnSave' => $this->tagsIgnoredOnSave,
                 ]);
 
                 return null;
@@ -556,7 +556,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         if ($data instanceof ElementInterface) {
             if (!$data->__isBasedOnLatestData()) {
                 $this->logger->warning('Not saving {key} to cache as element is not based on latest data', [
-                    'key' => $item->getKey()
+                    'key' => $item->getKey(),
                 ]);
 
                 // TODO: this check needs to be done recursive, especially for Objects (like cache tags)
@@ -574,7 +574,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 'Failed to add entry {key} to cache. Item size was {itemSize}',
                 [
                     'key' => $item->getKey(),
-                    'itemSize' => formatBytes(strlen($item->get()))
+                    'itemSize' => formatBytes(strlen($item->get())),
                 ]
             );
         }
@@ -661,7 +661,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             'Could not clear tags as tag list is empty after normalization',
             [
                 'tags' => $tags,
-                'originalTags' => $originalTags
+                'originalTags' => $originalTags,
             ]
         );
 

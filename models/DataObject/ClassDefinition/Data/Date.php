@@ -71,7 +71,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param \DateTime $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int|null
@@ -96,7 +96,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param int $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return \Carbon\Carbon|null
@@ -123,7 +123,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param \DateTime $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int
@@ -137,7 +137,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getDataForEditmode
      *
      * @param \DateTime $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return int|null
@@ -168,7 +168,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getDataFromEditmode
      *
      * @param int $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return \Carbon\Carbon|null
@@ -329,7 +329,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @deprecated
      *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *

@@ -76,7 +76,7 @@ class Dao extends Model\Dao\PhpArrayTable
         $data = [];
         $allowedProperties = ['name', 'description', 'group', 'items', 'medias', 'format',
             'quality', 'highResolution', 'creationDate', 'modificationDate', 'preserveColor', 'preserveMetaData',
-            'rasterizeSVG', 'downloadable', 'forcePictureTag'];
+            'rasterizeSVG', 'downloadable', 'forcePictureTag', ];
 
         foreach ($dataRaw as $key => $value) {
             if (in_array($key, $allowedProperties)) {

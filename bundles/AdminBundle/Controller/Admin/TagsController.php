@@ -173,8 +173,8 @@ class TagsController extends AdminController
             'leaf' => !$tag->hasChildren(),
             'iconCls' => 'pimcore_icon_element_tags',
             'qtipCfg' => [
-                'title' => 'ID: ' . $tag->getId()
-            ]
+                'title' => 'ID: ' . $tag->getId(),
+            ],
         ];
 
         if ($showSelection) {
@@ -331,7 +331,7 @@ class TagsController extends AdminController
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $childsList,
-            'context' => []
+            'context' => [],
         ]);
         $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
         /** @var \Pimcore\Model\DataObject\Listing $childsList */
@@ -363,7 +363,7 @@ class TagsController extends AdminController
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $childsList,
-            'context' => []
+            'context' => [],
         ]);
         $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
         /** @var \Pimcore\Model\Asset\Listing $childsList */
@@ -395,7 +395,7 @@ class TagsController extends AdminController
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $childsList,
-            'context' => []
+            'context' => [],
         ]);
         $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
         /** @var \Pimcore\Model\Document\Listing $childsList */

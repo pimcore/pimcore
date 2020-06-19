@@ -113,7 +113,7 @@ class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundl
             'return_url' => null,
             'cancel_url' => null,
             'OrderDescription' => null,
-            'InternalPaymentId' => null
+            'InternalPaymentId' => null,
         ];
 
         $config = array_intersect_key($config, $required);
@@ -150,10 +150,10 @@ class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundl
                     'description' => $config['OrderDescription'],
                     'amount' => [
                         'currency_code' => $price->getCurrency()->getShortName(),
-                        'value' => $price->getGrossAmount()->asString(2)
-                    ]
-                ]
-            ]
+                        'value' => $price->getGrossAmount()->asString(2),
+                    ],
+                ],
+            ],
         ];
 
         return $requestBody;
@@ -200,7 +200,7 @@ class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundl
             'payerID' => null,
             'email_address' => null,
             'given_name' => null,
-            'surname' => null
+            'surname' => null,
         ];
 
         // check fields
@@ -287,7 +287,7 @@ class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundl
             '',
             $statusResponse->result->status == 'COMPLETED' ? StatusInterface::STATUS_CLEARED : StatusInterface::STATUS_CANCELLED,
             [
-                'transactionId' => $statusResponse->result->purchase_units[0]->payments->captures[0]->id
+                'transactionId' => $statusResponse->result->purchase_units[0]->payments->captures[0]->id,
             ]
         );
     }
@@ -316,7 +316,7 @@ class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundl
             'client_secret',
             'shipping_preference',
             'user_action',
-            'capture_strategy'
+            'capture_strategy',
         ]);
 
         $resolver
@@ -349,7 +349,7 @@ class PayPalSmartPaymentButton extends AbstractPayment implements \Pimcore\Bundl
 
         $this->applicationContext = [
             'shipping_preference' => $options['shipping_preference'],
-            'user_action' => $options['user_action']
+            'user_action' => $options['user_action'],
         ];
 
         $this->captureStrategy = $options['capture_strategy'];

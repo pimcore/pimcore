@@ -200,7 +200,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -218,7 +218,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -236,7 +236,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -254,7 +254,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @see Data::getDataForEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -270,7 +270,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
 
     /**
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -284,7 +284,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string

@@ -81,7 +81,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
             'values' => $values,
             'definition' => $filterDefinition,
             'fieldname' => $filterDefinition->getField(),
-            'resultCount' => $productList->count()
+            'resultCount' => $productList->count(),
         ]);
     }
 

@@ -52,7 +52,7 @@ class NotificationController extends AdminController
 
             $data[] = [
                 'id' => $recipient->getId(),
-                'text' => $prefix . $recipient->getName()
+                'text' => $prefix . $recipient->getName(),
             ];
         }
 
@@ -132,7 +132,7 @@ class NotificationController extends AdminController
 
         $options = [
             'offset' => $request->get('start', 0),
-            'limit' => $request->get('limit', 40)
+            'limit' => $request->get('limit', 40),
         ];
 
         $result = $service->findAll($filter, $options);

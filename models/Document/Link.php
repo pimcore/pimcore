@@ -92,7 +92,7 @@ class Link extends Model\Document
 
                 $dependencies[$key] = [
                     'id' => $this->getObject()->getId(),
-                    'type' => $this->getInternalType()
+                    'type' => $this->getInternalType(),
                 ];
             }
         }

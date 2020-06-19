@@ -60,7 +60,7 @@ final class LogArchiveTask implements TaskInterface
         $timestamp = time();
         $sql = ' SELECT %s FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_treshold.' DAY)';
 
-        if ($db->fetchOne(sprintf($sql, 'COUNT(*)')) > 1 || true) {
+        if ($db->query(sprintf($sql, 'COUNT(*)'))->fetchColumn() > 0) {
             $db->query('CREATE TABLE IF NOT EXISTS '.$tablename." (
                        id BIGINT(20) NOT NULL,
                        `pid` INT(11) NULL DEFAULT NULL,

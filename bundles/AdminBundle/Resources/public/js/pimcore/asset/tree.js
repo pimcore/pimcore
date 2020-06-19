@@ -976,7 +976,7 @@ pimcore.asset.tree = Class.create({
 
     uploadZip: function (tree, record) {
 
-        pimcore.helpers.uploadDialog(Routing.generate('pimcore_admin_asset_importzipfiles', {parentId: record.id}), "Filedata", function (response) {
+        pimcore.helpers.uploadDialog(Routing.generate('pimcore_admin_asset_importzip', {parentId: record.id}), "Filedata", function (response) {
             // this.attributes.reference
             var res = Ext.decode(response.response.responseText);
             pimcore.helpers.addTreeNodeLoadingIndicator("asset", record.get("id"));

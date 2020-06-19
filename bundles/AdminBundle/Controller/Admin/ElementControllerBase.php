@@ -146,8 +146,8 @@ class ElementControllerBase extends AdminController
                     'method' => 'POST',
                     'params' => [
                         'type' => $type,
-                        'id' => $element->getId()
-                    ]
+                        'id' => $element->getId(),
+                    ],
                 ]];
 
                 $hasChilds = $element->hasChildren();
@@ -174,8 +174,8 @@ class ElementControllerBase extends AdminController
                                     'step' => $i,
                                     'amount' => $deleteObjectsPerRequest,
                                     'type' => 'childs',
-                                    'id' => $element->getId()
-                                ]
+                                    'id' => $element->getId(),
+                                ],
                             ]];
                         }
                     }
@@ -186,8 +186,8 @@ class ElementControllerBase extends AdminController
                     'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/' . $type . '/delete',
                     'method' => 'DELETE',
                     'params' => [
-                        'id' => $element->getId()
-                    ]
+                        'id' => $element->getId(),
+                    ],
                 ]];
             }
         }
@@ -209,7 +209,7 @@ class ElementControllerBase extends AdminController
             'batchDelete' => count($ids) > 1,
             'elementKey' => $elementKey,
             'errors' => $errors,
-            'itemResults' => $itemResults
+            'itemResults' => $itemResults,
         ]);
     }
 }

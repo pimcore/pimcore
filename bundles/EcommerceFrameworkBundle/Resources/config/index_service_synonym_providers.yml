@@ -1,0 +1,7 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider\FileSynonymProvider: ~

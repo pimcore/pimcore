@@ -44,7 +44,7 @@ class Tenant implements ConditionInterface
     {
         // basic
         $json = [
-            'type' => 'Tenant', 'tenant' => implode(',', $this->getTenant())
+            'type' => 'Tenant', 'tenant' => implode(',', $this->getTenant()),
         ];
 
         return json_encode($json);

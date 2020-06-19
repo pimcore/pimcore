@@ -310,11 +310,11 @@ class AdminOrderController extends AdminController implements EventedControllerI
 
         // create timeline
         $arrIcons = [
-            'itemChangeAmount' => 'fa fa-pen', 'itemCancel' => 'fa fa-times', 'itemComplaint' => 'fa fa-exclamation-triangle'
+            'itemChangeAmount' => 'fa fa-pen', 'itemCancel' => 'fa fa-times', 'itemComplaint' => 'fa fa-exclamation-triangle',
         ];
 
         $arrContext = [
-            'itemChangeAmount' => 'secondary', 'itemCancel' => 'danger', 'itemComplaint' => 'warning'
+            'itemChangeAmount' => 'secondary', 'itemCancel' => 'danger', 'itemComplaint' => 'warning',
         ];
 
         $arrTimeline = [];
@@ -356,7 +356,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
                 'user' => $user ? $user->getName() : null,
                 'message' => $note->getData()['message']['data'],
                 'title' => $title ?: $note->getTitle(),
-                'quantity' => $quantity
+                'quantity' => $quantity,
             ];
         }
 

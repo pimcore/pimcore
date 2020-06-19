@@ -74,7 +74,7 @@ class ClassController extends AbstractRestController
         foreach ($classes as $class) {
             $item = [
                 'id' => $class->getId(),
-                'name' => $class->getName()
+                'name' => $class->getName(),
             ];
 
             $result[] = $item;
@@ -130,7 +130,7 @@ class ClassController extends AbstractRestController
 
         foreach ($bricks as $brick) {
             $item = [
-                'name' => $brick->getKey()
+                'name' => $brick->getKey(),
             ];
 
             $result[] = $item;
@@ -186,7 +186,7 @@ class ClassController extends AbstractRestController
 
         foreach ($fieldCollections as $fc) {
             $item = [
-                'name' => $fc->getKey()
+                'name' => $fc->getKey(),
             ];
 
             $result[] = $item;

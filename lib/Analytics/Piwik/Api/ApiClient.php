@@ -122,7 +122,7 @@ class ApiClient
         $config = $this->configProvider->getConfig();
 
         $options = array_merge([
-            'base_uri' => $this->getBaseUri($config)
+            'base_uri' => $this->getBaseUri($config),
         ], $config->getApiClientOptions());
 
         $this->client = $this->clientFactory->createClient($options);

@@ -224,14 +224,14 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
                 $setColumn,
                 Type::getType('string'),
                 [
-                    'length' => 255
+                    'length' => 255,
                 ]
             ),
             $versionColumn => new Column(
                 $versionColumn,
                 Type::getType('string'),
                 [
-                    'length' => 255
+                    'length' => 255,
                 ]
             ),
             $migrationDateColumn => new Column(
@@ -266,7 +266,7 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
             $this->formatQuery('SELECT {version} FROM {table} WHERE {migration_set} = ? AND {version} = ?'),
             [
                 $this->migrationSet,
-                $version->getVersion()
+                $version->getVersion(),
             ]
         );
 
@@ -284,7 +284,7 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
         $this->createMigrationTable();
 
         $ret = $this->connection->fetchAll($this->formatQuery('SELECT {version} FROM {table} WHERE {migration_set} = ?'), [
-            $this->migrationSet
+            $this->migrationSet,
         ]);
 
         return array_map('current', $ret);
@@ -320,7 +320,7 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
 
         $sql = $this->connection->getDatabasePlatform()->modifyLimitQuery($sql, 1);
         $result = $this->connection->fetchColumn($sql, [
-            $this->migrationSet
+            $this->migrationSet,
         ]);
 
         if (false !== $result) {
@@ -360,7 +360,7 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
         $this->connection->executeQuery(
             $this->formatQuery('DELETE FROM {table} WHERE {migration_set} = ?'),
             [
-                $this->migrationSet
+                $this->migrationSet,
             ]
         );
     }
@@ -407,7 +407,7 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
             'table' => $this->getMigrationsTableName(),
             'migration_set' => $this->migrationSetColumnName,
             'version' => $this->getMigrationsColumnName(),
-            'migrated_at' => $this->migrationDateColumnName
+            'migrated_at' => $this->migrationDateColumnName,
         ];
 
         $from = array_map(function ($key) {

@@ -784,205 +784,205 @@ class User extends User\UserRole
                 [
                     'action' => 'save',
                     'key' => ord('S'),
-                    'ctrl' => true
+                    'ctrl' => true,
                 ],
                 [
                     'action' => 'publish',
                     'key' => ord('P'),
                     'ctrl' => true,
-                    'shift' => true
+                    'shift' => true,
                 ],
                 [
                     'action' => 'unpublish',
                     'key' => ord('U'),
                     'ctrl' => true,
-                    'shift' => true
+                    'shift' => true,
                 ],
                 [
                     'action' => 'rename',
                     'key' => ord('R'),
                     'alt' => true,
-                    'shift' => true
+                    'shift' => true,
                 ],
                 [
                     'action' => 'refresh',
-                    'key' => 116
+                    'key' => 116,
                 ],
                 [
                     'action' => 'openAsset',
                     'key' => ord('A'),
                     'ctrl' => true,
-                    'shift' => true
+                    'shift' => true,
                 ],
                 [
                     'action' => 'openObject',
                     'key' => ord('O'),
                     'ctrl' => true,
-                    'shift' => true
+                    'shift' => true,
                 ],
                 [
                     'action' => 'openDocument',
                     'key' => ord('D'),
                     'ctrl' => true,
-                    'shift' => true
+                    'shift' => true,
                 ],
                 [
                     'action' => 'openClassEditor',
                     'key' => ord('C'),
                     'ctrl' => true,
-                    'shift' => true
+                    'shift' => true,
 
                 ],
                 [
                     'action' => 'openInTree',
                     'key' => ord('L'),
                     'ctrl' => true,
-                    'shift' => true
+                    'shift' => true,
 
                 ],
                 [
                     'action' => 'showMetaInfo',
                     'key' => ord('I'),
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'searchDocument',
                     'key' => ord('W'),
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'searchAsset',
                     'key' => ord('A'),
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'searchObject',
                     'key' => ord('O'),
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'showElementHistory',
                     'key' => ord('H'),
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'closeAllTabs',
                     'key' => ord('T'),
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'searchAndReplaceAssignments',
                     'key' => ord('S'),
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'glossary',
                     'key' => ord('G'),
                     'shift' => true,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'redirects',
                     'key' => ord('R'),
                     'ctrl' => false,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'sharedTranslations',
                     'key' => ord('T'),
                     'ctrl' => true,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'recycleBin',
                     'key' => ord('R'),
                     'ctrl' => true,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'notesEvents',
                     'key' => ord('N'),
                     'ctrl' => true,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'applicationLogger',
                     'key' => ord('L'),
                     'ctrl' => true,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'reports',
                     'key' => ord('M'),
                     'ctrl' => true,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'tagManager',
                     'key' => ord('H'),
                     'ctrl' => true,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'seoDocumentEditor',
                     'key' => ord('S'),
                     'ctrl' => true,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'robots',
                     'key' => ord('J'),
                     'ctrl' => true,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'httpErrorLog',
                     'key' => ord('O'),
                     'ctrl' => true,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'customReports',
                     'key' => ord('C'),
                     'ctrl' => true,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'tagConfiguration',
                     'key' => ord('N'),
                     'ctrl' => true,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'users',
                     'key' => ord('U'),
                     'ctrl' => true,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'roles',
                     'key' => ord('P'),
                     'ctrl' => true,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'clearAllCaches',
                     'key' => ord('Q'),
                     'ctrl' => false,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'clearDataCache',
                     'key' => ord('C'),
                     'ctrl' => false,
-                    'alt' => true
+                    'alt' => true,
                 ],
                 [
                     'action' => 'quickSearch',
                     'key' => ord('F'),
                     'ctrl' => true,
-                    'shift' => true
-                ]
+                    'shift' => true,
+                ],
             ]);
     }
 
@@ -1015,7 +1015,7 @@ class User extends User\UserRole
                 'required' => false,
                 'enabled' => false,
                 'secret' => '',
-                'type' => ''
+                'type' => '',
             ];
         }
 

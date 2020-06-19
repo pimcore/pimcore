@@ -45,7 +45,7 @@ class SettingsController extends ReportsControllerBase
 
         $response = [
             'values' => $config,
-            'config' => []
+            'config' => [],
         ];
 
         return $this->adminJson($response);

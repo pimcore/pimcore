@@ -163,7 +163,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
                     'heidelpay_paymentType' => $transaction->getPayment()->getPaymentType()->jsonSerialize(),
                     'heidelpay_paymentReference' => $config['paymentReference'],
                     'heidelpay_responseStatus' => '',
-                    'heidelpay_response' => $transaction->jsonSerialize()
+                    'heidelpay_response' => $transaction->jsonSerialize(),
                 ]
             );
             $orderAgent->updatePayment($paymentStatus);
@@ -227,7 +227,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
                         'paymentMethod' => get_class($payment->getPaymentType()),
                         'clientMessage' => '',
                         'merchantMessage' => '',
-                        'chargeId' => $payment->getChargeByIndex(0)->getId()
+                        'chargeId' => $payment->getChargeByIndex(0)->getId(),
                 ]);
 
                 return new Status(
@@ -242,7 +242,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
                         'heidelpay_paymentReference' => $paymentInfo->getPaymentReference(),
                         'heidelpay_paymentMethod' => get_class($payment->getPaymentType()),
                         'heidelpay_responseStatus' => 'completed',
-                        'heidelpay_response' => $payment->jsonSerialize()
+                        'heidelpay_response' => $payment->jsonSerialize(),
                     ]
                 );
             } elseif ($payment->isPending()) {
@@ -258,7 +258,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
                         'heidelpay_paymentReference' => $paymentInfo->getPaymentReference(),
                         'heidelpay_paymentMethod' => get_class($payment->getPaymentType()),
                         'heidelpay_responseStatus' => 'pending',
-                        'heidelpay_response' => $payment->jsonSerialize()
+                        'heidelpay_response' => $payment->jsonSerialize(),
                     ]
                 );
             }

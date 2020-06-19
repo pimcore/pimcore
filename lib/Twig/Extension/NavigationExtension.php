@@ -44,7 +44,7 @@ class NavigationExtension extends AbstractExtension
         return [
             new TwigFunction('pimcore_build_nav', [$this, 'buildNavigation']),
             new TwigFunction('pimcore_render_nav', [$this, 'render'], [
-                'is_safe' => ['html']
+                'is_safe' => ['html'],
             ]),
             new TwigFunction('pimcore_nav_renderer', [$this, 'getRenderer']),
         ];

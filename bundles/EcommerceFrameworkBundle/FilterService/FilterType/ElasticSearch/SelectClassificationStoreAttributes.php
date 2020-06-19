@@ -111,7 +111,7 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
 
                 $keyCollection[$keyId] = [
                     'keyConfig' => $key,
-                    'values' => $keyValues
+                    'values' => $keyValues,
                 ];
             }
         }

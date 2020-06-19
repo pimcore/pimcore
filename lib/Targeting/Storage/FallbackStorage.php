@@ -74,7 +74,7 @@ class FallbackStorage implements TargetingStorageInterface
     protected function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'clear_after_migration' => false
+            'clear_after_migration' => false,
         ]);
 
         $resolver->setAllowedTypes('clear_after_migration', 'bool');

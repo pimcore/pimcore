@@ -156,7 +156,7 @@ class Newsletter
                 'mail' => $mail,
                 'document' => $mail->getDocument(),
                 'sendingContainer' => $sendingContainer,
-                'mailer' => $mailer
+                'mailer' => $mailer,
             ]);
 
             Pimcore::getEventDispatcher()->dispatch(DocumentEvents::NEWSLETTER_PRE_SEND, $event);
@@ -223,7 +223,7 @@ class Newsletter
             'lastname' => $object->getLastname(),
             'email' => $object->getEmail(),
             'token' => $object->getProperty('token'),
-            'object' => $object
+            'object' => $object,
         ];
 
         $mail = new Mail();
@@ -375,7 +375,7 @@ class Newsletter
         $token = base64_encode(json_encode([
             'salt' => md5(microtime()),
             'email' => $object->getEmail(),
-            'id' => $object->getId()
+            'id' => $object->getId(),
         ]));
         $token = str_replace('=', '~', $token); // base64 can contain = which isn't safe in URL's
         $object->setProperty('token', 'text', $token);
@@ -406,7 +406,7 @@ class Newsletter
             'lastname' => $object->getLastname(),
             'email' => $object->getEmail(),
             'token' => $object->getProperty('token'),
-            'object' => $object
+            'object' => $object,
         ];
 
         $params = array_merge($defaultParameters, $params);
@@ -546,8 +546,8 @@ class Newsletter
         $note->setData([
             'ip' => [
                 'type' => 'text',
-                'data' => Tool::getClientIp()
-            ]
+                'data' => Tool::getClientIp(),
+            ],
         ]);
         $note->save();
     }

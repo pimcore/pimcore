@@ -299,7 +299,7 @@ class TestDataHelper extends Module
             'width' => 10,
             'height' => 20,
             'top' => 30,
-            'left' => 40
+            'left' => 40,
         ];
         $result[] = $hotspot1;
 
@@ -308,7 +308,7 @@ class TestDataHelper extends Module
             'width' => 10,
             'height' => 50,
             'top' => 20,
-            'left' => 40
+            'left' => 40,
         ];
 
         $result[] = $hotspot2;
@@ -525,7 +525,7 @@ class TestDataHelper extends Module
                 'parentId' => 0,
                 'username' => $username,
                 'password' => Authentication::getPasswordHash($username, $username),
-                'active' => true
+                'active' => true,
             ]);
 
             $user->setAdmin(true);
@@ -805,7 +805,7 @@ class TestDataHelper extends Module
         return [
             new DataObject\Data\Geopoint(150.54428100585938, -33.464671118242684),
             new DataObject\Data\Geopoint(150.73654174804688, -33.913733814316245),
-            new DataObject\Data\Geopoint(151.2542724609375, -33.9946115848146)
+            new DataObject\Data\Geopoint(151.2542724609375, -33.9946115848146),
         ];
     }
 

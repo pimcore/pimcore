@@ -27,6 +27,7 @@ pimcore.registerNS("pimcore.document.tree");
 pimcore.document.tree = Class.create({
 
     treeDataUrl: null,
+    nodesToMove: [],
 
     initialize: function(config, perspectiveCfg) {
         this.treeDataUrl = Routing.generate('pimcore_admin_document_document_treegetchildsbyid');
@@ -135,7 +136,10 @@ pimcore.document.tree = Class.create({
                     ddGroup: "element"
                 },
                 listeners: {
-                    nodedragover: this.onTreeNodeOver.bind(this)
+                    nodedragover: this.onTreeNodeOver.bind(this),
+                    beforedrop: function (node, data, overModel, dropPosition, dropHandlers, eOpts) {
+                        this.nodesToMove = [];
+                    }.bind(this)
                 },
                 xtype: 'pimcoretreeview'
             },
@@ -284,12 +288,18 @@ pimcore.document.tree = Class.create({
             (node.data.type === 'page' || node.data.type === 'hardlink') &&
             pimcore.globalmanager.get("user").isAllowed('redirects')
         ) {
+            this.nodesToMove.push({
+                "id": node.data.id,
+                "params": params,
+                "moveCallback": moveCallback,
+            });
+
             // ask the user if redirects should be created, if node was moved to a new parent
             Ext.MessageBox.confirm("", t("create_redirects"), function (buttonValue) {
-                if (buttonValue == "yes") {
-                    params['create_redirects'] = 'true';
+                for (let nodeIdx in this.nodesToMove) {
+                    this.nodesToMove[nodeIdx]['params']['create_redirects'] = (buttonValue == "yes");
+                    pimcore.elementservice.updateDocument(this.nodesToMove[nodeIdx].id, this.nodesToMove[nodeIdx].params, this.nodesToMove[nodeIdx].moveCallback);
                 }
-                pimcore.elementservice.updateDocument(node.data.id, params, moveCallback);
             }.bind(this));
         } else {
             pimcore.elementservice.updateDocument(node.data.id, params, moveCallback);
@@ -358,19 +368,24 @@ pimcore.document.tree = Class.create({
             var pasteInheritanceMenu = [];
             var childSupportedDocument = (record.data.type == "page" || record.data.type == "folder"
                 || record.data.type == "link" || record.data.type == "hardlink"
-                || record.data.type == "printpage" || record.data.type == "printcontainer");
+                || record.data.type == "printcontainer");
 
             if (childSupportedDocument && record.data.permissions.create) {
 
 
                 var addDocuments = perspectiveCfg.inTreeContextMenu("document.add");
-                var addBlankDocument = perspectiveCfg.inTreeContextMenu("document.addBlankDocument");
                 var addPrintDocuments = perspectiveCfg.inTreeContextMenu("document.addPrintPage");
                 var addEmail = perspectiveCfg.inTreeContextMenu("document.addEmail");
                 var addSnippet = perspectiveCfg.inTreeContextMenu("document.addSnippet");
                 var addLink = perspectiveCfg.inTreeContextMenu("document.addLink");
                 var addNewsletter = perspectiveCfg.inTreeContextMenu("document.addNewsletter");
                 var addHardlink = perspectiveCfg.inTreeContextMenu("document.addHardlink");
+
+                var addBlankDocument = perspectiveCfg.inTreeContextMenu("document.addBlankDocument");
+                var addBlankPrintDocuments = perspectiveCfg.inTreeContextMenu("document.addBlankPrintPage");
+                var addBlankEmail = perspectiveCfg.inTreeContextMenu("document.addBlankEmail");
+                var addBlankSnippet = perspectiveCfg.inTreeContextMenu("document.addBlankSnippet");
+                var addBlankNewsletter = perspectiveCfg.inTreeContextMenu("document.addBlankNewsletter");
 
                 if (addDocuments || addPrintDocuments) {
 
@@ -394,7 +409,21 @@ pimcore.document.tree = Class.create({
                         });
                     }
 
-                    if (addSnippet) {
+                    if (addBlankPrintDocuments) {
+                        // empty print pages
+                        documentMenu.printPage.push({
+                            text: "&gt; " + t("add_printpage"),
+                            iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
+                            handler: this.addDocument.bind(this, tree, record, "printpage")
+                        });
+                        documentMenu.printPage.push({
+                            text: "&gt; " + t("add_printcontainer"),
+                            iconCls: "pimcore_icon_printcontainer pimcore_icon_overlay_add",
+                            handler: this.addDocument.bind(this, tree, record, "printcontainer")
+                        });
+                    }
+
+                    if (addBlankSnippet) {
                         // empty snippet
                         documentMenu.snippet.push({
                             text: "&gt; " + t("blank"),
@@ -403,7 +432,7 @@ pimcore.document.tree = Class.create({
                         });
                     }
 
-                    if (addEmail) {
+                    if (addBlankEmail) {
                         // empty email
                         documentMenu.email.push({
                             text: "&gt; " + t("blank"),
@@ -412,7 +441,7 @@ pimcore.document.tree = Class.create({
                         });
                     }
 
-                    if (addNewsletter) {
+                    if (addBlankNewsletter) {
                         // empty newsletter
                         documentMenu.newsletter.push({
                             text: "&gt; " + t("blank"),
@@ -432,18 +461,6 @@ pimcore.document.tree = Class.create({
                     }
 
                     if (addPrintDocuments && record.data.type != "email" && record.data.type != "newsletter" && record.data.type != "link") {
-                        //print pages
-                        documentMenu.printPage.push({
-                            text: "&gt; " + t("add_printpage"),
-                            iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",
-                            handler: this.addDocument.bind(this, tree, record, "printpage")
-                        });
-                        documentMenu.printPage.push({
-                            text: "&gt; " + t("add_printcontainer"),
-                            iconCls: "pimcore_icon_printcontainer pimcore_icon_overlay_add",
-                            handler: this.addDocument.bind(this, tree, record, "printcontainer")
-                        });
-
                         menu.add(new Ext.menu.Item({
                             text: t('add_printpage'),
                             iconCls: "pimcore_icon_printpage pimcore_icon_overlay_add",

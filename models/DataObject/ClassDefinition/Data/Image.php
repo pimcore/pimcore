@@ -115,7 +115,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param Asset $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int|null
@@ -133,7 +133,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param int $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Asset|null
@@ -151,7 +151,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param Asset $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int|null
@@ -169,7 +169,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see Data::getDataForEditmode
      *
      * @param Asset\Image|null $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return array|null
@@ -185,7 +185,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @param Asset $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -199,7 +199,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Asset\Image|null
@@ -215,7 +215,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @param int $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Asset
@@ -248,7 +248,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @abstract
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -326,7 +326,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if ($data instanceof Asset) {
             $dependencies['asset_' . $data->getId()] = [
                 'id' => $data->getId(),
-                'type' => 'asset'
+                'type' => 'asset',
             ];
         }
 
@@ -338,7 +338,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @deprecated
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return int|null
@@ -488,7 +488,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -498,14 +498,14 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if ($value instanceof \Pimcore\Model\Asset\Image) {
             return [
                 'type' => 'asset',
-                'id' => $value->getId()
+                'id' => $value->getId(),
             ];
         }
     }
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed

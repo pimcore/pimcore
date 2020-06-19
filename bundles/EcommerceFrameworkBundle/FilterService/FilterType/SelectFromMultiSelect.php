@@ -46,7 +46,7 @@ class SelectFromMultiSelect extends AbstractFilterType
             'values' => array_values($values),
             'fieldname' => $field,
             'metaData' => $filterDefinition->getMetaData(),
-            'resultCount' => $productList->count()
+            'resultCount' => $productList->count(),
         ]);
     }
 

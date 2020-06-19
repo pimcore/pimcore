@@ -99,7 +99,7 @@ class Filename extends AbstractResolver
             $object = DataObject::getByPath($intendedPath);
 
             $object = $service->populate($config, $object, $rowData, [
-                'override' => $overwrite
+                'override' => $overwrite,
             ]);
         } else {
             if ($service instanceof ImportDataServiceInterface) {

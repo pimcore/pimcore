@@ -69,7 +69,7 @@ abstract class Dao extends Model\Dao\AbstractDao
 
         return [
             'key' => $key,
-            'path' => $path
+            'path' => $path,
         ];
     }
 

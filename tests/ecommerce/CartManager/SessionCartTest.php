@@ -33,7 +33,7 @@ class SessionCartTest extends TestCase
                 return false;
             },
             'modified' => function () {
-            }
+            },
         ]);
 
         $cart->addItem($product, 2);

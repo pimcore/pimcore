@@ -2,8 +2,7 @@
 Depending on the *Product Index* implementation, there are two different *Product Index* data architectures and ways for 
 indexing: Simple Mysql Architecture and Optimized Architecture. 
 
-For indexing itself the helper class `\Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Tool\IndexUpdater` 
-or the provided Pimcore console commands can be used. 
+For indexing itself the provided Pimcore console commands can be used. 
 
 
 ## Simple Mysql Architecture
@@ -44,7 +43,7 @@ that should be used.
 - In this case a so called store table is between the Pimcore objects and the *Product Index*. This store table enables to ...
    - ... update the *Product Index* only if index relevant data has changed. Therefore the load on the index itself is reduced 
          and unnecessary write operations are prevented. 
-   - ... update the *Product Index* asynchronously and therefore update also dependent elements (childs, variants, ...) 
+   - ... update the *Product Index* asynchronously and therefore update also dependent elements (children, variants, ...) 
          of an updated Pimcore object without impact on save performance. 
    - ... rebuilding the whole *Product Index* out of the store table much faster since no direct interaction with 
          Pimcore objects is needed. 
@@ -64,20 +63,20 @@ For updating data in index following commands are available.
 **This command should be executed periodically (e.g. all 10 minutes).**
 
 ```bash
-php bin/console ecommerce:indexservice:process-queue preparation
+php bin/console ecommerce:indexservice:process-preparation-queue
 ```
 
 - To update the Product Index based on changes stored in the store table use the following command. 
 **This command should be executed periodically (e.g. all 10 minutes).**
 
 ```bash
-php bin/console ecommerce:indexservice:process-queue update-index
+php bin/console ecommerce:indexservice:process-update-queue 
 ```
 
 - For manually update all Pimcore objects in the index store use following command. As stated before, this should only be
   necessary for an initial fill-up of the index. After that, at least Product Index Store and Pimcore objects should always 
-  be in sync. It is important to execute `ecommerce:indexservice:process-queue preparation` and 
-  `ecommerce:indexservice:process-queue update-index` periodically though.
+  be in sync. It is important to execute `ecommerce:indexservice:process-preparation-queue` and 
+  `ecommerce:indexservice:process-update-queue` periodically though.
 ```bash
 php bin/console ecommerce:indexservice:bootstrap --update-index
 ```
@@ -89,8 +88,8 @@ php bin/console ecommerce:indexservice:bootstrap --update-index
   the store table is out of sync. Reset the preparation queue for instance when your product model 
   returns updated data for a field.
 ```bash
-php bin/console ecommerce:indexservice:reset-queue preparation
-php bin/console ecommerce:indexservice:reset-queue update-index
+php bin/console ecommerce:indexservice:reset-queue preparation --tenant=MyTenant
+php bin/console ecommerce:indexservice:reset-queue update-index --tenant=MyTenant
 ```
 
 - If you need to create or update the index structures you can still use:
@@ -101,3 +100,8 @@ php bin/console ecommerce:indexservice:bootstrap --create-or-update-index-struct
 > For further details see `--help` section of the commands. 
 
 
+### Paralelization of Indexing
+All indexing commands include the [parallelization trait of webmozart](https://github.com/webmozarts/console-parallelization). 
+Thus indexing can be parallelized very easily by adding the `--processes=X` option to the command.
+
+Be aware that depending on the command too many parallel processes might cause deadlocks on database.

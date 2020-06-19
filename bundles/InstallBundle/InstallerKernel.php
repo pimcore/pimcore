@@ -84,7 +84,7 @@ class InstallerKernel extends Kernel
         $bundles = [
             new FrameworkBundle(),
             new MonologBundle(),
-            new PimcoreInstallBundle()
+            new PimcoreInstallBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'])) {
