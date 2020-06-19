@@ -237,6 +237,7 @@ class AssetHelperController extends AdminController
         }
 
         $availableFields = [];
+        $language = '';
 
         if (empty($gridConfig)) {
             $availableFields = $this->getDefaultGridFields(
