@@ -472,6 +472,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $userData['twoFactorAuthentication']['isActive'] = ($user->getTwoFactorAuthentication('enabled') || $user->getTwoFactorAuthentication('secret'));
         unset($userData['password']);
         unset($userData['twoFactorAuthentication']['secret']);
+        $userData['hasImage'] = $user->hasImage();
 
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
@@ -644,6 +645,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $userData['twoFactorAuthentication'] = $user->getTwoFactorAuthentication();
         unset($userData['twoFactorAuthentication']['secret']);
         $userData['twoFactorAuthentication']['isActive'] = $user->getTwoFactorAuthentication('enabled') && $user->getTwoFactorAuthentication('secret');
+        $userData['hasImage'] = $user->hasImage();
 
         $userData['isPasswordReset'] = Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
             return $adminSession->get('password_reset');
@@ -771,17 +773,8 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function uploadImageAction(Request $request)
     {
-        if ($request->get('id')) {
-            if ($this->getAdminUser()->getId() != $request->get('id')) {
-                $this->checkPermission('users');
-            }
-            $id = $request->get('id');
-        } else {
-            $id = $this->getAdminUser()->getId();
-        }
-
         /** @var User $userObj */
-        $userObj = User::getById($id);
+        $userObj = User::getById($this->getUserId($request));
 
         if ($userObj->isAdmin() && !$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Only admin users are allowed to modify admin users');
@@ -796,6 +789,29 @@ class UserController extends AdminController implements EventedControllerInterfa
         $response->headers->set('Content-Type', 'text/html');
 
         return $response;
+    }
+
+    /**
+     * @Route("/user/delete-image", name="pimcore_admin_user_deleteimage", methods={"DELETE"})
+     *
+     * @param Request $request
+     *
+     * @throws \Exception
+     *
+     * @return JsonResponse
+     */
+    public function deleteImageAction(Request $request)
+    {
+        /** @var User $userObj */
+        $userObj = User::getById($this->getUserId($request));
+
+        if ($userObj->isAdmin() && !$this->getAdminUser()->isAdmin()) {
+            throw new \Exception('Only admin users are allowed to modify admin users');
+        }
+
+        $userObj->setImage(null);
+
+        return $this->adminJson(['success' => true]);
     }
 
     /**
@@ -894,17 +910,8 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function getImageAction(Request $request)
     {
-        if ($request->get('id')) {
-            if ($this->getAdminUser()->getId() != $request->get('id')) {
-                $this->checkPermission('users');
-            }
-            $id = $request->get('id');
-        } else {
-            $id = $this->getAdminUser()->getId();
-        }
-
         /** @var User $userObj */
-        $userObj = User::getById($id);
+        $userObj = User::getById($this->getUserId($request));
         $thumb = $userObj->getImage();
 
         $response = new BinaryFileResponse($thumb);
@@ -1193,5 +1200,22 @@ class UserController extends AdminController implements EventedControllerInterfa
             'success' => $success,
             'message' => $message,
         ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return int
+     */
+    protected function getUserId(Request $request)
+    {
+        if ($request->get('id')) {
+            if ($this->getAdminUser()->getId() != $request->get('id')) {
+                $this->checkPermission('users');
+            }
+
+            return (int) $request->get('id');
+        }
+
+        return $this->getAdminUser()->getId();
     }
 }
