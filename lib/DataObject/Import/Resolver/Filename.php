@@ -42,8 +42,8 @@ class Filename extends AbstractResolver
 
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
-        $overwrite = filter_var($config->resolverSettings->overwrite, FILTER_VALIDATE_BOOLEAN);
-        $skipIfExists = filter_var($config->resolverSettings->skipIfExists, FILTER_VALIDATE_BOOLEAN);
+        $overwrite = filter_var($config->resolverSettings->overwrite ?? false, FILTER_VALIDATE_BOOLEAN);
+        $skipIfExists = filter_var($config->resolverSettings->skipIfExists ?? false, FILTER_VALIDATE_BOOLEAN);
         $prefix = (string)$config->resolverSettings->prefix;
         $service = ImportClassResolver::resolveClassOrService($config->resolverSettings->phpClassOrService);
 
