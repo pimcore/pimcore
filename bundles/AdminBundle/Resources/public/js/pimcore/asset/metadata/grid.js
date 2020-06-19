@@ -152,8 +152,10 @@ pimcore.asset.metadata.grid = Class.create({
                                 name: "data",
                                 convert: function (v, r) {
                                     let dataType = r.data.type;
-                                    if (typeof pimcore.asset.metadata.tags[dataType].prototype.convertPredefinedGridData === "function") {
-                                        v = pimcore.asset.metadata.tags[dataType].prototype.convertPredefinedGridData(v, r);
+                                    if (typeof pimcore.asset.metadata.tags[dataType] !== "undefined") {
+                                        if (typeof pimcore.asset.metadata.tags[dataType].prototype.convertPredefinedGridData === "function") {
+                                            v = pimcore.asset.metadata.tags[dataType].prototype.convertPredefinedGridData(v, r);
+                                        }
                                     }
                                     return v;
                                 }
@@ -171,7 +173,9 @@ pimcore.asset.metadata.grid = Class.create({
                 listeners: {
                     update: function(store, record, operation, modifiedFieldNames, details, eOpts) {
                         let newData = record.data.data;
-                        newData = pimcore.asset.metadata.tags[record.data.type].prototype.marshal(newData);
+                        if (typeof pimcore.asset.metadata.tags[record.data.type] !== "undefined") {
+                            newData = pimcore.asset.metadata.tags[record.data.type].prototype.marshal(newData);
+                        }
                         this.dataProvider.update(record.data, newData, this.grid.getId());
                     }.bind(this),
                     remove: function(store, records, index, isMove, eOpts ) {
@@ -316,10 +320,14 @@ pimcore.asset.metadata.grid = Class.create({
                                     icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
                                     handler: function (grid, rowIndex) {
                                         let rec = grid.getStore().getAt(rowIndex);
-                                        pimcore.asset.metadata.tags[rec.get('type')].prototype.handleGridOpenAction(grid, rowIndex);
+                                        if (typeof pimcore.asset.metadata.tags[rec.get('type')] !== "undefined") {
+                                            pimcore.asset.metadata.tags[rec.get('type')].prototype.handleGridOpenAction(grid, rowIndex);
+                                        }
                                     }.bind(this),
                                     getClass: function (v, meta, rec) {
-                                        return pimcore.asset.metadata.tags[rec.get('type')].prototype.getGridOpenActionVisibilityStyle();
+                                        if (typeof pimcore.asset.metadata.tags[rec.get('type')] !== "undefined") {
+                                            return pimcore.asset.metadata.tags[rec.get('type')].prototype.getGridOpenActionVisibilityStyle();
+                                        }
                                     }
                                 }
                             ]
@@ -359,7 +367,9 @@ pimcore.asset.metadata.grid = Class.create({
                     Ext.get(rows[i]).addCls("pimcore_properties_hidden_row");
                 }
 
-                pimcore.asset.metadata.tags[data.type].prototype.updatePredefinedGridRow(this.grid, rows[i], data);
+                if (typeof pimcore.asset.metadata.tags[data.type] !== "undefined") {
+                    pimcore.asset.metadata.tags[data.type].prototype.updatePredefinedGridRow(this.grid, rows[i], data);
+                }
             } catch (e) {
                 console.log(e);
             }
@@ -373,6 +383,9 @@ pimcore.asset.metadata.grid = Class.create({
     getCellRenderer: function (value, metaData, record, rowIndex, colIndex, store) {
         var data = store.getAt(rowIndex).data;
         var type = data.type;
+        if (typeof pimcore.asset.metadata.tags[type] == "undefined") {
+            type = "input";
+        }
         return pimcore.asset.metadata.tags[type].prototype.getGridCellRenderer(value, metaData, record, rowIndex, colIndex, store);
     },
 
@@ -425,11 +438,19 @@ pimcore.asset.metadata.grid = Class.create({
     cellMousedown: function (grid, cell, rowIndex, cellIndex, e) {
         var store = grid.getStore();
         var record = store.getAt(rowIndex);
-        pimcore.asset.metadata.tags[record.data.type].prototype.handleGridCellClick(grid, cell, rowIndex, cellIndex, e);
+        let type = record.data.type;
+        if (typeof pimcore.asset.metadata.tags[type] === "undefined") {
+            type = "input";
+        }
+        pimcore.asset.metadata.tags[type].prototype.handleGridCellClick(grid, cell, rowIndex, cellIndex, e);
     },
 
     getCellEditor: function (record) {
-        return pimcore.asset.metadata.tags[record.data.type].prototype.getGridCellEditor("custom", record);
+        let type = record.data.type;
+        if (typeof pimcore.asset.metadata.tags[type] === "undefined") {
+            type = "input";
+        }
+        return pimcore.asset.metadata.tags[type].prototype.getGridCellEditor("custom", record);
     },
 
     commitChanges: function () {
@@ -475,7 +496,9 @@ pimcore.asset.metadata.grid = Class.create({
 
             if (duplicateIndex < 0) {
                 let value = item.data;
-                value = pimcore.asset.metadata.tags[item.type].prototype.unmarshal(value);
+                if (typeof pimcore.asset.metadata.tags[item.type] !== "undefined") {
+                    value = pimcore.asset.metadata.tags[item.type].prototype.unmarshal(value);
+                }
 
                 let newRecord = {
                     name: key,
