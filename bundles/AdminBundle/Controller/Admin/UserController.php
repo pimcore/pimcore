@@ -1204,6 +1204,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
     /**
      * @param Request $request
+     *
      * @return int
      */
     protected function getUserId(Request $request)
