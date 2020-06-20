@@ -375,6 +375,11 @@ class Block extends Model\Document\Tag implements BlockInterface
     {
         $document = $this->getDocument();
 
+        // https://github.com/pimcore/pimcore/issues/6629
+        if (!$document instanceof Model\Document\PageSnippet) {
+            return [];
+        }
+
         $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();
 
