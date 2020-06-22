@@ -73,7 +73,7 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
                 ->setClasses(['RelationTest'])
-                );
+            );
 
             $panel->addChild($this->createDataChild('manyToOneRelation', 'relation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
@@ -87,14 +87,14 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata']
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'advancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'meta']
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'meta'],
                 ]));
 
             $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
@@ -116,14 +116,14 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata']
+                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
             $lFields->addChild($this->createDataChild('advancedManyToManyRelation', 'ladvancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'meta']
+                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'meta'],
                 ]));
 
             $lFields->addChild($this->createDataChild('manyToManyObjectRelation', 'lobjects')
@@ -149,14 +149,14 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata']
+                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
             $block->addChild($this->createDataChild('advancedManyToManyRelation', 'blockadvancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
-                ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta']
+                ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta'],
                 ]));
 
             $blockLazyLoaded = new ClassDefinition\Data\Block();
@@ -179,14 +179,14 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata']
+                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
             $blockLazyLoaded->addChild($this->createDataChild('advancedManyToManyRelation', 'blockadvancedRelationsLazyLoaded')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
-                ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta']
+                ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta'],
                 ]));
 
             $panel->addChild($lFields);
@@ -275,28 +275,28 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true)
-                ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta']
+                ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta'],
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'multipleManyToMany')
                 ->setAllowMultipleAssignments(true)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true)
-                ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta']
+                ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta'],
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'onlyOneManyToManyObject')
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
-                ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta']
+                ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta'],
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'multipleManyToManyObject')
                 ->setAllowMultipleAssignments(true)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
-                ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta']
+                ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta'],
                 ]));
 
             $root->addChild($rootPanel);
@@ -351,11 +351,13 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('manyToManyObjectRelation', 'objects')
                 ->setClasses([]));
 
+            //TODO add test
+
             $panel->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'objectswithmetadata')
                 ->setAllowedClassId($name)
                 ->setClasses([])
                 ->setColumns([ ['position' => 1, 'key' => 'meta1', 'type' => 'text', 'label' => 'label1'],
-                    ['position' => 2, 'key' => 'meta2', 'type' => 'text', 'label' => 'label2']]));
+                    ['position' => 2, 'key' => 'meta2', 'type' => 'text', 'label' => 'label2'], ]));
 
             $panel->addChild($this->createDataChild('slider'));
             $panel->addChild($this->createDataChild('numeric', 'number'));
@@ -370,7 +372,7 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('wysiwyg'));
             $panel->addChild($this->createDataChild('select')->setOptions([
                 ['key' => 'Selection 1', 'value' => '1'],
-                ['key' => 'Selection 2', 'value' => '2']]));
+                ['key' => 'Selection 2', 'value' => '2'], ]));
 
             $panel->addChild($this->createDataChild('multiselect')->setOptions([
                 ['key' => 'Katze', 'value' => 'cat'],
@@ -379,7 +381,7 @@ class Model extends AbstractDefinitionHelper
                 ['key' => 'Schwein', 'value' => 'pig'],
                 ['key' => 'Esel', 'value' => 'donkey'],
                 ['key' => 'Affe', 'value' => 'monkey'],
-                ['key' => 'Huhn', 'value' => 'chicken']
+                ['key' => 'Huhn', 'value' => 'chicken'],
             ]));
 
             $panel->addChild($this->createDataChild('country'));
@@ -395,12 +397,12 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('structuredTable', 'structuredtable')
                 ->setCols([
                     ['position' => 1, 'key' => 'col1', 'type' => 'number', 'label' => 'collabel1'],
-                    ['position' => 2, 'key' => 'col2', 'type' => 'text', 'label' => 'collabel2']
+                    ['position' => 2, 'key' => 'col2', 'type' => 'text', 'label' => 'collabel2'],
                 ])
                 ->setRows([
                     ['position' => 1, 'key' => 'row1', 'label' => 'rowlabel1'],
                     ['position' => 2, 'key' => 'row2', 'label' => 'rowlabel2'],
-                    ['position' => 3, 'key' => 'row3', 'label' => 'rowlabel3']
+                    ['position' => 3, 'key' => 'row3', 'label' => 'rowlabel3'],
                 ])
             );
             $panel->addChild($this->createDataChild('fieldcollections', 'fieldcollection')
@@ -424,11 +426,11 @@ class Model extends AbstractDefinitionHelper
             $lFields->addChild($this->createDataChild('time', 'ltime'));
             $lFields->addChild($this->createDataChild('select', 'lselect')->setOptions([
                 ['key' => 'one', 'value' => '1'],
-                ['key' => 'two', 'value' => '2']]));
+                ['key' => 'two', 'value' => '2'], ]));
 
             $lFields->addChild($this->createDataChild('multiselect', 'lmultiselect')->setOptions([
                 ['key' => 'one', 'value' => '1'],
-                ['key' => 'two', 'value' => '2']]));
+                ['key' => 'two', 'value' => '2'], ]));
             $lFields->addChild($this->createDataChild('countrymultiselect', 'lcountries'));
             $lFields->addChild($this->createDataChild('languagemultiselect', 'llanguages'));
             $lFields->addChild($this->createDataChild('table', 'ltable'));
@@ -488,6 +490,9 @@ class Model extends AbstractDefinitionHelper
             $otherPanel->addChild($this->createDataChild('slider'));
             $otherPanel->addChild($this->createDataChild('manyToManyObjectRelation', 'relationobjects')
                 ->setClasses([]));
+            $panel->addChild($this->createDataChild('manyToOneRelation', 'relation')
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
             $panel->addChild($lFields);
             $panel->addChild($otherPanel);
@@ -558,6 +563,17 @@ class Model extends AbstractDefinitionHelper
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+
+            $lFields->addChild($this->createDataChild('Input', 'linput'));
+
+            $lFields->addChild($this->createDataChild('manyToOneRelation', 'lrelation')
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
+
+            $panel->addChild($lFields);
+
             $root->addChild($rootPanel);
             $definition = $this->createFieldcollection($name, $root, $filename);
         }
@@ -602,14 +618,14 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata']
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'advancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'meta']
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'meta'],
                 ]));
 
             $root->addChild($rootPanel);
@@ -659,14 +675,14 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata']
+                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
             $lFields->addChild($this->createDataChild('advancedManyToManyRelation', 'ladvancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'meta']
+                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'meta'],
                 ]));
 
             $panel->addChild($lFields);
@@ -715,19 +731,19 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata']
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
             $panel->addChild($this->createDataChild('advancedManyToManyRelation', 'advancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'meta']
+                ->setColumns([ ['position' => 1, 'key' => 'metadataUpper', 'type' => 'text', 'label' => 'meta'],
                 ]));
 
             $root->addChild($rootPanel);
             $definition = $this->createObjectbrick($name, $root, $filename, [
-                ['classname' => 'LazyLoading', 'fieldname' => 'bricks']
+                ['classname' => 'LazyLoading', 'fieldname' => 'bricks'],
 
             ]);
         }
@@ -775,20 +791,20 @@ class Model extends AbstractDefinitionHelper
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
                 ->setClasses([])
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata']
+                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'metadata'],
                 ]));
 
             $lFields->addChild($this->createDataChild('advancedManyToManyRelation', 'ladvancedRelations')
                 ->setAllowMultipleAssignments(false)
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
-                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'meta']
+                ->setColumns([ ['position' => 1, 'key' => 'metadata', 'type' => 'text', 'label' => 'meta'],
                 ]));
 
             $panel->addChild($lFields);
             $root->addChild($rootPanel);
             $definition = $this->createObjectbrick($name, $root, $filename, [
-                ['classname' => 'LazyLoading', 'fieldname' => 'bricks']
+                ['classname' => 'LazyLoading', 'fieldname' => 'bricks'],
 
             ]);
         }
@@ -819,14 +835,16 @@ class Model extends AbstractDefinitionHelper
 
             $panel->addChild($this->createDataChild('input', 'brickinput'));
 
+            $panel->addChild($this->createDataChild('input', 'brickinput2'));
+
             $panel->addChild($this->createDataChild('manyToManyRelation', 'brickLazyRelation')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])
                 ->setDocumentsAllowed(true)->setAssetsAllowed(true)->setObjectsAllowed(true));
 
             $root->addChild($rootPanel);
             $definition = $this->createObjectbrick($name, $root, $filename, [
-                ['classname' => 'unittest', 'fieldname' => 'mybricks']
-
+                ['classname' => 'unittest', 'fieldname' => 'mybricks'],
+                ['classname' => 'inheritance', 'fieldname' => 'mybricks'],
             ]);
         }
 
@@ -884,6 +902,7 @@ class Model extends AbstractDefinitionHelper
 
         $this->setupPimcoreClass_Unittest();
         $this->setupPimcoreClass_Inheritance();
+        $this->setupPimcoreClass_RelationTest();
 
         $this->setupObjectbrick_UnittestBrick();
     }

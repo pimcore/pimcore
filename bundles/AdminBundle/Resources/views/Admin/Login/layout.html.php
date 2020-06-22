@@ -48,7 +48,7 @@ $config = $this->config;
 <?php } ?>
 
 <div id="logo">
-    <img src="/admin/settings/display-custom-logo<?= $config['branding']['login_screen_invert_colors'] ? '' : '?white=true' ?>">
+    <img src="<?=$view->router()->path('pimcore_settings_display_custom_logo')?><?= $config['branding']['login_screen_invert_colors'] ? '' : '?white=true' ?>">
 </div>
 
 <div id="content">

@@ -132,7 +132,22 @@ class ClassDefinition extends Model\Webservice\Data
     public $group;
 
     /**
+     * @var bool
+     */
+    public $showAppLoggerTab = false;
+
+    /**
      * @var string
      */
     public $linkGeneratorReference;
+
+    /**
+     * @var array
+     */
+    public $compositeIndices;
+
+    /**
+     * @var bool
+     */
+    public $showFieldLookup = false;
 }

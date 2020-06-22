@@ -65,7 +65,7 @@ class GoogleTagManagerListener
      */
     private $headBlocks = [
         self::BLOCK_HEAD_BEFORE_SCRIPT_TAG,
-        self::BLOCK_HEAD_AFTER_SCRIPT_TAG
+        self::BLOCK_HEAD_AFTER_SCRIPT_TAG,
     ];
 
     /**
@@ -73,7 +73,7 @@ class GoogleTagManagerListener
      */
     private $bodyBlocks = [
         self::BLOCK_BODY_BEFORE_NOSCRIPT_TAG,
-        self::BLOCK_BODY_AFTER_NOSCRIPT_TAG
+        self::BLOCK_BODY_AFTER_NOSCRIPT_TAG,
     ];
 
     public function __construct(
@@ -133,7 +133,7 @@ class GoogleTagManagerListener
             '@PimcoreCore/Google/TagManager/codeHead.html.twig',
             $this->headBlocks,
             [
-                'containerId' => $containerId
+                'containerId' => $containerId,
             ]
         );
 
@@ -142,7 +142,7 @@ class GoogleTagManagerListener
             '@PimcoreCore/Google/TagManager/codeBody.html.twig',
             $this->bodyBlocks,
             [
-                'containerId' => $containerId
+                'containerId' => $containerId,
             ]
         );
 

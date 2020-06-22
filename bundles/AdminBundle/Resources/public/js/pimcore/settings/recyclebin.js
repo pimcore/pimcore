@@ -55,7 +55,7 @@ pimcore.settings.recyclebin = Class.create({
 
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
         this.store = pimcore.helpers.grid.buildDefaultStore(
-            '/admin/recyclebin/list?',
+            Routing.generate('pimcore_admin_recyclebin_list'),
             [
                 {name: 'id'},
                 {name: 'type'},
@@ -229,7 +229,7 @@ pimcore.settings.recyclebin = Class.create({
 
     onFlush: function (btn, ev) {
         Ext.Ajax.request({
-            url: "/admin/recyclebin/flush",
+            url: Routing.generate('pimcore_admin_recyclebin_flush'),
             method: 'DELETE',
             success: function () {
                 this.store.reload();
@@ -244,27 +244,13 @@ pimcore.settings.recyclebin = Class.create({
         this.grid.getView().refresh();
 
         if (offset == ids.length) {
-            // refresh all trees
             try {
-                if (pimcore.globalmanager.get("layout_document_tree").tree.rendered) {
-                    var tree = pimcore.globalmanager.get("layout_document_tree").tree;
-                    tree.getStore().load({
-                        node: tree.getRootNode()
-                    });
-                }
-                if (pimcore.globalmanager.get("layout_asset_tree").tree.rendered) {
-                    var tree = pimcore.globalmanager.get("layout_asset_tree").tree;
-                    tree.getStore().load({
-                        node: tree.getRootNode()
-                    });
-
-                }
-                if (pimcore.globalmanager.get("layout_object_tree").tree.rendered) {
-                    var tree = pimcore.globalmanager.get("layout_object_tree").tree;
-                    tree.getStore().load({
-                        node: tree.getRootNode()
-                    });
-                }
+                // would be nice if /admin/recyclebin/restore could return the affected types
+                // so that we don't have to refresh all types
+               const elementTypes = ["document", "asset", "object"];
+               elementTypes.forEach(function(elementType, index) {
+                   pimcore.elementservice.refreshRootNodeAllTrees(elementType);
+                });
             }
             catch (e) {
                 console.log(e);
@@ -275,7 +261,7 @@ pimcore.settings.recyclebin = Class.create({
         }
 
         Ext.Ajax.request({
-            url: "/admin/recyclebin/restore",
+            url: Routing.generate('pimcore_admin_recyclebin_restore'),
             method: 'POST',
             params: {
                 id: ids[offset]

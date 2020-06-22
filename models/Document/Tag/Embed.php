@@ -47,7 +47,7 @@ class Embed extends Model\Document\Tag
     public function getData()
     {
         return [
-            'url' => $this->url
+            'url' => $this->url,
         ];
     }
 
@@ -57,7 +57,7 @@ class Embed extends Model\Document\Tag
     public function getDataForResource()
     {
         return [
-            'url' => $this->url
+            'url' => $this->url,
         ];
     }
 

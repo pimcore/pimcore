@@ -38,7 +38,7 @@ class ClientFactory
     {
         $guzzleConfig = [
             RequestOptions::TIMEOUT => 3600,
-            RequestOptions::VERIFY => CaBundle::getSystemCaRootBundlePath()
+            RequestOptions::VERIFY => CaBundle::getSystemCaRootBundlePath(),
         ];
 
         if (($this->config['httpclient']['adapter'] ?? null) == 'Proxy') {

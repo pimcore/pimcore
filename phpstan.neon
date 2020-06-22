@@ -12,7 +12,7 @@ parameters:
 
     excludes_analyse:
         - '**/DependencyInjection/Configuration.php'
-        - '**/migrations/Version*.php'
+        - '**/Migrations/Version*.php'
         - '**/External/AdminerController.php'
         - '**/Generator/DoctrineCrudGenerator.php'
         - '**/EcommerceFrameworkBundle/Resources/views/Voucher/parts/paginator.html.php'
@@ -21,6 +21,8 @@ parameters:
         - '**/simple_html_dom.php'
         - '**/PDFreactor.class.php'
         - '**/Document/MigrateTagNamingStrategyCommand.php'
+        - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
+        - '**/bundles/AdminBundle/Security/Guard/WebserviceAuthenticator.php'
 
     ignoreErrors:
         - '/(snappy|lz4)_(un)?compress/'
@@ -37,8 +39,10 @@ parameters:
             message: '#Using \$this outside a class\.#'
             path: '**/*.html.php'
         -
-            message: '#Undefined variable: \$(this|view|app)#'
-            path: '**/*.html.php'
+            message: '#Variable \$(this|view|app) might not be defined.#'
+            paths:
+                - '**/*.html.php'
+                - '**/EcommerceFrameworkBundle/Resources/views/**/*.js.php'
         -
             message: '#Using \$this outside a class\.#'
             path: '**/*.js.php'
@@ -63,6 +67,6 @@ parameters:
         - '~^Method Psr\\Cache\\CacheItemPoolInterface::clear\(\) invoked with 1 parameter, 0 required\.\z~'
         - '~^Method Symfony\\Component\\Cache\\Adapter\\AdapterInterface::clear\(\) invoked with 1 parameter, 0 required\.\z~'
 
-    # see https://github.com/phpstan/phpstan#universal-object-crates
+    # see https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
         -  Pimcore\Templating\Model\ViewModel

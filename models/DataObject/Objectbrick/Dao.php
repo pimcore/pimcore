@@ -109,7 +109,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
                 $setter = 'set' . ucfirst($type);
 
-                if ($brick instanceof DataObject\DirtyIndicatorInterface) {
+                if ($brick instanceof Model\Element\DirtyIndicatorInterface) {
                     $brick->markFieldDirty('_self', false);
                 }
 
@@ -125,6 +125,8 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
     /**
      * @param DataObject\Concrete $object
      * @param bool $saveMode true if called from save method
+     *
+     * @return array
      */
     public function delete(DataObject\Concrete $object, $saveMode = false)
     {
@@ -138,5 +140,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                 $this->db->delete($tableName, ['o_id' => $object->getId()]);
             }
         }
+
+        return [];
     }
 }

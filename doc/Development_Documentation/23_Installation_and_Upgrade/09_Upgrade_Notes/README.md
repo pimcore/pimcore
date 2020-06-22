@@ -1,10 +1,40 @@
 # Upgrade Notes
 
+## 6.7.0
+- [Ecommerce][IndexService] Elastic Search worker does not use mockup cache anymore. Now mockup objects are build directly based on information in response of ES response (_source flag). Therefore `AbstractElasticSearch` Worker does not extend `AbstractMockupCacheWorker` anymore. 
+- Rules regarding default values in combination with inheritance enabled have been clarified. Read [this](../../05_Objects/01_Object_Classes/01_Data_Types/README.md) for details.
+
+## 6.6.4
+- If you are using the specific settings 'max. items' option for ObjectBricks & Fieldcollections on your class definition, then API will validate the max limit on save() calls from now on.
+
+## 6.6.2
+- class `ElementDescriptor` has been moved from 'Pimcore\Model\Version' to 'Pimcore\Model\Element'.
+The BC layer will be removed in 7. Use the following [migration scripts](https://gist.github.com/weisswurstkanone/a63f733fe58930778f41c695f862724a) to migrate your version and recyclebin files
+if necessary.   
+
 ## 6.6.0
 - Default config for monolog handler `main` in prod environment is now `stream` instead of `fingers_crossed`. If you still want to use `fingers_crossed` please update your project config accordingly. 
+- `app` migration set is now located in `app/Migrations` instead of `app/Resources/migrations` - Pimcore will automatically move existing migration scripts for you (update your VCS!)
+- Replaced `html2text` from [Martin Bayer] with `Html2Text\Html2Text` library. `Pimcore\Mail::determineHtml2TextIsInstalled`, `Pimcore\Mail::getHtml2TextBinaryEnabled`, `Pimcore\Mail::enableHtml2textBinary`, are deprecated in favour of new library and will be removed in Pimcore 7. Also, `Pimcore\Mail::setHtml2TextOptions` now accepts array options instead of string.
+- Ecommerce: interpreter getters in the application which do not return the correct type: a string or integer field may receive "false" - if false was returned which should actually be null, see [#5876](https://github.com/pimcore/pimcore/pull/5876)
+- Dirty detection `\Pimcore\Model\DataObject\DirtyIndicatorInterface` & `\Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait` is deprecated and will be removed in Pimcore 7. Please use new interface `\Pimcore\Model\Element\DirtyIndicatorInterface` and trait `\Pimcore\Model\Element\Traits\DirtyIndicatorTrait` instead.
+- Image thumbnails using any (P)JPEG/AUTO format will now all use `.jpg` as file extension (used to be `.jpeg` or `.pjpeg`). 
+You can delete all existing `.pjpeg` and `.jpeg` thumbnails as they are not getting used anymore (`.jpg` files will be newly generated). 
+You can use the following command to delete the obsolete files: `find web/var/tmp/image-thumbnails/ -type f \( -iname \*.jpeg -o -iname \*.pjpeg \) -delete`   
+If you're using pre-generation for your thumbnails, don't forget to run the command (e.g. `./bin/console pimcore:thumbnails:image ...`). 
 
+- [Workflows] Added new option `save_version` to changePublishedState under transitions configuration for documents and objects to save only version while transition from places. e.g.
+    ```yml
+    transitions:
+        start_work:
+            from: 'todo'
+            to: ['edit_text', 'edit_images']
+            options:
+                label: 'Start Work'
+                changePublishedState: save_version
+    ```
 ## 6.5.2
-- Passing multiple relations(w/o multiple assignments check) in data objects is deprecated and will throw exception in Pimcore 7.
+- Passing multiple relations (w/o multiple assignments check) in data objects is deprecated and will throw exception in Pimcore 7.
 
 ## 6.5.0
 
@@ -28,10 +58,10 @@ foreach ($list as $class) {
 ```
 
 - [Data Objects] Relations are always lazy-loaded from now on
-  see https://github.com/pimcore/pimcore/issues/5772
+  see [5772](https://github.com/pimcore/pimcore/issues/5772)
 - [Data Objects] Relation Types DB Caching Layer is always turned on now. Removed support for non-cached alternative. 
-  All rows of the affected `object_relation_` table will be fetched in on go and cached together we with the object. 
-  see https://github.com/pimcore/pimcore/issues/5427
+  All rows of the affected `object_relation_` table will be fetched in one go and cached together with the object. 
+  see [5427](https://github.com/pimcore/pimcore/issues/5427)
 - [Data Objects] If you have custom lazy-loaded datatypes **not** extending `Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations`,
   implement the `Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface`
   The `method_exists('getLazyLoading')` calls will be removed in Pimcore 7.

@@ -27,6 +27,8 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
+    use DataObject\Traits\CompositeIndexTrait;
+
     /**
      * @var DataObject\ClassDefinition
      */
@@ -212,6 +214,9 @@ class Dao extends Model\Dao\AbstractDao
             Logger::debug($e);
         }
 
+        $this->updateCompositeIndices($objectDatastoreTable, 'store', $this->model->getCompositeIndices());
+        $this->updateCompositeIndices($objectTable, 'query', $this->model->getCompositeIndices());
+
         $this->tableDefinitions = null;
     }
 
@@ -290,7 +295,7 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->update('objects', ['o_className' => $newName], ['o_classId' => $this->model->getId()]);
 
         $this->db->updateWhere('object_query_' . $this->model->getId(), [
-            'oo_className' => $newName
+            'oo_className' => $newName,
         ]);
     }
 }

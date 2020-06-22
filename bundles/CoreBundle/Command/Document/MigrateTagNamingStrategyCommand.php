@@ -46,7 +46,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         'page',
         'snippet',
         'email',
-        'printpage'
+        'printpage',
     ];
 
     /**
@@ -143,7 +143,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
 
         $this->io->writeln([
             '  * <comment>render</comment>: renders all documents to fetch all editable names. To make the render strategy work',
-            '    you must make sure that all your documents/templates can be rendered without errors.'
+            '    you must make sure that all your documents/templates can be rendered without errors.',
         ]);
 
         $this->io->newLine();
@@ -151,7 +151,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
         $this->io->writeln([
             '  * <comment>analyze</comment>: analyzes the DB structure and tries to fetch editable names to migrate from the existing',
             '    editable names. As this can\'t always be reliably determined, you\'ll be prompted to resolve',
-            '    potential conflicts (<fg=red>experimental!</>).'
+            '    potential conflicts (<fg=red>experimental!</>).',
         ]);
 
         $this->io->newLine();
@@ -162,7 +162,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
             'resolve all conflicts automatically and demands understanding of your template/editable structure. You can',
             'try what works best for your project by simulating the migration with the --dry-run flag.',
             '',
-            '<comment>In any case, please make sure you have a proper backup before running the migration!</comment>'
+            '<comment>In any case, please make sure you have a proper backup before running the migration!</comment>',
         ]);
     }
 
@@ -340,7 +340,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 // check the old editable exists in the DB
                 $oldResult = $stmt->execute([
                     'documentId' => $documentId,
-                    'name' => $oldName
+                    'name' => $oldName,
                 ]);
 
                 if (!$oldResult) {
@@ -364,7 +364,7 @@ class MigrateTagNamingStrategyCommand extends AbstractCommand
                 // check if there is no new editable
                 $newResult = $stmt->execute([
                     'documentId' => $documentId,
-                    'name' => $newName
+                    'name' => $newName,
                 ]);
 
                 if (!$newResult) {

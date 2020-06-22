@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
 
 /**
@@ -32,7 +33,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
-    use Model\DataObject\Traits\DirtyIndicatorTrait;
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     use Model\Element\ElementDumpStateTrait;
 
@@ -459,11 +460,13 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
                             $parentContainer = $parent;
 
                             if (isset($context['containerType']) && $context['containerType'] === 'objectbrick') {
-                                $brickContainerGetter = 'get' . ucfirst($context['fieldname']);
-                                $brickContainer = $parent->$brickContainerGetter();
-                                $brickGetter = 'get' . $context['containerKey'];
-                                $brickData = $brickContainer->$brickGetter();
-                                $parentContainer = $brickData;
+                                if (!empty($context['fieldname'])) {
+                                    $brickContainerGetter = 'get' . ucfirst($context['fieldname']);
+                                    $brickContainer = $parent->$brickContainerGetter();
+                                    $brickGetter = 'get' . $context['containerKey'];
+                                    $brickData = $brickContainer->$brickGetter();
+                                    $parentContainer = $brickData;
+                                }
                             }
 
                             if (method_exists($parentContainer, $method)) {
@@ -483,7 +486,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         // check for fallback value
         if ($fieldDefinition->isEmpty($data) && !$ignoreFallbackLanguage && self::doGetFallbackValues()) {
             foreach (Tool::getFallbackLanguagesFor($language) as $l) {
-                if ($this->languageExists($l)) {
+                // fallback-language may not exist yet for lazy-loaded field (relation)
+                if ($this->languageExists($l) || ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading())) {
                     if ($data = $this->getLocalizedValue($name, $l)) {
                         break;
                     }

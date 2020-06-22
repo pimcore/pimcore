@@ -87,7 +87,7 @@ class FrontendRoutingListener implements EventSubscriberInterface
             KernelEvents::REQUEST => ['onKernelRequest', 512],
 
             // run with high priority before handling real errors
-            KernelEvents::EXCEPTION => ['onKernelException', 64]
+            KernelEvents::EXCEPTION => ['onKernelException', 64],
         ];
     }
 

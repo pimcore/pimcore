@@ -23,7 +23,9 @@ use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
@@ -161,7 +163,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                 if ($e instanceof Model\Element\ValidationException) {
                     $subItems = $e->getSubItems();
-                    if (is_array($subItems)) {
+                    if (is_array($subItems) && count($subItems)) {
                         $msg .= ' (';
                         $subItemParts = [];
                         /** @var \Exception $subItem */
@@ -273,7 +275,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this, [
-                    'saveVersionOnly' => true
+                    'saveVersionOnly' => true,
                 ]));
             }
 
@@ -294,7 +296,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this, [
-                    'saveVersionOnly' => true
+                    'saveVersionOnly' => true,
                 ]));
             }
 
@@ -302,7 +304,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         } catch (\Exception $e) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE_FAILURE, new DataObjectEvent($this, [
                 'saveVersionOnly' => true,
-                'exception' => $e
+                'exception' => $e,
             ]));
 
             throw $e;
@@ -623,6 +625,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
         // get real fieldname (case sensitive)
         $fieldnames = [];
+        $defaultCondition = '';
         foreach ($classDefinition->getFieldDefinitions() as $fd) {
             $fieldnames[] = $fd->getName();
         }
@@ -668,7 +671,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                 $defaultCondition = $localizedPropertyName . ' = ' . Db::get()->quote($value) . ' ';
                 $listConfig = [
-                    'condition' => $defaultCondition
+                    'condition' => $defaultCondition,
                 ];
 
                 if ($locale) {
@@ -678,9 +681,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 $arguments = array_pad($arguments, 3, 0);
                 [$value, $limit, $offset] = $arguments;
 
-                $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
+                if (!$field instanceof AbstractRelations) {
+                    $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
+                }
                 $listConfig = [
-                    'condition' => $defaultCondition
+                    'condition' => $defaultCondition,
                 ];
             }
 
@@ -693,10 +698,15 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 }
             } else {
                 $listConfig = array_merge($listConfig, $limit);
-                $listConfig['condition'] = $defaultCondition . $limit['condition'];
+                $limitCondition = $limit['condition'] ?? '';
+                $listConfig['condition'] = $defaultCondition . $limitCondition;
             }
 
             $list = static::getList($listConfig);
+
+            if ($field instanceof AbstractRelations && $field->isFilterable()) {
+                $list = $field->addListingFilter($list, $value);
+            }
 
             if (isset($listConfig['limit']) && $listConfig['limit'] == 1) {
                 $elements = $list->getObjects();

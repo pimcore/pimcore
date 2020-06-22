@@ -66,7 +66,36 @@ pimcore.object.classes.data.geo.abstract = Class.create(pimcore.object.classes.d
                 decimalPrecision: 0,
                 minValue: 1,
                 incrementValue: 1
+            }, {
+                xtype: "numberfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: this.datax.width
+            },
+            {
+                xtype: "numberfield",
+                fieldLabel: t("height"),
+                name: "height",
+                minValue: 180,
+                value: this.datax.height
             }
         ];
+    },
+    
+    applySpecialData: function (source) {
+        if (source.datax) {
+            if (!this.datax) {
+                this.datax = {};
+            }
+            Ext.apply(this.datax,
+                {
+                    lat: source.datax.lat,
+                    lng: source.datax.lat,
+                    zoom: source.datax.zoom,
+                    width: source.datax.width,
+                    height: source.datax.height
+                });
+        }
     }
+    
 });

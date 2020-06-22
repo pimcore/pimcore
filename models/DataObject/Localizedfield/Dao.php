@@ -34,6 +34,8 @@ class Dao extends Model\Dao\AbstractDao
 {
     use DataObject\ClassDefinition\Helper\Dao;
 
+    use DataObject\Traits\CompositeIndexTrait;
+
     /**
      * @var array|null
      */
@@ -154,20 +156,15 @@ class Dao extends Model\Dao\AbstractDao
                         $context['subContainerType'] = 'localizedfield';
                     }
 
-                    $childParams = [
-                        'context' => $context,
-                        'language' => $language,
-                    ];
+                    $isUpdate = isset($params['isUpdate']) && $params['isUpdate'];
+                    $childParams = $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $isUpdate, 'context' => $context]);
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
-                        if ((isset($params['saveRelationalData'])
-                                && isset($params['saveRelationalData']['saveLocalizedRelations'])
-                                && $params['saveRelationalData']['saveLocalizedRelations']
-                                && $container instanceof DataObject\Fieldcollection\Definition
-                            )
+                        $saveLocalizedRelations = $params['saveRelationalData']['saveLocalizedRelations'] ?? false;
+                        if (($saveLocalizedRelations && $container instanceof DataObject\Fieldcollection\Definition)
                             || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
                                     && $this->model->isLanguageDirty($language))
-                                || $params['saveRelationalData']['saveLocalizedRelations'])) {
+                                || $saveLocalizedRelations)) {
                             $fd->save($this->model, $childParams);
                         }
                     } else {
@@ -179,14 +176,14 @@ class Dao extends Model\Dao\AbstractDao
                         $insertDataArray = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language)
+                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $params['isUpdate'] ?? null ])
                         );
                         $insertData = array_merge($insertData, $insertDataArray);
                     } else {
                         $insertData[$fd->getName()] = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language)
+                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $params['isUpdate'] ?? null])
                         );
                     }
                 }
@@ -377,17 +374,17 @@ class Dao extends Model\Dao\AbstractDao
                     if ($context['containerType'] === 'objectbrick') {
                         $inheritanceRelationContext = [
                             'ownertype' => 'localizedfield',
-                            'ownername' => '/objectbrick~' . $context['fieldname'] . '//localizedfield~localizedfield'
+                            'ownername' => '/objectbrick~' . $context['fieldname'] . '//localizedfield~localizedfield',
                         ];
                     } else {
                         $inheritanceRelationContext = [
                             'ownertype' => 'localizedfield',
-                            'ownername' => 'localizedfield'
+                            'ownername' => 'localizedfield',
                         ];
                     }
                     $this->inheritanceHelper->doUpdate($object->getId(), true, [
                         'language' => $language,
-                        'inheritanceRelationContext' => $inheritanceRelationContext
+                        'inheritanceRelationContext' => $inheritanceRelationContext,
                     ]);
                 }
                 $this->inheritanceHelper->resetFieldsToCheck();
@@ -450,7 +447,7 @@ class Dao extends Model\Dao\AbstractDao
                     if ($fd instanceof CustomResourcePersistingInterface) {
                         $params = [
                             'context' => $this->model->getContext() ? $this->model->getContext() : [],
-                            'isUpdate' => $isUpdate
+                            'isUpdate' => $isUpdate,
                         ];
                         if (isset($params['context']['containerType']) && ($params['context']['containerType'] === 'fieldcollection' || $params['context']['containerType'] === 'objectbrick')) {
                             $params['context']['subContainerType'] = 'localizedfield';
@@ -477,7 +474,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($this->model->allLanguagesAreDirty() ||
             ($container instanceof DataObject\Fieldcollection\Definition)
-            ) {
+        ) {
             $dirtyLanguageCondition = '';
         } elseif ($this->model->hasDirtyLanguages()) {
             $languageList = [];
@@ -862,10 +859,15 @@ QUERY;
 
                 // remove unused columns in the table
                 $this->removeUnusedColumns($queryTable, $columnsToRemove, $protectedColumns);
+
+                if ($container instanceof DataObject\ClassDefinition) {
+                    $this->updateCompositeIndices($queryTable, 'localized_query', $this->model->getClass()->getCompositeIndices());
+                }
             }
         }
 
         if ($container instanceof DataObject\ClassDefinition) {
+            $this->updateCompositeIndices($table, 'localized_store', $this->model->getClass()->getCompositeIndices());
             $this->createLocalizedViews();
         }
 
@@ -875,15 +877,19 @@ QUERY;
     /**
      * @param string $fieldname
      * @param string $language
+     * @param array $extraParams
      *
      * @return array
      */
-    private function getFieldDefinitionParams(string $fieldname, string $language)
+    public function getFieldDefinitionParams(string $fieldname, string $language, $extraParams = [])
     {
-        return [
-            'owner' => $this->model,
-            'fieldname' => $fieldname,
-            'language' => $language,
-        ];
+        return array_merge(
+            [
+                'owner' => $this->model,
+                'fieldname' => $fieldname,
+                'language' => $language,
+            ],
+            $extraParams
+        );
     }
 }

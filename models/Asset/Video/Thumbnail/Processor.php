@@ -31,7 +31,7 @@ class Processor
     protected static $argumentMapping = [
         'resize' => ['width', 'height'],
         'scaleByWidth' => ['width'],
-        'scaleByHeight' => ['height']
+        'scaleByHeight' => ['height'],
     ];
 
     /**
@@ -117,7 +117,6 @@ class Processor
 
             if (!is_dir(dirname($fsPath))) {
                 File::mkdir(dirname($fsPath));
-                @chmod($thumbDir, File::getDefaultMode());
             }
 
             if (is_file($fsPath)) {
@@ -167,7 +166,7 @@ class Processor
         $customSetting[$config->getName()] = [
             'status' => 'inprogress',
             'formats' => $existingFormats,
-            'processId' => $instance->getProcessId()
+            'processId' => $instance->getProcessId(),
         ];
         $asset->setCustomSetting('thumbnails', $customSetting);
         $asset->save();
@@ -238,7 +237,7 @@ class Processor
 
             $customSetting[$instance->getConfig()->getName()] = [
                 'status' => $conversionStatus,
-                'formats' => $formats
+                'formats' => $formats,
             ];
             $asset->setCustomSetting('thumbnails', $customSetting);
             $asset->save();

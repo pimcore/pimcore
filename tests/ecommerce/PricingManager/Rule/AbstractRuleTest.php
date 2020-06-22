@@ -57,13 +57,13 @@ class AbstractRuleTest extends EcommerceTestCase
         $options = [
             'rule_class' => "Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule",
             'price_info_class' => "Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PriceInfo",
-            'environment_class' => "Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Environment"
+            'environment_class' => "Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Environment",
         ];
 
         $pricingManager = Stub::construct(PricingManager::class, [$conditionMapping, $actionMapping, $session, $options], [
             'getValidRules' => function () use ($rules) {
                 return $rules;
-            }
+            },
         ]);
 
         return $pricingManager;
@@ -114,7 +114,7 @@ class AbstractRuleTest extends EcommerceTestCase
             },
             'isCartReadOnly' => function () {
                 return false;
-            }
+            },
         ]);
 
         $cart->setPriceCalculator($this->buildCartCalculator($cart, $pricingManager, $withModificators));
@@ -155,7 +155,7 @@ class AbstractRuleTest extends EcommerceTestCase
         $pricingManagers = Stub::make(PricingManagerLocator::class, [
             'getPricingManager' => function () use ($pricingManager) {
                 return $pricingManager;
-            }
+            },
         ]);
 
         $priceSystem = Stub::construct(AttributePriceSystem::class, [$pricingManagers, $environment], [
@@ -167,7 +167,7 @@ class AbstractRuleTest extends EcommerceTestCase
             },
             'calculateAmount' => function () use ($grossPrice): Decimal {
                 return $grossPrice;
-            }
+            },
         ]);
 
         /** @var AbstractProduct|\PHPUnit_Framework_MockObject_Stub $product */
@@ -180,7 +180,7 @@ class AbstractRuleTest extends EcommerceTestCase
             },
             'getCategories' => function () use ($categories) {
                 return $categories;
-            }
+            },
         ]);
 
         return $product;

@@ -46,7 +46,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class DocumentController extends AbstractElementController
 {
     /**
-     * @Route("/document/id/{id}", requirements={"id": "\d+"}, methods={"GET"})
+     * @Route("/document/id/{id}", name="pimcore_api_rest_element_document_get", requirements={"id": "\d+"}, methods={"GET"})
      *
      * @api              {get} /document Get document
      * @apiName          getDocument
@@ -106,7 +106,7 @@ class DocumentController extends AbstractElementController
     }
 
     /**
-     * @Route("/document", methods={"POST", "PUT"})
+     * @Route("/document", name="pimcore_api_rest_element_document_create", methods={"POST", "PUT"})
      *
      * @api              {post} /document/id/{id} Create document
      * @apiName          createDocument
@@ -148,7 +148,7 @@ class DocumentController extends AbstractElementController
     }
 
     /**
-     * @Route("/document/id/{id}", requirements={"id": "\d+"}, methods={"POST", "PUT"})
+     * @Route("/document/id/{id}", name="pimcore_api_rest_element_document_update", requirements={"id": "\d+"}, methods={"POST", "PUT"})
      *
      * @api              {put} /document/id/{id} Update document
      * @apiName          updateDocument
@@ -187,7 +187,7 @@ class DocumentController extends AbstractElementController
     }
 
     /**
-     * @Route("/document/id/{id}", requirements={"id": "\d+"}, methods={"DELETE"})
+     * @Route("/document/id/{id}", name="pimcore_api_rest_element_document_delete", requirements={"id": "\d+"}, methods={"DELETE"})
      *
      * @api              {delete} /document Delete document
      * @apiName          deleteDocument
@@ -234,7 +234,7 @@ class DocumentController extends AbstractElementController
     }
 
     /**
-     * @Route("/document-list", methods={"GET"})
+     * @Route("/document-list", name="pimcore_api_rest_element_document_list", methods={"GET"})
      *
      * Returns a list of document id/type pairs matching the given criteria.
      *  Example:
@@ -275,7 +275,7 @@ class DocumentController extends AbstractElementController
     }
 
     /**
-     * @Route("/document-count", methods={"GET"})
+     * @Route("/document-count", name="pimcore_api_rest_element_document_count", methods={"GET"})
      *
      * Returns the total number of documents matching the given condition
      *  GET http://[YOUR-DOMAIN]/webservice/rest/asset-count?apikey=[API-KEY]&q={"type": "folder"}
@@ -313,12 +313,12 @@ class DocumentController extends AbstractElementController
         $count = Document::getTotalCount($params);
 
         return $this->createSuccessResponse([
-            'totalCount' => $count
+            'totalCount' => $count,
         ]);
     }
 
     /**
-     * @Route("/document-inquire", methods={"GET", "POST"})
+     * @Route("/document-inquire", name="pimcore_api_rest_element_document_inquire", methods={"GET", "POST"})
      *
      * Checks for existence of the given document IDs
      *
@@ -357,7 +357,7 @@ class DocumentController extends AbstractElementController
 
         throw $this->createNotFoundResponseException([
             'msg' => sprintf('Document %d does not exist', (int)$id),
-            'code' => static::ELEMENT_DOES_NOT_EXIST
+            'code' => static::ELEMENT_DOES_NOT_EXIST,
         ]);
     }
 
@@ -389,7 +389,7 @@ class DocumentController extends AbstractElementController
 
         if (null !== $id) {
             return $this->createSuccessResponse([
-                'id' => $id
+                'id' => $id,
             ], false);
         } else {
             return $this->createErrorResponse();

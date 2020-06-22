@@ -60,7 +60,7 @@ class RestClient extends AbstractRestClient
 
         $request = $this->lastRequest = new Request($method, $uri, $server, $content);
         $response = $this->lastResponse = $this->client->send($request, [
-            'query' => $parameters
+            'query' => $parameters,
         ]);
 
         return $response;

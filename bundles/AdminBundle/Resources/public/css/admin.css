@@ -1333,14 +1333,6 @@ span.warning {
 
 
 /* ExtJS 6.0 specific styles */
-
-#pimcore_panel_tabs-body {
-    background-image: url(/admin/settings/display-custom-logo);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: 500px auto;
-}
-
 #pimcore_panel_tabs > .x-tab-bar {
     background: #0C0F12;
     background-image: url(/bundles/pimcoreadmin/img/logo-gray.svg);

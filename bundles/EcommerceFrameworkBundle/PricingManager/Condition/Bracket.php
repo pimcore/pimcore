@@ -114,7 +114,7 @@ class Bracket implements BracketInterface
                 /* @var ConditionInterface $condition */
                 $cond = [
                     'operator' => $this->operator[$num],
-                    'condition' => json_decode($condition->toJSON())
+                    'condition' => json_decode($condition->toJSON()),
                 ];
                 $json['conditions'][] = $cond;
             }

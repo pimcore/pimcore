@@ -125,7 +125,7 @@ class AreabrickPass implements CompilerPassInterface
                 // register brick on the areabrick manager
                 $areaManagerDefinition->addMethodCall('registerService', [
                     $bundleArea['brickId'],
-                    $bundleArea['serviceId']
+                    $bundleArea['serviceId'],
                 ]);
 
                 // handle bricks implementing ContainerAwareInterface
@@ -169,7 +169,7 @@ class AreabrickPass implements CompilerPassInterface
         $directory = implode(DIRECTORY_SEPARATOR, [
             $metadata['path'],
             'Document',
-            'Areabrick'
+            'Areabrick',
         ]);
 
         // update cache when directory is added/removed

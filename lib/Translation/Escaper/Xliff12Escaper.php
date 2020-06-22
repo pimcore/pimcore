@@ -89,9 +89,7 @@ class Xliff12Escaper
      */
     public function unescapeXliff(string $content): string
     {
-        $content = preg_replace("/<\/?(target|mrk)([^>.]+)?>/i", '', $content);
-        // we have to do this again but with html entities because of CDATA content
-        $content = preg_replace("/&lt;\/?(target|mrk)((?!&gt;).)*&gt;/i", '', $content);
+        $content = $this->parseInnerXml($content);
 
         if (preg_match("/<\/?(bpt|ept)/", $content)) {
             $xml = str_get_html($content);
@@ -104,6 +102,23 @@ class Xliff12Escaper
             }
             $content = $xml->save();
         }
+
+        return $content;
+    }
+
+    private function parseInnerXml(string $content)
+    {
+        $node = simplexml_load_string($content, null, LIBXML_NOCDATA);
+
+        if (empty($node->children())) {
+            return (string) $node;
+        }
+
+        $content = $node->asXml();
+
+        $content = preg_replace("/<\/?(target|mrk)([^>.]+)?>/i", '', $content);
+        // we have to do this again but with html entities because of CDATA content
+        $content = preg_replace("/&lt;\/?(target|mrk)((?!&gt;).)*&gt;/i", '', $content);
 
         return $content;
     }

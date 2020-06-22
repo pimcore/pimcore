@@ -1214,7 +1214,7 @@ abstract class AbstractRestClient implements LoggerAwareInterface
     public function getImageThumbnail($id)
     {
         $params = [
-            'id' => $id
+            'id' => $id,
         ];
 
         $response = $this->getJsonResponse('GET', '/image-thumbnail', $params);

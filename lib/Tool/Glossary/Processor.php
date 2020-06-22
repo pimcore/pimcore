@@ -45,7 +45,7 @@ class Processor
      */
     private $blockedTags = [
         'a', 'script', 'style', 'code', 'pre', 'textarea', 'acronym',
-        'abbr', 'option', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'
+        'abbr', 'option', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
     ];
 
     /**
@@ -79,7 +79,7 @@ class Processor
         }
 
         $options = array_merge([
-            'limit' => -1
+            'limit' => -1,
         ], $options);
 
         if ($this->editmodeResolver->isEditmode()) {
@@ -265,7 +265,7 @@ class Processor
                 'replace' => $r,
                 'search' => $d['text'],
                 'linkType' => $linkType,
-                'linkTarget' => $linkTarget
+                'linkTarget' => $linkTarget,
             ];
         }
 

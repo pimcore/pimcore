@@ -59,7 +59,7 @@ class PimcoreNotificationService extends AbstractNotificationService
                         $subjectType . ' ' . $subject->getFullPath(),
                         $subject->getId(),
                         $this->translator->trans($action, [], 'admin', $language),
-                        $this->translator->trans($workflow->getName(), [], 'admin', $language)
+                        $this->translator->trans($workflow->getName(), [], 'admin', $language),
                     ],
                     'admin',
                     $language

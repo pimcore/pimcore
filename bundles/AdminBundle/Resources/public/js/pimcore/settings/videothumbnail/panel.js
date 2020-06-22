@@ -50,7 +50,7 @@ pimcore.settings.videothumbnail.panel = Class.create({
 
         return this.panel;
     },
-    
+
     getTree: function () {
         if (!this.tree) {
             var store = Ext.create('Ext.data.TreeStore', {
@@ -58,7 +58,7 @@ pimcore.settings.videothumbnail.panel = Class.create({
                 autoSync: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/settings/video-thumbnail-tree',
+                    url: Routing.generate('pimcore_admin_settings_videothumbnailtree'),
                     reader: {
                         type: 'json'
                     }
@@ -148,7 +148,7 @@ pimcore.settings.videothumbnail.panel = Class.create({
         }
 
         Ext.Ajax.request({
-            url: "/admin/settings/video-thumbnail-get",
+            url: Routing.generate('pimcore_admin_settings_videothumbnailget'),
             params: {
                 name: id
             },
@@ -199,7 +199,7 @@ pimcore.settings.videothumbnail.panel = Class.create({
             }
 
             Ext.Ajax.request({
-                url: "/admin/settings/video-thumbnail-add",
+                url: Routing.generate('pimcore_admin_settings_videothumbnailadd'),
                 method: "POST",
                 params: {
                     name: value
@@ -227,7 +227,7 @@ pimcore.settings.videothumbnail.panel = Class.create({
 
     deleteField: function (tree, record) {
         Ext.Ajax.request({
-            url: "/admin/settings/video-thumbnail-delete",
+            url: Routing.generate('pimcore_admin_settings_videothumbnaildelete'),
             method: 'DELETE',
             params: {
                 name: record.data.id

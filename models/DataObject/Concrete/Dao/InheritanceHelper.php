@@ -230,7 +230,7 @@ class InheritanceHelper
             $result = $this->db->fetchRow('SELECT ' . $this->idField . ' AS id' . $fields . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
             $o = [
                 'id' => $result['id'],
-                'values' => $result ?? null
+                'values' => $result ?? null,
             ];
 
             $o['children'] = $this->buildTree($result['id'], $fields, null, $params);
@@ -316,7 +316,7 @@ class InheritanceHelper
 
         $o = [
             'id' => $objectId,
-            'children' => $this->buildTree($objectId, $fields, null, $params)
+            'children' => $this->buildTree($objectId, $fields, null, $params),
         ];
 
         if (!empty($this->fields)) {
@@ -475,7 +475,7 @@ class InheritanceHelper
                 $o = [
                     'id' => $id,
                     'children' => $this->buildTree($id, $fields, $parentIdGroups, $params),
-                    'values' => $rowData
+                    'values' => $rowData,
                 ];
 
                 $objects[] = $o;
@@ -524,7 +524,7 @@ class InheritanceHelper
         $relationCondition = $this->getRelationCondition($params);
 
         if (isset($params['language'])) {
-            $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') "
+            $objectRelationsResult = $this->db->fetchAll('SELECT src_id as id, fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') "
                 . ' GROUP BY position, fieldname'
                 . ' HAVING `position` = "' . $params['language'] . '" OR ISNULL(`position`)', [$node['id']]);
             $objectRelationsResult = $this->filterResultByLanguage($objectRelationsResult, $params['language'], 'position');

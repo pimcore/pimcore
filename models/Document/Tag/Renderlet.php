@@ -79,7 +79,7 @@ class Renderlet extends Model\Document\Tag
         return [
             'id' => $this->id,
             'type' => $this->getObjectType(),
-            'subtype' => $this->subtype
+            'subtype' => $this->subtype,
         ];
     }
 
@@ -94,7 +94,7 @@ class Renderlet extends Model\Document\Tag
             return [
                 'id' => $this->id,
                 'type' => $this->getObjectType(),
-                'subtype' => $this->subtype
+                'subtype' => $this->subtype,
             ];
         }
 
@@ -152,30 +152,21 @@ class Renderlet extends Model\Document\Tag
                 }
             }
 
-            try {
-                $moduleOrBundle = null;
+            $moduleOrBundle = null;
 
-                if (isset($this->options['bundle'])) {
-                    $moduleOrBundle = $this->options['bundle'];
-                } elseif (isset($this->options['module'])) {
-                    $moduleOrBundle = $this->options['module'];
-                }
-
-                $content = $tagHandler->renderAction(
-                    $this->view,
-                    $this->options['controller'],
-                    $this->options['action'],
-                    $moduleOrBundle,
-                    $params
-                );
-
-                return $content;
-            } catch (\Exception $e) {
-                if (\Pimcore::inDebugMode()) {
-                    return 'ERROR: ' . $e->getMessage() . ' (for details see log files in /var/logs)';
-                }
-                Logger::error($e);
+            if (isset($this->options['bundle'])) {
+                $moduleOrBundle = $this->options['bundle'];
+            } elseif (isset($this->options['module'])) {
+                $moduleOrBundle = $this->options['module'];
             }
+
+            return $tagHandler->renderAction(
+                $this->view,
+                $this->options['controller'],
+                $this->options['action'],
+                $moduleOrBundle,
+                $params
+            );
         }
 
         return '';
@@ -246,7 +237,7 @@ class Renderlet extends Model\Document\Tag
 
             $dependencies[$key] = [
                 'id' => $this->o->getId(),
-                'type' => $elementType
+                'type' => $elementType,
             ];
         }
 

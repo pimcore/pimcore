@@ -219,7 +219,7 @@ pimcore.document.pages.settings = Class.create(pimcore.document.settings_abstrac
                                 listeners: {
                                     "focusleave": function (el) {
                                         Ext.Ajax.request({
-                                            url: "/admin/page/check-pretty-url",
+                                            url: Routing.generate('pimcore_admin_document_page_checkprettyurl'),
                                             method: "POST",
                                             params: {
                                                 id: this.document.id,

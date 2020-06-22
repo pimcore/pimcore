@@ -21,6 +21,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Element;
+use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 
 /**
  * @property \Pimcore\Model\Dependency $model
@@ -156,7 +157,7 @@ class Dao extends Model\Dao\AbstractDao
                         'sourceid' => $this->model->getSourceId(),
                         'sourcetype' => $this->model->getSourceType(),
                         'targetid' => $target['id'],
-                        'targettype' => $target['type']
+                        'targettype' => $target['type'],
                     ]);
                 } catch (UniqueConstraintViolationException $e) {
                 }
@@ -174,9 +175,9 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getRequiredBy($offset = null, $limit = null)
     {
-        $query = 'SELECT * FROM dependencies WHERE targetid = ? AND targettype = ?';
+        $query = 'SELECT sourceid, sourcetype FROM dependencies WHERE targetid = ? AND targettype = ?';
 
-        if ($offset !== null & $limit !== null) {
+        if ($offset !== null && $limit !== null) {
             $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
         }
 
@@ -188,12 +189,71 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($data as $d) {
                 $requiredBy[] = [
                     'id' => $d['sourceid'],
-                    'type' => $d['sourcetype']
+                    'type' => $d['sourcetype'],
                 ];
             }
         }
 
         return $requiredBy;
+    }
+
+    /**
+     * @param string|null $orderBy
+     * @param string|null $orderDirection
+     * @param int|null $offset
+     * @param int|null $limit
+     *
+     * @return array
+     */
+    public function getRequiredByWithPath($offset = null, $limit = null, $orderBy = null, $orderDirection = null)
+    {
+        $targetId = intval($this->model->getSourceId());
+
+        if (in_array($this->model->getSourceType(), ['object', 'document', 'asset'])) {
+            $targetType = $this->model->getSourceType();
+        } else {
+            throw new SuspiciousOperationException('Illegal source type ' . $this->model->getSourceType());
+        }
+
+        if (!in_array($orderBy, ['id', 'type', 'path'])) {
+            $orderBy = 'id';
+        }
+
+        if (!in_array($orderDirection, ['ASC', 'DESC'])) {
+            $orderDirection = 'ASC';
+        }
+
+        $query = '
+            SELECT id, type, path
+            FROM (
+                SELECT d.sourceid as id, d.sourcetype as type, CONCAT(o.o_path, o.o_key) as path
+                FROM dependencies d
+                JOIN objects o ON o.o_id = d.sourceid
+                WHERE d.targetid = ' . $targetId . " AND  d.targettype = '" . $targetType. "'
+                UNION
+                SELECT d.sourceid as id, d.sourcetype as type, CONCAT(doc.path, doc.key) as path
+                FROM dependencies d
+                JOIN documents doc ON doc.id = d.sourceid
+                WHERE d.targetid = " . $targetId . " AND  d.targettype = '" . $targetType. "'
+                UNION
+                SELECT d.sourceid as id, d.sourcetype as type, CONCAT(a.path, a.filename) as path
+                FROM dependencies d
+                JOIN assets a ON a.id = d.sourceid
+                WHERE d.targetid = " . $targetId . " AND  d.targettype = '" . $targetType. "'
+            ) dep
+            ORDER BY " . $orderBy . ' ' . $orderDirection;
+
+        if (is_int($offset) && is_int($limit)) {
+            $query .= ' LIMIT ' . $offset . ', ' . $limit;
+        }
+
+        $requiredBy = $this->db->fetchAll($query);
+
+        if (is_array($requiredBy) && count($requiredBy) > 0) {
+            return $requiredBy;
+        } else {
+            return [];
+        }
     }
 
     /**

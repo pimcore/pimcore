@@ -38,13 +38,13 @@ where ( ((`o_modificationDate` > '1000') )  AND  ((`o_modificationDate` < '9999'
 ```
 
 ```
-q={"o_modificationDate" : {"$gt" : "1000"}, "$or": [{"o_id": "3", "o_key": {"$like" :"%lorem-ipsum%"}}]}
+q={"o_modificationDate" : {"$gt" : "1000"}, "$or": [{"o_id": "3"}, {"o_key": {"$like" :"%lorem-ipsum%"}}]}
 ...
 where ((`o_modificationDate` > '1000') AND  ((`o_id` = '3') OR  ((`o_key` LIKE '%lorem-ipsum%') )  )  )
 ```
 
 ```
-q={"$and" : [{"o_published": "0"}, {"o_modificationDate" : {"$gt" : "1000"}, "$or": [{"o_id": "3", "o_key": {"$like" :"%lorem-ipsum%"}}]}]}
+q={"$and" : [{"o_published": "0"}, {"o_modificationDate" : {"$gt" : "1000"}, "$or": [{"o_id": "3"}, {"o_key": {"$like" :"%lorem-ipsum%"}}]}]}
 ...        
 where ( ((`o_published` = '0') )  AND  ((`o_modificationDate` > '1000') AND  ((`o_id` = '3') OR (`o_key` LIKE '%lorem-ipsum%') )  )  )
 ```

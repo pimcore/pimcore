@@ -127,10 +127,15 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $activeGroupDefinitions = [];
 
     /**
+     * @var int
+     */
+    public $maxItems;
+
+    /**
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -207,7 +212,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         $items = $data->getItems();
 
-        foreach ($items  as $groupId => $keys) {
+        foreach ($items as $groupId => $keys) {
             if (!isset($data->getActiveGroups()[$groupId])) {
                 continue;
             }
@@ -260,7 +265,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             $keyId = $key->getKeyId();
                             $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
 
-                            if ($fd->isEmpty($fieldData[$language][$groupId][$keyId])) {
+                            if ($fd->isEmpty($fieldData[$language][$groupId][$keyId] ?? null)) {
                                 $foundEmptyValue = true;
                                 $inherited = true;
                                 $metaData[$language][$groupId][$keyId] = ['inherited' => true, 'objectid' => $parent->getId()];
@@ -281,7 +286,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $result = [
             'data' => $fieldData,
             'metaData' => $metaData,
-            'inherited' => $inherited
+            'inherited' => $inherited,
         ];
 
         return $result;
@@ -432,6 +437,9 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                     foreach ($values as $language => $value) {
                         $value = $fieldDefinition->getDataForResource($value, $object, $params);
+                        if (is_array($value)) {
+                            $value = implode(',', $value);
+                        }
                         $dataString .= $value . ' ';
                     }
                 }
@@ -489,7 +497,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         $activeGroups[$groupId] = [
                             'id' => $groupId,
                             'name' => $groupDef->getName(). ' - ' . $groupDef->getDescription(),
-                            'enabled' => $groupData
+                            'enabled' => $groupData,
                         ];
                     }
                 }
@@ -511,7 +519,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         'containerType' => 'classificationstore',
                         'fieldname' => $this->getName(),
                         'groupId' => $groupId,
-                        'keyId' => $keyId
+                        'keyId' => $keyId,
                     ];
 
                     foreach ($validLanguages as $language) {
@@ -521,7 +529,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             'id' => $keyId,
                             'name' => $keyConfig->getName(),
                             'description' => $keyConfig->getDescription(),
-                            'value' => $value
+                            'value' => $value,
                         ];
                         if ($level > 0) {
                             $resultItem['inheritedFrom'] = $object->getId();
@@ -536,7 +544,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                         $groupResult = [
                             'id' => $groupId,
                             'name' => $groupDef->getName(). ' - ' . $groupDef->getDescription(),
-                            'keys' => $groupResult
+                            'keys' => $groupResult,
                         ];
                     }
                 }
@@ -966,6 +974,12 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $getInheritedValues = DataObject\AbstractObject::doGetInheritedValues();
 
         if (!$omitMandatoryCheck) {
+            if ($this->maxItems > 0 && count($activeGroups) > $this->maxItems) {
+                throw new Model\Element\ValidationException(
+                    'Groups in field [' . $this->getName() . '] is bigger than ' . $this->getMaxItems()
+                );
+            }
+
             foreach ($activeGroups as $activeGroupId => $enabled) {
                 if ($enabled) {
                     $groupDefinition = DataObject\Classificationstore\GroupConfig::getById($activeGroupId);
@@ -1097,6 +1111,22 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function getLabelWidth()
     {
         return $this->labelWidth;
+    }
+
+    /**
+     * @param int $maxItems
+     */
+    public function setMaxItems($maxItems)
+    {
+        $this->maxItems = (int) $maxItems;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxItems()
+    {
+        return $this->maxItems;
     }
 
     /**
@@ -1239,6 +1269,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     continue;
                 }
                 $definition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($keyGroupRelation);
+
+                // changes here also have an effect here: "bundles/AdminBundle/Resources/public/js/pimcore/object/tags/classificationstore.js"
                 $fallbackTooltip = $definition->getName() . ' - ' . $keyGroupRelation->getDescription();
                 $definition->setTooltip($definition->getTooltip() ?: $fallbackTooltip);
 
@@ -1264,7 +1296,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                     'name' => $keyGroupRelation->getName(),
                     'id' => $keyGroupRelation->getKeyId(),
                     'description' => $keyGroupRelation->getDescription(),
-                    'definition' => $definition
+                    'definition' => $definition,
                 ];
             }
 
@@ -1272,7 +1304,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                 'name' => $group->getName(),
                 'id' => $group->getId(),
                 'description' => $group->getDescription(),
-                'keys' => $keyList
+                'keys' => $keyList,
             ];
         }
 

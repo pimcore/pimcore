@@ -38,7 +38,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class RedirectsController extends AdminController
 {
     /**
-     * @Route("/list", methods={"POST"})
+     * @Route("/list", name="pimcore_admin_redirects_redirects", methods={"POST"})
      *
      * @param Request $request
      * @param RedirectHandler $redirectHandler
@@ -171,7 +171,7 @@ class RedirectsController extends AdminController
     }
 
     /**
-     * @Route("/csv-export", methods={"GET"})
+     * @Route("/csv-export", name="pimcore_admin_redirects_csvexport", methods={"GET"})
      *
      * @param Request $request
      * @param Csv $csv
@@ -203,7 +203,7 @@ class RedirectsController extends AdminController
     }
 
     /**
-     * @Route("/csv-import", methods={"POST"})
+     * @Route("/csv-import", name="pimcore_admin_redirects_csvimport", methods={"POST"})
      *
      * @param Request $request
      * @param Csv $csv
@@ -225,12 +225,12 @@ class RedirectsController extends AdminController
 
         return $this->adminJson([
             'success' => true,
-            'data' => $result
+            'data' => $result,
         ]);
     }
 
     /**
-     * @Route("/cleanup", methods={"DELETE"})
+     * @Route("/cleanup", name="pimcore_admin_redirects_cleanup", methods={"DELETE"})
      *
      * @param Request $request
      *

@@ -229,7 +229,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\StructuredTable $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -255,7 +255,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\StructuredTable
@@ -283,7 +283,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\StructuredTable $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -297,7 +297,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -329,7 +329,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\StructuredTable
@@ -599,7 +599,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         $mapper = [
             'text' => 'varchar('.($length > 0 ? $length : '190').')',
             'number' => 'double',
-            'bool' => 'tinyint(1)'
+            'bool' => 'tinyint(1)',
         ];
 
         return $mapper[$type];
@@ -614,9 +614,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     {
         if ($data instanceof DataObject\Data\StructuredTable) {
             return $data->isEmpty();
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     /** True if change is allowed in edit mode.

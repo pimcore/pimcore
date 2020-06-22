@@ -41,7 +41,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         'NElongitude' => 'double',
         'NElatitude' => 'double',
         'SWlongitude' => 'double',
-        'SWlatitude' => 'double'
+        'SWlatitude' => 'double',
     ];
 
     /**
@@ -53,7 +53,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         'NElongitude' => 'double',
         'NElatitude' => 'double',
         'SWlongitude' => 'double',
-        'SWlatitude' => 'double'
+        'SWlatitude' => 'double',
     ];
 
     /**
@@ -67,7 +67,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Geobounds $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -79,7 +79,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
                 $this->getName() . '__NElongitude' => $data->getNorthEast()->getLongitude(),
                 $this->getName() . '__NElatitude' => $data->getNorthEast()->getLatitude(),
                 $this->getName() . '__SWlongitude' => $data->getSouthWest()->getLongitude(),
-                $this->getName() . '__SWlatitude' => $data->getSouthWest()->getLatitude()
+                $this->getName() . '__SWlatitude' => $data->getSouthWest()->getLatitude(),
             ];
         }
 
@@ -87,7 +87,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             $this->getName() . '__NElongitude' => null,
             $this->getName() . '__NElatitude' => null,
             $this->getName() . '__SWlongitude' => null,
-            $this->getName() . '__SWlatitude' => null
+            $this->getName() . '__SWlatitude' => null,
         ];
     }
 
@@ -95,7 +95,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Geobounds|null
@@ -122,7 +122,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\Geobounds $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -136,7 +136,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      * @see Data::getDataForEditmode
      *
      * @param DataObject\Data\Geobounds $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -148,7 +148,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
                 'NElongitude' => $data->getNorthEast()->getLongitude(),
                 'NElatitude' => $data->getNorthEast()->getLatitude(),
                 'SWlongitude' => $data->getSouthWest()->getLongitude(),
-                'SWlatitude' => $data->getSouthWest()->getLatitude()
+                'SWlatitude' => $data->getSouthWest()->getLatitude(),
             ];
         }
 
@@ -171,7 +171,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Geobounds|null
@@ -277,7 +277,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
                 'NElongitude' => $data->getNorthEast()->getLongitude(),
                 'NElatitude' => $data->getNorthEast()->getLatitude(),
                 'SWlongitude' => $data->getSouthWest()->getLongitude(),
-                'SWlatitude' => $data->getSouthWest()->getLatitude()
+                'SWlatitude' => $data->getSouthWest()->getLatitude(),
             ];
         }
 
@@ -288,7 +288,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      * @deprecated
      *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -326,7 +326,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -336,14 +336,14 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         if ($value) {
             return [
                 'value' => json_encode([$value[$this->getName() . '__NElatitude'], $value[$this->getName() . '__NElongitude']]),
-                'value2' => json_encode([$value[$this->getName() . '__SWlatitude'], $value[$this->getName() . '__SWlongitude']])
+                'value2' => json_encode([$value[$this->getName() . '__SWlatitude'], $value[$this->getName() . '__SWlongitude']]),
             ];
         }
     }
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed

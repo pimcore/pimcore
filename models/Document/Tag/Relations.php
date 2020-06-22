@@ -214,7 +214,7 @@ class Relations extends Model\Document\Tag implements \Iterator
 
                     $dependencies[$key] = [
                         'id' => $element->getId(),
-                        'type' => $elementType
+                        'type' => $elementType,
                     ];
                 }
             }
@@ -429,7 +429,7 @@ class Relations extends Model\Document\Tag implements \Iterator
             foreach ($elements as $element) {
                 $result[] = [
                     'type' => Element\Service::getType($element),
-                    'id' => $element->getId()
+                    'id' => $element->getId(),
                 ];
             }
 

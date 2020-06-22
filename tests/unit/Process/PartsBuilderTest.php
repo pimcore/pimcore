@@ -28,7 +28,7 @@ class PartsBuilderTest extends TestCase
     private $inputArguments = [
         'foo',
         'bar',
-        'baz:inga'
+        'baz:inga',
     ];
 
     private $inputOptions = [
@@ -37,7 +37,7 @@ class PartsBuilderTest extends TestCase
         'baz' => 'inga',
         'test' => null,  // omitted because null
         'o' => true,
-        'x' => 'yz'
+        'x' => 'yz',
     ];
 
     private $expected = [
@@ -47,7 +47,7 @@ class PartsBuilderTest extends TestCase
         '--foo',
         '--baz=inga',
         '-o',
-        '-x=yz'
+        '-x=yz',
     ];
 
     public function testSetPartsInConstructor()
@@ -89,7 +89,7 @@ class PartsBuilderTest extends TestCase
         ], [
             'foo' => true,
             'bar' => false,
-            'baz' => 'inga'
+            'baz' => 'inga',
         ]);
 
         $builder->addArgument('baz:inga');
@@ -128,7 +128,7 @@ class PartsBuilderTest extends TestCase
             '--foo=baz',
             '-x=ab',
             '-y=b',
-            '--baz'
+            '--baz',
         ], $builder->getParts());
     }
 }

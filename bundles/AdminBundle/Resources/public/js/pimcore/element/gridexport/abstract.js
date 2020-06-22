@@ -16,7 +16,7 @@ pimcore.element.gridexport.abstract = Class.create({
     name: t('export'),
     text: t('export'),
     warningText: t('asset_export_warning'),
-    downloadUrl: null,
+
     getExportSettingsContainer: function () {
         return null;
     },

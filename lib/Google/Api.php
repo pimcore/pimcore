@@ -224,13 +224,13 @@ class Api
                         }
                         $result[] = [
                             'id' => str_replace('XX', $i, $item['id']),
-                            'name' => $name
+                            'name' => $name,
                         ];
                     }
                 } else {
                     $result[] = [
                         'id' => $item['id'],
-                        'name' => $translator->trans($item['attributes']['uiName'], [], 'admin')
+                        'name' => $translator->trans($item['attributes']['uiName'], [], 'admin'),
                     ];
                 }
             }

@@ -204,20 +204,10 @@ Open the build log and check for problems.
 
 PHPStan can create a baseline file, which contain all current errors. See this [blog](https://medium.com/@ondrejmirtes/phpstans-baseline-feature-lets-you-hold-new-code-to-a-higher-standard-e77d815a5dff) entry.
  
-To generate a new baseline file you have to do following steps:
-
-1. Deactivate baseline file include (comment out) in phpstan.neon
-    ```sh
-    sed -e "s?- phpstan-baseline.neon?#- phpstan-baseline.neon?g" -i phpstan.neon
-    ```
-2. Generate new baseline file
-    ```sh
-    vendor/bin/phpstan analyse -c .travis/phpstan.s4.travis.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --error-format baselineNeon > phpstan-baseline.neon
-    ```
-3. Activate baseline file include in phpstan.neon
-    ```sh
-    sed -e "s?#- phpstan-baseline.neon?- phpstan-baseline.neon?g" -i phpstan.neon
-    ```
+To generate a new baseline file you have to execute following command:
+```sh
+vendor/bin/phpstan analyse -c .travis/phpstan.s4.travis.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --generate-baseline
+```
 
 With this baseline file include, Travis can detect new errors without having to fix all errors first.
 

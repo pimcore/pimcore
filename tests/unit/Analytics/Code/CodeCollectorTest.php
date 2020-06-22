@@ -78,10 +78,10 @@ class CodeCollectorTest extends TestCase
             CodeCollector::CONFIG_KEY_GLOBAL => [
                 'A' => [
                     CodeCollector::ACTION_APPEND => [
-                        'foo'
-                    ]
-                ]
-            ]
+                        'foo',
+                    ],
+                ],
+            ],
         ], $this->getCodeParts());
     }
 
@@ -95,10 +95,10 @@ class CodeCollectorTest extends TestCase
             CodeCollector::CONFIG_KEY_GLOBAL => [
                 'B' => [
                     CodeCollector::ACTION_APPEND => [
-                        'foo'
-                    ]
-                ]
-            ]
+                        'foo',
+                    ],
+                ],
+            ],
         ], $this->getCodeParts());
     }
 
@@ -112,10 +112,10 @@ class CodeCollectorTest extends TestCase
             CodeCollector::CONFIG_KEY_GLOBAL => [
                 'A' => [
                     CodeCollector::ACTION_PREPEND => [
-                        'foo'
-                    ]
-                ]
-            ]
+                        'foo',
+                    ],
+                ],
+            ],
         ], $this->getCodeParts());
     }
 
@@ -129,10 +129,10 @@ class CodeCollectorTest extends TestCase
             'site_1' => [
                 'A' => [
                     CodeCollector::ACTION_APPEND => [
-                        'foo'
-                    ]
-                ]
-            ]
+                        'foo',
+                    ],
+                ],
+            ],
         ], $this->getCodeParts());
     }
 

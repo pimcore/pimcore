@@ -18,9 +18,9 @@
 namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Cache;
-use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Model\Site;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Tool\DeviceDetector;
 use Pimcore\Tool\Frontend;
@@ -90,7 +90,7 @@ class Snippet extends Model\Document\Tag
         if ($this->snippet instanceof Document\Snippet) {
             return [
                 'id' => $this->id,
-                'path' => $this->snippet->getFullPath()
+                'path' => $this->snippet->getFullPath(),
             ];
         }
 
@@ -114,71 +114,66 @@ class Snippet extends Model\Document\Tag
             return '';
         }
 
-        try {
-            if (!$this->snippet instanceof Document\Snippet) {
-                return '';
-            }
+        if (!$this->snippet instanceof Document\Snippet) {
+            return '';
+        }
 
-            if (!$this->snippet->isPublished()) {
-                return '';
-            }
+        if (!$this->snippet->isPublished()) {
+            return '';
+        }
 
-            // apply best matching target group (if any)
-            $targetingConfigurator->configureTargetGroup($this->snippet);
+        // apply best matching target group (if any)
+        $targetingConfigurator->configureTargetGroup($this->snippet);
 
-            $params = $this->options;
-            $params['document'] = $this->snippet;
+        $params = $this->options;
+        $params['document'] = $this->snippet;
 
-            // check if output-cache is enabled, if so, we're also using the cache here
-            $cacheKey = null;
-            if ($cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled()) {
+        // check if output-cache is enabled, if so, we're also using the cache here
+        $cacheKey = null;
+        $cacheConfig = \Pimcore\Tool\Frontend::isOutputCacheEnabled();
+        if ((isset($params['cache']) && $params['cache'] === true) || $cacheConfig) {
 
-                // cleanup params to avoid serializing Element\ElementInterface objects
-                $cacheParams = $params;
-                array_walk($cacheParams, function (&$value, $key) {
-                    if ($value instanceof Model\Element\ElementInterface) {
-                        $value = $value->getId();
-                    }
-                });
-
-                // TODO is this enough for cache or should we disable caching completely?
-                if ($this->snippet->getUseTargetGroup()) {
-                    $cacheParams['target_group'] = $this->snippet->getUseTargetGroup();
+            // cleanup params to avoid serializing Element\ElementInterface objects
+            $cacheParams = $params;
+            array_walk($cacheParams, function (&$value, $key) {
+                if ($value instanceof Model\Element\ElementInterface) {
+                    $value = $value->getId();
                 }
+            });
 
-                if (Frontend::hasWebpSupport()) {
-                    $cacheParams['webp'] = true;
-                }
-
-                $cacheKey = 'tag_snippet__' . md5(serialize($cacheParams));
-                if ($content = Cache::load($cacheKey)) {
-                    return $content;
-                }
+            // TODO is this enough for cache or should we disable caching completely?
+            if ($this->snippet->getUseTargetGroup()) {
+                $cacheParams['target_group'] = $this->snippet->getUseTargetGroup();
             }
 
-            $content = $tagHandler->renderAction(
-                $this->view,
-                $this->snippet->getController(),
-                $this->snippet->getAction(),
-                $this->snippet->getModule(),
-                $params
-            );
+            $cacheParams['webp'] = Frontend::hasWebpSupport();
 
-            // write contents to the cache, if output-cache is enabled
-            if ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
-                Cache::save($content, $cacheKey, ['output', 'output_inline'], $cacheConfig['lifetime']);
+            if (Site::isSiteRequest()) {
+                $cacheParams['siteId'] = Site::getCurrentSite()->getId();
             }
 
-            return $content;
-        } catch (\Exception $e) {
-            Logger::error($e);
-
-            if (\Pimcore::inDebugMode()) {
-                return 'ERROR: ' . $e->getMessage() . ' (for details see log files in /var/logs)';
+            $cacheKey = 'tag_snippet__' . md5(serialize($cacheParams));
+            if ($content = Cache::load($cacheKey)) {
+                return $content;
             }
         }
 
-        return '';
+        $content = $tagHandler->renderAction(
+            $this->view,
+            $this->snippet->getController(),
+            $this->snippet->getAction(),
+            $this->snippet->getModule(),
+            $params
+        );
+
+        // write contents to the cache, if output-cache is enabled
+        if (isset($params['cache']) && $params['cache'] === true) {
+            Cache::save($content, $cacheKey, ['output']);
+        } elseif ($cacheConfig && !DeviceDetector::getInstance()->wasUsed()) {
+            Cache::save($content, $cacheKey, ['output', 'output_inline'], $cacheConfig['lifetime']);
+        }
+
+        return $content;
     }
 
     /**
@@ -241,7 +236,7 @@ class Snippet extends Model\Document\Tag
 
             $dependencies[$key] = [
                 'id' => $this->snippet->getId(),
-                'type' => 'document'
+                'type' => 'document',
             ];
         }
 

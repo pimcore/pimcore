@@ -30,7 +30,7 @@ class SelectFromMultiSelect extends AbstractFilterType
             $explode = explode(WorkerInterface::MULTISELECT_DELIMITER, $v['value']);
             foreach ($explode as $e) {
                 if (!empty($e)) {
-                    if ($values[$e]) {
+                    if (!empty($values[$e])) {
                         $values[$e]['count'] += $v['count'];
                     } else {
                         $values[$e] = ['value' => $e, 'count' => $v['count']];
@@ -46,7 +46,7 @@ class SelectFromMultiSelect extends AbstractFilterType
             'values' => array_values($values),
             'fieldname' => $field,
             'metaData' => $filterDefinition->getMetaData(),
-            'resultCount' => $productList->count()
+            'resultCount' => $productList->count(),
         ]);
     }
 

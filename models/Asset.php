@@ -292,6 +292,8 @@ class Asset extends Element\AbstractElement
                 $asset->getDao()->getById($id);
                 $asset->__setDataVersionTimestamp($asset->getModificationDate());
 
+                $asset->resetDirtyMap();
+
                 \Pimcore\Cache::save($asset, $cacheKey);
             } else {
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
@@ -828,7 +830,7 @@ class Asset extends Element\AbstractElement
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, new AssetEvent($this, [
-                    'saveVersionOnly' => true
+                    'saveVersionOnly' => true,
                 ]));
             }
 
@@ -855,7 +857,7 @@ class Asset extends Element\AbstractElement
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, new AssetEvent($this, [
-                    'saveVersionOnly' => true
+                    'saveVersionOnly' => true,
                 ]));
             }
 
@@ -863,7 +865,7 @@ class Asset extends Element\AbstractElement
         } catch (\Exception $e) {
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE_FAILURE, new AssetEvent($this, [
                 'saveVersionOnly' => true,
-                'exception' => $e
+                'exception' => $e,
             ]));
 
             throw $e;
@@ -883,7 +885,7 @@ class Asset extends Element\AbstractElement
             $path = urlencode_ignore_slash($path);
 
             $event = new GenericEvent($this, [
-                'frontendPath' => $path
+                'frontendPath' => $path,
             ]);
             \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_PATH, $event);
             $path = $event->getArgument('frontendPath');
@@ -1231,6 +1233,8 @@ class Asset extends Element\AbstractElement
      */
     public function setModificationDate($modificationDate)
     {
+        $this->markFieldDirty('modificationDate');
+
         $this->modificationDate = (int) $modificationDate;
 
         return $this;
@@ -1503,6 +1507,8 @@ class Asset extends Element\AbstractElement
      */
     public function setUserModification($userModification)
     {
+        $this->markFieldDirty('userModification');
+
         $this->userModification = (int) $userModification;
 
         return $this;
@@ -1710,7 +1716,7 @@ class Asset extends Element\AbstractElement
                 'name' => $name,
                 'type' => $type,
                 'data' => $data,
-                'language' => $language
+                'language' => $language,
             ];
             $this->metadata = $tmp;
 
@@ -2007,7 +2013,7 @@ class Asset extends Element\AbstractElement
                     $key = $elementType . '_' . $elementData->getId();
                     $dependencies[$key] = [
                         'id' => $elementData->getId(),
-                        'type' => $elementType
+                        'type' => $elementType,
                     ];
                 }
             }

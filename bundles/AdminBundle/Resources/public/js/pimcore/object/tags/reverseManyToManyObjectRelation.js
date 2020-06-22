@@ -53,7 +53,7 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
         if (pimcore.globalmanager.exists("object_" + this.getStore().getAt(index).data.id) == false) {
 
             Ext.Ajax.request({
-                url: "/admin/object/get",
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_get'),
                 async: false,
                 params: {id: this.getStore().getAt(index).data.id},
                 success: function(index, response) {
@@ -74,7 +74,7 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
 
                     } else {
                         Ext.Ajax.request({
-                            url: "/admin/element/lock-element",
+                            url: Routing.generate('pimcore_admin_element_lockelement'),
                             method: 'PUT',
                             params: {
                                 id: this.getStore().getAt(index).data.id,
@@ -340,7 +340,7 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
         if (pimcore.globalmanager.exists("object_" + item.id) == false) {
 
             Ext.Ajax.request({
-                url: "/admin/object/get",
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_get'),
                 params: {id: item.id},
                 success: function(item, response) {
                     this.data = Ext.decode(response.responseText);
@@ -364,7 +364,7 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
 
                     } else {
                         Ext.Ajax.request({
-                            url: "/admin/element/lock-element",
+                            url: Routing.generate('pimcore_admin_element_lockelement'),
                             method: 'PUT',
                             params: {id: item.id, type: 'object'}
                         });

@@ -77,7 +77,7 @@ In the editmode, there is now a container available where you can assign an asse
 
 You can use videos from external services, as well (at the moment, YouTube, Vimeo and Dailymotion) but with limited functionalities. 
 In the video edit dialog, change the type to `youtube` and fill the **ID** input with a video identifier or the video URL.
-(in that case you can easily find it in the url).
+(in that case you can easily find it in the url). Youtube playlists are supported as well - you can identify them by the prefix `PL` in the **ID**.
 
 ![Video editable - YouTube configuration - editmode](../../img/editables_video_youtube_editmode.png)
 

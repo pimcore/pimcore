@@ -43,7 +43,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     protected $characterPools = [
         'alphaNumeric' => '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ',
         'numeric' => '123456789',
-        'alpha' => 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
+        'alpha' => 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ',
     ];
 
     public function __construct(AbstractVoucherTokenType $configuration)
@@ -214,7 +214,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             'usageCount' => $usageCount,
             'freeCount' => $overallCount - $usageCount - $reservedTokenCount,
             'reservedCount' => $reservedTokenCount,
-            'usage' => $usage
+            'usage' => $usage,
         ];
     }
 
@@ -605,7 +605,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
                 'token' => $token->getToken(),
                 'usages' => $token->getUsages(),
                 'length' => $token->getLength(),
-                'timestamp' => $token->getTimestamp()
+                'timestamp' => $token->getTimestamp(),
             ];
         }
 

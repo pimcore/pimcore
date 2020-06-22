@@ -36,7 +36,7 @@ class Dao extends Model\Dao\AbstractDao
             'data' => $data,
             'documentId' => $this->model->getDocumentId(),
             'name' => $this->model->getName(),
-            'type' => $this->model->getType()
+            'type' => $this->model->getType(),
         ];
 
         $this->db->insertOrUpdate('documents_elements', $element);
@@ -46,7 +46,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $this->db->delete('documents_elements', [
             'documentId' => $this->model->getDocumentId(),
-            'name' => $this->model->getName()
+            'name' => $this->model->getName(),
         ]);
     }
 }

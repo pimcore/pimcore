@@ -52,7 +52,7 @@ class MultiSelectCategory extends AbstractFilterType
             'values' => array_values($values),
             'fieldname' => $filterDefinition->getField(),
             'metaData' => $filterDefinition->getMetaData(),
-            'resultCount' => $productList->count()
+            'resultCount' => $productList->count(),
         ]);
     }
 

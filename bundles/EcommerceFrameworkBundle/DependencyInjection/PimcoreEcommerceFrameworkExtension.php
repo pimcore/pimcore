@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFacto
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CheckoutManagerFactoryLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorLocatorInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\ThrowExceptionStrategy;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Legacy\InterfaceLoader;
@@ -212,7 +213,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $mapping,
             OrderManagerLocator::class,
             [
-                'pimcore_ecommerce.locator.order_manager'
+                'pimcore_ecommerce.locator.order_manager',
             ]
         );
     }
@@ -246,7 +247,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $mapping,
             PricingManagerLocator::class,
             [
-                'pimcore_ecommerce.locator.pricing_manager'
+                'pimcore_ecommerce.locator.pricing_manager',
             ]
         );
     }
@@ -312,6 +313,8 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
                 $locatorMapping = [];
                 if ($factoryConfig['handle_pending_payments_strategy']) {
                     $locatorMapping[$factoryConfig['handle_pending_payments_strategy']] = $factoryConfig['handle_pending_payments_strategy'];
+                } else {
+                    $locatorMapping[ThrowExceptionStrategy::class] = ThrowExceptionStrategy::class;
                 }
 
                 $checkoutManagerFactory->setArgument('$options', $factoryConfig);
@@ -411,6 +414,9 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $container->setParameter('pimcore_ecommerce.index_service.default_tenant', $config['default_tenant']);
 
+        //@TODO Pimcore 7 - remove this
+        $container->setParameter('pimcore_ecommerce.index_service.worker_mode', $config['worker_mode']);
+
         $getterIds = [];
         $interpreterIds = [];
 
@@ -442,11 +448,12 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
                 '$tenantName' => $tenant,
                 '$attributes' => $attributes,
                 '$searchAttributes' => $tenantConfig['search_attributes'],
-                '$filterTypes' => []
+                '$filterTypes' => [],
             ]);
 
             if (!empty($tenantConfig['config_options'])) {
                 $config->setArgument('$options', $tenantConfig['config_options']);
+                $this->registerIndexServiceElasticSearchSynonymProviders($tenantConfig['config_options'], $config, $container);
             }
 
             $worker = new ChildDefinition($tenantConfig['worker_id']);
@@ -459,6 +466,33 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $this->setupServiceLocator($container, 'index_service.getters', $getterIds);
         $this->setupServiceLocator($container, 'index_service.interpreters', $interpreterIds);
+    }
+
+    /**
+     * Register synonym providers and their options per tenant config.
+     *
+     * @param array $tenantConfigOptions
+     * @param Definition $config
+     * @param ContainerBuilder $container
+     */
+    private function registerIndexServiceElasticSearchSynonymProviders(array $tenantConfigOptions,
+                                                                       Definition $config,
+                                                                       ContainerBuilder $container)
+    {
+        if (!isset($tenantConfigOptions['synonym_providers'])) {
+            return;
+        }
+
+        $providers = [];
+        foreach ($tenantConfigOptions['synonym_providers'] as $name => $synonymProviderConfig) {
+            $synonymProvider = new ChildDefinition($synonymProviderConfig['provider_id']);
+            $synonymProvider->setArgument('$options', $synonymProviderConfig['options'] ?? []);
+            $synonymProviderServiceId = self::SERVICE_ID_INDEX_SERVICE.'.synonym_provider.'.$name;
+            $container->setDefinition($synonymProviderServiceId, $synonymProvider);
+            $providers[$name] = $synonymProvider;
+        }
+
+        $config->setArgument('$synonymProviders', $providers);
     }
 
     private function registerFilterServiceConfig(ContainerBuilder $container, array $config)
@@ -497,7 +531,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $mapping,
             FilterServiceLocator::class,
             [
-                'pimcore_ecommerce.locator.filter_service'
+                'pimcore_ecommerce.locator.filter_service',
             ]
         );
     }
@@ -599,7 +633,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $container->setDefinition($id, new Definition($class, [
             $serviceLocator,
             new Reference('pimcore_ecommerce.environment'),
-            $container->getParameter('pimcore_ecommerce.factory.strict_tenants')
+            $container->getParameter('pimcore_ecommerce.factory.strict_tenants'),
         ]));
 
         foreach ($aliases as $alias) {
@@ -612,7 +646,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $serviceLocator = $this->setupServiceLocator($container, $id, $mapping, false);
 
         $locator = new Definition($class, [
-            $serviceLocator
+            $serviceLocator,
         ]);
 
         $container->setDefinition(sprintf('pimcore_ecommerce.locator.%s', $id), $locator);

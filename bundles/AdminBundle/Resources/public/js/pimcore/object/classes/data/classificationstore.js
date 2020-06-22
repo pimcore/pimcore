@@ -65,7 +65,6 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
             name: "localized",
             fieldLabel: t("localized"),
             checked: this.datax.localized
-
         });
 
         this.specificPanel.add({
@@ -77,10 +76,18 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
             value: this.datax.allowedGroupIds
         });
 
+        this.specificPanel.add({
+            xtype: "numberfield",
+            fieldLabel: t("classificationstore_group_limitation"),
+            name: "maxItems",
+            value: this.datax.maxItems,
+            minValue: 0
+        });
+
         var  store = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
-                url: "/admin/classificationstore/list-stores"
+                url: Routing.generate('pimcore_admin_dataobject_classificationstore_liststores')
             },
             autoDestroy: false,
             autoLoad: true,
@@ -107,7 +114,6 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
             name: "hideEmptyData",
             fieldLabel: t("hide_empty_data"),
             checked: this.datax.hideEmptyData
-
         });
 
         this.specificPanel.add({
@@ -117,8 +123,6 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
             checked: this.datax.disallowAddRemove
 
         });
-
-
 
         this.layout.on("render", this.layoutRendered.bind(this));
 
@@ -135,6 +139,7 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
             if (!this.datax) {
                 this.datax =  {};
             }
+
             Ext.apply(this.datax,
                 {
                     region: source.datax.region,
@@ -142,7 +147,12 @@ pimcore.object.classes.data.classificationstore = Class.create(pimcore.object.cl
                     width: source.datax.width,
                     height: source.datax.height,
                     maxTabs: source.datax.maxTabs,
-                    labelWidth: source.datax.labelWidth
+                    labelWidth: source.datax.labelWidth,
+                    localized: source.datax.localized,
+                    allowedGroupIds: source.datax.allowedGroupIds,
+                    hideEmptyData: source.datax.hideEmptyData,
+                    disallowAddRemove: source.datax.disallowAddRemove,
+                    storeId: source.datax.storeId 
                 });
         }
     }

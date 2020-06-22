@@ -38,7 +38,7 @@ class AdminExceptionListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::EXCEPTION => 'onKernelException'
+            KernelEvents::EXCEPTION => 'onKernelException',
         ];
     }
 
@@ -97,7 +97,7 @@ class AdminExceptionListener implements EventSubscriberInterface
 
             $data = [
                 'success' => false,
-                'msg' => $message
+                'msg' => $message,
             ];
 
             if (\Pimcore::inDebugMode()) {

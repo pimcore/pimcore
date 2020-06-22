@@ -161,6 +161,17 @@ function in_arrayi(string $needle, array $haystack)
 }
 
 /**
+ * @param string $needle
+ * @param array $haystack
+ *
+ * @return false|int|string the key for needle if it is found in the array, false otherwise.
+ */
+function array_searchi(string $needle, array $haystack)
+{
+    return array_search(strtolower($needle), array_map('strtolower', $haystack));
+}
+
+/**
  * @param object $node
  *
  * @return array
@@ -551,7 +562,7 @@ function closureHash(Closure $closure)
 
     $hash = md5(json_encode([
         $content,
-        $ref->getStaticVariables()
+        $ref->getStaticVariables(),
     ]));
 
     return $hash;

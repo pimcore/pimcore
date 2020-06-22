@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class RecyclebinController extends AdminController implements EventedControllerInterface
 {
     /**
-     * @Route("/recyclebin/list", methods={"POST"})
+     * @Route("/recyclebin/list", name="pimcore_admin_recyclebin_list", methods={"POST"})
      *
      * @param Request $request
      *
@@ -130,7 +130,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/recyclebin/restore", methods={"POST"})
+     * @Route("/recyclebin/restore", name="pimcore_admin_recyclebin_restore", methods={"POST"})
      *
      * @param Request $request
      *
@@ -145,7 +145,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/recyclebin/flush", methods={"DELETE"})
+     * @Route("/recyclebin/flush", name="pimcore_admin_recyclebin_flush", methods={"DELETE"})
      *
      * @return JsonResponse
      */
@@ -158,7 +158,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @Route("/recyclebin/add", methods={"POST"})
+     * @Route("/recyclebin/add", name="pimcore_admin_recyclebin_add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -166,24 +166,26 @@ class RecyclebinController extends AdminController implements EventedControllerI
      */
     public function addAction(Request $request)
     {
-        $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
+        try {
+            $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
 
-        if ($element) {
-            $type = Element\Service::getElementType($element);
-            $baseClass = Element\Service::getBaseClassNameForElement($type);
-            $listClass = '\\Pimcore\\Model\\' . $baseClass . '\\Listing';
-            $list = new $listClass();
-            $list->setCondition((($type == 'object') ? 'o_' : '') . 'path LIKE ' . $list->quote($element->getRealFullPath() . '/%'));
-            $children = $list->getTotalCount();
+            if ($element) {
+                $type = Element\Service::getElementType($element);
+                $baseClass = Element\Service::getBaseClassNameForElement($type);
+                $listClass = '\\Pimcore\\Model\\' . $baseClass . '\\Listing';
+                $list = new $listClass();
+                $list->setCondition((($type == 'object') ? 'o_' : '') . 'path LIKE ' . $list->quote($element->getRealFullPath() . '/%'));
+                $children = $list->getTotalCount();
 
-            if ($children <= 100) {
-                Recyclebin\Item::create($element, $this->getAdminUser());
+                if ($children <= 100) {
+                    Recyclebin\Item::create($element, $this->getAdminUser());
+                }
             }
-
-            return $this->adminJson(['success' => true]);
-        } else {
-            return $this->adminJson(['success' => false]);
+        } catch (\Exception $e) {
+            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
         }
+
+        return $this->adminJson(['success' => true]);
     }
 
     /**

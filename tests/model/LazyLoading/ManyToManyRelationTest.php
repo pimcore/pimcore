@@ -3,14 +3,53 @@
 namespace Pimcore\Tests\Model\LazyLoading;
 
 use Pimcore\Cache;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Fieldcollection;
 use Pimcore\Model\DataObject\LazyLoading;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingLocalizedTest;
 use Pimcore\Model\DataObject\Objectbrick\Data\LazyLoadingTest;
+use Pimcore\Model\DataObject\RelationTest;
+use Pimcore\Model\DataObject\Service;
 
 class ManyToManyRelationTest extends AbstractLazyLoadingTest
 {
+    public function testUnpublished()
+    {
+        $preservedState = Concrete::getHideUnpublished();
+        $folder = Service::createFolderByPath('/rel-test');
+
+        $unpub = new RelationTest();
+        $unpub->setParent($folder);
+        $unpub->setPublished(false);
+        $unpub->setKey('unpub');
+        $unpub->save();
+
+        $source = new Lazyloading();
+        $source->setParentId(1);
+        $source->setKey('source');
+        $source->setPublished(true);
+        $source->setRelations([$unpub]);
+        $source->save();
+
+        $source = LazyLoading::getById($source->getId(), true);
+
+        $this->assertEquals(0, count($source->getRelations()), 'expected 0 items');
+
+        Concrete::setHideUnpublished(false);
+        $this->assertEquals(1, count($source->getRelations()), 'expected 1 items');
+
+        Concrete::setHideUnpublished(true);
+        $source->setRelations([]);
+        $source->save();
+        $source = LazyLoading::getById($source->getId(), true);
+
+        Concrete::setHideUnpublished(false);
+        $this->assertEquals(0, count($source->getRelations()), 'expected 0 items');
+
+        Concrete::setHideUnpublished($preservedState);
+    }
+
     public function testClassAttributes()
     {
         //prepare data object
@@ -96,11 +135,9 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
             //reload data object from database
             $object = LazyLoading::getById($id, true);
 
-            // inherited data isn't assigned to a property, it's only returned by the getter and therefore doesn't get serialized
-            $contentShouldBeIncluded = ($objectType === 'inherited') ? false : true;
-
             //serialize data object and check for (not) wanted content in serialized string
-            $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
+            // content should never be included in the serialized data
+            $this->checkSerialization($object, $messagePrefix, false);
 
             //load relation and check if relation loads correctly
             $blockItems = $object->getTestBlock();
@@ -108,7 +145,8 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
-            $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
+            // content should never be included in the serialized data
+            $this->checkSerialization($object, $messagePrefix, false);
         }
     }
 

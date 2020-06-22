@@ -54,7 +54,7 @@ class Dao extends Model\Document\PageSnippet\Dao
         parent::create();
 
         $this->db->insert('documents_newsletter', [
-            'id' => $this->model->getId()
+            'id' => $this->model->getId(),
         ]);
     }
 

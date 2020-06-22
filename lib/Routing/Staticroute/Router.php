@@ -187,23 +187,33 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             unset($parameters['encode']);
             // assemble the route / url in Staticroute::assemble()
             $url = $route->assemble($parameters, $reset, $encode);
+            $port = '';
+            $scheme = $this->context->getScheme();
+
+            if ('http' === $scheme && 80 !== $this->context->getHttpPort()) {
+                $port = ':'.$this->context->getHttpPort();
+            } elseif ('https' === $scheme && 443 !== $this->context->getHttpsPort()) {
+                $port = ':'.$this->context->getHttpsPort();
+            }
+
+            $schemeAuthority = self::NETWORK_PATH === $referenceType || '' === $scheme ? '//' : "$scheme://";
+            $schemeAuthority .= $hostname.$port;
 
             if ($needsHostname) {
-                if (self::ABSOLUTE_URL === $referenceType) {
-                    $url = $this->context->getScheme() . '://' . $hostname . $url;
-                } else {
-                    $url = '//' . $hostname . $url;
-                }
+                $url = $schemeAuthority.$this->context->getBaseUrl().$url;
             } else {
                 if (self::RELATIVE_PATH === $referenceType) {
                     $url = UrlGenerator::getRelativePath($this->context->getPathInfo(), $url);
+                } else {
+                    $url = $this->context->getBaseUrl().$url;
                 }
             }
 
             return $url;
         }
 
-        throw new RouteNotFoundException(sprintf('Could not generate URL for route %s as the static route wasn\'t found', $name));
+        throw new RouteNotFoundException(sprintf('Could not generate URL for route %s as the static route wasn\'t found',
+            $name));
     }
 
     /**
@@ -224,7 +234,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * @param string $pathinfo
-     * @param Request $request
+     * @param Request|null $request
      *
      * @return array
      */
@@ -273,7 +283,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         $keys = [
             'module',
             'controller',
-            'action'
+            'action',
         ];
 
         $controllerParams = [];

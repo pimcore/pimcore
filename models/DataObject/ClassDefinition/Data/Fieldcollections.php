@@ -100,7 +100,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -144,7 +144,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                         'data' => $collectionData,
                         'type' => $item->getType(),
                         'oIndex' => $idx,
-                        'title' => $collectionDef->getTitle()
+                        'title' => $collectionDef->getTitle(),
                     ];
                 }
             }
@@ -157,7 +157,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Fieldcollection
@@ -200,8 +200,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                                 'containerKey' => $collectionKey,
                                 'fieldname' => $fieldname,
                                 'index' => $count,
-                                'oIndex' => $oIndex
-                            ]
+                                'oIndex' => $oIndex,
+                            ],
                         ];
 
                         $collectionData[$fd->getName()] = $fd->getDataFromEditmode(
@@ -318,8 +318,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             $params = [
                 'context' => [
                     'containerType' => 'fieldcollection',
-                    'fieldname' => $this->getName()
-                ]
+                    'fieldname' => $this->getName(),
+                ],
             ];
 
             $container->save($object, $params);
@@ -393,7 +393,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * @deprecated
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -438,7 +438,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @deprecated
      *
      * @param mixed $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -486,8 +486,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                                     'containerType' => 'fieldcollection',
                                     'containerKey' => $fieldcollection,
                                     'fieldname' => $fd->getName(),
-                                    'index' => $count
-                                ]];
+                                    'index' => $count,
+                                ], ];
 
                             $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $object, $params, $idMapper);
                             break;
@@ -580,17 +580,22 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      */
     public function checkValidity($data, $omitMandatoryCheck = false)
     {
-        if (!$omitMandatoryCheck) {
-            if ($data instanceof DataObject\Fieldcollection) {
-                $validationExceptions = [];
+        if ($data instanceof DataObject\Fieldcollection) {
+            $validationExceptions = [];
 
-                $idx = -1;
-                foreach ($data as $item) {
-                    $idx++;
-                    if (!$item instanceof DataObject\Fieldcollection\Data\AbstractData) {
-                        continue;
-                    }
+            $idx = -1;
+            foreach ($data as $item) {
+                $idx++;
+                if (!$item instanceof DataObject\Fieldcollection\Data\AbstractData) {
+                    continue;
+                }
 
+                //max limit check should be performed irrespective of omitMandatory check
+                if (!empty($this->maxItems) && $idx + 1 > $this->maxItems) {
+                    throw new Model\Element\ValidationException('Maximum limit reached for items in field collection: ' . $this->getName());
+                }
+
+                if (!$omitMandatoryCheck) {
                     if ($collectionDef = DataObject\Fieldcollection\Definition::getByKey($item->getType())) {
                         foreach ($collectionDef->getFieldDefinitions() as $fd) {
                             try {
@@ -605,12 +610,12 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                         }
                     }
                 }
+            }
 
-                if ($validationExceptions) {
-                    $aggregatedExceptions = new Model\Element\ValidationException();
-                    $aggregatedExceptions->setSubItems($validationExceptions);
-                    throw $aggregatedExceptions;
-                }
+            if ($validationExceptions) {
+                $aggregatedExceptions = new Model\Element\ValidationException();
+                $aggregatedExceptions->setSubItems($validationExceptions);
+                throw $aggregatedExceptions;
             }
         }
     }
@@ -632,7 +637,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         $data = $object->getObjectVar($this->getName());
         if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
             $data = $this->load($object);
-            if ($data instanceof DataObject\DirtyIndicatorInterface) {
+            if ($data instanceof Model\Element\DirtyIndicatorInterface) {
                 $data->resetDirtyMap();
             }
 

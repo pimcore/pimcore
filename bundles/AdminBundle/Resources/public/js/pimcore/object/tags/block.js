@@ -49,7 +49,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         var panelConf = {
             autoHeight: true,
             border: true,
-            // style: "margin-bottom: 10px",
+            style: "margin-bottom: 10px",
             componentCls: "object_field",
             collapsible: this.fieldConfig.collapsible,
             collapsed: this.fieldConfig.collapsed

@@ -51,7 +51,7 @@ pimcore.document.newsletters.addressSourceAdapters.report = Class.create({
                             autoDestroy: true,
                             proxy: {
                                 type: 'ajax',
-                                url: "/admin/newsletter/get-available-reports?task=list",
+                                url: Routing.generate('pimcore_admin_document_newsletter_getavailablereports', {task: 'list'}),
                                 reader: {
                                     type: 'json',
                                     rootProperty: 'data'
@@ -83,7 +83,7 @@ pimcore.document.newsletters.addressSourceAdapters.report = Class.create({
                             autoDestroy: true,
                             proxy: {
                                 type: 'ajax',
-                                url: "/admin/newsletter/get-available-reports?task=fieldNames",
+                                url: Routing.generate('pimcore_admin_document_newsletter_getavailablereports', {task: 'fieldNames'}),
                                 reader: {
                                     type: 'json',
                                     rootProperty: 'data'
