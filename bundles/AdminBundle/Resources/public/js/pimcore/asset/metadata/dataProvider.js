@@ -30,7 +30,8 @@ pimcore.asset.metadata.dataProvider = Class.create({
             data: item.data,
             language: item.language,
             name: item.name,
-            type: item.type
+            type: item.type,
+            config: item.config
         };
         return sItem;
     },
@@ -158,7 +159,7 @@ pimcore.asset.metadata.dataProvider = Class.create({
             }
             for (let targetId in this.globalChangeListeners) {
                 let callback = this.globalChangeListeners[targetId];
-                callback(eventType, item.name, item.language, item.data, item.type, originator);
+                callback(eventType, item.name, item.language, item.data, item.type, item.config, originator);
             }
         } catch (e) {
             console.log(e);

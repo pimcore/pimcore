@@ -26,7 +26,7 @@ pimcore.asset.metadata.grid = Class.create({
 
         this.dataProvider.setStore(this.asset.data.metadata);
 
-        let updateListener = function(eventType, name, language, newValue, type, originator) {
+        let updateListener = function(eventType, name, language, newValue, type, config, originator) {
             if (originator == this.grid.getId()) {
                 // nothing to do
                 return;
@@ -54,7 +54,8 @@ pimcore.asset.metadata.grid = Class.create({
                     name: name,
                     language: language,
                     data: newValue,
-                    type: type
+                    type: type,
+                    config: config
                 };
                 store.add(item);
             }
