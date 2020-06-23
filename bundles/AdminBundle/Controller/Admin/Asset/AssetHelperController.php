@@ -316,10 +316,6 @@ class AssetHelperController extends AdminController
         } elseif (in_array($fieldDef[0], $defaulMetadataFields)) {
             $type = 'input';
         } else {
-            //check if predefined metadata exists, otherwise ignore
-            if (empty($predefined) || ($predefined->getType() != $field['fieldConfig']['type'])) {
-                return null;
-            }
             $type = $field['fieldConfig']['type'];
             if (isset($fieldDef[1])) {
                 $field['fieldConfig']['label'] = $field['fieldConfig']['layout']['title'] = $fieldDef[0] . ' (' . $fieldDef[1] . ')';
@@ -341,7 +337,7 @@ class AssetHelperController extends AdminController
             $result['locked'] = $field['locked'];
         }
 
-        if ($type === 'select') {
+        if ($type === 'select' && $predefined) {
             $field['fieldConfig']['layout']['config'] = $predefined->getConfig();
             $result['layout'] = $field['fieldConfig']['layout'];
         } elseif ($type === 'document' || $type === 'asset' || $type === 'object') {
