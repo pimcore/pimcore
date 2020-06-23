@@ -104,7 +104,7 @@ pimcore.asset.metadata.tags.abstract = Class.create({
     getWindowCellEditor: function ( field, record) {
         return new pimcore.element.helpers.gridCellEditor({
             fieldInfo: field,
-            elementType: "asset"
+            elementType: "assetmetadata"
         });
     },
 
