@@ -1690,9 +1690,9 @@ class Service extends Model\Element\Service
 
     /**
      * @param AbstractObject $object
-     * @param $requestedLanguage
-     * @param $fields
-     * @param $helperDefinitions
+     * @param string $requestedLanguage
+     * @param array $fields
+     * @param array $helperDefinitions
      * @param LocaleServiceInterface $localeService
      * @param bool $returnMappedFieldNames
      * @return array
