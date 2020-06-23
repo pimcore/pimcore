@@ -27,6 +27,7 @@ use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Tool\Session;
@@ -1687,7 +1688,15 @@ class Service extends Model\Element\Service
         return $conditionParts;
     }
 
-
+    /**
+     * @param AbstractObject $object
+     * @param $requestedLanguage
+     * @param $fields
+     * @param $helperDefinitions
+     * @param LocaleServiceInterface $localeService
+     * @param bool $returnMappedFieldNames
+     * @return array
+     */
     public static function getCsvDataForObject(AbstractObject $object, $requestedLanguage, $fields,$helperDefinitions,LocaleServiceInterface $localeService,$returnMappedFieldNames = false){
         $objectData = [];
         $mappedFieldnames = [];
