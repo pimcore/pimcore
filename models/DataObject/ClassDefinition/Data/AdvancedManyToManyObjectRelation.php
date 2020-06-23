@@ -345,6 +345,10 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                 $o = $metaObject->getObject();
                 $item = $o->getRealFullPath();
 
+                if (!$o) {
+                    continue;
+                }
+
                 if (sizeof($metaObject->getData())) {
                     $subItems = [];
                     foreach ($metaObject->getData() as $key => $value) {
