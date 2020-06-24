@@ -123,6 +123,8 @@ class Dao extends Model\Dao\AbstractDao
                             'fieldname' => $this->model->getFieldname(),
                         ],
                         'isUpdate' => $isBrickUpdate,
+                        'owner' => $this->model,
+                        'fieldname' => $key
                     ]));
             }
 
@@ -141,6 +143,7 @@ class Dao extends Model\Dao\AbstractDao
                 } else {
                     $insertData = $fd->getDataForResource($this->model->$getter(), $object, [
                         'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
+                        'fieldname' => $key,
                         'isUpdate' => $isBrickUpdate,
                         'context' => [
                             'containerType' => 'objectbrick',

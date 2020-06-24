@@ -127,6 +127,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
+
+                    $this->setBlockElementOwner($blockElement, $params);
+
                     $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
                         // class definition seems to have changed
@@ -207,11 +210,14 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $dataFromResource = $fd->unmarshal($elementData, $object, ['raw' => true, 'blockmode' => true]);
                     $blockElementRaw['data'] = $dataFromResource;
 
+                    $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data']);
+
                     if ($blockElementRaw['type'] == 'localizedfields') {
                         /** @var DataObject\Localizedfield $data */
                         $data = $blockElementRaw['data'];
                         if ($data) {
                             $data->setObject($object);
+                            $data->setOwner($blockElement, 'localizedfields');
                             $data->setContext(['containerType' => 'block',
                                 'fieldname' => $this->getName(),
                                 'index' => $count,
@@ -220,12 +226,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                             $blockElementRaw['data'] = $data;
                         }
                     }
-                    $blockElement = new DataObject\Data\BlockElement($blockElementRaw['name'], $blockElementRaw['type'], $blockElementRaw['data']);
+
                     $blockElement->setNeedsRenewReferences(true);
 
-                    if (isset($params['owner'])) {
-                        $blockElement->setOwner($params['owner'], $params['fieldname'], $params['language']);
-                    }
+                    $this->setBlockElementOwner($blockElement, $params);
 
                     $items[$elementName] = $blockElement;
                 }
@@ -1187,6 +1191,26 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     }
                 }
             }
+        }
+    }
+
+    private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, $params = []) {
+        if (!isset($params['owner'])) {
+            throw new \Error("owner missing");
+        } else {
+            // addition check. if owner is passed but no fieldname then there is something wrong with the params.
+            if (!array_key_exists('fieldname', $params)) {
+                // do not throw an exception because it is silently swallowed by the caller
+                throw new \Error('params contains owner but no fieldname');
+            }
+
+            if ($params['owner'] instanceof DataObject\Localizedfield) {
+                //make sure that for a localized field parent the language param is set and not empty
+                if (($params['language'] ?? null) === null) {
+                    throw new \Error("language param missing");
+                }
+            }
+            $blockElement->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
         }
     }
 }

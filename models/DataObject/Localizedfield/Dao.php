@@ -116,6 +116,12 @@ class Dao extends Model\Dao\AbstractDao
             $container = $this->model->getClass();
         }
 
+        if (!isset($params['owner'])) {
+            throw new \Exception("need owner from container implementation");
+        }
+
+        $this->model->setOwner($params['owner'], 'localizedfields');
+
         /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
         $localizedfields = $container->getFieldDefinition('localizedfields');
         $fieldDefinitions = $localizedfields->getFieldDefinitions(
@@ -176,14 +182,14 @@ class Dao extends Model\Dao\AbstractDao
                         $insertDataArray = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $params['isUpdate'] ?? null ])
+                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => ($params['isUpdate'] ?? false) ])
                         );
                         $insertData = array_merge($insertData, $insertDataArray);
                     } else {
                         $insertData[$fd->getName()] = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
                             $object,
-                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $params['isUpdate'] ?? null])
+                            $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => ($params['isUpdate'] ?? false)])
                         );
                     }
                 }
@@ -565,6 +571,12 @@ class Dao extends Model\Dao\AbstractDao
                 [$this->model->getObject()->getId()]
             );
         }
+
+        if (!isset($params['owner'])) {
+            throw new \Exception("need owner from container implementation");
+        }
+
+        $this->model->setOwner($params['owner'], 'localizedfields');
 
         foreach ($data as $row) {
             /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
