@@ -24,8 +24,10 @@ use Pimcore\DataObject\GridColumnConfig\Service as GridColumnConfigService;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Admin as AdminTool;
 use Pimcore\Tool\Session;
@@ -1579,7 +1581,7 @@ class Service extends Model\Element\Service
             Model\DataObject\Concrete::setGetInheritedValues(true);
 
             if ($object instanceof Model\DataObject\Fieldcollection\Data\AbstractData
-                    || $object instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
+                || $object instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
                 $object = $object->getObject();
             }
             $result = call_user_func([$calculator, 'compute'], $object, $data);
@@ -1685,4 +1687,275 @@ class Service extends Model\Element\Service
 
         return $conditionParts;
     }
+
+    /**
+     * @param AbstractObject $object
+     * @param string $requestedLanguage
+     * @param array $fields
+     * @param array $helperDefinitions
+     * @param LocaleServiceInterface $localeService
+     * @param bool $returnMappedFieldNames
+     * @return array
+     */
+    public static function getCsvDataForObject(AbstractObject $object, $requestedLanguage, $fields,$helperDefinitions,LocaleServiceInterface $localeService,$returnMappedFieldNames = false){
+        $objectData = [];
+        $mappedFieldnames = [];
+        foreach ($fields as $field) {
+            if (static::isHelperGridColumnConfig($field) && $validLanguages = static::expandGridColumnForExport($helperDefinitions, $field)) {
+                $currentLocale = $localeService->getLocale();
+                $mappedFieldnameBase = self::mapFieldname($field, $helperDefinitions);
+
+                foreach ($validLanguages as $validLanguage) {
+                    $localeService->setLocale($validLanguage);
+                    $fieldData = self::getCsvFieldData($currentLocale, $field, $object, $validLanguage, $helperDefinitions);
+                    $localizedFieldKey = $field . '-' . $validLanguage;
+                    if (!isset($mappedFieldnames[$localizedFieldKey])) {
+                        $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
+                    }
+                    $objectData[$localizedFieldKey] = $fieldData;
+                }
+
+                $localeService->setLocale($currentLocale);
+            } else {
+                $fieldData = self::getCsvFieldData($requestedLanguage, $field, $object, $requestedLanguage, $helperDefinitions);
+                if (!isset($mappedFieldnames[$field])) {
+                    $mappedFieldnames[$field] = self::mapFieldname($field, $helperDefinitions);
+                }
+                $objectData[$field] = $fieldData;
+            }
+        }
+
+        if($returnMappedFieldNames){
+            $tmp = [];
+            foreach($mappedFieldnames as $key => $value){
+                $tmp[$value] = $objectData[$key];
+            }
+            return $tmp;
+        }
+
+        return $objectData;
+    }
+
+    /**
+     * @param string $requestedLanguage
+     * @param LocaleServiceInterface $localeService
+     * @param DataObject\Listing $list
+     * @param string[] $fields
+     * @param bool $addTitles
+     *
+     * @return array
+     */
+    public static function getCsvData($requestedLanguage, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true)
+    {
+        $mappedFieldnames = [];
+
+        $data = [];
+        Logger::debug('objects in list:' . count($list->getObjects()));
+
+        $helperDefinitions = static::getHelperDefinitions();
+
+        foreach ($list->getObjects() as $object) {
+            if ($fields) {
+
+                if($addTitles && empty($data)){
+                    $tmp = [];
+                    $mapped = self::getCsvDataForObject($object,$requestedLanguage,$fields,$helperDefinitions, $localeService,true);
+                    foreach($mapped as $key => $value){
+                        $tmp[] = '"' . $key . '"';
+                    }
+                    $data[] = $tmp;
+                }
+
+                $data[] = self::getCsvDataForObject($object,$requestedLanguage,$fields,$helperDefinitions, $localeService);
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * @param string $field
+     * @param array $helperDefinitions
+     *
+     * @return string
+     */
+    protected static function mapFieldname($field, $helperDefinitions)
+    {
+        if (strpos($field, '#') === 0) {
+            if (isset($helperDefinitions[$field])) {
+                if ($helperDefinitions[$field]->attributes) {
+                    return $helperDefinitions[$field]->attributes->label ? $helperDefinitions[$field]->attributes->label : $field;
+                }
+
+                return $field;
+            }
+        } elseif (substr($field, 0, 1) == '~') {
+            $fieldParts = explode('~', $field);
+            $type = $fieldParts[1];
+
+            if ($type == 'classificationstore') {
+                $fieldname = $fieldParts[2];
+                $groupKeyId = explode('-', $fieldParts[3]);
+                $groupId = $groupKeyId[0];
+                $keyId = $groupKeyId[1];
+
+                $groupConfig = DataObject\Classificationstore\GroupConfig::getById($groupId);
+                $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
+
+                $field = $fieldname . '~' . $groupConfig->getName() . '~' . $keyConfig->getName();
+            }
+        }
+
+        return $field;
+    }
+
+    /**
+     * @param string $fallbackLanguage
+     * @param string $field
+     * @param DataObject\Concrete $object
+     * @param string $requestedLanguage
+     * @param array $helperDefinitions
+     *
+     * @return mixed
+     */
+    protected static function getCsvFieldData($fallbackLanguage, $field, $object, $requestedLanguage, $helperDefinitions)
+    {
+        //check if field is systemfield
+        $systemFieldMap = [
+            'id' => 'getId',
+            'fullpath' => 'getRealFullPath',
+            'published' => 'getPublished',
+            'creationDate' => 'getCreationDate',
+            'modificationDate' => 'getModificationDate',
+            'filename' => 'getKey',
+            'key' => 'getKey',
+            'classname' => 'getClassname',
+        ];
+        if (in_array($field, array_keys($systemFieldMap))) {
+            $getter = $systemFieldMap[$field];
+
+            return $object->$getter();
+        } else {
+            //check if field is standard object field
+            $fieldDefinition = $object->getClass()->getFieldDefinition($field);
+            if ($fieldDefinition) {
+                return $fieldDefinition->getForCsvExport($object);
+            } else {
+                $fieldParts = explode('~', $field);
+
+                // check for objects bricks and localized fields
+                if (static::isHelperGridColumnConfig($field)) {
+                    if ($helperDefinitions[$field]) {
+                        $cellValue = static::calculateCellValue($object, $helperDefinitions, $field, ['language' => $requestedLanguage]);
+
+                        // Mimic grid concatenation behavior
+                        if (is_array($cellValue)) {
+                            $cellValue = implode(',', $cellValue);
+                        }
+
+                        return $cellValue;
+                    }
+                } elseif (substr($field, 0, 1) == '~') {
+                    $type = $fieldParts[1];
+
+                    if ($type == 'classificationstore') {
+                        $fieldname = $fieldParts[2];
+                        $groupKeyId = explode('-', $fieldParts[3]);
+                        $groupId = $groupKeyId[0];
+                        $keyId = $groupKeyId[1];
+                        $getter = 'get' . ucfirst($fieldname);
+                        if (method_exists($object, $getter)) {
+                            $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
+                            $type = $keyConfig->getType();
+                            $definition = json_decode($keyConfig->getDefinition());
+                            $fieldDefinition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
+
+                            /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
+                            $csFieldDefinition = $object->getClass()->getFieldDefinition($fieldname);
+                            $csLanguage = $requestedLanguage;
+                            if (!$csFieldDefinition->isLocalized()) {
+                                $csLanguage = 'default';
+                            }
+
+                            return $fieldDefinition->getForCsvExport(
+                                $object,
+                                ['context' => [
+                                    'containerType' => 'classificationstore',
+                                    'fieldname' => $fieldname,
+                                    'groupId' => $groupId,
+                                    'keyId' => $keyId,
+                                    'language' => $csLanguage,
+                                ]]
+                            );
+                        }
+                    }
+                    //key value store - ignore for now
+                } elseif (count($fieldParts) > 1) {
+                    // brick
+                    $brickType = $fieldParts[0];
+                    $brickDescriptor = null;
+                    $innerContainer = null;
+
+                    if (strpos($brickType, '?') !== false) {
+                        $brickDescriptor = substr($brickType, 1);
+                        $brickDescriptor = json_decode($brickDescriptor, true);
+                        $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
+                        $brickType = $brickDescriptor['containerKey'];
+                    }
+                    $brickKey = $fieldParts[1];
+
+                    $key = static::getFieldForBrickType($object->getClass(), $brickType);
+
+                    $brickClass = DataObject\Objectbrick\Definition::getByKey($brickType);
+
+                    if ($brickDescriptor) {
+                        /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
+                        $localizedFields = $brickClass->getFieldDefinition($innerContainer);
+                        $fieldDefinition = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
+                    } else {
+                        $fieldDefinition = $brickClass->getFieldDefinition($brickKey);
+                    }
+
+                    if ($fieldDefinition) {
+                        $brickContainer = $object->{'get' . ucfirst($key)}();
+                        if ($brickContainer && !empty($brickKey)) {
+                            $brick = $brickContainer->{'get' . ucfirst($brickType)}();
+                            if ($brick) {
+                                $params = [
+                                    'context' => [
+                                        'containerType' => 'objectbrick',
+                                        'containerKey' => $brickType,
+                                        'fieldname' => $brickKey,
+                                    ],
+
+                                ];
+
+                                $value = $brick;
+
+                                if ($brickDescriptor) {
+                                    $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
+                                    $value = $brick->{'get' . ucfirst($innerContainer)}();
+                                }
+
+                                return $fieldDefinition->getForCsvExport($value, $params);
+                            }
+                        }
+                    }
+                } else {
+                    // if the definition is not set try to get the definition from localized fields
+                    /** @var DataObject\ClassDefinition\Data\Localizedfields|null $locFields */
+                    $locFields = $object->getClass()->getFieldDefinition('localizedfields');
+
+                    if ($locFields) {
+                        $fieldDefinition = $locFields->getFieldDefinition($field);
+                        if ($fieldDefinition) {
+                            return $fieldDefinition->getForCsvExport($object->get('localizedFields'), ['language' => $fallbackLanguage]);
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
 }
