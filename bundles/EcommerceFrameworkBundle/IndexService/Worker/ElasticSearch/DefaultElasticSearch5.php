@@ -39,7 +39,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
             'parentCategoryIds' => 'long',
             'priceSystemName' => 'string',
             'active' => 'boolean',
-            'inProductList' => 'boolean'];
+            'inProductList' => 'boolean', ];
 
         if ($includeTypes) {
             return $systemAttributes;
@@ -79,9 +79,9 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                 'type' => ProductListInterface::PRODUCT_TYPE_OBJECT,
                 'body' => [
                     ProductListInterface::PRODUCT_TYPE_OBJECT => [
-                        'properties' => $this->createMappingAttributes()
-                    ]
-                ]
+                        'properties' => $this->createMappingAttributes(),
+                    ],
+                ],
             ];
 
             return $params;
@@ -92,9 +92,9 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                 'body' => [
                     ProductListInterface::PRODUCT_TYPE_VARIANT => [
                         '_parent' => ['type' => ProductListInterface::PRODUCT_TYPE_OBJECT],
-                        'properties' => $this->createMappingAttributes()
-                    ]
-                ]
+                        'properties' => $this->createMappingAttributes(),
+                    ],
+                ],
             ];
 
             return $params;
@@ -181,7 +181,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                     $mapping = [
                         'type' => $type,
                         'store' => $this->getStoreCustomAttributes(),
-                        'index' => 'not_analyzed'
+                        'index' => 'not_analyzed',
                     ];
 
                     if (!empty($attribute->getOption('analyzer'))) {
@@ -268,12 +268,12 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                     'bool' => [
                         'must' => [
                             'term' => [
-                                'system.o_id' => $indexSystemData['o_id']
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'system.o_id' => $indexSystemData['o_id'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $hits = $variants['hits']['hits'] ?? [];
@@ -284,7 +284,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                     'index' => $this->getIndexNameVersion(),
                     'type' => ProductListInterface::PRODUCT_TYPE_VARIANT,
                     'id' => $indexSystemData['o_id'],
-                    'parent' => $hit['_parent']
+                    'parent' => $hit['_parent'],
                 ];
                 $esClient->delete($params);
             }

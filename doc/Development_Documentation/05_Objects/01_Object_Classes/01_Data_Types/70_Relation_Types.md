@@ -38,7 +38,7 @@ $objects=$list->load();
  
 $relationId = 345;
 $list = new \Pimcore\Model\DataObject\Example\Listing();
-$list->setCondition("myManyToManyRelations like '%,".$relationId.",%'");
+$list->setCondition("myManyToManyRelations like '%,object|".$relationId.",%'");
 $objects=$list->load();
 ```
 

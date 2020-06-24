@@ -77,7 +77,7 @@ final class ElementTree
      */
     private $blockTypes = [
         'block' => Block::class,
-        'areablock' => Areablock::class
+        'areablock' => Areablock::class,
     ];
 
     /**

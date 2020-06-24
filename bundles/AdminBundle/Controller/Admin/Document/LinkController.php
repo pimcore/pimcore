@@ -152,9 +152,9 @@ class LinkController extends DocumentControllerBase
                 'success' => true,
                 'data' => [
                     'versionDate' => $link->getModificationDate(),
-                    'versionCount' => $link->getVersionCount()
+                    'versionCount' => $link->getVersionCount(),
                 ],
-                'treeData' => $treeData
+                'treeData' => $treeData,
             ]);
         } else {
             throw $this->createAccessDeniedHttpException();

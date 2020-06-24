@@ -46,7 +46,7 @@ class CartFactory implements CartFactoryInterface
         $resolver->setDefaults([
             'cart_class_name' => Cart::class,
             'guest_cart_class_name' => SessionCart::class,
-            'cart_readonly_mode' => AbstractCart::CART_READ_ONLY_MODE_STRICT
+            'cart_readonly_mode' => AbstractCart::CART_READ_ONLY_MODE_STRICT,
         ]);
 
         $resolver->setAllowedTypes('cart_class_name', 'string');
@@ -55,7 +55,7 @@ class CartFactory implements CartFactoryInterface
 
         $resolver->addAllowedValues('cart_readonly_mode', [
             AbstractCart::CART_READ_ONLY_MODE_STRICT,
-            AbstractCart::CART_READ_ONLY_MODE_DEACTIVATED
+            AbstractCart::CART_READ_ONLY_MODE_DEACTIVATED,
         ]);
     }
 

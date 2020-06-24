@@ -93,7 +93,7 @@ final class BlockName implements \JsonSerializable
     {
         return [
             'name' => $this->name,
-            'realName' => $this->realName
+            'realName' => $this->realName,
         ];
     }
 }

@@ -30,7 +30,7 @@ class Dao extends Model\Dao\AbstractDao
         try {
             $this->db->insert('users_permission_definitions', [
                 'key' => $this->model->getKey(),
-                'category' => $this->model->getCategory() ? $this->model->getCategory() : ''
+                'category' => $this->model->getCategory() ? $this->model->getCategory() : '',
             ]);
         } catch (\Exception $e) {
             Logger::warn($e);

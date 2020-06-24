@@ -46,7 +46,7 @@ class QrcodeController extends ReportsControllerBase implements EventedControlle
         foreach ($items as $item) {
             $codes[] = [
                 'id' => $item->getName(),
-                'text' => $item->getName()
+                'text' => $item->getName(),
             ];
         }
 

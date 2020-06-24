@@ -44,7 +44,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      */
     public $queryColumnType = [
         'rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
-        'a' => 'VARCHAR(2) NULL DEFAULT NULL'
+        'a' => 'VARCHAR(2) NULL DEFAULT NULL',
     ];
 
     /**
@@ -53,7 +53,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      * @var array
      */
     public $columnType = ['rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
-        'a' => 'VARCHAR(2) NULL DEFAULT NULL'
+        'a' => 'VARCHAR(2) NULL DEFAULT NULL',
     ];
 
     /**
@@ -100,13 +100,13 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
             return [
                 $this->getName() . '__rgb' => $rgb,
-                $this->getName() . '__a' => $a
+                $this->getName() . '__a' => $a,
             ];
         }
 
         return [
             $this->getName() . '__rgb' => null,
-            $this->getName() . '__a' => null
+            $this->getName() . '__a' => null,
         ];
     }
 
@@ -323,7 +323,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
             return [
                 'value' => $rgb,
-                'value2' => $a
+                'value2' => $a,
             ];
         }
     }

@@ -407,7 +407,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                     $fd = $this->getFieldDefinition($fieldname);
                     if ($fd) {
                         $forSearchIndex = $fd->getDataForSearchIndex($lfData, [
-                            'injectedData' => $lData
+                            'injectedData' => $lData,
                         ]);
                         if ($forSearchIndex) {
                             $dataString .= $forSearchIndex . ' ';

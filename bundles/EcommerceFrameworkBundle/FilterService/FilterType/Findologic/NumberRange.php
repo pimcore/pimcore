@@ -45,19 +45,19 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
                     'from' => $value['parameter']->min,
                     'to' => $value['parameter']->max,
                     'value' => $value['parameter']->min,
-                    'count' => 1
+                    'count' => 1,
                 ];
                 // add max
                 $values[] = [
                     'from' => $value['parameter']->min,
                     'to' => $value['parameter']->max,
                     'value' => $value['parameter']->max,
-                    'count' => 1
+                    'count' => 1,
                 ];
             } else {
                 $values[] = [
                     'value' => $value['value'],
-                    'count' => $value['count']
+                    'count' => $value['count'],
                 ];
             }
         }
@@ -69,7 +69,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
             'values' => $values,
             'definition' => $filterDefinition,
             'fieldname' => $this->getField($filterDefinition),
-            'resultCount' => $productList->count()
+            'resultCount' => $productList->count(),
         ]);
     }
 

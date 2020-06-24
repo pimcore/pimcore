@@ -59,7 +59,7 @@ class CsvList implements AddressSourceAdapterInterface
     public function getParamsForTestSending($emailAddress)
     {
         return new SendingParamContainer($emailAddress, [
-            'emailAddress' => current($this->emailAddresses)
+            'emailAddress' => current($this->emailAddresses),
         ]);
     }
 

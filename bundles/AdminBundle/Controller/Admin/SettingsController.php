@@ -350,7 +350,7 @@ class SettingsController extends AdminController
             if (!empty($short)) {
                 $languageOptions[] = [
                     'language' => $short,
-                    'display' => $translation . " ($short)"
+                    'display' => $translation . " ($short)",
                 ];
                 $validLanguages[] = $short;
             }
@@ -365,7 +365,7 @@ class SettingsController extends AdminController
                 if (!in_array($existingValue, $validLanguages)) {
                     $languageOptions[] = [
                         'language' => $existingValue,
-                        'display' => $existingValue
+                        'display' => $existingValue,
                     ];
                 }
             }
@@ -405,8 +405,8 @@ class SettingsController extends AdminController
                 'client_ip' => $request->getClientIp(),
                 'google_private_key_exists' => file_exists(\Pimcore\Google\Api::getPrivateKeyPath()),
                 'google_private_key_path' => \Pimcore\Google\Api::getPrivateKeyPath(),
-                'path_separator' => PATH_SEPARATOR
-            ]
+                'path_separator' => PATH_SEPARATOR,
+            ],
         ];
 
         return $this->adminJson($response);
@@ -480,16 +480,16 @@ class SettingsController extends AdminController
                     'steps' => $values['documents.versions.steps'] ?? null,
                 ],
                 'error_pages' => [
-                    'default' => $values['documents.error_pages.default']
+                    'default' => $values['documents.error_pages.default'],
                 ],
                 'allow_trailing_slash' => $values['documents.allowtrailingslash'],
-                'generate_preview' => $values['documents.generatepreview']
+                'generate_preview' => $values['documents.generatepreview'],
             ],
             'objects' => [
                 'versions' => [
                     'days' => $values['objects.versions.days'] ?? null,
                     'steps' => $values['objects.versions.steps'] ?? null,
-                ]
+                ],
             ],
             'assets' => [
                 'versions' => [
@@ -499,24 +499,24 @@ class SettingsController extends AdminController
                 'icc_rgb_profile' => $values['assets.icc_rgb_profile'],
                 'icc_cmyk_profile' => $values['assets.icc_cmyk_profile'],
                 'hide_edit_image' => $values['assets.hide_edit_image'],
-                'disable_tree_preview' => $values['assets.disable_tree_preview']
+                'disable_tree_preview' => $values['assets.disable_tree_preview'],
             ],
             'services' => [
                 'google' => [
                     'client_id' => $values['services.google.client_id'],
                     'email' => $values['services.google.email'],
                     'simple_api_key' => $values['services.google.simpleapikey'],
-                    'browser_api_key' => $values['services.google.browserapikey']
-                ]
+                    'browser_api_key' => $values['services.google.browserapikey'],
+                ],
             ],
             'full_page_cache' => [
                 'enabled' => $values['full_page_cache.enabled'],
                 'lifetime' => $values['full_page_cache.lifetime'],
                 'exclude_patterns' => $cacheExcludePatterns,
-                'exclude_cookie' => $values['full_page_cache.excludeCookie']
+                'exclude_cookie' => $values['full_page_cache.excludeCookie'],
             ],
             'webservice' => [
-                'enabled' => $values['webservice.enabled']
+                'enabled' => $values['webservice.enabled'],
             ],
             'httpclient' => [
                 'adapter' => $values['httpclient.adapter'],
@@ -533,7 +533,7 @@ class SettingsController extends AdminController
                 ],
                 'archive_treshold' => $values['applicationlog.archive_treshold'],
                 'archive_alternative_database' => $values['applicationlog.archive_alternative_database'],
-            ]
+            ],
         ];
 
         //branding
@@ -544,7 +544,7 @@ class SettingsController extends AdminController
                     'color_login_screen' => $values['branding.color_login_screen'],
                     'color_admin_interface' => $values['branding.color_admin_interface'],
                     'login_screen_custom_image' => $values['general.loginscreencustomimage'],
-                ]
+                ],
         ];
 
         // email & newsletter (swiftmailer settings)
@@ -552,10 +552,10 @@ class SettingsController extends AdminController
             $settings['pimcore'][$type] = [
                 'sender' => [
                     'name' => $values[$type . '.sender.name'],
-                    'email' => $values[$type . '.sender.email']],
+                    'email' => $values[$type . '.sender.email'], ],
                 'return' => [
                     'name' => $values[$type . '.return.name'],
-                    'email' => $values[$type . '.return.email']],
+                    'email' => $values[$type . '.return.email'], ],
                 'method' => $values[$type . '.method'],
             ];
 
@@ -603,7 +603,7 @@ class SettingsController extends AdminController
         $this->forward(self::class . '::clearCacheAction', [
             'only_symfony_cache' => false,
             'only_pimcore_cache' => false,
-            'env' => [\Pimcore::getKernel()->getEnvironment()]
+            'env' => [\Pimcore::getKernel()->getEnvironment()],
         ]);
 
         return $this->adminJson(['success' => true]);
@@ -663,7 +663,7 @@ class SettingsController extends AdminController
         $valueArray['wkhtml2pdfOptions'] = implode("\n", $optionsString);
 
         $response = [
-            'values' => $valueArray
+            'values' => $valueArray,
         ];
 
         return $this->adminJson($response);
@@ -727,7 +727,7 @@ class SettingsController extends AdminController
         $this->checkPermissionsHasOneOf(['clear_cache', 'system_settings']);
 
         $result = [
-            'success' => true
+            'success' => true,
         ];
 
         $clearPimcoreCache = !(bool)$request->get('only_symfony_cache');
@@ -792,7 +792,7 @@ class SettingsController extends AdminController
 
                     $result = array_merge($result, [
                         'success' => false,
-                        'errors' => $errors
+                        'errors' => $errors,
                     ]);
                 }
             }
@@ -964,7 +964,7 @@ class SettingsController extends AdminController
             if (array_key_exists($lang, $locales)) {
                 $langs[] = [
                     'language' => $lang,
-                    'display' => $locales[$lang]
+                    'display' => $locales[$lang],
                 ];
             }
         }
@@ -1107,7 +1107,7 @@ class SettingsController extends AdminController
                 'rootId' => 1,
                 'domains' => '',
                 'rootPath' => '/',
-                'domain' => $this->trans('main_site')
+                'domain' => $this->trans('main_site'),
             ];
         }
 
@@ -1119,7 +1119,7 @@ class SettingsController extends AdminController
                         'rootId' => $site->getRootId(),
                         'domains' => implode(',', $site->getDomains()),
                         'rootPath' => $site->getRootPath(),
-                        'domain' => $site->getMainDomain()
+                        'domain' => $site->getMainDomain(),
                     ];
                 }
             } else {
@@ -1149,7 +1149,7 @@ class SettingsController extends AdminController
             if (strlen($short) == 2) {
                 $options[] = [
                     'key' => $translation . ' (' . $short . ')',
-                    'value' => $short
+                    'value' => $short,
                 ];
             }
         }
@@ -1209,7 +1209,7 @@ class SettingsController extends AdminController
                         'allowChildren' => true,
                         'iconCls' => 'pimcore_icon_folder',
                         'group' => $item->getGroup(),
-                        'children' => []
+                        'children' => [],
                         ];
                 }
                 $groups[$item->getGroup()]['children'][] =
@@ -1217,14 +1217,14 @@ class SettingsController extends AdminController
                         'id' => $item->getName(),
                         'text' => $item->getName(),
                         'leaf' => true,
-                        'iconCls' => 'pimcore_icon_thumbnails'
+                        'iconCls' => 'pimcore_icon_thumbnails',
                     ];
             } else {
                 $thumbnails[] = [
                     'id' => $item->getName(),
                     'text' => $item->getName(),
                     'leaf' => true,
-                    'iconCls' => 'pimcore_icon_thumbnails'
+                    'iconCls' => 'pimcore_icon_thumbnails',
                 ];
             }
         }
@@ -1419,7 +1419,7 @@ class SettingsController extends AdminController
                         'allowChildren' => true,
                         'iconCls' => 'pimcore_icon_folder',
                         'group' => $item->getGroup(),
-                        'children' => []
+                        'children' => [],
                     ];
                 }
                 $groups[$item->getGroup()]['children'][] =
@@ -1427,14 +1427,14 @@ class SettingsController extends AdminController
                         'id' => $item->getName(),
                         'text' => $item->getName(),
                         'leaf' => true,
-                        'iconCls' => 'pimcore_icon_videothumbnails'
+                        'iconCls' => 'pimcore_icon_videothumbnails',
                     ];
             } else {
                 $thumbnails[] = [
                     'id' => $item->getName(),
                     'text' => $item->getName(),
                     'leaf' => true,
-                    'iconCls' => 'pimcore_icon_videothumbnails'
+                    'iconCls' => 'pimcore_icon_videothumbnails',
                 ];
             }
         }
@@ -1560,7 +1560,7 @@ class SettingsController extends AdminController
         return $this->adminJson([
             'success' => true,
             'data' => $config,
-            'onFileSystem' => file_exists(PIMCORE_WEB_ROOT . '/robots.txt')
+            'onFileSystem' => file_exists(PIMCORE_WEB_ROOT . '/robots.txt'),
         ]);
     }
 
@@ -1586,7 +1586,7 @@ class SettingsController extends AdminController
         );
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 
@@ -1609,7 +1609,7 @@ class SettingsController extends AdminController
         foreach ($items as $item) {
             $tags[] = [
                 'id' => $item->getName(),
-                'text' => $item->getName()
+                'text' => $item->getName(),
             ];
         }
 
@@ -1727,7 +1727,7 @@ class SettingsController extends AdminController
         for ($i = 0; $i < 5; $i++) {
             $params[] = [
                 'name' => $data['params.name' . $i],
-                'value' => $data['params.value' . $i]
+                'value' => $data['params.value' . $i],
             ];
         }
         $tag->setParams($params);
@@ -1880,7 +1880,7 @@ class SettingsController extends AdminController
             'data' => null,
             'siteId' => $item->getSiteId(),
             'creationDate' => $item->getCreationDate(),
-            'modificationDate' => $item->getModificationDate()
+            'modificationDate' => $item->getModificationDate(),
         ];
 
         switch ($item->getType()) {
@@ -1913,14 +1913,14 @@ class SettingsController extends AdminController
             [
                 'key' => 'password_hash',
                 'value' => 'password_hash',
-            ]
+            ],
         ];
 
         $algorithms = hash_algos();
         foreach ($algorithms as $algorithm) {
             $options[] = [
                 'key' => $algorithm,
-                'value' => $algorithm
+                'value' => $algorithm,
             ];
         }
 

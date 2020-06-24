@@ -65,7 +65,7 @@ class ControllerDataProvider
      */
     private $templateNamePatterns = [
         '*.php',
-        '*.twig'
+        '*.twig',
     ];
 
     /**

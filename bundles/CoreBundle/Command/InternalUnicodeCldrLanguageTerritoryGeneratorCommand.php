@@ -63,7 +63,7 @@ class InternalUnicodeCldrLanguageTerritoryGeneratorCommand extends AbstractComma
                     if ($this->localeService->isLocale($languageCode . '_' . $territory['type'])) {
                         $languageRawData[$languageCode][] = [
                             'country' => (string)$territory['type'],
-                            'population' => $populationAbsolute
+                            'population' => $populationAbsolute,
                         ];
                     }
                 }

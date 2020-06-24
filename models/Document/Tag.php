@@ -165,7 +165,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             'options' => $this->getOptions(),
             'data' => $this->getEditmodeData(),
             'type' => $this->getType(),
-            'inherited' => $this->getInherited()
+            'inherited' => $this->getInherited(),
         ];
 
         return $options;
@@ -221,7 +221,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             'data-real-name' => $this->getRealName(),
             'data-type' => $this->getType(),
             'data-block-names' => implode(', ', $blockNames),
-            'data-block-indexes' => implode(', ', $blockState->getIndexes())
+            'data-block-indexes' => implode(', ', $blockState->getIndexes()),
         ];
 
         return $attributes;
@@ -236,7 +236,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     {
         $classes = [
             'pimcore_editable',
-            'pimcore_tag_' . $this->getType()
+            'pimcore_tag_' . $this->getType(),
         ];
 
         $editableOptions = $this->getOptions();
@@ -539,7 +539,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             }
 
             Logger::error('toString() returned an exception: {exception}', [
-                'exception' => $e
+                'exception' => $e,
             ]);
 
             return '';

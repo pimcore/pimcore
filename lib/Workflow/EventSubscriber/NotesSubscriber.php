@@ -272,7 +272,7 @@ class NotesSubscriber implements EventSubscriberInterface
             'workflow.completed' => ['onWorkflowCompleted', 1],
             'workflow.enter' => 'onWorkflowEnter',
             WorkflowEvents::PRE_GLOBAL_ACTION => 'onPreGlobalAction',
-            WorkflowEvents::POST_GLOBAL_ACTION => 'onPostGlobalAction'
+            WorkflowEvents::POST_GLOBAL_ACTION => 'onPostGlobalAction',
         ];
     }
 }

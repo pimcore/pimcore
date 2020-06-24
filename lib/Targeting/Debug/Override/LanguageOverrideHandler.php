@@ -28,7 +28,7 @@ class LanguageOverrideHandler implements OverrideHandlerInterface
     public function buildOverrideForm(FormBuilderInterface $form, Request $request)
     {
         $form->add('language', LanguageType::class, [
-            'required' => false
+            'required' => false,
         ]);
     }
 

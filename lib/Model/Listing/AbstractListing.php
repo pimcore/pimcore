@@ -71,7 +71,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
      */
     protected $validOrders = [
         'ASC',
-        'DESC'
+        'DESC',
     ];
 
     /**

@@ -136,7 +136,7 @@ class PiwikReportsProvider
         foreach ($this->reportingWidgets as $widgetId) {
             if (isset($widgets[$widgetId])) {
                 $widgetConfig = $this->widgetBroker->getWidgetConfig($widgetId, $siteConfig->getConfigKey(), null, [
-                    'period' => 'month'
+                    'period' => 'month',
                 ]);
 
                 $widgetData = $widgetConfig->getData();
@@ -181,7 +181,7 @@ class PiwikReportsProvider
         $piwikSiteId = $this->config->getPiwikSiteId($siteConfig->getConfigKey());
 
         $url = $this->config->generateIframeUrl([
-            'idSite' => $piwikSiteId
+            'idSite' => $piwikSiteId,
         ]);
 
         $hashParams = [

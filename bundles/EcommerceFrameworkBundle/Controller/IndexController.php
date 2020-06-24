@@ -148,7 +148,7 @@ class IndexController extends AdminController
         if ($request->get('specific_price_field') == 'true') {
             $fields[ProductListInterface::ORDERKEY_PRICE] = [
                 'key' => ProductListInterface::ORDERKEY_PRICE,
-                'name' => $this->trans(ProductListInterface::ORDERKEY_PRICE)
+                'name' => $this->trans(ProductListInterface::ORDERKEY_PRICE),
             ];
         }
 

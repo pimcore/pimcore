@@ -146,7 +146,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
             'client_config',
             'index_settings',
             'es_client_params',
-            'mapping'
+            'mapping',
         ];
 
         foreach ($arrayFields as $field) {

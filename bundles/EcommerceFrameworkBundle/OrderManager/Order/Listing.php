@@ -73,7 +73,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
             $select->from(
                 [ 'order' => 'object_query_' . OnlineShopOrder::classId() ],
                 [
-                    new Db\ZendCompatibility\Expression('SQL_CALC_FOUND_ROWS 1'), 'OrderId' => 'order.oo_id'
+                    new Db\ZendCompatibility\Expression('SQL_CALC_FOUND_ROWS 1'), 'OrderId' => 'order.oo_id',
                 ]
             );
 
@@ -186,7 +186,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
                 ->from(
                     ['_paymentInfo' => 'object_collection_PaymentInfo_' . OnlineShopOrder::classId()],
                     [
-                        'paymentReference' => 'GROUP_CONCAT(",", _paymentInfo.paymentReference, "," SEPARATOR ",")', 'o_id' => '_order.o_id'
+                        'paymentReference' => 'GROUP_CONCAT(",", _paymentInfo.paymentReference, "," SEPARATOR ",")', 'o_id' => '_order.o_id',
                     ]
                 )
                 ->join(

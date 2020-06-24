@@ -42,7 +42,7 @@ class VisitorClient
         $result = $this->apiClient->get($this->buildParameters([
             'method' => 'Live.getVisitorProfile',
             'idSite' => $piwikSiteId,
-            'visitorId' => $visitorId
+            'visitorId' => $visitorId,
         ]));
 
         return $result;

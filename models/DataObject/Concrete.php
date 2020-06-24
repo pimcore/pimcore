@@ -275,7 +275,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this, [
-                    'saveVersionOnly' => true
+                    'saveVersionOnly' => true,
                 ]));
             }
 
@@ -296,7 +296,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this, [
-                    'saveVersionOnly' => true
+                    'saveVersionOnly' => true,
                 ]));
             }
 
@@ -304,7 +304,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         } catch (\Exception $e) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE_FAILURE, new DataObjectEvent($this, [
                 'saveVersionOnly' => true,
-                'exception' => $e
+                'exception' => $e,
             ]));
 
             throw $e;
@@ -671,7 +671,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                 $defaultCondition = $localizedPropertyName . ' = ' . Db::get()->quote($value) . ' ';
                 $listConfig = [
-                    'condition' => $defaultCondition
+                    'condition' => $defaultCondition,
                 ];
 
                 if ($locale) {
@@ -685,7 +685,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                     $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
                 }
                 $listConfig = [
-                    'condition' => $defaultCondition
+                    'condition' => $defaultCondition,
                 ];
             }
 

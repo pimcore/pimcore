@@ -70,7 +70,7 @@ class Dependency extends AbstractModel
     {
         $this->requires[] = [
             'type' => $type,
-            'id' => $id
+            'id' => $id,
         ];
     }
 

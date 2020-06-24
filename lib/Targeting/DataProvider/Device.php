@@ -97,20 +97,20 @@ class Device implements DataProviderInterface
 
         if (isset($overrides['hardwarePlatform']) && !empty($overrides['hardwarePlatform'])) {
             $result['device'] = array_merge($result['device'] ?? [], [
-                'type' => $overrides['hardwarePlatform']
+                'type' => $overrides['hardwarePlatform'],
             ]);
         }
 
         if (isset($overrides['operatingSystem']) && !empty($overrides['operatingSystem'])) {
             $result['os'] = array_merge($result['os'] ?? [], [
-                'short_name' => $overrides['operatingSystem']
+                'short_name' => $overrides['operatingSystem'],
             ]);
         }
 
         if (isset($overrides['browser']) && !empty($overrides['browser'])) {
             $result['client'] = array_merge($result['client'] ?? [], [
                 'type' => 'browser',
-                'name' => $overrides['browser']
+                'name' => $overrides['browser'],
             ]);
         }
 

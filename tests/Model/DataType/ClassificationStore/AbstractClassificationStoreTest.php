@@ -25,7 +25,7 @@ abstract class AbstractClassificationStoreTest extends ModelTestCase
             }
 
             $class = $this->tester->setupPimcoreClass_Csstore([
-                'storeId' => $store->getId()
+                'storeId' => $store->getId(),
             ]);
         }
 

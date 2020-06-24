@@ -45,7 +45,7 @@ class ProductTaxManagementTest extends EcommerceTestCase
         $pricingManagers = Stub::make(PricingManagerLocator::class, [
             'getPricingManager' => function () {
                 return new PricingManager([], [], $this->buildSession());
-            }
+            },
         ]);
 
         $priceSystem = Stub::construct(AttributePriceSystem::class, [$pricingManagers, $environment], [
@@ -57,7 +57,7 @@ class ProductTaxManagementTest extends EcommerceTestCase
             },
             'calculateAmount' => function () use ($grossPrice): Decimal {
                 return $grossPrice;
-            }
+            },
         ]);
 
         /** @var AbstractProduct|\PHPUnit_Framework_MockObject_Stub $product */
@@ -70,7 +70,7 @@ class ProductTaxManagementTest extends EcommerceTestCase
             },
             'getCategories' => function () {
                 return [];
-            }
+            },
         ]);
 
         return $product;

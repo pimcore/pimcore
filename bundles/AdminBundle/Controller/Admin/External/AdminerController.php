@@ -259,7 +259,7 @@ namespace {
                     $result = [
                         $host,
                         $db->getUsername(),
-                        $db->getPassword()
+                        $db->getPassword(),
                     ];
 
                     return $result;

@@ -84,7 +84,7 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
         // basic
         $json = [
             'type' => 'CatalogProduct',
-            'products' => []
+            'products' => [],
         ];
 
         // add categories
@@ -92,7 +92,7 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
             /* @var AbstractProduct $product */
             $json['products'][] = [
                 $product->getId(),
-                $product->getFullPath()
+                $product->getFullPath(),
             ];
         }
 

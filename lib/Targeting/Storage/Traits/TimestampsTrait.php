@@ -31,7 +31,7 @@ trait TimestampsTrait
 
         $timestamps = [
             'createdAt' => $now,
-            'updatedAt' => $now
+            'updatedAt' => $now,
         ];
 
         if (null !== $createdAt) {

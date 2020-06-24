@@ -161,7 +161,7 @@ class MigrateElementNamesCommand extends AbstractCommand
                 'documentId' => $row['documentId'],
                 'type' => $row['type'],
                 'oldName' => $row['name'],
-                'newName' => $newName
+                'newName' => $newName,
             ];
 
             $this->output->writeln(sprintf(

@@ -56,7 +56,7 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
     protected function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'tableName' => 'targeting_storage'
+            'tableName' => 'targeting_storage',
         ]);
 
         $resolver->setRequired(['tableName']);
@@ -201,7 +201,7 @@ EOF;
             $this->db->executeQuery(
                 'DELETE FROM ' . $this->tableName . ' WHERE visitorId = :visitorId',
                 [
-                    'visitorId' => $visitorInfo->getVisitorId()
+                    'visitorId' => $visitorInfo->getVisitorId(),
                 ]
             );
         } else {
@@ -209,7 +209,7 @@ EOF;
                 'DELETE FROM ' . $this->tableName . ' WHERE visitorId = :visitorId AND scope = :scope',
                 [
                     'visitorId' => $visitorInfo->getVisitorId(),
-                    'scope' => $scope
+                    'scope' => $scope,
                 ]
             );
         }
@@ -373,7 +373,7 @@ EOF;
             'DELETE FROM ' . $this->tableName . ' WHERE scope = :scope AND modificationDate < (NOW() - INTERVAL :expiry SECOND)',
             [
                 'scope' => $scope,
-                'expiry' => $expiry
+                'expiry' => $expiry,
             ]
         );
     }

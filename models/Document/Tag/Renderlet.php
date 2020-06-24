@@ -79,7 +79,7 @@ class Renderlet extends Model\Document\Tag
         return [
             'id' => $this->id,
             'type' => $this->getObjectType(),
-            'subtype' => $this->subtype
+            'subtype' => $this->subtype,
         ];
     }
 
@@ -94,7 +94,7 @@ class Renderlet extends Model\Document\Tag
             return [
                 'id' => $this->id,
                 'type' => $this->getObjectType(),
-                'subtype' => $this->subtype
+                'subtype' => $this->subtype,
             ];
         }
 
@@ -237,7 +237,7 @@ class Renderlet extends Model\Document\Tag
 
             $dependencies[$key] = [
                 'id' => $this->o->getId(),
-                'type' => $elementType
+                'type' => $elementType,
             ];
         }
 

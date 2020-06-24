@@ -57,7 +57,7 @@ class TemplateControllerListener implements EventSubscriberInterface
         // handles the Template annotation
         return [
             KernelEvents::CONTROLLER => 'onKernelController',
-            KernelEvents::VIEW => ['onKernelView', 32]
+            KernelEvents::VIEW => ['onKernelView', 32],
         ];
     }
 

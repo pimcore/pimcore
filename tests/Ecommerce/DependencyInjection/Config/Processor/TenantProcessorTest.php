@@ -43,9 +43,9 @@ class TenantProcessorTest extends TestCase
                 'foo' => 'bar',
                 'baz' => [
                     'in',
-                    'ga'
-                ]
-            ]
+                    'ga',
+                ],
+            ],
         ];
 
         $this->assertEquals($input, $this->processor->mergeTenantConfig($input));
@@ -55,7 +55,7 @@ class TenantProcessorTest extends TestCase
     {
         $input = [
             '_defaults' => [
-                'default' => 'value'
+                'default' => 'value',
             ],
             'default' => [
                 'foo' => 'bar',
@@ -63,9 +63,9 @@ class TenantProcessorTest extends TestCase
             'tenant1' => [
                 'baz' => [
                     'in',
-                    'ga'
-                ]
-            ]
+                    'ga',
+                ],
+            ],
         ];
 
         $expected = [
@@ -77,9 +77,9 @@ class TenantProcessorTest extends TestCase
                 'default' => 'value',
                 'baz' => [
                     'in',
-                    'ga'
-                ]
-            ]
+                    'ga',
+                ],
+            ],
         ];
 
         $this->assertEquals($expected, $this->processor->mergeTenantConfig($input));
@@ -93,13 +93,13 @@ class TenantProcessorTest extends TestCase
     {
         $input = [
             '_defaults' => [
-                'default' => 'value'
+                'default' => 'value',
             ],
             '_defaults_foobar' => [
-                'xy' => 'z'
+                'xy' => 'z',
             ],
             '_defaultsblahfoo' => [
-                'blah' => 'foo'
+                'blah' => 'foo',
             ],
             'tenant1' => [
                 'foo' => 'bar',
@@ -107,9 +107,9 @@ class TenantProcessorTest extends TestCase
             'tenant2' => [
                 'baz' => [
                     'in',
-                    'ga'
-                ]
-            ]
+                    'ga',
+                ],
+            ],
         ];
 
         $expected = [
@@ -121,9 +121,9 @@ class TenantProcessorTest extends TestCase
                 'default' => 'value',
                 'baz' => [
                     'in',
-                    'ga'
-                ]
-            ]
+                    'ga',
+                ],
+            ],
         ];
 
         $this->assertEquals($expected, $this->processor->mergeTenantConfig($input));
@@ -135,35 +135,35 @@ class TenantProcessorTest extends TestCase
             '_defaults' => [
                 'values' => [
                     'A' => 'B',
-                    'C' => 'D'
-                ]
+                    'C' => 'D',
+                ],
             ],
             'tenant1' => [
                 'values' => [
                     'A' => 'B1',
-                ]
+                ],
             ],
             'tenant2' => [
                 'values' => [
-                    'E' => 'F'
-                ]
-            ]
+                    'E' => 'F',
+                ],
+            ],
         ];
 
         $expected = [
             'tenant1' => [
                 'values' => [
                     'A' => 'B1',
-                    'C' => 'D'
-                ]
+                    'C' => 'D',
+                ],
             ],
             'tenant2' => [
                 'values' => [
                     'A' => 'B',
                     'C' => 'D',
-                    'E' => 'F'
-                ]
-            ]
+                    'E' => 'F',
+                ],
+            ],
         ];
 
         $this->assertEquals($expected, $this->processor->mergeTenantConfig($input));
@@ -173,23 +173,23 @@ class TenantProcessorTest extends TestCase
     {
         $input = [
             '_defaults' => [
-                'values' => ['A', 'B', 'C']
+                'values' => ['A', 'B', 'C'],
             ],
             'tenant1' => [
-                'values' => ['D', 'E']
+                'values' => ['D', 'E'],
             ],
             'tenant2' => [
-                'values' => ['F']
-            ]
+                'values' => ['F'],
+            ],
         ];
 
         $expected = [
             'tenant1' => [
-                'values' => ['A', 'B', 'C', 'D', 'E']
+                'values' => ['A', 'B', 'C', 'D', 'E'],
             ],
             'tenant2' => [
-                'values' => ['A', 'B', 'C', 'F']
-            ]
+                'values' => ['A', 'B', 'C', 'F'],
+            ],
         ];
 
         $this->assertEquals($expected, $this->processor->mergeTenantConfig($input));
@@ -202,37 +202,37 @@ class TenantProcessorTest extends TestCase
                 'level1' => [
                     'level11A' => [
                         'foo',
-                        'bar'
+                        'bar',
                     ],
                     'level11B' => [
                         'x' => 'yz',
-                        'y' => 'z'
-                    ]
-                ]
+                        'y' => 'z',
+                    ],
+                ],
             ],
 
             'tenant1' => [
                 'level1' => [
                     'level11B' => [
-                        'y' => 'AA'
-                    ]
+                        'y' => 'AA',
+                    ],
                 ],
                 'level2' => [
-                    'foo' => ['bar', 'bazinga']
-                ]
+                    'foo' => ['bar', 'bazinga'],
+                ],
             ],
 
             'tenant2' => [
                 'level1' => [
                     'level11A' => [
-                        'bazinga'
+                        'bazinga',
                     ],
                     'level11C' => [
-                        'my' => 'custom element'
-                    ]
+                        'my' => 'custom element',
+                    ],
                 ],
-                'level2' => 'ABC'
-            ]
+                'level2' => 'ABC',
+            ],
         ];
 
         $expected = [
@@ -240,16 +240,16 @@ class TenantProcessorTest extends TestCase
                 'level1' => [
                     'level11A' => [
                         'foo',
-                        'bar'
+                        'bar',
                     ],
                     'level11B' => [
                         'x' => 'yz',
-                        'y' => 'AA'
-                    ]
+                        'y' => 'AA',
+                    ],
                 ],
                 'level2' => [
-                    'foo' => ['bar', 'bazinga']
-                ]
+                    'foo' => ['bar', 'bazinga'],
+                ],
             ],
 
             'tenant2' => [
@@ -257,18 +257,18 @@ class TenantProcessorTest extends TestCase
                     'level11A' => [
                         'foo',
                         'bar',
-                        'bazinga'
+                        'bazinga',
                     ],
                     'level11B' => [
                         'x' => 'yz',
-                        'y' => 'z'
+                        'y' => 'z',
                     ],
                     'level11C' => [
-                        'my' => 'custom element'
-                    ]
+                        'my' => 'custom element',
+                    ],
                 ],
-                'level2' => 'ABC'
-            ]
+                'level2' => 'ABC',
+            ],
         ];
 
         $this->assertEquals($expected, $this->processor->mergeTenantConfig($input));
@@ -278,10 +278,10 @@ class TenantProcessorTest extends TestCase
     {
         $input = [
             '_defaults' => [
-                'values' => ['A', 'B', 'C']
+                'values' => ['A', 'B', 'C'],
             ],
             'tenant1' => [
-                'values' => 'D;E'
+                'values' => 'D;E',
             ],
         ];
 

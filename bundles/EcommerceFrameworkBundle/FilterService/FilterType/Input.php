@@ -28,7 +28,7 @@ class Input extends AbstractFilterType
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$field],
             'fieldname' => $field,
-            'metaData' => $filterDefinition->getMetaData()
+            'metaData' => $filterDefinition->getMetaData(),
         ]);
     }
 

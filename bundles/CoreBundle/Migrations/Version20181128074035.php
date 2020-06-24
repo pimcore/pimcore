@@ -159,7 +159,7 @@ class Version20181128074035 extends AbstractPimcoreMigration
                 $tmp2 = explode(' ', trim($entry));
                 $dataArray[] = [
                     'email' => trim($tmp2[0]),
-                    'name' => str_replace(['(', ')'], '', $tmp2[1])
+                    'name' => str_replace(['(', ')'], '', $tmp2[1]),
                 ];
             }
         }
