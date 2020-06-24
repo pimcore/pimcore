@@ -321,9 +321,9 @@ class Notification extends AbstractModel
      */
     public function save(): void
     {
-        \Pimcore::getEventDispatcher()->dispatch(NotificationEvents::PRE_ADD, new NotificationEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(NotificationEvents::PRE_SAVE, new NotificationEvent($this));
         $this->getDao()->save();
-        \Pimcore::getEventDispatcher()->dispatch(NotificationEvents::POST_ADD, new NotificationEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(NotificationEvents::POST_SAVE, new NotificationEvent($this));
     }
 
     /**

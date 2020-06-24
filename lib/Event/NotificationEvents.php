@@ -21,14 +21,14 @@ final class NotificationEvents
      *
      * @var string
      */
-    const PRE_ADD = 'pimcore.notification.preAdd';
+    const PRE_SAVE = 'pimcore.notification.preSave';
 
     /**
      * @Event("Pimcore\Event\Model\NotificationEvent")
      *
      * @var string
      */
-    const POST_ADD = 'pimcore.notification.postAdd';
+    const POST_SAVE = 'pimcore.notification.postSave';
 
     /**
      * @Event("Pimcore\Event\Model\NotificationEvent")
