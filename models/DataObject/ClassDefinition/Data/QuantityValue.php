@@ -433,7 +433,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         $values = explode('_', $importValue);
 
         $value = null;
-        if ($values[0] && $values[1]) {
+        if (count($values) === 2) {
             $number = (float) str_replace(',', '.', $values[0]);
             $value = new Model\DataObject\Data\QuantityValue($number, $values[1]);
         }
