@@ -45,7 +45,7 @@ abstract class AbstractCookieSaveHandler implements CookieSaveHandlerInterface
         $resolver->setDefaults([
             'domain' => null,
             'secure' => false,
-            'httpOnly' => true
+            'httpOnly' => true,
         ]);
 
         $resolver->setAllowedTypes('domain', ['null', 'string']);

@@ -160,7 +160,7 @@ trait ImageThumbnailTrait
                 if ($info) {
                     $dimensions = [
                         'width' => $info[0],
-                        'height' => $info[1]
+                        'height' => $info[1],
                     ];
                 }
             }
@@ -180,7 +180,7 @@ trait ImageThumbnailTrait
 
         return [
             'width' => $this->width,
-            'height' => $this->height
+            'height' => $this->height,
         ];
     }
 

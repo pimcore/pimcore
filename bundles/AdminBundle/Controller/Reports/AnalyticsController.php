@@ -84,7 +84,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
                             'name' => $detail['name'],
                             'trackid' => $detail['webPropertyId'],
                             'internalid' => $detail['internalWebPropertyId'],
-                            'accountid' => $detail['accountId']
+                            'accountid' => $detail['accountId'],
                         ];
                     }
                 }
@@ -178,7 +178,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
         }
 
         $opts = [
-            'dimensions' => 'ga:date'
+            'dimensions' => 'ga:date',
         ];
 
         if (!empty($filters)) {
@@ -200,7 +200,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
 
             $tmpData = [
                 'timestamp' => strtotime($date),
-                'datetext' => $this->formatDimension('date', $date)
+                'datetext' => $this->formatDimension('date', $date),
             ];
 
             foreach ($result['columnHeaders'] as $index => $metric) {
@@ -242,7 +242,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
         }
 
         $opts = [
-            'dimensions' => 'ga:date'
+            'dimensions' => 'ga:date',
         ];
 
         if (!empty($filters)) {
@@ -274,7 +274,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
             'ga:uniquePageviews' => 1,
             'ga:exits' => 2,
             'ga:entrances' => 3,
-            'ga:bounces' => 4
+            'ga:bounces' => 4,
         ];
 
         $outputData = [];
@@ -283,7 +283,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
                 'label' => str_replace('ga:', '', $key),
                 'value' => round($value, 2),
                 'chart' => \Pimcore\Helper\ImageChart::lineSmall($dailyDataGrouped[$key]),
-                'metric' => str_replace('ga:', '', $key)
+                'metric' => str_replace('ga:', '', $key),
             ];
         }
 
@@ -319,7 +319,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
         $opts = [
             'dimensions' => 'ga:source',
             'max-results' => '10',
-            'sort' => '-ga:pageviews'
+            'sort' => '-ga:pageviews',
         ];
 
         if (!empty($filters)) {
@@ -339,7 +339,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
         foreach ((array) $result['rows'] as $row) {
             $data[] = [
                 'pageviews' => $row[1],
-                'source' => $row[0]
+                'source' => $row[0],
             ];
         }
 
@@ -391,7 +391,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
         $opts = [
             'dimensions' => $dimension,
             'max-results' => $limit,
-            'sort' => ($descending ? '-' : '') . $metric
+            'sort' => ($descending ? '-' : '') . $metric,
         ];
 
         if (!empty($filters)) {
@@ -410,7 +410,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
         foreach ($result['rows'] as $row) {
             $data[] = [
                 'dimension' => $this->formatDimension($dimension, $row[0]),
-                'metric' => (float) $row[1]
+                'metric' => (float) $row[1],
             ];
         }
 
@@ -457,7 +457,7 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
         foreach ($result['items'] as $row) {
             $data[] = [
                 'id' => $row['segmentId'],
-                'name' => $row['name']
+                'name' => $row['name'],
             ];
         }
 

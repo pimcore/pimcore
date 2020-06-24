@@ -168,7 +168,7 @@ class DataObjectHelperController extends AdminController
                 $fieldConfig = [
                     'key' => $column['key'],
                     'label' => $column['label'],
-                    'type' => $column['type']
+                    'type' => $column['type'],
                 ];
 
                 $column['fieldConfig'] = $fieldConfig;
@@ -231,7 +231,7 @@ class DataObjectHelperController extends AdminController
             foreach ($list as $config) {
                 $result[] = [
                     'id' => $config->getId(),
-                    'name' => $config->getName()
+                    'name' => $config->getName(),
                 ];
             }
         }
@@ -258,7 +258,7 @@ class DataObjectHelperController extends AdminController
 
         $result[] = [
             'id' => -1,
-            'name' => '--default--'
+            'name' => '--default--',
         ];
 
         if ($list) {
@@ -266,7 +266,7 @@ class DataObjectHelperController extends AdminController
             foreach ($list as $config) {
                 $result[] = [
                     'id' => $config->getId(),
-                    'name' => $config->getName()
+                    'name' => $config->getName(),
                 ];
             }
         }
@@ -501,7 +501,7 @@ class DataObjectHelperController extends AdminController
                             'type' => 'system',
                             'label' => $key,
                             'locked' => $sc['locked'],
-                            'position' => $sc['position']];
+                            'position' => $sc['position'], ];
                         if (isset($sc['width'])) {
                             $colConfig['width'] = $sc['width'];
                         }
@@ -654,7 +654,7 @@ class DataObjectHelperController extends AdminController
             'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,
             'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false,
             'availableConfigs' => $availableConfigs,
-            'sharedConfigs' => $sharedConfigs
+            'sharedConfigs' => $sharedConfigs,
 
         ];
     }
@@ -689,7 +689,7 @@ class DataObjectHelperController extends AdminController
                         'key' => $sc,
                         'type' => 'system',
                         'label' => $sc,
-                        'position' => $count];
+                        'position' => $count, ];
                     $count++;
                 }
             }
@@ -762,7 +762,7 @@ class DataObjectHelperController extends AdminController
 
                     $context = [
                         'containerKey' => $brickType,
-                        'fieldname' => $field->getName()
+                        'fieldname' => $field->getName(),
                     ];
 
                     $this->appendBrickFields($bf, $localizedFieldDefinitions, $availableFields, $gridType, $count, $brickType, $class, $objectId, $context);
@@ -968,7 +968,7 @@ class DataObjectHelperController extends AdminController
     {
         $result = [
             'sharedUserIds' => [],
-            'sharedRoleIds' => []
+            'sharedRoleIds' => [],
         ];
 
         $db = Db::get();
@@ -1045,7 +1045,7 @@ class DataObjectHelperController extends AdminController
 
             return $this->adminJson(['success' => true,
                     'importConfigId' => $importConfig->getId(),
-                    'availableConfigs' => $this->getImportConfigs($importService, $this->getAdminUser(), $classId)
+                    'availableConfigs' => $this->getImportConfigs($importService, $this->getAdminUser(), $classId),
                 ]
             );
         } catch (\Exception $e) {
@@ -1282,7 +1282,7 @@ class DataObjectHelperController extends AdminController
                 'label' => $title,
                 'config' => $config,
                 'layout' => $field,
-                'position' => $position
+                'position' => $position,
             ];
 
             if ($field instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -1317,7 +1317,7 @@ class DataObjectHelperController extends AdminController
         }
 
         $response = $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
 
         return $response;
@@ -1490,7 +1490,7 @@ class DataObjectHelperController extends AdminController
         File::put($importFileOriginal, $data);
 
         $response = $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
@@ -1551,7 +1551,7 @@ class DataObjectHelperController extends AdminController
         }
 
         $csv = new \SplFileObject($originalFile);
-        $csv->setFlags(\SplFileObject::READ_CSV);
+        $csv->setFlags(\SplFileObject::READ_CSV | \SplFileObject::SKIP_EMPTY | \SplFileObject::READ_AHEAD | \SplFileObject::DROP_NEW_LINE);
         $csv->setCsvControl($dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
         $rows = 0;
         $nbFields = 0;
@@ -1608,9 +1608,9 @@ class DataObjectHelperController extends AdminController
                 'rows' => $rows,
                 'cols' => $cols ?? null,
                 'classId' => $classId,
-                'isShared' => $importConfig && $importConfig->getOwnerId() != $this->getAdminUser()->getId()
+                'isShared' => $importConfig && $importConfig->getOwnerId() != $this->getAdminUser()->getId(),
             ],
-            'availableConfigs' => $availableConfigs
+            'availableConfigs' => $availableConfigs,
         ]);
     }
 
@@ -1856,18 +1856,25 @@ class DataObjectHelperController extends AdminController
 
         $addTitles = $request->get('initial');
 
-        $csv = $this->getCsvData($request, $localeService, $list, $fields, $addTitles);
+        $requestedLanguage = $this->extractLanguage($request);
+        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $addTitles);
 
         $fp = fopen($this->getCsvFile($fileHandle), 'a');
 
         $firstLine = true;
-        foreach ($csv as $line) {
+        $lineCount = count($csv);
+
+        for ($i = 0; $i < $lineCount; $i++) {
+            $line = $csv[$i];
             if ($addTitles && $firstLine) {
                 $firstLine = false;
-                $line = implode($delimiter, $line) . "\r\n";
+                $line = implode($delimiter, $line);
                 fwrite($fp, $line);
             } else {
-                fputs($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)) . "\r\n");
+                fputs($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)));
+            }
+            if ($i < $lineCount - 1) {
+                fwrite($fp, "\r\n");
             }
         }
 
@@ -1939,259 +1946,11 @@ class DataObjectHelperController extends AdminController
         throw $this->createNotFoundException('XLSX file not found');
     }
 
-    /**
-     * @param string $field
-     * @param array $helperDefinitions
-     *
-     * @return string
-     */
-    protected function mapFieldname($field, $helperDefinitions)
-    {
-        if (strpos($field, '#') === 0) {
-            if (isset($helperDefinitions[$field])) {
-                if ($helperDefinitions[$field]->attributes) {
-                    return $helperDefinitions[$field]->attributes->label ? $helperDefinitions[$field]->attributes->label : $field;
-                }
 
-                return $field;
-            }
-        } elseif (substr($field, 0, 1) == '~') {
-            $fieldParts = explode('~', $field);
-            $type = $fieldParts[1];
 
-            if ($type == 'classificationstore') {
-                $fieldname = $fieldParts[2];
-                $groupKeyId = explode('-', $fieldParts[3]);
-                $groupId = $groupKeyId[0];
-                $keyId = $groupKeyId[1];
 
-                $groupConfig = DataObject\Classificationstore\GroupConfig::getById($groupId);
-                $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
 
-                $field = $fieldname . '~' . $groupConfig->getName() . '~' . $keyConfig->getName();
-            }
-        }
 
-        return $field;
-    }
-
-    /**
-     * @param Request $request
-     * @param LocaleServiceInterface $localeService
-     * @param DataObject\Listing $list
-     * @param string[] $fields
-     * @param bool $addTitles
-     *
-     * @return array
-     */
-    protected function getCsvData(Request $request, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true)
-    {
-        $requestedLanguage = $this->extractLanguage($request);
-        $mappedFieldnames = [];
-
-        $objects = [];
-        Logger::debug('objects in list:' . count($list->getObjects()));
-
-        $helperDefinitions = DataObject\Service::getHelperDefinitions();
-
-        foreach ($list->getObjects() as $object) {
-            if ($fields) {
-                $objectData = [];
-                foreach ($fields as $field) {
-                    if (DataObject\Service::isHelperGridColumnConfig($field) && $validLanguages = DataObject\Service::expandGridColumnForExport($helperDefinitions, $field)) {
-                        $currentLocale = $localeService->getLocale();
-                        $mappedFieldnameBase = $this->mapFieldname($field, $helperDefinitions);
-
-                        foreach ($validLanguages as $validLanguage) {
-                            $localeService->setLocale($validLanguage);
-                            $fieldData = $this->getCsvFieldData($request, $field, $object, $validLanguage, $helperDefinitions);
-                            $localizedFieldKey = $field . '-' . $validLanguage;
-                            if (!isset($mappedFieldnames[$localizedFieldKey])) {
-                                $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
-                            }
-                            $objectData[$localizedFieldKey] = $fieldData;
-                        }
-
-                        $localeService->setLocale($currentLocale);
-                    } else {
-                        $fieldData = $this->getCsvFieldData($request, $field, $object, $requestedLanguage, $helperDefinitions);
-                        if (!isset($mappedFieldnames[$field])) {
-                            $mappedFieldnames[$field] = $this->mapFieldname($field, $helperDefinitions);
-                        }
-                        $objectData[$field] = $fieldData;
-                    }
-                }
-                $objects[] = $objectData;
-            }
-        }
-        //create csv
-        $csv = [];
-        if (!empty($objects)) {
-            if ($addTitles) {
-                $columns = array_keys($objects[0]);
-                foreach ($columns as $columnIdx => $columnKey) {
-                    $columnName = $mappedFieldnames[$columnKey];
-                    $columns[$columnIdx] = '"' . $columnName . '"';
-                }
-                $csv[] = $columns;
-            }
-            foreach ($objects as $o) {
-                $csv[] = $o;
-            }
-        }
-
-        return $csv;
-    }
-
-    /**
-     * @param Request $request
-     * @param string $field
-     * @param DataObject\Concrete $object
-     * @param string $requestedLanguage
-     * @param array $helperDefinitions
-     *
-     * @return mixed
-     */
-    protected function getCsvFieldData(Request $request, $field, $object, $requestedLanguage, $helperDefinitions)
-    {
-        //check if field is systemfield
-        $systemFieldMap = [
-            'id' => 'getId',
-            'fullpath' => 'getRealFullPath',
-            'published' => 'getPublished',
-            'creationDate' => 'getCreationDate',
-            'modificationDate' => 'getModificationDate',
-            'filename' => 'getKey',
-            'key' => 'getKey',
-            'classname' => 'getClassname'
-        ];
-        if (in_array($field, array_keys($systemFieldMap))) {
-            $getter = $systemFieldMap[$field];
-
-            return $object->$getter();
-        } else {
-            //check if field is standard object field
-            $fieldDefinition = $object->getClass()->getFieldDefinition($field);
-            if ($fieldDefinition) {
-                return $fieldDefinition->getForCsvExport($object);
-            } else {
-                $fieldParts = explode('~', $field);
-
-                // check for objects bricks and localized fields
-                if (DataObject\Service::isHelperGridColumnConfig($field)) {
-                    if ($helperDefinitions[$field]) {
-                        $cellValue = DataObject\Service::calculateCellValue($object, $helperDefinitions, $field, ['language' => $requestedLanguage]);
-
-                        // Mimic grid concatenation behavior
-                        if (is_array($cellValue)) {
-                            $cellValue = implode(',', $cellValue);
-                        }
-
-                        return $cellValue;
-                    }
-                } elseif (substr($field, 0, 1) == '~') {
-                    $type = $fieldParts[1];
-
-                    if ($type == 'classificationstore') {
-                        $fieldname = $fieldParts[2];
-                        $groupKeyId = explode('-', $fieldParts[3]);
-                        $groupId = $groupKeyId[0];
-                        $keyId = $groupKeyId[1];
-                        $getter = 'get' . ucfirst($fieldname);
-                        if (method_exists($object, $getter)) {
-                            $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
-                            $type = $keyConfig->getType();
-                            $definition = json_decode($keyConfig->getDefinition());
-                            $fieldDefinition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
-
-                            /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
-                            $csFieldDefinition = $object->getClass()->getFieldDefinition($fieldname);
-                            $csLanguage = $requestedLanguage;
-                            if (!$csFieldDefinition->isLocalized()) {
-                                $csLanguage = 'default';
-                            }
-
-                            return $fieldDefinition->getForCsvExport(
-                                $object,
-                                ['context' => [
-                                    'containerType' => 'classificationstore',
-                                    'fieldname' => $fieldname,
-                                    'groupId' => $groupId,
-                                    'keyId' => $keyId,
-                                    'language' => $csLanguage
-                                ]]
-                            );
-                        }
-                    }
-                    //key value store - ignore for now
-                } elseif (count($fieldParts) > 1) {
-                    // brick
-                    $brickType = $fieldParts[0];
-                    $brickDescriptor = null;
-                    $innerContainer = null;
-
-                    if (strpos($brickType, '?') !== false) {
-                        $brickDescriptor = substr($brickType, 1);
-                        $brickDescriptor = json_decode($brickDescriptor, true);
-                        $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
-                        $brickType = $brickDescriptor['containerKey'];
-                    }
-                    $brickKey = $fieldParts[1];
-
-                    $key = DataObject\Service::getFieldForBrickType($object->getClass(), $brickType);
-
-                    $brickClass = DataObject\Objectbrick\Definition::getByKey($brickType);
-
-                    if ($brickDescriptor) {
-                        /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
-                        $localizedFields = $brickClass->getFieldDefinition($innerContainer);
-                        $fieldDefinition = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
-                    } else {
-                        $fieldDefinition = $brickClass->getFieldDefinition($brickKey);
-                    }
-
-                    if ($fieldDefinition) {
-                        $brickContainer = $object->{'get' . ucfirst($key)}();
-                        if ($brickContainer && !empty($brickKey)) {
-                            $brick = $brickContainer->{'get' . ucfirst($brickType)}();
-                            if ($brick) {
-                                $params = [
-                                    'context' => [
-                                        'containerType' => 'objectbrick',
-                                        'containerKey' => $brickType,
-                                        'fieldname' => $brickKey
-                                    ]
-
-                                ];
-
-                                $value = $brick;
-
-                                if ($brickDescriptor) {
-                                    $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
-                                    $value = $brick->{'get' . ucfirst($innerContainer)}();
-                                }
-
-                                return $fieldDefinition->getForCsvExport($value, $params);
-                            }
-                        }
-                    }
-                } else {
-                    // if the definition is not set try to get the definition from localized fields
-                    /** @var DataObject\ClassDefinition\Data\Localizedfields|null $locFields */
-                    $locFields = $object->getClass()->getFieldDefinition('localizedfields');
-
-                    if ($locFields) {
-                        $fieldDefinition = $locFields->getFieldDefinition($field);
-                        if ($fieldDefinition) {
-                            return $fieldDefinition->getForCsvExport($object->get('localizedFields'), ['language' => $request->get('language')]);
-                        }
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
 
     /**
      * Flattens object data to an array with key=>value where
@@ -2547,7 +2306,7 @@ class DataObjectHelperController extends AdminController
             }
 
             $jsonResponse = new JsonResponse(json_encode($configData), 200, [
-                'Content-Disposition' => 'attachment; filename="'.$configName.'.json"'
+                'Content-Disposition' => 'attachment; filename="'.$configName.'.json"',
             ], true);
 
             return $jsonResponse;
@@ -2613,9 +2372,9 @@ class DataObjectHelperController extends AdminController
                 'rows' => $configData['rows'],
                 'cols' => $configData['cols'] ?? null,
                 'classId' => $classId,
-                'isShared' => $configData['isShared']
+                'isShared' => $configData['isShared'],
             ],
-            'availableConfigs' => $availableConfigs
+            'availableConfigs' => $availableConfigs,
         ]);
     }
 }

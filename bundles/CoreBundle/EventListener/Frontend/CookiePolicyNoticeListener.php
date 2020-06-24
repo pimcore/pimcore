@@ -307,7 +307,7 @@ class CookiePolicyNoticeListener
                 'lv' => 'Sapratu',
                 'lt' => 'Supratau',
                 'ro' => 'Am înțeles',
-            ]
+            ],
         ];
 
         $translations = [];

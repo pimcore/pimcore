@@ -60,7 +60,7 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
         // basic
         $json = [
             'type' => 'CatalogCategory',
-            'categories' => []
+            'categories' => [],
         ];
 
         // add categories
@@ -68,7 +68,7 @@ class CatalogCategory extends AbstractObjectListCondition implements CategoryInt
             /* @var AbstractCategory $category */
             $json['categories'][] = [
                 $category->getId(),
-                $category->getFullPath()
+                $category->getFullPath(),
             ];
         }
 

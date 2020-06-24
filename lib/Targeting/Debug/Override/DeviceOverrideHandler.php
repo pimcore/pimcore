@@ -31,8 +31,8 @@ class DeviceOverrideHandler implements OverrideHandlerInterface
             'label' => 'Device',
             'required' => false,
             'attr' => [
-                'class' => '_ptgtb__override-form__collapse-section'
-            ]
+                'class' => '_ptgtb__override-form__collapse-section',
+            ],
         ]);
     }
 

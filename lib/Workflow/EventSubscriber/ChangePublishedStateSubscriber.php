@@ -64,7 +64,7 @@ class ChangePublishedStateSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'workflow.completed' => 'onWorkflowCompleted'
+            'workflow.completed' => 'onWorkflowCompleted',
         ];
     }
 }

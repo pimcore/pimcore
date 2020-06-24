@@ -87,7 +87,7 @@ class File extends DAV\File
             $log[$this->asset->getRealFullPath()] = [
                 'id' => $this->asset->getId(),
                 'timestamp' => time(),
-                'data' => \Pimcore\Tool\Serialize::serialize($this->asset)
+                'data' => \Pimcore\Tool\Serialize::serialize($this->asset),
             ];
 
             $this->asset->setInDumpState(false);

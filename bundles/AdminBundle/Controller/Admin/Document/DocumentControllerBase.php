@@ -44,14 +44,14 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
         $data['php'] = [
             'classes' => array_merge([get_class($document)], array_values(class_parents($document))),
-            'interfaces' => array_values(class_implements($document))
+            'interfaces' => array_values(class_implements($document)),
         ];
 
         $this->addAdminStyle($document, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
         $event = new GenericEvent($this, [
             'data' => $data,
-            'document' => $document
+            'document' => $document,
         ]);
         \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
         $data = $event->getArgument('data');

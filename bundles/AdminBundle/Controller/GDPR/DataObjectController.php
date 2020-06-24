@@ -87,7 +87,7 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
 
         $json = $this->encodeJson($exportResult, [], JsonResponse::DEFAULT_ENCODING_OPTIONS | JSON_PRETTY_PRINT);
         $jsonResponse = new JsonResponse($json, 200, [
-            'Content-Disposition' => 'attachment; filename="export-data-object-' . $object->getId() . '.json"'
+            'Content-Disposition' => 'attachment; filename="export-data-object-' . $object->getId() . '.json"',
         ], true);
 
         return $jsonResponse;

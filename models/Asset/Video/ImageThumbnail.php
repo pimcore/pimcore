@@ -67,7 +67,7 @@ class ImageThumbnail
 
         $event = new GenericEvent($this, [
             'filesystemPath' => $fsPath,
-            'frontendPath' => $path
+            'frontendPath' => $path,
         ]);
         \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_VIDEO_IMAGE_THUMBNAIL, $event);
         $path = $event->getArgument('frontendPath');
@@ -168,7 +168,7 @@ class ImageThumbnail
 
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::VIDEO_IMAGE_THUMBNAIL, new GenericEvent($this, [
                 'deferred' => $deferred,
-                'generated' => $generated
+                'generated' => $generated,
             ]));
         }
     }

@@ -132,9 +132,9 @@ class Config extends Model\AbstractModel
                 'method' => 'scaleByWidth',
                 'arguments' =>
                 [
-                    'width' => 500
-                ]
-            ]
+                    'width' => 500,
+                ],
+            ],
         ]);
 
         return $config;
@@ -161,7 +161,7 @@ class Config extends Model\AbstractModel
     {
         $item = [
             'method' => $name,
-            'arguments' => $parameters
+            'arguments' => $parameters,
         ];
 
         // default is added to $this->items for compatibility reasons
@@ -193,7 +193,7 @@ class Config extends Model\AbstractModel
 
         array_splice($itemContainer, $position, 0, [[
             'method' => $name,
-            'arguments' => $parameters
+            'arguments' => $parameters,
         ]]);
 
         return true;

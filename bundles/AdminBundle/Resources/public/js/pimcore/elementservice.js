@@ -1091,7 +1091,7 @@ pimcore.elementservice.downloadAssetFolderAsZip = function (id, selectedIds) {
                     that.downloadProgressBar = null;
                     that.downloadProgressWin = null;
 
-                    pimcore.helpers.download(Routing.generate('pimcore_admin_asset_downloadaszipaddfiles', {jobId: res.jobId, id: id}));
+                    pimcore.helpers.download(Routing.generate('pimcore_admin_asset_downloadaszip', {jobId: res.jobId, id: id}));
                 },
                 update: function (currentStep, steps, percent) {
                     if(that.downloadProgressBar) {

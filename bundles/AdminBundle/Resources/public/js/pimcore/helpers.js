@@ -221,6 +221,10 @@ pimcore.helpers.updateTreeElementStyle = function (type, id, treeData) {
                     record.set("icon", treeData.icon);
                 }
 
+                if (typeof treeData.cls !== "undefined") {
+                    record.set("cls", treeData.cls);
+                }
+
                 if (typeof treeData.iconCls !== "undefined") {
                     record.set("iconCls", treeData.iconCls);
                 }
@@ -932,7 +936,7 @@ pimcore.helpers.openMemorizedTabs = function () {
 pimcore.helpers.assetSingleUploadDialog = function (parent, parentType, success, failure, context) {
 
     var params = {};
-    params['parent' . ucfirst(parentType)] = parent;
+    params['parent' + ucfirst(parentType)] = parent;
 
     var url = Routing.generate('pimcore_admin_asset_addassetcompatibility', params);
     if (context) {
@@ -3179,4 +3183,20 @@ pimcore.helpers.getProgressWindowListeners = function () {
             }
         }
     };
+};
+
+pimcore.helpers.reloadUserImage = function (userId) {
+    var image = Routing.generate('pimcore_admin_user_getimage', {id: userId, '_dc': Ext.Date.now()});
+
+    if (pimcore.currentuser.id == userId) {
+        Ext.get("pimcore_avatar").query('img')[0].src = image;
+    }
+
+    if (Ext.getCmp("pimcore_user_image_" + userId)) {
+        Ext.getCmp("pimcore_user_image_" + userId).setSrc(image);
+    }
+
+    if (Ext.getCmp("pimcore_profile_image_" + userId)) {
+        Ext.getCmp("pimcore_profile_image_" + userId).setSrc(image);
+    }
 };

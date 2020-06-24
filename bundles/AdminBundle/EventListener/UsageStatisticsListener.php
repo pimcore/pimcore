@@ -53,7 +53,7 @@ class UsageStatisticsListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => 'onKernelRequest'
+            KernelEvents::REQUEST => 'onKernelRequest',
         ];
     }
 
@@ -89,7 +89,7 @@ class UsageStatisticsListener implements EventSubscriberInterface
             $request->attributes->get('_controller'),
             $request->attributes->get('_route'),
             @json_encode($request->attributes->get('_route_params')),
-            @json_encode($params)
+            @json_encode($params),
         ];
 
         Simple::log('usagelog', implode('|', $parts));

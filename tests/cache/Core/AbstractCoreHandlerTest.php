@@ -43,7 +43,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     protected $sampleEntries = [
         'A' => ['tag_a', 'tag_ab', 'tag_all'],
         'B' => ['tag_b', 'tag_ab', 'tag_bc', 'tag_all'],
-        'C' => ['tag_c', 'tag_bc', 'tag_all']
+        'C' => ['tag_c', 'tag_bc', 'tag_all'],
     ];
 
     /**
@@ -100,7 +100,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
             ->setMethods($mockMethods)
             ->setConstructorArgs([
                 $this->cache,
-                $this->writeLock
+                $this->writeLock,
             ])
             ->getMock();
 
@@ -554,7 +554,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
             ['tag_c', ['C']],
             ['tag_ab', ['A', 'B']],
             ['tag_bc', ['B', 'C']],
-            ['tag_all', ['A', 'B', 'C']]
+            ['tag_all', ['A', 'B', 'C']],
         ];
     }
 

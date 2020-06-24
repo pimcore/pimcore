@@ -63,7 +63,7 @@ class Wysiwyg extends Model\Document\Tag
 
         return Text::wysiwygText($this->text, [
             'document' => $document,
-            'context' => $this
+            'context' => $this,
         ]);
     }
 
@@ -78,7 +78,7 @@ class Wysiwyg extends Model\Document\Tag
 
         return Text::wysiwygText($this->text, [
                 'document' => $document,
-                'context' => $this
+                'context' => $this,
             ]);
     }
 

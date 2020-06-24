@@ -38,15 +38,15 @@ class PlaceholderProcessorTest extends TestCase
     public function testPlaceholdersAreMergedIntoArrayValues()
     {
         $input = [
-            'locale' => '%locale%'
+            'locale' => '%locale%',
         ];
 
         $expected = [
-            'locale' => 'en_US'
+            'locale' => 'en_US',
         ];
 
         $placeholders = [
-            '%locale%' => 'en_US'
+            '%locale%' => 'en_US',
         ];
 
         $this->assertEquals($expected, $this->processor->mergePlaceholders($input, $placeholders));
@@ -56,17 +56,17 @@ class PlaceholderProcessorTest extends TestCase
     {
         $input = [
             'locale1' => '%locale1%',
-            'locale2' => '%locale2%'
+            'locale2' => '%locale2%',
         ];
 
         $expected = [
             'locale1' => 'de_AT',
-            'locale2' => 'en_US'
+            'locale2' => 'en_US',
         ];
 
         $placeholders = [
             '%locale1%' => 'de_AT',
-            '%locale2%' => 'en_US'
+            '%locale2%' => 'en_US',
         ];
 
         $this->assertEquals($expected, $this->processor->mergePlaceholders($input, $placeholders));
@@ -75,15 +75,15 @@ class PlaceholderProcessorTest extends TestCase
     public function testPlaceholdersAreMergedIntoCompositeArrayValues()
     {
         $input = [
-            'locale' => 'my locale is %locale%'
+            'locale' => 'my locale is %locale%',
         ];
 
         $expected = [
-            'locale' => 'my locale is en_US'
+            'locale' => 'my locale is en_US',
         ];
 
         $placeholders = [
-            '%locale%' => 'en_US'
+            '%locale%' => 'en_US',
         ];
 
         $this->assertEquals($expected, $this->processor->mergePlaceholders($input, $placeholders));
@@ -96,9 +96,9 @@ class PlaceholderProcessorTest extends TestCase
                 'locale' => '%locale2%',
                 'locales' => [
                     '%locale1%',
-                    '%locale2%'
-                ]
-            ]
+                    '%locale2%',
+                ],
+            ],
         ];
 
         $expected = [
@@ -106,9 +106,9 @@ class PlaceholderProcessorTest extends TestCase
                 'locale' => 'en_US',
                 'locales' => [
                     'de_AT',
-                    'en_US'
-                ]
-            ]
+                    'en_US',
+                ],
+            ],
         ];
 
         $placeholders = [
@@ -126,13 +126,13 @@ class PlaceholderProcessorTest extends TestCase
                 'locale' => '%locale1%',
                 'locales' => [
                     '%locale1%',
-                    '%locale2%'
+                    '%locale2%',
                 ],
                 'locale_%locale1%' => '%locale2%',
             ],
             'mapping' => [
-                '%locale1%' => '%locale2%'
-            ]
+                '%locale1%' => '%locale2%',
+            ],
         ];
 
         $expected = [
@@ -140,13 +140,13 @@ class PlaceholderProcessorTest extends TestCase
                 'locale' => 'de_AT',
                 'locales' => [
                     'de_AT',
-                    'en_US'
+                    'en_US',
                 ],
                 'locale_de_AT' => 'en_US',
             ],
             'mapping' => [
-                'de_AT' => 'en_US'
-            ]
+                'de_AT' => 'en_US',
+            ],
         ];
 
         $placeholders = [

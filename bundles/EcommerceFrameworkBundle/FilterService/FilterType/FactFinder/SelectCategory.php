@@ -109,7 +109,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
             'values' => array_values($values),
             'fieldname' => $filterDefinition->getField(),
             'metaData' => $filterDefinition->getMetaData(),
-            'resultCount' => $productList->count()
+            'resultCount' => $productList->count(),
         ]);
     }
 }

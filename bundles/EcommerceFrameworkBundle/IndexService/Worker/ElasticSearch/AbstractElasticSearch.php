@@ -22,7 +22,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearchCon
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractBatchProcessingWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
@@ -32,7 +31,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * @property ElasticSearch $tenantConfig
  */
-abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker implements Worker\BatchProcessingWorkerInterface
+abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessingWorker implements Worker\BatchProcessingWorkerInterface
 {
     const STORE_TABLE_NAME = 'ecommerceframework_productindex_store_elastic';
 
@@ -78,12 +77,14 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
     protected $indexStoreMetaData = [];
 
     /**
-     * @param ElasticSearch|ElasticSearchConfigInterface $tenantConfig
+     * @param ElasticSearchConfigInterface $tenantConfig
      * @param ConnectionInterface $db
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param string|null $workerMode
      */
-    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
-        parent::__construct($tenantConfig, $db, $eventDispatcher);
+        parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
 
         $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
     }
@@ -133,7 +134,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
 
             try {
                 $result = $esClient->indices()->getAlias([
-                    'name' => $this->indexName
+                    'name' => $this->indexName,
                 ]);
 
                 if (is_array($result)) {
@@ -242,7 +243,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
                 } else {
                     $mapping = [
                         'type' => $type,
-                        'store' => $this->getStoreCustomAttributes()
+                        'store' => $this->getStoreCustomAttributes(),
                     ];
 
                     if (!empty($attribute->getOption('analyzer'))) {
@@ -302,7 +303,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
             'parentCategoryIds' => 'long',
             'priceSystemName' => 'keyword',
             'active' => 'boolean',
-            'inProductList' => 'boolean'];
+            'inProductList' => 'boolean', ];
 
         if ($includeTypes) {
             return $systemAttributes;
@@ -358,7 +359,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
         }
 
         if (count($subObjectIds) > 0) {
-            $this->commitUpdateIndex();
+            $this->commitBatchToIndex();
             $this->fillupPreparationQueue($object);
         }
     }
@@ -433,9 +434,6 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
             }
             $this->bulkIndexData[] = $bulkIndexData;
             $this->indexStoreMetaData[$objectId] = $routingId;
-
-            //update crc sums in store table to mark element as indexed
-            $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE o_id = ? and tenant = ?', [$objectId, $this->name]);
         }
     }
 
@@ -455,35 +453,53 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
     /**
      * actually sending data to elastic search
      */
-    protected function commitUpdateIndex()
+    public function commitBatchToIndex(): void
     {
         if (sizeof($this->bulkIndexData)) {
             $esClient = $this->getElasticSearchClient();
             $responses = $esClient->bulk([
-                'body' => $this->bulkIndexData
+                'body' => $this->bulkIndexData,
             ]);
 
             // save update status
             foreach ($responses['items'] as $response) {
-                $data = [
-                    'update_status' => $response['index']['status'],
-                    'update_error' => null,
-                    'metadata' => $this->indexStoreMetaData[$response['index']['_id']]
-                ];
-
-                if (isset($response['index']['error']) && $response['index']['error']) {
-                    $data['update_error'] = json_encode($response['index']['error']);
-                    $data['crc_index'] = 0;
-                    Logger::error('Failed to Index Object with Id:' . $response['index']['_id'],
-                                json_decode($data['update_error'], true)
-                                 );
+                $operation = null;
+                if (isset($response['index'])) {
+                    $operation = 'index';
+                } elseif (isset($response['delete'])) {
+                    $operation = 'delete';
                 }
 
-                $this->db->updateWhere(
-                    $this->getStoreTableName(),
-                    $data,
-                    'o_id = ' . $this->db->quote($response['index']['_id']) . ' AND tenant = ' . $this->db->quote($this->name)
-                );
+                if ($operation) {
+                    $data = [
+                        'update_status' => $response[$operation]['status'],
+                        'update_error' => null,
+                        'metadata' => isset($this->indexStoreMetaData[$response[$operation]['_id']]) ? $this->indexStoreMetaData[$response[$operation]['_id']] : null,
+                    ];
+                    if (isset($response[$operation]['error']) && $response[$operation]['error']) {
+                        $data['update_error'] = json_encode($response[$operation]['error']);
+                        $data['crc_index'] = 0;
+                        Logger::error(
+                            'Failed to Index Object with Id:' . $response[$operation]['_id'],
+                            json_decode($data['update_error'], true)
+                        );
+
+                        $this->db->updateWhere(
+                            $this->getStoreTableName(),
+                            $data,
+                            'o_id = ' . $this->db->quote($response[$operation]['_id']) . ' AND tenant = ' . $this->db->quote($this->name)
+                        );
+                    } else {
+
+                        //update crc sums in store table to mark element as indexed
+                        $this->db->query(
+                            'UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current, update_status = ?, update_error = ?, metadata = ? WHERE o_id = ? and tenant = ?',
+                            [$data['update_status'], $data['update_error'], $data['metadata'], $response[$operation]['_id'], $this->name]
+                        );
+                    }
+                } else {
+                    throw new \Exception('Unkown operation in response: ' . print_r($response, true));
+                }
             }
         }
 
@@ -493,6 +509,8 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
     }
 
     /**
+     * @deprecated
+     *
      * first run processUpdateIndexQueue of trait and then commit updated entries
      *
      * @param int $limit
@@ -503,7 +521,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
     {
         $entriesUpdated = parent::processUpdateIndexQueue($limit);
         Logger::info('Entries updated:' . $entriesUpdated);
-        $this->commitUpdateIndex();
+        $this->commitBatchToIndex();
 
         return $entriesUpdated;
     }
@@ -535,9 +553,9 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
                     'add' => [
                         'index' => $this->getIndexNameVersion(),
                         'alias' => $this->indexName,
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
         $result = $esClient->indices()->updateAliases($params);
         if (!$result['acknowledged']) {
@@ -602,7 +620,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
                     'index' => $this->getIndexNameVersion(),
                     'type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'],
                     'id' => $objectId,
-                    'routing' => $storeEntry['o_virtualProductId']
+                    'routing' => $storeEntry['o_virtualProductId'],
                 ]);
             } catch (\Exception $e) {
                 //if \Elasticsearch\Common\Exceptions\Missing404Exception <- the object is not in the index so its ok.
@@ -634,13 +652,15 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
             $this->createEsAliasIfMissing();
         }
 
-        $params = $this->getMappingParams();
-
         try {
-            $result = $esClient->indices()->putMapping($params);
-            Logger::info('Index-Actions - updated Mapping for Index: ' . $this->getIndexNameVersion());
+            $this->putIndexMapping($this->getIndexNameVersion());
 
             $configuredSettings = $this->tenantConfig->getIndexSettings();
+            $synonymSettings = $this->extractMinimalSynonymFiltersTreeFromTenantConfig();
+            if (isset($synonymSettings['analysis'])) {
+                $configuredSettings['analysis']['filter'] = array_replace_recursive($configuredSettings['analysis']['filter'], $synonymSettings['analysis']['filter']);
+            }
+
             $currentSettings = $esClient->indices()->getSettings([
                 'index' => $this->getIndexNameVersion(),
             ]);
@@ -651,22 +671,18 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
                 $esClient->indices()->putSettings([
                     'index' => $this->getIndexNameVersion(),
                     'body' => [
-                        'index' => $this->tenantConfig->getIndexSettings()
-                    ]
+                        'index' => $this->tenantConfig->getIndexSettings(),
+                    ],
                 ]);
+                Logger::info('Index-Actions - updated settings for Index: ' . $this->getIndexNameVersion());
+            } else {
+                Logger::info('Index-Actions - no settings update necessary for Index: ' . $this->getIndexNameVersion());
             }
-
-            Logger::info('Index-Actions - updated settings for Index: ' . $this->getIndexNameVersion());
         } catch (\Exception $e) {
             Logger::info("Index-Actions - can't create Mapping - trying reindexing " . $e->getMessage());
             Logger::info('Index-Actions - Perform native reindexing for Index: ' . $this->getIndexNameVersion());
 
             $this->startReindexMode();
-        }
-
-        // index created return "true" and mapping creation returns array
-        if ((is_array($result) && !$result['acknowledged']) || (is_bool($result) && !$result)) {
-            throw new \Exception('Index creation failed');
         }
     }
 
@@ -677,8 +693,8 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
             'index' => $this->getIndexNameVersion(),
             'type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'],
             'body' => [
-                'properties' => $this->createMappingAttributes()
-            ]
+                'properties' => $this->createMappingAttributes(),
+            ],
         ];
 
         return $params;
@@ -724,9 +740,9 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
                         'add' => [
                             'index' => $this->getIndexNameVersion(),
                             'alias' => $this->indexName,
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ];
             $result = $esClient->indices()->updateAliases($params);
             if (!$result) {
@@ -749,20 +765,36 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
         Logger::info('Index-Actions - creating new Index. Name: ' . $indexName);
         $result = $esClient->indices()->create([
             'index' => $indexName,
-            'body' => ['settings' => $this->tenantConfig->getIndexSettings()]
+            'body' => ['settings' => $this->tenantConfig->getIndexSettings()],
         ]);
 
         if (!$result['acknowledged']) {
             throw new \Exception('Index creation failed. IndexName: ' . $indexName);
         }
 
+        $this->updateSynonyms($indexName, true, true);
+    }
+
+    /**
+     * puts current mapping to index with given name
+     *
+     * @param string $indexName
+     *
+     * @throws \Exception
+     */
+    protected function putIndexMapping(string $indexName)
+    {
+        $esClient = $this->getElasticSearchClient();
+
         $params = $this->getMappingParams();
-        $params['index'] = $indexName; //important
+        $params['index'] = $indexName;
         $result = $esClient->indices()->putMapping($params);
 
         if (!$result['acknowledged']) {
-            throw new \Exception('Index creation failed. IndexName: ' . $indexName);
+            throw new \Exception('Putting mapping to index failed. IndexName: ' . $indexName);
         }
+
+        Logger::info('Index-Actions - updated Mapping for Index: ' . $indexName);
     }
 
     /**
@@ -813,12 +845,12 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
         $body =
             [
                 'source' => [
-                    'index' => $sourceIndexName
+                    'index' => $sourceIndexName,
 
                 ],
                 'dest' => [
                     'index' => $targetIndexName,
-                ]
+                ],
             ];
 
         $startTime = time();
@@ -827,11 +859,11 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
             'targetIndexName' => $targetIndexName,
             'method' => 'POST',
             'uri' => '/_reindex',
-            'body' => $body
+            'body' => $body,
         ]);
 
         $esClient->reindex([
-            'body' => $body
+            'body' => $body,
         ]);
 
         Logger::info(sprintf('Completed re-index in %.02f seconds.', (time() - $startTime)));
@@ -860,6 +892,7 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
 
             $this->deleteEsIndexIfExisting($nextIndexName);
             $this->createEsIndex($nextIndexName);
+            $this->putIndexMapping($nextIndexName);
 
             $this->performReindex($currentIndexName, $nextIndexName);
 
@@ -869,6 +902,137 @@ abstract class AbstractElasticSearch extends AbstractBatchProcessingWorker imple
         } finally {
             $this->releaseIndexLock();
         }
+    }
+
+    /**
+     *
+     * Perform a synonym update on the currently selected ES index, if necessary.
+     *
+     * Attention: the current index will be closed and opened, so it won't be available for a tiny moment (typically some milliseconds).
+     *
+     * @param string $indexNameOverride if given, then that index will be used instead of the current index.
+     * @param bool $skipComparison if explicitly set to true, then the comparison whether the synonyms between the current index settings
+     *        and the local index settings vary, will be skipped, and the index settings will be updated regardless.
+     * @param bool $skipLocking if explictly set to true, then no global lock will be activated / released.
+     *
+     * @throws \Exception is thrown if the synonym transmission fails.
+     */
+    public function updateSynonyms(string $indexNameOverride = '', bool $skipComparison = false, bool $skipLocking = true)
+    {
+        try {
+            if (!$skipLocking) {
+                $this->activateIndexLock(); //lock all other processes
+            }
+
+            $indexName = $indexNameOverride ?: $this->getIndexNameVersion();
+
+            $indexSettingsSynonymPartLocalConfig = $this->extractMinimalSynonymFiltersTreeFromTenantConfig();
+            if (empty($indexSettingsSynonymPartLocalConfig)) {
+                Logger::info('No index update required, as no synonym providers are configured. '.
+                    'If filters have been removed, then reindexing will help to get rid of old configurations.'
+                );
+
+                return;
+            }
+
+            $esClient = $this->getElasticSearchClient();
+
+            if (!$skipComparison) {
+                $indexSettingsCurrentEs = $esClient->indices()->getSettings(['index' => $indexName])[$indexName]['settings']['index'];
+                $indexSettingsSynonymPartEs = $this->extractMinimalSynonymFiltersTreeFromIndexSettings($indexSettingsCurrentEs);
+
+                if ($indexSettingsSynonymPartEs == $indexSettingsSynonymPartLocalConfig) {
+                    Logger::info(sprintf('The synonyms in ES index "%s" are identical with those of the local configuration. '.
+                        'No update required.', $indexName));
+
+                    return;
+                }
+            }
+
+            Logger::info(sprintf('Update synonyms in "%s"...', $indexName));
+            $esClient->indices()->close(['index' => $indexName]);
+
+            $result = $esClient->indices()->putSettings([
+                'index' => $indexName,
+                'body' => [
+                    'index' => $indexSettingsSynonymPartLocalConfig,
+                ],
+            ]);
+
+            $esClient->indices()->open(['index' => $indexName]);
+
+            if (!$result['acknowledged']) {
+                //exception must be thrown after re-opening the index!
+                throw new \Exception('Index synonym settings update failed. IndexName: ' . $indexName);
+            }
+        } finally {
+            if (!$skipLocking) {
+                $this->releaseIndexLock();
+            }
+        }
+    }
+
+    /**
+     * Extract the minimal synonym filters tree based on the tenant config's synonym provider configuration.
+     *
+     * @return array the index tree settings ready to be pushed into the index, or an empty array, if no configuration exists.
+     */
+    protected function extractMinimalSynonymFiltersTreeFromTenantConfig(): array
+    {
+        $indexPart = [];
+        foreach ($this->tenantConfig->getSynonymProviders() as $filterName => $synonymProvider) {
+            $synonymLines = $synonymProvider->getSynonyms();
+            if (empty($indexPart)) {
+                $indexPart = [
+                    'analysis' =>
+                        [
+                            'filter' => [],
+                        ],
+                ];
+            }
+
+            $indexPart['analysis']['filter'][$filterName] = ['synonyms' => $synonymLines];
+        }
+
+        return $indexPart;
+    }
+
+    /**
+     * Extract that part of the ES analysis index settings that are related to synonym (provider) filters.
+     *
+     * @param array $indexSettings the index settings
+     *
+     * @return array part of the index_settings that contains the synonym-related filters, including
+     *  the parent elements:
+     *      - analysis
+     *          - filter
+     *              - synonym_filter_1:
+     *                  - type: synonym/synonym_graph
+     *                  - ...
+     */
+    public function extractMinimalSynonymFiltersTreeFromIndexSettings(array $indexSettings): array
+    {
+        $filters = isset($indexSettings['analysis']['filter']) ? $indexSettings['analysis']['filter'] : [];
+        $indexPart = [];
+        if ($filters) {
+            $synonymProviderMap = $this->tenantConfig->getSynonymProviders();
+            foreach ($filters as $filterName => $filter) {
+                if (array_key_exists($filterName, $synonymProviderMap)) {
+                    if (empty($indexPart)) {
+                        $indexPart = [
+                            'analysis' =>
+                                [
+                                    'filter' => [],
+                                ],
+                        ];
+                    }
+
+                    $indexPart['analysis']['filter'][$filterName]['synonyms'] = $filter['synonyms'];
+                }
+            }
+        }
+
+        return $indexPart;
     }
 
     /**

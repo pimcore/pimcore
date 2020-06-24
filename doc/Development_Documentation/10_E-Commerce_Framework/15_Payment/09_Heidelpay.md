@@ -405,3 +405,7 @@ public function commitOrderAction(Request $request, Factory $factory, LoggerInte
     return $this->redirectToRoute('shop-checkout-completed');
 }
 ```
+
+## Important Configuration
+Please make sure that `serialize_precision` is set to a very high value, or even better to `-1` in order to prevent rounding issues with the heidelpay php sdk. 
+For details also see https://docs.heidelpay.com/docs/installation#php-configuration

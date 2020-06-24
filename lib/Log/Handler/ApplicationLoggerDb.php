@@ -54,7 +54,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
             'fileobject' => $record['context']['fileObject'] ?? null,
             'relatedobject' => $record['context']['relatedObject'] ?? null,
             'relatedobjecttype' => $record['context']['relatedObjectType'] ?? null,
-            'source' => $record['context']['source'] ?? null
+            'source' => $record['context']['source'] ?? null,
         ];
 
         $this->db->insert(self::TABLE_NAME, $data);
@@ -90,7 +90,7 @@ class ApplicationLoggerDb extends AbstractProcessingHandler
             'error' => 'ERR',
             'critical' => 'CRIT',
             'alert' => 'ALERT',
-            'emergency' => 'EMERG'
+            'emergency' => 'EMERG',
         ];
 
         $db = Db::get();

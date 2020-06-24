@@ -10,7 +10,7 @@ Contains general settings about timezone, view suffix, additional path variables
 
  
 ## Localization & Internationalization (i18n/l10n) 
-This settings are used in documents to specify the content language (in properties tab), for objects in localized-fields, 
+These settings are used in documents to specify the content language (in properties tab), for objects in localized-fields, 
 for shared translations, ... simply everywhere the editor can choose or use a language for the content.
 Fallback languages are currently used in object's localized fields and shared translations.
 

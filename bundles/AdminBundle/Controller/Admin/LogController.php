@@ -144,7 +144,7 @@ class LogController extends AdminController implements EventedControllerInterfac
                 'relatedobject' => $row['relatedobject'],
                 'relatedobjecttype' => $row['relatedobjecttype'],
                 'component' => $row['component'],
-                'source' => $row['source']
+                'source' => $row['source'],
             ];
 
             $logEntries[] = $logEntry;
@@ -152,7 +152,7 @@ class LogController extends AdminController implements EventedControllerInterfac
 
         return $this->adminJson([
             'p_totalCount' => $total,
-            'p_results' => $logEntries
+            'p_results' => $logEntries,
         ]);
     }
 

@@ -34,7 +34,7 @@ class Version20180830113528 extends AbstractPimcoreMigration
                     $options = $fieldDefinition->getOptions();
                     $options[] = [
                         'value' => 'abortedButResponseReceived',
-                        'key' => 'Aborted but Response Received'
+                        'key' => 'Aborted but Response Received',
                     ];
                     $fieldDefinition->setOptions($options);
 

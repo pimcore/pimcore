@@ -225,7 +225,7 @@ class NotificationEmailService extends AbstractNotificationService
             'deeplink' => $deeplink,
             'note_description' => $noteDescription,
             'translator' => $this->translator,
-            'lang' => $language
+            'lang' => $language,
         ];
     }
 }

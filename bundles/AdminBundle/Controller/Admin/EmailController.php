@@ -101,7 +101,7 @@ class EmailController extends AdminController
         return $this->adminJson([
             'data' => $jsonData,
             'success' => true,
-            'total' => $list->getTotalCount()
+            'total' => $list->getTotalCount(),
         ]);
     }
 
@@ -134,7 +134,7 @@ class EmailController extends AdminController
             return new Response('<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>' . $templatingEnginePhp->escape($emailLog->getTextLog()) . '</pre></body></html>');
         } elseif ($request->get('type') == 'html') {
             return new Response($emailLog->getHtmlLog(), 200, [
-                'Content-Security-Policy' => "default-src 'self'; style-src 'self' 'unsafe-inline'"
+                'Content-Security-Policy' => "default-src 'self'; style-src 'self' 'unsafe-inline'",
             ]);
         } elseif ($request->get('type') == 'params') {
             try {
@@ -495,7 +495,7 @@ class EmailController extends AdminController
             return $this->adminJson([
                 'success' => true,
                 'data' => $data,
-                'total' => $list->getTotalCount()
+                'total' => $list->getTotalCount(),
             ]);
         }
 

@@ -39,13 +39,36 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
             'parentCategoryIds' => 'long',
             'priceSystemName' => 'string',
             'active' => 'boolean',
-            'inProductList' => 'boolean'];
+            'inProductList' => 'boolean', ];
 
         if ($includeTypes) {
             return $systemAttributes;
         } else {
             return array_keys($systemAttributes);
         }
+    }
+
+    /**
+     * puts current mapping to index with given name
+     *
+     * @param string $indexName
+     *
+     * @throws \Exception
+     */
+    protected function putIndexMapping(string $indexName)
+    {
+        $esClient = $this->getElasticSearchClient();
+        foreach ([ProductListInterface::PRODUCT_TYPE_VARIANT, ProductListInterface::PRODUCT_TYPE_OBJECT] as $mappingType) {
+            $params = $this->getMappingParams($mappingType);
+            $params['index'] = $indexName;
+            $result = $esClient->indices()->putMapping($params);
+
+            if (!$result['acknowledged']) {
+                throw new \Exception('Putting mapping to index failed. IndexName: ' . $indexName);
+            }
+        }
+
+        Logger::info('Index-Actions - updated Mapping for Index: ' . $indexName);
     }
 
     protected function getMappingParams($type = null)
@@ -56,9 +79,9 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                 'type' => ProductListInterface::PRODUCT_TYPE_OBJECT,
                 'body' => [
                     ProductListInterface::PRODUCT_TYPE_OBJECT => [
-                        'properties' => $this->createMappingAttributes()
-                    ]
-                ]
+                        'properties' => $this->createMappingAttributes(),
+                    ],
+                ],
             ];
 
             return $params;
@@ -69,9 +92,9 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                 'body' => [
                     ProductListInterface::PRODUCT_TYPE_VARIANT => [
                         '_parent' => ['type' => ProductListInterface::PRODUCT_TYPE_OBJECT],
-                        'properties' => $this->createMappingAttributes()
-                    ]
-                ]
+                        'properties' => $this->createMappingAttributes(),
+                    ],
+                ],
             ];
 
             return $params;
@@ -90,11 +113,8 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
 
         $result = $esClient->indices()->exists(['index' => $this->getIndexNameVersion()]);
         if (!$result) {
-            $result = $esClient->indices()->create(['index' => $this->getIndexNameVersion(), 'body' => ['settings' => $this->tenantConfig->getIndexSettings()]]);
-            Logger::info('Index-Actions - creating new Index. Name: ' . $this->getIndexNameVersion());
-            if (!$result['acknowledged']) {
-                throw new \Exception('Index creation failed. IndexName: ' . $this->getIndexNameVersion());
-            }
+            $indexName = $this->getIndexNameVersion();
+            $this->createEsIndex($indexName);
 
             //index didn't exist -> reset index queue to make sure all products get reindexed
             $this->resetIndexingQueue();
@@ -161,7 +181,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                     $mapping = [
                         'type' => $type,
                         'store' => $this->getStoreCustomAttributes(),
-                        'index' => 'not_analyzed'
+                        'index' => 'not_analyzed',
                     ];
 
                     if (!empty($attribute->getOption('analyzer'))) {
@@ -248,12 +268,12 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                     'bool' => [
                         'must' => [
                             'term' => [
-                                'system.o_id' => $indexSystemData['o_id']
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                'system.o_id' => $indexSystemData['o_id'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $hits = $variants['hits']['hits'] ?? [];
@@ -264,7 +284,7 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                     'index' => $this->getIndexNameVersion(),
                     'type' => ProductListInterface::PRODUCT_TYPE_VARIANT,
                     'id' => $indexSystemData['o_id'],
-                    'parent' => $hit['_parent']
+                    'parent' => $hit['_parent'],
                 ];
                 $esClient->delete($params);
             }
@@ -328,9 +348,6 @@ class DefaultElasticSearch5 extends AbstractElasticSearch
                 $this->bulkIndexData[] = ['index' => ['_index' => $this->getIndexNameVersion(), '_type' => $indexSystemData['o_type'], '_id' => $objectId]];
             }
             $this->bulkIndexData[] = array_filter(['system' => array_filter($indexSystemData), 'type' => $indexSystemData['o_type'], 'attributes' => array_filter($indexAttributeData), 'relations' => $indexRelationData, 'subtenants' => $data['subtenants']]);
-
-            //update crc sums in store table to mark element as indexed
-            $this->db->query('UPDATE ' . $this->getStoreTableName() . ' SET crc_index = crc_current WHERE o_id = ? and tenant = ?', [$objectId, $this->name]);
         }
     }
 

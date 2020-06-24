@@ -67,7 +67,7 @@ class ImageController extends AbstractRestController
         foreach ($items as $item) {
             $thumbnails[] = [
                 'id' => $item->getName(),
-                'text' => $item->getName()
+                'text' => $item->getName(),
             ];
         }
 

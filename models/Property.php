@@ -315,7 +315,7 @@ class Property extends AbstractModel
             $key = $elementType . '_' . $this->getData()->getId();
             $dependencies[$key] = [
                 'id' => $this->getData()->getId(),
-                'type' => $elementType
+                'type' => $elementType,
             ];
         }
 

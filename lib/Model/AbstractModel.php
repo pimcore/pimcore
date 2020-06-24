@@ -146,7 +146,7 @@ abstract class AbstractModel implements ModelInterface
             for ($i = 0; $i < $length; $i++) {
                 $classNames = [
                     implode($delimiter, $classParts) . $delimiter . 'Dao',
-                    implode($delimiter, $classParts) . $delimiter . 'Resource'
+                    implode($delimiter, $classParts) . $delimiter . 'Resource',
                 ];
 
                 foreach ($classNames as $tmpClassName) {

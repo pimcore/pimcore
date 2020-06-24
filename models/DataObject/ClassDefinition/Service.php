@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 
 /**
@@ -38,7 +37,8 @@ class Service
      */
     public static function generateClassDefinitionJson($class)
     {
-        $data = Webservice\Data\Mapper::map($class, '\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out', 'out');
+        $class = clone $class;
+        $data = json_decode(json_encode($class));
         unset($data->name);
         unset($data->creationDate);
         unset($data->modificationDate);
@@ -48,12 +48,7 @@ class Service
 
         self::removeDynamicOptionsFromLayoutDefinition($data->layoutDefinitions);
 
-        //add propertyVisibility to export data
-        $data->propertyVisibility = $class->propertyVisibility;
-
-        $json = json_encode($data, JSON_PRETTY_PRINT);
-
-        return $json;
+        return json_encode($data, JSON_PRETTY_PRINT);
     }
 
     public static function removeDynamicOptionsFromLayoutDefinition(&$layout)
@@ -109,7 +104,7 @@ class Service
 
         foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'showVariants', 'parentClass',
                     'implementsInterfaces', 'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
-                    'linkGeneratorReference', 'compositeIndices'] as $importPropertyName) {
+                    'linkGeneratorReference', 'compositeIndices', ] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $class->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }

@@ -82,13 +82,13 @@ class PiwikController extends ReportsControllerBase
         $config = $configProvider->getConfig();
 
         $data = [
-            'configured' => false
+            'configured' => false,
         ];
 
         if ($config->isIframeIntegrationConfigured()) {
             $data = [
                 'configured' => true,
-                'url' => $config->generateIframeUrl()
+                'url' => $config->generateIframeUrl(),
             ];
         }
 
@@ -122,7 +122,7 @@ class PiwikController extends ReportsControllerBase
 
             $sites[] = [
                 'id' => $siteConfig->getConfigKey(),
-                'title' => $siteConfig->getTitle($translator)
+                'title' => $siteConfig->getTitle($translator),
             ];
         }
 
@@ -172,7 +172,7 @@ class PiwikController extends ReportsControllerBase
         } catch (\InvalidArgumentException $e) {
             return $this->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], JsonResponse::HTTP_NOT_FOUND);
         }
 
@@ -199,7 +199,7 @@ class PiwikController extends ReportsControllerBase
         $siteId = $sitesManager->addSite($siteConfig);
 
         return $this->json([
-            'site_id' => $siteId
+            'site_id' => $siteId,
         ]);
     }
 
@@ -223,7 +223,7 @@ class PiwikController extends ReportsControllerBase
         $siteId = $sitesManager->updateSite($siteConfig);
 
         return $this->json([
-            'site_id' => $siteId
+            'site_id' => $siteId,
         ]);
     }
 }

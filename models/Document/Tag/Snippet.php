@@ -90,7 +90,7 @@ class Snippet extends Model\Document\Tag
         if ($this->snippet instanceof Document\Snippet) {
             return [
                 'id' => $this->id,
-                'path' => $this->snippet->getFullPath()
+                'path' => $this->snippet->getFullPath(),
             ];
         }
 
@@ -236,7 +236,7 @@ class Snippet extends Model\Document\Tag
 
             $dependencies[$key] = [
                 'id' => $this->snippet->getId(),
-                'type' => 'document'
+                'type' => 'document',
             ];
         }
 

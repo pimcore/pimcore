@@ -191,7 +191,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         var fieldComboStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_asset_assethelper_gridgetcolumnconfig'),
+                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
                 extraParams: {
                     types: 'objectbricks',
                     gridtype: "all",

@@ -11,7 +11,7 @@ class TaggableRedisLuaTest extends TaggableRedisTest
     protected function getRedisOptions(): array
     {
         return [
-            'use_lua' => true
+            'use_lua' => true,
         ];
     }
 }

@@ -46,7 +46,7 @@ class VisitedPagesCountListener implements EventSubscriberInterface
     {
         return [
             TargetingEvents::VISITED_PAGES_COUNT_MATCH => 'onVisitedPagesCountMatch', // triggered from conditions depending on page count
-            TargetingEvents::POST_RESOLVE => 'onPostResolveVisitorInfo'
+            TargetingEvents::POST_RESOLVE => 'onPostResolveVisitorInfo',
         ];
     }
 

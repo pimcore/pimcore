@@ -125,7 +125,7 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
         'UCAF_PAYMENT_CARD_EXPDATE_MONTH', 'UCAF_PAYMENT_CARD_EXPDATE_YEAR',   'UCAF_PAYMENT_CARD_NUMBER',
         'USERID',                          'USERTYPE',                         'VERSION',
         'WBTU_MSISDN',                     'WBTU_ORDERID',                     'WEIGHTUNIT',
-        'WIN3DS',                          'WITHROOT'
+        'WIN3DS',                          'WITHROOT',
     ];
 
     /** @var string[] parameters that can be used for the creation of the SHA fingerprint */
@@ -150,7 +150,7 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
             'PAYMENT_REFERENCE',        'PM',                   'SCO_CATEGORY',
             'SCORING',                  'SEQUENCETYPE',         'SIGNDATE',
             'STATUS',                   'SUBBRAND',             'SUBSCRIPTION_ID',
-            'TRXDATE',                  'VC'
+            'TRXDATE',                  'VC',
     ];
 
     public function __construct(array $options, FormFactoryInterface $formFactory)
@@ -177,7 +177,7 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
     {
         //form name needs to be null in order to make sure the element names are correct - and not FORMNAME[ELEMENTNAME]
         $form = $this->formFactory->createNamedBuilder(null, FormType::class, [], [
-            'attr' => ['id' => 'payment_ogone_form']
+            'attr' => ['id' => 'payment_ogone_form'],
         ]);
 
         /** @var \OnlineShop\Framework\Model\AbstractPaymentInformation $paymentInfo * */
@@ -270,7 +270,7 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
             'amount' => $amount,
             'currency' => $currency,
             'ip' => $ip,
-            'customerName' => $customerName
+            'customerName' => $customerName,
         ]);
 
         $responseStatus = new Status(
@@ -283,7 +283,7 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
                 'ogone_paymentId' => $oGonePaymentId,
                 'ogone_paymentState' => $state,
                 'ogone_paymentType' => $paymentMethod,
-                'ogone_response' => $response
+                'ogone_response' => $response,
             ]
         );
 
@@ -305,7 +305,7 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
             'pspid',
             'secret',
             'encryptionType',
-            'mode'
+            'mode',
         ]);
         $resolver->setAllowedValues('encryptionType', ['SHA1', 'SHA256', 'SHA512']);
         $notEmptyValidator = function ($value) {
