@@ -1695,9 +1695,11 @@ class Service extends Model\Element\Service
      * @param array $helperDefinitions
      * @param LocaleServiceInterface $localeService
      * @param bool $returnMappedFieldNames
+     *
      * @return array
      */
-    public static function getCsvDataForObject(AbstractObject $object, $requestedLanguage, $fields,$helperDefinitions,LocaleServiceInterface $localeService,$returnMappedFieldNames = false){
+    public static function getCsvDataForObject(AbstractObject $object, $requestedLanguage, $fields, $helperDefinitions, LocaleServiceInterface $localeService, $returnMappedFieldNames = false)
+    {
         $objectData = [];
         $mappedFieldnames = [];
         foreach ($fields as $field) {
@@ -1725,11 +1727,12 @@ class Service extends Model\Element\Service
             }
         }
 
-        if($returnMappedFieldNames){
+        if ($returnMappedFieldNames) {
             $tmp = [];
-            foreach($mappedFieldnames as $key => $value){
+            foreach ($mappedFieldnames as $key => $value) {
                 $tmp[$value] = $objectData[$key];
             }
+
             return $tmp;
         }
 
@@ -1756,19 +1759,19 @@ class Service extends Model\Element\Service
 
         foreach ($list->getObjects() as $object) {
             if ($fields) {
-
-                if($addTitles && empty($data)){
+                if ($addTitles && empty($data)) {
                     $tmp = [];
-                    $mapped = self::getCsvDataForObject($object,$requestedLanguage,$fields,$helperDefinitions, $localeService,true);
-                    foreach($mapped as $key => $value){
+                    $mapped = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, true);
+                    foreach ($mapped as $key => $value) {
                         $tmp[] = '"' . $key . '"';
                     }
                     $data[] = $tmp;
                 }
 
-                $data[] = self::getCsvDataForObject($object,$requestedLanguage,$fields,$helperDefinitions, $localeService);
+                $data[] = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService);
             }
         }
+
         return $data;
     }
 
@@ -1957,5 +1960,4 @@ class Service extends Model\Element\Service
 
         return null;
     }
-
 }
