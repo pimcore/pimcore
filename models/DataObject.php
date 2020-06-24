@@ -15,17 +15,13 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace {
-    // this is just an alias ;-)
-    class_alias('Pimcore\\Model\\DataObject\\AbstractObject', 'Pimcore\\Model\\DataObject');
-}
-
 // the following is for IDEs to support auto-complete
+namespace Pimcore\Model;
 
-namespace Pimcore\Model {
-    if (!\Pimcore\Tool::classExists('Pimcore\\Model\\DataObject')) {
-        class DataObject extends \Pimcore\Model\DataObject\AbstractObject
-        {
-        }
+class_exists(DataObject\AbstractObject::class);
+
+if (false) {
+    class DataObject extends \Pimcore\Model\DataObject\AbstractObject
+    {
     }
 }
