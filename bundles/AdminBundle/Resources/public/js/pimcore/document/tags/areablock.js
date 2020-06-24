@@ -22,7 +22,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         this.id = id;
         this.name = name;
         this.elements = [];
-        this.elementCounter = [];
+        this.brickTypeUsageCounter = [];
         this.options = this.parseOptions(options);
 
         this.initNamingStrategies();
@@ -53,7 +53,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         }
 
         for (var i=0; i<data.length; i++) {
-            this.elementCounter[data[i].type] = this.elementCounter[data[i].type]+1 || 1;
+            this.brickTypeUsageCounter[data[i].type] = this.brickTypeUsageCounter[data[i].type]+1 || 1;
         }
 
         // type mapping
@@ -733,7 +733,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                         if(in_array(this.options.types[i].type,this.options.group[groups[g]])) {
                             let type = this.options.types[i].type;
                             if (typeof this.options["limits"][type] == "undefined" ||
-                                typeof this.elementCounter[type] == "undefined" || this.elementCounter[type] < this.options["limits"][type]) {
+                                typeof this.brickTypeUsageCounter[type] == "undefined" || this.brickTypeUsageCounter[type] < this.options["limits"][type]) {
                                     groupMenu.menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element, insertPosition));
                             }
                         }
@@ -745,7 +745,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             for (var i=0; i<this.options.types.length; i++) {
                 let type = this.options.types[i].type;
                 if (typeof this.options["limits"][type] == "undefined" ||
-                    typeof this.elementCounter[type] == "undefined" || this.elementCounter[type] < this.options["limits"][type]) {
+                    typeof this.brickTypeUsageCounter[type] == "undefined" || this.brickTypeUsageCounter[type] < this.options["limits"][type]) {
                     menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element, insertPosition));
                 }
             }
@@ -814,7 +814,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             return;
         }
 
-        if(typeof this.options["limits"][type] != "undefined" && this.elementCounter[type] >= this.options["limits"][type]) {
+        if(typeof this.options["limits"][type] != "undefined" && this.brickTypeUsageCounter[type] >= this.options["limits"][type]) {
             let brickName = type;
             let brickIndex = this.allowedTypes.indexOf(brickName);
             if (brickIndex >= 0 && typeof this.options.types[brickIndex].name != "undefined") {
