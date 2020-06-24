@@ -1946,12 +1946,6 @@ class DataObjectHelperController extends AdminController
         throw $this->createNotFoundException('XLSX file not found');
     }
 
-
-
-
-
-
-
     /**
      * Flattens object data to an array with key=>value where
      * value is simply a string representation of the value (for objects, hrefs and assets the full path is used)
