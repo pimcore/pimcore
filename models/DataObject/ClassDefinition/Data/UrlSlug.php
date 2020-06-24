@@ -842,4 +842,10 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     {
         return null;
     }
+
+    /** @inheritDoc */
+    public function supportsInheritance()
+    {
+        return false;
+    }
 }
