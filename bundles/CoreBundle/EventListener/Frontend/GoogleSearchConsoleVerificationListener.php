@@ -28,7 +28,7 @@ class GoogleSearchConsoleVerificationListener implements EventSubscriberInterfac
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => ['onKernelRequest', 64]
+            KernelEvents::REQUEST => ['onKernelRequest', 64],
         ];
     }
 

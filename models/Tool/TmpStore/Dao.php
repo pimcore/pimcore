@@ -47,7 +47,7 @@ class Dao extends Model\Dao\AbstractDao
                 'tag' => $tag,
                 'date' => time(),
                 'expiryDate' => (time() + $lifetime),
-                'serialized' => (int) $serialized
+                'serialized' => (int) $serialized,
             ]);
 
             return true;

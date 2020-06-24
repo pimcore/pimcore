@@ -63,7 +63,7 @@ pimcore.report.qrcode.item = Class.create({
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/reports/analytics/chartmetricdata',
+                    url: Routing.generate('pimcore_admin_reports_analytics_chartmetricdata'),
                     extraParams: {
                         "metric[]": "visits",
                         filters: "ga:campaign==" + this.data.name + ";ga:medium==QR-Code;ga:source==Mobile"
@@ -143,7 +143,7 @@ pimcore.report.qrcode.item = Class.create({
                     var analyticsUrl = "#report/trafficsources-campaigns/a{accountId}w{internalWebPropertyId}p{id}/"
                         + "%3F_r.drilldown%3Danalytics.campaign%3A" + this.data.name
                         + "%2Canalytics.sourceMedium%3AQR-Code/";
-                    window.open("/admin/reports/analytics/deeplink?url=" + encodeURIComponent(analyticsUrl));
+                    window.open(Routing.generate('pimcore_admin_reports_analytics_deeplink', {url: analyticsUrl}));
                 }.bind(this)
             }]
         });
@@ -307,7 +307,8 @@ pimcore.report.qrcode.item = Class.create({
         params["_dc"] = d.getTime();
         params["name"] = this.data.name;
 
-        var codeUrl = "/admin/reports/qrcode/code?url=" + url + '&' + Ext.urlEncode(params);
+        params['url'] = url;
+        var codeUrl = Routing.generate('pimcore_admin_reports_qrcode_code', params);
         this.codePanel.update('<img src="' + codeUrl + '" style="padding:10px; width:100%;" />');
     },
 
@@ -315,7 +316,7 @@ pimcore.report.qrcode.item = Class.create({
 
         var m = Ext.encode(this.form.getForm().getFieldValues());
         Ext.Ajax.request({
-            url: "/admin/reports/qrcode/update",
+            url: Routing.generate('pimcore_admin_reports_qrcode_update'),
             method: "PUT",
             params: {
                 configuration: m,
@@ -339,7 +340,7 @@ pimcore.report.qrcode.item = Class.create({
         params["download"] = "true";
         params["name"] = this.data.name;
 
-        var codeUrl = "/admin/reports/qrcode/code?" + Ext.urlEncode(params);
+        var codeUrl = Routing.generate('pimcore_admin_reports_qrcode_code', params);
         pimcore.helpers.download(codeUrl);
     }
 });

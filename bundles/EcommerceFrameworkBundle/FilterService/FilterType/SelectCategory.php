@@ -67,7 +67,7 @@ class SelectCategory extends AbstractFilterType
             'metaData' => $filterDefinition->getMetaData(),
             'rootCategory' => $filterDefinition->getRootCategory(),
             'document' => $request->get('contentDocument'),
-            'resultCount' => $productList->count()
+            'resultCount' => $productList->count(),
         ];
 
         return $this->render($this->getTemplate($filterDefinition), $parameters);

@@ -105,7 +105,7 @@ pimcore.log.admin = Class.create({
                 autoDestroy: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/log/priority-json',
+                    url: Routing.generate('pimcore_admin_log_priorityjson'),
                     reader: {
                         rootProperty: 'priorities',
                         idProperty: 'key'
@@ -118,7 +118,7 @@ pimcore.log.admin = Class.create({
                 autoDestroy: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/log/component-json',
+                    url: Routing.generate('pimcore_admin_log_componentjson'),
                     reader: {
                         type: 'json',
                         rootProperty: 'components',
@@ -146,7 +146,7 @@ pimcore.log.admin = Class.create({
 
             var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
-                '/admin/log/show?',
+                Routing.generate('pimcore_admin_log_show'),
                 [
                     'id', 'pid', 'message', 'priority', 'timestamp', 'fileobject', 'component', 'relatedobject', 'source'
                 ],
@@ -206,7 +206,7 @@ pimcore.log.admin = Class.create({
                     flex: 70,
                     renderer: function(value, p, record){
                         if (value) {
-                            var url = '/admin/log/show-file-object?filePath=' + record.data.fileobject;
+                            var url = Routing.generate('pimcore_admin_log_showfileobject', {filePath: record.data.fileobject});
                             return Ext.String.format('<a href="{0}" target="_blank">{1}</a>', url,  t("open"));
                         }
 

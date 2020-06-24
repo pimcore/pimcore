@@ -95,7 +95,7 @@ class WidgetBroker
             'cache' => true,
             'cache_interval' => 'PT3H',
             'exclude_categories' => [
-                'About Piwik'
+                'About Piwik',
             ],
             'exclude_subcategories' => [],
         ]);
@@ -298,7 +298,7 @@ class WidgetBroker
             'method' => 'API.getWidgetMetadata',
             'format' => 'JSON',
             'idSite' => $config->getPiwikSiteId($configKey),
-            'token_auth' => $config->getReportToken()
+            'token_auth' => $config->getReportToken(),
         ];
 
         if (null !== $locale) {
@@ -318,7 +318,7 @@ class WidgetBroker
             'date' => 'yesterday',
             'disableLink' => 1,
             'idSite' => $config->getPiwikSiteId($configKey),
-            'token_auth' => $config->getReportToken()
+            'token_auth' => $config->getReportToken(),
         ], $urlParams);
 
         $params['moduleToWidgetize'] = $widget['module'];

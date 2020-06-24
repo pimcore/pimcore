@@ -16,12 +16,13 @@ pimcore.object.helpers.classTree = Class.create({
 
     showFieldName: false,
 
-    initialize: function (showFieldName, config) {
+    initialize: function (showFieldName, config, object) {
         if (showFieldName) {
             this.showFieldName = showFieldName;
         }
         // allow additional configuration options
         this.config = config || {};
+        this.object = object;
     },
 
     updateFilter: function (tree, filterField) {
@@ -152,7 +153,8 @@ pimcore.object.helpers.classTree = Class.create({
                         type: "layout",
                         allowDrag: false,
                         iconCls: "pimcore_icon_" + data[keys[i]].nodeType,
-                        text: text
+                        text: text,
+                        originalText: text
                     };
 
                     baseNode = tree.getRootNode().appendChild(baseNode);
@@ -210,7 +212,8 @@ pimcore.object.helpers.classTree = Class.create({
             expandable: initData.childs.length,
             allowDrag: false,
             iconCls: "pimcore_icon_" + type,
-            text: t(nodeLabel)
+            text: t(nodeLabel),
+            originalText: nodeLabel
         };
 
         newNode = this.appendChild(newNode);
@@ -273,7 +276,8 @@ pimcore.object.helpers.classTree = Class.create({
                 dataType: type,
                 iconCls: "pimcore_icon_" + type,
                 expanded: true,
-                brickDescriptor: brickDescriptor
+                brickDescriptor: brickDescriptor,
+                originalText: text
             };
 
             newNode = this.appendChild(newNode);

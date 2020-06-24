@@ -26,15 +26,20 @@ $object->save();
 The password field is basically the same as the input field with hidden input characters. It's column length can not be 
 changed, since passwords are always hashed using the selected algorithm.  
 
-If a string shorter than 32 characters is passed to the setter, it is assumed that it is a plain text password, so 
-Pimcore creates a Hash of that password and stores it in the database.
+If a string appears to already be hashed, either by detection by [password_get_info()](https://www.php.net/manual/en/function.password-get-info.php) or if it matches any common hash patterns below, then it will not be hashed again.
 
-If a string with 32 characters is passed to the setter, Pimcore assumes that a hash was given and stores the string 
-without further hashing in the database. 
-The maximum length of a plain text password is 30 characters.
+ - Hexadecimal string
+ - with legth of 32, 40, 48, 56, 64, 96, or 128 characters
 
-If `password_hash` is selected as algorithm, Pimcore checks with `password_get_info()` if given string is already 
-hashed - and does so if not. 
+These rules will detect the following hashes:
+ - MD2, MD4, MD5, RIPEMD-128, Snefru 128, Tiger/128, HAVAL128
+ - SHA-1, HAS-160, RIPEMD-160, Tiger/160, HAVAL160
+ - Tiger/192, HAVAL192
+ - SHA-224, HAVAL224
+ - SHA-256, BLAKE-256, GOST, GOST CryptoPro, HAVAL256, RIPEMD-256, Snefru 256
+ - SHA-384
+ - SHA-512, BLAKE-512, SWIFFT
+
 
 We recommend using `password_hash` as algorithm.
  

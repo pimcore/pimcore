@@ -373,7 +373,7 @@ class HeadLink extends CacheBusterAware
             }
 
             \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::VIEW_HELPER_HEAD_LINK, new GenericEvent($this, [
-                'item' => $item
+                'item' => $item,
             ]));
 
             $source = (string)($item->href ?? '');

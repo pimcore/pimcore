@@ -107,7 +107,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-delete-column-config", methods={"DELETE"})
+     * @Route("/grid-delete-column-config", name="pimcore_admin_asset_assethelper_griddeletecolumnconfig", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -138,7 +138,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-get-column-config", methods={"GET"})
+     * @Route("/grid-get-column-config", name="pimcore_admin_asset_assethelper_gridgetcolumnconfig", methods={"GET"})
      *
      * @param Request $request
      *
@@ -292,7 +292,7 @@ class AssetHelperController extends AdminController
             'onlyUnreferenced' => isset($gridConfig['onlyUnreferenced']) ? $gridConfig['onlyUnreferenced'] : false,
             'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false,
             'availableConfigs' => $availableConfigs,
-            'sharedConfigs' => $sharedConfigs
+            'sharedConfigs' => $sharedConfigs,
 
         ];
     }
@@ -382,7 +382,7 @@ class AssetHelperController extends AdminController
                         'key' => $sc . '~system',
                         'type' => 'system',
                         'label' => $sc,
-                        'position' => $count];
+                        'position' => $count, ];
                     $count++;
                 }
             }
@@ -392,7 +392,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @Route("/prepare-helper-column-configs", methods={"POST"})
+     * @Route("/prepare-helper-column-configs", name="pimcore_admin_asset_assethelper_preparehelpercolumnconfigs", methods={"POST"})
      *
      * @param Request $request
      *
@@ -426,7 +426,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-mark-favourite-column-config", methods={"POST"})
+     * @Route("/grid-mark-favourite-column-config", name="pimcore_admin_asset_assethelper_gridmarkfavouritecolumnconfig", methods={"POST"})
      *
      * @param Request $request
      *
@@ -477,7 +477,7 @@ class AssetHelperController extends AdminController
     {
         $result = [
             'sharedUserIds' => [],
-            'sharedRoleIds' => []
+            'sharedRoleIds' => [],
         ];
 
         $db = Db::get();
@@ -501,7 +501,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-save-column-config", methods={"POST"})
+     * @Route("/grid-save-column-config", name="pimcore_admin_asset_assethelper_gridsavecolumnconfig", methods={"POST"})
      *
      * @param Request $request
      *
@@ -628,7 +628,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-export-jobs", methods={"GET"})
+     * @Route("/get-export-jobs", name="pimcore_admin_asset_assethelper_getexportjobs", methods={"GET"})
      *
      * @param Request $request
      * @param GridHelperService $gridHelperService
@@ -653,7 +653,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @Route("/do-export", methods={"POST"})
+     * @Route("/do-export", name="pimcore_admin_asset_assethelper_doexport", methods={"POST"})
      *
      * @param Request $request
      * @param LocaleServiceInterface $localeService
@@ -795,7 +795,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @Route("/download-csv-file", methods={"GET"})
+     * @Route("/download-csv-file", name="pimcore_admin_asset_assethelper_downloadcsvfile", methods={"GET"})
      *
      * @param Request $request
      *
@@ -818,7 +818,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @Route("/download-xlsx-file", methods={"GET"})
+     * @Route("/download-xlsx-file", name="pimcore_admin_asset_assethelper_downloadxlsxfile", methods={"GET"})
      *
      * @param Request $request
      *
@@ -851,7 +851,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-metadata-for-column-config", methods={"GET"})
+     * @Route("/get-metadata-for-column-config", name="pimcore_admin_asset_assethelper_getmetadataforcolumnconfig", methods={"GET"})
      *
      * @param Request $request
      *
@@ -887,7 +887,7 @@ class AssetHelperController extends AdminController
                     'subtype' => $item->getTargetSubtype(),
                     'datatype' => 'data',
                     'fieldtype' => $item->getType(),
-                    'config' => $item->getConfig()
+                    'config' => $item->getConfig(),
                 ];
             }
         }
@@ -910,7 +910,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-batch-jobs", methods={"GET"})
+     * @Route("/get-batch-jobs", name="pimcore_admin_asset_assethelper_getbatchjobs", methods={"GET"})
      *
      * @param Request $request
      *
@@ -931,7 +931,7 @@ class AssetHelperController extends AdminController
     }
 
     /**
-     * @Route("/batch", methods={"PUT"})
+     * @Route("/batch", name="pimcore_admin_asset_assethelper_batch", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -982,7 +982,7 @@ class AssetHelperController extends AdminController
                                 'name' => $name,
                                 'language' => $language,
                                 'type' => 'input',
-                                'data' => $value
+                                'data' => $value,
                             ];
                             $dirty = true;
                         } else {
@@ -993,7 +993,7 @@ class AssetHelperController extends AdminController
                                     'name' => $name,
                                     'language' => $language,
                                     'type' => $predefined->getType(),
-                                    'data' => $value
+                                    'data' => $value,
                                 ];
                                 $dirty = true;
                             }

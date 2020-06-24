@@ -123,7 +123,7 @@ class QueryBuilder
         self::ORDER => [],
         self::LIMIT_COUNT => null,
         self::LIMIT_OFFSET => null,
-        self::FOR_UPDATE => false
+        self::FOR_UPDATE => false,
     ];
 
     /**
@@ -147,7 +147,7 @@ class QueryBuilder
      */
     protected static $_unionTypes = [
         self::SQL_UNION,
-        self::SQL_UNION_ALL
+        self::SQL_UNION_ALL,
     ];
 
     /**
@@ -991,7 +991,7 @@ class QueryBuilder
                 'joinType' => $type,
                 'schema' => $schema,
                 'tableName' => $tableName,
-                'joinCondition' => $cond
+                'joinCondition' => $cond,
             ];
             while ($tmpFromParts) {
                 $currentCorrelationName = key($tmpFromParts);

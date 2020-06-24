@@ -1185,11 +1185,11 @@
 }
 
 .pimcore_icon_export{
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/internal.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/external.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_import{
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/external.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/internal.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_clone  {
@@ -1771,6 +1771,10 @@
 
 .pimcore_material_icon_info {
     background: url(/bundles/pimcoreadmin/img/material-icons/outline-info-24px.svg) center center no-repeat;
+}
+
+.pimcore_material_fieldlookup {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-search-24px.svg) center center no-repeat;
 }
 
 .pimcore_material_icon_translation {

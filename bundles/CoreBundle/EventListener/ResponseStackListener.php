@@ -43,7 +43,7 @@ class ResponseStackListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::RESPONSE => ['onKernelResponse', 24]
+            KernelEvents::RESPONSE => ['onKernelResponse', 24],
         ];
     }
 

@@ -143,14 +143,14 @@ class Dao extends Model\Dao\AbstractDao
 
         if (is_string($value) || is_int($value) || is_null($value)) {
             $class->data = ['type' => 'simple',
-                'value' => $value];
+                'value' => $value, ];
         } elseif ($value instanceof \DateTimeInterface) {
             $class->data = ['type' => 'simple',
-                'value' => $value->format('Y-m-d H:i')];
+                'value' => $value->format('Y-m-d H:i'), ];
         } elseif (is_object($value) && method_exists($value, 'getId')) {
             $class->data = ['type' => 'object',
                 'objectId' => $value->getId(),
-                'objectClass' => get_class($value)];
+                'objectClass' => get_class($value), ];
         } elseif (is_array($value)) {
             foreach ($value as $entryKey => $entryValue) {
                 $class->children[] = self::prepareLoggingData($entryKey, $entryValue);

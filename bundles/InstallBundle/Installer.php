@@ -101,7 +101,7 @@ class Installer
         'install_classes' => 'Installing classes ...',
         'install_custom_layouts' => 'Installing custom layouts ...',
         'migrations' => 'Mark existing migrations as done ...',
-        'complete' => 'Install complete!'
+        'complete' => 'Install complete!',
     ];
 
     public function __construct(
@@ -274,14 +274,14 @@ class Installer
                 $dbConfig,
                 [
                     'username' => $adminUser,
-                    'password' => $adminPass
+                    'password' => $adminPass,
                 ]
             );
         } catch (\Throwable $e) {
             $this->logger->error($e);
 
             return [
-                $e->getMessage()
+                $e->getMessage(),
             ];
         }
     }
@@ -323,7 +323,7 @@ class Installer
         $mysqlSslCertPath = $params['mysql_ssl_cert_path'];
         if (!empty($mysqlSslCertPath)) {
             $dbConfig['driverOptions'] = [
-                PDO::MYSQL_ATTR_SSL_CA => $mysqlSslCertPath
+                PDO::MYSQL_ATTR_SSL_CA => $mysqlSslCertPath,
             ];
         }
 
@@ -348,7 +348,7 @@ class Installer
             'doctrine' => [
                 'dbal' => [
                   'connections' => [
-                      'default' => $dbConfig
+                      'default' => $dbConfig,
                   ],
                 ],
             ],
@@ -410,7 +410,7 @@ class Installer
                 Console::getPhpCli(),
                 PIMCORE_PROJECT_ROOT . '/bin/console',
                 'pimcore:deployment:classes-rebuild',
-                '-c'
+                '-c',
             ];
 
             $partsBuilder = new PartsBuilder($arguments);
@@ -460,7 +460,7 @@ class Installer
                 Console::getPhpCli(),
                 PIMCORE_PROJECT_ROOT . '/bin/console',
                 'pimcore:deployment:custom-layouts-rebuild',
-                '-c'
+                '-c',
             ];
 
             $partsBuilder = new PartsBuilder($arguments);
@@ -511,7 +511,7 @@ class Installer
             $ansi = null !== $io && $io->isDecorated();
 
             $process = $assetsInstaller->install([
-                'ansi' => $ansi
+                'ansi' => $ansi,
             ]);
 
             if (null !== $io) {
@@ -631,7 +631,7 @@ class Installer
     {
         $defaultConfig = [
             'username' => 'admin',
-            'password' => md5(microtime())
+            'password' => md5(microtime()),
         ];
 
         $settings = array_replace_recursive($defaultConfig, $config);
@@ -646,7 +646,7 @@ class Installer
             'parentId' => 0,
             'username' => $settings['username'],
             'password' => \Pimcore\Tool\Authentication::getPasswordHash($settings['username'], $settings['password']),
-            'active' => true
+            'active' => true,
         ]);
         $user->setAdmin(true);
         $user->save();
@@ -705,7 +705,7 @@ class Installer
             'creationDate' => time(),
             'modificationDate' => time(),
             'userOwner' => 1,
-            'userModification' => 1
+            'userModification' => 1,
         ]);
         $db->insert('documents', [
             'id' => 1,
@@ -718,7 +718,7 @@ class Installer
             'creationDate' => time(),
             'modificationDate' => time(),
             'userOwner' => 1,
-            'userModification' => 1
+            'userModification' => 1,
         ]);
         $db->insert('documents_page', [
             'id' => 1,
@@ -726,7 +726,7 @@ class Installer
             'action' => 'default',
             'template' => '',
             'title' => '',
-            'description' => ''
+            'description' => '',
         ]);
         $db->insert('objects', [
             'o_id' => 1,
@@ -739,14 +739,14 @@ class Installer
             'o_creationDate' => time(),
             'o_modificationDate' => time(),
             'o_userOwner' => 1,
-            'o_userModification' => 1
+            'o_userModification' => 1,
         ]);
 
         $db->insert('users', [
             'parentId' => 0,
             'name' => 'system',
             'admin' => 1,
-            'active' => 1
+            'active' => 1,
         ]);
         $db->update('users', ['id' => 0], ['name' => 'system']);
 
@@ -795,7 +795,7 @@ class Installer
             ['key' => 'web2print_settings'],
             ['key' => 'workflow_details'],
             ['key' => 'notifications'],
-            ['key' => 'notifications_send']
+            ['key' => 'notifications_send'],
         ];
 
         foreach ($userPermissions as $up) {

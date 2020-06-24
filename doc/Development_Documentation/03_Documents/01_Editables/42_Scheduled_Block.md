@@ -4,10 +4,10 @@
 
 The scheduled block element allows to manage scheduled content within an editable. 
 Basically the scheduled block is very similar to the standard [block](./06_Block.md) editable.
-You can configure on or multiple sub editables that are repeated multiple times as block items. 
+You can configure one or multiple sub editables that are repeated multiple times as block items. 
 The difference is, that within the scheduled block each block item has a specific timestamp and in 
 the frontend only one block item - the one with the corresponding timestamp - is displayed at a time 
-(not all within a loop). 
+(not all within a loop).
 
 In editmode, additional block items can be added and their timestamp can be configured. 
 

@@ -31,8 +31,8 @@ class DeviceType extends AbstractType
             'choices' => [
                 'Desktop' => 'desktop',
                 'Tablet' => 'tablet',
-                'Mobile' => 'mobile'
-            ]
+                'Mobile' => 'mobile',
+            ],
         ]);
 
         $builder->add('operatingSystem', ChoiceType::class, [
@@ -44,7 +44,7 @@ class DeviceType extends AbstractType
                 'Linux' => 'linux',
                 'Android' => 'android',
                 'iOS' => 'ios',
-            ]
+            ],
         ]);
 
         $builder->add('browser', ChoiceType::class, [
@@ -56,7 +56,7 @@ class DeviceType extends AbstractType
                 'Google Chrome' => 'chrome',
                 'Safari' => 'safari',
                 'Opera' => 'opera',
-            ]
+            ],
         ]);
     }
 }

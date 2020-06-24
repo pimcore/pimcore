@@ -112,8 +112,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param null|DataObject\Concrete $object
+     * @param array $params
      *
      * @return string
      */
@@ -180,7 +180,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $resultElement[$elementName] = [
                         'name' => $blockElement->getName(),
                         'type' => $blockElement->getType(),
-                        'data' => $dataForResource
+                        'data' => $dataForResource,
                     ];
                 }
                 $result[] = $resultElement;
@@ -237,7 +237,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                                 'fieldname' => $this->getName(),
                                 'index' => $count,
                                 'containerKey' => $this->getName(),
-                                'classId' => $object ? $object->getClassId() : null]);
+                                'classId' => $object ? $object->getClassId() : null, ]);
                             $blockElementRaw['data'] = $data;
                         }
                     }
@@ -278,7 +278,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -309,7 +309,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 }
                 $result[] = [
                     'oIndex' => $idx,
-                    'data' => $resultElement
+                    'data' => $resultElement,
                 ];
             }
         }
@@ -369,8 +369,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                                 'fieldname' => $this->getName(),
                                 'index' => $count,
                                 'oIndex' => $oIndex,
-                                'classId' => $object->getClassId()
-                            ]
+                                'classId' => $object->getClassId(),
+                            ],
                         ]
                     );
 
@@ -618,17 +618,13 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     }
 
     /**
-     * @param DataObject\Data\ExternalImage $data
+     * @param DataObject\Data\BlockElement[][]|null $data
      *
      * @return bool
      */
     public function isEmpty($data)
     {
-        if (is_null($data) || count($data) == 0) {
-            return true;
-        }
-
-        return false;
+        return is_null($data) || count($data) === 0;
     }
 
     /**

@@ -49,7 +49,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
     getData: function () {
         var options = this.options || {};
         Ext.Ajax.request({
-            url: "/admin/object/get-folder",
+            url: Routing.generate('pimcore_admin_dataobject_dataobject_getfolder'),
             params: {id: this.id},
             ignoreErrors: options.ignoreNotFoundError,
             success: this.getDataComplete.bind(this),
@@ -109,7 +109,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
 
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
-                url: "/admin/element/unlock-element",
+                url: Routing.generate('pimcore_admin_element_unlockelement'),
                 method: 'PUT',
                 params: {
                     id: this.id,
@@ -344,7 +344,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
         this.tab.mask();
 
         Ext.Ajax.request({
-            url: '/admin/object/save-folder?task=' + task,
+            url: Routing.generate('pimcore_admin_dataobject_dataobject_savefolder', {task: task}),
             method: "PUT",
             params: this.getSaveData(),
             success: function (response) {

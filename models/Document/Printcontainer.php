@@ -56,7 +56,7 @@ class Printcontainer extends Document\PrintAbstract
             'settings' => $this->isAllowed('settings'),
             'rename' => $this->isAllowed('rename'),
             'publish' => $this->isAllowed('publish'),
-            'create' => $this->isAllowed('create')
+            'create' => $this->isAllowed('create'),
         ];
 
         return $tmpDocument;

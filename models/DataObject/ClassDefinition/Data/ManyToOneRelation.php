@@ -61,7 +61,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public $queryColumnType = [
         'id' => 'int(11)',
-        'type' => "enum('document','asset','object')"
+        'type' => "enum('document','asset','object')",
     ];
 
     /**
@@ -217,7 +217,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             return [[
                 'dest_id' => $id,
                 'type' => $type,
-                'fieldname' => $this->getName()
+                'fieldname' => $this->getName(),
             ]];
         }
 
@@ -235,7 +235,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
         $result = [
             'dirty' => false,
-            'data' => null
+            'data' => null,
         ];
 
         if (!empty($data['dest_id']) && !empty($data['type'])) {
@@ -254,7 +254,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param Asset|Document|DataObject\AbstractObject $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -287,7 +287,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
                 'path' => $data->getRealFullPath(),
                 'subtype' => $data->getType(),
                 'type' => Element\Service::getElementType($data),
-                'published' => Element\Service::isPublished($data)
+                'published' => Element\Service::isPublished($data),
             ];
 
             return $r;
@@ -300,7 +300,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Asset|Document|DataObject\AbstractObject|null
@@ -316,7 +316,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     /**
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Asset|Document|DataObject\AbstractObject
@@ -471,7 +471,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             $elementType = Element\Service::getElementType($data);
             $dependencies[$elementType . '_' . $data->getId()] = [
                 'id' => $data->getId(),
-                'type' => $elementType
+                'type' => $elementType,
             ];
         }
 
@@ -495,7 +495,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             return [
                 'type' => Element\Service::getType($data),
                 'subtype' => $data->getType(),
-                'id' => $data->getId()
+                'id' => $data->getId(),
             ];
         }
 
@@ -677,7 +677,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -690,14 +690,14 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
 
             return [
                 'type' => $type,
-                'id' => $id
+                'id' => $id,
             ];
         }
     }
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -746,7 +746,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         if ($data instanceof Element\ElementInterface) {
             $data = [
                 'id' => $data->getId(),
-                'type' => Element\Service::getElementType($data)
+                'type' => Element\Service::getElementType($data),
             ];
         }
 

@@ -566,7 +566,7 @@ abstract class Adapter
 
         return [
             'width' => $this->getWidth() * $factor,
-            'height' => $this->getHeight() * $factor
+            'height' => $this->getHeight() * $factor,
         ];
     }
 

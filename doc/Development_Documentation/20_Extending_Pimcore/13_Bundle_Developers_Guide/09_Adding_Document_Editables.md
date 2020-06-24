@@ -53,7 +53,7 @@ the function `getType()`. If you extend from other bundles tags make sure your b
 // src/Resources/public/js/pimcore/document/tags/markdown.js
 
 pimcore.registerNS("pimcore.document.tags.markdown");
-pimcore.document.tags.markdown = Class.create(pimcore.document.tags.markdown, {
+pimcore.document.tags.markdown = Class.create(pimcore.document.tags.textarea, {
     getType: function () {
         return "markdown";
     }

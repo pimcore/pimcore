@@ -1,5 +1,9 @@
 # Upgrade Notes
 
+## 6.7.0
+- [Ecommerce][IndexService] Elastic Search worker does not use mockup cache anymore. Now mockup objects are build directly based on information in response of ES response (_source flag). Therefore `AbstractElasticSearch` Worker does not extend `AbstractMockupCacheWorker` anymore. 
+- Rules regarding default values in combination with inheritance enabled have been clarified. Read [this](../../05_Objects/01_Object_Classes/01_Data_Types/README.md) for details.
+
 ## 6.6.4
 - If you are using the specific settings 'max. items' option for ObjectBricks & Fieldcollections on your class definition, then API will validate the max limit on save() calls from now on.
 
@@ -30,7 +34,7 @@ If you're using pre-generation for your thumbnails, don't forget to run the comm
                 changePublishedState: save_version
     ```
 ## 6.5.2
-- Passing multiple relations(w/o multiple assignments check) in data objects is deprecated and will throw exception in Pimcore 7.
+- Passing multiple relations (w/o multiple assignments check) in data objects is deprecated and will throw exception in Pimcore 7.
 
 ## 6.5.0
 
@@ -54,10 +58,10 @@ foreach ($list as $class) {
 ```
 
 - [Data Objects] Relations are always lazy-loaded from now on
-  see https://github.com/pimcore/pimcore/issues/5772
+  see [5772](https://github.com/pimcore/pimcore/issues/5772)
 - [Data Objects] Relation Types DB Caching Layer is always turned on now. Removed support for non-cached alternative. 
-  All rows of the affected `object_relation_` table will be fetched in on go and cached together we with the object. 
-  see https://github.com/pimcore/pimcore/issues/5427
+  All rows of the affected `object_relation_` table will be fetched in one go and cached together with the object. 
+  see [5427](https://github.com/pimcore/pimcore/issues/5427)
 - [Data Objects] If you have custom lazy-loaded datatypes **not** extending `Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations`,
   implement the `Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface`
   The `method_exists('getLazyLoading')` calls will be removed in Pimcore 7.

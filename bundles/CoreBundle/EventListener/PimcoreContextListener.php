@@ -59,7 +59,7 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
         return [
             // run after router to be able to match the _route attribute
             // TODO check if this is early enough
-            KernelEvents::REQUEST => ['onKernelRequest', 24]
+            KernelEvents::REQUEST => ['onKernelRequest', 24],
         ];
     }
 
@@ -73,11 +73,11 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
             if ($context) {
                 $this->logger->debug('Resolved pimcore context for path {path} to {context}', [
                     'path' => $request->getPathInfo(),
-                    'context' => $context
+                    'context' => $context,
                 ]);
             } else {
                 $this->logger->debug('Could not resolve a pimcore context for path {path}', [
-                    'path' => $request->getPathInfo()
+                    'path' => $request->getPathInfo(),
                 ]);
             }
 

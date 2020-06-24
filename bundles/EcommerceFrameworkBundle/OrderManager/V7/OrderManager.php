@@ -103,7 +103,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
 
         $event = new OrderManagerEvent($cart, $order, $this, [
             'cartIsLockedDueToPayments' => $cartIsLockedDueToPayments,
-            'orderNeedsUpdate' => $orderNeedsUpdate
+            'orderNeedsUpdate' => $orderNeedsUpdate,
         ]);
         $this->eventDispatcher->dispatch(OrderManagerEvents::PRE_UPDATE_ORDER, $event);
 

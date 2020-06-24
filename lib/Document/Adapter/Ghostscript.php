@@ -53,7 +53,7 @@ class Ghostscript extends Adapter
     {
 
         // it's also possible to pass a path or filename
-        if (preg_match("/\.?pdf$/", $fileType)) {
+        if (preg_match("/\.?pdf$/i", $fileType)) {
             return true;
         }
 
@@ -125,7 +125,7 @@ class Ghostscript extends Adapter
             $path = $this->path;
         }
 
-        if (preg_match("/\.?pdf$/", $path)) { // only PDF's are supported
+        if (preg_match("/\.?pdf$/i", $path)) { // only PDF's are supported
             return $path;
         }
 

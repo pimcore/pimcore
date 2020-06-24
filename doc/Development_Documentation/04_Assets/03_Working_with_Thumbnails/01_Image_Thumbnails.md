@@ -223,7 +223,7 @@ This is a special functionality to allow embedding high resolution (ppi/dpi) ima
 The following is only necessary in special use-cases like Web-to-Print, in typical web-based cases, Pimcore 
 automatically adds the `srcset` attribute to `<img>` and `<picture>` tags automatically, so no manual work is necessary. 
 
-####Use in the Thumbnail Configuration: 
+#### Use in the Thumbnail Configuration: 
 ![High Resolution](../../img/thumbnails3.png)
 The above configuration will generate a thumbnail with 500px width. 
 

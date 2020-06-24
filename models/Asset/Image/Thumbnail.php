@@ -67,7 +67,7 @@ class Thumbnail
         if ($this->hasListeners(FrontendEvents::ASSET_IMAGE_THUMBNAIL)) {
             $event = new GenericEvent($this, [
                 'filesystemPath' => $fsPath,
-                'frontendPath' => $path
+                'frontendPath' => $path,
             ]);
             \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
             $path = $event->getArgument('frontendPath');
@@ -136,7 +136,7 @@ class Thumbnail
         if ($this->hasListeners(AssetEvents::IMAGE_THUMBNAIL)) {
             \Pimcore::getEventDispatcher()->dispatch(AssetEvents::IMAGE_THUMBNAIL, new GenericEvent($this, [
                 'deferred' => $deferred,
-                'generated' => $generated
+                'generated' => $generated,
             ]));
         }
     }
@@ -204,7 +204,7 @@ class Thumbnail
         $w3cImgAttributes = ['alt', 'align', 'border', 'height', 'hspace', 'ismap', 'longdesc', 'usemap',
             'vspace', 'width', 'class', 'dir', 'id', 'lang', 'style', 'title', 'xml:lang', 'onmouseover',
             'onabort', 'onclick', 'ondblclick', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseup',
-            'onkeydown', 'onkeypress', 'onkeyup', 'itemprop', 'itemscope', 'itemtype'];
+            'onkeydown', 'onkeypress', 'onkeyup', 'itemprop', 'itemscope', 'itemtype', ];
 
         $customAttributes = [];
         if (isset($options['attributes']) && is_array($options['attributes'])) {

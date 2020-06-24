@@ -45,7 +45,7 @@ class LegacyTemplatePass implements CompilerPassInterface
             $definition
                 ->setClass(LegacyTemplateListener::class)
                 ->addMethodCall('setTemplateEngine', [
-                    new Reference('templating')
+                    new Reference('templating'),
                 ]);
         }
     }

@@ -81,7 +81,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $queryColumnType = [
         'value' => 'double',
-        'unit' => 'bigint(20)'
+        'unit' => 'bigint(20)',
     ];
 
     /**
@@ -91,7 +91,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $columnType = [
         'value' => 'double',
-        'unit' => 'bigint(20)'
+        'unit' => 'bigint(20)',
     ];
 
     /**
@@ -223,7 +223,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param Model\DataObject\Data\QuantityValue $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -235,13 +235,13 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         if ($data instanceof Model\DataObject\Data\QuantityValue) {
             return [
                 $this->getName() . '__value' => $data->getValue(),
-                $this->getName() . '__unit' => $data->getUnitId()
+                $this->getName() . '__unit' => $data->getUnitId(),
             ];
         }
 
         return [
             $this->getName() . '__value' => null,
-            $this->getName() . '__unit' => null
+            $this->getName() . '__unit' => null,
         ];
     }
 
@@ -249,7 +249,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Model\DataObject\Data\QuantityValue|null
@@ -273,7 +273,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param Model\DataObject\Data\QuantityValue $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -287,7 +287,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @see Data::getDataForEditmode
      *
      * @param float $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -297,7 +297,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         if ($data instanceof Model\DataObject\Data\QuantityValue) {
             return [
                 'value' => $data->getValue(),
-                'unit' => $data->getUnitId()
+                'unit' => $data->getUnitId(),
             ];
         }
 
@@ -404,7 +404,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @abstract
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -463,7 +463,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             return [
                 'value' => $data->getValue(),
                 'unit' => $unit ? $unit->getId() : null,
-                'unitAbbr' => $unitAbbreviation
+                'unitAbbr' => $unitAbbreviation,
             ];
         }
 
@@ -475,7 +475,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @deprecated
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return array|null
@@ -488,7 +488,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             return [
                 'value' => $data->getValue(),
                 'unit' => $data->getUnitId(),
-                'unitAbbreviation' => is_object($data->getUnit()) ? $data->getUnit()->getAbbreviation() : ''
+                'unitAbbreviation' => is_object($data->getUnit()) ? $data->getUnit()->getAbbreviation() : '',
             ];
         }
 
@@ -501,7 +501,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @deprecated
      *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -537,7 +537,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -547,7 +547,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         if (($params['blockmode'] ?? false) && $value instanceof Model\DataObject\Data\QuantityValue) {
             return [
                 'value' => $value->getValue(),
-                'value2' => $value->getUnitId()
+                'value2' => $value->getUnitId(),
             ];
         } elseif ($params['simple'] ?? false) {
             if (is_array($value)) {
@@ -559,12 +559,12 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             if (is_array($value)) {
                 return [
                     'value' => $value[$this->getName() . '__value'],
-                    'value2' => $value[$this->getName() . '__unit']
+                    'value2' => $value[$this->getName() . '__unit'],
                 ];
             } else {
                 return [
                     'value' => null,
-                    'value2' => null
+                    'value2' => null,
                 ];
             }
         }
@@ -572,7 +572,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed

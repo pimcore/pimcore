@@ -83,7 +83,7 @@ class IndexController extends AdminController implements EventedControllerInterf
     ) {
         $user = $this->getAdminUser();
         $view = new ViewModel([
-            'config' => $config
+            'config' => $config,
         ]);
 
         $this
@@ -104,7 +104,7 @@ class IndexController extends AdminController implements EventedControllerInterf
 
             $user->save();
             $settings->getParameters()->add([
-                'twoFactorSetupRequired' => true
+                'twoFactorSetupRequired' => true,
             ]);
         }
 
@@ -149,7 +149,7 @@ class IndexController extends AdminController implements EventedControllerInterf
                     'cpu' => true,
                     'virtualization' => true,
                     'distro' => true,
-                ]
+                ],
             ]);
             $linfo->scan();
             $systemData = $linfo->getInfo();
@@ -259,7 +259,7 @@ class IndexController extends AdminController implements EventedControllerInterf
                 $this->getAdminUser(),
                 $config['general']['valid_languages'],
                 true
-            )
+            ),
         ]);
 
         // flags
@@ -282,7 +282,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             'asset_tree_paging_limit' => $config['assets']['tree_paging_limit'],
             'document_tree_paging_limit' => $config['documents']['tree_paging_limit'],
             'object_tree_paging_limit' => $config['objects']['tree_paging_limit'],
-            'maxmind_geoip_installed' => (bool) $this->getParameter('pimcore.geoip.db_file')
+            'maxmind_geoip_installed' => (bool) $this->getParameter('pimcore.geoip.db_file'),
         ]);
 
         $dashboardHelper = new \Pimcore\Helper\Dashboard($user);
@@ -330,7 +330,7 @@ class IndexController extends AdminController implements EventedControllerInterf
 
         $settings->getParameters()->add([
             'google_analytics_enabled' => (bool)$siteConfigProvider->isSiteReportingConfigured(),
-            'google_webmastertools_enabled' => (bool)Google\Webmastertools::isConfigured()
+            'google_webmastertools_enabled' => (bool)Google\Webmastertools::isConfigured(),
         ]);
     }
 

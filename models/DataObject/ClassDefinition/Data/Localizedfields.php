@@ -124,7 +124,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      * @see Data::getDataForEditmode
      *
      * @param DataObject\Localizedfield $localizedField
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -285,7 +285,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Localizedfield
@@ -407,7 +407,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                     $fd = $this->getFieldDefinition($fieldname);
                     if ($fd) {
                         $forSearchIndex = $fd->getDataForSearchIndex($lfData, [
-                            'injectedData' => $lData
+                            'injectedData' => $lData,
                         ]);
                         if ($forSearchIndex) {
                             $dataString .= $forSearchIndex . ' ';
@@ -423,7 +423,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @deprecated
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -1440,7 +1440,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -1478,7 +1478,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed

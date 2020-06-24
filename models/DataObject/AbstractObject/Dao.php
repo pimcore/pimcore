@@ -73,7 +73,7 @@ class Dao extends Model\Element\Dao
     {
         $this->db->insert('objects', [
             'o_key' => $this->model->getKey(),
-            'o_path' => $this->model->getRealPath()
+            'o_path' => $this->model->getRealPath(),
         ]);
         $this->model->setId($this->db->lastInsertId());
 
@@ -125,7 +125,7 @@ class Dao extends Model\Element\Dao
             $this->db->insert('tree_locks', [
                 'id' => $this->model->getId(),
                 'type' => 'object',
-                'locked' => $this->model->getLocked()
+                'locked' => $this->model->getLocked(),
             ]);
         }
     }
@@ -143,9 +143,9 @@ class Dao extends Model\Element\Dao
     public function updateWorkspaces()
     {
         $this->db->update('users_workspaces_object', [
-            'cpath' => $this->model->getRealFullPath()
+            'cpath' => $this->model->getRealFullPath(),
         ], [
-            'cid' => $this->model->getId()
+            'cid' => $this->model->getId(),
         ]);
     }
 
@@ -587,9 +587,9 @@ class Dao extends Model\Element\Dao
     public function saveIndex($index)
     {
         $this->db->update('objects', [
-            'o_index' => $index
+            'o_index' => $index,
         ], [
-            'o_id' => $this->model->getId()
+            'o_id' => $this->model->getId(),
         ]);
     }
 

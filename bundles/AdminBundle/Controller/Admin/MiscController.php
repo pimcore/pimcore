@@ -20,6 +20,7 @@ use Pimcore\Controller\Config\ControllerDataProvider;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Db;
 use Pimcore\File;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
 use Pimcore\Translation\Translator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -36,7 +37,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class MiscController extends AdminController
 {
     /**
-     * @Route("/get-available-modules", methods={"GET"})
+     * @Route("/get-available-modules", name="pimcore_admin_misc_getavailablemodules", methods={"GET"})
      *
      * @param ControllerDataProvider $provider
      *
@@ -49,19 +50,19 @@ class MiscController extends AdminController
 
         $result = array_map(function (BundleInterface $bundle) {
             return [
-                'name' => $bundle->getName()
+                'name' => $bundle->getName(),
             ];
         }, $bundles);
 
         sort($result);
 
         return $this->adminJson([
-            'data' => $result
+            'data' => $result,
         ]);
     }
 
     /**
-     * @Route("/get-available-controllers", methods={"GET"})
+     * @Route("/get-available-controllers", name="pimcore_admin_misc_getavailablecontrollers", methods={"GET"})
      *
      * @param Request $request
      * @param ControllerDataProvider $provider
@@ -76,19 +77,19 @@ class MiscController extends AdminController
 
         $result = array_map(function ($controller) {
             return [
-                'name' => $controller
+                'name' => $controller,
             ];
         }, $controllers);
 
         sort($result);
 
         return $this->adminJson([
-            'data' => $result
+            'data' => $result,
         ]);
     }
 
     /**
-     * @Route("/get-available-actions", methods={"GET"})
+     * @Route("/get-available-actions", name="pimcore_admin_misc_getavailableactions", methods={"GET"})
      *
      * @param Request $request
      * @param ControllerDataProvider $provider
@@ -112,19 +113,19 @@ class MiscController extends AdminController
 
         $result = array_map(function ($action) {
             return [
-                'name' => $action
+                'name' => $action,
             ];
         }, $actions);
 
         sort($result);
 
         return $this->adminJson([
-            'data' => $result
+            'data' => $result,
         ]);
     }
 
     /**
-     * @Route("/get-available-templates", methods={"GET"})
+     * @Route("/get-available-templates", name="pimcore_admin_misc_getavailabletemplates", methods={"GET"})
      *
      * @param ControllerDataProvider $provider
      *
@@ -136,19 +137,19 @@ class MiscController extends AdminController
 
         $result = array_map(function ($template) {
             return [
-                'path' => $template
+                'path' => $template,
             ];
         }, $templates);
 
         sort($result);
 
         return $this->adminJson([
-            'data' => $result
+            'data' => $result,
         ]);
     }
 
     /**
-     * @Route("/json-translations-system", methods={"GET"})
+     * @Route("/json-translations-system", name="pimcore_admin_misc_jsontranslationssystem", methods={"GET"})
      *
      * @param Request $request
      *
@@ -180,7 +181,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/script-proxy", methods={"GET"})
+     * @Route("/script-proxy", name="pimcore_admin_misc_scriptproxy", methods={"GET"})
      *
      * @param Request $request
      *
@@ -227,7 +228,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/admin-css", methods={"GET"})
+     * @Route("/admin-css", name="pimcore_admin_misc_admincss", methods={"GET"})
      *
      * @param Request $request
      * @param Config $config
@@ -246,7 +247,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/ping", methods={"GET"})
+     * @Route("/ping", name="pimcore_admin_misc_ping", methods={"GET"})
      *
      * @param Request $request
      *
@@ -255,14 +256,14 @@ class MiscController extends AdminController
     public function pingAction(Request $request)
     {
         $response = [
-            'success' => true
+            'success' => true,
         ];
 
         return $this->adminJson($response);
     }
 
     /**
-     * @Route("/available-languages", methods={"GET"})
+     * @Route("/available-languages", name="pimcore_admin_misc_availablelanguages", methods={"GET"})
      *
      * @param Request $request
      *
@@ -278,7 +279,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/get-valid-filename", methods={"GET"})
+     * @Route("/get-valid-filename", name="pimcore_admin_misc_getvalidfilename", methods={"GET"})
      *
      * @param Request $request
      *
@@ -287,14 +288,14 @@ class MiscController extends AdminController
     public function getValidFilenameAction(Request $request)
     {
         return $this->adminJson([
-            'filename' => \Pimcore\Model\Element\Service::getValidKey($request->get('value'), $request->get('type'))
+            'filename' => \Pimcore\Model\Element\Service::getValidKey($request->get('value'), $request->get('type')),
         ]);
     }
 
     /* FILEEXPLORER */
 
     /**
-     * @Route("/fileexplorer-tree", methods={"GET"})
+     * @Route("/fileexplorer-tree", name="pimcore_admin_misc_fileexplorertree", methods={"GET"})
      *
      * @param Request $request
      *
@@ -321,7 +322,7 @@ class MiscController extends AdminController
                     'id' => '/fileexplorer' . str_replace(PIMCORE_PROJECT_ROOT, '', $file),
                     'text' => $item,
                     'leaf' => true,
-                    'writeable' => is_writable($file)
+                    'writeable' => is_writable($file),
                 ];
 
                 if (is_dir($file)) {
@@ -343,7 +344,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/fileexplorer-content", methods={"GET"})
+     * @Route("/fileexplorer-content", name="pimcore_admin_misc_fileexplorercontent", methods={"GET"})
      *
      * @param Request $request
      *
@@ -370,12 +371,12 @@ class MiscController extends AdminController
             'content' => $content,
             'writeable' => $writeable,
             'filename' => basename($file),
-            'path' => preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', '', $file)
+            'path' => preg_replace('@^' . preg_quote(PIMCORE_PROJECT_ROOT, '@') . '@', '', $file),
         ]);
     }
 
     /**
-     * @Route("/fileexplorer-content-save", methods={"PUT"})
+     * @Route("/fileexplorer-content-save", name="pimcore_admin_misc_fileexplorercontentsave", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -397,12 +398,12 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
     /**
-     * @Route("/fileexplorer-add", methods={"POST"})
+     * @Route("/fileexplorer-add", name="pimcore_admin_misc_fileexploreradd", methods={"POST"})
      *
      * @param Request $request
      *
@@ -433,12 +434,12 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
     /**
-     * @Route("/fileexplorer-add-folder", methods={"POST"})
+     * @Route("/fileexplorer-add-folder", name="pimcore_admin_misc_fileexploreraddfolder", methods={"POST"})
      *
      * @param Request $request
      *
@@ -469,12 +470,12 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
     /**
-     * @Route("/fileexplorer-delete", methods={"DELETE"})
+     * @Route("/fileexplorer-delete", name="pimcore_admin_misc_fileexplorerdelete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -494,12 +495,12 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
     /**
-     * @Route("/fileexplorer-rename", methods={"PUT"})
+     * @Route("/fileexplorer-rename", name="pimcore_admin_misc_fileexplorerrename", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -518,7 +519,7 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
@@ -543,7 +544,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/maintenance", methods={"POST"})
+     * @Route("/maintenance", name="pimcore_admin_misc_maintenance", methods={"POST"})
      *
      * @param Request $request
      *
@@ -562,12 +563,12 @@ class MiscController extends AdminController
         }
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 
     /**
-     * @Route("/http-error-log", methods={"POST"})
+     * @Route("/http-error-log", name="pimcore_admin_misc_httperrorlog", methods={"POST"})
      *
      * @param Request $request
      *
@@ -614,12 +615,12 @@ class MiscController extends AdminController
         return $this->adminJson([
             'items' => $logs,
             'total' => $total,
-            'success' => true
+            'success' => true,
         ]);
     }
 
     /**
-     * @Route("/http-error-log-flush", methods={"DELETE"})
+     * @Route("/http-error-log-flush", name="pimcore_admin_misc_httperrorlogflush", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -633,12 +634,12 @@ class MiscController extends AdminController
         $db->query('TRUNCATE TABLE http_error_log');
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 
     /**
-     * @Route("/http-error-log-detail", methods={"GET"})
+     * @Route("/http-error-log-detail", name="pimcore_admin_misc_httperrorlogdetail", methods={"GET"})
      *
      * @param Request $request
      *
@@ -663,15 +664,15 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/country-list", methods={"GET"})
+     * @Route("/country-list", name="pimcore_admin_misc_countrylist", methods={"GET"})
      *
-     * @param Request $request
+     * @param LocaleServiceInterface $localeService
      *
      * @return JsonResponse
      */
-    public function countryListAction(Request $request)
+    public function countryListAction(LocaleServiceInterface $localeService)
     {
-        $countries = \Pimcore::getContainer()->get('pimcore.locale')->getDisplayRegions();
+        $countries = $localeService->getDisplayRegions();
         asort($countries);
         $options = [];
 
@@ -679,7 +680,7 @@ class MiscController extends AdminController
             if (strlen($short) == 2) {
                 $options[] = [
                     'name' => $translation,
-                    'code' => $short
+                    'code' => $short,
                 ];
             }
         }
@@ -688,7 +689,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/language-list", methods={"GET"})
+     * @Route("/language-list", name="pimcore_admin_misc_languagelist", methods={"GET"})
      *
      * @param Request $request
      *
@@ -702,7 +703,7 @@ class MiscController extends AdminController
         foreach ($locales as $short => $translation) {
             $options[] = [
                 'name' => $translation,
-                'code' => $short
+                'code' => $short,
             ];
         }
 
@@ -710,7 +711,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/phpinfo", methods={"GET"})
+     * @Route("/phpinfo", name="pimcore_admin_misc_phpinfo", methods={"GET"})
      *
      * @param Request $request
      * @param Profiler $profiler
@@ -737,7 +738,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/get-language-flag", methods={"GET"})
+     * @Route("/get-language-flag", name="pimcore_admin_misc_getlanguageflag", methods={"GET"})
      *
      * @param Request $request
      *
@@ -753,7 +754,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/icon-list", methods={"GET"})
+     * @Route("/icon-list", name="pimcore_admin_misc_iconlist", methods={"GET"})
      * @TemplatePhp()
      *
      * @param Request $request
@@ -767,7 +768,7 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/test")
+     * @Route("/test", name="pimcore_admin_misc_test")
      *
      * @param Request $request
      *

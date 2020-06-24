@@ -50,7 +50,7 @@ class DocumentTargetingOverrideHandler implements OverrideHandlerInterface
             },
             'choice_label' => function (TargetGroup $targetGroup = null, $key, $index) {
                 return $targetGroup ? $targetGroup->getName() : '';
-            }
+            },
         ]);
     }
 

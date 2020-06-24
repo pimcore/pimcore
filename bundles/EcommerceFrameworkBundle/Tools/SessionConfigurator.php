@@ -34,7 +34,7 @@ class SessionConfigurator implements SessionConfiguratorInterface
             self::ATTRIBUTE_BAG_CART,
             self::ATTRIBUTE_BAG_ENVIRONMENT,
             self::ATTRIBUTE_BAG_PRICING_ENVIRONMENT,
-            self::ATTRIBUTE_BAG_PAYMENT_ENVIRONMENT
+            self::ATTRIBUTE_BAG_PAYMENT_ENVIRONMENT,
         ];
     }
 

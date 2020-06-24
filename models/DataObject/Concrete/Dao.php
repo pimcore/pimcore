@@ -399,8 +399,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     {
         $this->inheritanceHelper->doUpdate($this->model->getId(), false, [
             'inheritanceRelationContext' => [
-                'ownerType' => 'object'
-            ]
+                'ownerType' => 'object',
+            ],
         ]);
         $this->inheritanceHelper->resetFieldsToCheck();
     }

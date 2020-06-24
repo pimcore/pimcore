@@ -39,7 +39,7 @@ class NumberRange extends AbstractFilterType
               'definition' => $filterDefinition,
               'fieldname' => $this->getField($filterDefinition),
               'metaData' => $filterDefinition->getMetaData(),
-              'resultCount' => $productList->count()
+              'resultCount' => $productList->count(),
          ]);
     }
 

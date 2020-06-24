@@ -112,8 +112,8 @@ class Dao extends Model\Dao\AbstractDao
                     [
                         'context' => [
                             'containerType' => 'fieldcollection',
-                            'containerKey' => $this->model->getKey()
-                        ]
+                            'containerKey' => $this->model->getKey(),
+                        ],
                     ]
                 );
             }

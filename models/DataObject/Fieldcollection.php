@@ -149,11 +149,7 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
      */
     public function isEmpty()
     {
-        if (count($this->getItems()) < 1) {
-            return true;
-        }
-
-        return false;
+        return count($this->getItems()) < 1;
     }
 
     /**
@@ -299,8 +295,8 @@ class Fieldcollection extends Model\AbstractModel implements \Iterator, DirtyInd
                         'containerType' => 'fieldcollection',
                         'containerKey' => $type,
                         'fieldname' => $fcField,
-                        'index' => $index
-                    ]];
+                        'index' => $index,
+                    ], ];
 
                 $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
                 AbstractObject::disableDirtyDetection();

@@ -32,7 +32,7 @@ trait Dao
 
         $prefixes = [
             'p_index_' => ['enabled' => $field->getIndex(), 'unique' => false],
-            'u_index_' => ['enabled' => $considerUniqueIndex && $field->getUnique(), 'unique' => true]
+            'u_index_' => ['enabled' => $considerUniqueIndex && $field->getUnique(), 'unique' => true],
 
         ];
 

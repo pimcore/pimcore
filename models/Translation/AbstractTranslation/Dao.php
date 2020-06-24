@@ -63,7 +63,7 @@ abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface
                     'language' => $language,
                     'text' => $text,
                     'modificationDate' => $this->model->getModificationDate(),
-                    'creationDate' => $this->model->getCreationDate()
+                    'creationDate' => $this->model->getCreationDate(),
                 ];
                 $this->db->insertOrUpdate(static::getTableName(), $data);
             }

@@ -133,7 +133,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
         } else {
             var columnsPostData = Ext.encode(this.data.columns);
             Ext.Ajax.request({
-                url: "/admin/aset-helper/prepare-helper-column-configs",
+                url: Routing.generate('pimcore_admin_asset_assethelper_preparehelpercolumnconfigs'),
                 method: 'POST',
                 params: {
                     columns: columnsPostData
@@ -166,7 +166,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
         }
 
         Ext.Ajax.request({
-            url: "/admin/asset/grid-proxy",
+            url: Routing.generate('pimcore_admin_asset_gridproxy'),
             params: {
                 "folderId": this.previewSettings.folderId,
                 "fields[]": keys,
@@ -558,7 +558,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
 
     getMetadataTreePanel: function () {
         if (!this.metadataTreePanel) {
-            this.metadataTreePanel = this.getMetadataTree("/admin/asset-helper/get-metadata-for-column-config");
+            this.metadataTreePanel = this.getMetadataTree(Routing.generate('pimcore_admin_asset_assethelper_getmetadataforcolumnconfig'));
         }
 
         return this.metadataTreePanel;

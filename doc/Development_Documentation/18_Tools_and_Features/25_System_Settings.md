@@ -10,7 +10,7 @@ Contains general settings about timezone, view suffix, additional path variables
 
  
 ## Localization & Internationalization (i18n/l10n) 
-This settings are used in documents to specify the content language (in properties tab), for objects in localized-fields, 
+These settings are used in documents to specify the content language (in properties tab), for objects in localized-fields, 
 for shared translations, ... simply everywhere the editor can choose or use a language for the content.
 Fallback languages are currently used in object's localized fields and shared translations.
 
@@ -103,7 +103,7 @@ Only use a *Service Account* from the Google Cloud Console.
 Google API Key (Simple API Access for CSE, ...) is e.g. required for correct display of geo data types in Pimcore ojbects. 
  
  
-## Ouput-Cache
+## Output-Cache
 Settings for Pimcore [output cache](../19_Development_Tools_and_Details/09_Cache/README.md).
 
 

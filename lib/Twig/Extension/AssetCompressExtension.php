@@ -25,7 +25,7 @@ class AssetCompressExtension extends AbstractExtension
     public function getTokenParsers(): array
     {
         return [
-            new AssetCompressParser()
+            new AssetCompressParser(),
         ];
     }
 }

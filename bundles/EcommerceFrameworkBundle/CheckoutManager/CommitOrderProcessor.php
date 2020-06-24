@@ -210,7 +210,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
             $logger->critical($message,
                 [
                     'fileObject' => new FileObject(print_r($paymentStatus, true)),
-                    'relatedObject' => $order
+                    'relatedObject' => $order,
                 ]
             );
             Lock::release(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());

@@ -55,7 +55,7 @@ pimcore.settings.user.panels.abstract = Class.create({
             fn: function (button) {
                 if (button == "ok") {
                     Ext.Ajax.request({
-                        url: "/admin/user/delete",
+                        url: Routing.generate('pimcore_admin_user_delete'),
                         method: 'DELETE',
                         params: {
                             id: record.data.id
@@ -87,7 +87,7 @@ pimcore.settings.user.panels.abstract = Class.create({
         Ext.MessageBox.prompt(t('add'), t('enter_the_name_of_the_new_item'), function (button, value, object) {
             if(button=='ok' && value != ''){
                 Ext.Ajax.request({
-                    url: "/admin/user/add",
+                    url: Routing.generate('pimcore_admin_user_add'),
                     method: 'POST',
                     params: {
                         parentId: pid,

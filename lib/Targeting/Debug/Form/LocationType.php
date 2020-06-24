@@ -33,12 +33,12 @@ class LocationType extends AbstractType
 
         $builder->add('latitude', TextType::class, [
             'label' => 'Latitude',
-            'required' => false
+            'required' => false,
         ]);
 
         $builder->add('longitude', TextType::class, [
             'label' => 'Longitude',
-            'required' => false
+            'required' => false,
         ]);
     }
 }

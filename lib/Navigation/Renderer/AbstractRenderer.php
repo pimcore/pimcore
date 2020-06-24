@@ -323,7 +323,7 @@ abstract class AbstractRenderer implements RendererInterface
                 'title' => $title,
                 'class' => $page->getClass(),
                 'href' => $page->getHref(),
-                'target' => $page->getTarget()
+                'target' => $page->getTarget(),
             ],
             $page->getCustomHtmlAttribs()
         );

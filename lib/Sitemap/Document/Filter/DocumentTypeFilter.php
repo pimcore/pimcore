@@ -30,7 +30,7 @@ class DocumentTypeFilter implements FilterInterface
     private $documentTypes = [
         'page',
         'link',
-        'hardlink'
+        'hardlink',
     ];
 
     /**
@@ -40,7 +40,7 @@ class DocumentTypeFilter implements FilterInterface
         'page',
         'folder',
         'link',
-        'hardlink'
+        'hardlink',
     ];
 
     public function __construct(array $documentTypes = null, array $containerTypes = null)

@@ -606,7 +606,7 @@ class Mail extends \Swift_Message
         }
 
         $event = new MailEvent($this, [
-            'mailer' => $mailer
+            'mailer' => $mailer,
         ]);
 
         \Pimcore::getEventDispatcher()->dispatch(MailEvents::PRE_SEND, $event);

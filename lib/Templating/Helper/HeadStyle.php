@@ -70,7 +70,7 @@ class HeadStyle extends AbstractHelper
      */
     protected $_mediaTypes = [
         'all', 'aural', 'braille', 'handheld', 'print',
-        'projection', 'screen', 'tty', 'tv'
+        'projection', 'screen', 'tty', 'tv',
     ];
 
     /**

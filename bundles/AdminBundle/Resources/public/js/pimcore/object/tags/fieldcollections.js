@@ -66,7 +66,7 @@ pimcore.object.tags.fieldcollections = Class.create(pimcore.object.tags.abstract
         }
 
         Ext.Ajax.request({
-            url: "/admin/class/fieldcollection-tree",
+            url: Routing.generate('pimcore_admin_dataobject_class_fieldcollectiontree'),
             params: extraParams,
             success: this.initData.bind(this)
         });

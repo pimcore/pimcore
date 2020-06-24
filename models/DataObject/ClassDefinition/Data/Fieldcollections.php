@@ -100,7 +100,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -144,7 +144,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                         'data' => $collectionData,
                         'type' => $item->getType(),
                         'oIndex' => $idx,
-                        'title' => $collectionDef->getTitle()
+                        'title' => $collectionDef->getTitle(),
                     ];
                 }
             }
@@ -157,7 +157,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Fieldcollection
@@ -200,8 +200,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                                 'containerKey' => $collectionKey,
                                 'fieldname' => $fieldname,
                                 'index' => $count,
-                                'oIndex' => $oIndex
-                            ]
+                                'oIndex' => $oIndex,
+                            ],
                         ];
 
                         $collectionData[$fd->getName()] = $fd->getDataFromEditmode(
@@ -318,8 +318,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
             $params = [
                 'context' => [
                     'containerType' => 'fieldcollection',
-                    'fieldname' => $this->getName()
-                ]
+                    'fieldname' => $this->getName(),
+                ],
             ];
 
             $container->save($object, $params);
@@ -393,7 +393,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * @deprecated
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -438,7 +438,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
      * @deprecated
      *
      * @param mixed $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -486,8 +486,8 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
                                     'containerType' => 'fieldcollection',
                                     'containerKey' => $fieldcollection,
                                     'fieldname' => $fd->getName(),
-                                    'index' => $count
-                                ]];
+                                    'index' => $count,
+                                ], ];
 
                             $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $object, $params, $idMapper);
                             break;

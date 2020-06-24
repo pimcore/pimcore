@@ -18,7 +18,7 @@ trait RedisItemPoolTrait
     protected function getRedisOptions(): array
     {
         return [
-            'use_lua' => false
+            'use_lua' => false,
         ];
     }
 

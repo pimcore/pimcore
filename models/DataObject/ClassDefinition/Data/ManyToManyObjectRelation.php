@@ -114,7 +114,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                         'dest_id' => $object->getId(),
                         'type' => 'object',
                         'fieldname' => $this->getName(),
-                        'index' => $counter
+                        'index' => $counter,
                     ];
                 }
                 $counter++;
@@ -137,7 +137,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     {
         $objects = [
             'dirty' => false,
-            'data' => []
+            'data' => [],
         ];
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $object) {
@@ -157,7 +157,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @throws \Exception
@@ -192,7 +192,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @see Data::getDataForEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -221,7 +221,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -250,7 +250,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -436,7 +436,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 if ($o instanceof DataObject\AbstractObject) {
                     $dependencies['object_' . $o->getId()] = [
                         'id' => $o->getId(),
-                        'type' => 'object'
+                        'type' => 'object',
                     ];
                 }
             }
@@ -462,7 +462,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 if ($eo instanceof Element\ElementInterface) {
                     $items[] = [
                         'type' => $eo->getType(),
-                        'id' => $eo->getId()
+                        'id' => $eo->getId(),
                     ];
                 }
             }
@@ -756,7 +756,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -770,7 +770,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 $id = $element->getId();
                 $result[] = [
                     'type' => $type,
-                    'id' => $id
+                    'id' => $id,
                 ];
             }
 
@@ -782,7 +782,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -843,7 +843,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                         'title' => $item['path'],
                         'raw' => $raw,
                         'gridrow' => $item,
-                        'unique' => $unique
+                        'unique' => $unique,
                     ];
                 }
                 $data['data'] = $newItems;
@@ -853,14 +853,14 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
                 'type' => 'grid',
                 'columnConfig' => [
                     'id' => [
-                        'width' => 60
+                        'width' => 60,
                     ],
                     'path' => [
-                        'flex' => 2
-                    ]
+                        'flex' => 2,
+                    ],
 
                 ],
-                'html' => $this->getVersionPreview($originalData, $object, $params)
+                'html' => $this->getVersionPreview($originalData, $object, $params),
             ];
 
             $newData = [];
