@@ -73,6 +73,10 @@ Ext.define('pimcore.element.helpers.gridCellEditor', {
             cellEditing: true
         });
 
+        if (typeof tag["finishSetup"] !== "undefined") {
+            tag.finishSetup();
+        }
+
         var formPanel = Ext.create('Ext.form.Panel', {
             xtype: "form",
             border: false,
