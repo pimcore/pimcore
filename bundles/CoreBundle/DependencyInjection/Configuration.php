@@ -100,6 +100,12 @@ class Configuration implements ConfigurationInterface
                             ->info('Force Pimcore translations to NOT be case sensitive. This only applies to translations set via Pimcore\'s translator (e.g. website translations)')
                             ->defaultFalse()
                         ->end()
+
+                        ->arrayNode('admin_translation_mapping')
+                            ->useAttributeAsKey('locale')
+                            ->prototype('scalar')->end()
+                        ->end()
+
                         ->arrayNode('debugging')
                             ->info('If debugging is enabled, the translator will return the plain translation key instead of the translated message.')
                             ->addDefaultsIfNotSet()
