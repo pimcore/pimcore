@@ -497,14 +497,14 @@ abstract class AbstractRelations extends Data implements
     /**
      * @inheritDoc
      */
-    public function getInputType() {
+    public function getTypeHintInputType(): ?string {
         return '?array';
     }
 
     /**
      * @inheritDoc
      */
-    public function getReturnType() {
+    public function getTypeHintReturnType(): ?string {
         return 'array';
     }
 }

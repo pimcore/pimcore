@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface
+class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeHintSupportInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -734,11 +734,13 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return true;
     }
 
-    public function getInputType() {
+    /** @inheritDoc */
+    public function getTypeHintInputType(): ?string {
         return '?\Pimcore\Model\Element\AbstractElement';
     }
 
-    public function getReturnType() {
+    /** @inheritDoc */
+    public function getTypeHintReturnType(): ?string {
         return '?\Pimcore\Model\Element\AbstractElement';
     }
 

@@ -23,7 +23,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Redirect;
 
-class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface
+class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeHintSupportInterface
 {
     use Extension\ColumnType;
 
@@ -822,11 +822,13 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $result;
     }
 
-    public function getInputType() {
+    /** @inheritDoc */
+    public function getTypeHintInputType(): ?string {
         return '?array';
     }
 
-    public function getReturnType() {
+    /** @inheritDoc */
+    public function getTypeHintReturnType(): ?string {
         return '?array';
     }
 }

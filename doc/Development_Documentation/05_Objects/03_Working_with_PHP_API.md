@@ -458,3 +458,12 @@ $list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder query)
     echo $query;
 });
 ```
+
+### Type Hinting
+
+If you want to add [Type Hints as described in](https://github.com/pimcore/pimcore/issues/6387) on generated PHP code
+please enable this feature in the you class definition.
+
+If you have custom data types please implement the `Pimcore\Model\DataObject\ClassDefinition\Data\TypeHintSupportInterface` interface. 
+
+

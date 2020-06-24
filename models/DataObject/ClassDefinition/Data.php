@@ -655,17 +655,31 @@ abstract class Data
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getInputType() {
-        return '?' . $this->getPhpdocType();
+    public function getTypeHintInputType(): ?string {
+        return '?' . $this->getPhpdocInputType();
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getReturnType() {
-        return '?' . $this->getPhpdocType();
+    public function getTypeHintReturnType(): ?string {
+        return '?' . $this->getPhpdocReturnType();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhpDocInputType(): ?string {
+        return $this->getPhpdocType();
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhpDocReturnType(): ?string {
+        return $this->getPhpdocType();
     }
 
     /**
@@ -680,8 +694,8 @@ abstract class Data
         $key = $this->getName();
 
 
-        if ($class->getUseTypeHints() && $this->getReturnType()) {
-            $typehint = ': ' . $this->getReturnType();
+        if ($class->getUseTypeHints() && $this->getTypeHintReturnType() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+            $typehint = ': ' . $this->getTypeHintReturnType();
 
         } else {
             $typehint = '';
@@ -691,7 +705,7 @@ abstract class Data
 
         $code .= '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . " ()" . $typehint . " {\n";
 
@@ -743,8 +757,9 @@ abstract class Data
 
         $key = $this->getName();
 
-        if ($class->getUseTypeHints() && $this->getInputType()) {
-            $typehint = $this->getInputType() . ' ';
+
+        if ($class->getUseTypeHints() && $this->getTypeHintInputType() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+            $typehint = $this->getTypeHintInputType() . ' ';
         } else {
             $typehint = '';
         }
@@ -752,7 +767,7 @@ abstract class Data
         $code = '';
         $code .= '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
+        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . $typehint . '$' . $key . ") {\n";
@@ -811,8 +826,8 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($brickClass->getUseTypeHints() && $this->getReturnType()) {
-            $typehint = ': ' . $this->getReturnType();
+        if ($brickClass->getUseTypeHints() && $this->getTypeHintReturnType() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+            $typehint = ': ' . $this->getTypeHintReturnType();
         } else {
             $typehint = '';
         }
@@ -820,7 +835,7 @@ abstract class Data
         $code = '';
         $code .= '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . " ()" . $typehint . " {\n";
 
@@ -861,8 +876,8 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($brickClass->getUseTypeHints() && $this->getInputType()) {
-            $typehint = $this->getInputType() . ' ';
+        if ($brickClass->getUseTypeHints() && $this->getTypeHintInputType() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+            $typehint = $this->getTypeHintInputType() . ' ';
         } else {
             $typehint = '';
         }
@@ -870,7 +885,7 @@ abstract class Data
         $code = '';
         $code .= '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
+        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickClass->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . $typehint . '$' . $key . ") {\n";
@@ -930,8 +945,8 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($fieldcollectionDefinition->getUseTypeHints() && $this->getReturnType()) {
-            $typehint = ': ' . $this->getReturnType();
+        if ($fieldcollectionDefinition->getUseTypeHints() && $this->getTypeHintReturnType() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+            $typehint = ': ' . $this->getTypeHintReturnType();
         } else {
             $typehint = '';
         }
@@ -939,7 +954,7 @@ abstract class Data
         $code = '';
         $code .= '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . " ()" . $typehint . " {\n";
 
@@ -972,8 +987,8 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($fieldcollectionDefinition->getUseTypeHints() && $this->getInputType()) {
-            $typehint = $this->getInputType() . ' ';
+        if ($fieldcollectionDefinition->getUseTypeHints() && $this->getTypeHintInputType() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+            $typehint = $this->getTypeHintInputType() . ' ';
         } else {
             $typehint = '';
         }
@@ -981,7 +996,7 @@ abstract class Data
         $code = '';
         $code .= '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
+        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . $typehint . '$' . $key . ") {\n";
@@ -1032,8 +1047,8 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($class->getUseTypeHints() && $this->getReturnType()) {
-            $typehint = ': ' . $this->getReturnType();
+        if ($class->getUseTypeHints() && $this->getTypeHintReturnType() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+            $typehint = ': ' . $this->getTypeHintReturnType();
 
         } else {
             $typehint = '';
@@ -1041,7 +1056,7 @@ abstract class Data
 
         $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . ' ($language = null)' . $typehint . ' {' . "\n";
 
@@ -1084,8 +1099,8 @@ abstract class Data
             $containerGetter = 'getClass';
         }
 
-        if ($class->getUseTypeHints() && $this->getInputType()) {
-            $typehint = $this->getInputType() . ' ';
+        if ($class->getUseTypeHints() && $this->getTypeHintInputType() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+            $typehint = $this->getTypeHintInputType() . ' ';
 
         } else {
             $typehint = '';
@@ -1093,7 +1108,7 @@ abstract class Data
 
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
+        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function set' . ucfirst($key) . ' (' . $typehint . '$' . $key . ', $language = null) {' . "\n";

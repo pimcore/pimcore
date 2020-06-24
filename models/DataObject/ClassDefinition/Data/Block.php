@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeHintSupportInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Extension\ColumnType;
@@ -1193,14 +1193,14 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @inheritDoc
      */
-    public function getInputType() {
+    public function getTypeHintInputType(): ?string {
         return '?array';
     }
 
     /**
      * @inheritDoc
      */
-    public function getReturnType() {
+    public function getTypeHintReturnType(): ?string {
         return '?array';
     }
 }
