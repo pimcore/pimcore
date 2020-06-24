@@ -128,22 +128,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
 
-                    if (!isset($params['owner'])) {
-                        throw new \Exception("owner missing");
-                    } else {
-                        // addition check. if owner is passed but no fieldname then there is something wrong with the params.
-                        if (!array_key_exists('fieldname', $params)) {
-                            throw new \Exception('params contains owner but no fieldname');
-                        }
-
-                        if ($params['owner'] instanceof DataObject\Localizedfield) {
-                            //make sure that for a localized field parent the language param is set and not empty
-                            if (($params['language'] ?? null) === null) {
-                                throw new \Exception("language param missing");
-                            }
-                        }
-                        $blockElement->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
-                    }
+                    $this->setBlockElementOwner($blockElement, $params);
 
                     $fd = $this->getFieldDefinition($elementName);
                     if (!$fd) {
@@ -244,23 +229,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                     $blockElement->setNeedsRenewReferences(true);
 
-                    if (!isset($params['owner'])) {
-                        throw new \Error("owner missing");
-                    } else {
-                        // addition check. if owner is passed but no fieldname then there is something wrong with the params.
-                        if (!array_key_exists('fieldname', $params)) {
-                            // do not throw an exception because it is silently swallowed by the caller
-                            throw new \Error('params contains owner but no fieldname');
-                        }
-
-                        if ($params['owner'] instanceof DataObject\Localizedfield) {
-                            //make sure that for a localized field parent the language param is set and not empty
-                            if (($params['language'] ?? null) === null) {
-                                throw new \Error("language param missing");
-                            }
-                        }
-                        $blockElement->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
-                    }
+                    $this->setBlockElementOwner($blockElement, $params);
 
                     $items[$elementName] = $blockElement;
                 }
@@ -1222,6 +1191,26 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     }
                 }
             }
+        }
+    }
+
+    private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, $params = []) {
+        if (!isset($params['owner'])) {
+            throw new \Error("owner missing");
+        } else {
+            // addition check. if owner is passed but no fieldname then there is something wrong with the params.
+            if (!array_key_exists('fieldname', $params)) {
+                // do not throw an exception because it is silently swallowed by the caller
+                throw new \Error('params contains owner but no fieldname');
+            }
+
+            if ($params['owner'] instanceof DataObject\Localizedfield) {
+                //make sure that for a localized field parent the language param is set and not empty
+                if (($params['language'] ?? null) === null) {
+                    throw new \Error("language param missing");
+                }
+            }
+            $blockElement->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
         }
     }
 }
