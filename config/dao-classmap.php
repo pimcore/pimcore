@@ -166,5 +166,5 @@ return [
     'Pimcore\\Model\\Metadata\\Predefined\\Listing' => 'Pimcore\\Model\\Metadata\\Predefined\\Listing\\Dao',
     'Pimcore\\Model\\Metadata\\Predefined' => 'Pimcore\\Model\\Metadata\\Predefined\\Dao',
     'Pimcore\\Model\\Property\\Predefined\\Listing' => 'Pimcore\\Model\\Property\\Predefined\\Listing\\Dao',
-    'Pimcore\\Model\\Property\\Predefined' => 'Pimcore\\Model\\Property\\Predefined\\Dao'
+    'Pimcore\\Model\\Property\\Predefined' => 'Pimcore\\Model\\Property\\Predefined\\Dao',
 ];

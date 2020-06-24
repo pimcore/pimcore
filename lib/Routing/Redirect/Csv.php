@@ -98,7 +98,7 @@ class Csv
                 $redirect->getRegex(),
                 $redirect->getPassThroughParameters(),
                 $redirect->getActive(),
-                $expiry
+                $expiry,
             ];
 
             $writer->insertOne($data);
@@ -134,7 +134,7 @@ class Csv
             'imported' => 0,
             'created' => 0,
             'updated' => 0,
-            'errored' => 0
+            'errored' => 0,
         ];
 
         $errors = [];

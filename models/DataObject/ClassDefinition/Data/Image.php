@@ -326,7 +326,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if ($data instanceof Asset) {
             $dependencies['asset_' . $data->getId()] = [
                 'id' => $data->getId(),
-                'type' => 'asset'
+                'type' => 'asset',
             ];
         }
 
@@ -498,7 +498,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if ($value instanceof \Pimcore\Model\Asset\Image) {
             return [
                 'type' => 'asset',
-                'id' => $value->getId()
+                'id' => $value->getId(),
             ];
         }
     }

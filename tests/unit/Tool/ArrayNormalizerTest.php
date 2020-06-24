@@ -29,7 +29,7 @@ class ArrayNormalizerTest extends TestCase
         'a' => 'foo',
         'b' => 'bar',
         'c' => 'baz',
-        'd' => 'inga'
+        'd' => 'inga',
     ];
 
     public function testArrayIsUntouchedWithoutNormalizers()
@@ -61,7 +61,7 @@ class ArrayNormalizerTest extends TestCase
                 'a' => 'normalized:foo',
                 'b' => 'normalized:bar',
                 'c' => 'normalized2:baz',
-                'd' => 'inga'
+                'd' => 'inga',
             ],
             $result
         );

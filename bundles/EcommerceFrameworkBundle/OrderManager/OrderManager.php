@@ -120,7 +120,7 @@ class OrderManager implements OrderManagerInterface
             'order_item_class' => '\\Pimcore\\Model\\DataObject\\OnlineShopOrderItem',
             'list_class' => Listing::class,
             'list_item_class' => Listing\Item::class,
-            'parent_order_folder' => '/order/%Y/%m/%d'
+            'parent_order_folder' => '/order/%Y/%m/%d',
         ]);
 
         foreach ($classProperties as $classProperty) {
@@ -711,7 +711,7 @@ class OrderManager implements OrderManagerInterface
             $taxArray[] = [
                 $taxEntry->getEntry()->getName(),
                 $taxEntry->getPercent() . '%',
-                $taxEntry->getAmount()->asString()
+                $taxEntry->getAmount()->asString(),
             ];
         }
 

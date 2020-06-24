@@ -599,7 +599,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         $mapper = [
             'text' => 'varchar('.($length > 0 ? $length : '190').')',
             'number' => 'double',
-            'bool' => 'tinyint(1)'
+            'bool' => 'tinyint(1)',
         ];
 
         return $mapper[$type];

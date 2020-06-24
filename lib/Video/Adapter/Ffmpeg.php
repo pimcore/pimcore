@@ -233,8 +233,8 @@ class Ffmpeg extends Adapter
     {
         $output = $this->getVideoInfo();
 
-        preg_match('/( [0-9]+x[0-9]+ )/', $output, $matches);
-        $durationRaw = trim($matches[1]);
+        preg_match('/ ([0-9]+x[0-9]+)[, ]/', $output, $matches);
+        $durationRaw = $matches[1];
         list($width, $height) = explode('x', $durationRaw);
 
         return ['width' => $width, 'height' => $height];

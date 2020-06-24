@@ -64,7 +64,7 @@ class AssetController extends AbstractElementController
         } else {
             $light = $request->get('light');
             $options = [
-                'LIGHT' => $light ? 1 : 0
+                'LIGHT' => $light ? 1 : 0,
             ];
 
             $object = $this->service->getAssetFileById($id, $options);
@@ -81,7 +81,7 @@ class AssetController extends AbstractElementController
 
             $object->checksum = [
                 'algo' => $algo,
-                'value' => $checksum
+                'value' => $checksum,
             ];
 
             if ($light) {
@@ -262,7 +262,7 @@ class AssetController extends AbstractElementController
         $count = Asset::getTotalCount($params);
 
         return $this->createSuccessResponse([
-            'totalCount' => $count
+            'totalCount' => $count,
         ]);
     }
 
@@ -306,7 +306,7 @@ class AssetController extends AbstractElementController
 
         throw $this->createNotFoundResponseException([
             'msg' => sprintf('Asset %d does not exist', (int)$id),
-            'code' => static::ELEMENT_DOES_NOT_EXIST
+            'code' => static::ELEMENT_DOES_NOT_EXIST,
         ]);
     }
 
@@ -339,7 +339,7 @@ class AssetController extends AbstractElementController
 
         if (null !== $id) {
             return $this->createSuccessResponse([
-                'id' => $id
+                'id' => $id,
             ], true);
         } else {
             return $this->createErrorResponse();

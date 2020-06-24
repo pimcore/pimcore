@@ -185,15 +185,15 @@ class ClassDefinition extends Model\AbstractModel
             'path' => true,
             'published' => true,
             'modificationDate' => true,
-            'creationDate' => true
+            'creationDate' => true,
         ],
         'search' => [
             'id' => true,
             'path' => true,
             'published' => true,
             'modificationDate' => true,
-            'creationDate' => true
-        ]
+            'creationDate' => true,
+        ],
     ];
 
     /**

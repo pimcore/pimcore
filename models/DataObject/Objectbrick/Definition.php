@@ -238,7 +238,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
         $useParts = [
             'Pimcore\Model\DataObject',
             'Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException',
-            'Pimcore\Model\DataObject\PreGetValueHookInterface'
+            'Pimcore\Model\DataObject\PreGetValueHookInterface',
         ];
 
         $cd .= DataObject\ClassDefinition\Service::buildUseCode($useParts);

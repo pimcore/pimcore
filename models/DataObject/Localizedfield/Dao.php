@@ -157,17 +157,14 @@ class Dao extends Model\Dao\AbstractDao
                     }
 
                     $isUpdate = isset($params['isUpdate']) && $params['isUpdate'];
-                    $childParams = $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $isUpdate]);
+                    $childParams = $this->getFieldDefinitionParams($fd->getName(), $language, ['isUpdate' => $isUpdate, 'context' => $context]);
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
-                        if ((isset($params['saveRelationalData'])
-                                && isset($params['saveRelationalData']['saveLocalizedRelations'])
-                                && $params['saveRelationalData']['saveLocalizedRelations']
-                                && $container instanceof DataObject\Fieldcollection\Definition
-                            )
+                        $saveLocalizedRelations = $params['saveRelationalData']['saveLocalizedRelations'] ?? false;
+                        if (($saveLocalizedRelations && $container instanceof DataObject\Fieldcollection\Definition)
                             || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
                                     && $this->model->isLanguageDirty($language))
-                                || $params['saveRelationalData']['saveLocalizedRelations'])) {
+                                || $saveLocalizedRelations)) {
                             $fd->save($this->model, $childParams);
                         }
                     } else {
@@ -377,17 +374,17 @@ class Dao extends Model\Dao\AbstractDao
                     if ($context['containerType'] === 'objectbrick') {
                         $inheritanceRelationContext = [
                             'ownertype' => 'localizedfield',
-                            'ownername' => '/objectbrick~' . $context['fieldname'] . '//localizedfield~localizedfield'
+                            'ownername' => '/objectbrick~' . $context['fieldname'] . '//localizedfield~localizedfield',
                         ];
                     } else {
                         $inheritanceRelationContext = [
                             'ownertype' => 'localizedfield',
-                            'ownername' => 'localizedfield'
+                            'ownername' => 'localizedfield',
                         ];
                     }
                     $this->inheritanceHelper->doUpdate($object->getId(), true, [
                         'language' => $language,
-                        'inheritanceRelationContext' => $inheritanceRelationContext
+                        'inheritanceRelationContext' => $inheritanceRelationContext,
                     ]);
                 }
                 $this->inheritanceHelper->resetFieldsToCheck();
@@ -450,7 +447,7 @@ class Dao extends Model\Dao\AbstractDao
                     if ($fd instanceof CustomResourcePersistingInterface) {
                         $params = [
                             'context' => $this->model->getContext() ? $this->model->getContext() : [],
-                            'isUpdate' => $isUpdate
+                            'isUpdate' => $isUpdate,
                         ];
                         if (isset($params['context']['containerType']) && ($params['context']['containerType'] === 'fieldcollection' || $params['context']['containerType'] === 'objectbrick')) {
                             $params['context']['subContainerType'] = 'localizedfield';
@@ -477,7 +474,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if ($this->model->allLanguagesAreDirty() ||
             ($container instanceof DataObject\Fieldcollection\Definition)
-            ) {
+        ) {
             $dirtyLanguageCondition = '';
         } elseif ($this->model->hasDirtyLanguages()) {
             $languageList = [];

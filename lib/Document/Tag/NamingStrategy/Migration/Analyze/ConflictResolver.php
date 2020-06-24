@@ -57,7 +57,7 @@ class ConflictResolver implements ConflictResolverInterface
 
         $message = [
             sprintf('<fg=red>[ERROR]</> %s', $exception->getMessage()),
-            '        You can try to open and save the document in the admin interface to clean up orphaned elements.'
+            '        You can try to open and save the document in the admin interface to clean up orphaned elements.',
         ];
 
         $this->showErrorInfo(
@@ -68,7 +68,7 @@ class ConflictResolver implements ConflictResolverInterface
 
         $choices = [
             'Leave unresolved',
-            'Ignore editable (<fg=red>data will be lost!</>)'
+            'Ignore editable (<fg=red>data will be lost!</>)',
         ];
 
         $result = $this->io->choice(
@@ -202,7 +202,7 @@ EOF;
                     '<comment>%s</comment> (ID: <info>%d</info>)',
                     $document->getRealFullPath(),
                     $document->getId()
-                )
+                ),
             ],
             [
                 'Element',
@@ -210,8 +210,8 @@ EOF;
                     '<comment>%s</comment> (type <comment>%s</comment>)',
                     $exception->getName(),
                     $exception->getType()
-                )
-            ]
+                ),
+            ],
         ];
 
         if (!empty($document->getTemplate())) {
@@ -220,13 +220,13 @@ EOF;
                 sprintf(
                     '<comment>%s</comment>',
                     $document->getTemplate()
-                )
+                ),
             ];
         }
 
         $tableRows[] = [
             'Data',
-            $this->dumpData($exception->getElementData())
+            $this->dumpData($exception->getElementData()),
         ];
 
         $this->io->table([], $tableRows);

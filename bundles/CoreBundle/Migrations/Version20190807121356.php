@@ -21,7 +21,7 @@ class Version20190807121356 extends AbstractPimcoreMigration
             'bundle_ecommerce.back-office.order-list.total-orders' => 'Total Orders',
             'bundle_ecommerce.back-office.order.cart-taxes' => 'Cart Taxes',
             'bundle_ecommerce.back-office.order.customer-account.orderCount' => 'Order Count',
-            'bundle_ecommerce.back-office.order-list.filter-date.to' => 'To Date'
+            'bundle_ecommerce.back-office.order-list.filter-date.to' => 'To Date',
         ];
 
         foreach ($ecommerceTranslationUpdates as $key => $value) {
@@ -47,7 +47,7 @@ class Version20190807121356 extends AbstractPimcoreMigration
             'bundle_ecommerce.back-office.order-list.total-orders' => 'Total Orders',
             'bundle_ecommerce.back-office.order.cart-taxes' => 'Cart Taxes',
             'bundle_ecommerce.back-office.order.customer-account.orderCount' => 'Order Count',
-            'bundle_ecommerce.back-office.order-list.filter-date.to' => 'To Date'
+            'bundle_ecommerce.back-office.order-list.filter-date.to' => 'To Date',
         ];
 
         foreach ($ecommerceTranslationUpdates as $key => $value) {

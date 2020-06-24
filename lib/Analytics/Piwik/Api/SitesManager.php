@@ -82,11 +82,11 @@ class SitesManager
         $params = array_merge($this->buildParameters([
             'method' => 'SitesManager.addSite',
             'siteName' => $siteId->getTitle($this->translator),
-            'urls' => $this->buildSiteUrls($siteId)
+            'urls' => $this->buildSiteUrls($siteId),
         ]), $params);
 
         $response = $this->apiClient->request('POST', [
-            'query' => $params
+            'query' => $params,
         ]);
 
         $piwikSiteId = $response['value'] ?? null;
@@ -121,11 +121,11 @@ class SitesManager
         $params = array_merge($this->buildParameters([
             'method' => 'SitesManager.updateSite',
             'idSite' => $piwikSiteId,
-            'urls' => $this->buildSiteUrls($siteId, $currentUrls)
+            'urls' => $this->buildSiteUrls($siteId, $currentUrls),
         ]), $params);
 
         $response = $this->apiClient->request('POST', [
-            'query' => $params
+            'query' => $params,
         ]);
 
         if ('success' === $response['result'] && 'ok' === $response['message']) {
@@ -139,7 +139,7 @@ class SitesManager
     {
         $params = array_merge($this->buildParameters([
             'method' => 'SitesManager.getSiteFromId',
-            'idSite' => $piwikSiteId
+            'idSite' => $piwikSiteId,
         ]), $params);
 
         $response = $this->apiClient->get($params);
@@ -158,7 +158,7 @@ class SitesManager
     {
         $params = array_merge($this->buildParameters([
             'method' => 'SitesManager.getSiteUrlsFromId',
-            'idSite' => $piwikSiteId
+            'idSite' => $piwikSiteId,
         ]), $params);
 
         return $this->apiClient->get($params);
@@ -233,10 +233,10 @@ class SitesManager
             'piwik' => [
                 'sites' => [
                     $configKey => [
-                        'site_id' => $piwikSiteId
-                    ]
-                ]
-            ]
+                        'site_id' => $piwikSiteId,
+                    ],
+                ],
+            ],
         ]);
     }
 }

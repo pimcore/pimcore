@@ -39,7 +39,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      */
     public $queryColumnType = [
         'longitude' => 'double',
-        'latitude' => 'double'
+        'latitude' => 'double',
     ];
 
     /**
@@ -49,7 +49,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      */
     public $columnType = [
         'longitude' => 'double',
-        'latitude' => 'double'
+        'latitude' => 'double',
     ];
 
     /**
@@ -73,13 +73,13 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
         if ($data instanceof DataObject\Data\Geopoint) {
             return [
                 $this->getName() . '__longitude' => $data->getLongitude(),
-                $this->getName() . '__latitude' => $data->getLatitude()
+                $this->getName() . '__latitude' => $data->getLatitude(),
             ];
         }
 
         return [
             $this->getName() . '__longitude' => null,
-            $this->getName() . '__latitude' => null
+            $this->getName() . '__latitude' => null,
         ];
     }
 
@@ -135,7 +135,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
         if ($data instanceof DataObject\Data\Geopoint) {
             return [
                 'longitude' => $data->getLongitude(),
-                'latitude' => $data->getLatitude()
+                'latitude' => $data->getLatitude(),
             ];
         }
 
@@ -259,7 +259,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
         if ($data instanceof DataObject\Data\Geopoint) {
             return [
                 'longitude' => $data->getLongitude(),
-                'latitude' => $data->getLatitude()
+                'latitude' => $data->getLatitude(),
             ];
         } else {
             return null;
@@ -315,7 +315,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
         if ($value instanceof DataObject\Data\Geopoint) {
             return [
                 'value' => $value->getLatitude(),
-                'value2' => $value->getLongitude()
+                'value2' => $value->getLongitude(),
             ];
         }
     }

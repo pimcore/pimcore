@@ -162,7 +162,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     $resultElement[$elementName] = [
                         'name' => $blockElement->getName(),
                         'type' => $blockElement->getType(),
-                        'data' => $dataForResource
+                        'data' => $dataForResource,
                     ];
                 }
                 $result[] = $resultElement;
@@ -216,7 +216,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                                 'fieldname' => $this->getName(),
                                 'index' => $count,
                                 'containerKey' => $this->getName(),
-                                'classId' => $object ? $object->getClassId() : null]);
+                                'classId' => $object ? $object->getClassId() : null, ]);
                             $blockElementRaw['data'] = $data;
                         }
                     }
@@ -274,7 +274,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 }
                 $result[] = [
                     'oIndex' => $idx,
-                    'data' => $resultElement
+                    'data' => $resultElement,
                 ];
             }
         }
@@ -334,8 +334,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                                 'fieldname' => $this->getName(),
                                 'index' => $count,
                                 'oIndex' => $oIndex,
-                                'classId' => $object->getClassId()
-                            ]
+                                'classId' => $object->getClassId(),
+                            ],
                         ]
                     );
 

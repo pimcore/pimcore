@@ -575,7 +575,7 @@ class DecimalTest extends TestCase
         return [
             [new \DateTime()],
             [true],
-            [false]
+            [false],
         ];
     }
 
@@ -602,7 +602,7 @@ class DecimalTest extends TestCase
             [100, 50, 'div', 2],
             [100, -100, 'toAdditiveInverse'],
             [100, 50, 'toPercentage', 50],
-            [100, 85, 'discount', 15]
+            [100, 85, 'discount', 15],
         ];
     }
 
@@ -632,7 +632,7 @@ class DecimalTest extends TestCase
             [0],
             [0.0],
             ['0'],
-            [Decimal::create(0, 4)]
+            [Decimal::create(0, 4)],
         ];
     }
 
@@ -648,16 +648,16 @@ class DecimalTest extends TestCase
         $input = [
             [
                 15.50,
-                14.50
+                14.50,
             ],
             [
                 '15.50',
-                '14.50'
+                '14.50',
             ],
             [
                 Decimal::fromRawValue(155000),
-                Decimal::fromRawValue(145000)
-            ]
+                Decimal::fromRawValue(145000),
+            ],
         ];
 
         return $this->mixPairs($input, $expected);
@@ -675,20 +675,20 @@ class DecimalTest extends TestCase
         $input = [
             [
                 15,
-                2
+                2,
             ],
             [
                 15.00,
-                2.00
+                2.00,
             ],
             [
                 '15.00',
-                '2'
+                '2',
             ],
             [
                 Decimal::fromRawValue(150000),
                 Decimal::fromRawValue(20000),
-            ]
+            ],
         ];
 
         return $this->mixPairs($input, $expected);
@@ -712,7 +712,7 @@ class DecimalTest extends TestCase
                 $data[] = [
                     $input[$i][0],
                     $input[$j][1],
-                    $expected
+                    $expected,
                 ];
             }
         }

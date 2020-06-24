@@ -1225,7 +1225,7 @@ abstract class Page extends Container
                 'active' => $this->isActive(),
                 'visible' => $this->isVisible(),
                 'type' => get_class($this),
-                'pages' => parent::toArray()
+                'pages' => parent::toArray(),
             ]
         );
     }

@@ -25,9 +25,9 @@ class CompositeIndexTest extends ModelTestCase
                'index_key' => 'mycomposite',
                'index_type' => 'query',
                'index_columns' => [
-                   'slider', 'number'
-               ]
-           ]
+                   'slider', 'number',
+               ],
+           ],
         ]);
 
         $definition->save();

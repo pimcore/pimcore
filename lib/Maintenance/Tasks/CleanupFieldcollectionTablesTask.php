@@ -44,8 +44,8 @@ final class CleanupFieldcollectionTablesTask implements TaskInterface
             [
                 'localized' => false,
                 'prefix' => 'object_collection_',
-                'pattern' => "object\_collection\_%"
-            ]
+                'pattern' => "object\_collection\_%",
+            ],
         ];
         foreach ($tasks as $task) {
             $prefix = $task['prefix'];

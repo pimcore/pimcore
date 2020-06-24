@@ -101,7 +101,7 @@ class PayU extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
             'pos_id',
             'md5_key',
             'oauth_client_id',
-            'oauth_client_secret'
+            'oauth_client_secret',
         ]);
 
         $resolver
@@ -165,7 +165,7 @@ class PayU extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
         $orderData['customerIp'] = $config['customerIp'];
         $orderData['merchantPosId'] = $this->posId;
         $orderData['buyer'] = [
-            'email' => $order->getCustomer()->getEmail()
+            'email' => $order->getCustomer()->getEmail(),
         ];
         $orderData['currencyCode'] = $price->getCurrency()->getShortName();
         $orderData['totalAmount'] = (string) (round($price->getAmount()->asNumeric(), 2) * 100);
@@ -212,7 +212,7 @@ class PayU extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
         $response = $this->client->post($this->authorizeUrl, ['form_params' => [
             'grant_type' => 'client_credentials',
             'client_id' => $this->oauthClientId,
-            'client_secret' => $this->oauthClientSecret
+            'client_secret' => $this->oauthClientSecret,
         ]]);
 
         $response = \GuzzleHttp\json_decode($response->getBody()->getContents());
@@ -235,11 +235,11 @@ class PayU extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
     {
         $response = $this->client->post($this->orderUrl, [
             'headers' => [
-                'Authorization' => 'Bearer ' . $this->accessToken
+                'Authorization' => 'Bearer ' . $this->accessToken,
             ],
             'json' => $order,
             'allow_redirects' => false,
-            'http_errors' => false
+            'http_errors' => false,
         ]);
 
         $response = \GuzzleHttp\json_decode($response->getBody()->getContents());
@@ -281,11 +281,11 @@ class PayU extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
             'totalAmount' => null,
             'currencyCode' => null,
             'status' => null,
-            'order' => null
+            'order' => null,
         ];
 
         $authorizedData = [
-            'orderId' => null
+            'orderId' => null,
         ];
 
         // check fields
@@ -340,7 +340,7 @@ class PayU extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
                 AbstractOrder::ORDER_STATE_COMMITTED,
                 [
                     'payu_PaymentType' => $response['payMethod']['type'],
-                    'payu_amount' => (string) $price
+                    'payu_amount' => (string) $price,
                 ]
             );
         } else {

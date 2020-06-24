@@ -32,7 +32,7 @@ class Tool
         $modelsDir = PIMCORE_PATH.'/models/';
         $files = rscandir($modelsDir);
         $includePatterns = [
-            "/Webservice\/Data/"
+            "/Webservice\/Data/",
         ];
         $classMap = [];
 

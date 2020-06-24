@@ -188,7 +188,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
             'type' => $item->getType(),
             'metaData' => $brickMetaData,
             'inherited' => $inherited,
-            'title' => $brickDefinition->getTitle()
+            'title' => $brickDefinition->getTitle(),
         ];
 
         return $editmodeDataItem;
@@ -328,8 +328,8 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                                         'context' => [
                                             'containerType' => 'objectbrick',
                                             'containerKey' => $collectionRaw['type'],
-                                            'fieldname' => $this->getName()
-                                        ]
+                                            'fieldname' => $this->getName(),
+                                        ],
                                     ]);
                         }
                     }
@@ -876,7 +876,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                 $brickdata = [
                     'brick' => substr($getter, 3),
                     'name' => $fd->getName(),
-                    'subdata' => $subdata
+                    'subdata' => $subdata,
                 ];
                 $diffdata['data'] = $brickdata;
             }

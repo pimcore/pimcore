@@ -198,6 +198,41 @@
                                         "visibleGridView": true,
                                         "visibleSearch": true,
                                         "defaultValueGenerator": ""
+                                    },
+                                    {
+                                        "fieldtype": "manyToOneRelation",
+                                        "width": null,
+                                        "assetUploadPath": null,
+                                        "relationType": true,
+                                        "queryColumnType": {
+                                            "id": "int(11)",
+                                            "type": "enum('document','asset','object')"
+                                        },
+                                        "phpdocType": "\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject",
+                                        "objectsAllowed": true,
+                                        "assetsAllowed": false,
+                                        "assetTypes": [],
+                                        "documentsAllowed": false,
+                                        "documentTypes": [],
+                                        "classes": [
+                                            {
+                                                "classes": "RelationTest"
+                                            }
+                                        ],
+                                        "pathFormatterClass": null,
+                                        "name": "relation",
+                                        "title": "relation",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
                                     }
                                 ],
                                 "name": "localizedfields",

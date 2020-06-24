@@ -84,7 +84,7 @@ class TagRenderer implements LoggerAwareInterface
             if ($document instanceof PageSnippet) {
                 $view = new ViewModel([
                     'editmode' => $editmode,
-                    'document' => $document
+                    'document' => $document,
                 ]);
 
                 $tag = $document->getElement($name);

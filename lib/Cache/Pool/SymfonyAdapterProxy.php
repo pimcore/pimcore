@@ -72,7 +72,7 @@ class SymfonyAdapterProxy extends AbstractCacheItemPool
 
                 yield $item->getKey() => [
                     'value' => $data,
-                    'tags' => []
+                    'tags' => [],
                 ];
             }
         }
@@ -149,7 +149,7 @@ class SymfonyAdapterProxy extends AbstractCacheItemPool
         if (!empty($this->deferred) || !empty($symfonyItems)) {
             $this->logger->error('Not all deferred cache items were processed', [
                 'deferred' => array_keys($this->deferred),
-                'symfony' => array_keys($symfonyItems)
+                'symfony' => array_keys($symfonyItems),
             ]);
 
             return false;

@@ -214,13 +214,13 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
             return [
                 $this->getName() . '__images' => $ids,
-                $this->getName() . '__hotspots' => Serialize::serialize($hotspots)
+                $this->getName() . '__hotspots' => Serialize::serialize($hotspots),
             ];
         }
 
         return [
             $this->getName() . '__images' => null,
-            $this->getName() . '__hotspots' => null
+            $this->getName() . '__hotspots' => null,
         ];
     }
 
@@ -258,7 +258,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
             $itemData = [
                 $fd->getName() . '__image' => $imageId,
-                $fd->getName() . '__hotspots' => $hotspotData
+                $fd->getName() . '__hotspots' => $hotspotData,
             ];
 
             $itemResult = $fd->getDataFromResource($itemData, $object, $params);
@@ -604,7 +604,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
             return [
                     'value' => $value[$this->getName() . '__images'],
-                    'value2' => $value[$this->getName() . '__hotspots']
+                    'value2' => $value[$this->getName() . '__hotspots'],
                 ];
         }
 

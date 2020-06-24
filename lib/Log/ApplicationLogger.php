@@ -194,7 +194,7 @@ class ApplicationLogger implements LoggerInterface
     {
         $validMethods = [
             'log', 'logException', 'emergency', 'critical', 'error',
-            'alert', 'warning', 'notice', 'info', 'debug'
+            'alert', 'warning', 'notice', 'info', 'debug',
         ];
 
         $previousCall = null;
@@ -377,7 +377,7 @@ class ApplicationLogger implements LoggerInterface
         $this->log($priority, $message, [
             'relatedObject' => $relatedObject,
             'fileObject' => $fileObject,
-            'component' => $component
+            'component' => $component,
          ]);
     }
 

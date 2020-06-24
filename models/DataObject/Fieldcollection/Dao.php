@@ -94,8 +94,8 @@ class Dao extends Model\Dao\AbstractDao
                                         'containerType' => 'fieldcollection',
                                         'containerKey' => $type,
                                         'fieldname' => $this->model->getFieldname(),
-                                        'index' => $result['index']
-                                    ]]
+                                        'index' => $result['index'],
+                                    ], ]
                             );
 
                             if ($value === 0 || !empty($value)) {
@@ -164,7 +164,7 @@ class Dao extends Model\Dao\AbstractDao
             try {
                 $this->db->delete($tableName, [
                     'o_id' => $object->getId(),
-                    'fieldname' => $this->model->getFieldname()
+                    'fieldname' => $this->model->getFieldname(),
                 ]);
             } catch (\Exception $e) {
                 // create definition if it does not exist
@@ -177,7 +177,7 @@ class Dao extends Model\Dao\AbstractDao
                 try {
                     $this->db->delete($tableName, [
                         'ooo_id' => $object->getId(),
-                        'fieldname' => $this->model->getFieldname()
+                        'fieldname' => $this->model->getFieldname(),
                     ]);
                 } catch (\Exception $e) {
                     Logger::error($e);
@@ -204,8 +204,8 @@ class Dao extends Model\Dao\AbstractDao
                                 'context' => [
                                     'containerType' => 'fieldcollection',
                                     'containerKey' => $type,
-                                    'fieldname' => $this->model->getFieldname()
-                                ]
+                                    'fieldname' => $this->model->getFieldname(),
+                                ],
                             ]
                         );
                     }

@@ -171,7 +171,7 @@ class Service extends Model\Element\Service
 
         // triggers actions after the complete document cloning
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [
-            'base_element' => $source // the element used to make a copy
+            'base_element' => $source, // the element used to make a copy
         ]));
 
         return $new;
@@ -224,7 +224,7 @@ class Service extends Model\Element\Service
 
         // triggers actions after the complete object cloning
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [
-            'base_element' => $source // the element used to make a copy
+            'base_element' => $source, // the element used to make a copy
         ]));
 
         return $new;
@@ -295,7 +295,7 @@ class Service extends Model\Element\Service
         if ($object instanceof Concrete) {
             $context = ['object' => $object,
                 'purpose' => 'gridview',
-                'language' => $requestedLanguage];
+                'language' => $requestedLanguage, ];
             $data['classname'] = $object->getClassName();
             $data['idPath'] = Element\Service::getIdPath($object);
             $data['inheritedFields'] = [];

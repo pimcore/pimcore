@@ -95,7 +95,7 @@ class EditmodeResolver extends AbstractRequestResolver implements TemplateVarsPr
         $logData = [
             'param' => false,
             'adminRequest' => false,
-            'user' => false
+            'user' => false,
         ];
 
         // read editmode from request params
@@ -123,7 +123,7 @@ class EditmodeResolver extends AbstractRequestResolver implements TemplateVarsPr
 
         $this->logger->debug('Resolved editmode to {editmode}', [
             'editmode' => $result ? 'true' : 'false',
-            'params' => $logData
+            'params' => $logData,
         ]);
 
         $request->attributes->set(static::ATTRIBUTE_EDITMODE, $result);

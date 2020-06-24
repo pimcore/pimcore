@@ -42,7 +42,7 @@ class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multisele
             if (strlen($short) == 2) {
                 $options[] = [
                     'key' => $translation,
-                    'value' => $short
+                    'value' => $short,
                 ];
             }
         }

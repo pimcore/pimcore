@@ -123,7 +123,7 @@ class RequestHelper
             "/^\/admin.*/",
             "/^\/install.*/",
             "/^\/plugin.*/",
-            "/^\/webservice.*/"
+            "/^\/webservice.*/",
         ];
 
         foreach ($excludePatterns as $pattern) {
@@ -151,7 +151,7 @@ class RequestHelper
             'pimcore_preview',
             'pimcore_admin',
             'pimcore_object_preview',
-            'pimcore_version'
+            'pimcore_version',
         ];
 
         foreach ($keys as $key) {

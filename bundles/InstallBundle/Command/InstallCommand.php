@@ -119,7 +119,7 @@ class InstallCommand extends Command
                 'description' => 'MySQL SSL certificate path (if empty non-ssl connection assumed)',
                 'mode' => InputOption::VALUE_OPTIONAL,
                 'default' => '',
-                'group' => 'db_credentials'
+                'group' => 'db_credentials',
             ],
             'skip-database-structure' => [
                 'description' => 'Skipping creation of database structure during install',
@@ -220,7 +220,7 @@ class InstallCommand extends Command
                     sprintf(
                         'Consider using the interactive prompt or the <comment>%s</comment> environment variable instead.',
                         $config['env']
-                    )
+                    ),
                 ]);
 
                 $this->io->newLine();

@@ -160,9 +160,9 @@ class SnippetController extends DocumentControllerBase
                 'success' => true,
                 'data' => [
                     'versionDate' => $snippet->getModificationDate(),
-                    'versionCount' => $snippet->getVersionCount()
+                    'versionCount' => $snippet->getVersionCount(),
                 ],
-                'treeData' => $treeData
+                'treeData' => $treeData,
             ]);
         } elseif ($snippet->isAllowed('save')) {
             $this->setValuesToDocument($request, $snippet);

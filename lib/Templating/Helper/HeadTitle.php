@@ -105,7 +105,7 @@ class HeadTitle extends AbstractHelper
         if (!in_array($setType, [
             Container::APPEND,
             Container::SET,
-            Container::PREPEND
+            Container::PREPEND,
         ])) {
             throw new Exception("You must use a valid attach order: 'PREPEND', 'APPEND' or 'SET'");
         }
