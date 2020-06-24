@@ -21,7 +21,7 @@ class AssetTest extends ModelTestCase
     public function testCustomUserModification()
     {
         $userId = 101;
-        $asset = TestHelper::createImageAsset('', null);
+        $asset = TestHelper::createImageAsset();
 
         //custom user modification
         $asset->setUserModification($userId);
@@ -43,7 +43,7 @@ class AssetTest extends ModelTestCase
         $customDateTime = new \Carbon\Carbon();
         $customDateTime = $customDateTime->subHour();
 
-        $asset = TestHelper::createImageAsset('', null);
+        $asset = TestHelper::createDocumentAsset();
 
         //custom modification date
         $asset->setModificationDate($customDateTime->getTimestamp());
