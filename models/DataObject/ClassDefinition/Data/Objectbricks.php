@@ -767,12 +767,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                         throw new Model\Element\ValidationException('Maximum limit reached for items in brick: ' . $this->getName());
                     }
 
-                    if (!$omitMandatoryCheck) {
-                        //needed when new brick is added but not saved yet - then validity check fails.
-                        if (!$item->getFieldname()) {
-                            $item->setFieldname($data->getFieldname());
-                        }
+                    //needed when new brick is added but not saved yet - then validity check fails.
+                    if (!$item->getFieldname()) {
+                        $item->setFieldname($data->getFieldname());
+                    }
 
+                    if (!$omitMandatoryCheck) {
                         foreach ($collectionDef->getFieldDefinitions() as $fd) {
                             try {
                                 $key = $fd->getName();
