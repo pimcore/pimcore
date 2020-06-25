@@ -24,6 +24,7 @@ use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset\Listing;
+use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Mime;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -1712,12 +1713,21 @@ class Asset extends Element\AbstractElement
                     $tmp[] = $item;
                 }
             }
-            $tmp[] = [
+
+            $item = [
                 'name' => $name,
                 'type' => $type,
                 'data' => $data,
                 'language' => $language
             ];
+
+            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            /** @var Data $instance */
+            $instance = $loader->build($item['type']);
+            $transformedData = $instance->transformSetterData($data, $item);
+            $item["data"] = $transformedData;
+
+            $tmp[] = $item;
             $this->metadata = $tmp;
 
             $this->setHasMetaData(true);
@@ -1735,12 +1745,14 @@ class Asset extends Element\AbstractElement
      */
     public function getMetadata($name = null, $language = null, $strictMatch = false)
     {
-        $convert = function ($metaData) {
-            if (in_array($metaData['type'], ['asset', 'document', 'object']) && is_numeric($metaData['data'])) {
-                return Element\Service::getElementById($metaData['type'], $metaData['data']);
-            }
 
-            return $metaData['data'];
+        //
+        $convert = function ($metaData) {
+            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            /** @var Data $instance */
+            $instance = $loader->build($metaData['type']);
+            $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
+            return $transformedData;
         };
 
         if ($name) {

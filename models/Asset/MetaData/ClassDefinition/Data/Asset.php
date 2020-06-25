@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
 class Asset extends Data
@@ -56,5 +57,68 @@ class Asset extends Data
         }
 
         return $value;
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function transformGetterData($data, $params = []) {
+        if (is_numeric($data)) {
+            return \Pimcore\Model\Asset\Service::getElementById("asset", $data);
+        }
+        return $data;
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function transformSetterData($data, $params = []) {
+        if ($data instanceof \Pimcore\Model\Asset) {
+            return $data->getId();
+        }
+        return $data;
+    }
+
+
+    /**
+     * @param $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataFromEditMode($data, $params = []) {
+        $element = Service::getElementByPath("asset", $data);
+        if ($element) {
+            return $element->getId();
+        }
+        return "";
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataForResource($data, $params = []) {
+        if ($data instanceof ElementInterface) {
+            return $data->getId();
+        }
+
+        return $data;
+    }
+
+    /** @inheritDoc */
+    public function getDataForEditMode($data, $params = []) {
+        if (is_numeric($data)) {
+            $data = Service::getElementById("asset", $data);
+        }
+        if ($data instanceof ElementInterface) {
+            return $data->getRealFullPath();
+        } else {
+            return "";
+        }
     }
 }

@@ -19,6 +19,7 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -102,15 +103,19 @@ class Dao extends Model\Element\Dao
         // metadata
         $this->db->delete('assets_metadata', ['cid' => $this->model->getId()]);
         $metadata = $this->model->getMetadata();
+
+
         $data['hasMetaData'] = 0;
         if (!empty($metadata)) {
             foreach ($metadata as $metadataItem) {
                 $metadataItem['cid'] = $this->model->getId();
                 unset($metadataItem['config']);
 
-                if ($metadataItem['data'] instanceof Model\Element\ElementInterface) {
-                    $metadataItem['data'] = $metadataItem['data']->getId();
-                }
+                $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+                /** @var Data $instance */
+                $instance = $loader->build($metadataItem['type']);
+                $dataForResource = $instance->getDataForResource($metadataItem['data'], $metadataItem);
+                $metadataItem["data"] = $dataForResource;
 
                 $metadataItem['language'] = (string) $metadataItem['language']; // language column cannot be NULL -> see SQL schema
 

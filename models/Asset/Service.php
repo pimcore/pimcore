@@ -21,6 +21,7 @@ use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Element;
 
 /**
@@ -349,24 +350,12 @@ class Service extends Model\Element\Service
 
         $result = [];
         foreach ($metadata as $item) {
-            $type = $item['type'];
-            switch ($type) {
-                case 'document':
-                case 'asset':
-                case 'object':
-                    {
-                        $element = Element\Service::getElementByPath($type, $item['data']);
-                        if ($element) {
-                            $item['data'] = $element->getId();
-                        } else {
-                            $item['data'] = '';
-                        }
-                    }
 
-                    break;
-                default:
-                    //nothing to do
-            }
+            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            /** @var Data $instance */
+            $instance = $loader->build($item['type']);
+            $transformedData = $instance->getDataFromEditMode($item['data'], $item);
+            $item["data"] = $transformedData;
             $result[] = $item;
         }
 
@@ -384,30 +373,15 @@ class Service extends Model\Element\Service
             return $metadata;
         }
 
+
         $result = [];
         foreach ($metadata as $item) {
-            $type = $item['type'];
-            switch ($type) {
-                case 'document':
-                case 'asset':
-                case 'object':
-                {
-                    $element = $item['data'];
-                    if (is_numeric($item['data'])) {
-                        $element = Element\Service::getElementById($type, $item['data']);
-                    }
-                    if ($element instanceof Element\ElementInterface) {
-                        $item['data'] = $element->getRealFullPath();
-                    } else {
-                        $item['data'] = '';
-                    }
-                }
 
-                    break;
-                default:
-                    //nothing to do
-            }
-
+            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            /** @var Data $instance */
+            $instance = $loader->build($item['type']);
+            $transformedData = $instance->getDataForEditMode($item['data'], $item);
+            $item["data"] = $transformedData;
             //get the config from an predefined property-set (eg. select)
             $predefined = Model\Metadata\Predefined::getByName($item['name']);
             if ($predefined && $predefined->getType() == $item['type'] && $predefined->getConfig()) {

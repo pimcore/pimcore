@@ -17,7 +17,9 @@
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
-abstract class Data
+use Pimcore\AssetMetadataClassDefinitionsBundle\Model\ClassDefinition\Data\DataDefinitionInterface;
+
+abstract class Data implements DataDefinitionInterface
 {
     /**
      * @param mixed $value
@@ -44,5 +46,51 @@ abstract class Data
     public function __toString()
     {
         return get_class($this);
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function transformGetterData($data, $params = []) {
+        return $data;
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function transformSetterData($data, $params = []) {
+        return $data;
+    }
+
+    /**
+     * @param $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataFromEditMode($data, $params = []) {
+        return $data;
+    }
+
+    /**
+     * @param $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataForResource($data, $params = []) {
+        return $data;
+    }
+
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataForEditMode($data, $params = []) {
+        return $data;
     }
 }

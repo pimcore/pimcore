@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
 class Document extends Data
@@ -57,4 +58,67 @@ class Document extends Data
 
         return $value;
     }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function transformGetterData($data, $params = []) {
+        if (is_numeric($data)) {
+            return \Pimcore\Model\Document\Service::getElementById("document", $data);
+        }
+        return $data;
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function transformSetterData($data, $params = []) {
+        if ($data instanceof \Pimcore\Model\Document) {
+            return $data->getId();
+        }
+        return $data;
+    }
+
+    /**
+     * @param $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataFromEditMode($data, $params = []) {
+        $element = Service::getElementByPath("document", $data);
+        if ($element) {
+            return $element->getId();
+        }
+        return "";
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataForResource($data, $params = []) {
+        if ($data instanceof ElementInterface) {
+            return $data->getId();
+        }
+
+        return $data;
+    }
+
+    /** @inheritDoc */
+    public function getDataForEditMode($data, $params = []) {
+        if (is_numeric($data)) {
+            $data = Service::getElementById("asset", $data);
+        }
+        if ($data instanceof ElementInterface) {
+            return $data->getRealFullPath();
+        } else {
+            return "";
+        }
+    }
+
 }
