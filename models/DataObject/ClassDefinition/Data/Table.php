@@ -99,7 +99,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @var string
      */
-    public $phpdocType = 'array';
+    public $phpdocType = 'array|string';
 
     /**
      * @return int
