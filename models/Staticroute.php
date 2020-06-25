@@ -83,6 +83,11 @@ class Staticroute extends AbstractModel
     public $methods;
 
     /**
+     * @var array
+     */
+    public $nonRequiredParams = [];
+
+    /**
      * @var int
      */
     public $priority = 1;
@@ -550,6 +555,11 @@ class Staticroute extends AbstractModel
                 // eg. %abcd prior %ab if %abcd matches already %ab shouldn't match again on the same placeholder
                 $tmpReversePattern = str_replace('%' . $key, '---', $tmpReversePattern);
             } else {
+                // Non required parameter, skip
+                if (in_array($key, $this->getNonRequiredParams())) {
+                    continue;
+                }
+
                 // only append the get parameters if there are defined in $urlOptions
                 // or if they are defined in $_GET an $reset is false
                 if (array_key_exists($key, $urlOptions) || (!$reset && array_key_exists($key, $_GET))) {
@@ -726,6 +736,35 @@ class Staticroute extends AbstractModel
         }
 
         $this->methods = $methods;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getNonRequiredParams()
+    {
+        if ($this->nonRequiredParams && !is_array($this->nonRequiredParams)) {
+            $this->nonRequiredParams = explode(',', $this->nonRequiredParams);
+        }
+
+        return $this->nonRequiredParams;
+    }
+
+    /**
+     * @param array $nonRequiredParams
+     *
+     * @return $this
+     */
+    public function setNonRequiredParams($nonRequiredParams)
+    {
+        if (!is_array($nonRequiredParams)) {
+            $nonRequiredParams = strlen($nonRequiredParams) ? explode(',', $nonRequiredParams) : [];
+            $nonRequiredParams = array_map('trim', $nonRequiredParams);
+        }
+
+        $this->nonRequiredParams = $nonRequiredParams;
 
         return $this;
     }
