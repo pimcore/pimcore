@@ -94,10 +94,10 @@ class Dao extends Model\Dao\AbstractDao
                                         'containerType' => 'fieldcollection',
                                         'containerKey' => $type,
                                         'fieldname' => $this->model->getFieldname(),
-                                        'index' => $result['index']
+                                        'index' => $result['index'],
                                     ],
                                     'owner' => $collection,
-                                    'fieldname' => $key
+                                    'fieldname' => $key,
                                 ]
                             );
 

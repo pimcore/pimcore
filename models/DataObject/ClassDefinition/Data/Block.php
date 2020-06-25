@@ -127,7 +127,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
                 /** @var DataObject\Data\BlockElement $blockElement */
                 foreach ($blockElements as $elementName => $blockElement) {
-
                     $this->setBlockElementOwner($blockElement, $params);
 
                     $fd = $this->getFieldDefinition($elementName);
@@ -1194,9 +1193,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         }
     }
 
-    private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, $params = []) {
+    private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, $params = [])
+    {
         if (!isset($params['owner'])) {
-            throw new \Error("owner missing");
+            throw new \Error('owner missing');
         } else {
             // addition check. if owner is passed but no fieldname then there is something wrong with the params.
             if (!array_key_exists('fieldname', $params)) {
@@ -1207,7 +1207,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             if ($params['owner'] instanceof DataObject\Localizedfield) {
                 //make sure that for a localized field parent the language param is set and not empty
                 if (($params['language'] ?? null) === null) {
-                    throw new \Error("language param missing");
+                    throw new \Error('language param missing');
                 }
             }
             $blockElement->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);

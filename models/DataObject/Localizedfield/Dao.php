@@ -117,7 +117,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if (!isset($params['owner'])) {
-            throw new \Exception("need owner from container implementation");
+            throw new \Exception('need owner from container implementation');
         }
 
         $this->model->setOwner($params['owner'], 'localizedfields');
@@ -573,7 +573,7 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         if (!isset($params['owner'])) {
-            throw new \Exception("need owner from container implementation");
+            throw new \Exception('need owner from container implementation');
         }
 
         $this->model->setOwner($params['owner'], 'localizedfields');

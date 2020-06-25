@@ -29,7 +29,10 @@ use Pimcore\Tool;
  * @method void save($params = [])
  * @method void createUpdateTable($params = [])
  */
-class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface,
+class Localizedfield extends Model\AbstractModel implements
+    DirtyIndicatorInterface,
+    LazyLoadedFieldsInterface,
+    Model\Element\ElementDumpStateInterface,
                         OwnerAwareFieldInterface
 {
     use Model\DataObject\Traits\OwnerAwareFieldTrait;

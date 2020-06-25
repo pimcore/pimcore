@@ -70,8 +70,8 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                     $context['brickField'] = $key;
                     $context['fieldname'] = $brick->getFieldname();
                     $params['context'] = $context;
-                    $params["owner"] = $this->model;
-                    $params["fieldname"] = $key;
+                    $params['owner'] = $this->model;
+                    $params['fieldname'] = $key;
 
                     if ($fd instanceof CustomResourcePersistingInterface) {
                         $doLoad = true;

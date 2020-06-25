@@ -152,10 +152,10 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     // datafield has it's own loader
                     $params = [
                         'context' => [
-                            'object' => $this->model
+                            'object' => $this->model,
                         ],
                         'owner' => $this->model,
-                        'fieldname' => $key
+                        'fieldname' => $key,
                     ];
                     $value = $value->load($this->model, $params);
                     if ($value === 0 || !empty($value)) {
@@ -174,7 +174,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 } else {
                     $this->model->setValue($key, $value->getDataFromResource($data[$key], $this->model,
                             ['owner' => $this->model,
-                                'fieldname' => $key]));
+                                'fieldname' => $key, ]));
                 }
             }
         }
@@ -239,10 +239,10 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                 $saveParams = ['isUntouchable' => in_array($fd->getName(), $untouchable),
                     'isUpdate' => $isUpdate,
                     'context' => [
-                        'containerType' => 'object'
+                        'containerType' => 'object',
                     ],
                     'owner' => $this->model,
-                    'fieldname' => $key
+                    'fieldname' => $key,
                 ]
                 ;
                 if ($this->model instanceof Model\Element\DirtyIndicatorInterface) {
@@ -257,7 +257,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                         [
                             'isUpdate' => $isUpdate,
                             'owner' => $this->model,
-                            'fieldname' => $key
+                            'fieldname' => $key,
                         ]);
                     if (is_array($insertDataArray)) {
                         $data = array_merge($data, $insertDataArray);
@@ -267,7 +267,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                         [
                             'isUpdate' => $isUpdate,
                             'owner' => $this->model,
-                            'fieldname' => $key
+                            'fieldname' => $key,
                         ]);
                     $data[$key] = $insertData;
                 }
@@ -306,7 +306,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                         [
                             'isUpdate' => $isUpdate,
                             'owner' => $this->model,
-                            'fieldname' => $key
+                            'fieldname' => $key,
                         ]);
                     $isEmpty = $fd->isEmpty($fieldValue);
 

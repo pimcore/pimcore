@@ -249,17 +249,17 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         // view parameters
         $viewParameters = array_merge($view->getParameters()->all(), [
             // enable editmode if editmode is active and the brick has no edit template or edit in view is forced
-            "editmode" => $editmode ? (!$brick->hasEditTemplate() || $forceEditInView) : false
+            'editmode' => $editmode ? (!$brick->hasEditTemplate() || $forceEditInView) : false,
         ]);
 
         // edit parameters
         $editTemplate = null;
         $editParameters = [];
 
-        if($brick->hasEditTemplate() && $editmode) {
+        if ($brick->hasEditTemplate() && $editmode) {
             $editTemplate = $this->resolveBrickTemplate($brick, 'edit');
             $editParameters = array_merge($view->getParameters()->all(), [
-                "editmode" => true
+                'editmode' => true,
             ]);
         }
 
@@ -267,15 +267,15 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         // passing the engine interface is necessary otherwise rendering a
         // php template inside the twig template returns the content of the php file
         // instead of actually parsing the php template
-        echo $this->templating->render("PimcoreCoreBundle:Areabrick:wrapper.html.twig", [
-            "brick" => $brick,
-            "info" => $info,
-            "templating" => $this->templating,
-            "editmode" => $editmode,
-            "viewTemplate" => $viewTemplate,
-            "viewParameters" => $viewParameters,
-            "editTemplate" => $editTemplate,
-            "editParameters" => $editParameters
+        echo $this->templating->render('PimcoreCoreBundle:Areabrick:wrapper.html.twig', [
+            'brick' => $brick,
+            'info' => $info,
+            'templating' => $this->templating,
+            'editmode' => $editmode,
+            'viewTemplate' => $viewTemplate,
+            'viewParameters' => $viewParameters,
+            'editTemplate' => $editTemplate,
+            'editParameters' => $editParameters,
         ]);
 
         if ($brickInfoRestoreValue === null) {

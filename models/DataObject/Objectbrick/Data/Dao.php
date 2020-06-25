@@ -124,7 +124,7 @@ class Dao extends Model\Dao\AbstractDao
                         ],
                         'isUpdate' => $isBrickUpdate,
                         'owner' => $this->model,
-                        'fieldname' => $key
+                        'fieldname' => $key,
                     ]));
             }
 
