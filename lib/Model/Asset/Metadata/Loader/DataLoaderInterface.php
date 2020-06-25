@@ -17,9 +17,9 @@ declare(strict_types = 1);
 
 namespace Pimcore\Model\Asset\Metadata\Loader;
 
-use Pimcore\AssetMetadataClassDefinitionsBundle\Model\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
+use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 
 interface DataLoaderInterface extends LoaderInterface
 {

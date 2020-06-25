@@ -17,8 +17,6 @@
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
-use Pimcore\AssetMetadataClassDefinitionsBundle\Model\ClassDefinition\Data\DataDefinitionInterface;
-
 abstract class Data implements DataDefinitionInterface
 {
     /**
