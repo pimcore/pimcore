@@ -91,4 +91,24 @@ abstract class Data implements DataDefinitionInterface
     public function getDataForEditMode($data, $params = []) {
         return $data;
     }
+
+    /**
+     * @param $data
+     * @param array $params
+     * @return bool
+     */
+    public function isEmpty($data, $params = []) {
+        return empty($data);
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     */
+    public function checkValidity($data, $params = [])
+    {
+
+    }
+
+
 }

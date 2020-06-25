@@ -19,4 +19,18 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 interface DataDefinitionInterface
 {
 
+    /**
+     * @param $data
+     * @param array $params
+     * @return mixed
+     */
+    public function isEmpty($data, $params = []);
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * throws \Exception
+     */
+    public function checkValidity($data, $params = []);
+
 }
