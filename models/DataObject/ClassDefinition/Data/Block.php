@@ -1203,8 +1203,10 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @inheritDoc
      */
-    public function getTypeHintReturnType(): ?string {
+    public function getTypeHintReturnType(): ?string
+    {
         return '?array';
+    }
 
     private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, $params = [])
     {
