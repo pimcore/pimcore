@@ -2411,6 +2411,14 @@ class AssetController extends ElementControllerBase implements EventedController
                 try {
                     $data = $this->decodeJson($allParams['data']);
 
+                    $updateEvent = new GenericEvent($this, [
+                        'data' => $data
+                    ]);
+
+                    $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_UPDATE, $updateEvent);
+
+                    $data = $updateEvent->getArgument("data");
+
                     // save
                     $asset = Asset::getById($data['id']);
 
