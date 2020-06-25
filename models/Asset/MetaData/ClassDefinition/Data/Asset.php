@@ -86,7 +86,7 @@ class Asset extends Data
 
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param array $params
      * @return mixed
      */

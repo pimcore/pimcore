@@ -1772,7 +1772,7 @@ class Asset extends Element\AbstractElement
                     }
                     if (empty($md['language']) && !$strictMatch) {
                         if ($raw) {
-                            return $raw;
+                            return $md;
                         }
                         $data = $md;
                     }

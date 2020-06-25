@@ -228,8 +228,8 @@ class Service extends Model\Element\Service
 
 
                     if ($rawMetaData) {
+                        $type = $rawMetaData["type"];
                         if (!$loader) {
-                            $type = $rawMetaData["type"];
                             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
                         }
                         /** @var Data $instance */

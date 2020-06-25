@@ -85,7 +85,7 @@ class Document extends Data
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param array $params
      * @return mixed
      */
