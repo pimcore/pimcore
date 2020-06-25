@@ -671,7 +671,7 @@ abstract class Data
     /**
      * @return string|null
      */
-    public function getPhpDocInputType(): ?string {
+    public function getPhpdocInputType(): ?string {
         return $this->getPhpdocType();
     }
 
