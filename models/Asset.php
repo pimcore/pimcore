@@ -1740,10 +1740,11 @@ class Asset extends Element\AbstractElement
      * @param string|null $name
      * @param string|null $language
      * @param bool $strictMatch
+     * @param bool $raw
      *
      * @return array|string|null
      */
-    public function getMetadata($name = null, $language = null, $strictMatch = false)
+    public function getMetadata($name = null, $language = null, $strictMatch = false, $raw = false)
     {
 
         //
@@ -1764,15 +1765,24 @@ class Asset extends Element\AbstractElement
             foreach ($this->metadata as $md) {
                 if ($md['name'] == $name) {
                     if ($language == $md['language']) {
+                        if ($raw) {
+                            return $md;
+                        }
                         return $convert($md);
                     }
                     if (empty($md['language']) && !$strictMatch) {
+                        if ($raw) {
+                            return $raw;
+                        }
                         $data = $md;
                     }
                 }
             }
 
             if ($data) {
+                if ($raw) {
+                    return $raw;
+                }
                 return $convert($data);
             }
 

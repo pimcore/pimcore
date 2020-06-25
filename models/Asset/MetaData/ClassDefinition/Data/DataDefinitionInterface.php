@@ -33,4 +33,11 @@ interface DataDefinitionInterface
      */
     public function checkValidity($data, $params = []);
 
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataForListfolderGrid($data, $params = []);
+
 }

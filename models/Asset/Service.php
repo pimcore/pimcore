@@ -189,6 +189,7 @@ class Service extends Model\Element\Service
     public static function gridAssetData($asset, $fields = null, $requestedLanguage = null, $params = [])
     {
         $data = Element\Service::gridElementData($asset);
+        $loader = null;
 
         if ($asset instanceof Asset && !empty($fields)) {
             $data = [
@@ -219,12 +220,23 @@ class Service extends Model\Element\Service
                     if (isset($fieldDef[1])) {
                         $language = ($fieldDef[1] === 'none' ? '' : $fieldDef[1]);
                         $metaData = $asset->getMetadata($fieldDef[0], $language, true);
+                        $rawMetaData = $asset->getMetadata($fieldDef[0], $language, true, true);
                     } else {
                         $metaData = $asset->getMetadata($field, $requestedLanguage, true);
+                        $rawMetaData = $asset->getMetadata($field, $requestedLanguage, true, true);
                     }
 
-                    if ($metaData instanceof Model\Element\AbstractElement) {
-                        $metaData = $metaData->getFullPath();
+
+                    if ($rawMetaData) {
+                        if (!$loader) {
+                            $type = $rawMetaData["type"];
+                            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+                        }
+                        /** @var Data $instance */
+                         $instance = $loader->build($type);
+                         if ($instance) {
+                             $metaData = $instance->getDataForListfolderGrid($metaData, $rawMetaData);
+                         }
                     }
 
                     $data[$field] = $metaData;
@@ -337,7 +349,16 @@ class Service extends Model\Element\Service
         return $asset;
     }
 
+    public static function getListfolderGridData($item) {
+
+
+    }
+
+
+
     /**
+     * @internal
+     *
      * @param array $metadata
      *
      * @return array
@@ -354,8 +375,10 @@ class Service extends Model\Element\Service
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
             /** @var Data $instance */
             $instance = $loader->build($item['type']);
-            $transformedData = $instance->getDataFromEditMode($item['data'], $item);
-            $item["data"] = $transformedData;
+            if ($instance) {
+                $transformedData = $instance->getDataFromEditMode($item['data'], $item);
+                $item["data"] = $transformedData;
+            }
             $result[] = $item;
         }
 
