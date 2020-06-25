@@ -412,8 +412,12 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function getForCsvExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof \Pimcore\Model\DataObject\Data\QuantityValue) {
-            return $data->getValue() . '_' . $data->getUnitId();
+        if ($data instanceof Model\DataObject\Data\QuantityValue) {
+            if ($unit = $data->getUnit()) {
+                return $data->getValue() . ' ' . $unit->getAbbreviation();
+            }
+
+            return $data->getValue();
         }
 
         return '';
@@ -430,15 +434,26 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        $values = explode('_', $importValue);
+        if (strpos($importValue, '_') !== false) {
+            [$number, $unitId] = explode('_', $importValue);
+            $number = (float) str_replace(',', '.', $number);
 
-        $value = null;
-        if ($values[0] && $values[1]) {
-            $number = (float) str_replace(',', '.', $values[0]);
-            $value = new Model\DataObject\Data\QuantityValue($number, $values[1]);
+            return new Model\DataObject\Data\QuantityValue($number, $unitId);
         }
 
-        return $value;
+        if (strpos($importValue, ' ') !== false) {
+            [$number, $abbreviation] = explode(' ', $importValue);
+            $number = (float)str_replace(',', '.', $number);
+            $unit = Model\DataObject\QuantityValue\Unit::getByAbbreviation($abbreviation);
+            return new Model\DataObject\Data\QuantityValue($number, $unit);
+        }
+
+        if ($importValue) {
+            $number = (float)str_replace(',', '.', $importValue);
+            return new Model\DataObject\Data\QuantityValue($number);
+        }
+
+        return null;
     }
 
     /**
