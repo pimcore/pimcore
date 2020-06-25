@@ -248,6 +248,42 @@ pimcore.asset.metadata.grid = Class.create({
                 });
             }
 
+            let nameConfig = {
+                text: t("name"),
+                dataIndex: 'name',
+                renderer: Ext.util.Format.htmlEncode,
+                sortable: true,
+                width: 230
+            };
+
+            if (!this.config.disableName) {
+                nameConfig["getEditor"] = function () {
+                    return new Ext.form.TextField({
+                        allowBlank: false
+                    });
+                };
+            }
+
+            let languageConfig = {
+                text: t('language'),
+                sortable: true,
+                dataIndex: "language",
+                width: 80,
+            };
+
+            if (!this.config.disableLanguage) {
+                languageConfig["getEditor"] = function () {
+                    return new Ext.form.ComboBox({
+                        name: "language",
+                        store: languagestore,
+                        editable: false,
+                        listConfig: {minWidth: 200},
+                        triggerAction: 'all',
+                        mode: "local"
+                    });
+                };
+            }
+
             this.grid = Ext.create('Ext.grid.Panel', {
                 title: this.config.title ? this.config.title : t("custom_metadata"),
                 autoScroll: true,
@@ -272,34 +308,8 @@ pimcore.asset.metadata.grid = Class.create({
                             renderer: this.getTypeRenderer.bind(this),
                             sortable: true
                         },
-                        {
-                            text: t("name"),
-                            dataIndex: 'name',
-                            getEditor: function () {
-                                return new Ext.form.TextField({
-                                    allowBlank: false
-                                });
-                            },
-                            renderer: Ext.util.Format.htmlEncode,
-                            sortable: true,
-                            width: 230
-                        },
-                        {
-                            text: t('language'),
-                            sortable: true,
-                            dataIndex: "language",
-                            getEditor: function () {
-                                return new Ext.form.ComboBox({
-                                    name: "language",
-                                    store: languagestore,
-                                    editable: false,
-                                    listConfig: {minWidth: 200},
-                                    triggerAction: 'all',
-                                    mode: "local"
-                                });
-                            },
-                            width: 80
-                        },
+                        nameConfig,
+                        languageConfig,
                         {
                             text: t("value"),
                             dataIndex: 'data',
