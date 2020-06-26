@@ -118,4 +118,13 @@ abstract class Data implements DataDefinitionInterface
     public function getDataForListfolderGrid($data, $params = []) {
         return $data;
     }
+
+    /**
+     * @param $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataFromListfolderGrid($data, $params = []) {
+        return $data;
+    }
 }

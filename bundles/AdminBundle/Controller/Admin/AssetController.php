@@ -959,7 +959,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 $metadata = $metadataEvent->getArgument('metadata');
                 $metadataValues = $metadata['values'];
 
-                $metadataValues = Asset\Service::minimizeMetadata($metadataValues);
+                $metadataValues = Asset\Service::minimizeMetadata($metadataValues, "editor");
                 $asset->setMetadata($metadataValues);
             }
 
@@ -2412,10 +2412,18 @@ class AssetController extends ElementControllerBase implements EventedController
                     $data = $this->decodeJson($allParams['data']);
 
                     $updateEvent = new GenericEvent($this, [
-                        'data' => $data
+                        'data' => $data,
+                        'processed' => false
                     ]);
 
                     $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_UPDATE, $updateEvent);
+
+                    $processed = $updateEvent->getArgument('processed');
+
+                    if ($processed) {
+                        // update already processed by event handler
+                        return $this->adminJson(['success' => true]);
+                    }
 
                     $data = $updateEvent->getArgument("data");
 
@@ -2476,7 +2484,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     }
 
                     if ($dirty) {
-                        $metadata = Asset\Service::minimizeMetadata($metadata);
+                        $metadata = Asset\Service::minimizeMetadata($metadata, "grid");
                         $asset->setMetadata($metadata);
                         $asset->save();
 

@@ -199,6 +199,21 @@ final class AdminEvents
     const ASSET_LIST_AFTER_LIST_LOAD = 'pimcore.admin.asset.list.afterListLoad';
 
     /**
+     * Allows you to modify the data from the listfolder grid before it gets processed
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - data | raw data as an array
+     *  - processed | true to stop processing
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_LIST_BEFORE_UPDATE = 'pimcore.admin.asset.list.beforeUpdate';
+
+
+    /**
      * Fired before the request params are parsed. This event apply to the seo panel tree.
      *
      * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController

@@ -988,7 +988,7 @@ class AssetHelperController extends AdminController
 
                     try {
                         if ($dirty) {
-                            $metadata = Asset\Service::minimizeMetadata($metadata);
+                            $metadata = Asset\Service::minimizeMetadata($metadata, "grid");
                             $asset->setMetadata($metadata);
                             $asset->save();
 

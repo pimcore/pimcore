@@ -360,10 +360,11 @@ class Service extends Model\Element\Service
      * @internal
      *
      * @param array $metadata
+     * @param string $mode
      *
      * @return array
      */
-    public static function minimizeMetadata($metadata)
+    public static function minimizeMetadata($metadata, string $mode)
     {
         if (!is_array($metadata)) {
             return $metadata;
@@ -376,7 +377,12 @@ class Service extends Model\Element\Service
             /** @var Data $instance */
             $instance = $loader->build($item['type']);
             if ($instance) {
-                $transformedData = $instance->getDataFromEditMode($item['data'], $item);
+                if ($mode == "grid") {
+                    $transformedData = $instance->getDataFromListfolderGrid($item['data'], $item);
+                } else {
+                    $transformedData = $instance->getDataFromEditMode($item['data'], $item);
+                }
+
                 $item["data"] = $transformedData;
             }
             $result[] = $item;

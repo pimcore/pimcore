@@ -40,4 +40,18 @@ interface DataDefinitionInterface
      */
     public function getDataForListfolderGrid($data, $params = []);
 
+    /**
+     * @param $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataFromEditMode($data, $params = []);
+
+    /**
+     * @param $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataFromListfolderGrid($data, $params = []);
+
 }
