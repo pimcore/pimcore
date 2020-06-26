@@ -445,11 +445,13 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             [$number, $abbreviation] = explode(' ', $importValue);
             $number = (float)str_replace(',', '.', $number);
             $unit = Model\DataObject\QuantityValue\Unit::getByAbbreviation($abbreviation);
+
             return new Model\DataObject\Data\QuantityValue($number, $unit);
         }
 
         if ($importValue) {
             $number = (float)str_replace(',', '.', $importValue);
+
             return new Model\DataObject\Data\QuantityValue($number);
         }
 

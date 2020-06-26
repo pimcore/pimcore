@@ -189,7 +189,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
                 'description' => $desc,
                 'type' => $brick->getId(),
                 'icon' => $icon,
-                'limit' => $limit
+                'limit' => $limit,
             ];
         }
 
