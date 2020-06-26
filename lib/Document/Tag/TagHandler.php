@@ -159,6 +159,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
             $name = $brick->getName();
             $desc = $brick->getDescription();
             $icon = $brick->getIcon();
+            $limit = $options['limits'][$brick->getId()] ?? null;
 
             // autoresolve icon as <bundleName>/Resources/public/areas/<id>/icon.png
             if (null === $icon) {
@@ -188,6 +189,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
                 'description' => $desc,
                 'type' => $brick->getId(),
                 'icon' => $icon,
+                'limit' => $limit
             ];
         }
 
