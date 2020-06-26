@@ -37,7 +37,7 @@ pimcore.object.tags.inputQuantityValue = Class.create(pimcore.object.tags.abstra
             fields: ['id', 'abbreviation']
         });
 
-        pimcore.helpers.quantityValue.initUnitStore(this.setData.bind(this), fieldConfig.validUnits);
+        pimcore.helpers.quantityValue.initUnitStore(this.setData.bind(this), fieldConfig.validUnits, this.data);
     },
 
     setData: function(data) {
