@@ -160,7 +160,23 @@ pimcore.asset.metadata.grid = Class.create({
                                     }
                                     return v;
                                 }
-                            }, "language", "config"]
+                            }, "language", "config",
+                            {
+                                name: "lastName",
+                                persist: false,
+                                convert: function(v,rec) {
+                                    return rec.data.name;
+                                }.bind(this)
+                            },
+                            {
+                                name: "lastLanguage",
+                                persist: false,
+                                convert: function(v,rec) {
+                                    return rec.data.language;
+                                }.bind(this)
+                            }
+
+                            ]
                     }
                 );
             }
@@ -174,6 +190,30 @@ pimcore.asset.metadata.grid = Class.create({
                 listeners: {
                     update: function(store, record, operation, modifiedFieldNames, details, eOpts) {
                         let newData = record.data.data;
+
+                        let oldKey = record.data.lastName + "~" + record.data.lastLanguage;
+                        let newKey = record.data.name + "~" + record.data.language;
+
+                        if (oldKey != newKey) {
+                            console.log("key changed");
+                            
+                            let oldRecord = {
+                                name: record.data.lastName,
+                                language: record.data.lastLanguage
+                            };
+
+                            this.dataProvider.remove(oldRecord, this.grid.getId());
+
+                            record.set("lastName", record.data.name, {
+                                silent: true
+                            })
+
+                            record.set("lastLanguage", record.data.language, {
+                                silent: true
+                            })
+                        }
+
+
                         if (typeof pimcore.asset.metadata.tags[record.data.type] !== "undefined") {
                             newData = pimcore.asset.metadata.tags[record.data.type].prototype.marshal(newData);
                         }
