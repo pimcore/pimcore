@@ -54,4 +54,11 @@ interface DataDefinitionInterface
      */
     public function getDataFromListfolderGrid($data, $params = []);
 
+    /**
+     * @param $data
+     * @param array $params
+     * @return array
+     */
+    public function resolveDependencies($data, $params = []);
+
 }

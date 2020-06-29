@@ -25,6 +25,7 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
+use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Tool\Mime;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -2032,11 +2033,13 @@ class Asset extends Element\AbstractElement
                     /** @var ElementInterface $elementData */
                     $elementData = $md['data'];
                     $elementType = $md['type'];
-                    $key = $elementType . '_' . $elementData->getId();
-                    $dependencies[$key] = [
-                        'id' => $elementData->getId(),
-                        'type' => $elementType
-                    ];
+                    $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+                    /** @var DataDefinitionInterface $instance */
+                    $implementation = $loader->build($elementType);
+                    if ($implementation) {
+                        $dependencies = array_merge($dependencies, $implementation->resolveDependencies($elementData, $md));
+                    }
+
                 }
             }
         }

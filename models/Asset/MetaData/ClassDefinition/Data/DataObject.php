@@ -134,4 +134,26 @@ class DataObject extends Data
         }
         return $data;
     }
+
+    /**
+     * @param $data
+     * @param array $params
+     * @return array
+     */
+    public function resolveDependencies($data, $params = [])
+    {
+        if (isset($params['data']) && $params['data'] instanceof ElementInterface) {
+            /** @var ElementInterface $elementData */
+            $elementData = $params['data'];
+            $elementType = $params['type'];
+
+            $key = $elementType . '_' . $elementData->getId();
+            return [
+                $key => [
+                    'id' => $elementData->getId(),
+                    'type' => $elementType
+                ]];
+        }
+        return [];
+    }
 }

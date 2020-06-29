@@ -65,7 +65,8 @@ class Asset extends Data
      * @param array $params
      * @return mixed
      */
-    public function transformGetterData($data, $params = []) {
+    public function transformGetterData($data, $params = [])
+    {
         if (is_numeric($data)) {
             return \Pimcore\Model\Asset\Service::getElementById("asset", $data);
         }
@@ -77,7 +78,8 @@ class Asset extends Data
      * @param array $params
      * @return mixed
      */
-    public function transformSetterData($data, $params = []) {
+    public function transformSetterData($data, $params = [])
+    {
         if ($data instanceof \Pimcore\Model\Asset) {
             return $data->getId();
         }
@@ -90,7 +92,8 @@ class Asset extends Data
      * @param array $params
      * @return mixed
      */
-    public function getDataFromEditMode($data, $params = []) {
+    public function getDataFromEditMode($data, $params = [])
+    {
         $element = Service::getElementByPath("asset", $data);
         if ($element) {
             return $element->getId();
@@ -103,7 +106,8 @@ class Asset extends Data
      * @param array $params
      * @return mixed
      */
-    public function getDataForResource($data, $params = []) {
+    public function getDataForResource($data, $params = [])
+    {
         if ($data instanceof ElementInterface) {
             return $data->getId();
         }
@@ -112,7 +116,8 @@ class Asset extends Data
     }
 
     /** @inheritDoc */
-    public function getDataForEditMode($data, $params = []) {
+    public function getDataForEditMode($data, $params = [])
+    {
         if (is_numeric($data)) {
             $data = Service::getElementById("asset", $data);
         }
@@ -128,10 +133,33 @@ class Asset extends Data
      * @param array $params
      * @return mixed
      */
-    public function getDataForListfolderGrid($data, $params = []) {
+    public function getDataForListfolderGrid($data, $params = [])
+    {
         if ($data instanceof AbstractElement) {
             return $data->getFullPath();
         }
         return $data;
+    }
+
+    /**
+     * @param $data
+     * @param array $params
+     * @return array
+     */
+    public function resolveDependencies($data, $params = [])
+    {
+        if (isset($params['data']) && $params['data'] instanceof ElementInterface) {
+            /** @var ElementInterface $elementData */
+            $elementData = $params['data'];
+            $elementType = $params['type'];
+
+            $key = $elementType . '_' . $elementData->getId();
+            return [
+                $key => [
+                    'id' => $elementData->getId(),
+                    'type' => $elementType
+                ]];
+        }
+        return [];
     }
 }
