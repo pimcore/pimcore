@@ -169,7 +169,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
             $data['workflowManagement']['workflows'] = $data['workflowManagement']['workflows'] ?? [];
 
             // Fix: places stored as empty string ("") considered uninitialized prior to Symfony 4.4.8
-            $this->workflowManager->ensureBackwardCompatibleInitialPlace($workflowName, $element);
+            $this->workflowManager->ensureInitialPlace($workflowName, $element);
 
             $allowedTransitions = $this->actionsButtonService->getAllowedTransitions($workflow, $element);
             $globalActions = $this->actionsButtonService->getGlobalActions($workflow, $element);

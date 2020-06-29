@@ -336,12 +336,11 @@ class Manager
     }
 
     /**
-     * Compatibility Fix: forces an initial place being set (and stored) if the current place is empty.
+     * Forces an initial place being set (and stored) if the current place is empty.
      * We cannot apply a regular transition b/c it would be considered invalid by the state machine.
      *
      * As of Symfony 4.4.8 built-in implementations of @see \Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface
-     * use strict `null` comparison when retrieving the current marking. This will throw exceptions for elements
-     * stored with empty marking despite an initial state was configured in prior versions of Pimcore.
+     * use strict `null` comparison when retrieving the current marking and throw an exception otherwise.
      *
      * @param Asset|Concrete|PageSnippet $subject
      *
@@ -349,7 +348,7 @@ class Manager
      *
      * @throws \Exception
      */
-    public function ensureBackwardCompatibleInitialPlace(string $workflowName, $subject): bool
+    public function ensureInitialPlace(string $workflowName, $subject): bool
     {
         if (!$workflow = $this->getWorkflowIfExists($subject, $workflowName)) {
             return false;
