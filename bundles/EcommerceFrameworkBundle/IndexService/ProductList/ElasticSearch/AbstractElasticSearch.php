@@ -25,6 +25,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
 {
     const LIMIT_UNLIMITED = 'unlimited';
     const INTEGER_MAX_VALUE = 2147483647;     // Elasticsearch Integer.MAX_VALUE is 2^31-1
+    const ADVANCED_SORT = 'advanced_sort';
 
     /**
      * @var null|IndexableInterface[]
@@ -387,7 +388,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
      * Single field name
      * Array of field names
      * Array of arrays (field name, direction)
-     * Array containing your sort configuration ['advanced_sort' => <sort_config as array>]
+     * Array containing your sort configuration [self::ADVANCED_SORT => <sort_config as array>]
      *
      * @return void
      */
@@ -580,8 +581,8 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
         if ($this->orderKey) {
             if (is_array($this->orderKey)) {
-                if (!empty($this->orderKey['advanced_sort'])) {
-                    $params['body']['sort'] = $this->orderKey['advanced_sort'];
+                if (!empty($this->orderKey[self::ADVANCED_SORT])) {
+                    $params['body']['sort'] = $this->orderKey[self::ADVANCED_SORT];
                 } else {
                     foreach ($this->orderKey as $orderKey) {
                         $params['body']['sort'][] = [$this->tenantConfig->getFieldNameMapped($orderKey[0]) => (strtolower($orderKey[1]) ?: 'asc')];
