@@ -215,7 +215,8 @@ class Areablock extends Model\Document\Tag implements BlockInterface
 
         if ($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
             $this->getTagHandler()->renderAreaFrontend($info);
-            $this->brickTypeUsageCounter[$this->currentIndex['type']] += 1;
+            $this->brickTypeUsageCounter += [$this->currentIndex['type'] => 0];
+            $this->brickTypeUsageCounter[$this->currentIndex['type']]++;
         }
 
         $this->current++;
