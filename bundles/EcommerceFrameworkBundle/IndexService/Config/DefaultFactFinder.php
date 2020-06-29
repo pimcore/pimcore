@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFactFinder as DefaultFactFinderWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
@@ -22,6 +23,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
+ * @deprecated since version 6.7.0 and will be removed in 7.0.0.
+ *
  * Default implementation for fact finder as product index backend
  *
  * @method DefaultFactFinderWorker getTenantWorker()
@@ -34,6 +37,28 @@ class DefaultFactFinder extends AbstractConfig implements FactFinderConfigInterf
      * @var array
      */
     protected $clientConfig;
+
+    /**
+     * @param string $tenantName
+     * @param array[]|Attribute[] $attributes
+     * @param array $searchAttributes
+     * @param array $filterTypes
+     * @param array $options
+     */
+    public function __construct(
+        string $tenantName,
+        array $attributes,
+        array $searchAttributes,
+        array $filterTypes,
+        array $options = []
+    ) {
+        @trigger_error(
+            'Class ' . self::class . ' is deprecated since version 6.7.0 and will be removed in 7.0.0.',
+            E_USER_DEPRECATED
+        );
+
+        parent::__construct($tenantName, $attributes, $searchAttributes, $filterTypes, $options);
+    }
 
     protected function processOptions(array $options)
     {
