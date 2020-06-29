@@ -529,18 +529,15 @@ class AbstractObject extends Model\Element\AbstractElement
 
         try {
             // delete children
-            if ($this->hasChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT])) {
-                // delete also unpublished children
-                $unpublishedStatus = self::doHideUnpublished();
-                self::setHideUnpublished(false);
-                foreach ($this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true) as $child) {
+            $children = $this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true);
+            if (count($children) > 0) {
+                foreach ($children as $child) {
                     $child->delete(true);
                 }
-                self::setHideUnpublished($unpublishedStatus);
             }
 
             // remove dependencies
-            $d = $this->getDependencies();
+            $d = new Model\Dependency;
             $d->cleanAllForElement($this);
 
             // remove all properties
