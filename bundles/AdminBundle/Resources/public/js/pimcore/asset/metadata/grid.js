@@ -195,8 +195,6 @@ pimcore.asset.metadata.grid = Class.create({
                         let newKey = record.data.name + "~" + record.data.language;
 
                         if (oldKey != newKey) {
-                            console.log("key changed");
-                            
                             let oldRecord = {
                                 name: record.data.lastName,
                                 language: record.data.lastLanguage
