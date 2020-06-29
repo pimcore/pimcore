@@ -110,7 +110,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         if ($link instanceof DataObject\Data\Link) {
             if (isset($params['owner'])) {
-                $link->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                $link->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
             }
 
             try {

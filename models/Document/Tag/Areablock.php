@@ -55,6 +55,11 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     protected $blockStarted;
 
     /**
+     * @var array
+     */
+    private $brickTypeUsageCounter = [];
+
+    /**
      * @see Document\Tag\TagInterface::getType
      *
      * @return string
@@ -149,6 +154,12 @@ class Areablock extends Model\Document\Tag implements BlockInterface
                 $disabled = true;
             }
 
+            $brickTypeLimit = $this->options['limits'][$this->currentIndex['type']] ?? 100000;
+            $brickTypeUsageCounter = $this->brickTypeUsageCounter[$this->currentIndex['type']] ?? 0;
+            if ($brickTypeUsageCounter >= $brickTypeLimit) {
+                $disabled = true;
+            }
+
             if (!$this->getTagHandler()->isBrickEnabled($this, $index['type']) && $options['dontCheckEnabled'] != true) {
                 $disabled = true;
             }
@@ -204,6 +215,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
 
         if ($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
             $this->getTagHandler()->renderAreaFrontend($info);
+            $this->brickTypeUsageCounter[$this->currentIndex['type']] += 1;
         }
 
         $this->current++;
