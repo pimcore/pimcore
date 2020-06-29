@@ -823,12 +823,12 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /** @inheritDoc */
-    public function getTypeHintInputType(): ?string {
+    public function getParameterTypeDeclaration(): ?string {
         return '?array';
     }
 
     /** @inheritDoc */
-    public function getTypeHintReturnType(): ?string {
+    public function getReturnTypeDeclaration(): ?string {
         return '?array';
     }
 }

@@ -735,12 +735,12 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /** @inheritDoc */
-    public function getTypeHintInputType(): ?string {
+    public function getParameterTypeDeclaration(): ?string {
         return '?\Pimcore\Model\Element\AbstractElement';
     }
 
     /** @inheritDoc */
-    public function getTypeHintReturnType(): ?string {
+    public function getReturnTypeDeclaration(): ?string {
         return '?\Pimcore\Model\Element\AbstractElement';
     }
 

@@ -25,12 +25,12 @@ interface TypeHintSupportInterface
      *
      * @return string|null
      */
-    public function getTypeHintInputType(): ?string;
+    public function getParameterTypeDeclaration(): ?string;
 
     /**
      * @return string|null
      */
-    public function getTypeHintReturnType(): ?string;
+    public function getReturnTypeDeclaration(): ?string;
 
     /**
      * @return string|null
