@@ -1748,7 +1748,11 @@ class Asset extends Element\AbstractElement
     public function getMetadata($name = null, $language = null, $strictMatch = false, $raw = false)
     {
 
-        //
+        $preEvent = new AssetEvent($this);
+        $preEvent->setArgument("metadata", $this->metadata);
+        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_GETMETADATA, $preEvent);
+        $this->metadata = $preEvent->getArgument("metadata");
+
         $convert = function ($metaData) {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
             /** @var Data $instance */
