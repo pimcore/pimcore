@@ -170,7 +170,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
             $element = Element\Service::getElementById($request->get('type'), $request->get('id'));
 
             if ($element) {
-                $list = $element->getList(['unpublished' => true]);
+                $list = $element::getList(['unpublished' => true]);
                 $list->setCondition((($request->get('type') === 'object') ? 'o_' : '') . 'path LIKE ' . $list->quote($element->getRealFullPath() . '/%'));
                 $children = $list->getTotalCount();
 

@@ -157,7 +157,7 @@ class ElementControllerBase extends AdminController
 
                 if ($hasChilds) {
                     // get amount of childs
-                    $list = $element->getList(['unpublished' => true]);
+                    $list = $element::getList(['unpublished' => true]);
                     $pathColumn = ($type === 'object') ? 'o_path' : 'path';
                     $list->setCondition($pathColumn . ' LIKE ?', [$element->getRealFullPath() . '/%']);
                     $childs = $list->getTotalCount();
