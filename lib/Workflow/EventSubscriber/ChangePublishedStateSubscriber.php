@@ -44,6 +44,7 @@ class ChangePublishedStateSubscriber implements EventSubscriberInterface
         if ($changePublishedState === self::FORCE_UNPUBLISHED) {
             $subject->setPublished(false);
         } elseif ($changePublishedState === self::FORCE_PUBLISHED) {
+            $subject->setModificationDate(time());
             $subject->setPublished(true);
         }
     }
