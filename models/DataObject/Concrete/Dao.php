@@ -185,6 +185,14 @@ class Dao extends Model\DataObject\AbstractObject\Dao
     {
         parent::update($isUpdate);
 
+        $oldData = $this->db->fetchRow('SELECT * FROM object_query_' . $this->model->getClassId() . ' WHERE oo_id = ?', $this->model->getId());
+
+        $dirtyDetectionDisabled = DataObject\Concrete::isDirtyDetectionDisabled();
+        if ($oldData === false) {
+            // query data missing, rewrite the whole row
+            DataObject\Concrete::disableDirtyDetection();
+        }
+
         // get fields which shouldn't be updated
         $fieldDefinitions = $this->model->getClass()->getFieldDefinitions();
         $untouchable = [];
@@ -382,6 +390,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
         $this->db->insertOrUpdate('object_query_' . $this->model->getClassId(), $data);
 
         DataObject\AbstractObject::setGetInheritedValues($inheritedValues);
+
+        DataObject\Concrete::setDisableDirtyDetection($dirtyDetectionDisabled);
     }
 
     public function saveChildData()
