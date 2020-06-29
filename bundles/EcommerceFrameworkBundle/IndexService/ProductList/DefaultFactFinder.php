@@ -25,7 +25,7 @@ use Psr\Http\Message\ResponseInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
- * @deprecated version 6.7.0 and will be removed in 7.0.0.
+ * @deprecated since version 6.7.0 and will be removed in 7.0.0.
  *
  */
 class DefaultFactFinder implements ProductListInterface
