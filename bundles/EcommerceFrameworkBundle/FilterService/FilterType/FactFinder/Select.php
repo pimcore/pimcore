@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @deprecated version 6.7.0 and will be removed in 7.0.0.
+ * @deprecated since version 6.7.0 and will be removed in 7.0.0.
  *
  */
 class Select extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Select
