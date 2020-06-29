@@ -19,8 +19,6 @@ use Pimcore\Model\Element;
 use Pimcore\Translation\AttributeSet\Attribute;
 use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor;
 
-use function explode;
-
 class DataObjectImporter extends AbstractElementImporter
 {
     /**
