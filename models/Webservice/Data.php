@@ -145,7 +145,7 @@ abstract class Data
             $object->setProperties(null);
         }
 
-        if (isset($this->properties) && is_array($this->properties)) {
+        if (isset($this->properties) && (is_array($this->properties) || $this->properties instanceof \stdClass)) {
             foreach ($this->properties as $propertyWs) {
                 $propertyWs = (array) $propertyWs;
 

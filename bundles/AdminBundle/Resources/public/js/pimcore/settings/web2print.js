@@ -320,8 +320,18 @@ pimcore.settings.web2print = Class.create({
         tabPanel.setActiveItem("pimcore_settings_web2print");
     },
 
-    save: function () {
+    getValues: function () {
         var values = this.layout.getForm().getFieldValues();
+        Object.keys(values).forEach(function (key) {
+            if (key.includes('displayfield')) {
+                delete values[key];
+            }
+        });
+        return values;
+    },
+
+    save: function () {
+        var values = this.getValues();
 
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_settings_setweb2print'),

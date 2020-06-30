@@ -220,4 +220,12 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
     {
         $this->needsRenewReferences = (bool) $needsRenewReferences;
     }
+
+    /**
+     * @param string $language
+     */
+    public function setLanguage(string $language)
+    {
+        $this->_language = $language;
+    }
 }
