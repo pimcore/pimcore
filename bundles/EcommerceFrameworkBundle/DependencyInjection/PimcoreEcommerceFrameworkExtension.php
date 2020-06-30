@@ -213,7 +213,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $mapping,
             OrderManagerLocator::class,
             [
-                'pimcore_ecommerce.locator.order_manager'
+                'pimcore_ecommerce.locator.order_manager',
             ]
         );
     }
@@ -247,7 +247,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $mapping,
             PricingManagerLocator::class,
             [
-                'pimcore_ecommerce.locator.pricing_manager'
+                'pimcore_ecommerce.locator.pricing_manager',
             ]
         );
     }
@@ -448,7 +448,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
                 '$tenantName' => $tenant,
                 '$attributes' => $attributes,
                 '$searchAttributes' => $tenantConfig['search_attributes'],
-                '$filterTypes' => []
+                '$filterTypes' => [],
             ]);
 
             if (!empty($tenantConfig['config_options'])) {
@@ -470,14 +470,15 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
     /**
      * Register synonym providers and their options per tenant config.
+     *
      * @param array $tenantConfigOptions
      * @param Definition $config
      * @param ContainerBuilder $container
      */
     private function registerIndexServiceElasticSearchSynonymProviders(array $tenantConfigOptions,
                                                                        Definition $config,
-                                                                       ContainerBuilder $container) {
-
+                                                                       ContainerBuilder $container)
+    {
         if (!isset($tenantConfigOptions['synonym_providers'])) {
             return;
         }
@@ -530,7 +531,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
             $mapping,
             FilterServiceLocator::class,
             [
-                'pimcore_ecommerce.locator.filter_service'
+                'pimcore_ecommerce.locator.filter_service',
             ]
         );
     }
@@ -632,7 +633,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $container->setDefinition($id, new Definition($class, [
             $serviceLocator,
             new Reference('pimcore_ecommerce.environment'),
-            $container->getParameter('pimcore_ecommerce.factory.strict_tenants')
+            $container->getParameter('pimcore_ecommerce.factory.strict_tenants'),
         ]));
 
         foreach ($aliases as $alias) {
@@ -645,7 +646,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
         $serviceLocator = $this->setupServiceLocator($container, $id, $mapping, false);
 
         $locator = new Definition($class, [
-            $serviceLocator
+            $serviceLocator,
         ]);
 
         $container->setDefinition(sprintf('pimcore_ecommerce.locator.%s', $id), $locator);

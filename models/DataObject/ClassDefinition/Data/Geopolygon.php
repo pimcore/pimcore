@@ -113,7 +113,7 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
                 foreach ($data as $point) {
                     $points[] = [
                         'latitude' => $point->getLatitude(),
-                        'longitude' => $point->getLongitude()
+                        'longitude' => $point->getLongitude(),
                     ];
                 }
 
@@ -324,13 +324,13 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
                 foreach ($value as $point) {
                     $result[] = [
                             $point->getLatitude(),
-                            $point->getLongitude()
+                            $point->getLongitude(),
                         ];
                 }
             }
 
             return [
-                'value' => json_encode($result)
+                'value' => json_encode($result),
             ];
         }
     }

@@ -44,7 +44,7 @@ class ControllerViewModelListener implements EventSubscriberInterface
             // set a higher priority to make this run before the @Template annotation
             // handler kicks in (SensioFrameworkExtraBundle) to make sure the ViewModel
             // is processed before template is rendered
-            KernelEvents::VIEW => ['onKernelView', 10]
+            KernelEvents::VIEW => ['onKernelView', 10],
         ];
     }
 

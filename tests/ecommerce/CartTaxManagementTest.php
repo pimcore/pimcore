@@ -55,7 +55,7 @@ class CartTaxManagementTest extends EcommerceTestCase
         $pricingManagers = Stub::make(PricingManagerLocator::class, [
             'getPricingManager' => function () {
                 return new PricingManager([], [], $this->buildSession());
-            }
+            },
         ]);
 
         $priceSystem = Stub::construct(AttributePriceSystem::class, [$pricingManagers, $environment], [
@@ -70,7 +70,7 @@ class CartTaxManagementTest extends EcommerceTestCase
             },
             'calculateAmount' => function () use ($grossPrice) {
                 return Decimal::create($grossPrice);
-            }
+            },
         ]);
 
         /** @var Stub|CheckoutableInterface $product */
@@ -86,7 +86,7 @@ class CartTaxManagementTest extends EcommerceTestCase
             },
             'getClass' => function () {
                 return ClassDefinition::getByName('Product');
-            }
+            },
         ]);
 
         return $product;
@@ -108,7 +108,7 @@ class CartTaxManagementTest extends EcommerceTestCase
                 return false;
             },
             'modified' => function () {
-            }
+            },
         ]);
 
         return $cart;
@@ -162,11 +162,11 @@ class CartTaxManagementTest extends EcommerceTestCase
     {
         $product = $this->setUpProduct(100, [
             1 => 10,
-            2 => 15
+            2 => 15,
         ], TaxEntry::CALCULATION_MODE_COMBINE);
 
         $product2 = $this->setUpProduct(50, [
-            1 => 10
+            1 => 10,
         ], TaxEntry::CALCULATION_MODE_COMBINE);
 
         $cart = $this->setUpCart();
@@ -207,11 +207,11 @@ class CartTaxManagementTest extends EcommerceTestCase
     {
         $product = $this->setUpProduct(100, [
             1 => 10,
-            2 => 15
+            2 => 15,
         ], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
 
         $product2 = $this->setUpProduct(50, [
-            1 => 10
+            1 => 10,
         ], TaxEntry::CALCULATION_MODE_ONE_AFTER_ANOTHER);
 
         $cart = $this->setUpCart();

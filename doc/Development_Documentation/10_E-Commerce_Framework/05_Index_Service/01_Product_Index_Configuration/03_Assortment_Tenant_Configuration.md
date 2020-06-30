@@ -32,7 +32,7 @@ and may be extended:
   - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch`: Provides a default [elastic search](https://www.elastic.co/) 
   implementation of the product index.
   - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFactFinder`: Provides a default [fact finder](http://www.fact-finder.de/) 
-  implementation of the product index.
+  implementation of the product index. (Deprecated since version 6.7.0 and will be removed in 7.)
   - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFindologic`: Provides a default [findologic](https://www.findologic.com/) 
   implementation of the product index.
 

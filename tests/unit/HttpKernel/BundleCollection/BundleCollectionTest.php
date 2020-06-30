@@ -49,7 +49,7 @@ class BundleCollectionTest extends TestCase
             new BundleA,
             new BundleB,
             new BundleC,
-            new BundleD
+            new BundleD,
         ];
     }
 
@@ -204,14 +204,14 @@ class BundleCollectionTest extends TestCase
         $this->assertEquals([
             $bundles[0],
             $bundles[1],
-            $bundles[2]
+            $bundles[2],
         ], $collection->getBundles('dev'));
 
         // test environment excludes the dev-only bundle
         $this->assertEquals([
             $bundles[0],
             $bundles[2],
-            $bundles[3]
+            $bundles[3],
         ], $collection->getBundles('test'));
     }
 

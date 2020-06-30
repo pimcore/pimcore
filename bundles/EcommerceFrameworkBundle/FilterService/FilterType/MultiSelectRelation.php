@@ -59,7 +59,7 @@ class MultiSelectRelation extends AbstractFilterType
             'objects' => $objects,
             'fieldname' => $field,
             'metaData' => $filterDefinition->getMetaData(),
-            'resultCount' => $productList->count()
+            'resultCount' => $productList->count(),
         ]);
     }
 

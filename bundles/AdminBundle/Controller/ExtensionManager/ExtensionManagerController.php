@@ -131,7 +131,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
         $this->bundleManager->setStates($updates);
 
         return $this->adminJson([
-            'extensions' => $this->getBundleList(array_keys($updates))
+            'extensions' => $this->getBundleList(array_keys($updates)),
         ]);
     }
 
@@ -159,7 +159,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
 
         $data = [
             'success' => true,
-            'errors' => []
+            'errors' => [],
         ];
 
         if ($type === 'bundle') {
@@ -172,7 +172,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
             if (!$kernel->isDebug()) {
                 try {
                     $cacheClearer->clear($kernel->getEnvironment(), [
-                        'no-warmup' => true
+                        'no-warmup' => true,
                     ]);
                 } catch (\Throwable $e) {
                     $data['errors'][] = $e->getMessage();
@@ -267,7 +267,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
 
             $data = [
                 'success' => true,
-                'reload' => $this->bundleManager->needsReloadAfterInstall($bundle)
+                'reload' => $this->bundleManager->needsReloadAfterInstall($bundle),
             ];
 
             if (!empty($message = $this->getInstallerOutput($bundle))) {
@@ -278,12 +278,12 @@ class ExtensionManagerController extends AdminController implements EventedContr
         } catch (BundleNotFoundException $e) {
             return $this->adminJson([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 404);
         } catch (\Exception $e) {
             return $this->adminJson([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 400);
         }
     }
@@ -368,7 +368,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
         } catch (\Exception $e) {
             $this->get('monolog.logger.pimcore')->error('Failed to build instance of bundle {bundle}: {error}', [
                 'bundle' => $bundleName,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
 
@@ -400,7 +400,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
             'configuration' => $this->getIframePath($bundle),
             'version' => $bundle->getVersion(),
             'priority' => $state['priority'],
-            'environments' => implode(', ', $state['environments'])
+            'environments' => implode(', ', $state['environments']),
         ];
 
         // only check for installation specifics if the bundle is enabled
@@ -479,7 +479,7 @@ class ExtensionManagerController extends AdminController implements EventedContr
             'uninstallable' => false,
             'installed' => true,
             'active' => $this->areabrickManager->isEnabled($brick->getId()),
-            'version' => $brick->getVersion()
+            'version' => $brick->getVersion(),
         ];
     }
 

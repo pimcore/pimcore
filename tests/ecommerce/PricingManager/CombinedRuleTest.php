@@ -23,37 +23,37 @@ class CombinedRuleTest extends AbstractRuleTest
                 'actions' => [
                     [
                         'class' => ProductDiscount::class,
-                        'amount' => 10
-                    ]
+                        'amount' => 10,
+                    ],
                 ],
-                'condition' => ''
+                'condition' => '',
             ],
             'testrule2' => [
                 'actions' => [
                     [
                         'class' => CartDiscount::class,
-                        'amount' => 10
-                    ]
+                        'amount' => 10,
+                    ],
                 ],
-                'condition' => ''
-            ]
+                'condition' => '',
+            ],
         ];
 
         $productDefinitions = [
             'singleProduct' => [
                 'id' => 4,
-                'price' => 100
+                'price' => 100,
             ],
             'cart' => [
                 [
                     'id' => 4,
-                    'price' => 100
+                    'price' => 100,
                 ],
                 [
                     'id' => 5,
-                    'price' => 50
-                ]
-            ]
+                    'price' => 50,
+                ],
+            ],
 
         ];
 
@@ -76,40 +76,40 @@ class CombinedRuleTest extends AbstractRuleTest
                 'actions' => [
                     [
                         'class' => ProductDiscount::class,
-                        'amount' => 10
-                    ]
+                        'amount' => 10,
+                    ],
                 ],
-                'condition' => ''
+                'condition' => '',
             ],
             'testrule2' => [
                 'actions' => [
                     [
                         'class' => CartDiscount::class,
-                        'amount' => 10
-                    ]
+                        'amount' => 10,
+                    ],
                 ],
                 'condition' => [
                     'class' => CartAmount::class,
-                    'limit' => 200
-                ]
-            ]
+                    'limit' => 200,
+                ],
+            ],
         ];
 
         $productDefinitions = [
             'singleProduct' => [
                 'id' => 4,
-                'price' => 100
+                'price' => 100,
             ],
             'cart' => [
                 [
                     'id' => 4,
-                    'price' => 100
+                    'price' => 100,
                 ],
                 [
                     'id' => 5,
-                    'price' => 50
-                ]
-            ]
+                    'price' => 50,
+                ],
+            ],
 
         ];
 
@@ -127,22 +127,22 @@ class CombinedRuleTest extends AbstractRuleTest
         $productDefinitions = [
             'singleProduct' => [
                 'id' => 4,
-                'price' => 100
+                'price' => 100,
             ],
             'cart' => [
                 [
                     'id' => 4,
-                    'price' => 100
+                    'price' => 100,
                 ],
                 [
                     'id' => 5,
-                    'price' => 50
+                    'price' => 50,
                 ],
                 [
                     'id' => 6,
-                    'price' => 80
-                ]
-            ]
+                    'price' => 80,
+                ],
+            ],
 
         ];
 
@@ -165,51 +165,51 @@ class CombinedRuleTest extends AbstractRuleTest
                 'actions' => [
                     [
                         'class' => ProductDiscount::class,
-                        'amount' => 10
-                    ]
+                        'amount' => 10,
+                    ],
                 ],
-                'condition' => ''
+                'condition' => '',
             ],
             'testrule3' => [
                 'actions' => [
                     [
-                        'class' => FreeShipping::class
+                        'class' => FreeShipping::class,
                     ],
                 ],
                 'condition' => [
                     'class' => CartAmount::class,
-                    'limit' => 200
-                ]
+                    'limit' => 200,
+                ],
             ],
             'testrule4' => [
                 'actions' => [
                     [
                         'class' => ProductDiscount::class,
-                        'amount' => 10
-                    ]
+                        'amount' => 10,
+                    ],
                 ],
                 'condition' => [
                     'class' => CartAmount::class,
-                    'limit' => 10
-                ]
+                    'limit' => 10,
+                ],
             ],
         ];
 
         $productDefinitions = [
             'singleProduct' => [
                 'id' => 4,
-                'price' => 100
+                'price' => 100,
             ],
             'cart' => [
                 [
                     'id' => 4,
-                    'price' => 100
+                    'price' => 100,
                 ],
                 [
                     'id' => 5,
-                    'price' => 50
-                ]
-            ]
+                    'price' => 50,
+                ],
+            ],
 
         ];
 
@@ -227,22 +227,22 @@ class CombinedRuleTest extends AbstractRuleTest
         $productDefinitions = [
             'singleProduct' => [
                 'id' => 4,
-                'price' => 100
+                'price' => 100,
             ],
             'cart' => [
                 [
                     'id' => 4,
-                    'price' => 100
+                    'price' => 100,
                 ],
                 [
                     'id' => 5,
-                    'price' => 50
+                    'price' => 50,
                 ],
                 [
                     'id' => 6,
-                    'price' => 80
-                ]
-            ]
+                    'price' => 80,
+                ],
+            ],
 
         ];
 
@@ -265,51 +265,51 @@ class CombinedRuleTest extends AbstractRuleTest
                 'actions' => [
                     [
                         'class' => ProductDiscount::class,
-                        'amount' => 10
-                    ]
+                        'amount' => 10,
+                    ],
                 ],
-                'condition' => ''
+                'condition' => '',
             ],
             'testrule4' => [
                 'actions' => [
                     [
                         'class' => ProductDiscount::class,
-                        'amount' => 10
-                    ]
-                ],
-                'condition' => [
-                    'class' => CartAmount::class,
-                    'limit' => 10
-                ]
-            ],
-            'testrule3' => [
-                'actions' => [
-                    [
-                        'class' => FreeShipping::class
+                        'amount' => 10,
                     ],
                 ],
                 'condition' => [
                     'class' => CartAmount::class,
-                    'limit' => 200
-                ]
+                    'limit' => 10,
+                ],
+            ],
+            'testrule3' => [
+                'actions' => [
+                    [
+                        'class' => FreeShipping::class,
+                    ],
+                ],
+                'condition' => [
+                    'class' => CartAmount::class,
+                    'limit' => 200,
+                ],
             ],
         ];
 
         $productDefinitions = [
             'singleProduct' => [
                 'id' => 4,
-                'price' => 100
+                'price' => 100,
             ],
             'cart' => [
                 [
                     'id' => 4,
-                    'price' => 100
+                    'price' => 100,
                 ],
                 [
                     'id' => 5,
-                    'price' => 50
-                ]
-            ]
+                    'price' => 50,
+                ],
+            ],
 
         ];
 
@@ -327,22 +327,22 @@ class CombinedRuleTest extends AbstractRuleTest
         $productDefinitions = [
             'singleProduct' => [
                 'id' => 4,
-                'price' => 100
+                'price' => 100,
             ],
             'cart' => [
                 [
                     'id' => 4,
-                    'price' => 100
+                    'price' => 100,
                 ],
                 [
                     'id' => 5,
-                    'price' => 50
+                    'price' => 50,
                 ],
                 [
                     'id' => 6,
-                    'price' => 80
-                ]
-            ]
+                    'price' => 80,
+                ],
+            ],
 
         ];
 

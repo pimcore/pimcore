@@ -78,7 +78,7 @@ class NumberRangeSelection extends AbstractFilterType
             'definition' => $filterDefinition,
             'fieldname' => $field,
             'metaData' => $filterDefinition->getMetaData(),
-            'resultCount' => $productList->count()
+            'resultCount' => $productList->count(),
         ]);
     }
 

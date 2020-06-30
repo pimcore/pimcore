@@ -59,7 +59,7 @@ class ResponseHeaderResolver extends AbstractRequestResolver
         $responseHeaders[] = new ResponseHeader([
             'key' => $key,
             'values' => $values,
-            'replace' => $replace
+            'replace' => $replace,
         ]);
 
         $request->attributes->set(static::ATTRIBUTE_RESPONSE_HEADER, $responseHeaders);

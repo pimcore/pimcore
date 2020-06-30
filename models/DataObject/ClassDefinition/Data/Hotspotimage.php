@@ -139,20 +139,20 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
             $metaData = [
                 'hotspots' => $data->getHotspots(),
                 'marker' => $data->getMarker(),
-                'crop' => $data->getCrop()
+                'crop' => $data->getCrop(),
             ];
 
             $metaData = Serialize::serialize($metaData);
 
             return [
                 $this->getName() . '__image' => $imageId,
-                $this->getName() . '__hotspots' => $metaData
+                $this->getName() . '__hotspots' => $metaData,
             ];
         }
 
         return [
             $this->getName() . '__image' => null,
-            $this->getName() . '__hotspots' => null
+            $this->getName() . '__hotspots' => null,
         ];
     }
 
@@ -279,7 +279,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
                 'id' => $imageId,
                 'hotspots' => $hotspots,
                 'marker' => $marker,
-                'crop' => $data->getCrop()
+                'crop' => $data->getCrop(),
             ];
         }
 
@@ -468,7 +468,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
             $dependencies['asset_' . $data->getImage()->getId()] = [
                 'id' => $data->getImage()->getId(),
-                'type' => 'asset'
+                'type' => 'asset',
             ];
 
             $getMetaDataDependencies = function ($data, $dependencies) {
@@ -482,7 +482,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
                             if ($metaData['value'] instanceof Element\ElementInterface) {
                                 $dependencies[$metaData['type'] . '_' . $metaData['value']->getId()] = [
                                     'id' => $metaData['value']->getId(),
-                                    'type' => $metaData['type']
+                                    'type' => $metaData['type'],
                                 ];
                             }
                         }
@@ -720,7 +720,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
                 $id = $image->getId();
                 $result['image'] = [
                     'type' => $type,
-                    'id' => $id
+                    'id' => $id,
                 ];
             }
 

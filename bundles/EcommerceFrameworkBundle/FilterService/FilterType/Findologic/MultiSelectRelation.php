@@ -50,7 +50,7 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
 
                 if ($add) {
                     array_unshift($values, [
-                        'value' => $id, 'label' => $id, 'count' => null, 'parameter' => null
+                        'value' => $id, 'label' => $id, 'count' => null, 'parameter' => null,
                     ]);
                 }
             }
@@ -81,7 +81,7 @@ class MultiSelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filte
             'values' => $values,
             'objects' => $objects,
             'fieldname' => $field,
-            'resultCount' => $productList->count()
+            'resultCount' => $productList->count(),
         ]);
     }
 

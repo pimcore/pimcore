@@ -174,7 +174,7 @@ class Version20190527121800 extends AbstractPimcoreMigration
                                 'password' => '%pimcore_system_config.email.smtp.auth.password%',
                                 'port' => '%pimcore_system_config.email.smtp.port%',
                                 'encryption' => '%pimcore_system_config.email.smtp.ssl%',
-                                'auth_mode' => '%pimcore_system_config.email.smtp.auth.method%'
+                                'auth_mode' => '%pimcore_system_config.email.smtp.auth.method%',
                             ],
                             'newsletter_mailer' => [
                                 'transport' => '%pimcore_system_config.newsletter.method%',
@@ -184,7 +184,7 @@ class Version20190527121800 extends AbstractPimcoreMigration
                                 'password' => '%pimcore_system_config.newsletter.smtp.auth.password%',
                                 'port' => '%pimcore_system_config.newsletter.smtp.port%',
                                 'encryption' => '%pimcore_system_config.newsletter.smtp.ssl%',
-                                'auth_mode' => '%pimcore_system_config.newsletter.smtp.auth.method%'
+                                'auth_mode' => '%pimcore_system_config.newsletter.smtp.auth.method%',
                             ],
                         ],
                     ],

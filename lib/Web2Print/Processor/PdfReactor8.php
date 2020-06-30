@@ -48,7 +48,7 @@ class PdfReactor8 extends Processor
             'logLevel' => $config->loglevel ?? \LogLevel::FATAL,
             'enableDebugMode' => $web2PrintConfig->get('pdfreactorEnableDebugMode') || $config->enableDebugMode === true,
             'addOverprint' => isset($config->addOverprint) && $config->addOverprint === true,
-            'httpsMode' => $web2PrintConfig->get('pdfreactorEnableLenientHttpsMode') ? \HttpsMode::LENIENT : \HttpsMode::STRICT
+            'httpsMode' => $web2PrintConfig->get('pdfreactorEnableLenientHttpsMode') ? \HttpsMode::LENIENT : \HttpsMode::STRICT,
         ];
         if (!empty($config->viewerPreference)) {
             $reactorConfig['viewerPreferences'] = [$config->viewerPreference];
@@ -185,41 +185,41 @@ class PdfReactor8 extends Processor
             'name' => 'javaScriptMode',
             'type' => 'select',
             'values' => [\JavaScriptMode::ENABLED, \JavaScriptMode::DISABLED, \JavaScriptMode::ENABLED_NO_LAYOUT],
-            'default' => \JavaScriptMode::ENABLED
+            'default' => \JavaScriptMode::ENABLED,
         ];
 
         $options[] = [
             'name' => 'viewerPreference',
             'type' => 'select',
             'values' => [\ViewerPreferences::PAGE_LAYOUT_SINGLE_PAGE, \ViewerPreferences::PAGE_LAYOUT_TWO_COLUMN_LEFT, \ViewerPreferences::PAGE_LAYOUT_TWO_COLUMN_RIGHT],
-            'default' => \ViewerPreferences::PAGE_LAYOUT_SINGLE_PAGE
+            'default' => \ViewerPreferences::PAGE_LAYOUT_SINGLE_PAGE,
         ];
 
         $options[] = [
             'name' => 'colorspace',
             'type' => 'select',
             'values' => [\ColorSpace::CMYK, \ColorSpace::RGB],
-            'default' => \ColorSpace::CMYK
+            'default' => \ColorSpace::CMYK,
         ];
 
         $options[] = [
             'name' => 'encryption',
             'type' => 'select',
             'values' => [\Encryption::NONE, \Encryption::TYPE_40, \Encryption::TYPE_128],
-            'default' => \Encryption::NONE
+            'default' => \Encryption::NONE,
         ];
 
         $options[] = [
             'name' => 'loglevel',
             'type' => 'select',
             'values' => [\LogLevel::FATAL, \LogLevel::WARN, \LogLevel::INFO, \LogLevel::DEBUG, \LogLevel::PERFORMANCE],
-            'default' => \LogLevel::FATAL
+            'default' => \LogLevel::FATAL,
         ];
 
         $options[] = ['name' => 'enableDebugMode', 'type' => 'bool', 'default' => false];
 
         $event = new PrintConfigEvent($this, [
-            'options' => $options
+            'options' => $options,
         ]);
 
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS, $event);

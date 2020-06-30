@@ -282,7 +282,7 @@ class AssetHelperController extends AdminController
             'onlyUnreferenced' => isset($gridConfig['onlyUnreferenced']) ? $gridConfig['onlyUnreferenced'] : false,
             'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false,
             'availableConfigs' => $availableConfigs,
-            'sharedConfigs' => $sharedConfigs
+            'sharedConfigs' => $sharedConfigs,
 
         ];
     }
@@ -368,7 +368,7 @@ class AssetHelperController extends AdminController
                         'key' => $sc . '~system',
                         'type' => 'system',
                         'label' => $sc,
-                        'position' => $count];
+                        'position' => $count, ];
                     $count++;
                 }
             }
@@ -463,7 +463,7 @@ class AssetHelperController extends AdminController
     {
         $result = [
             'sharedUserIds' => [],
-            'sharedRoleIds' => []
+            'sharedRoleIds' => [],
         ];
 
         $db = Db::get();
@@ -873,7 +873,7 @@ class AssetHelperController extends AdminController
                     'subtype' => $item->getTargetSubtype(),
                     'datatype' => 'data',
                     'fieldtype' => $item->getType(),
-                    'config' => $item->getConfig()
+                    'config' => $item->getConfig(),
                 ];
             }
         }
@@ -968,7 +968,7 @@ class AssetHelperController extends AdminController
                                 'name' => $name,
                                 'language' => $language,
                                 'type' => 'input',
-                                'data' => $value
+                                'data' => $value,
                             ];
                             $dirty = true;
                         } else {
@@ -979,7 +979,7 @@ class AssetHelperController extends AdminController
                                     'name' => $name,
                                     'language' => $language,
                                     'type' => $predefined->getType(),
-                                    'data' => $value
+                                    'data' => $value,
                                 ];
                                 $dirty = true;
                             }

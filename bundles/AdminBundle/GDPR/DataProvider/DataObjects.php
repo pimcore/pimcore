@@ -192,7 +192,7 @@ class DataObjects extends Elements implements DataProviderInterface
         if ($sortingSettings['orderKey']) {
             // we need a special mapping for classname as this is stored in subtype column
             $sortMapping = [
-                'classname' => 'subtype'
+                'classname' => 'subtype',
             ];
 
             $sort = $sortingSettings['orderKey'];

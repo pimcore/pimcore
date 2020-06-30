@@ -134,7 +134,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
             try {
                 $result = $esClient->indices()->getAlias([
-                    'name' => $this->indexName
+                    'name' => $this->indexName,
                 ]);
 
                 if (is_array($result)) {
@@ -243,7 +243,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 } else {
                     $mapping = [
                         'type' => $type,
-                        'store' => $this->getStoreCustomAttributes()
+                        'store' => $this->getStoreCustomAttributes(),
                     ];
 
                     if (!empty($attribute->getOption('analyzer'))) {
@@ -303,7 +303,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             'parentCategoryIds' => 'long',
             'priceSystemName' => 'keyword',
             'active' => 'boolean',
-            'inProductList' => 'boolean'];
+            'inProductList' => 'boolean', ];
 
         if ($includeTypes) {
             return $systemAttributes;
@@ -458,7 +458,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         if (sizeof($this->bulkIndexData)) {
             $esClient = $this->getElasticSearchClient();
             $responses = $esClient->bulk([
-                'body' => $this->bulkIndexData
+                'body' => $this->bulkIndexData,
             ]);
 
             // save update status
@@ -474,7 +474,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                     $data = [
                         'update_status' => $response[$operation]['status'],
                         'update_error' => null,
-                        'metadata' => isset($this->indexStoreMetaData[$response[$operation]['_id']]) ? $this->indexStoreMetaData[$response[$operation]['_id']] : null
+                        'metadata' => isset($this->indexStoreMetaData[$response[$operation]['_id']]) ? $this->indexStoreMetaData[$response[$operation]['_id']] : null,
                     ];
                     if (isset($response[$operation]['error']) && $response[$operation]['error']) {
                         $data['update_error'] = json_encode($response[$operation]['error']);
@@ -553,9 +553,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                     'add' => [
                         'index' => $this->getIndexNameVersion(),
                         'alias' => $this->indexName,
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
         $result = $esClient->indices()->updateAliases($params);
         if (!$result['acknowledged']) {
@@ -620,7 +620,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                     'index' => $this->getIndexNameVersion(),
                     'type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'],
                     'id' => $objectId,
-                    'routing' => $storeEntry['o_virtualProductId']
+                    'routing' => $storeEntry['o_virtualProductId'],
                 ]);
             } catch (\Exception $e) {
                 //if \Elasticsearch\Common\Exceptions\Missing404Exception <- the object is not in the index so its ok.
@@ -655,10 +655,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         try {
             $this->putIndexMapping($this->getIndexNameVersion());
 
-
             $configuredSettings = $this->tenantConfig->getIndexSettings();
             $synonymSettings = $this->extractMinimalSynonymFiltersTreeFromTenantConfig();
-            if(isset($synonymSettings['analysis'])) {
+            if (isset($synonymSettings['analysis'])) {
                 $configuredSettings['analysis']['filter'] = array_replace_recursive($configuredSettings['analysis']['filter'], $synonymSettings['analysis']['filter']);
             }
 
@@ -672,22 +671,19 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 $esClient->indices()->putSettings([
                     'index' => $this->getIndexNameVersion(),
                     'body' => [
-                        'index' => $this->tenantConfig->getIndexSettings()
-                    ]
+                        'index' => $this->tenantConfig->getIndexSettings(),
+                    ],
                 ]);
                 Logger::info('Index-Actions - updated settings for Index: ' . $this->getIndexNameVersion());
             } else {
                 Logger::info('Index-Actions - no settings update necessary for Index: ' . $this->getIndexNameVersion());
             }
-
-
         } catch (\Exception $e) {
             Logger::info("Index-Actions - can't create Mapping - trying reindexing " . $e->getMessage());
             Logger::info('Index-Actions - Perform native reindexing for Index: ' . $this->getIndexNameVersion());
 
             $this->startReindexMode();
         }
-
     }
 
     // type will be removed in ES 7
@@ -697,8 +693,8 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             'index' => $this->getIndexNameVersion(),
             'type' => $this->getTenantConfig()->getElasticSearchClientParams()['indexType'],
             'body' => [
-                'properties' => $this->createMappingAttributes()
-            ]
+                'properties' => $this->createMappingAttributes(),
+            ],
         ];
 
         return $params;
@@ -744,9 +740,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                         'add' => [
                             'index' => $this->getIndexNameVersion(),
                             'alias' => $this->indexName,
-                        ]
-                    ]
-                ]
+                        ],
+                    ],
+                ],
             ];
             $result = $esClient->indices()->updateAliases($params);
             if (!$result) {
@@ -769,7 +765,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         Logger::info('Index-Actions - creating new Index. Name: ' . $indexName);
         $result = $esClient->indices()->create([
             'index' => $indexName,
-            'body' => ['settings' => $this->tenantConfig->getIndexSettings()]
+            'body' => ['settings' => $this->tenantConfig->getIndexSettings()],
         ]);
 
         if (!$result['acknowledged']) {
@@ -849,12 +845,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         $body =
             [
                 'source' => [
-                    'index' => $sourceIndexName
+                    'index' => $sourceIndexName,
 
                 ],
                 'dest' => [
                     'index' => $targetIndexName,
-                ]
+                ],
             ];
 
         $startTime = time();
@@ -863,11 +859,11 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             'targetIndexName' => $targetIndexName,
             'method' => 'POST',
             'uri' => '/_reindex',
-            'body' => $body
+            'body' => $body,
         ]);
 
         $esClient->reindex([
-            'body' => $body
+            'body' => $body,
         ]);
 
         Logger::info(sprintf('Completed re-index in %.02f seconds.', (time() - $startTime)));
@@ -908,7 +904,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         }
     }
 
-
     /**
      *
      * Perform a synonym update on the currently selected ES index, if necessary.
@@ -922,20 +917,21 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *
      * @throws \Exception is thrown if the synonym transmission fails.
      */
-    public function updateSynonyms(string $indexNameOverride = "", bool $skipComparison = false, bool $skipLocking = true) {
+    public function updateSynonyms(string $indexNameOverride = '', bool $skipComparison = false, bool $skipLocking = true)
+    {
         try {
-
             if (!$skipLocking) {
                 $this->activateIndexLock(); //lock all other processes
             }
 
-            $indexName = $indexNameOverride ? : $this->getIndexNameVersion();
+            $indexName = $indexNameOverride ?: $this->getIndexNameVersion();
 
             $indexSettingsSynonymPartLocalConfig = $this->extractMinimalSynonymFiltersTreeFromTenantConfig();
             if (empty($indexSettingsSynonymPartLocalConfig)) {
                 Logger::info('No index update required, as no synonym providers are configured. '.
                     'If filters have been removed, then reindexing will help to get rid of old configurations.'
                 );
+
                 return;
             }
 
@@ -948,6 +944,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 if ($indexSettingsSynonymPartEs == $indexSettingsSynonymPartLocalConfig) {
                     Logger::info(sprintf('The synonyms in ES index "%s" are identical with those of the local configuration. '.
                         'No update required.', $indexName));
+
                     return;
                 }
             }
@@ -958,8 +955,8 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             $result = $esClient->indices()->putSettings([
                 'index' => $indexName,
                 'body' => [
-                    'index' => $indexSettingsSynonymPartLocalConfig
-                ]
+                    'index' => $indexSettingsSynonymPartLocalConfig,
+                ],
             ]);
 
             $esClient->indices()->open(['index' => $indexName]);
@@ -968,8 +965,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 //exception must be thrown after re-opening the index!
                 throw new \Exception('Index synonym settings update failed. IndexName: ' . $indexName);
             }
-
-
         } finally {
             if (!$skipLocking) {
                 $this->releaseIndexLock();
@@ -979,9 +974,11 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
     /**
      * Extract the minimal synonym filters tree based on the tenant config's synonym provider configuration.
+     *
      * @return array the index tree settings ready to be pushed into the index, or an empty array, if no configuration exists.
      */
-    protected function extractMinimalSynonymFiltersTreeFromTenantConfig() : array {
+    protected function extractMinimalSynonymFiltersTreeFromTenantConfig(): array
+    {
         $indexPart = [];
         foreach ($this->tenantConfig->getSynonymProviders() as $filterName => $synonymProvider) {
             $synonymLines = $synonymProvider->getSynonyms();
@@ -989,8 +986,8 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
                 $indexPart = [
                     'analysis' =>
                         [
-                            'filter' => []
-                        ]
+                            'filter' => [],
+                        ],
                 ];
             }
 
@@ -1000,10 +997,11 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         return $indexPart;
     }
 
-
     /**
      * Extract that part of the ES analysis index settings that are related to synonym (provider) filters.
+     *
      * @param array $indexSettings the index settings
+     *
      * @return array part of the index_settings that contains the synonym-related filters, including
      *  the parent elements:
      *      - analysis
@@ -1012,20 +1010,20 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      *                  - type: synonym/synonym_graph
      *                  - ...
      */
-    public function extractMinimalSynonymFiltersTreeFromIndexSettings(array $indexSettings) : array {
+    public function extractMinimalSynonymFiltersTreeFromIndexSettings(array $indexSettings): array
+    {
         $filters = isset($indexSettings['analysis']['filter']) ? $indexSettings['analysis']['filter'] : [];
         $indexPart = [];
         if ($filters) {
             $synonymProviderMap = $this->tenantConfig->getSynonymProviders();
             foreach ($filters as $filterName => $filter) {
-
                 if (array_key_exists($filterName, $synonymProviderMap)) {
                     if (empty($indexPart)) {
                         $indexPart = [
                             'analysis' =>
                                 [
-                                    'filter' => []
-                                ]
+                                    'filter' => [],
+                                ],
                         ];
                     }
 

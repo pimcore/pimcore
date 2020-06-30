@@ -14,6 +14,7 @@ services:
         calls:
             - [setKernel, ['@kernel']]
             - [setAdminPath, ['%pimcore.admin.translations.path%']]
+            - [setAdminTranslationMapping, ['%pimcore.translations.admin_translation_mapping%']]
 
     #
     # LOCALE

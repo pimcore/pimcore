@@ -159,7 +159,7 @@ class RedirectHandler implements LoggerAwareInterface
             } else {
                 $this->logger->error('Target of redirect {redirect} not found (Document-ID: {document})', [
                     'redirect' => $redirect->getId(),
-                    'document' => $target
+                    'document' => $target,
                 ]);
 
                 return null;
@@ -184,7 +184,7 @@ class RedirectHandler implements LoggerAwareInterface
                 } else {
                     $this->logger->error('Site with ID {targetSite} not found', [
                         'redirect' => $redirect->getId(),
-                        'targetSite' => $redirect->getTargetSite()
+                        'targetSite' => $redirect->getTargetSite(),
                     ]);
 
                     return null;
@@ -264,7 +264,7 @@ class RedirectHandler implements LoggerAwareInterface
 
         if (!is_array($this->redirects)) {
             $this->logger->warning('Failed to load redirects', [
-                'redirects' => $this->redirects
+                'redirects' => $this->redirects,
             ]);
 
             $this->redirects = [];

@@ -71,7 +71,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'template_prefix' => 'PimcoreEcommerceFrameworkBundle:Tracking/analytics/enhanced'
+            'template_prefix' => 'PimcoreEcommerceFrameworkBundle:Tracking/analytics/enhanced',
         ]);
     }
 
@@ -109,7 +109,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
         $item = $this->trackingItemBuilder->buildProductImpressionItem($product, $list);
 
         $parameters = [
-            'productData' => $this->transformProductImpression($item)
+            'productData' => $this->transformProductImpression($item),
         ];
 
         $result = $this->renderTemplate('product_impression', $parameters);
@@ -189,7 +189,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
         $parameters['items'] = $items;
         $parameters['calls'] = $this->buildCheckoutCalls($items);
         $parameters['actionData'] = [
-            'step' => 1
+            'step' => 1,
         ];
 
         $result = $this->renderTemplate('checkout', $parameters);
@@ -343,7 +343,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
                 'price' => $item->getPrice() ? Decimal::fromNumeric($item->getPrice())->asString() : '',
                 'quantity' => $item->getQuantity() ?: 1,
                 'position' => $item->getPosition(),
-                'coupon' => $item->getCoupon()
+                'coupon' => $item->getCoupon(),
             ],
                 $item->getAdditionalAttributes())
         );
@@ -366,7 +366,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
             'variant' => $item->getVariant(),
             'price' => $item->getPrice() ? Decimal::fromNumeric($item->getPrice())->asString() : '',
             'list' => $item->getList(),
-            'position' => $item->getPosition()
+            'position' => $item->getPosition(),
         ], $item->getAdditionalAttributes()));
 
         return $data;
@@ -382,7 +382,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
         }
 
         $result = $this->renderTemplate('dependencies', [
-            'dependencies' => $this->dependencies
+            'dependencies' => $this->dependencies,
         ]);
 
         $this->trackCode($result);

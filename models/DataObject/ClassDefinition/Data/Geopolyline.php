@@ -113,7 +113,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
                 foreach ($data as $point) {
                     $points[] = [
                         'latitude' => $point->getLatitude(),
-                        'longitude' => $point->getLongitude()
+                        'longitude' => $point->getLongitude(),
                     ];
                 }
 
@@ -324,13 +324,13 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
                 foreach ($value as $point) {
                     $result[] = [
                         $point->getLatitude(),
-                        $point->getLongitude()
+                        $point->getLongitude(),
                     ];
                 }
             }
 
             return [
-                'value' => json_encode($result)
+                'value' => json_encode($result),
             ];
         }
     }

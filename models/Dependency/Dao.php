@@ -157,7 +157,7 @@ class Dao extends Model\Dao\AbstractDao
                         'sourceid' => $this->model->getSourceId(),
                         'sourcetype' => $this->model->getSourceType(),
                         'targetid' => $target['id'],
-                        'targettype' => $target['type']
+                        'targettype' => $target['type'],
                     ]);
                 } catch (UniqueConstraintViolationException $e) {
                 }
@@ -189,7 +189,7 @@ class Dao extends Model\Dao\AbstractDao
             foreach ($data as $d) {
                 $requiredBy[] = [
                     'id' => $d['sourceid'],
-                    'type' => $d['sourcetype']
+                    'type' => $d['sourcetype'],
                 ];
             }
         }

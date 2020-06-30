@@ -105,7 +105,7 @@ class Dao extends Model\Dao\AbstractDao
 
         $this->db->$updateMethod('locks', [
             'id' => $key,
-            'date' => time()
+            'date' => time(),
         ]);
     }
 

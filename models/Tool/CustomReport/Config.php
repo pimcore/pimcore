@@ -162,7 +162,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         foreach ($items as $item) {
             $reports[] = [
                 'id' => $item->getName(),
-                'text' => $item->getName()
+                'text' => $item->getName(),
             ];
         }
 

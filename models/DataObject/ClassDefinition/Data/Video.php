@@ -427,14 +427,14 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if ($data && $data->getData() instanceof Asset) {
             $dependencies['asset_' . $data->getData()->getId()] = [
                 'id' => $data->getData()->getId(),
-                'type' => 'asset'
+                'type' => 'asset',
             ];
         }
 
         if ($data && $data->getPoster() instanceof Asset) {
             $dependencies['asset_' . $data->getPoster()->getId()] = [
                 'id' => $data->getPoster()->getId(),
-                'type' => 'asset'
+                'type' => 'asset',
             ];
         }
 
@@ -625,7 +625,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             if ($poster) {
                 $result['poster'] = [
                     'type' => Model\Element\Service::getType($poster),
-                    'id' => $poster->getId()
+                    'id' => $poster->getId(),
                 ];
             }
 
@@ -634,7 +634,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             if ($data && $value->getType() == 'asset') {
                 $result['data'] = [
                     'type' => Model\Element\Service::getType($data),
-                    'id' => $data->getId()
+                    'id' => $data->getId(),
                 ];
             } else {
                 $result['data'] = $data;

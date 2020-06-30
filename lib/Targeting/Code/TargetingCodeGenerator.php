@@ -63,7 +63,7 @@ class TargetingCodeGenerator
     {
         $data = [
             'inDebugMode' => \Pimcore::inDebugMode(),
-            'dataProviderKeys' => $visitorInfo->getFrontendDataProviders()
+            'dataProviderKeys' => $visitorInfo->getFrontendDataProviders(),
         ];
 
         $event = new TargetingCodeEvent(

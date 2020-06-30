@@ -46,7 +46,7 @@ class GoogleTagManager extends Tracker implements
     const DEFERRED_DIMENSION_IMPRESSIONS = 'impressions';
 
     const DEFERRED_DIMENSIONS = [
-        self::DEFERRED_DIMENSION_IMPRESSIONS
+        self::DEFERRED_DIMENSION_IMPRESSIONS,
     ];
 
     /** @var string[] */

@@ -34,7 +34,7 @@ class UsageRecorderSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            DocumentEvents::TAG_NAME => 'onBuildTagName'
+            DocumentEvents::TAG_NAME => 'onBuildTagName',
         ];
     }
 

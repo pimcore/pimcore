@@ -110,7 +110,7 @@ class Piwik implements DataProviderInterface
         }
 
         $this->logger->debug('Fetching Piwik visitor profile for ID {visitorId}', [
-            'visitorId' => $visitorInfo->getVisitorId()
+            'visitorId' => $visitorInfo->getVisitorId(),
         ]);
 
         return $this->visitorClient->getVisitorProfile(

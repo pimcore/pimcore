@@ -118,7 +118,7 @@ class TaxCalculationTest extends EcommerceTestCase
 
         // single tax entry 10%
         $price->setTaxEntries([
-            new TaxEntry(10, Decimal::create(0))
+            new TaxEntry(10, Decimal::create(0)),
         ]);
 
         $this->calculationService->updateTaxes($price, TaxCalculationService::CALCULATION_FROM_NET);
@@ -139,7 +139,7 @@ class TaxCalculationTest extends EcommerceTestCase
     {
         $price = new Price(Decimal::create(0), new Currency('EUR'));
         $price->setTaxEntries([
-            new TaxEntry(15, Decimal::create(0))
+            new TaxEntry(15, Decimal::create(0)),
         ]);
         $price->setGrossAmount(Decimal::create(110), true);
 
@@ -257,7 +257,7 @@ class TaxCalculationTest extends EcommerceTestCase
         $pricingManagers = Stub::make(PricingManagerLocator::class, [
             'getPricingManager' => function () {
                 return new PricingManager([], [], $this->buildSession());
-            }
+            },
         ]);
 
         $priceSystem = Stub::construct(AttributePriceSystem::class, [$pricingManagers, $environment], [
@@ -272,7 +272,7 @@ class TaxCalculationTest extends EcommerceTestCase
             },
             'calculateAmount' => function () {
                 return Decimal::create(100);
-            }
+            },
         ]);
 
         /** @var AbstractProduct $product */
@@ -285,7 +285,7 @@ class TaxCalculationTest extends EcommerceTestCase
             },
             'getCategories' => function () {
                 return [];
-            }
+            },
         ]);
 
         $this->assertEquals(

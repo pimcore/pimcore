@@ -100,6 +100,12 @@ class Configuration implements ConfigurationInterface
                             ->info('Force Pimcore translations to NOT be case sensitive. This only applies to translations set via Pimcore\'s translator (e.g. website translations)')
                             ->defaultFalse()
                         ->end()
+
+                        ->arrayNode('admin_translation_mapping')
+                            ->useAttributeAsKey('locale')
+                            ->prototype('scalar')->end()
+                        ->end()
+
                         ->arrayNode('debugging')
                             ->info('If debugging is enabled, the translator will return the plain translation key instead of the translated message.')
                             ->addDefaultsIfNotSet()
@@ -817,13 +823,13 @@ class Configuration implements ConfigurationInterface
                 foreach ($array as $name => $value) {
                     if (null === $value) {
                         $value = [
-                            'storage_key' => '_' . $name
+                            'storage_key' => '_' . $name,
                         ];
                     }
 
                     if (is_string($value)) {
                         $value = [
-                            'storage_key' => $value
+                            'storage_key' => $value,
                         ];
                     }
 
@@ -837,12 +843,12 @@ class Configuration implements ConfigurationInterface
                 $result = [];
                 foreach ($array as $name) {
                     $result[$name] = [
-                        'storage_key' => '_' . $name
+                        'storage_key' => '_' . $name,
                     ];
                 }
 
                 return $result;
-            }
+            },
         ];
 
         $adminNode
@@ -869,12 +875,12 @@ class Configuration implements ConfigurationInterface
                                 ],
                                 [
                                     'foo' => [
-                                        'storage_key' => '_foo'
+                                        'storage_key' => '_foo',
                                     ],
                                     'bar' => [
-                                        'storage_key' => '_bar'
-                                    ]
-                                ]
+                                        'storage_key' => '_bar',
+                                    ],
+                                ],
                             ])
                             ->prototype('array')
                                 ->children()
@@ -900,9 +906,9 @@ class Configuration implements ConfigurationInterface
                             ->info('Encoder factories to use as className => factory service ID mapping')
                             ->example([
                                 'AppBundle\Model\DataObject\User1' => [
-                                    'id' => 'website_demo.security.encoder_factory2'
+                                    'id' => 'website_demo.security.encoder_factory2',
                                 ],
-                                'AppBundle\Model\DataObject\User2' => 'website_demo.security.encoder_factory2'
+                                'AppBundle\Model\DataObject\User2' => 'website_demo.security.encoder_factory2',
                             ])
                             ->useAttributeAsKey('class')
                             ->prototype('array')
@@ -931,9 +937,9 @@ class Configuration implements ConfigurationInterface
                 ->example([
                     'toolbar' => [
                         'excluded_routes' => [
-                            ['path' => '^/test/path']
-                        ]
-                    ]
+                            ['path' => '^/test/path'],
+                        ],
+                    ],
                 ])
                 ->addDefaultsIfNotSet();
 
@@ -1203,15 +1209,15 @@ class Configuration implements ConfigurationInterface
                                     'custom_set' => [
                                         'name' => 'Custom Migrations',
                                         'namespace' => 'App\\Migrations\\Custom',
-                                        'directory' => 'src/App/Migrations/Custom'
+                                        'directory' => 'src/App/Migrations/Custom',
                                     ],
                                     'custom_set_2' => [
                                         'name' => 'Custom Migrations 2',
                                         'namespace' => 'App\\Migrations\\Custom2',
                                         'directory' => 'src/App/Migrations/Custom2',
-                                        'connection' => 'custom_connection'
+                                        'connection' => 'custom_connection',
                                     ],
-                                ]
+                                ],
                             ])
                             ->prototype('array')
                                 ->children()
@@ -1301,7 +1307,7 @@ class Configuration implements ConfigurationInterface
                                         return [
                                             'enabled' => true,
                                             'generator_id' => $v,
-                                            'priority' => 0
+                                            'priority' => 0,
                                         ];
                                     })
                                 ->end()
@@ -1352,8 +1358,8 @@ class Configuration implements ConfigurationInterface
                                     ->info('Placeholder values in this workflow configuration (locale: "%%locale%%") will be replaced by the given placeholder value (eg. "de_AT")')
                                     ->example([
                                         'placeholders' => [
-                                            '%%locale%%' => 'de_AT'
-                                        ]
+                                            '%%locale%%' => 'de_AT',
+                                        ],
                                     ])
                                     ->defaultValue([])
                                     ->beforeNormalization()
@@ -1481,8 +1487,8 @@ class Configuration implements ConfigurationInterface
                                         'type' => 'expression',
                                         'arguments' => [
                                             '\Pimcore\Model\DataObject\Product',
-                                            'subject.getProductType() == "article" and is_fully_authenticated() and "ROLE_PIMCORE_ADMIN" in roles'
-                                        ]
+                                            'subject.getProductType() == "article" and is_fully_authenticated() and "ROLE_PIMCORE_ADMIN" in roles',
+                                        ],
                                     ])
                                 ->end()
                                 ->scalarNode('initial_place')
@@ -1552,15 +1558,15 @@ class Configuration implements ConfigurationInterface
                                                 'permissions' => [
                                                     [
                                                         'condition' => "is_fully_authenticated() and 'ROLE_PIMCORE_ADMIN' in roles",
-                                                        'modify' => false
+                                                        'modify' => false,
                                                     ],
                                                     [
                                                         'modify' => false,
-                                                        'objectLayout' => 2
-                                                    ]
-                                                ]
-                                            ]
-                                        ]
+                                                        'objectLayout' => 2,
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
                                     ])
                                 ->end()
                                 ->arrayNode('transitions')
@@ -1731,13 +1737,13 @@ class Configuration implements ConfigurationInterface
                                                                     ['key' => 'Option A', 'value' => 'a'],
                                                                     ['key' => 'Option B', 'value' => 'b'],
                                                                     ['key' => 'Option C', 'value' => 'c'],
-                                                                ]
+                                                                ],
                                                             ],
-                                                        ]
+                                                        ],
                                                     ],
-                                                ]
-                                            ]
-                                        ]
+                                                ],
+                                            ],
+                                        ],
                                     ])
                                 ->end()
                                 ->arrayNode('globalActions')

@@ -107,7 +107,7 @@ abstract class Processor
         try {
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_PRE_PDF_GENERATION, new DocumentEvent($document, [
                 'processor' => $this,
-                'jobConfig' => $jobConfigFile->config
+                'jobConfig' => $jobConfigFile->config,
             ]));
 
             $pdf = $this->buildPdf($document, $jobConfigFile->config);
@@ -115,7 +115,7 @@ abstract class Processor
 
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_POST_PDF_GENERATION, new DocumentEvent($document, [
                 'filename' => $document->getPdfFileName(),
-                'pdf' => $pdf
+                'pdf' => $pdf,
             ]));
 
             $document->setLastGenerated((time() + 1));
@@ -225,7 +225,7 @@ abstract class Processor
         if ($jobConfig) {
             return [
                 'status' => $jobConfig->status,
-                'statusUpdate' => $jobConfig->statusUpdate
+                'statusUpdate' => $jobConfig->statusUpdate,
             ];
         }
     }

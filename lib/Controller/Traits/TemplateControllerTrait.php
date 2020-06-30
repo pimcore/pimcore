@@ -36,7 +36,7 @@ trait TemplateControllerTrait
         } else {
             $attributes = [
                 TemplateControllerInterface::ATTRIBUTE_AUTO_RENDER,
-                TemplateControllerInterface::ATTRIBUTE_AUTO_RENDER_ENGINE
+                TemplateControllerInterface::ATTRIBUTE_AUTO_RENDER_ENGINE,
             ];
 
             foreach ($attributes as $attribute) {

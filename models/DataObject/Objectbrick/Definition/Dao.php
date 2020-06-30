@@ -130,8 +130,8 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
                     [
                         'context' => [
                             'containerType' => 'objectbrick',
-                            'containerKey' => $this->model->getKey()
-                        ]
+                            'containerKey' => $this->model->getKey(),
+                        ],
                     ]
                 );
             }

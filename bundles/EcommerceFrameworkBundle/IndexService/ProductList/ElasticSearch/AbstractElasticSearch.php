@@ -25,6 +25,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
 {
     const LIMIT_UNLIMITED = 'unlimited';
     const INTEGER_MAX_VALUE = 2147483647;     // Elasticsearch Integer.MAX_VALUE is 2^31-1
+    const ADVANCED_SORT = 'advanced_sort';
 
     /**
      * @var null|IndexableInterface[]
@@ -160,7 +161,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * @var array
      */
-    private $hitData = [];
+    protected $hitData = [];
 
     /**
      * @return array
@@ -383,7 +384,11 @@ abstract class AbstractElasticSearch implements ProductListInterface
     /**
      * sets order key
      *
-     * @param string|array $orderKey either single field name, or array of field names or array of arrays (field name, direction)
+     * @param string|array $orderKey either:
+     * Single field name
+     * Array of field names
+     * Array of arrays (field name, direction)
+     * Array containing your sort configuration [self::ADVANCED_SORT => <sort_config as array>]
      *
      * @return void
      */
@@ -576,8 +581,12 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
         if ($this->orderKey) {
             if (is_array($this->orderKey)) {
-                foreach ($this->orderKey as $orderKey) {
-                    $params['body']['sort'][] = [$this->tenantConfig->getFieldNameMapped($orderKey[0]) => (strtolower($orderKey[1]) ?: 'asc')];
+                if (!empty($this->orderKey[self::ADVANCED_SORT])) {
+                    $params['body']['sort'] = $this->orderKey[self::ADVANCED_SORT];
+                } else {
+                    foreach ($this->orderKey as $orderKey) {
+                        $params['body']['sort'][] = [$this->tenantConfig->getFieldNameMapped($orderKey[0]) => (strtolower($orderKey[1]) ?: 'asc')];
+                    }
                 }
             } else {
                 $params['body']['sort'][] = [$this->tenantConfig->getFieldNameMapped($this->orderKey) => ($this->order ?: 'asc')];
@@ -719,16 +728,16 @@ abstract class AbstractElasticSearch implements ProductListInterface
             $params['body']['query']['bool']['must']['has_child']['inner_hits'] = [
                 'name' => 'variants',
                 '_source' => false,
-                'size' => 100
+                'size' => 100,
             ];
         } else {
             if ($variantMode == ProductListInterface::VARIANT_MODE_VARIANTS_ONLY) {
                 $boolFilters[] = [
-                    'term' => ['type' => self::PRODUCT_TYPE_VARIANT]
+                    'term' => ['type' => self::PRODUCT_TYPE_VARIANT],
                 ];
             } elseif ($variantMode == ProductListInterface::VARIANT_MODE_HIDE) {
                 $boolFilters[] = [
-                    'term' => ['type' => self::PRODUCT_TYPE_OBJECT]
+                    'term' => ['type' => self::PRODUCT_TYPE_OBJECT],
                 ];
             }
 
@@ -843,7 +852,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
                             $queryFilters[] = ['multi_match' => [
                                 'query' => $queryCondition,
-                                'fields' => $mappedFieldnames
+                                'fields' => $mappedFieldnames,
                             ]];
                         }
                     }
@@ -916,7 +925,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
             $this->preparedGroupByValues[$this->tenantConfig->getFieldNameMapped($fieldname, true)] = [
                 'countValues' => $countValues,
                 'fieldnameShouldBeExcluded' => $fieldnameShouldBeExcluded,
-                'aggregationConfig' => $aggregationConfig
+                'aggregationConfig' => $aggregationConfig,
             ];
             $this->preparedGroupByValuesLoaded = false;
         }
@@ -1108,7 +1117,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
                 $aggregation = $config['aggregationConfig'];
             } else {
                 $aggregation = [
-                    'terms' => ['field' => $fieldname, 'size' => self::INTEGER_MAX_VALUE, 'order' => ['_key' => 'asc']]
+                    'terms' => ['field' => $fieldname, 'size' => self::INTEGER_MAX_VALUE, 'order' => ['_key' => 'asc']],
                 ];
             }
 
@@ -1116,18 +1125,18 @@ abstract class AbstractElasticSearch implements ProductListInterface
                 $aggregations[$fieldname] = [
                     'filter' => [
                         'bool' => [
-                            'must' => $specificFilters
-                        ]
+                            'must' => $specificFilters,
+                        ],
                     ],
                     'aggs' => [
-                        $fieldname => $aggregation
-                    ]
+                        $fieldname => $aggregation,
+                    ],
                 ];
 
                 //necessary to calculate correct counts of search results for filter values
                 if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     $aggregations[$fieldname]['aggs'][$fieldname]['aggs'] = [
-                        'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']]
+                        'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']],
                     ];
                 }
             } else {
@@ -1136,7 +1145,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
                 //necessary to calculate correct counts of search results for filter values
                 if ($this->getVariantMode() == ProductListInterface::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
                     $aggregations[$fieldname]['aggs'] = [
-                        'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']]
+                        'objectCount' => ['cardinality' => ['field' => 'system.o_virtualProductId']],
                     ];
                 }
             }
@@ -1229,7 +1238,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
     {
         $data = [
             'value' => $bucket['key'],
-            'count' => $bucket['doc_count']
+            'count' => $bucket['doc_count'],
         ];
 
         unset($bucket['key']);

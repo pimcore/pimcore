@@ -34,7 +34,7 @@ class ElementTagsListener implements EventSubscriberInterface
             DocumentEvents::POST_COPY => 'onPostCopy',
             AssetEvents::POST_COPY => 'onPostCopy',
 
-            AssetEvents::POST_DELETE => ['onPostAssetDelete', -9999]
+            AssetEvents::POST_DELETE => ['onPostAssetDelete', -9999],
         ];
     }
 

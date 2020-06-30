@@ -269,7 +269,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                 $jsonData = json_encode([
                     'data' => $data,
                     'relations' => ($relationData ? $relationData : []),
-                    'subtenants' => ($subTenantData ? $subTenantData : [])
+                    'subtenants' => ($subTenantData ? $subTenantData : []),
                 ]);
 
                 $jsonLastError = \json_last_error();
@@ -314,7 +314,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                     'crc_current' => $crc,
                     'in_preparation_queue' => $hasError ? (int)true : (int)false,
                     'preparation_status' => $hasError ? self::INDEX_STATUS_PREPARATION_STATUS_ERROR : self::INDEX_STATUS_PREPARATION_STATUS_DONE,
-                    'preparation_error' => $preparationErrorDb
+                    'preparation_error' => $preparationErrorDb,
                 ];
 
                 if ($hasError) {
@@ -529,7 +529,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         in_preparation_queue = 1 WHERE tenant = ?";
         $this->db->query($query, [
             sprintf('Reset preparation queue in "%s".', $className),
-            $this->name
+            $this->name,
         ]);
     }
 
@@ -548,7 +548,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                         crc_index = 0 WHERE tenant = ?';
         $this->db->query($query, [
             sprintf('Reset indexing queue in "%s".', $className),
-            $this->name
+            $this->name,
         ]);
     }
 

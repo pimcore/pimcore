@@ -15,14 +15,10 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider;
 
-
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\DefaultBrickGetter;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider\AbstractSynonymProvider;
-use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider\SynonymProviderInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class FileSynonymProvider extends  AbstractSynonymProvider implements SynonymProviderInterface
+class FileSynonymProvider extends AbstractSynonymProvider implements SynonymProviderInterface
 {
     use OptionsResolverTrait;
 
@@ -46,5 +42,4 @@ class FileSynonymProvider extends  AbstractSynonymProvider implements SynonymPro
     {
         $resolver->setRequired(static::SYNONYM_FILE_OPTION);
     }
-
 }

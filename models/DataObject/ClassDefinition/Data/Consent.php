@@ -53,7 +53,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public $columnType = [
         'consent' => 'tinyint(1)',
-        'note' => 'int(11)'
+        'note' => 'int(11)',
     ];
 
     /**
@@ -84,13 +84,13 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         if ($data instanceof DataObject\Data\Consent) {
             return [
                 $this->getName() . '__consent' => $data->getConsent(),
-                $this->getName() . '__note' => $data->getNoteId()
+                $this->getName() . '__note' => $data->getNoteId(),
             ];
         }
 
         return [
             $this->getName() . '__consent' => false,
-            $this->getName() . '__note' => null
+            $this->getName() . '__note' => null,
         ];
     }
 
@@ -152,7 +152,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
             return [
                 'consent' => $data->getConsent(),
                 'noteContent' => $data->getSummaryString(),
-                'noteId' => $data->getNoteId()
+                'noteId' => $data->getNoteId(),
             ];
         }
 

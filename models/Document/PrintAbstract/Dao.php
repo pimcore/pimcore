@@ -70,7 +70,7 @@ class Dao extends Document\PageSnippet\Dao
         parent::create();
 
         $this->db->insert('documents_printpage', [
-            'id' => $this->model->getId()
+            'id' => $this->model->getId(),
         ]);
     }
 

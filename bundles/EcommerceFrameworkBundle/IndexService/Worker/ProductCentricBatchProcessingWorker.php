@@ -173,7 +173,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
                         in_preparation_queue = 1 WHERE tenant = ?";
             $this->db->query($query, [
                 sprintf('Reset preparation queue in "%s".', $className),
-                $this->name
+                $this->name,
             ]);
         } else {
             // @TODO Pimcore 7 - remove this
@@ -194,7 +194,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
                         crc_index = 0 WHERE tenant = ?';
             $this->db->query($query, [
                 sprintf('Reset indexing queue in "%s".', $className),
-                $this->name
+                $this->name,
             ]);
         } else {
             // @TODO Pimcore 7 - remove this

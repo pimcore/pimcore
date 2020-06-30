@@ -63,16 +63,18 @@ pimcore.settings.profile.panel = Class.create({
             }
         };
 
-        var generalItems = [];
+        var generalItems = [],
+            baseItems = [];
 
-        generalItems.push({
+        baseItems.push({
             xtype: "textfield",
             fieldLabel: t("firstname"),
             name: "firstname",
             value: this.currentUser.firstname,
             width: 400
         });
-        generalItems.push({
+
+        baseItems.push({
             xtype: "textfield",
             fieldLabel: t("lastname"),
             name: "lastname",
@@ -80,8 +82,7 @@ pimcore.settings.profile.panel = Class.create({
             width: 400
         });
 
-
-        generalItems.push({
+        baseItems.push({
             xtype: "textfield",
             fieldLabel: t("email"),
             name: "email",
@@ -89,8 +90,7 @@ pimcore.settings.profile.panel = Class.create({
             width: 400
         });
 
-
-        generalItems.push({
+        baseItems.push({
             xtype: 'combo',
             fieldLabel: t('language'),
             typeAhead: true,
@@ -114,18 +114,24 @@ pimcore.settings.profile.panel = Class.create({
             }
         });
 
-        generalItems.push({
+        baseItems.push({
             xtype: "checkbox",
             boxLabel: t("show_welcome_screen"),
             name: "welcomescreen",
             checked: this.currentUser.welcomescreen
         });
 
-        generalItems.push({
+        baseItems.push({
             xtype: "checkbox",
             boxLabel: t("memorize_tabs"),
             name: "memorizeTabs",
             checked: this.currentUser.memorizeTabs
+        });
+
+        generalItems.push({
+            xtype: "fieldset",
+            title: t('general_settings'),
+            items: baseItems
         });
 
         var passwordField = new Ext.form.field.Text({
@@ -217,35 +223,56 @@ pimcore.settings.profile.panel = Class.create({
         var twoFactorSettings = new pimcore.settings.profile.twoFactorSettings(this.currentUser.twoFactorAuthentication);
         generalItems.push(twoFactorSettings.getPanel());
 
-
-        var date = new Date();
-
-        var image = Routing.generate('pimcore_admin_user_getimage', {id: this.currentUser.id, '_dc': date.getTime()});
-
         generalItems.push({
             xtype: "fieldset",
             title: t("image"),
             width: '100%',
-            items: [{
-                xtype: "container",
-                id: "pimcore_profile_image_" + this.currentUser.id,
-                html: '<img src="' + image + '" />',
-                width: 45,
-                height: 45,
-                style: "float:left; margin-right: 10px;"
-            }, {
-                xtype: "button",
-                text: t("upload"),
-                handler: function () {
-                    pimcore.helpers.uploadDialog(Routing.generate('pimcore_admin_user_uploadcurrentuserimage', {id: this.currentUser.id}), null, function () {
-                        var cont = Ext.getCmp("pimcore_profile_image_" + this.currentUser.id);
-                        var date = new Date();
-                        var image = Routing.generate('pimcore_admin_user_getimage', {id: this.currentUser.id, '_dc': date.getTime()});
-
-                        cont.update('<img src="'+image+'" />');
-                    }.bind(this));
-                }.bind(this)
-            }]
+            items: [
+                {
+                    xtype: "container",
+                    items: [{
+                        xtype: "image",
+                        id: "pimcore_profile_image_" + this.currentUser.id,
+                        src: Routing.generate('pimcore_admin_user_getimage', {id: this.currentUser.id, '_dc': Ext.Date.now()}),
+                        width: 45,
+                        height: 45
+                    }],
+                    style: "float:left; margin-right: 10px;max-width:45px;"
+                },
+                {
+                    xtype: "button",
+                    text: t("upload"),
+                    handler: function () {
+                        pimcore.helpers.uploadDialog(
+                            Routing.generate('pimcore_admin_user_uploadcurrentuserimage', {id: this.currentUser.id}),
+                            null,
+                            function () {
+                                Ext.getCmp("pimcore_profile_delete_image_" + this.currentUser.id).setVisible(true);
+                                pimcore.helpers.reloadUserImage(this.currentUser.id);
+                                this.currentUser.hasImage = true;
+                            }.bind(this)
+                        );
+                    }.bind(this)
+                },
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_cancel",
+                    tooltip: t("remove"),
+                    id: "pimcore_profile_delete_image_" + this.currentUser.id,
+                    hidden: !this.currentUser.hasImage,
+                    handler: function () {
+                        Ext.Ajax.request({
+                            url: Routing.generate('pimcore_admin_user_deleteimage', {id: this.currentUser.id}),
+                            method: 'DELETE',
+                            success: function() {
+                                Ext.getCmp("pimcore_profile_delete_image_" + this.currentUser.id).setVisible(false);
+                                pimcore.helpers.reloadUserImage(this.currentUser.id);
+                                this.currentUser.hasImage = false;
+                            }.bind(this)
+                        });
+                    }.bind(this)
+                }
+            ]
         });
 
         this.editorSettings = new pimcore.settings.user.editorSettings(this, this.currentUser.contentLanguages);

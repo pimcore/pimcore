@@ -40,7 +40,7 @@ class HelperShortcuts implements HelperBrokerInterface
         'getRequest',
         'path',
         'url',
-        't'
+        't',
     ];
 
     /**

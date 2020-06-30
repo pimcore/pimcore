@@ -42,13 +42,13 @@ class ConfigMergerTest extends TestCase
         $coreConfig = [
             'providers' => [
                 'pimcore_admin' => [
-                    'id' => 'Pimcore\\Bundle\\AdminBundle\\Security\\User\\UserProvider'
-                ]
+                    'id' => 'Pimcore\\Bundle\\AdminBundle\\Security\\User\\UserProvider',
+                ],
             ],
             'firewalls' => [
                 'dev' => [
                     'pattern' => '^/(_(profiler|wdt)|css|images|js)/',
-                    'security' => false
+                    'security' => false,
                 ],
                 'admin' => [
                     'anonymous' => null,
@@ -58,44 +58,44 @@ class ConfigMergerTest extends TestCase
                     'logout' => [
                         'path' => '/admin/logout',
                         'target' => '/admin/login',
-                        'success_handler' => 'Pimcore\\Bundle\\AdminBundle\\Security\\LogoutSuccessHandler'
+                        'success_handler' => 'Pimcore\\Bundle\\AdminBundle\\Security\\LogoutSuccessHandler',
                     ],
                     'guard' => [
                         'entry_point' => 'Pimcore\\Bundle\\AdminBundle\\Security\\Guard\\AdminAuthenticator',
                         'authenticators' => [
-                            'Pimcore\\Bundle\\AdminBundle\\Security\\Guard\\AdminAuthenticator'
-                        ]
-                    ]
+                            'Pimcore\\Bundle\\AdminBundle\\Security\\Guard\\AdminAuthenticator',
+                        ],
+                    ],
                 ],
             ],
             'access_control' => [
                 [
                     'path' => '^/admin/settings/display-custom-logo',
-                    'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY'
+                    'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY',
                 ],
                 [
                     'path' => '^/admin/login$',
-                    'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY'
+                    'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY',
                 ],
                 [
                     'path' => '^/admin/login/(login|lostpassword|deeplink)$',
-                    'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY'
+                    'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY',
                 ],
                 [
                     'path' => '^/admin',
-                    'roles' => 'ROLE_PIMCORE_USER'
+                    'roles' => 'ROLE_PIMCORE_USER',
                 ],
             ],
             'role_hierarchy' => [
-                'ROLE_PIMCORE_ADMIN' => ['ROLE_PIMCORE_USER']
-            ]
+                'ROLE_PIMCORE_ADMIN' => ['ROLE_PIMCORE_USER'],
+            ],
         ];
 
         $appConfig = [
             'providers' => [
                 'demo_cms_provider' => [
-                    'id' => 'app.security.user_provider'
-                ]
+                    'id' => 'app.security.user_provider',
+                ],
             ],
             'firewalls' => [
                 'demo_cms_fw' => [
@@ -103,29 +103,29 @@ class ConfigMergerTest extends TestCase
                     'provider' => 'demo_cms_provider',
                     'form_login' => [
                         'login_path' => 'demo_login',
-                        'check_path' => 'demo_login'
+                        'check_path' => 'demo_login',
                     ],
                     'logout' => [
                         'path' => 'demo_logout',
                         'target' => 'demo_login',
-                        'invalidate_session' => false
+                        'invalidate_session' => false,
                     ],
-                    'logout_on_user_change' => true
-                ]
+                    'logout_on_user_change' => true,
+                ],
             ],
             'access_control' => [
                 [
                     'path' => '^/secure',
-                    'roles' => 'ROLE_USER'
+                    'roles' => 'ROLE_USER',
                 ],
                 [
                     'path' => '^/secure/admin',
-                    'roles' => 'ROLE_ADMIN'
+                    'roles' => 'ROLE_ADMIN',
                 ],
             ],
             'role_hierarchy' => [
-                'ROLE_ADMIN' => ['ROLE_USER']
-            ]
+                'ROLE_ADMIN' => ['ROLE_USER'],
+            ],
         ];
 
         $merged = $this->configMerger->merge($coreConfig, $appConfig);
@@ -133,16 +133,16 @@ class ConfigMergerTest extends TestCase
         $this->assertEquals([
             'providers' => [
                 'pimcore_admin' => [
-                    'id' => 'Pimcore\\Bundle\\AdminBundle\\Security\\User\\UserProvider'
+                    'id' => 'Pimcore\\Bundle\\AdminBundle\\Security\\User\\UserProvider',
                 ],
                 'demo_cms_provider' => [
-                    'id' => 'app.security.user_provider'
-                ]
+                    'id' => 'app.security.user_provider',
+                ],
             ],
             'firewalls' => [
                 'dev' => [
                     'pattern' => '^/(_(profiler|wdt)|css|images|js)/',
-                    'security' => false
+                    'security' => false,
                 ],
                 'admin' => [
                     'anonymous' => null,
@@ -152,60 +152,60 @@ class ConfigMergerTest extends TestCase
                     'logout' => [
                         'path' => '/admin/logout',
                         'target' => '/admin/login',
-                        'success_handler' => 'Pimcore\\Bundle\\AdminBundle\\Security\\LogoutSuccessHandler'
+                        'success_handler' => 'Pimcore\\Bundle\\AdminBundle\\Security\\LogoutSuccessHandler',
                     ],
                     'guard' => [
                         'entry_point' => 'Pimcore\\Bundle\\AdminBundle\\Security\\Guard\\AdminAuthenticator',
                         'authenticators' => [
-                            'Pimcore\\Bundle\\AdminBundle\\Security\\Guard\\AdminAuthenticator'
-                        ]
-                    ]
+                            'Pimcore\\Bundle\\AdminBundle\\Security\\Guard\\AdminAuthenticator',
+                        ],
+                    ],
                 ],
                 'demo_cms_fw' => [
                     'anonymous' => null,
                     'provider' => 'demo_cms_provider',
                     'form_login' => [
                         'login_path' => 'demo_login',
-                        'check_path' => 'demo_login'
+                        'check_path' => 'demo_login',
                     ],
                     'logout' => [
                         'path' => 'demo_logout',
                         'target' => 'demo_login',
-                        'invalidate_session' => false
+                        'invalidate_session' => false,
                     ],
-                    'logout_on_user_change' => true
-                ]
+                    'logout_on_user_change' => true,
+                ],
             ],
             'access_control' => [
                 [
                     'path' => '^/admin/settings/display-custom-logo',
-                    'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY'
+                    'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY',
                 ],
                 [
                     'path' => '^/admin/login$',
-                    'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY'
+                    'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY',
                 ],
                 [
                     'path' => '^/admin/login/(login|lostpassword|deeplink)$',
-                    'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY'
+                    'roles' => 'IS_AUTHENTICATED_ANONYMOUSLY',
                 ],
                 [
                     'path' => '^/admin',
-                    'roles' => 'ROLE_PIMCORE_USER'
+                    'roles' => 'ROLE_PIMCORE_USER',
                 ],
                 [
                     'path' => '^/secure',
-                    'roles' => 'ROLE_USER'
+                    'roles' => 'ROLE_USER',
                 ],
                 [
                     'path' => '^/secure/admin',
-                    'roles' => 'ROLE_ADMIN'
-                ]
+                    'roles' => 'ROLE_ADMIN',
+                ],
             ],
             'role_hierarchy' => [
                 'ROLE_PIMCORE_ADMIN' => ['ROLE_PIMCORE_USER'],
-                'ROLE_ADMIN' => ['ROLE_USER']
-            ]
+                'ROLE_ADMIN' => ['ROLE_USER'],
+            ],
         ], $merged);
     }
 
@@ -213,18 +213,18 @@ class ConfigMergerTest extends TestCase
     {
         $arr1 = [
             'foo' => [
-                'A', 'B', 'C'
-            ]
+                'A', 'B', 'C',
+            ],
         ];
 
         $arr2 = [
             'foo' => [
-                'D', 'E', 'F'
-            ]
+                'D', 'E', 'F',
+            ],
         ];
 
         $this->assertEquals([
-            'foo' => ['A', 'B', 'C', 'D', 'E', 'F']
+            'foo' => ['A', 'B', 'C', 'D', 'E', 'F'],
         ], $this->configMerger->merge($arr1, $arr2));
     }
 
@@ -235,9 +235,9 @@ class ConfigMergerTest extends TestCase
                 'bar' => 'baz',
                 'tooverwrite' => 'xyz',
                 'tomerge' => [
-                    'A', 'B'
-                ]
-            ]
+                    'A', 'B',
+                ],
+            ],
         ];
 
         $arr2 = [
@@ -245,9 +245,9 @@ class ConfigMergerTest extends TestCase
                 'baz' => 'inga',
                 'tooverwrite' => 'abc',
                 'tomerge' => [
-                    'C', 'D'
-                ]
-            ]
+                    'C', 'D',
+                ],
+            ],
         ];
 
         $this->assertEquals([
@@ -256,9 +256,9 @@ class ConfigMergerTest extends TestCase
                 'baz' => 'inga',
                 'tooverwrite' => 'abc',
                 'tomerge' => [
-                    'A', 'B', 'C', 'D'
-                ]
-            ]
+                    'A', 'B', 'C', 'D',
+                ],
+            ],
         ], $this->configMerger->merge($arr1, $arr2));
     }
 
@@ -268,17 +268,17 @@ class ConfigMergerTest extends TestCase
             'access_control' => [
                 [
                     'path' => '^/secure',
-                    'roles' => 'ROLE_USER'
+                    'roles' => 'ROLE_USER',
                 ],
                 [
                     'path' => '^/secure/admin',
-                    'roles' => 'ROLE_ADMIN'
+                    'roles' => 'ROLE_ADMIN',
                 ],
             ],
         ];
 
         $arr2 = [
-            'access_control' => null
+            'access_control' => null,
         ];
 
         $this->assertEquals($arr1, $this->configMerger->merge($arr1, $arr2));
@@ -287,18 +287,18 @@ class ConfigMergerTest extends TestCase
     public function testIndexedArraysOverwriteNull()
     {
         $arr1 = [
-            'access_control' => null
+            'access_control' => null,
         ];
 
         $arr2 = [
             'access_control' => [
                 [
                     'path' => '^/secure',
-                    'roles' => 'ROLE_USER'
+                    'roles' => 'ROLE_USER',
                 ],
                 [
                     'path' => '^/secure/admin',
-                    'roles' => 'ROLE_ADMIN'
+                    'roles' => 'ROLE_ADMIN',
                 ],
             ],
         ];
@@ -315,22 +315,22 @@ class ConfigMergerTest extends TestCase
                     'provider' => 'demo_cms_provider',
                     'form_login' => [
                         'login_path' => 'demo_login',
-                        'check_path' => 'demo_login'
+                        'check_path' => 'demo_login',
                     ],
                     'logout' => [
                         'path' => 'demo_logout',
                         'target' => 'demo_login',
-                        'invalidate_session' => false
+                        'invalidate_session' => false,
                     ],
-                    'logout_on_user_change' => true
-                ]
+                    'logout_on_user_change' => true,
+                ],
             ],
         ];
 
         $arr2 = [
             'firewalls' => [
-                'demo_cms_fw' => null
-            ]
+                'demo_cms_fw' => null,
+            ],
         ];
 
         $this->assertEquals($arr1, $this->configMerger->merge($arr1, $arr2));
@@ -340,8 +340,8 @@ class ConfigMergerTest extends TestCase
     {
         $arr1 = [
             'firewalls' => [
-                'demo_cms_fw' => null
-            ]
+                'demo_cms_fw' => null,
+            ],
         ];
 
         $arr2 = [
@@ -351,15 +351,15 @@ class ConfigMergerTest extends TestCase
                     'provider' => 'demo_cms_provider',
                     'form_login' => [
                         'login_path' => 'demo_login',
-                        'check_path' => 'demo_login'
+                        'check_path' => 'demo_login',
                     ],
                     'logout' => [
                         'path' => 'demo_logout',
                         'target' => 'demo_login',
-                        'invalidate_session' => false
+                        'invalidate_session' => false,
                     ],
-                    'logout_on_user_change' => true
-                ]
+                    'logout_on_user_change' => true,
+                ],
             ],
         ];
 

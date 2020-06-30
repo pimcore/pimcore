@@ -78,7 +78,7 @@ class Relation extends Model\Document\Tag
         return [
             'id' => $this->id,
             'type' => $this->type,
-            'subtype' => $this->subtype
+            'subtype' => $this->subtype,
         ];
     }
 
@@ -96,7 +96,7 @@ class Relation extends Model\Document\Tag
                 'id' => $this->id,
                 'path' => $this->element->getRealFullPath(),
                 'elementType' => $this->type,
-                'subtype' => $this->subtype
+                'subtype' => $this->subtype,
             ];
         }
 
@@ -242,7 +242,7 @@ class Relation extends Model\Document\Tag
             $key = $elementType . '_' . $this->element->getId();
             $dependencies[$key] = [
                 'id' => $this->element->getId(),
-                'type' => $elementType
+                'type' => $elementType,
             ];
         }
 

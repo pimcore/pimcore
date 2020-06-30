@@ -599,7 +599,7 @@ class Staticroute extends AbstractModel
             'frontendPath' => $url,
             'params' => $urlParams,
             'reset' => $reset,
-            'encode' => $encode
+            'encode' => $encode,
         ]);
         \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::STATICROUTE_PATH, $event);
         $url = $event->getArgument('frontendPath');

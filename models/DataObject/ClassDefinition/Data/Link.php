@@ -110,7 +110,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         if ($link instanceof DataObject\Data\Link) {
             if (isset($params['owner'])) {
-                $link->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                $link->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
             }
 
             try {
@@ -261,7 +261,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                         $key = 'document_' . $doc->getId();
                         $dependencies[$key] = [
                             'id' => $doc->getId(),
-                            'type' => 'document'
+                            'type' => 'document',
                         ];
                     }
                 } elseif ($data->getInternalType() == 'asset') {
@@ -270,7 +270,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
                         $dependencies[$key] = [
                             'id' => $asset->getId(),
-                            'type' => 'asset'
+                            'type' => 'asset',
                         ];
                     }
                 }

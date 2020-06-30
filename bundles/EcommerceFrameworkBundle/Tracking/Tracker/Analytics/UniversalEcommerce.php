@@ -28,7 +28,7 @@ class UniversalEcommerce extends AbstractAnalyticsTracker implements CheckoutCom
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'template_prefix' => 'PimcoreEcommerceFrameworkBundle:Tracking/analytics/universal'
+            'template_prefix' => 'PimcoreEcommerceFrameworkBundle:Tracking/analytics/universal',
         ]);
     }
 
@@ -62,9 +62,9 @@ class UniversalEcommerce extends AbstractAnalyticsTracker implements CheckoutCom
     {
         $calls = [
             'ecommerce:addTransaction' => [
-                $this->transformTransaction($transaction)
+                $this->transformTransaction($transaction),
             ],
-            'ecommerce:addItem' => []
+            'ecommerce:addItem' => [],
         ];
 
         foreach ($items as $item) {
@@ -88,7 +88,7 @@ class UniversalEcommerce extends AbstractAnalyticsTracker implements CheckoutCom
             'affiliation' => $transaction->getAffiliation() ?: '',      // Affiliation or store name.
             'revenue' => $transaction->getTotal(),                  // Grand Total.
             'shipping' => round($transaction->getShipping(), 2),               // Shipping.
-            'tax' => round($transaction->getTax(), 2)                     // Tax.
+            'tax' => round($transaction->getTax(), 2),                     // Tax.
         ],
                 $transaction->getAdditionalAttributes())
         );
