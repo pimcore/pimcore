@@ -163,13 +163,13 @@ class RedirectingPlugin extends \Swift_Plugins_RedirectingPlugin
     {
         $originalData = $message->getOriginalData();
 
-        if ($originalData['html']) {
+        if (isset($originalData['html']) && $originalData['html']) {
             $message->setBody($originalData['html'], 'text/html');
         }
-        if ($originalData['text']) {
+        if (isset($originalData['text']) && $originalData['text']) {
             $message->getBodyTextMimePart()->setBody($originalData['html']);
         }
-        if ($originalData['subject']) {
+        if (isset($originalData['subject']) && $originalData['subject']) {
             $message->setSubject($originalData['subject']);
         }
 
