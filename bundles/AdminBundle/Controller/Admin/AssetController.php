@@ -1003,7 +1003,12 @@ class AssetController extends ElementControllerBase implements EventedController
             }
 
             $asset->setUserModification($this->getAdminUser()->getId());
-            $asset->save();
+            if ($request->get("task") === "session") {
+                // save to session only
+                Asset\Service::saveElementToSession($asset);
+            } else {
+                $asset->save();
+            }
 
             $treeData = $this->getTreeNodeConfig($asset);
 
