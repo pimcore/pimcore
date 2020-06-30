@@ -155,4 +155,14 @@ class Document extends Data
         }
         return [];
     }
+
+    /**
+     * @param $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataFromListfolderGrid($data, $params = []) {
+        $data = \Pimcore\Model\Document::getByPath($data);
+        return $data;
+    }
 }

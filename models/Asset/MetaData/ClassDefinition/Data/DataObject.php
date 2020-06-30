@@ -156,4 +156,14 @@ class DataObject extends Data
         }
         return [];
     }
+
+    /**
+     * @param $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataFromListfolderGrid($data, $params = []) {
+        $data = AbstractObject::getByPath($data);
+        return $data;
+    }
 }
