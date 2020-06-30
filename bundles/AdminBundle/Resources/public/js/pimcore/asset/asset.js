@@ -281,6 +281,17 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         tabPanel.setActiveItem(tabId);
     },
 
+    saveToSession: function (onCompleteCallback) {
+
+        if (typeof onCompleteCallback != "function") {
+            onCompleteCallback = function () {
+            };
+        }
+
+        this.save(false, onCompleteCallback, "session")
+    },
+
+
     getSaveData : function (only) {
         var parameters = {};
 
@@ -329,7 +340,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
         return parameters;
     },
 
-    save : function (only, callback) {
+    save : function (only, callback, task) {
 
         if(this.tab.disabled || this.tab.isMasked()) {
             return;
@@ -351,6 +362,11 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 pimcore.helpers.showNotification(t("Info"), 'Asset not saved: ' + e.message, 'info');
                 return false;
             }
+        }
+
+        let params = this.getSaveData(only);
+        if (task) {
+            params.task = task
         }
 
         Ext.Ajax.request({
@@ -387,7 +403,7 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             failure: function () {
                 this.tab.unmask();
             }.bind(this),
-            params: this.getSaveData(only)
+            params: params
         });
     },
 
