@@ -268,7 +268,6 @@ abstract class DocumentControllerBase extends AdminController implements Evented
         if ($latestVersion) {
             $latestDoc = $latestVersion->loadData();
             if ($latestDoc instanceof Model\Document\PageSnippet) {
-                $latestDoc->setModificationDate($document->getModificationDate()); // set de modification-date from published version to compare it in js-frontend
                 return $latestDoc;
             }
         }
