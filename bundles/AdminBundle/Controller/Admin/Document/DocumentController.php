@@ -164,7 +164,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 $userIds[] = $this->getAdminUser()->getId();
                 $condition =
                     'parentId = ' . $db->quote($document->getId()) . ' and (
-                        (select list from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and (LOCATE(CONCAT(path,`key`),cpath)=1 or LOCATE(cpath,CONCAT(path,`key`))=1) ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $this->getAdminUser()->getId() . ') DESC, list DESC LIMIT 1)=1
+                        (SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND (LOCATE(CONCAT(path,`key`),cpath)=1 OR LOCATE(cpath,CONCAT(path,`key`))=1) ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $this->getAdminUser()->getId() . ') DESC, list DESC LIMIT 1)=1
                     )'
                 ;
             }
