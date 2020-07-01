@@ -257,7 +257,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
                 $condition = 'parentId = ' . $db->quote($asset->getId()) . ' and
                 (
-                    (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and (LOCATE(CONCAT(path,filename),cpath)=1 or LOCATE(cpath,CONCAT(path,filename))=1) ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $this->getAdminUser()->getId() . ') DESC, list DESC LIMIT 1)=1
+                    (SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND (LOCATE(CONCAT(path,filename),cpath)=1 OR LOCATE(cpath,CONCAT(path,filename))=1) ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $this->getAdminUser()->getId() . ') DESC, list DESC LIMIT 1)=1
                 )';
             }
 
