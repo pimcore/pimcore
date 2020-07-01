@@ -507,11 +507,6 @@ class Data extends \Pimcore\Model\AbstractModel
         $data = str_replace("\t", '', $data);
         $data = preg_replace('#[ ]+#', ' ', $data);
 
-        // deduplication
-        $arr = explode(' ', $data);
-        $arr = array_unique($arr);
-        $data = implode(' ', $arr);
-
         return $data;
     }
 
