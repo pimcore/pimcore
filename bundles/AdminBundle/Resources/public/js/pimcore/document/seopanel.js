@@ -100,7 +100,7 @@ pimcore.document.seopanel = Class.create({
         var store = Ext.create('Ext.data.TreeStore', {
             proxy: {
                 type: 'ajax',
-                url: Routing.generate('pimcore_admin_document_document_seopaneltreeroot')
+                url: Routing.generate('pimcore_admin_document_document_seopaneltree')
             }
         });
 
