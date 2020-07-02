@@ -928,7 +928,11 @@ class AssetHelperController extends AdminController
         try {
             if ($request->get('data')) {
                 $params = $this->decodeJson($request->get('data'), true);
-                $language = $params['language'] != 'default' ? $params['language'] : null;
+
+                $language = null;
+                if (isset($params["language"])) {
+                    $language = $params['language'] != 'default' ? $params['language'] : null;
+                }
 
                 $asset = Asset::getById($params['job']);
 
@@ -949,7 +953,7 @@ class AssetHelperController extends AdminController
 
                     $fieldDef = explode('~', $name);
                     $name = $fieldDef[0];
-                    if ($fieldDef[1]) {
+                    if (count($fieldDef) > 1) {
                         $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
                     }
 
