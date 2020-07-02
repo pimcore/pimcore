@@ -1003,7 +1003,7 @@ class AssetController extends ElementControllerBase implements EventedController
             }
 
             $asset->setUserModification($this->getAdminUser()->getId());
-            if ($request->get("task") === "session") {
+            if ($request->get('task') === 'session') {
                 // save to session only
                 Asset\Service::saveElementToSession($asset);
             } else {
