@@ -2038,7 +2038,7 @@ class Asset extends Element\AbstractElement
                     $elementData = $md['data'];
                     $elementType = $md['type'];
                     $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-                    /** @var DataDefinitionInterface $instance */
+                    /** @var DataDefinitionInterface $implementation */
                     $implementation = $loader->build($elementType);
                     if ($implementation) {
                         $dependencies = array_merge($dependencies, $implementation->resolveDependencies($elementData, $md));
