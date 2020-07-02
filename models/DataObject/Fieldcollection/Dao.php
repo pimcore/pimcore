@@ -95,7 +95,10 @@ class Dao extends Model\Dao\AbstractDao
                                         'containerKey' => $type,
                                         'fieldname' => $this->model->getFieldname(),
                                         'index' => $result['index'],
-                                    ], ]
+                                    ],
+                                    'owner' => $collection,
+                                    'fieldname' => $key,
+                                ]
                             );
 
                             if ($value === 0 || !empty($value)) {

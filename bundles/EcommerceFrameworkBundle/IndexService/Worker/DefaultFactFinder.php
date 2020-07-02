@@ -26,6 +26,8 @@ use Pimcore\Tool\Text;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
+ * @deprecated since version 6.7.0 and will be removed in 7.0.0.
+ *
  * @property DefaultFactFinderConfig $tenantConfig
  */
 class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInterface, BatchProcessingWorkerInterface
@@ -46,6 +48,11 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
      */
     public function __construct(FactFinderConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
+        @trigger_error(
+            'Class ' . self::class . ' is deprecated since version 6.7.0 and will be removed in 7.0.0.',
+            E_USER_DEPRECATED
+        );
+
         parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
     }
 
