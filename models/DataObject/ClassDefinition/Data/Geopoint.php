@@ -366,7 +366,7 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
             return false;
         }
 
-        return $oldValue->getLongitude() === $newValue->getLongitude()
-            && $oldValue->getLatitude() === $newValue->getLatitude();
+        return (abs($oldValue->getLongitude() - $newValue->getLongitude()) < 0.000000000001)
+            && (abs($oldValue->getLatitude() - $newValue->getLatitude()) < 0.000000000001);
     }
 }

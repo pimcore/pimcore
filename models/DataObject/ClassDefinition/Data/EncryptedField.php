@@ -642,10 +642,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     public function isEqual($oldValue, $newValue)
     {
         $fd = $this->getDelegateDatatypeDefinition();
-        $oldValue = $oldValue instanceof Model\DataObject\Data\EncryptedField ? $oldValue->getPlain() : null;
-        $newValue = $newValue instanceof Model\DataObject\Data\EncryptedField ? $newValue->getPlain() : null;
-
-        if ($fd) {
+        if ($fd instanceof Model\DataObject\ClassDefinition\Data) {
+            $oldValue = $oldValue instanceof Model\DataObject\Data\EncryptedField ? $oldValue->getPlain() : null;
+            $newValue = $newValue instanceof Model\DataObject\Data\EncryptedField ? $newValue->getPlain() : null;
             return $fd->isEqual($oldValue, $newValue);
         }
 

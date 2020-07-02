@@ -380,6 +380,9 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
 
         $fd = new Geopoint();
 
+        $oldValue = array_values($oldValue);
+        $newValue = array_values($newValue);
+
         foreach ($oldValue as $p => $point) {
             if (!$fd->isEqual($oldValue[$p], $newValue[$p])) {
                 return false;

@@ -695,10 +695,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             return false;
         }
 
-        $oldData = [
-            'type' => $oldValue->getType(),
-            'data' => $oldValue->getData()
-        ];
+        $oldData['data'] = $oldValue->getData();
 
         if ($oldData['data'] instanceof Asset\Video) {
             $oldData['data'] = $oldData['data']->getId();
@@ -707,10 +704,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             $oldData['description'] = $oldValue->getDescription();
         }
 
-        $newData = [
-            'type' => $newValue->getType(),
-            'data' => $newValue->getData()
-        ];
+        $newData['data'] = $newValue->getData();
 
         if ($newData['data'] instanceof Asset\Video) {
             $newData['data'] = $newData['data']->getId();
@@ -720,7 +714,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         foreach ($oldData as $key => $oValue) {
-            if ($oValue !== $newData[$key]) {
+            if (!isset($newData[$key]) || $oValue !== $newData[$key]) {
                 return false;
             }
         }
