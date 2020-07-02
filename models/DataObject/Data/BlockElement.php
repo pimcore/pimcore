@@ -177,10 +177,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
      */
     public function __sleep()
     {
-        if ($this->data instanceof OwnerAwareFieldInterface) {
-            $this->data->setOwner($this, $this->getName());
-        }
-
         $copier = new DeepCopy();
         $copier->skipUncloneable(true);
         $copier->addTypeFilter(
