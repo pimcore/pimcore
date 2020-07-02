@@ -961,10 +961,12 @@ class AssetHelperController extends AdminController
                         $value = $this->decodeJson($value);
                     }
 
-                    $fieldDef = explode('~', $name);
-                    $name = $fieldDef[0];
-                    if ($fieldDef[1]) {
-                        $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
+                    if (strpos($name, '~') !== false) {
+                        $fieldDef = explode('~', $name);
+                        $name = $fieldDef[0];
+                        if (isset($fieldDef[1])) {
+                            $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
+                        }
                     }
 
                     foreach ($metadata as $idx => &$em) {
