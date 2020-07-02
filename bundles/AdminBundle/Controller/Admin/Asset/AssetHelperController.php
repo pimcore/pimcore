@@ -19,6 +19,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Db;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -30,6 +31,8 @@ use Pimcore\Model\Metadata;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -920,21 +923,35 @@ class AssetHelperController extends AdminController
      * @Route("/batch", name="pimcore_admin_asset_assethelper_batch", methods={"PUT"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function batchAction(Request $request)
+    public function batchAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         try {
             if ($request->get('data')) {
-                $params = $this->decodeJson($request->get('data'), true);
+                $data = $this->decodeJson($request->get('data'), true);
 
-                $language = null;
-                if (isset($params["language"])) {
-                    $language = $params['language'] != 'default' ? $params['language'] : null;
+                $updateEvent = new GenericEvent($this, [
+                    'data' => $data,
+                    'processed' => false
+                ]);
+
+                $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_BATCH_UPDATE, $updateEvent);
+
+                $processed = $updateEvent->getArgument('processed');
+
+                if ($processed) {
+                    return $this->adminJson(['success' => true]);
                 }
 
-                $asset = Asset::getById($params['job']);
+                $language = null;
+                if (isset($data["language"])) {
+                    $language = $data['language'] != 'default' ? $data['language'] : null;
+                }
+
+                $asset = Asset::getById($data['job']);
 
                 if ($asset) {
                     if (!$asset->isAllowed('publish')) {
@@ -944,10 +961,10 @@ class AssetHelperController extends AdminController
                     $metadata = $asset->getMetadata();
                     $dirty = false;
 
-                    $name = $params['name'];
-                    $value = $params['value'];
+                    $name = $data['name'];
+                    $value = $data['value'];
 
-                    if ($params['valueType'] == 'object') {
+                    if ($data['valueType'] == 'object') {
                         $value = $this->decodeJson($value);
                     }
 

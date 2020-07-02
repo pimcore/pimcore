@@ -212,6 +212,19 @@ final class AdminEvents
      */
     const ASSET_LIST_BEFORE_UPDATE = 'pimcore.admin.asset.list.beforeUpdate';
 
+    /**
+     * Allows you to modify the batch update data from the listfolder grid before it gets processed
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - params |
+     *  - processed | true to stop processing
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_LIST_BEFORE_BATCH_UPDATE = 'pimcore.admin.asset.list.beforeBatchUpdate';
 
     /**
      * Fired before the request params are parsed. This event apply to the seo panel tree.
