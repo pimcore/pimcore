@@ -120,7 +120,7 @@ abstract class Data implements DataDefinitionInterface
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param array $params
      * @return mixed
      */
@@ -129,7 +129,7 @@ abstract class Data implements DataDefinitionInterface
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param array $params
      * @return array
      */

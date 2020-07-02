@@ -136,7 +136,7 @@ class DataObject extends Data
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param array $params
      * @return array
      */
@@ -158,7 +158,7 @@ class DataObject extends Data
     }
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param array $params
      * @return mixed
      */

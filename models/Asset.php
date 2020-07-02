@@ -1786,7 +1786,7 @@ class Asset extends Element\AbstractElement
 
             if ($data) {
                 if ($raw) {
-                    return $raw;
+                    return $data;
                 }
                 return $convert($data);
             }
