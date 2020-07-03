@@ -56,7 +56,7 @@ class Dao extends Model\Element\Dao
                     unset($md['cid']);
                     $metadata[] = $md;
                 }
-                $this->model->setMetadata($metadata);
+                $this->model->setMetadataFromResource($metadata);
             }
         } else {
             throw new \Exception('Asset with ID ' . $id . " doesn't exists");

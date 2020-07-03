@@ -1654,6 +1654,24 @@ class Asset extends Element\AbstractElement
     }
 
     /**
+     * @internal
+     *
+     * @param array $metadata for each array item: mandatory keys: name, type - optional keys: data, language
+     *
+     * @return self
+     */
+    public function setMetadataFromResource($metadata)
+    {
+        $this->metadata = $metadata;
+        if ($this->metadata) {
+            $this->setHasMetaData(true);
+        }
+
+        return $this;
+    }
+
+
+    /**
      * @param array|\stdClass[] $metadata for each array item: mandatory keys: name, type - optional keys: data, language
      *
      * @return self
@@ -1671,6 +1689,7 @@ class Asset extends Element\AbstractElement
 
         return $this;
     }
+
 
     /**
      * @return bool
