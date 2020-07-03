@@ -48,6 +48,11 @@ services:
         tags:
             - { name: routing.loader }
 
+    # routing loader for fos js routing routes
+    Pimcore\Routing\Loader\FOSJsRoutingLoader:
+        tags:
+            - { name: routing.loader }
+
     # redirect handler used to handle redirects before/after routing
     Pimcore\Routing\RedirectHandler:
         calls:

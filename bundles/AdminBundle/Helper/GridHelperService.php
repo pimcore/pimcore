@@ -739,7 +739,7 @@ class GridHelperService
                     $filter['value'] = (int) $filter['value'];
                 }
                 // system field
-                $value = $filter['value'];
+                $value = $filter['value'] ?? '';
                 if ($operator == 'LIKE') {
                     $value = $db->quote('%' . $value . '%');
                 } elseif ($operator == 'IN') {

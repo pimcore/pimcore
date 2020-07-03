@@ -1734,7 +1734,7 @@ class DataObjectHelperController extends AdminController
 
                 $eventDispatcher->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
 
-                $object->setUserModification($this->getUser());
+                $object->setUserModification($this->getAdminUser()->getId());
                 $object->save();
 
                 $eventDispatcher->dispatch(DataObjectImportEvents::POST_SAVE, $eventData);
