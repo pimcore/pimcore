@@ -16,6 +16,7 @@
  */
 
 // the following is for IDEs to support auto-complete
+
 namespace Pimcore\Model;
 
 class_exists(DataObject\AbstractObject::class);

@@ -62,6 +62,11 @@ class Dao extends Model\Dao\AbstractDao
                     ],
                 ]);
 
+                if ($fd instanceof Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations
+                            && ($params['saveRelationalData']['saveFieldcollectionRelations'] ?? false)) {
+                    $params['forceSave'] = true;
+                }
+
                 $fd->save(
                     $this->model, $params
                 );
