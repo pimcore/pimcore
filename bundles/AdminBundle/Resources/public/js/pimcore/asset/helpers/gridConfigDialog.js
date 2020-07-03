@@ -390,12 +390,12 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                                     console.log(e);
                                 }
 
-                                if (typeof value == "string") {
-                                    value = '<div style="max-height: 50px">' + value + '</div>';
-                                }
-
                                 if (typeof pimcore.asset.metadata.tags[fieldType] !== "undefined" && typeof pimcore.asset.metadata.tags[fieldType].prototype.previewRenderer == "function") {
                                     value = pimcore.asset.metadata.tags[fieldType].prototype.previewRenderer(value, record);
+                                }
+
+                                if (typeof value == "string") {
+                                    value = '<div style="max-height: 50px">' + value + '</div>';
                                 }
 
                                 return value;
