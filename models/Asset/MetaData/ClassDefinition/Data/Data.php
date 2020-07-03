@@ -82,6 +82,15 @@ abstract class Data implements DataDefinitionInterface
         return $data;
     }
 
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataFromResource($data, $params = []) {
+        return $data;
+    }
+
 
     /**
      * @param mixed $data

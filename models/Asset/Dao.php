@@ -47,6 +47,12 @@ class Dao extends Model\Element\Dao
                 $metadataRaw = $this->db->fetchAll('SELECT * FROM assets_metadata WHERE cid = ?', [$data['id']]);
                 $metadata = [];
                 foreach ($metadataRaw as $md) {
+
+                    $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+                    /** @var Data $instance */
+                    $instance = $loader->build($md['type']);
+                    $transformedData = $instance->getDataFromResource($md["data"], $md);
+                    $md["data"] = $transformedData;
                     unset($md['cid']);
                     $metadata[] = $md;
                 }
@@ -115,6 +121,9 @@ class Dao extends Model\Element\Dao
                 /** @var Data $instance */
                 $instance = $loader->build($metadataItem['type']);
                 $dataForResource = $instance->getDataForResource($metadataItem['data'], $metadataItem);
+
+
+
                 $metadataItem["data"] = $dataForResource;
 
                 $metadataItem['language'] = (string) $metadataItem['language']; // language column cannot be NULL -> see SQL schema
