@@ -79,7 +79,7 @@ class FieldcollectionTest extends ModelTestCase
         $fc = $object->getFieldcollection();
         $items = $fc->getItems();
         $loadedFieldcollectionItem = $items[1];
-        $loadedFieldcollectionItem->setFieldRelation([$target3]);
+        $loadedFieldcollectionItem->setFieldRelation([$target3]);           // target3 instead of target2
         $object->save();
 
         //Reload object from db
@@ -90,7 +90,7 @@ class FieldcollectionTest extends ModelTestCase
 
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(1);
         $rel = $loadedFieldcollectionItem->getFieldRelation();
-        $this->assertEquals($target3->getId(), $rel[1]->getId());
+        $this->assertEquals($target3->getId(), $rel[0]->getId());
 
         //Flush relations
         $loadedFieldcollectionItem->setFieldRelation(null);
@@ -101,7 +101,7 @@ class FieldcollectionTest extends ModelTestCase
 
         $loadedFieldcollectionItem = $object->getFieldcollection()->get(1);
         $rel = $loadedFieldcollectionItem->getFieldRelation();
-        $this->assertEquals(null, $rel);
+        $this->assertEquals([], $rel);
     }
 
     public function testLocalizedFieldInsideFieldCollection()
