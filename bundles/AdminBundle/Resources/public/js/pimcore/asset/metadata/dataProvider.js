@@ -104,6 +104,7 @@ pimcore.asset.metadata.dataProvider = Class.create({
 
     getItemByKey: function(key) {
         let value = this.store[key];
+        value = Ext.clone(value);
         return value;
     },
 
