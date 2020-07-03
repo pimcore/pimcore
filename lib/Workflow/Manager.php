@@ -393,7 +393,7 @@ class Manager
         $initialPlaces = [];
         $definition = $workflow->getDefinition();
 
-        if(method_exists($definition, 'getInitialPlaces')) {
+        if (method_exists($definition, 'getInitialPlaces')) {
             // Symfony >= 4.3
             $initialPlaces = $definition->getInitialPlaces();
         } elseif (method_exists($definition, 'getInitialPlace')) {
