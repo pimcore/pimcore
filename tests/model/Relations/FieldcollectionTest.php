@@ -82,7 +82,6 @@ class FieldcollectionTest extends ModelTestCase
         $items = $fc->getItems();
         $loadedFieldcollectionItem = $items[1];
         $loadedFieldcollectionItem->setLRelation($target3, 'en');
-        $fc->setItems($items);
         $object->save();
 
         //Reload object from db

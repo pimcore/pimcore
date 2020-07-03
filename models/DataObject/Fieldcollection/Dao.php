@@ -213,9 +213,22 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        if (!$this->model->isFieldDirty('_self') && !DataObject\AbstractObject::isDirtyDetectionDisabled()) {
+        $isDirty = $this->model->isFieldDirty('_self');
+        if (!$isDirty) {
+            if ($items = $this->model->getItems()) {
+                /** @var Model\Element\DirtyIndicatorInterface $item */
+                foreach ($items as $item) {
+                    if ($item->hasDirtyFields()) {
+                        $isDirty = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!$isDirty && !DataObject\AbstractObject::isDirtyDetectionDisabled()) {
             return [];
         }
+
         $whereLocalizedFields = "(ownertype = 'localizedfield' AND "
             . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~'
                 . $this->model->getFieldname() . '/%')
