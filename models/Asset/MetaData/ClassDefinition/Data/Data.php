@@ -145,4 +145,13 @@ abstract class Data implements DataDefinitionInterface
     public function resolveDependencies($data, $params = []) {
         return [];
     }
+
+    /**
+     * @param mixed $value
+     * @param array $params
+     */
+    public function getVersionPreview($value, $params = [])
+    {
+        return $value;
+    }
 }
