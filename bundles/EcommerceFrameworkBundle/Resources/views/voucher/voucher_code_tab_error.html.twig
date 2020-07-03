@@ -1,0 +1,12 @@
+<head>
+    <link href="/bundles/pimcoreecommerceframework/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="alert alert-danger">
+        {% if errors is iterable %}
+            {% for error in errors %}
+                {{ error|trans([],'admin') }}
+            {% endfor %}
+        {% endif %}
+    </div>
+</body>

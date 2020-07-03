@@ -1,0 +1,88 @@
+# Monolog Configuration
+monolog:
+    channels: ['pimcore_ecommerce_sql', 'pimcore_ecommerce_factfinder', 'pimcore_ecommerce_es', 'pimcore_ecommerce_findologic']
+
+pimcore:
+    objects:
+        class_definitions:
+            data:
+                map:
+                    indexFieldSelection: Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelection
+                    indexFieldSelectionCombo: Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelectionCombo
+                    indexFieldSelectionField: Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ClassDefinition\IndexFieldSelectionField
+
+pimcore_ecommerce_framework:
+    cart_manager:
+        tenants:
+            default: ~
+
+    order_manager:
+        tenants:
+            default: ~
+
+    pricing_manager:
+        tenants:
+            default: ~
+
+        conditions:
+            Bracket: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Bracket
+            DateRange: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\DateRange
+            CartAmount: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CartAmount
+            CatalogProduct: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CatalogProduct
+            CatalogCategory: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\CatalogCategory
+            Token: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Token
+            Sold: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Sold
+            Sales: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Sales
+            ClientIp: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\ClientIp
+            VoucherToken: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\VoucherToken
+            Tenant: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\Tenant
+            TargetGroup: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\TargetGroup
+        actions:
+            ProductDiscount: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\ProductDiscount
+            CartDiscount: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\CartDiscount
+            Gift: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\Gift
+            FreeShipping: \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\FreeShipping
+
+    price_systems:
+        default:
+            id: Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem
+
+    availability_systems:
+        default:
+            id: Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\AvailabilitySystem
+
+    checkout_manager:
+        tenants:
+            default: ~
+
+    index_service:
+        tenants:
+            default: ~
+
+    filter_service:
+        tenants:
+            default: ~
+
+    voucher_service:
+        token_managers:
+            mapping:
+                VoucherTokenTypePattern: \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\Pattern
+                VoucherTokenTypeSingle: \Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager\Single
+
+    tracking_manager:
+        trackers:
+            enhanced_ecommerce:
+                id: Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\EnhancedEcommerce
+                enabled: false
+            universal_ecommerce:
+                id: Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\UniversalEcommerce
+                enabled: false
+            ecommerce:
+                id: Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Analytics\Ecommerce
+                enabled: false
+            tag_manager:
+                id: Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\GoogleTagManager
+                enabled: false
+            piwik:
+                id: Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\Tracker\Piwik
+                enabled: false

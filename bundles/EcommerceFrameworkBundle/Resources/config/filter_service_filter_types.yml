@@ -1,0 +1,19 @@
+services:
+    #
+    # FILTER SERVICE FILTER TYPES
+    #
+    # Defined in an extra file as we can't define parent/child definitions in a file with _defaults
+    #
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType:
+        class: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType
+        abstract: true
+        public: false
+        arguments:
+            - '@translator'
+            - '@templating.engine.delegating'
+            - '@request_stack'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\:
+        resource: '../../FilterService/FilterType'
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType

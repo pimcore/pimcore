@@ -1,0 +1,27 @@
+services:
+    # Abstract services which can be used from client implementations
+
+    # pimcore_admin_pre_auth authentication provider
+    #
+    # The 'pimcore_admin_pre_auth' authentication provider checks against already logged in admin users. Logging in through
+    # this provider is not possible, only previously authenticated users.
+    #
+    # Provider instances are built by Pimcore\Bundle\AdminBundle\Security\Factory\PreAuthenticatedAdminSessionFactory
+    #
+    pimcore.security.authentication.provider.admin_pre_auth:
+        class: Symfony\Component\Security\Core\Authentication\Provider\PreAuthenticatedAuthenticationProvider
+        public: false
+        abstract: true
+        arguments:
+            - '' # user provider will be set by factory
+            - '@Pimcore\Bundle\AdminBundle\Security\User\UserChecker'
+            - '' # provider key will be set by factory
+
+    pimcore.security.authentication.listener.admin_pre_auth:
+        class: Pimcore\Bundle\AdminBundle\Security\Firewall\PreAuthenticatedAdminSessionListener
+        public: false
+        abstract: true
+        arguments:
+            - '@security.token_storage'
+            - '@security.authentication.manager'
+            - '' # provider key will be set by factory

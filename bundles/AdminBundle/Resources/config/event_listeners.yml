@@ -1,0 +1,59 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    #
+    # SECURITY
+    #
+
+    Pimcore\Bundle\AdminBundle\EventListener\BruteforceProtectionListener: ~
+
+    Pimcore\Bundle\AdminBundle\EventListener\AdminAuthenticationDoubleCheckListener:
+        arguments:
+            $unauthenticatedRoutes: '%pimcore.admin.unauthenticated_routes%'
+
+    Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener:
+        public: true
+        arguments: ['%pimcore_admin.csrf_protection.excluded_routes%', '@templating.engine.php']
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: admin }
+
+    #
+    # EXCEPTION HANDLING
+    #
+
+    Pimcore\Bundle\AdminBundle\EventListener\AdminExceptionListener: ~
+
+    #
+    # GRID CONFIG CLEANUP
+    #
+    Pimcore\Bundle\AdminBundle\EventListener\GridConfigListener: ~
+
+    #
+    # IMPORT CONFIG CLEANUP
+    #
+    Pimcore\Bundle\AdminBundle\EventListener\ImportConfigListener: ~
+
+
+    #
+    # MISC
+    #
+
+    Pimcore\Bundle\AdminBundle\EventListener\HttpCacheListener: ~
+
+    Pimcore\Bundle\AdminBundle\EventListener\CustomAdminEntryPointCheckListener:
+        arguments: ['%pimcore_admin.custom_admin_path_identifier%']
+
+    Pimcore\Bundle\AdminBundle\EventListener\UserPerspectiveListener:
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: admin }
+
+    Pimcore\Bundle\AdminBundle\EventListener\UsageStatisticsListener: ~
+
+    Pimcore\Bundle\AdminBundle\EventListener\EnablePreviewTimeSliderListener: ~

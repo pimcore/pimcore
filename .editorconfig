@@ -1,4 +1,3 @@
-root = true
 
 [*]
 charset = utf-8
@@ -13,6 +12,9 @@ trim_trailing_whitespace = true
 [*.md]
 trim_trailing_whitespace = false
 
-[composer.json]
+[*.yml]
+indent_size = 4
+
+[*.json]
 indent_style = space
 indent_size = 2

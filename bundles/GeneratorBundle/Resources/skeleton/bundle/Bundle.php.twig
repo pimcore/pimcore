@@ -1,0 +1,18 @@
+{% extends 'bundle/BaseBundle.php.twig' %}
+
+{% block use_statements %}
+use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+{% endblock use_statements %}
+
+{% block class_definition %}
+class {{ bundle }} extends AbstractPimcoreBundle
+{% endblock class_definition %}
+
+{% block class_body %}
+    public function getJsPaths()
+    {
+        return [
+            '/bundles/{{ bundle_basename|lower }}/js/pimcore/startup.js'
+        ];
+    }
+{% endblock class_body %}

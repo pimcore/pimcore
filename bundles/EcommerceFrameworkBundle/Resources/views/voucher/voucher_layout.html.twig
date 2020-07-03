@@ -1,0 +1,28 @@
+<head>
+    {% spaceless -%}
+        {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/bootstrap4/css/bootstrap.css')) %}
+        {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.css')) %}
+        {% do pimcore_head_link().appendStylesheet('https://use.fontawesome.com/releases/v5.9.0/css/all.css') %}
+        {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/css/voucherservice/style.css')) %}
+        {% do pimcore_head_script().prependFile(asset('/bundles/pimcoreecommerceframework/vendor/bootstrap4/js/bootstrap-native-v4.min.js')) %}
+        {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/chart.min.js')) %}
+        {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.js')) %}
+        {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/js/voucherservice/voucherSeriesTabScript.js')) %}
+    {%- endspaceless %}
+
+    {% block head_stylesheets deferred %}
+    {{ pimcore_head_link() }}
+    {% endblock %}
+</head>
+<body>
+    {# output scripts added before #}
+    {% block scripts deferred %}
+        {{ pimcore_head_script() }}
+    {% endblock %}
+    {% set colors = {
+        'used': "#F7355B",
+        'free': "#47BFBD",
+        'reserved': "#FDC45B"}
+    %}
+    {{ block('content') }}
+</body>

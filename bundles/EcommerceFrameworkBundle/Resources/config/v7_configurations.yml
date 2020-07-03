@@ -1,0 +1,19 @@
+pimcore_ecommerce_framework:
+
+    order_manager:
+        tenants:
+            default:
+                order_manager_id: Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderManager
+
+                order_agent:
+                    factory_options:
+                        agent_class: Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\V7\OrderAgent
+
+    checkout_manager:
+        tenants:
+            default:
+                factory_options:
+                    class: Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManager
+                    handle_pending_payments_strategy: Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\CancelPaymentOrRecreateOrderStrategy
+                commit_order_processor:
+                    id: Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CommitOrderProcessor

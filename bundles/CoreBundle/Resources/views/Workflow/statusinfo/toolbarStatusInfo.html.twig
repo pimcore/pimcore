@@ -1,0 +1,11 @@
+{# @var places \Pimcore\Workflow\Place\PlaceConfig[] #}
+{# @var translator \Symfony\Contracts\Translation\TranslatorInterface #}
+
+<div class="pimcore-workflow-place-indicator-wrapper">
+    {% for place in places %}
+
+        <div class="pimcore-workflow-place-indicator" style="background-color: {{ place.backgroundColor }}; color:{{ place.fontColor }}; border: 1px solid {{ place.borderColor }};"  title="{{ place.title }}">
+            {{ translator.trans(place.label,[],'admin') }}
+        </div>
+    {% endfor %}
+</div>

@@ -1,0 +1,226 @@
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
+a {
+    color: #428bca;
+    text-decoration: none;
+}
+
+.picker__holder {
+    min-width: 300px;
+}
+
+.border{
+    border: 1px solid #ccc;
+}
+div.statistics {
+    padding: 25px;
+}
+
+h3 {
+    margin-top: 0;
+}
+
+div.table-container table td {
+    font-size: 0.8em;
+    padding: 2px;
+}
+
+div.table-container table tr td:first-of-type{
+    max-width: 300px;
+    word-wrap: break-word;
+}
+.token {
+    font-family: courier;
+}
+
+div.form-group.form-group-50 {
+    width: 50%
+}
+
+.form-control.form-control-25 {
+    width: 25%;
+}
+
+.form-control.form-control-50 {
+    width: 50%;
+}
+
+.form-control[type="checkbox"]{
+    height: 25px;
+}
+.form-control.js-datepicker{
+    cursor: pointer;
+    background-color: #ffffff;
+}
+
+.header button.btn, .header a.btn {
+    min-width: 150px;
+}
+
+.tab-content {
+    border: 1px solid #ccc;
+    border-top: 0;
+    padding: 35px;
+}
+
+.nav.nav-tabs {
+    margin-top: 20px;
+}
+
+div.token-container {
+    border: 1px solid #ccc;
+    padding: 25px;
+}
+
+div.token-overview {
+    padding-right: 4%;
+}
+div.token-filter {
+    padding-right: 3%;
+}
+
+div.header {
+    padding: 25px;
+    border: 1px solid #ccc;
+    margin-bottom: 25px;
+}
+
+div.paging {
+    padding-top: 15px;
+}
+
+ul.pagination {
+    margin: 0;
+}
+
+div.alert {
+    margin-bottom: 0;
+    padding: 6px 25px;
+}
+
+.token-container .col h3 {
+    margin-top: 5px;
+    margin-bottom: 30px;
+}
+
+.table th {
+    padding-top: 0;
+}
+
+.table.table-only-body{
+    margin-bottom: 0;
+    margin-top: 15px;
+}
+
+.form-horizontal {
+    margin-top: 45px;
+}
+
+.token-container .table-container{
+    margin-top: 20px;
+}
+.table.table-only-body tr:first-of-type td{
+    border-top: 0;
+}
+
+.form-horizontal div.form-group {
+    margin: 15px 0;
+}
+
+.filter .form-group .col {
+    padding-right:0;
+}
+
+.token-container h5.subtitle{
+    color: #909090;
+    margin: 0;
+    margin-left: 12px;
+    margin-top: -15px;
+}
+
+/*  MEDIA QUERIES   */
+
+@media screen and (max-width: 1366px) {
+    div.header, div.token-container {
+        padding: 15px 5px;
+    }
+
+    .token-container div.col {
+        padding: 0 5px;
+    }
+
+    .token-container .token-overview h3, .token-container h5 {
+        padding-left: 15px;
+    }
+
+    .token-container .col.filter {
+        padding-left: 25px;
+    }
+}
+
+/*  MODAL STYLING  */
+
+div.modal-body-content, div.modal-footer {
+    padding: 15px 35px;
+}
+
+.modal-body-content .form-group {
+    margin: 25px 0;
+}
+
+.modal h3 {
+    margin-top: 0;
+}
+
+
+.fade.in {
+    opacity: 1;
+}
+.modal.in .modal-dialog {
+    -webkit-transform: translate(0, 0);
+    -o-transform: translate(0, 0);
+    transform: translate(0, 0);
+}
+.modal-backdrop.in {
+    opacity: 0.5;
+}
+
+div.content-block{
+    padding-bottom: 50px;
+}
+
+.sort:hover{
+    cursor: pointer;
+}
+.sort{
+    font-size: 0.7em;
+}
+.sort.active{
+    font-size: 1em;
+}
+a.pages-count{
+    text-decoration: none;
+    color: black;
+}
+a.pages-count:hover, a.pages-count.active{
+    font-weight: bold;
+}
+
+.token-container h5.subtitle.pages{
+    margin-right: 12px;
+}
+
+.form-horizontal .cleanup-radio{
+    min-width: 100px;
+}

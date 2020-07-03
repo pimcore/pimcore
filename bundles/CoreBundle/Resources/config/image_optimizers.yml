@@ -1,0 +1,27 @@
+services:
+    Pimcore\Image\Optimizer:
+        public: true
+
+    Pimcore\Image\Optimizer\AdvancedPngOptimizer:
+        tags:
+            - { name: pimcore.image.optimizer }
+
+    Pimcore\Image\Optimizer\CjpegOptimizer:
+        tags:
+            - { name: pimcore.image.optimizer }
+
+    Pimcore\Image\Optimizer\JpegoptimOptimizer:
+        tags:
+            - { name: pimcore.image.optimizer }
+
+    Pimcore\Image\Optimizer\PngCrushOptimizer:
+        tags:
+            - { name: pimcore.image.optimizer }
+
+    Pimcore\Image\Optimizer\PngOutOptimizer:
+        tags:
+            - { name: pimcore.image.optimizer }
+
+    Pimcore\Image\Optimizer\ZopflipngOptimizer:
+        tags:
+            - { name: pimcore.image.optimizer }

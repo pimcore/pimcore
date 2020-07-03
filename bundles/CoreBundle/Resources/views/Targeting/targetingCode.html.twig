@@ -1,0 +1,28 @@
+{% block beforeScriptTag %}{{ blocks.beforeScriptTag|raw }}{% endblock %}
+
+<script>
+    {% block beforeScript %}{{ blocks.beforeScript|raw }}{% endblock %}
+
+    {% block script %}
+    {% autoescape 'js' %}
+    var _ptg = _ptg || {};
+    _ptg.options = _ptg.options || {};
+
+    {% if inDebugMode %}
+    _ptg.options.log = true;
+    {% endif %}
+
+    {% if dataProviderKeys is not empty %}
+    _ptg.dataProviderKeys = {{ dataProviderKeys|json_encode|raw }};
+    {% endif %}
+    {% endautoescape %}
+    {% endblock %}
+
+    {% block afterScript %}{{ blocks.afterScript|raw }}{% endblock %}
+</script>
+
+{% block afterScriptTag %}{{ blocks.afterScriptTag|raw }}{% endblock %}
+
+{% block targetingScript %}
+    <script src="{{ asset('bundles/pimcorecore/js/targeting.js') }}" async></script>
+{% endblock %}

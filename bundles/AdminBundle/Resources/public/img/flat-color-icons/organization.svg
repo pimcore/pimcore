@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Ebene_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<polygon fill="#A3A5A7" points="12,7 12,3 2,3 2,21 22,21 22,7 "/>
+<rect x="4" y="17" fill="#0C0F12" width="2" height="2"/>
+<rect x="4" y="13" fill="#0C0F12" width="2" height="2"/>
+<rect x="4" y="9" fill="#0C0F12" width="2" height="2"/>
+<rect x="4" y="5" fill="#0C0F12" width="2" height="2"/>
+<rect x="8" y="17" fill="#0C0F12" width="2" height="2"/>
+<rect x="8" y="13" fill="#0C0F12" width="2" height="2"/>
+<rect x="8" y="9" fill="#0C0F12" width="2" height="2"/>
+<rect x="8" y="5" fill="#0C0F12" width="2" height="2"/>
+<path fill="#0C0F12" d="M12,9v2h2v2h-2v2h2v2h-2v2h8V9H12z M18,17h-2v-2h2V17z M18,13h-2v-2h2V13z"/>
+</svg>

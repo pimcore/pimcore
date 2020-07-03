@@ -1,0 +1,47 @@
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
+
+body {
+    font-family: Arial;
+    font-size: 12px;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    font-family: Arial;
+}
+
+h1 {
+    font-size: 20px;
+}
+
+h2 {
+    font-size: 18px;
+}
+
+h3 {
+    font-size: 16px;
+}
+
+h4,h5,h6 {
+    font-size: 14px;
+}
+
+.element-headline {
+    color: #cc2929;
+    font-size: 12px;
+    font-style:italic;
+    width: 100%;
+    border-bottom: 1px solid #cc2929;
+    page-break-before: always;
+}

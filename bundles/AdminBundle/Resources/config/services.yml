@@ -1,0 +1,84 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    #
+    # SESSION
+    #
+
+    Pimcore\Bundle\AdminBundle\Session\AdminSessionBagConfigurator:
+        arguments:
+            - '%pimcore.admin.session.attribute_bags%'
+        tags:
+            - { name: pimcore.session.configurator }
+
+    Pimcore\Bundle\AdminBundle\Session\Handler\AdminSessionHandler:
+        public: true
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: pimcore_admin.session }
+
+    #
+    # API
+    #
+
+    Pimcore\Model\Webservice\Service:
+        deprecated: ~
+
+    #
+    # Notification Services
+    #
+
+    Pimcore\Model\Notification\Service\NotificationService:
+        public: true
+    Pimcore\Model\Notification\Service\UserService: ~
+
+    #
+    # CONTROLLERS
+    #
+
+    # auto-register all controllers as services
+    Pimcore\Bundle\AdminBundle\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
+    #
+    # TRANSLATIONS
+    #
+
+    Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator: ~
+
+    #
+    # REDIRECTS
+    #
+
+    Pimcore\Routing\Redirect\Csv: ~
+
+    #
+    # GDPR Services
+    #
+
+    # Tagged data providers will be injected from compiler pass
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Manager: ~
+
+    # Providers implementing DataProviderInterface will be auto-tagged via autoconfiguration
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\DataObjects:
+        arguments:
+            $config: '%pimcore.gdpr-data-extrator.dataobjects%'
+
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Assets:
+        arguments:
+            $config: '%pimcore.gdpr-data-extrator.assets%'
+
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\SentMail: ~
+    Pimcore\Bundle\AdminBundle\GDPR\DataProvider\PimcoreUsers: ~
+
+
+    #
+    # Grid Helper Service
+    #
+    Pimcore\Bundle\AdminBundle\Helper\GridHelperService: ~

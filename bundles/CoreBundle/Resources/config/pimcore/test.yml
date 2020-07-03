@@ -1,0 +1,9 @@
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+    profiler: false
+
+web_profiler:
+    toolbar: false
+    intercept_redirects: false

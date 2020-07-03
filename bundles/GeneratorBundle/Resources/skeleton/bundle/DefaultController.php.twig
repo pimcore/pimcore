@@ -1,0 +1,25 @@
+<?php
+
+namespace {{ namespace }}\Controller;
+
+{% block use_statements %}
+use Pimcore\Controller\FrontendController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+{% endblock use_statements %}
+
+{% block class_definition %}
+class DefaultController extends FrontendController
+{% endblock class_definition %}
+{
+{% block class_body %}
+    /**
+     * @Route("/{{ extension_alias }}")
+     */
+    public function indexAction(Request $request)
+    {
+        return new Response('Hello world from {{ extension_alias }}');
+    }
+{% endblock class_body %}
+}

@@ -1,0 +1,11 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\IndexUpdateListener:
+        tags:
+            - { name: monolog.logger, channel: pimcore_ecommerce_indexupdater }
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\EventListener\Frontend\TrackingCodeFlashMessageListener: ~

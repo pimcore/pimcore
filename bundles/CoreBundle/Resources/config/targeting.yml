@@ -1,0 +1,163 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    #
+    # TARGETING STORAGE
+    #
+    # The TargetingStorageInterface alias will be set to whatever service_id is configured
+    # in pimcore.targeting.service_id. The services below are just the core storages, but
+    # it's possible to define a custom service which can be configured via service_id.
+    #
+
+    # Cookie
+    Pimcore\Targeting\Storage\Cookie\JWTCookieSaveHandler:
+        arguments:
+            $secret: '%kernel.secret%'
+
+    # NOTE: using this save handler is inherently insecure and can open vulnerabilities by injecting malicious data into the
+    # client cookie. Use only for testing!
+    Pimcore\Targeting\Storage\Cookie\JsonCookieSaveHandler: ~
+
+    Pimcore\Targeting\Storage\CookieStorage:
+        arguments:
+            $saveHandler: '@Pimcore\Targeting\Storage\Cookie\JWTCookieSaveHandler'
+
+    # Session Storage. If this is used, the pimcore.targeting.session.enabled entry
+    # must be set to true to load the session configurator.
+    Pimcore\Targeting\Storage\SessionStorage: ~
+
+    # Database
+    Pimcore\Targeting\Storage\DbStorage: ~
+
+    # Example for redis
+    # pimcore.targeting.storage.redis.connection:
+    #    class: Credis_Client
+    #    factory: [Pimcore\Storage\Redis\ConnectionFactory, createConnection]
+    #    arguments:
+    #        - { server: 127.0.0.1, database: 7 }
+
+    # Pimcore\Targeting\Storage\RedisStorage:
+    #     arguments:
+    #         $redis: '@pimcore.targeting.storage.redis.connection'
+
+    # Example for fallback
+    # Pimcore\Targeting\Storage\FallbackStorage:
+    #    arguments:
+    #        $primaryStorage: '@Pimcore\Targeting\Storage\DbStorage'
+    #        $fallbackStorage: '@Pimcore\Targeting\Storage\CookieStorage'
+
+
+    #
+    # VISITOR INFO
+    #
+
+    Pimcore\Targeting\VisitorInfoStorageInterface: '@Pimcore\Targeting\VisitorInfoStorage'
+    Pimcore\Targeting\VisitorInfoStorage: ~
+    Pimcore\Targeting\VisitorInfoResolver: ~
+
+
+    #
+    # DATA PROVIDERS
+    #
+
+    GeoIp2\ProviderInterface: '@GeoIp2\Database\Reader'
+    GeoIp2\Database\Reader:
+        arguments:
+            $filename: '%pimcore.geoip.db_file%'
+
+    Pimcore\Targeting\DataLoaderInterface: '@Pimcore\Targeting\DataLoader'
+    Pimcore\Targeting\DataLoader: ~
+
+    Pimcore\Targeting\DataProvider\GeoIp:
+        calls:
+            - [setCache, ['@Pimcore\Cache\Core\CoreHandlerInterface']]
+
+    Pimcore\Targeting\DataProvider\GeoLocation: ~
+
+    Pimcore\Targeting\DataProvider\Device:
+        calls:
+            - [setCache, ['@Pimcore\Cache\Core\CoreHandlerInterface']]
+            - [setCachePool, ['@Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface']]
+
+    Pimcore\Targeting\DataProvider\Piwik: ~
+    Pimcore\Targeting\DataProvider\TargetingStorage: ~
+
+    Pimcore\Targeting\Service\VisitedPagesCounter: ~
+    Pimcore\Targeting\DataProvider\VisitedPagesCounter: ~
+
+
+    #
+    # CONDITIONS
+    #
+
+    Pimcore\Targeting\ConditionFactoryInterface: '@Pimcore\Targeting\ConditionFactory'
+    Pimcore\Targeting\ConditionFactory:
+        arguments:
+            $conditions: '%pimcore.targeting.conditions%'
+
+    pimcore.targeting.condition_matcher.expression_language:
+        class: Symfony\Component\ExpressionLanguage\ExpressionLanguage
+        arguments:
+            $cache: '@pimcore.cache.core.pool'
+
+    Pimcore\Targeting\ConditionMatcherInterface: '@Pimcore\Targeting\ConditionMatcher'
+    Pimcore\Targeting\ConditionMatcher:
+        arguments:
+            $expressionLanguage: '@pimcore.targeting.condition_matcher.expression_language'
+
+
+    #
+    # ACTION HANDLERS
+    #
+
+    Pimcore\Targeting\ActionHandler\ActionHandlerInterface: '@Pimcore\Targeting\ActionHandler\DelegatingActionHandler'
+    Pimcore\Targeting\ActionHandler\DelegatingActionHandler: ~
+    Pimcore\Targeting\ActionHandler\AssignTargetGroup: ~
+    Pimcore\Targeting\ActionHandler\Redirect: ~
+    Pimcore\Targeting\ActionHandler\CodeSnippet: ~
+
+
+    #
+    # DOCUMENT HANDLING
+    #
+
+    Pimcore\Targeting\Document\DocumentTargetingConfigurator:
+        public: true
+
+
+    #
+    # TARGETING CODE
+    #
+
+    Pimcore\Targeting\Code\TargetingCodeGenerator: ~
+
+    #
+    # TOOLBAR AND PROFILER
+    #
+
+    Pimcore\Targeting\Debug\TargetingDataCollector: ~
+
+    Pimcore\Targeting\Debug\OverrideHandler:
+        lazy: true
+        arguments:
+            # injected by TargetingOverrideHandlersPass
+            $overrideHandlers: '?@'
+
+    Pimcore\Targeting\Debug\Override\DocumentTargetingOverrideHandler:
+        tags:
+            - { name: pimcore.targeting.override_handler, priority: 500 }
+
+    Pimcore\Targeting\Debug\Override\LanguageOverrideHandler:
+        tags:
+            - { name: pimcore.targeting.override_handler, priority: 475 }
+
+    Pimcore\Targeting\Debug\Override\DeviceOverrideHandler:
+        tags:
+            - { name: pimcore.targeting.override_handler, priority: 450 }
+
+    Pimcore\Targeting\Debug\Override\LocationOverrideHandler:
+        tags:
+            - { name: pimcore.targeting.override_handler, priority: 425 }

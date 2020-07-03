@@ -1,0 +1,26 @@
+{# @var subjectType string #}
+{# @var subject AbstractElement #}
+{# @var action string #}
+{# @var deeplink string #}
+{# @var note_description string #}
+{# @var translator \Symfony\Contracts\Translation\TranslatorInterface #}
+{# @var lang string #}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+{{ translator.trans('workflow_change_email_notification_text', [subjectType ~ ' ' ~ subject.getFullPath(), subject.getId(), translator.trans(action, [], 'admin', lang), translator.trans(workflow.getName(), [], 'admin', lang)], 'admin', lang) }}<br>
+{% if deeplink|trim is not empty %}
+    <a href="{{ deeplink }}" target="_blank">{{ translator.trans('workflow_change_email_notification_deeplink', [], 'admin', lang) }}</a><br>
+{% endif %}
+<br>
+
+{% if note_description|trim is not empty %}
+    <strong>{{ translator.trans('workflow_change_email_notification_note', [], 'admin', lang) }}</strong>
+    <p>{{ note_description }}</p>
+{% endif %}
+</body>
+</html>

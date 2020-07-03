@@ -1,0 +1,42 @@
+framework:
+    router:
+        resource: "%kernel.root_dir%/config/routing_dev.yml"
+        strict_requirements: true
+    profiler: { only_exceptions: false }
+
+web_profiler:
+    toolbar: true
+    intercept_redirects: false
+
+doctrine:
+    dbal:
+        connections:
+            default:
+                logging: true
+                profiling: true
+
+monolog:
+    handlers:
+        main:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+            channels: ["!event"]
+        console:
+            type: console
+            process_psr_3_messages: false
+            channels: ['!event', '!doctrine', '!console']
+
+pimcore:
+    error_handling:
+        render_error_document: false
+
+    web_profiler:
+        toolbar:
+            excluded_routes: ~
+
+    translations:
+        # enables support for the pimcore_debug_translations magic parameter
+        # see https://pimcore.com/docs/6.x/Development_Documentation/Development_Tools_and_Details/Magic_Parameters.html
+        debugging:
+            enabled: true

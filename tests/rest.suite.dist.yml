@@ -1,0 +1,20 @@
+class_name: RestTester
+modules:
+    enabled:
+        - \Pimcore\Tests\Helper\Pimcore:
+            connect_db: true
+        - \Pimcore\Tests\Helper\ClassManager
+        - \Pimcore\Tests\Helper\Model
+        - \Pimcore\Tests\Helper\PimcoreRest:
+            url: /webservice/rest
+            depends: \Pimcore\Tests\Helper\Pimcore
+
+env:
+    http:
+        modules:
+            enabled:
+                - PhpBrowser:
+                    url: '%PIMCORE_TEST_URL%'
+            config:
+                \Pimcore\Tests\Helper\PimcoreRest:
+                    depends: PhpBrowser

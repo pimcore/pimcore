@@ -1,0 +1,25 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    #
+    # DEVELOPMENT/PROFILER
+    #
+
+    Pimcore\Bundle\CoreBundle\DataCollector\PimcoreDataCollector:
+        tags:
+            -
+                name:     data_collector
+                template: 'PimcoreCoreBundle:Profiler:data_collector.html.twig'
+                id:       'pimcore'
+                priority: 500
+
+    Pimcore\Bundle\CoreBundle\DataCollector\PimcoreTargetingDataCollector:
+        tags:
+            -
+                name:     data_collector
+                template: 'PimcoreCoreBundle:Profiler:targeting_data_collector.html.twig'
+                id:       'pimcore_targeting'
+                priority: 312

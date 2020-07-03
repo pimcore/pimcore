@@ -1,0 +1,141 @@
+{% if not headless -%}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex, nofollow" />
+</head>
+<body>
+{%- endif %}
+
+{% macro check(check) %}
+    {% set icon = 'high_priority' %}
+    {% if check.state == constant('\Pimcore\\Tool\\Requirements\\Check::STATE_OK') %}
+        {% set icon = 'ok' %}
+    {% elseif check.state == constant('\Pimcore\\Tool\\Requirements\\Check::STATE_WARNING') %}
+        {% set icon = 'overlay-error' %}
+    {% endif %}
+
+    <tr>
+        <td>
+            {% if check.link is not empty %}
+                <a href="{{ check.link }}" target="_blank">{{ check.name }}</a>
+            {% else %}
+                {{ check.name }}
+            {% endif %}
+        </td>
+
+        <td><img src="/bundles/pimcoreadmin/img/flat-color-icons/{{ icon }}.svg" /></td>
+    </tr>
+{% endmacro %}
+
+{% import _self as s %}
+
+    <style type="text/css">
+        body {
+            font-family: Arial, Tahoma, Verdana;
+            font-size: 12px;
+        }
+
+        h2 {
+            font-size: 16px;
+            margin: 0;
+            padding: 0 0 5px 0;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        a {
+            color: #0066cc;
+        }
+
+        .legend {
+            display: inline-block;
+        }
+
+        div.legend {
+            padding-left: 20px;
+        }
+
+        span.legend {
+            line-height: 30px;
+            position: relative;
+            padding: 0 30px 0 40px;
+        }
+
+        .legend img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width:30px;
+        }
+
+        table img {
+            width:20px;
+        }
+    </style>
+
+    <table cellpadding="20">
+        <tr>
+            <td valign="top">
+                <h2>PHP</h2>
+                <table border="1" cellpadding="3" cellspacing="0">
+
+                    {% for check in checksPHP %}
+                        {{ s.check(check) }}
+                    {% endfor %}
+
+                </table>
+            </td>
+            <td valign="top">
+                <h2>MySQL</h2>
+                <table border="1" cellpadding="3" cellspacing="0">
+
+                    {% for check in checksMySQL %}
+                        {{ s.check(check) }}
+                    {% endfor %}
+
+                </table>
+            </td>
+            <td valign="top">
+                <h2>Filesystem</h2>
+                <table border="1" cellpadding="3" cellspacing="0">
+
+                    {% for check in checksFS %}
+                        {{ s.check(check) }}
+                    {% endfor %}
+
+                </table>
+
+                <br />
+                <br />
+
+                <h2>CLI Tools &amp; Applications</h2>
+                <table border="1" cellpadding="3" cellspacing="0">
+
+                    {% for check in checksApps %}
+                        {{ s.check(check) }}
+                    {% endfor %}
+
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <div class="legend">
+        <p>
+            <b>Explanation:</b>
+        </p>
+        <p>
+            <span class="legend"><img src="/bundles/pimcoreadmin/img/flat-color-icons/ok.svg" />Everything ok</span>
+            <span class="legend"><img width="26" height="26" src="/bundles/pimcoreadmin/img/flat-color-icons/overlay-error.svg" /> Recommended but not required</span>
+            <span class="legend"><img src="/bundles/pimcoreadmin/img/flat-color-icons/high_priority.svg" /> Required</span>
+        </p>
+    </div>
+
+{% if not headless -%}
+</body>
+</html>
+{%- endif %}

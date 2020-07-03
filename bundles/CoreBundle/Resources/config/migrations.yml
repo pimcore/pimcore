@@ -1,0 +1,15 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Pimcore\Migrations\Command\:
+        resource: '../../../../lib/Migrations/Command'
+
+    Pimcore\Migrations\Configuration\ConfigurationFactory:
+        public: true
+
+    Pimcore\Migrations\MigrationManager:
+        lazy: true
+        public: true

@@ -1,0 +1,91 @@
+services:
+    #
+    # PRODUCT INDEX CONFIGS AND WORKERS
+    #
+    # Defined in an extra file as we can't define parent/child definitions in a file with _defaults
+
+    #
+    # CONFIGURATIONS
+    #
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AttributeFactory:
+        arguments:
+            $getters: '@pimcore_ecommerce.locator.index_service.getters'
+            $interpreters: '@pimcore_ecommerce.locator.index_service.interpreters'
+
+    # abstract configuration definition - arguments will be injected from configuration values
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig:
+        abstract: true
+        public: false
+        autowire: true
+        arguments:
+            $tenantName: ~
+            $attributes: []
+            $searchAttributes: []
+            $filterTypes: []
+            $options: []
+        calls:
+            - [setAttributeFactory, ['@Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AttributeFactory']]
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysql:
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultMysqlSubTenantConfig:
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig
+        arguments:
+            $environment: '@pimcore_ecommerce.environment'
+            $db: '@database_connection'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\OptimizedMysql:
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch:
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFactFinder:
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFindologic:
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AbstractConfig
+
+
+    #
+    # WORKERS
+    #
+
+    # abstract worker definition - arguments will be injected from configuration values
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker:
+        abstract: true
+        public: false
+        autowire: true
+        arguments:
+            $tenantConfig: ~ # will be injected from configuration
+            $db: '@database_connection'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultMysql:
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql:
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker
+        arguments:
+            $workerMode: '%pimcore_ecommerce.index_service.worker_mode%'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch5:
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker
+        arguments:
+            $workerMode: '%pimcore_ecommerce.index_service.worker_mode%'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\DefaultElasticSearch6:
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker
+        arguments:
+            $workerMode: '%pimcore_ecommerce.index_service.worker_mode%'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFactFinder:
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker
+        arguments:
+            $workerMode: '%pimcore_ecommerce.index_service.worker_mode%'
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologic:
+        parent: Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractWorker
+        arguments:
+            $workerMode: '%pimcore_ecommerce.index_service.worker_mode%'

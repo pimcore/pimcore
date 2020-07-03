@@ -1,0 +1,78 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
+use Pimcore\Config;
+use Pimcore\Bootstrap;
+use Pimcore\Bundle\InstallBundle\InstallerKernel;
+use Pimcore\Version;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Debug\Debug;
+
+@ini_set('display_errors', 'On');
+
+$maxExecutionTime = 0;
+@ini_set('max_execution_time', $maxExecutionTime);
+set_time_limit($maxExecutionTime);
+
+if (file_exists($a = getcwd() . '/vendor/autoload.php')) {
+    require $a;
+    $projectRoot = getcwd();
+} elseif (file_exists($a = __DIR__ . '/../../../../vendor/autoload.php')) {
+    require $a;
+    $projectRoot = __DIR__ . '/../../../..';
+} elseif (file_exists($a = __DIR__ . '/../autoload.php')) {
+    require $a;
+    $projectRoot = '/..';
+} else {
+    fwrite(STDERR, 'Cannot locate autoloader; please run "composer install"' . PHP_EOL);
+    exit(1);
+}
+
+define('PIMCORE_PROJECT_ROOT', $projectRoot);
+
+Bootstrap::defineConstants();
+
+Debug::enable(PIMCORE_PHP_ERROR_REPORTING);
+
+$kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), true);
+Pimcore::setKernel($kernel);
+
+$application = new Application($kernel);
+$application->setName('Pimcore Installer');
+$application->setVersion(Version::getVersion());
+$application->setDefaultCommand('pimcore:install');
+
+// In previous versions, this was to be called with bin/install and defined pimcore:install as single command (second parameter
+// to setDefaultCommand. As we now have multiple commands, we need to remove the single command flag, but that removes
+// the ability to call bin/console without the pimcore:install argument but with arguments as that is not supported by
+// Symfony. This block fetches the first argument from the input object and injects "pimcore:install" if there is no first
+// argument or the first argument is no valid command.
+$input         = new ArgvInput();
+$firstArgument = $input->getFirstArgument();
+
+// set pimcore:install as first argument to enable default command with arguments
+if (null === $firstArgument || !$application->has($firstArgument)) {
+    $argv = $_SERVER['argv'];
+
+    $applicationName = array_shift($argv);
+    array_unshift($argv, 'pimcore:install');
+    array_unshift($argv, $applicationName);
+
+    $input = new ArgvInput($argv);
+}
+
+// run application with the input resolved before
+$application->run($input);

@@ -1,0 +1,52 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    Pimcore\Http\RequestHelper: ~
+
+    Pimcore\Http\ResponseHelper: ~
+
+    Pimcore\Http\RequestMatcherFactory:
+        public: false
+
+    Pimcore\Http\Context\PimcoreContextGuesser:
+        public: false
+
+    Pimcore\Http\ResponseStack:
+        public: false
+
+    Pimcore\Http\Response\CodeInjector:
+        public: false
+
+    #
+    # REQUEST RESOLVERS
+    #
+    # Read/write/normalize defined request attributes (e.g. document)
+    #
+
+    Pimcore\Http\Request\Resolver\PimcoreContextResolver: ~
+
+    Pimcore\Http\Request\Resolver\OutputTimestampResolver: ~
+
+    Pimcore\Http\Request\Resolver\SiteResolver: ~
+
+    Pimcore\Http\Request\Resolver\EditmodeResolver:
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: init }
+            - { name: pimcore.templating.vars_provider }
+
+    Pimcore\Http\Request\Resolver\DocumentResolver:
+        tags:
+            - { name: pimcore.templating.vars_provider }
+
+    Pimcore\Http\Request\Resolver\TemplateResolver: ~
+
+    Pimcore\Http\Request\Resolver\TemplateVarsResolver: ~
+
+    Pimcore\Http\Request\Resolver\ViewModelResolver: ~
+
+    Pimcore\Http\Request\Resolver\ResponseHeaderResolver: ~

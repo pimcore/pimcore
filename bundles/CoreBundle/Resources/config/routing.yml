@@ -1,0 +1,45 @@
+_pimcore_service_robots_txt:
+    path: /robots.txt
+    defaults: { _controller: Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::robotsTxtAction }
+
+_pimcore_service_common_files:
+    path: /{filename}
+    defaults: { _controller: Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::commonFilesAction }
+    requirements:
+        filename: '(robots\.txt|crossdomain\.xml|favicon\.ico|browserconfig\.xml|wpad\.dat|\.crl)'
+
+_pimcore_service_common_files_apple_touch_icon:
+    path: /{filename}
+    defaults: { _controller: Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::commonFilesAction }
+    requirements:
+        filename: 'apple\-touch\-icon.*'
+
+_pimcore_service_hybridauth:
+    path: /hybridauth/{placeholder}
+    defaults: { _controller: Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::hybridauthAction }
+    requirements:
+        placeholder: '.*'
+
+_pimcore_service_qrcode:
+    path: /qr~-~code/{key}
+    defaults: { _controller: Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::qrcodeAction }
+    requirements:
+        key: '[a-zA-Z0-9_\-]+'
+
+_pimcore_service_thumbnail:
+    path: '{prefix}image-thumb__{assetId}__{thumbnailName}/{filename}'
+    defaults: { _controller: Pimcore\Bundle\CoreBundle\Controller\PublicServicesController::thumbnailAction}
+    requirements:
+        prefix: '.*'
+        assetId: '\d+'
+        thumbnailName: '[a-zA-Z0-9_\-]+'
+        filename: '.*'
+
+_fos_js_routing:
+    resource: .
+    type: fos_js_routing
+
+# auto loads routes from all bundles in Resources/config/pimcore/routing.yml
+_pimcore_bundle_auto:
+    resource: .
+    type: pimcore_bundle

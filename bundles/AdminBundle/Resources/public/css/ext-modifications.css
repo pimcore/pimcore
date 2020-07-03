@@ -1,0 +1,648 @@
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
+
+/* Bugfixes */
+
+.x-datepicker-month .x-btn-over .x-btn-inner, .x-datepicker-month .x-btn-over .x-btn-split-right:after {
+    color: #f0f0f0;
+}
+
+.x-fieldset .x-fieldset-header {
+    background-color: #f6f6f6;
+}
+
+/* Style overrides */
+
+.x-tab-default-top {
+    background-color: transparent;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-top: 1px solid transparent;
+    border-left: 1px solid transparent;
+    border-right: 1px solid transparent;
+}
+
+.pimcore_body .x-tab-default-top.x-tab-active {
+    box-shadow: none;
+}
+
+.x-tab-over.x-tab-default.x-tab-over {
+    background-color: #eaeaea;
+    border-color: transparent;
+}
+
+.x-tab-over.x-tab-default.x-tab-over.x-tab-active {
+    box-shadow: none;
+}
+
+.x-tab-inner-default {
+    color: #404040;
+}
+
+.x-tab-bar-default {
+    background: transparent;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
+.x-tab-focus.x-tab-default {
+    outline: none;
+}
+
+.x-tab-default .x-tab-close-btn {
+    color: #919191;
+}
+
+.x-tab-default.x-tab-over .x-tab-close-btn {
+    color: #919191;
+}
+
+.x-tab-bar-horizontal > .x-tab-bar-body-default {
+    min-height: 30px;
+}
+
+.x-tab.x-tab-active.x-tab-default {
+    background-color: #f6f6f6;
+    border-color: #d0d0d0;
+}
+
+.x-tab.x-tab-active.x-tab-default .x-tab-inner-default {
+    color: #404040;
+}
+
+.x-tab-bar-top .x-tab-bar-strip-default {
+    border-bottom: 1px solid #d0d0d0;
+}
+
+.x-tab-bar-bottom .x-tab-bar-strip-default {
+    border-top: 1px solid #d0d0d0;
+}
+
+.x-tab-bar-left .x-tab-bar-strip-default {
+    border-right: 1px solid #d0d0d0;
+}
+
+.x-tab-bar-right .x-tab-bar-strip-default {
+    border-left: 1px solid #d0d0d0;
+}
+
+.x-tab-bar-vertical > .x-tab-bar-body-default {
+    min-width: 39px;
+}
+
+.x-tab-default-bottom {
+    border-width: 0 1px 1px 1px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.x-box-scroller-tab-bar-default {
+    background: none;
+    color: #323639;
+}
+
+.x-tab .x-tab-icon-el {
+    min-height: 24px;
+    width: 24px;
+}
+
+.x-panel-default.x-tabpanel-child {
+    border-top: 3px solid #f6f6f6;
+}
+
+.x-panel-body-default {
+    background: #f6f6f6;
+}
+
+.x-window-body-default {
+    background: #f6f6f6;
+}
+
+.x-fieldset {
+    background: none;
+}
+
+.x-accordion-item .x-accordion-hd {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border:0 !important;
+}
+
+.x-accordion-item .x-accordion-hd.x-accordion-hd-over {
+    background: #dadada;
+}
+
+.x-view-item-focused {
+    outline: 0;
+}
+
+.x-tree-icon {
+    width: 24px;
+    background-size: 24px;
+}
+
+.x-btn-icon-el, .x-tab-icon-el {
+    /* this is for pimcore_icon_overlay_* */
+    position: relative;
+}
+
+.x-tree-view .x-grid-item {
+    background-color: #f6f6f6;
+}
+
+.x-tree-view .x-grid-item.x-grid-item-over {
+    background: #fff;
+}
+
+.x-tree-view .x-grid-item.x-grid-item-selected {
+    background: #EFF0F1;
+}
+
+.x-tree-view .x-grid-item-container {
+    overflow: visible;
+    padding-top: 10px;
+}
+
+.x-tree-view .x-grid-cell-inner-treecolumn, .pimcore_document_seo_tree .x-grid-cell-inner  {
+    padding: 3px 6px 0 0;
+    height: 24px;
+}
+
+.x-tree-elbow-plus:before,
+.x-tree-elbow-end-plus:before,
+.x-grid-tree-node-expanded .x-tree-elbow-plus:before,
+.x-grid-tree-node-expanded .x-tree-elbow-end-plus:before {
+    content: none;
+}
+
+.x-tree-elbow-plus,
+.x-tree-elbow-end-plus {
+    background: url(/bundles/pimcoreadmin/img/main-accordion-plus.svg) center center no-repeat !important;
+}
+
+.x-grid-tree-node-expanded .x-tree-elbow-plus,
+.x-grid-tree-node-expanded .x-tree-elbow-end-plus {
+    background: url(/bundles/pimcoreadmin/img/main-accordion-minus.svg) center center no-repeat !important;
+}
+
+.x-tree-elbow-img {
+    width: 20px;
+    margin-right: 8px;
+}
+
+.x-grid-item-alt {
+    background-color: #f6f6f6;
+}
+
+.x-grid-item-alt.x-grid-item-selected {
+    background-color: #ffefbb;
+}
+
+.x-grid-item-alt.x-grid-item-over {
+    background-color: #e4e4e4;
+}
+
+.x-grid-item-focused .x-grid-cell-inner:before {
+    border: 0;
+}
+
+.x-action-col-icon {
+    background-size: 16px !important;
+}
+
+.x-column-header-inner {
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+.x-mask.x-focus {
+    border:0;
+}
+
+body.x-border-layout-ct, div.x-border-layout-ct {
+    background-color: #f6f6f6;
+}
+
+.x-panel-header-default {
+    background-color: #f6f6f6;
+    border: 1px solid #d0d0d0;
+}
+
+.x-panel-header-horizontal {
+    border-bottom: 1px solid #d0d0d0 !important;
+}
+
+.x-panel-header-title-default {
+    color: #606060;
+}
+
+.x-panel-header-default-horizontal {
+    padding: 6px 7px 7px;
+}
+
+.x-panel-header-default-horizontal .x-panel-header-title {
+    min-height: 24px;
+}
+
+.x-panel-header-horizontal .x-panel-header-title-default > .x-title-icon-wrap-default.x-title-icon-left {
+    width: 28px;
+}
+
+.x-panel-header-horizontal .x-panel-header-title-default > .x-title-icon-wrap-default > .x-title-icon-default {
+    width: 24px;
+    height: 24px;
+}
+
+.x-column-header {
+    background-color: #d0d0d0;
+    border-right-color: #5a5c5e;
+    font-size: 11px;
+    line-height: 18px;
+    font-weight: 600;
+}
+
+.x-grid-body {
+    border-width:1px;
+}
+
+.x-grid-header-ct {
+    background-color: #d0d0d0;
+}
+
+.x-column-header-text-container {
+    display: inline  !important;
+}
+
+.x-column-header-text-wrapper {
+    display: inline  !important;
+}
+
+.x-column-header-text {
+    display: inline !important;
+}
+
+.x-grid-cell-inner {
+    cursor: pointer !important;
+}
+
+.x-grid-cell-inner, .x-grid-cell-inner-checkcolumn, .x-grid-cell-inner-action-col {
+    padding: 2px 10px 2px;
+}
+
+.x-column-header-checkbox .x-column-header-inner, .x-grid-cell-row-checker .x-grid-cell-inner {
+    padding: 3px 4px 0px 7px;
+}
+
+.x-mask {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+body > .x-mask {
+    background-color: rgba(246, 246, 246, 0.75);
+}
+
+.x-border-item {
+    border-right: 1px solid #d0d0d0;
+}
+
+.x-toolbar-default {
+    background-color: #f6f6f6;
+    padding: 7px 0 6px 8px;
+}
+
+.x-toolbar-default.x-toolbar-default-vertical {
+    padding: 6px 8px 0;
+}
+
+.x-toolbar-more-icon {
+    line-height: 24px;
+    font-size: 18px;
+}
+
+.x-btn-default-small, .x-btn-default-medium, .x-btn-default-large {
+    border-color: #000;
+}
+
+.x-btn-over.x-btn-default-small, .x-btn-over.x-btn-default-medium, .x-btn-over.x-btn-default-large {
+    border-color: #000;
+    background-color: #000;
+}
+
+.x-form-trigger-wrap-default.x-form-trigger-wrap-focus {
+    border-color: #000;
+}
+
+.x-form-text-wrap {
+    background: #fff;
+}
+
+.x-panel-default {
+    background: #f6f6f6;
+    border-color: #d0d0d0;
+}
+.x-panel > .x-panel-default-outer-border-l,
+.x-panel > .x-panel-default-outer-border-b,
+.x-panel > .x-panel-default-outer-border-bl,
+.x-panel > .x-panel-default-outer-border-r,
+.x-panel > .x-panel-default-outer-border-rl,
+.x-panel > .x-panel-default-outer-border-rb,
+.x-panel > .x-panel-default-outer-border-rbl,
+.x-panel > .x-panel-default-outer-border-t,
+.x-panel > .x-panel-default-outer-border-tl,
+.x-panel > .x-panel-default-outer-border-tb,
+.x-panel > .x-panel-default-outer-border-tbl,
+.x-panel > .x-panel-default-outer-border-tr,
+.x-panel > .x-panel-default-outer-border-trl,
+.x-panel > .x-panel-default-outer-border-trb,
+.x-panel > .x-panel-default-outer-border-trbl {
+    border-color: #d0d0d0 !important;
+    border-style: solid;
+}
+
+.x-portlet {
+    margin-bottom: 10px;
+}
+
+.x-btn-default-toolbar-medium .x-btn-icon .x-btn-icon-el,
+.x-btn-default-toolbar-small .x-btn-icon .x-btn-icon-el,
+.x-btn-default-small .x-btn-icon .x-btn-icon-el  {
+    width: 24px;
+    height: 24px;
+}
+
+.x-btn.x-btn-default-toolbar-small,
+.x-btn.x-btn-default-small {
+    padding: 3px;
+}
+
+.x-btn-button-default-small {
+    min-height: 24px;
+}
+
+.x-btn.x-btn-default-toolbar-medium {
+    padding: 6px;
+}
+
+.x-tip-header-default {
+    padding: 6px 8px 0 8px;
+}
+
+.x-tip-body-default {
+    padding: 2px 6px 6px 6px;
+}
+
+.x-btn-focus {
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+
+.x-menu-default {
+    border:0;
+}
+
+.x-menu-body-default {
+    background-color: #1B1E21;
+}
+
+.x-menu-item-text-default {
+    color: #fff;
+}
+
+.x-menu-item-default {
+    border-top: 1px solid #2A2D30;
+}
+
+.x-menu-item-default:first-child {
+    border:0;
+}
+
+.x-menu-item-separator + .x-menu-item-default {
+    border-top-width: 3px;
+}
+
+.x-menu-item-default.x-menu-item-separator {
+    border:0;
+    height:0;
+}
+
+.x-menu-item-default.x-menu-item-active {
+    background-color: #2A2D30;
+}
+
+.x-menu-item-active .x-menu-item-text {
+    font-weight: 100 !important;
+}
+
+.x-menu-icon-separator-default {
+    border-left-color: #1B1E21;
+}
+
+.x-menu-item-link {
+    outline: none !important;
+}
+
+.x-css-shadow {
+    display: none;
+    opacity: 0;
+}
+
+/*.x-accordion-item .x-tree-icon-parent {
+    vertical-align: middle;
+}*/
+
+.x-tree-drop-ok-above .x-dd-drop-icon {
+    background-image: url(../js/lib/ext/classic/theme-triton/resources/images/tree/drop-between.gif);
+}
+
+.x-tree-drop-ok-below .x-dd-drop-icon {
+    background-image: url(../js/lib/ext/classic/theme-triton/resources/images/tree/drop-between.gif);
+}
+
+.x-tree-drop-ok-between .x-dd-drop-icon {
+    background-image: url(../js/lib/ext/classic/theme-triton/resources/images/tree/drop-between.gif);
+}
+
+.x-form-item-default.x-item-disabled, .x-form-item-default.x-form-readonly {
+    opacity: 0.7;
+}
+
+.x-splitter-vertical {
+    border-right: 1px solid #d0d0d0;
+    border-left: 1px solid #d0d0d0;
+}
+
+.x-splitter-vertical.x-border-item {
+    border-left: 0;
+}
+
+.x-box-scroller-disabled {
+    visibility: hidden;
+}
+
+.x-form-checkbox-focus.x-form-checkbox-default {
+    color: #919191;
+}
+
+
+/* ExtJS 6.0 bugfixes */
+
+.x-accordion-hd .x-tool-right, .x-accordion-hd .x-tool-left {
+    background-image: none;
+}
+
+/* Bugfix #2178 for Safari 11 that the legend disappear on a fieldset. */
+.x-fieldset {
+    overflow: visible;
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:28 */
+.x-colorpicker-colormap {
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/map_gradient.png);
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:35 */
+.x-colorpicker-colormap-draghandle-container {
+    overflow: visible;
+    z-index: 1;
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:41 */
+.x-colorpicker-colormap-blender {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:49 */
+.x-colorpicker-colormap-draghandle {
+    width: 15px;
+    height: 15px;
+    position: relative;
+    left: -7px;
+    top: -7px;
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/drag_circle.png);
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:60 */
+.x-colorpicker-draghandle-container {
+    width: 20px;
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:63 */
+.x-colorpicker-draghandle-container .x-autocontainer-outerCt {
+    height: 100%;
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:68 */
+.x-colorpicker-draghandle {
+    width: 32px;
+    height: 9px;
+    position: relative;
+    left: -6px;
+    top: -4px;
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/pickerslider.png);
+    background-repeat: no-repeat;
+    z-index: 1;
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:79 */
+.x-colorpicker-hue {
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/huegradient.png);
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:86 */
+.x-colorpicker-hue-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:95 */
+.x-colorpicker-saturation .x-colorpicker-draghandle-container {
+    background: -moz-linear-gradient(top, #fff 0%, #000 100%);
+    /* FF3.6+ */
+    background: -webkit-linear-gradient(top, #fff 0%, #000 100%);
+    /* FF3.6+ */
+    /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #fff 0%, #000 100%);
+    /* Chrome10+,Safari5.1+ */
+    /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #fff 0%, #000 100%);
+    /* Opera 11.10+ */
+    /* IE10+ */
+    background: linear-gradient(to bottom, #fff 0%, #000 100%);
+    /* IE10+ */
+    /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#000000',GradientType=0 );
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:106 */
+.x-colorpicker-value .x-colorpicker-draghandle-container {
+    background: -moz-linear-gradient(top, red 0%, #000 100%);
+    /* FF3.6+ */
+    background: -webkit-linear-gradient(top, red 0%, #000 100%);
+    /* FF3.6+ */
+    /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, red 0%, #000 100%);
+    /* Chrome10+,Safari5.1+ */
+    /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, red 0%, #000 100%);
+    /* Opera 11.10+ */
+    /* IE10+ */
+    background: linear-gradient(to bottom, red 0%, #000 100%);
+    /* IE10+ */
+    /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff0000', endColorstr='#000000',GradientType=0 );
+}
+
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:117 */
+.x-colorpicker-alpha .x-colorpicker-draghandle-container {
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/checkerboard.png);
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Selector.scss:123 */
+.x-colorpicker-preview {
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/checkerboard.png);
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Button.scss:2 */
+.x-colorpicker-button {
+    position: relative;
+    border: 1px solid gray;
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/checkerboard.png);
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Field.scss:3 */
+.x-colorpicker-field .x-form-item-body {
+    position: relative;
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Field.scss:7 */
+.x-colorpicker-field input {
+    padding-left: 26px;
+}
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Field.scss:12 */
+.x-colorpicker-field-swatch {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 4px;
+    background-image: url(/bundles/pimcoreadmin/img/ext/colorpicker/checkerboard.png);
+    top: 0px;
+    bottom: 0px;
+    margin: auto;
+}
+
+/* /Users/space/buildAgent/work/8cc7421dd8da164c/staging/packages/ux/classic/sass/src/colorpick/Field.scss:25 */
+.x-colorpicker-field-swatch-inner {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+/* Ext override for making disabled fields show tooltip on mouseover - should be fixed in 6.2.0 */
+.x-item-disabled, .x-item-disabled * {
+    cursor: default;
+    pointer-events: all !important; /* enables tooltip for disabled elements */
+}

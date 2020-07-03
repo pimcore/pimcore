@@ -1,0 +1,69 @@
+{% if usage is iterable %}
+    <script>
+        var lineChartData = {
+            labels: [
+                {% for date, count in usage %}
+                     "{{ date }}",
+                {% endfor %}
+            ],
+            datasets: [
+                {
+                    label: "Usage Statistic",
+                    fillColor: "rgba(220,220,220,0.2)",
+                    strokeColor: "rgba(220,220,220,1)",
+                    pointColor: "rgba(220,220,220,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(220,220,220,1)",
+                    data: [
+                        {% for date, count in usage %}
+                        "{{ count }}",
+                        {% endfor %}
+                    ]
+                }
+            ]
+        };
+
+        var pieData = [
+            {
+                value: {{ statistics['usageCount'] }},
+                color: "{{ colors['used'] }}",
+                highlight: "#FE6B4F",
+                label: "Used"
+            },
+            {
+                value: {{ statistics['freeCount'] }},
+                color: "{{ colors['free'] }}",
+                highlight: "#5AD2D2",
+                label: "Free"
+            },
+            {
+                value: {{ statistics['reservedCount'] }},
+                color: "{{ colors['reserved'] }}",
+                highlight: "#FEC770",
+                label: "Reserved"
+            }
+        ];
+
+
+        /**
+         * Init Statistics canvas on tab click.
+         */
+        document.querySelector('#statistic-tab').onclick = function(e){
+            window.setTimeout(function () {
+
+                var usage = document.getElementById("canvas-usage").getContext("2d");
+
+                var usageChart = new Chart(usage).Line(lineChartData, {
+                    responsive: true,
+                    showTooltips: false
+                });
+
+                var tokens = document.getElementById("canvas-token").getContext("2d");
+                var tokenChart = new Chart(tokens).Pie(pieData, {
+                    responsive: true
+                });
+            }, 50);
+        }
+    </script>
+{% endif %}

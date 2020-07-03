@@ -1,0 +1,8 @@
+services:
+    Pimcore\Bundle\EcommerceFrameworkBundle\Maintenance\CleanupPendingOrdersTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: ecommerce_pending_orders }
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\Maintenance\CleanupVouchersTask:
+        tags:
+            - { name: pimcore.maintenance.task, type: ecommerce_vouchers }

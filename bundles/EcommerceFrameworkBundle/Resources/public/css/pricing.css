@@ -1,0 +1,115 @@
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
+
+/** Main Menu **/
+.bundle_ecommerce_pricing_rules {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/percent.svg") no-repeat center center !important;
+}
+
+/** Tree **/
+.bundle_ecommerce_pricing_icon_rule_additiv {
+    position: relative;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/percent.svg") no-repeat center center !important;
+}
+.bundle_ecommerce_pricing_icon_rule_additiv:before {
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    bottom: 4px;
+    right: 0;
+    content: "";
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/plus-circle.svg) center center no-repeat;
+    background-size: cover;
+}
+
+
+.bundle_ecommerce_pricing_icon_rule_stopExecute {
+    position: relative;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/percent.svg") no-repeat center center !important;
+}
+.bundle_ecommerce_pricing_icon_rule_stopExecute:before {
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    bottom: 4px;
+    right: 0;
+    content: "";
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/stop-circle.svg) center center no-repeat;
+    background-size: cover;
+}
+
+.bundle_ecommerce_pricing_icon_rule_disabled {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/percent.svg") no-repeat center center !important;
+    -webkit-filter: grayscale(100%) brightness(200%);
+    filter: grayscale(100%) brightness(200%);
+
+}
+
+/** Condition **/
+.bundle_ecommerce_pricing_icon_condition_bracket {
+    margin: 0 20px !important;
+}
+.bundle_ecommerce_pricing_icon_conditionCartAmount {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/shopping-cart.svg") no-repeat center center !important;
+}
+.bundle_ecommerce_pricing_icon_conditionDateRange {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/calendar.svg") no-repeat center center !important;
+}
+.bundle_ecommerce_pricing_icon_conditionCatalogProduct {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/camera.svg") no-repeat center center !important;
+}
+.bundle_ecommerce_pricing_icon_conditionCatalogCategory {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/folder.svg") no-repeat center center !important;
+}
+.bundle_ecommerce_pricing_icon_conditionCatalogCategory:before {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    top: 4px;
+    right: 0;
+    content: "";
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/camera.svg) center center no-repeat;
+    background-size: cover;
+}
+.bundle_ecommerce_pricing_icon_conditionToken {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/sms.svg") no-repeat center center !important;
+}
+.bundle_ecommerce_pricing_icon_conditionSold,
+.bundle_ecommerce_pricing_icon_conditionSales {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/sales_performance.svg") no-repeat center center !important;
+}
+.bundle_ecommerce_pricing_icon_conditionClientIp {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/laptop.svg") no-repeat center center !important;
+}
+.bundle_ecommerce_pricing_icon_conditionVoucherToken {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/diamond.svg") no-repeat center center !important;
+}
+.bundle_ecommerce_pricing_icon_conditionTenant {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/department.svg") no-repeat center center !important;
+}
+.bundle_ecommerce_pricing_icon_conditionTargetGroup {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/manager.svg") no-repeat center center !important;
+}
+
+/** Actions **/
+.bundle_ecommerce_pricing_icon_actionGift {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/gift.svg") no-repeat center center !important;
+}
+.bundle_ecommerce_pricing_icon_actionCartDiscount,
+.bundle_ecommerce_pricing_icon_actionProductDiscount {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/donate.svg") no-repeat center center !important;
+}
+.bundle_ecommerce_pricing_icon_actionFreeShipping {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/in_transit.svg") no-repeat center center !important;
+}

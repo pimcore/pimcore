@@ -1,0 +1,13 @@
+services:
+    _defaults:
+        public: true
+
+    pimcore_admin.security.user_provider: '@Pimcore\Bundle\AdminBundle\Security\User\UserProvider'
+    pimcore_admin.security.admin_authenticator: '@Pimcore\Bundle\AdminBundle\Security\Guard\AdminAuthenticator'
+    pimcore_admin.security.webservice_authenticator: '@Pimcore\Bundle\AdminBundle\Security\Guard\WebserviceAuthenticator'
+    pimcore_admin.security.logout_success_handler: '@Pimcore\Bundle\AdminBundle\Security\LogoutSuccessHandler'
+    pimcore_admin.security.token_storage_user_resolver: '@Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver'
+    pimcore_admin.security.user_loader: '@Pimcore\Bundle\AdminBundle\Security\User\UserLoader'
+    pimcore_admin.security.bruteforce_protection_handler: '@Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler'
+    pimcore_admin.security.user_checker: '@Pimcore\Bundle\AdminBundle\Security\User\UserChecker'
+    pimcore_admin.webservice.service: '@Pimcore\Model\Webservice\Service'

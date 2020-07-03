@@ -1,0 +1,47 @@
+{% block beforeScriptTag %}{{ blocks.beforeScriptTag|raw }}{% endblock %}
+
+<script>
+    {% block beforeScript %}{{ blocks.beforeScript|raw }}{% endblock %}
+    {% block beforeInit %}{{ blocks.beforeInit|raw }}{% endblock %}
+
+    window._gaq = window._gaq || [];
+
+    {% block trackInit %}
+    _gaq.push(['_setAccount', '{{ trackId }}']);
+    _gaq.push (['_gat._anonymizeIp']);
+    {% endblock %}
+
+    {% block beforeTrack %}{{ blocks.beforeTrack|raw }}{% endblock %}
+
+    {% block track %}
+    if (typeof _gaqPageView != "undefined"){
+        _gaq.push(['_trackPageview', _gaqPageView]);
+    } else {
+        {% if defaultPath %}
+        _gaq.push(['_trackPageview', '{{ defaultPath }}']);
+        {% else %}
+        _gaq.push(['_trackPageview']);
+        {% endif %}
+    }
+    {% endblock %}
+
+    {% block afterTrack %}{{ blocks.afterTrack|raw }}{% endblock %}
+
+    (function() {
+        {% block async %}
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+
+        {% if retargeting %}
+        ga.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'stats.g.doubleclick.net/dc.js';
+        {% else %}
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        {% endif %}
+
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        {% endblock %}
+    })();
+
+    {% block afterScript %}{{ blocks.afterScript|raw }}{% endblock %}
+</script>
+
+{% block afterScriptTag %}{{ blocks.afterScriptTag|raw }}{% endblock %}

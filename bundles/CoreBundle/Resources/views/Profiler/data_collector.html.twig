@@ -1,0 +1,62 @@
+{% extends 'WebProfilerBundle:Profiler:layout.html.twig' %}
+
+{% block toolbar %}
+    {% import _self as macros %}
+
+    {% set icon %}
+        {# this is the content displayed as a panel in the toolbar #}
+        <div style="padding-top: 3px">
+            {{ include("PimcoreCoreBundle:Profiler:logo.svg.twig") }}
+        </div>
+    {% endset %}
+
+    {% set text %}
+        {# this is the content displayed when hovering the mouse over
+           the toolbar panel #}
+        <div class="sf-toolbar-info-piece">
+            <b>Version</b>
+            <span>{{ collector.version }} build {{ collector.revision }}</span>
+        </div>
+
+        <div class="sf-toolbar-info-piece">
+            <b>Context</b>
+            <span>{{ collector.context }}</span>
+        </div>
+    {% endset %}
+
+    {# the 'link' value set to 'false' means that this panel doesn't
+       show a section in the web profiler #}
+    {{ include('@WebProfiler/Profiler/toolbar_item.html.twig', { link: true }) }}
+{% endblock %}
+
+{% block menu %}
+    <span class="label">
+        <span class="icon">
+            {{ include("PimcoreCoreBundle:Profiler:logo.svg.twig") }}
+        </span>
+        <strong>Pimcore</strong>
+    </span>
+{% endblock %}
+
+{% block panel %}
+    {% import _self as macros %}
+
+    <h2>Pimcore</h2>
+
+    <div class="metrics">
+        <div class="metric">
+            <span class="value">{{ collector.version }}</span>
+            <span class="label">Version</span>
+        </div>
+
+        <div class="metric">
+            <span class="value">{{ collector.revision }}</span>
+            <span class="label">Build</span>
+        </div>
+
+        <div class="metric">
+            <span class="value">{{ collector.context }}</span>
+            <span class="label">Request Context</span>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,41 @@
+_pimcore_admin:
+    resource: "@PimcoreAdminBundle/Controller/Admin/"
+    type:     annotation
+    prefix:   /admin
+    options:
+        expose: true
+
+_pimcore_extensionmanager:
+    resource: "@PimcoreAdminBundle/Controller/ExtensionManager/"
+    type:     annotation
+    prefix:   /admin/extensionmanager
+    options:
+        expose: true
+
+_pimcore_reports:
+    resource: "@PimcoreAdminBundle/Controller/Reports/"
+    type:     annotation
+    prefix:   /admin/reports
+    options:
+        expose: true
+
+_pimcore_search:
+    resource: "@PimcoreAdminBundle/Controller/Searchadmin/"
+    type:     annotation
+    prefix:   /admin/search
+    options:
+        expose: true
+
+_pimcore_gdpr:
+    resource: "@PimcoreAdminBundle/Controller/GDPR/"
+    type:     annotation
+    prefix:   /admin/gdpr
+    options:
+        expose: true
+
+_pimcore_api_rest:
+    resource: "@PimcoreAdminBundle/Controller/Rest/"
+    type:     annotation
+    prefix:   /webservice/rest
+
+

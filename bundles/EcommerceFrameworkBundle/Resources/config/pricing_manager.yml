@@ -1,0 +1,14 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+        autoconfigure: true
+
+    #
+    # PRICING MANAGER
+    #
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager:
+        arguments:
+            $conditionMapping: '%pimcore_ecommerce.pricing_manager.condition_mapping%'
+            $actionMapping: '%pimcore_ecommerce.pricing_manager.action_mapping%'

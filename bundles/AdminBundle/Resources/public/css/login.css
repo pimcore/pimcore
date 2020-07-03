@@ -1,0 +1,227 @@
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Enterprise License (PEL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ */
+
+@font-face {
+    font-family: 'Open Sans';
+    src: url('/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/fonts/OpenSans-Regular.ttf');
+    font-weight: 300;
+    font-style: normal;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    font-size: 14px;
+    color: #fff;
+    background: #0C0F12;
+}
+
+a, a:hover, a:visited, a:active {
+    color: #fff;
+    text-decoration: none;
+}
+
+#contentBackground {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 480px;
+    height: 100%;
+    background: #0C0F12;
+}
+
+#content {
+    z-index: 150;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 480px;
+    background: #0C0F12;
+    padding: 280px 90px 20px 90px;
+}
+
+#content input {
+    background: #393C3F;
+    color: #fff;
+    margin-bottom: 10px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 2px;
+    border:0;
+    outline: none;
+    line-height: 20px;
+}
+
+#content button {
+    background: #6428B4;
+    color: #fff;
+    margin-bottom: 10px;
+    width: 100%;
+    padding: 10px;
+    text-transform: uppercase;
+    border-radius: 2px;
+    border:0;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#content .text {
+    margin: 10px 0;
+}
+
+#content .text.error {
+    color: #990000;
+    padding: 10px;
+    background: #fff;
+    border-radius: 2px;
+}
+
+#content .browserinfo img {
+    width: 60px;
+    margin-right: 12px;
+}
+
+#background {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: calc(100% - 480px);
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#logo {
+    position: absolute;
+    top: 140px;
+    left: 90px;
+    width: 300px;
+    z-index: 200;
+}
+
+#logo img {
+    max-width: 300px;
+    max-height: 120px;
+}
+
+#footer {
+    z-index: 200;
+    position: absolute;
+    bottom: 20px;
+    left: 90px;
+    line-height: 25px;
+    height: 25px;
+    overflow: hidden;
+}
+
+
+#news {
+    z-index: 100;
+    position: absolute;
+    left: 0;
+    bottom: 70px;
+    width: 480px;
+    padding: 30px 90px 0 90px;
+    border-top: 1px solid #6428B4;
+}
+
+@media screen and (max-height: 800px) {
+    #news {
+        display: none;
+    }
+}
+
+#news h2 {
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+#news hr {
+    width: 40px;
+    height: 1px;
+    background: #6428B4;
+    margin: 0;
+    border: 0;
+}
+
+#news p {
+    padding: 10px 0 10px 0;
+}
+
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active  {
+    -webkit-box-shadow: 0 0 0 30px #393C3F inset !important;
+}
+
+input:-webkit-autofill {
+    -webkit-text-fill-color: #fff !important;
+}
+
+.inverted {
+    color: #0C0F12;
+    background: #fff;
+}
+
+.inverted a, .inverted a:hover, .inverted a:visited, .inverted a:active {
+    color: #6428B4;
+}
+
+.inverted #contentBackground {
+    background: #fff;
+}
+
+.inverted #content {
+    background: #fff;
+}
+
+.inverted #content input {
+    background: #EFF0F1;
+    color: #0C0F12;
+}
+
+.inverted #footer a {
+    color: #0C0F12;
+}
+
+.inverted #news {
+    border-top: 1px solid #CECFD0;
+}
+
+.inverted #news h2 {
+    color: #0C0F12;
+}
+
+
+
+.inverted input:-webkit-autofill,
+.inverted input:-webkit-autofill:hover,
+.inverted input:-webkit-autofill:focus,
+.inverted input:-webkit-autofill:active  {
+    -webkit-box-shadow: 0 0 0 30px #EFF0F1 inset !important;
+}
+
+.inverted input:-webkit-autofill {
+    -webkit-text-fill-color: #0C0F12 !important;
+}

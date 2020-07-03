@@ -1,0 +1,31 @@
+<div id="cleanup-reservations" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body-content">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <form class="form-horizontal js-cleanup-reservations-modal-form"
+                      action="{{ path('pimcore_ecommerce_backend_voucher_cleanup-reservations', urlParams) }}" method="post">
+                    <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
+                    <h3>{{ ('bundle_ecommerce_voucherservice_modal_cleanup-reservations-headline')|trans([],'admin') }}</h3>
+                    <div class="form-group" style="margin-top: 20px">
+                        <div class="col col-sm-12">
+                            <label for="duration">{{ ('bundle_ecommerce_voucherservice_modal_cleanup-reservations-olderthan-x-minutes')|trans([],'admin')  }}</label>
+                            <input type="number" name="duration" id="duration" class="form-control form-control-25 text-center" min="0" value ="5"/>
+                        </div>
+                        <input type="hidden" name="id" value="{{ app.request.get('id') }}">
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <div class="col col-sm-6 text-left">
+                    <p>{{ 'bundle_ecommerce_voucherservice_modal_cleanup-reservations-infotext'|trans([],'admin') }}</p>
+                </div>
+                <button onclick="document.querySelector('.js-cleanup-reservations-modal-form').submit()" class="btn btn-primary js-loading"
+                        data-msg="Cleaning up Tokens, please wait.">{{ 'bundle_ecommerce_voucherservice_modal_cleanup-reservations-submit'|trans([],'admin') }}
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'bundle_ecommerce_voucherservice_modal_cancel'|trans([],'admin') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
