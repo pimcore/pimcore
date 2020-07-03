@@ -228,7 +228,7 @@ class ClassDefinition extends Model\AbstractModel
 
                 \Pimcore\Cache\Runtime::set($cacheKey, $class);
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::info($e->getMessage());
 
                 return null;
             }
