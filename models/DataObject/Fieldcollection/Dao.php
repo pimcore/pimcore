@@ -219,7 +219,7 @@ class Dao extends Model\Dao\AbstractDao
                 /** @var Model\Element\DirtyIndicatorInterface $item */
                 foreach ($items as $item) {
                     if ($item->hasDirtyFields()) {
-                        $this->model->markFieldDirty("_self");
+                        $this->model->markFieldDirty('_self');
                         break;
                     }
                 }

@@ -15,7 +15,7 @@ trait ManyToManyRelationTrait
      */
     public function save($container, $params = [])
     {
-        if (!isset($params["forceSave"]) || $params["forceSave"] !== true) {
+        if (!isset($params['forceSave']) || $params['forceSave'] !== true) {
             if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $container instanceof DirtyIndicatorInterface) {
                 if ($container instanceof DataObject\Localizedfield) {
                     if ($container->getObject() instanceof DirtyIndicatorInterface) {

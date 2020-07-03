@@ -182,7 +182,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data) {
-            $data = trim($data, "# ");
+            $data = trim($data, '# ');
             list($r, $g, $b, $a) = sscanf($data, '%02x%02x%02x%02x');
             $color = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
 
