@@ -76,7 +76,7 @@ class Dao extends Model\Dao\AbstractDao
                 $collection->setObject($object);
 
                 foreach ($fieldDefinitions as $key => $fd) {
-                    $params =                                 [
+                    $params = [
                         'context' => [
                             'object' => $object,
                             'containerType' => 'fieldcollection',

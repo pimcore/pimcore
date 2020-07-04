@@ -80,7 +80,7 @@ class Dao extends Model\Dao\AbstractDao
                 } else {
                     $data[$fd->getName()] = $fd->getDataForResource($this->model->$getter(), $object, [
                         'owner' => $this->model, //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao
-                        'fieldname' => $fd->getName()
+                        'fieldname' => $fd->getName(),
                     ]);
                 }
             }
