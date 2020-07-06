@@ -485,7 +485,7 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/opened_folder.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_alphabetical_sorting_az {
+.pimcore_icon_alphabetical_sorting_az, .pimcore_icon_operator_alias {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/alphabetical_sorting_az.svg) center center no-repeat !important;
 }
 
