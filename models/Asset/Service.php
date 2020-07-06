@@ -219,13 +219,12 @@ class Service extends Model\Element\Service
                 } else {
                     if (isset($fieldDef[1])) {
                         $language = ($fieldDef[1] === 'none' ? '' : $fieldDef[1]);
-                        $metaData = $asset->getMetadata($fieldDef[0], $language, true);
                         $rawMetaData = $asset->getMetadata($fieldDef[0], $language, true, true);
                     } else {
-                        $metaData = $asset->getMetadata($field, $requestedLanguage, true);
                         $rawMetaData = $asset->getMetadata($field, $requestedLanguage, true, true);
                     }
 
+                    $metaData = $rawMetaData["data"] ?? null;
 
                     if ($rawMetaData) {
                         $type = $rawMetaData["type"];
@@ -235,7 +234,7 @@ class Service extends Model\Element\Service
                         /** @var Data $instance */
                          $instance = $loader->build($type);
                          if ($instance) {
-                             $metaData = $instance->getDataForListfolderGrid($metaData, $rawMetaData);
+                             $metaData = $instance->getDataForListfolderGrid($rawMetaData["data"] ?? null, $rawMetaData);
                          }
                     }
 

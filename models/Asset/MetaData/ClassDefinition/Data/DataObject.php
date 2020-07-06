@@ -142,15 +142,14 @@ class DataObject extends Data
      */
     public function resolveDependencies($data, $params = [])
     {
-        if (isset($params['data']) && $params['data'] instanceof ElementInterface) {
-            /** @var ElementInterface $elementData */
-            $elementData = $params['data'];
+        if (isset($params['data'])) {
+            $elementId = $params['data'];
             $elementType = $params['type'];
 
-            $key = $elementType . '_' . $elementData->getId();
+            $key = $elementType . '_' . $elementId;
             return [
                 $key => [
-                    'id' => $elementData->getId(),
+                    'id' => $elementId,
                     'type' => $elementType
                 ]];
         }

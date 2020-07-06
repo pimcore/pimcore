@@ -56,7 +56,7 @@ class Dao extends Model\Element\Dao
                     unset($md['cid']);
                     $metadata[] = $md;
                 }
-                $this->model->setMetadataFromResource($metadata);
+                $this->model->setMetadataRaw($metadata);
             }
         } else {
             throw new \Exception('Asset with ID ' . $id . " doesn't exists");
@@ -108,7 +108,7 @@ class Dao extends Model\Element\Dao
 
         // metadata
         $this->db->delete('assets_metadata', ['cid' => $this->model->getId()]);
-        $metadata = $this->model->getMetadata();
+        $metadata = $this->model->getMetadata(null, null, false, true);
 
 
         $data['hasMetaData'] = 0;

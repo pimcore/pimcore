@@ -960,7 +960,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 $metadataValues = $metadata['values'];
 
                 $metadataValues = Asset\Service::minimizeMetadata($metadataValues, "editor");
-                $asset->setMetadata($metadataValues);
+                $asset->setMetadataRaw($metadataValues);
             }
 
             // properties
@@ -2485,7 +2485,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
                     if ($dirty) {
                         $metadata = Asset\Service::minimizeMetadata($metadata, "grid");
-                        $asset->setMetadata($metadata);
+                        $asset->setMetadataRaw($metadata);
                         $asset->save();
 
                         return $this->adminJson(['success' => true]);

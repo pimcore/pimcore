@@ -154,4 +154,18 @@ abstract class Data implements DataDefinitionInterface
     {
         return $value;
     }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataForSearchIndex($data, $params = [])
+    {
+        if (is_scalar($data)) {
+            return $params['name'] . ':' . $data;
+        }
+    }
+
+
 }

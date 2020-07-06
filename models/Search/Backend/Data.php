@@ -413,8 +413,14 @@ class Data extends \Pimcore\Model\AbstractModel
             $elementMetadata = $element->getMetadata();
             if (is_array($elementMetadata)) {
                 foreach ($elementMetadata as $md) {
-                    if (is_scalar($md['data'])) {
-                        $this->data .= ' ' . $md['name'] . ':' . $md['data'];
+                    $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+                    /** @var \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
+                    $instance = $loader->build($md['type']);
+                    if ($instance) {
+                        $dataForSearchIndex= $instance->getDataForSearchIndex($md["data"], $md);
+                        if ($dataForSearchIndex) {
+                            $this->data .= ' ' . $dataForSearchIndex;
+                        }
                     }
                 }
             }

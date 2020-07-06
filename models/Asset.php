@@ -1660,7 +1660,7 @@ class Asset extends Element\AbstractElement
      *
      * @return self
      */
-    public function setMetadataFromResource($metadata)
+    public function setMetadataRaw($metadata)
     {
         $this->metadata = $metadata;
         if ($this->metadata) {
@@ -1744,8 +1744,10 @@ class Asset extends Element\AbstractElement
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
             /** @var Data $instance */
             $instance = $loader->build($item['type']);
-            $transformedData = $instance->transformSetterData($data, $item);
-            $item["data"] = $transformedData;
+            if ($instance) {
+                $transformedData = $instance->transformSetterData($data, $item);
+                $item["data"] = $transformedData;
+            }
 
             $tmp[] = $item;
             $this->metadata = $tmp;
@@ -1814,10 +1816,14 @@ class Asset extends Element\AbstractElement
         }
 
         $metaData = $this->getObjectVar('metadata');
+        $result = [];
         if (is_array($metaData)) {
-            foreach ($metaData as &$md) {
+            foreach ($metaData as $md) {
                 $md = (array)$md;
-                $md['data'] = $convert($md);
+                if (!$raw) {
+                    $md['data'] = $convert($md);
+                }
+                $result[] = $md;
             }
         }
 
@@ -2046,13 +2052,13 @@ class Asset extends Element\AbstractElement
      */
     public function resolveDependencies()
     {
-        $dependencies = parent::resolveDependencies();
+        $dependencies = parent::resolveDependencies(null, null, false, true);
 
         if ($this->hasMetaData) {
             $metaData = $this->getMetadata();
 
             foreach ($metaData as $md) {
-                if (isset($md['data']) && $md['data'] instanceof ElementInterface) {
+                if (isset($md['data']) && $md['data'] ) {
                     /** @var ElementInterface $elementData */
                     $elementData = $md['data'];
                     $elementType = $md['type'];
