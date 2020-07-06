@@ -17,6 +17,7 @@
 
 namespace Pimcore\DataObject\Import\Resolver;
 
+use Pimcore\Model\Element\Service;
 use const FILTER_VALIDATE_BOOLEAN;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -56,21 +57,30 @@ class Filename extends AbstractResolver
             throw new ImportErrorException('not allowed to import into folder ' . $parent->getFullPath());
         }
 
-        if ($overwrite) {
-            $objectKey = $rowData[$this->getIdColumn($config)];
-        } else {
-            $objectKey = $prefix;
-        }
+        $object = null;
 
         $classId = $config->classId;
         $classDefinition = ClassDefinition::getById($classId);
         $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
 
+        $objectKey = $rowData[$this->getIdColumn($config)];
+        $objectKey = Service::getValidKey($objectKey, "object");
         $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
-        $object = null;
 
-        if ($object = DataObject::getByPath($intendedPath) && $skipIfExists) {
-            throw new ImportWarningException('skipped filename exists: ' . $parent->getFullPath() . '/' . $objectKey);
+        if (!$overwrite) {
+            if (AbstractObject::getByPath($intendedPath)) {
+                $objectKey = $prefix;
+            } else {
+                $object = $this->modelFactory->build($className);
+                $object->setParent($parent);
+                $object->setKey($objectKey);
+            }
+        }
+
+        if (!$object) {
+            if ($object = DataObject::getByPath($intendedPath) && $skipIfExists) {
+                throw new ImportWarningException('skipped filename exists: ' . $parent->getFullPath() . '/' . $objectKey);
+            }
         }
 
         if ($overwrite && !$service) {
@@ -111,7 +121,9 @@ class Filename extends AbstractResolver
                     'classname' => $className,
                 ]);
             } else {
-                $object = $this->getAlternativeObject($prefix, $intendedPath, $parent, $className);
+                if (!$object) {
+                    $object = $this->getAlternativeObject($prefix, $intendedPath, $parent, $className);
+                }
             }
         }
 
