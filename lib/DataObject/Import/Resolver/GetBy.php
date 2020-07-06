@@ -59,8 +59,8 @@ class GetBy extends AbstractResolver
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
         $attribute = (string)$config->resolverSettings->attribute;
-        $skipIfExists = filter_var($config->resolverSettings->skipIfExists, FILTER_VALIDATE_BOOLEAN);
-        $createOnDemand = filter_var($config->resolverSettings->createOnDemand, FILTER_VALIDATE_BOOLEAN);
+        $skipIfExists = filter_var($config->resolverSettings->skipIfExists ?? false, FILTER_VALIDATE_BOOLEAN);
+        $createOnDemand = filter_var($config->resolverSettings->createOnDemand ?? false, FILTER_VALIDATE_BOOLEAN);
 
         $service = ImportClassResolver::resolveClassOrService($config->resolverSettings->phpClassOrService);
 

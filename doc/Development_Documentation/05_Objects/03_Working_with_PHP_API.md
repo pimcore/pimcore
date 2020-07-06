@@ -453,7 +453,7 @@ You can access and print the internal query which is based on `\Pimcore\Db\ZendC
 $list = new Pimcore\Model\DataObject\News\Listing();
  
 // set onCreateQuery callback
-$list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder query) {
+$list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder $query) {
     // echo query
     echo $query;
 });

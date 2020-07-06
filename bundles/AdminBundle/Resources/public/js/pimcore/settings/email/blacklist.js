@@ -158,7 +158,12 @@ pimcore.settings.email.blacklist = Class.create({
             columnLines:true,
             trackMouseOver:true,
             stripeRows:true,
-            columns:typesColumns,
+            columns: {
+                items: typesColumns,
+                defaults: {
+                    renderer: Ext.util.Format.htmlEncode
+                },
+            },
             selModel: Ext.create('Ext.selection.RowModel', {}),
             plugins: [
                 this.cellEditing

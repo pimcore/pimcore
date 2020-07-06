@@ -1057,6 +1057,10 @@ abstract class Data
                 $code .= "\t" . 'self::setGetInheritedValues($inheritValues);'."\n";
             }
             $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+
+            $code .= "\t" . 'if (!$isEqual) {' . "\n";
+            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+            $code .= "\t" . '}' . "\n";
         } else {
             $code .= "\t" . '$isEqual = false;' . "\n";
         }

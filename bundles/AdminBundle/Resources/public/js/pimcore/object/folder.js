@@ -170,7 +170,7 @@ pimcore.object.folder = Class.create(pimcore.object.abstract, {
                 iconCls: "pimcore_icon_save_white",
                 cls: "pimcore_save_button",
                 scale: "medium",
-                handler: this.save.bind(this)
+                handler: this.save.bind(this, "publish")
             });
 
             this.toolbarButtons.remove = new Ext.Button({
