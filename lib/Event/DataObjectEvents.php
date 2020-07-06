@@ -112,4 +112,11 @@ final class DataObjectEvents
      * @var string
      */
     const POST_COPY = 'pimcore.dataobject.postCopy';
+
+    /**
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    const POST_CSV_ITEM_EXPORT = 'pimcore.dataobject.postCsvItemExport';
 }

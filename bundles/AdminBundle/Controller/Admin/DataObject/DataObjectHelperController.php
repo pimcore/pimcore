@@ -1857,7 +1857,11 @@ class DataObjectHelperController extends AdminController
         $addTitles = $request->get('initial');
 
         $requestedLanguage = $this->extractLanguage($request);
-        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $addTitles);
+
+        $context = [
+            'source' => 'pimcore-export'
+        ];
+        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $addTitles, $context);
 
         $fp = fopen($this->getCsvFile($fileHandle), 'a');
 
