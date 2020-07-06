@@ -115,7 +115,7 @@ pimcore.object.versions = Class.create({
                         },
                         editable: false
                     },
-                    {text: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField()}
+                    {text: t("note"), sortable: true, dataIndex: 'note', editor: new Ext.form.TextField(), renderer: Ext.util.Format.htmlEncode}
                 ],
                 stripeRows: true,
                 width: 450,
