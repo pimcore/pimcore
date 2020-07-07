@@ -1864,6 +1864,10 @@ class DataObjectHelperController extends AdminController
         $firstLine = true;
         $lineCount = count($csv);
 
+        if (!$addTitles) {
+            fwrite($fp, "\r\n");
+        }
+
         for ($i = 0; $i < $lineCount; $i++) {
             $line = $csv[$i];
             if ($addTitles && $firstLine) {
