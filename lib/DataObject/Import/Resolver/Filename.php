@@ -17,7 +17,6 @@
 
 namespace Pimcore\DataObject\Import\Resolver;
 
-use Pimcore\Model\Element\Service;
 use const FILTER_VALIDATE_BOOLEAN;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -27,6 +26,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\ImportDataServiceInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\FactoryInterface;
 
 class Filename extends AbstractResolver
@@ -64,7 +64,7 @@ class Filename extends AbstractResolver
         $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
 
         $objectKey = $rowData[$this->getIdColumn($config)];
-        $objectKey = Service::getValidKey($objectKey, "object");
+        $objectKey = Service::getValidKey($objectKey, 'object');
         $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
 
         if (!$overwrite) {
