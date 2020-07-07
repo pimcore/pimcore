@@ -326,7 +326,9 @@ class Predefined extends Model\AbstractModel
         $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
         /** @var Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
         $instance = $loader->build($this->type);
-        $this->data = $instance->marshal($this->data);
+        if ($instance) {
+            $this->data = $instance->marshal($this->data);
+        }
     }
 
     public function expand()
@@ -334,6 +336,8 @@ class Predefined extends Model\AbstractModel
         $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
         /** @var Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
         $instance = $loader->build($this->type);
-        $this->data = $instance->unmarshal($this->data);
+        if ($instance) {
+            $this->data = $instance->unmarshal($this->data);
+        }
     }
 }

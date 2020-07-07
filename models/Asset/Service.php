@@ -233,6 +233,7 @@ class Service extends Model\Element\Service
                         }
                         /** @var Data $instance */
                          $instance = $loader->build($type);
+                        $metaData = $rawMetaData["data"] ?? null;
                          if ($instance) {
                              $metaData = $instance->getDataForListfolderGrid($rawMetaData["data"] ?? null, $rawMetaData);
                          }
@@ -408,7 +409,10 @@ class Service extends Model\Element\Service
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
             /** @var Data $instance */
             $instance = $loader->build($item['type']);
-            $transformedData = $instance->getDataForEditMode($item['data'], $item);
+            $transformedData = $item['data'];
+            if ($instance) {
+                $transformedData = $instance->getDataForEditMode($item['data'], $item);
+            }
             $item["data"] = $transformedData;
             //get the config from an predefined property-set (eg. select)
             $predefined = Model\Metadata\Predefined::getByName($item['name']);

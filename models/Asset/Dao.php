@@ -51,7 +51,10 @@ class Dao extends Model\Element\Dao
                     $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
                     /** @var Data $instance */
                     $instance = $loader->build($md['type']);
-                    $transformedData = $instance->getDataFromResource($md["data"], $md);
+                    $transformedData = $md["data"];
+                    if ($instance) {
+                        $transformedData = $instance->getDataFromResource($md["data"], $md);
+                    }
                     $md["data"] = $transformedData;
                     unset($md['cid']);
                     $metadata[] = $md;
@@ -120,9 +123,10 @@ class Dao extends Model\Element\Dao
                 $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
                 /** @var Data $instance */
                 $instance = $loader->build($metadataItem['type']);
-                $dataForResource = $instance->getDataForResource($metadataItem['data'], $metadataItem);
-
-
+                $dataForResource = $metadataItem['data'];
+                if ($instance) {
+                    $dataForResource = $instance->getDataForResource($metadataItem['data'], $metadataItem);
+                }
 
                 $metadataItem["data"] = $dataForResource;
 

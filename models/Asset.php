@@ -1778,7 +1778,11 @@ class Asset extends Element\AbstractElement
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
             /** @var Data $instance */
             $instance = $loader->build($metaData['type']);
-            $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
+            $transformedData = $metaData['data'];
+
+            if ($instance) {
+                $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
+            }
             return $transformedData;
         };
 
