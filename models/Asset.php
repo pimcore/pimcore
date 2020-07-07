@@ -22,6 +22,7 @@ use Pimcore\Event\AssetEvents;
 use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
@@ -1743,11 +1744,14 @@ class Asset extends Element\AbstractElement
 
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
             /** @var Data $instance */
-            $instance = $loader->build($item['type']);
-            if ($instance) {
+            try {
+                $instance = $loader->build($item['type']);
                 $transformedData = $instance->transformSetterData($data, $item);
                 $item["data"] = $transformedData;
+            } catch (UnsupportedException $e) {
+
             }
+
 
             $tmp[] = $item;
             $this->metadata = $tmp;
@@ -1776,13 +1780,16 @@ class Asset extends Element\AbstractElement
 
         $convert = function ($metaData) {
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-            /** @var Data $instance */
-            $instance = $loader->build($metaData['type']);
             $transformedData = $metaData['data'];
 
-            if ($instance) {
+            try {
+                /** @var Data $instance */
+                $instance = $loader->build($metaData['type']);
                 $transformedData = $instance->transformGetterData($metaData['data'], $metaData);
+            } catch (UnsupportedException $e) {
+
             }
+
             return $transformedData;
         };
 
@@ -2068,11 +2075,12 @@ class Asset extends Element\AbstractElement
                     $elementType = $md['type'];
                     $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
                     /** @var DataDefinitionInterface $implementation */
-                    $implementation = $loader->build($elementType);
-                    if ($implementation) {
+                    try {
+                        $implementation = $loader->build($elementType);
                         $dependencies = array_merge($dependencies, $implementation->resolveDependencies($elementData, $md));
-                    }
+                    } catch (UnsupportedException $e) {
 
+                    }
                 }
             }
         }

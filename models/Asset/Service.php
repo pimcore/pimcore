@@ -19,6 +19,7 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\AssetEvent;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
@@ -231,12 +232,16 @@ class Service extends Model\Element\Service
                         if (!$loader) {
                             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
                         }
-                        /** @var Data $instance */
-                         $instance = $loader->build($type);
+
+
                         $metaData = $rawMetaData["data"] ?? null;
-                         if ($instance) {
-                             $metaData = $instance->getDataForListfolderGrid($rawMetaData["data"] ?? null, $rawMetaData);
-                         }
+                        try {
+                            /** @var Data $instance */
+                            $instance = $loader->build($type);
+                            $metaData = $instance->getDataForListfolderGrid($rawMetaData["data"] ?? null, $rawMetaData);
+                        } catch (UnsupportedException $e) {
+
+                        }
                     }
 
                     $data[$field] = $metaData;
@@ -374,9 +379,10 @@ class Service extends Model\Element\Service
         foreach ($metadata as $item) {
 
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-            /** @var Data $instance */
-            $instance = $loader->build($item['type']);
-            if ($instance) {
+            try {
+                /** @var Data $instance */
+                $instance = $loader->build($item['type']);
+
                 if ($mode == "grid") {
                     $transformedData = $instance->getDataFromListfolderGrid($item['data'], $item);
                 } else {
@@ -384,7 +390,10 @@ class Service extends Model\Element\Service
                 }
 
                 $item["data"] = $transformedData;
+            } catch (UnsupportedException $e) {
+
             }
+
             $result[] = $item;
         }
 
@@ -407,12 +416,16 @@ class Service extends Model\Element\Service
         foreach ($metadata as $item) {
 
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-            /** @var Data $instance */
-            $instance = $loader->build($item['type']);
             $transformedData = $item['data'];
-            if ($instance) {
+
+            try {
+                /** @var Data $instance */
+                $instance = $loader->build($item['type']);
                 $transformedData = $instance->getDataForEditMode($item['data'], $item);
+            } catch (UnsupportedException $e) {
+
             }
+
             $item["data"] = $transformedData;
             //get the config from an predefined property-set (eg. select)
             $predefined = Model\Metadata\Predefined::getByName($item['name']);

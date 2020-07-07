@@ -93,12 +93,13 @@ use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data; ?>
                                     foreach ($metaData as $data) {
                                         $preview = $data["data"];
                                         /** @var Data $instance */
-                                        $instance = $loader->build($data['type']);
 
-                                        if ($instance) {
+                                        try {
+                                            $instance = $loader->build($data['type']);
                                             $preview = $instance->getVersionPreview($preview, $data);
-                                        }
+                                        } catch (\Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException $e) {
 
+                                        }
                                         ?>
                                         <tr>
                                             <td><?php echo $data['name']; ?>

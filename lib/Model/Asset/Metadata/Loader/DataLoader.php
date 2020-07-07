@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 /**
  * Pimcore
@@ -28,10 +28,6 @@ class DataLoader extends ImplementationLoader implements DataLoaderInterface
      */
     public function build(string $name, array $params = []): DataDefinitionInterface
     {
-        try {
-            return parent::build($name, $params);
-        } catch (\Exception $e) {
-            return null;
-        }
+        return parent::build($name, $params);
     }
 }

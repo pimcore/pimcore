@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Asset;
 
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
@@ -50,11 +51,16 @@ class Dao extends Model\Element\Dao
 
                     $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
                     /** @var Data $instance */
-                    $instance = $loader->build($md['type']);
+
                     $transformedData = $md["data"];
-                    if ($instance) {
+
+                    try {
+                        $instance = $loader->build($md['type']);
                         $transformedData = $instance->getDataFromResource($md["data"], $md);
+                    } catch (UnsupportedException $e) {
+
                     }
+
                     $md["data"] = $transformedData;
                     unset($md['cid']);
                     $metadata[] = $md;
@@ -122,10 +128,14 @@ class Dao extends Model\Element\Dao
 
                 $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
                 /** @var Data $instance */
-                $instance = $loader->build($metadataItem['type']);
+
                 $dataForResource = $metadataItem['data'];
-                if ($instance) {
+
+                try {
+                    $instance = $loader->build($metadataItem['type']);
                     $dataForResource = $instance->getDataForResource($metadataItem['data'], $metadataItem);
+                } catch (UnsupportedException $e) {
+
                 }
 
                 $metadataItem["data"] = $dataForResource;

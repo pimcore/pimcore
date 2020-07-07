@@ -29,7 +29,7 @@ interface DataLoaderInterface extends LoaderInterface
      * @param string $name
      * @param array $params
      *
-     * @return Data|null
+     * @return Data
      */
     public function build(string $name, array $params = []): DataDefinitionInterface;
 }

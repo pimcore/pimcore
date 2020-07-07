@@ -17,6 +17,7 @@ namespace Pimcore\Model\Search\Backend;
 use ForceUTF8\Encoding;
 use Pimcore\Event\Model\SearchBackendEvent;
 use Pimcore\Event\SearchBackendEvents;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -413,15 +414,18 @@ class Data extends \Pimcore\Model\AbstractModel
             $elementMetadata = $element->getMetadata();
             if (is_array($elementMetadata)) {
                 foreach ($elementMetadata as $md) {
-                    $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-                    /** @var \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
-                    $instance = $loader->build($md['type']);
-                    if ($instance) {
-                        $dataForSearchIndex= $instance->getDataForSearchIndex($md["data"], $md);
+                    try {
+                        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+                        /** @var \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
+                        $instance = $loader->build($md['type']);
+                        $dataForSearchIndex = $instance->getDataForSearchIndex($md["data"], $md);
                         if ($dataForSearchIndex) {
                             $this->data .= ' ' . $dataForSearchIndex;
                         }
+                    } catch (UnsupportedException $e) {
+
                     }
+
                 }
             }
 
