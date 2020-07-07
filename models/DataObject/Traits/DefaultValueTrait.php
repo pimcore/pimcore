@@ -47,7 +47,6 @@ trait DefaultValueTrait
     protected function handleDefaultValue($data, $object = null, $params = [])
     {
         $context = isset($params['context']) ? $params['context'] : [];
-        $isUpdate = isset($params['isUpdate']) ? $params['isUpdate'] : true;
 
         /**
          * if inheritance is enabled and there is no parent value then take the default value.
