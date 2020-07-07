@@ -50,15 +50,8 @@ trait DefaultValueTrait
         $isUpdate = isset($params['isUpdate']) ? $params['isUpdate'] : true;
 
         /**
-         * 1. only for create, not on update. otherwise there is no way to null it out anymore.
-         */
-        if ($isUpdate) {
-            return $data;
-        }
-
-        /**
-         * 2. if inheritance is enabled and there is no parent value then take the default value.
-         * 3. if inheritance is disabled, take the default value.
+         * if inheritance is enabled and there is no parent value then take the default value.
+         * if inheritance is disabled, take the default value.
          */
         if ($this->isEmpty($data)) {
             $class = null;
