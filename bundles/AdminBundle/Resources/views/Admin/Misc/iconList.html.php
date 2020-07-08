@@ -6,6 +6,7 @@ $prefixReplace = '/bundles/pimcoreadmin';
 $iconDir = realpath($prefixSearch . '/img');
 $colorIcons = rscandir($iconDir . '/flat-color-icons/');
 $whiteIcons = rscandir($iconDir . '/flat-white-icons/');
+$blackIcons = rscandir($iconDir . '/flat-black-icons/');
 $twemoji = rscandir($iconDir . '/twemoji/');
 
 $iconsCss = file_get_contents($prefixSearch . '/css/icons.css');
@@ -100,6 +101,26 @@ $iconInUse = function ($iconPath) use ($iconsCss, $prefixReplace, $prefixSearch)
     <?php foreach ($whiteIcons as $icon) {
         ?>
         <div class="icon black">
+            <img style="width:50px;" src="<?= str_replace($prefixSearch, $prefixReplace, $icon) ?>" title="<?= basename($icon) ?>">
+            <div class="label">
+                <?= $iconInUse($icon) ? '*' : '' ?>
+                <?= basename($icon) ?>
+            </div>
+        </div>
+        <?php
+    } ?>
+</div>
+
+<div class="info">
+    <a target="_blank">Black Icons</a>
+    <br>
+    <small>based on the <a href="https://github.com/google/material-design-icons/blob/master/LICENSE" target="_blank">Material Design Icons</a></small>
+</div>
+
+<div id="black_icons" class="icons">
+    <?php foreach ($blackIcons as $icon) {
+        ?>
+        <div class="icon">
             <img style="width:50px;" src="<?= str_replace($prefixSearch, $prefixReplace, $icon) ?>" title="<?= basename($icon) ?>">
             <div class="label">
                 <?= $iconInUse($icon) ? '*' : '' ?>
