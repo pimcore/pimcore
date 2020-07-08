@@ -554,6 +554,7 @@ class GridHelperService
         } else {
             $quotedPath = $list->quote($folder->getRealFullPath());
             $quotedWildcardPath = $list->quote(str_replace('//', '/', $folder->getRealFullPath() . '/') . '%');
+            $quotedWildcardPath = str_replace("_", '\\_', $quotedWildcardPath);
             $conditionFilters[] = '(o_path = ' . $quotedPath . ' OR o_path LIKE ' . $quotedWildcardPath . ')';
         }
 
