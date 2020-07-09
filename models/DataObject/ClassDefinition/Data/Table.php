@@ -655,8 +655,8 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param array $oldValue
-     * @param array $newValue
+     * @param array|null $oldValue
+     * @param array|null $newValue
      *
      * @return bool
      */

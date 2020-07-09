@@ -601,8 +601,8 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @param array $value1
-     * @param array $value2
+     * @param array|null $value1
+     * @param array|null $value2
      *
      * @return bool
      */
