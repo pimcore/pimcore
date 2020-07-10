@@ -454,7 +454,7 @@ class Dao extends Model\Element\Dao
         $userIds[] = $user->getId();
 
         try {
-            $permissionsParent = $this->db->fetchOne('SELECT `' . $type . '` FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, ABS(userId-' . $user->getId() . ') ASC LIMIT 1');
+            $permissionsParent = $this->db->fetchOne('SELECT `' . $type . '` FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $user->getId() . ') DESC, `' . $type . '` DESC LIMIT 1');
 
             if ($permissionsParent) {
                 return true;
@@ -504,7 +504,7 @@ class Dao extends Model\Element\Dao
             $commaSeparated = in_array($type, ['lView', 'lEdit', 'layouts']);
 
             if ($commaSeparated) {
-                $allPermissions = $this->db->fetchAll('SELECT ' . $queryType . ',cid,cpath FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC');
+                $allPermissions = $this->db->fetchAll('SELECT ' . $queryType . ',cid,cpath FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $user->getId() . ') DESC, `' . $type . '` DESC');
                 if (!$allPermissions) {
                     return null;
                 }
@@ -541,7 +541,7 @@ class Dao extends Model\Element\Dao
                 return $firstPermission;
             }
 
-            $permissions = $this->db->fetchRow('SELECT ' . $queryType . ' FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC LIMIT 1');
+            $permissions = $this->db->fetchRow('SELECT ' . $queryType . ' FROM users_workspaces_object WHERE cid IN (' . implode(',', $parentIds) . ') AND userId IN (' . implode(',', $userIds) . ') ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $user->getId() . ') DESC, `' . $type . '` DESC  LIMIT 1');
 
             return $permissions;
         } catch (\Exception $e) {

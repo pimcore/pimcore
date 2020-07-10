@@ -162,12 +162,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
             } else {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
-                $condition = 'parentId = ' . $db->quote($document->getId()) . ' and
-                                        (
-                                        (select list from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                        or
-                                        (select list from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                        )';
+                $condition = 'parentId = ' . $db->quote($document->getId()) . ' AND
+                (
+                    (SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
+                    or
+                    (SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(path,`key`))=1  ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
+                )';
             }
 
             if ($filter) {
