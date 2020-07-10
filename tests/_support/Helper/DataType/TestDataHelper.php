@@ -1423,8 +1423,8 @@ class TestDataHelper extends Module
     /**
      * @param Concrete $object
      * @param string $field
-     * @param $expected
-     * @param $value
+     * @param mixed $expected
+     * @param mixed $value
      *
      */
     private function assertIsEqual($object, $field, $expected, $value)
