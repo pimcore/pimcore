@@ -80,9 +80,16 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
                     'path' => $request->getPathInfo()
                 ]);
             }
-
-            $this->initializeContext($context, $request);
+        } else {
+            // copy master pimcore context to sub-request if available
+            if (!$context = $this->resolver->getPimcoreContext($request)) {
+                if ($context = $this->resolver->getPimcoreContext($this->requestStack->getMasterRequest())) {
+                    $this->resolver->setPimcoreContext($request, $context);
+                }
+            }
         }
+
+        $this->initializeContext($context, $request);
     }
 
     /**
