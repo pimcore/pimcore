@@ -76,7 +76,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     protected $scheduledTasks = null;
 
     /**
-     * @var bool
+     * @var bool|null
      */
     protected $omitMandatoryCheck;
 
