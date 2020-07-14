@@ -58,6 +58,28 @@ This launches the interactive installer with a few questions. Make sure that you
 
 > Note: Pimcore allows a fully automated installation process, read more here: [Advanced Installation Topics](./01_Advanced_Installation_Topics.md) 
 
+## 5. Install ExtJS 7
+
+First, register at Sencha.
+
+You need [NPM](https://github.com/npm/cli) for this.
+
+From your project root, call:
+```
+npm login --registry=https://sencha.myget.org/F/gpl/npm/ --scope=@sencha
+
+# you will be prompted for Sencha username and password.
+
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-core
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic-theme-material
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic-theme-neptune
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic-theme-triton
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-ux
+```
+
+> Note that for now the fonts and images resources are packaged with pimcore.
+
 ##### Open Admin Interface
 After the installer has finished, you can open the admin interface: `https://your-host.com/admin`
 
@@ -67,7 +89,7 @@ The installer writes a log in `var/installer/logs` which contains any errors enc
 have a look at the logs as a starting point when debugging installation issues.
 
 
-## 5. Maintenance Cron Job
+## 6. Maintenance Cron Job
 
 ```bash
 */5 * * * * /your/project/bin/console maintenance
@@ -75,11 +97,11 @@ have a look at the logs as a starting point when debugging installation issues.
 
 Keep in mind, that the cron job has to run as the same user as the web interface to avoid permission issues (eg. `www-data`).
 
-## 6. Additional Information & Help
+## 7. Additional Information & Help
 
 If you would like to know more about the installation process or if you are having problems getting Pimcore up and running, visit the [Installation Guide](../23_Installation_and_Upgrade/README.md) section.
 
-## 7. Further Reading
+## 8. Further Reading
 
 - [Advanced Installation Topics](./01_Advanced_Installation_Topics.md)
 - [Apache Configuration](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/01_Apache_Configuration.md)

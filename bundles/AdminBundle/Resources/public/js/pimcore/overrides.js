@@ -346,7 +346,8 @@ Ext.define('pimcore.data.PagingTreeStore', {
 
     extend: 'Ext.data.TreeStore',
 
-    ptb: false,
+    ptb: false
+    ,
 
     onProxyLoad: function(operation) {
         try {
@@ -358,7 +359,7 @@ Ext.define('pimcore.data.PagingTreeStore', {
 
 
             var response = operation.getResponse();
-            var data = Ext.decode(response.responseText);
+            var data = response.responseJson;
 
             node.fromPaging = data.fromPaging;
             node.filter = data.filter;
@@ -981,11 +982,12 @@ Ext.define('EXTJS-17231.ext.dom.Element.validIdRe', {
 // use only native scroll bar, the touch-scroller causes issues on hybrid touch devices when using with a mouse
 // this ist fixed in ExtJS 6.2.0 since there's no TouchScroller anymore, see:
 // http://docs.sencha.com/extjs/6.2.0/guides/whats_new/extjs_upgrade_guide.html
-Ext.define('Ext.scroll.TouchScroller', {
-    extend: 'Ext.scroll.DomScroller',
-    alias: 'scroller.touch'
-});
-Ext.supports.touchScroll = 0;
+//TODO EXTJS7 not needed anymore
+// Ext.define('Ext.scroll.TouchScroller', {
+//     extend: 'Ext.scroll.DomScroller',
+//     alias: 'scroller.touch'
+// });
+// Ext.supports.touchScroll = 0;
 
 /**
  * Fieldtype date is not able to save the correct value (before 1951) #1329

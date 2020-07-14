@@ -217,13 +217,14 @@ class EditmodeListener implements EventSubscriberInterface
             }
 
             if ($skipCheck || ($headElement && $bodyElement && $htmlElement)) {
-                $startupJavascript = '/bundles/pimcoreadmin/js/pimcore/document/edit/startup.js';
+                //TODO EXTJS7 only add if condition is satisfied
+                // $startupJavascript = '/bundles/pimcoreadmin/js/pimcore/document/edit/startup.js';
 
                 $headHtml = $this->buildHeadHtml($document, $user->getLanguage());
-                $bodyHtml = "\n\n" . '<script src="' . $startupJavascript . '?_dc=' . Version::getRevision() . '"></script>' . "\n\n";
+//                $bodyHtml = "\n\n" . '<script src="' . $startupJavascript . '?_dc=' . Version::getRevision() . '"></script>' . "\n\n";
 
                 $html = preg_replace('@</head>@i', $headHtml . "\n\n</head>", $html, 1);
-                $html = preg_replace('@</body>@i', $bodyHtml . "\n\n</body>", $html, 1);
+//                $html = preg_replace('@</body>@i', $bodyHtml . "\n\n</body>", $html, 1);
 
                 $response->setContent($html);
             } else {
@@ -241,7 +242,7 @@ class EditmodeListener implements EventSubscriberInterface
     protected function buildHeadHtml(Document $document, $language)
     {
         $libraries = $this->getEditmodeLibraries();
-        $scripts = $this->getEditmodeScripts();
+//        $scripts = $this->getEditmodeScripts();
         $stylesheets = $this->getEditmodeStylesheets();
 
         $headHtml = "\n\n\n<!-- pimcore editmode -->\n";
@@ -255,34 +256,78 @@ class EditmodeListener implements EventSubscriberInterface
         }
 
         $headHtml .= "\n\n";
+        $headHtml .= '
+        <script type="text/javascript">
+                var Ext = Ext || {};
+                Ext.manifest = "/bundles/pimcoreadmin/js/pimcoreEditmodeMinimum.json";
+                Ext.platformTags = {};
+        </script>';
+
+                 $headHtml .= '<script src="/bundles/pimcoreadmin/js/bootstrap.js"></script>' . "\n";
+
+//         $headHtml .= '<script src="/bundles/pimcoreadmin/js/bootstrap.js"></script>' . "\n";
+        // $headHtml .= '<script src="/admin/index/pimcoreEditmodeScriptsMinified.js"></script>';
+
+
+
+
+
 
         // include script libraries
         foreach ($libraries as $script) {
             $headHtml .= '<script src="' . $script . '?_dc=' . Version::getRevision() . '"></script>';
             $headHtml .= "\n";
         }
+        //TODO EXTJS7 cleanup
 
-        // combine the pimcore scripts in non-devmode
-        if (\Pimcore::disableMinifyJs()) {
-            foreach ($scripts as $script) {
-                $headHtml .= '<script src="' . $script . '?_dc=' . Version::getRevision() . '"></script>';
-                $headHtml .= "\n";
-            }
-        } else {
-            $scriptContents = '';
-            foreach ($scripts as $scriptUrl) {
-                $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $scriptUrl) . "\n\n\n";
-            }
+        $manifest = PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/pimcore.json";
+        if (is_file($manifest)) {
 
-            $headHtml .= '<script src="' . $this->router->generate('pimcore_admin_misc_scriptproxy', \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents, false)) . '"></script>' . "\n";
+
+
+//            $headHtml .= '<script type="application/javascript">';
+
+//            $manifestContents = file_get_contents($manifest);
+//            $manifestContents = json_decode($manifestContents, true);
+////            //TODO EXTJS7 only load stuff which is needed
+//            $loadOrder = $manifestContents["loadOrder"];
+//            foreach ($loadOrder as $loadOrderItem) {
+//                $relativePath = $loadOrderItem["path"];
+//                $fullPath = PIMCORE_WEB_ROOT . $relativePath;
+//                if (is_file($fullPath)) {
+//                    $includeContents = file_get_contents($fullPath);
+//                    $headHtml .= $includeContents;
+//
+//                }
+//            }
+
+//            $headHtml .= '</script>';
         }
-        $path = $this->router->generate('pimcore_admin_misc_jsontranslationssystem', [
-            'language' => $language,
-            '_dc' => Version::getRevision(),
-        ]);
 
-        $headHtml .= '<script src="'.$path.'"></script>' . "\n";
-        $headHtml .= '<script src="' . $this->router->generate('fos_js_routing_js', ['callback' => 'fos.Router.setData']) . '"></script>' . "\n";
+                // $headHtml .= '<script src="/admin/index/pimcoreEditmodeScriptsMinified"></script>' . "\n";
+
+//
+//        // combine the pimcore scripts in non-devmode
+//        if (\Pimcore::disableMinifyJs()) {
+//            foreach ($scripts as $script) {
+//                $headHtml .= '<script src="' . $script . '?_dc=' . Version::getRevision() . '"></script>';
+//                $headHtml .= "\n";
+//            }
+//        } else {
+//            $scriptContents = '';
+//            foreach ($scripts as $scriptUrl) {
+//                $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $scriptUrl) . "\n\n\n";
+//            }
+//
+//            $headHtml .= '<script src="' . $this->router->generate('pimcore_admin_misc_scriptproxy', \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents, false)) . '"></script>' . "\n";
+//        }
+//        $path = $this->router->generate('pimcore_admin_misc_jsontranslationssystem', [
+//            'language' => $language,
+//            '_dc' => Version::getRevision(),
+//        ]);
+//
+//        $headHtml .= '<script src="'.$path.'"></script>' . "\n";
+//        $headHtml .= '<script src="' . $this->router->generate('fos_js_routing_js', ['callback' => 'fos.Router.setData']) . '"></script>' . "\n";
         $headHtml .= "\n\n";
 
         // set var for editable configurations which is filled by Document\Tag::admin()
@@ -303,14 +348,19 @@ class EditmodeListener implements EventSubscriberInterface
     {
         $disableMinifyJs = \Pimcore::disableMinifyJs();
 
+        //TODO EXTJS7 documents
+
         return [
             '/bundles/pimcoreadmin/js/pimcore/common.js',
             '/bundles/pimcoreadmin/js/lib/class.js',
-            '/bundles/pimcoreadmin/js/lib/ext/ext-all' . ($disableMinifyJs ? '-debug' : '') . '.js',
             '/bundles/pimcoreadmin/js/lib/ckeditor/ckeditor.js',
         ];
+
+
+
     }
 
+    //TODO EXTJS7 not needed anymore (see IndexController)
     /**
      * @return array
      */

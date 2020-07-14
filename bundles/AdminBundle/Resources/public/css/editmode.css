@@ -11,7 +11,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-@import '/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css';
+/**
+
+//TODO EXTJS7
+
+ */
 @import 'ext-modifications.css';
 @import 'icons.css';
 

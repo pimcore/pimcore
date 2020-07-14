@@ -30,7 +30,7 @@ Remove plugins:
 Delete: samples/
 
 # EXT JS
-current version: 6.0.0.640
+current version: 7.0.0
 
 needed components:
 \build\ext-all.js

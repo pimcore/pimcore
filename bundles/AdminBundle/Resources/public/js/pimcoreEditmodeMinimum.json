@@ -1,0 +1,5378 @@
+{
+  "paths": {
+    "CoolClassicDesktopApp": "../app/desktop/src",
+    "CoolClassicDesktopApp.util": "../app/shared/src/util",
+    "CoolClassicDesktopApp.view.main.nav.ViewViewModel": "../app/desktop/src/view/main/nav/NavViewModel.js",
+    "CoolClassicDesktopApp.view.nav.menu.MenuView": "../app/desktop/src/view/main/nav/menu/MenuView.js",
+    "Ext": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src",
+    "Ext.AbstractManager": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/AbstractManager.js",
+    "Ext.Ajax": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/Ajax.js",
+    "Ext.AnimationQueue": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/AnimationQueue.js",
+    "Ext.Array": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/lang/Array.js",
+    "Ext.Assert": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/lang/Assert.js",
+    "Ext.Base": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/class/Base.js",
+    "Ext.Boot": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/cmd/dist/ant/build/app/Boot.js",
+    "Ext.Class": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/class/Class.js",
+    "Ext.ClassManager": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/class/ClassManager.js",
+    "Ext.ComponentManager": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/ComponentManager.js",
+    "Ext.ComponentQuery": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/ComponentQuery.js",
+    "Ext.Config": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/class/Config.js",
+    "Ext.Configurator": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/class/Configurator.js",
+    "Ext.Date": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/lang/Date.js",
+    "Ext.Deferred": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/Deferred.js",
+    "Ext.Error": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/lang/Error.js",
+    "Ext.Evented": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/Evented.js",
+    "Ext.Factory": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/mixin/Factoryable.js",
+    "Ext.Function": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/lang/Function.js",
+    "Ext.GlobalEvents": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/GlobalEvents.js",
+    "Ext.Glyph": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/Glyph.js",
+    "Ext.Inventory": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/class/Inventory.js",
+    "Ext.JSON": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/JSON.js",
+    "Ext.Loader": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/class/Loader.js",
+    "Ext.Mixin": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/class/Mixin.js",
+    "Ext.Msg": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src/window/MessageBox.js",
+    "Ext.Number": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/lang/Number.js",
+    "Ext.Object": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/lang/Object.js",
+    "Ext.Progress": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/Progress.js",
+    "Ext.ProgressBase": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/ProgressBase.js",
+    "Ext.Promise": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/Promise.js",
+    "Ext.Script": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/class/Inventory.js",
+    "Ext.String": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/lang/String.js",
+    "Ext.String.format": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/Template.js",
+    "Ext.TaskQueue": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/TaskQueue.js",
+    "Ext.Template": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/Template.js",
+    "Ext.Util": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/Util.js",
+    "Ext.Version": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/util/Version.js",
+    "Ext.Widget": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/Widget.js",
+    "Ext.XTemplate": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/XTemplate.js",
+    "Ext.app": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/app",
+    "Ext.browser": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/env/Browser.js",
+    "Ext.class": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/class",
+    "Ext.data": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/data",
+    "Ext.direct": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/direct",
+    "Ext.dom": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/dom",
+    "Ext.dom.ButtonElement": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src/dom/ButtonElement.js",
+    "Ext.dom.Layer": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src/dom/Layer.js",
+    "Ext.drag": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/drag",
+    "Ext.env": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/env",
+    "Ext.event": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/event",
+    "Ext.event.publisher.MouseEnterLeave": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src/event/publisher/MouseEnterLeave.js",
+    "Ext.feature": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/env/Feature.js",
+    "Ext.field": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/field",
+    "Ext.fx.Animation": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/fx/Animation.js",
+    "Ext.fx.Runner": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/fx/Runner.js",
+    "Ext.fx.Stafte": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/fx/State.js",
+    "Ext.fx.animation": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/fx/animation",
+    "Ext.fx.easing": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/fx/easing",
+    "Ext.fx.runner": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/fx/runner",
+    "Ext.lang": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/lang",
+    "Ext.list": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/list",
+    "Ext.mixin": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/mixin",
+    "Ext.os": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/env/OS.js",
+    "Ext.override": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/overrides",
+    "Ext.overrides": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/overrides",
+    "Ext.overrides.util.Positionable": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/overrides/Positionable.js",
+    "Ext.parse": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/parse",
+    "Ext.perf": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/perf",
+    "Ext.plugin.Abstract": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/plugin/Abstract.js",
+    "Ext.plugin.AbstractClipboard": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/plugin/AbstractClipboard.js",
+    "Ext.plugin.MouseEnter": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/plugin/MouseEnter.js",
+    "Ext.promise": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/promise",
+    "Ext.route": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/route",
+    "Ext.sparkline": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/sparkline",
+    "Ext.supports": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/env/Feature.js",
+    "Ext.theme.Material": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic-theme-material/src/theme/Material.js",
+    "Ext.theme.material": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic-theme-material/overrides",
+    "Ext.theme.neptune": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic-theme-neptune/overrides",
+    "Ext.theme.triton": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic-theme-triton/overrides",
+    "Ext.theme.triton.grid": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic-theme-triton/overrides",
+    "Ext.util": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/util",
+    "Ext.util.Animate": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src/util/Animate.js",
+    "Ext.util.ComponentDragger": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src/util/ComponentDragger.js",
+    "Ext.util.ElementContainer": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src/util/ElementContainer.js",
+    "Ext.util.Floating": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src/util/Floating.js",
+    "Ext.util.Format.format": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/Template.js",
+    "Ext.util.Memento": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src/util/Memento.js",
+    "Ext.util.ProtoElement": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src/util/ProtoElement.js",
+    "Ext.util.Queue": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src/util/Queue.js",
+    "Ext.util.Renderable": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src/util/Renderable.js",
+    "Ext.util.StoreHolder": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src/util/StoreHolder.js",
+    "Ext.util.TsvDecoder": "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-core/src/util/TSV.js",
+    "MyAppName": "../app/desktop/src"
+  },
+  "loadOrder": [
+
+  ],
+  "classes": {
+    "CoolClassicDesktopApp.Application": {
+      "idx": 841,
+      "alias": [],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.util.Shared": {
+      "idx": 818,
+      "alias": [],
+      "alternates": [
+        "Shared"
+      ]
+    },
+    "CoolClassicDesktopApp.view.home.HomeView": {
+      "idx": 819,
+      "alias": [
+        "widget.homeview"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.home.HomeViewController": {
+      "idx": 820,
+      "alias": [
+        "controller.homeviewcontroller"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.home.HomeViewModel": {
+      "idx": 821,
+      "alias": [
+        "viewmodel.homeviewmodel"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.login.LoginView": {
+      "idx": 822,
+      "alias": [
+        "widget.loginview"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.login.LoginViewController": {
+      "idx": 823,
+      "alias": [
+        "controller.loginviewcontroller"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.login.LoginViewModel": {
+      "idx": 824,
+      "alias": [
+        "viewmodel.loginviewmodel"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.main.MainView": {
+      "idx": 825,
+      "alias": [
+        "widget.mainview"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.main.MainViewController": {
+      "idx": 826,
+      "alias": [
+        "controller.mainviewcontroller"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.main.center.CenterView": {
+      "idx": 827,
+      "alias": [
+        "widget.centerview"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.main.detail.DetailView": {
+      "idx": 828,
+      "alias": [
+        "widget.detailview"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.main.footer.FooterView": {
+      "idx": 829,
+      "alias": [
+        "widget.footerview"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.main.header.HeaderView": {
+      "idx": 830,
+      "alias": [
+        "widget.headerview"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.main.nav.NavView": {
+      "idx": 831,
+      "alias": [
+        "widget.navview"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.main.nav.NavViewController": {
+      "idx": 832,
+      "alias": [
+        "controller.navviewcontroller"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.main.nav.ViewViewModel": {
+      "idx": 833,
+      "alias": [
+        "viewmodel.navviewmodel"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.main.nav.bottom.BottomView": {
+      "idx": 834,
+      "alias": [
+        "widget.bottomview"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.main.nav.top.TopView": {
+      "idx": 835,
+      "alias": [
+        "widget.topview"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.nav.menu.MenuView": {
+      "idx": 836,
+      "alias": [
+        "widget.menuview"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.personnel.PersonnelView": {
+      "idx": 837,
+      "alias": [
+        "widget.personnelview"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.personnel.PersonnelViewController": {
+      "idx": 838,
+      "alias": [
+        "controller.personnelviewcontroller"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.personnel.PersonnelViewModel": {
+      "idx": 839,
+      "alias": [
+        "viewmodel.personnelviewmodel"
+      ],
+      "alternates": []
+    },
+    "CoolClassicDesktopApp.view.personnel.PersonnelViewStore": {
+      "idx": 840,
+      "alias": [
+        "store.personnelviewstore"
+      ],
+      "alternates": []
+    },
+    "Ext.AbstractManager": {
+      "idx": 32,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.Action": {
+      "idx": 464,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.Ajax": {
+      "idx": 44,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.AnimationQueue": {
+      "idx": 45,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.Component": {
+      "idx": 156,
+      "alias": [
+        "widget.box",
+        "widget.component"
+      ],
+      "alternates": [
+        "Ext.AbstractComponent"
+      ]
+    },
+    "Ext.ComponentLoader": {
+      "idx": 466,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.ComponentManager": {
+      "idx": 47,
+      "alias": [],
+      "alternates": [
+        "Ext.ComponentMgr"
+      ]
+    },
+    "Ext.ComponentQuery": {
+      "idx": 50,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.Deferred": {
+      "idx": 37,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.Editor": {
+      "idx": 475,
+      "alias": [
+        "widget.editor"
+      ],
+      "alternates": []
+    },
+    "Ext.ElementLoader": {
+      "idx": 465,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.EventManager": {
+      "idx": 476,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.Evented": {
+      "idx": 51,
+      "alias": [],
+      "alternates": [
+        "Ext.EventedBase"
+      ]
+    },
+    "Ext.GlobalEvents": {
+      "idx": 110,
+      "alias": [],
+      "alternates": [
+        "Ext.globalEvents"
+      ]
+    },
+    "Ext.Glyph": {
+      "idx": 112,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.Img": {
+      "idx": 478,
+      "alias": [
+        "widget.image",
+        "widget.imagecomponent"
+      ],
+      "alternates": []
+    },
+    "Ext.LoadMask": {
+      "idx": 480,
+      "alias": [
+        "widget.loadmask"
+      ],
+      "alternates": []
+    },
+    "Ext.Mixin": {
+      "idx": 26,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.Progress": {
+      "idx": 129,
+      "alias": [
+        "widget.progress",
+        "widget.progressbarwidget"
+      ],
+      "alternates": [
+        "Ext.ProgressBarWidget"
+      ]
+    },
+    "Ext.ProgressBar": {
+      "idx": 484,
+      "alias": [
+        "widget.progressbar"
+      ],
+      "alternates": []
+    },
+    "Ext.ProgressBase": {
+      "idx": 128,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.Promise": {
+      "idx": 36,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.Responsive": {
+      "idx": 158,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.ResponsiveWidget": {
+      "idx": 127,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.TaskQueue": {
+      "idx": 71,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.Template": {
+      "idx": 132,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.Widget": {
+      "idx": 124,
+      "alias": [
+        "widget.widget"
+      ],
+      "alternates": [
+        "Ext.Gadget"
+      ]
+    },
+    "Ext.XTemplate": {
+      "idx": 135,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.ZIndexManager": {
+      "idx": 471,
+      "alias": [],
+      "alternates": [
+        "Ext.WindowGroup"
+      ]
+    },
+    "Ext.app.Application": {
+      "idx": 230,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.BaseController": {
+      "idx": 173,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.Controller": {
+      "idx": 229,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.EventBus": {
+      "idx": 165,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.EventDomain": {
+      "idx": 136,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.Profile": {
+      "idx": 233,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.Util": {
+      "idx": 174,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.ViewController": {
+      "idx": 236,
+      "alias": [
+        "controller.controller"
+      ],
+      "alternates": []
+    },
+    "Ext.app.ViewModel": {
+      "idx": 270,
+      "alias": [
+        "viewmodel.default"
+      ],
+      "alternates": []
+    },
+    "Ext.app.bind.AbstractStub": {
+      "idx": 251,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.bind.BaseBinding": {
+      "idx": 249,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.bind.Binding": {
+      "idx": 250,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.bind.Formula": {
+      "idx": 256,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.bind.LinkStub": {
+      "idx": 253,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.bind.Multi": {
+      "idx": 255,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.bind.Parser": {
+      "idx": 266,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.bind.RootStub": {
+      "idx": 254,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.bind.Stub": {
+      "idx": 252,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.bind.Template": {
+      "idx": 267,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.bind.TemplateBinding": {
+      "idx": 268,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.domain.Component": {
+      "idx": 137,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.domain.Controller": {
+      "idx": 271,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.domain.Direct": {
+      "idx": 274,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.domain.Global": {
+      "idx": 166,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.domain.Store": {
+      "idx": 228,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.domain.View": {
+      "idx": 234,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.button.Button": {
+      "idx": 488,
+      "alias": [
+        "widget.button"
+      ],
+      "alternates": [
+        "Ext.Button"
+      ]
+    },
+    "Ext.button.Cycle": {
+      "idx": 493,
+      "alias": [
+        "widget.cycle"
+      ],
+      "alternates": [
+        "Ext.CycleButton"
+      ]
+    },
+    "Ext.button.Manager": {
+      "idx": 486,
+      "alias": [],
+      "alternates": [
+        "Ext.ButtonToggleManager"
+      ]
+    },
+    "Ext.button.Segmented": {
+      "idx": 495,
+      "alias": [
+        "widget.segmentedbutton"
+      ],
+      "alternates": []
+    },
+    "Ext.button.Split": {
+      "idx": 491,
+      "alias": [
+        "widget.splitbutton"
+      ],
+      "alternates": [
+        "Ext.SplitButton"
+      ]
+    },
+    "Ext.container.ButtonGroup": {
+      "idx": 535,
+      "alias": [
+        "widget.buttongroup"
+      ],
+      "alternates": [
+        "Ext.ButtonGroup"
+      ]
+    },
+    "Ext.container.Container": {
+      "idx": 472,
+      "alias": [
+        "widget.container"
+      ],
+      "alternates": [
+        "Ext.Container",
+        "Ext.AbstractContainer"
+      ]
+    },
+    "Ext.container.DockingContainer": {
+      "idx": 530,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.container.Monitor": {
+      "idx": 537,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.container.Viewport": {
+      "idx": 539,
+      "alias": [
+        "widget.viewport"
+      ],
+      "alternates": [
+        "Ext.Viewport"
+      ]
+    },
+    "Ext.dashboard.Column": {
+      "idx": 542,
+      "alias": [
+        "widget.dashboard-column"
+      ],
+      "alternates": []
+    },
+    "Ext.dashboard.Dashboard": {
+      "idx": 556,
+      "alias": [
+        "widget.dashboard"
+      ],
+      "alternates": []
+    },
+    "Ext.dashboard.DropZone": {
+      "idx": 554,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dashboard.Panel": {
+      "idx": 541,
+      "alias": [
+        "widget.dashboard-panel"
+      ],
+      "alternates": []
+    },
+    "Ext.dashboard.Part": {
+      "idx": 555,
+      "alias": [
+        "part.part"
+      ],
+      "alternates": []
+    },
+    "Ext.data.AbstractStore": {
+      "idx": 188,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.ArrayStore": {
+      "idx": 226,
+      "alias": [
+        "store.array"
+      ],
+      "alternates": [
+        "Ext.data.SimpleStore"
+      ]
+    },
+    "Ext.data.Batch": {
+      "idx": 239,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.BufferedStore": {
+      "idx": 276,
+      "alias": [
+        "store.buffered"
+      ],
+      "alternates": []
+    },
+    "Ext.data.ChainedStore": {
+      "idx": 269,
+      "alias": [
+        "store.chained"
+      ],
+      "alternates": []
+    },
+    "Ext.data.ClientStore": {
+      "idx": 277,
+      "alias": [
+        "store.clientstorage"
+      ],
+      "alternates": []
+    },
+    "Ext.data.Connection": {
+      "idx": 43,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.DirectStore": {
+      "idx": 279,
+      "alias": [
+        "store.direct"
+      ],
+      "alternates": []
+    },
+    "Ext.data.Error": {
+      "idx": 189,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.ErrorCollection": {
+      "idx": 190,
+      "alias": [],
+      "alternates": [
+        "Ext.data.Errors"
+      ]
+    },
+    "Ext.data.Group": {
+      "idx": 215,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.JsonP": {
+      "idx": 280,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.JsonPStore": {
+      "idx": 282,
+      "alias": [
+        "store.jsonp"
+      ],
+      "alternates": []
+    },
+    "Ext.data.JsonStore": {
+      "idx": 283,
+      "alias": [
+        "store.json"
+      ],
+      "alternates": []
+    },
+    "Ext.data.LocalStore": {
+      "idx": 216,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.Model": {
+      "idx": 206,
+      "alias": [],
+      "alternates": [
+        "Ext.data.Record"
+      ]
+    },
+    "Ext.data.ModelManager": {
+      "idx": 284,
+      "alias": [],
+      "alternates": [
+        "Ext.ModelMgr"
+      ]
+    },
+    "Ext.data.NodeInterface": {
+      "idx": 285,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.NodeStore": {
+      "idx": 288,
+      "alias": [
+        "store.node"
+      ],
+      "alternates": []
+    },
+    "Ext.data.PageMap": {
+      "idx": 275,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.ProxyStore": {
+      "idx": 213,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.Query": {
+      "idx": 293,
+      "alias": [
+        "query.default"
+      ],
+      "alternates": []
+    },
+    "Ext.data.Range": {
+      "idx": 178,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.Request": {
+      "idx": 294,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.ResultSet": {
+      "idx": 207,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.Session": {
+      "idx": 247,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.SortTypes": {
+      "idx": 196,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.Store": {
+      "idx": 224,
+      "alias": [
+        "store.store"
+      ],
+      "alternates": []
+    },
+    "Ext.data.StoreManager": {
+      "idx": 227,
+      "alias": [],
+      "alternates": [
+        "Ext.StoreMgr",
+        "Ext.data.StoreMgr",
+        "Ext.StoreManager"
+      ]
+    },
+    "Ext.data.TreeModel": {
+      "idx": 287,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.TreeStore": {
+      "idx": 295,
+      "alias": [
+        "store.tree"
+      ],
+      "alternates": []
+    },
+    "Ext.data.Types": {
+      "idx": 296,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.Validation": {
+      "idx": 297,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.XmlStore": {
+      "idx": 303,
+      "alias": [
+        "store.xml"
+      ],
+      "alternates": []
+    },
+    "Ext.data.field.Boolean": {
+      "idx": 199,
+      "alias": [
+        "data.field.bool",
+        "data.field.boolean"
+      ],
+      "alternates": []
+    },
+    "Ext.data.field.Date": {
+      "idx": 200,
+      "alias": [
+        "data.field.date"
+      ],
+      "alternates": []
+    },
+    "Ext.data.field.Field": {
+      "idx": 198,
+      "alias": [
+        "data.field.auto"
+      ],
+      "alternates": [
+        "Ext.data.Field"
+      ]
+    },
+    "Ext.data.field.Integer": {
+      "idx": 201,
+      "alias": [
+        "data.field.int",
+        "data.field.integer"
+      ],
+      "alternates": []
+    },
+    "Ext.data.field.Number": {
+      "idx": 202,
+      "alias": [
+        "data.field.float",
+        "data.field.number"
+      ],
+      "alternates": []
+    },
+    "Ext.data.field.String": {
+      "idx": 203,
+      "alias": [
+        "data.field.string"
+      ],
+      "alternates": []
+    },
+    "Ext.data.flash.BinaryXhr": {
+      "idx": 40,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.identifier.Generator": {
+      "idx": 204,
+      "alias": [
+        "data.identifier.default"
+      ],
+      "alternates": []
+    },
+    "Ext.data.identifier.Negative": {
+      "idx": 304,
+      "alias": [
+        "data.identifier.negative"
+      ],
+      "alternates": []
+    },
+    "Ext.data.identifier.Sequential": {
+      "idx": 205,
+      "alias": [
+        "data.identifier.sequential"
+      ],
+      "alternates": []
+    },
+    "Ext.data.identifier.Uuid": {
+      "idx": 305,
+      "alias": [
+        "data.identifier.uuid"
+      ],
+      "alternates": []
+    },
+    "Ext.data.matrix.Matrix": {
+      "idx": 242,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.matrix.Side": {
+      "idx": 241,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.matrix.Slice": {
+      "idx": 240,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.operation.Create": {
+      "idx": 192,
+      "alias": [
+        "data.operation.create"
+      ],
+      "alternates": []
+    },
+    "Ext.data.operation.Destroy": {
+      "idx": 193,
+      "alias": [
+        "data.operation.destroy"
+      ],
+      "alternates": []
+    },
+    "Ext.data.operation.Operation": {
+      "idx": 191,
+      "alias": [],
+      "alternates": [
+        "Ext.data.Operation"
+      ]
+    },
+    "Ext.data.operation.Read": {
+      "idx": 194,
+      "alias": [
+        "data.operation.read"
+      ],
+      "alternates": []
+    },
+    "Ext.data.operation.Update": {
+      "idx": 195,
+      "alias": [
+        "data.operation.update"
+      ],
+      "alternates": []
+    },
+    "Ext.data.proxy.Ajax": {
+      "idx": 218,
+      "alias": [
+        "proxy.ajax"
+      ],
+      "alternates": [
+        "Ext.data.HttpProxy",
+        "Ext.data.AjaxProxy"
+      ]
+    },
+    "Ext.data.proxy.Client": {
+      "idx": 211,
+      "alias": [],
+      "alternates": [
+        "Ext.data.ClientProxy"
+      ]
+    },
+    "Ext.data.proxy.Direct": {
+      "idx": 278,
+      "alias": [
+        "proxy.direct"
+      ],
+      "alternates": [
+        "Ext.data.DirectProxy"
+      ]
+    },
+    "Ext.data.proxy.JsonP": {
+      "idx": 281,
+      "alias": [
+        "proxy.jsonp",
+        "proxy.scripttag"
+      ],
+      "alternates": [
+        "Ext.data.ScriptTagProxy"
+      ]
+    },
+    "Ext.data.proxy.LocalStorage": {
+      "idx": 307,
+      "alias": [
+        "proxy.localstorage"
+      ],
+      "alternates": [
+        "Ext.data.LocalStorageProxy"
+      ]
+    },
+    "Ext.data.proxy.Memory": {
+      "idx": 212,
+      "alias": [
+        "proxy.memory"
+      ],
+      "alternates": [
+        "Ext.data.MemoryProxy"
+      ]
+    },
+    "Ext.data.proxy.Proxy": {
+      "idx": 210,
+      "alias": [
+        "proxy.proxy"
+      ],
+      "alternates": [
+        "Ext.data.DataProxy",
+        "Ext.data.Proxy"
+      ]
+    },
+    "Ext.data.proxy.Rest": {
+      "idx": 308,
+      "alias": [
+        "proxy.rest"
+      ],
+      "alternates": [
+        "Ext.data.RestProxy"
+      ]
+    },
+    "Ext.data.proxy.Server": {
+      "idx": 217,
+      "alias": [
+        "proxy.server"
+      ],
+      "alternates": [
+        "Ext.data.ServerProxy"
+      ]
+    },
+    "Ext.data.proxy.SessionStorage": {
+      "idx": 309,
+      "alias": [
+        "proxy.sessionstorage"
+      ],
+      "alternates": [
+        "Ext.data.SessionStorageProxy"
+      ]
+    },
+    "Ext.data.proxy.WebStorage": {
+      "idx": 306,
+      "alias": [],
+      "alternates": [
+        "Ext.data.WebStorageProxy"
+      ]
+    },
+    "Ext.data.query.Compiler": {
+      "idx": 289,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.query.Converter": {
+      "idx": 290,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.query.Parser": {
+      "idx": 292,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.query.Stringifier": {
+      "idx": 291,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.reader.Array": {
+      "idx": 225,
+      "alias": [
+        "reader.array"
+      ],
+      "alternates": [
+        "Ext.data.ArrayReader"
+      ]
+    },
+    "Ext.data.reader.Json": {
+      "idx": 219,
+      "alias": [
+        "reader.json"
+      ],
+      "alternates": [
+        "Ext.data.JsonReader"
+      ]
+    },
+    "Ext.data.reader.Reader": {
+      "idx": 208,
+      "alias": [
+        "reader.base"
+      ],
+      "alternates": [
+        "Ext.data.Reader",
+        "Ext.data.DataReader"
+      ]
+    },
+    "Ext.data.reader.Xml": {
+      "idx": 301,
+      "alias": [
+        "reader.xml"
+      ],
+      "alternates": [
+        "Ext.data.XmlReader"
+      ]
+    },
+    "Ext.data.request.Ajax": {
+      "idx": 41,
+      "alias": [
+        "request.ajax"
+      ],
+      "alternates": []
+    },
+    "Ext.data.request.Base": {
+      "idx": 39,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.request.Form": {
+      "idx": 42,
+      "alias": [
+        "request.form"
+      ],
+      "alternates": []
+    },
+    "Ext.data.schema.Association": {
+      "idx": 181,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.schema.ManyToMany": {
+      "idx": 184,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.schema.ManyToOne": {
+      "idx": 183,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.schema.Namer": {
+      "idx": 186,
+      "alias": [
+        "namer.default"
+      ],
+      "alternates": []
+    },
+    "Ext.data.schema.OneToOne": {
+      "idx": 182,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.schema.Role": {
+      "idx": 180,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.schema.Schema": {
+      "idx": 187,
+      "alias": [
+        "schema.default"
+      ],
+      "alternates": []
+    },
+    "Ext.data.session.BatchVisitor": {
+      "idx": 245,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.session.ChangesVisitor": {
+      "idx": 243,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.session.ChildChangesVisitor": {
+      "idx": 244,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.summary.Average": {
+      "idx": 316,
+      "alias": [
+        "data.summary.average"
+      ],
+      "alternates": []
+    },
+    "Ext.data.summary.Base": {
+      "idx": 314,
+      "alias": [
+        "data.summary.base"
+      ],
+      "alternates": []
+    },
+    "Ext.data.summary.Count": {
+      "idx": 317,
+      "alias": [
+        "data.summary.count"
+      ],
+      "alternates": []
+    },
+    "Ext.data.summary.Max": {
+      "idx": 318,
+      "alias": [
+        "data.summary.max"
+      ],
+      "alternates": []
+    },
+    "Ext.data.summary.Min": {
+      "idx": 319,
+      "alias": [
+        "data.summary.min"
+      ],
+      "alternates": []
+    },
+    "Ext.data.summary.None": {
+      "idx": 320,
+      "alias": [
+        "data.summary.none"
+      ],
+      "alternates": []
+    },
+    "Ext.data.summary.Sum": {
+      "idx": 315,
+      "alias": [
+        "data.summary.sum"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.AbstractDate": {
+      "idx": 321,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.validator.Bound": {
+      "idx": 322,
+      "alias": [
+        "data.validator.bound"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.CIDRv4": {
+      "idx": 324,
+      "alias": [
+        "data.validator.cidrv4"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.CIDRv6": {
+      "idx": 325,
+      "alias": [
+        "data.validator.cidrv6"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.Currency": {
+      "idx": 327,
+      "alias": [
+        "data.validator.currency"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.CurrencyUS": {
+      "idx": 328,
+      "alias": [
+        "data.validator.currency-us"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.Date": {
+      "idx": 329,
+      "alias": [
+        "data.validator.date"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.DateTime": {
+      "idx": 330,
+      "alias": [
+        "data.validator.datetime"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.Email": {
+      "idx": 331,
+      "alias": [
+        "data.validator.email"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.Exclusion": {
+      "idx": 333,
+      "alias": [
+        "data.validator.exclusion"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.Format": {
+      "idx": 323,
+      "alias": [
+        "data.validator.format"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.IPAddress": {
+      "idx": 334,
+      "alias": [
+        "data.validator.ipaddress"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.Inclusion": {
+      "idx": 335,
+      "alias": [
+        "data.validator.inclusion"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.Length": {
+      "idx": 336,
+      "alias": [
+        "data.validator.length"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.List": {
+      "idx": 332,
+      "alias": [
+        "data.validator.list"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.NotNull": {
+      "idx": 338,
+      "alias": [
+        "data.validator.notnull"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.Number": {
+      "idx": 326,
+      "alias": [
+        "data.validator.number"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.Phone": {
+      "idx": 339,
+      "alias": [
+        "data.validator.phone"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.Presence": {
+      "idx": 337,
+      "alias": [
+        "data.validator.presence"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.Range": {
+      "idx": 340,
+      "alias": [
+        "data.validator.range"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.Time": {
+      "idx": 341,
+      "alias": [
+        "data.validator.time"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.Url": {
+      "idx": 342,
+      "alias": [
+        "data.validator.url"
+      ],
+      "alternates": []
+    },
+    "Ext.data.validator.Validator": {
+      "idx": 197,
+      "alias": [
+        "data.validator.base"
+      ],
+      "alternates": []
+    },
+    "Ext.data.virtual.Group": {
+      "idx": 343,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.virtual.Page": {
+      "idx": 344,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.virtual.PageMap": {
+      "idx": 345,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.virtual.Range": {
+      "idx": 346,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.data.virtual.Store": {
+      "idx": 347,
+      "alias": [
+        "store.virtual"
+      ],
+      "alternates": []
+    },
+    "Ext.data.writer.Json": {
+      "idx": 220,
+      "alias": [
+        "writer.json"
+      ],
+      "alternates": [
+        "Ext.data.JsonWriter"
+      ]
+    },
+    "Ext.data.writer.Writer": {
+      "idx": 209,
+      "alias": [
+        "writer.base"
+      ],
+      "alternates": [
+        "Ext.data.DataWriter",
+        "Ext.data.Writer"
+      ]
+    },
+    "Ext.data.writer.Xml": {
+      "idx": 302,
+      "alias": [
+        "writer.xml"
+      ],
+      "alternates": [
+        "Ext.data.XmlWriter"
+      ]
+    },
+    "Ext.dd.DD": {
+      "idx": 519,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.DDProxy": {
+      "idx": 521,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.DDTarget": {
+      "idx": 551,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.DragDrop": {
+      "idx": 518,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.DragDropManager": {
+      "idx": 506,
+      "alias": [],
+      "alternates": [
+        "Ext.dd.DragDropMgr",
+        "Ext.dd.DDM"
+      ]
+    },
+    "Ext.dd.DragSource": {
+      "idx": 523,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.DragTracker": {
+      "idx": 545,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.DragZone": {
+      "idx": 557,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.DropTarget": {
+      "idx": 553,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.DropZone": {
+      "idx": 559,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.Registry": {
+      "idx": 558,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.ScrollManager": {
+      "idx": 552,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.StatusProxy": {
+      "idx": 522,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.direct.Event": {
+      "idx": 348,
+      "alias": [
+        "direct.event"
+      ],
+      "alternates": []
+    },
+    "Ext.direct.ExceptionEvent": {
+      "idx": 350,
+      "alias": [
+        "direct.exception"
+      ],
+      "alternates": []
+    },
+    "Ext.direct.JsonProvider": {
+      "idx": 351,
+      "alias": [
+        "direct.jsonprovider"
+      ],
+      "alternates": []
+    },
+    "Ext.direct.Manager": {
+      "idx": 272,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.direct.PollingProvider": {
+      "idx": 352,
+      "alias": [
+        "direct.pollingprovider"
+      ],
+      "alternates": []
+    },
+    "Ext.direct.Provider": {
+      "idx": 273,
+      "alias": [
+        "direct.provider"
+      ],
+      "alternates": []
+    },
+    "Ext.direct.RemotingEvent": {
+      "idx": 349,
+      "alias": [
+        "direct.rpc"
+      ],
+      "alternates": []
+    },
+    "Ext.direct.RemotingMethod": {
+      "idx": 353,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.direct.RemotingProvider": {
+      "idx": 355,
+      "alias": [
+        "direct.remotingprovider"
+      ],
+      "alternates": []
+    },
+    "Ext.direct.Transaction": {
+      "idx": 354,
+      "alias": [
+        "direct.transaction"
+      ],
+      "alternates": []
+    },
+    "Ext.dom.ButtonElement": {
+      "idx": 485,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dom.CompositeElement": {
+      "idx": 139,
+      "alias": [],
+      "alternates": [
+        "Ext.CompositeElement"
+      ]
+    },
+    "Ext.dom.CompositeElementLite": {
+      "idx": 107,
+      "alias": [],
+      "alternates": [
+        "Ext.CompositeElementLite"
+      ]
+    },
+    "Ext.dom.Element": {
+      "idx": 80,
+      "alias": [],
+      "alternates": [
+        "Ext.Element"
+      ]
+    },
+    "Ext.dom.ElementEvent": {
+      "idx": 58,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dom.Fly": {
+      "idx": 106,
+      "alias": [],
+      "alternates": [
+        "Ext.dom.Element.Fly"
+      ]
+    },
+    "Ext.dom.GarbageCollector": {
+      "idx": 356,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dom.Helper": {
+      "idx": 298,
+      "alias": [],
+      "alternates": [
+        "Ext.DomHelper",
+        "Ext.core.DomHelper"
+      ]
+    },
+    "Ext.dom.Layer": {
+      "idx": 560,
+      "alias": [],
+      "alternates": [
+        "Ext.Layer"
+      ]
+    },
+    "Ext.dom.Query": {
+      "idx": 300,
+      "alias": [],
+      "alternates": [
+        "Ext.core.DomQuery",
+        "Ext.DomQuery"
+      ]
+    },
+    "Ext.dom.Shadow": {
+      "idx": 56,
+      "alias": [],
+      "alternates": [
+        "Ext.Shadow"
+      ]
+    },
+    "Ext.dom.Shim": {
+      "idx": 57,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dom.TouchAction": {
+      "idx": 357,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dom.Underlay": {
+      "idx": 55,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dom.UnderlayPool": {
+      "idx": 54,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.drag.Constraint": {
+      "idx": 358,
+      "alias": [
+        "drag.constraint.base"
+      ],
+      "alternates": []
+    },
+    "Ext.drag.Info": {
+      "idx": 359,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.drag.Item": {
+      "idx": 360,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.drag.Manager": {
+      "idx": 361,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.drag.Source": {
+      "idx": 362,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.drag.Target": {
+      "idx": 363,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.drag.proxy.None": {
+      "idx": 364,
+      "alias": [
+        "drag.proxy.none"
+      ],
+      "alternates": []
+    },
+    "Ext.drag.proxy.Original": {
+      "idx": 365,
+      "alias": [
+        "drag.proxy.original"
+      ],
+      "alternates": []
+    },
+    "Ext.drag.proxy.Placeholder": {
+      "idx": 366,
+      "alias": [
+        "drag.proxy.placeholder"
+      ],
+      "alternates": []
+    },
+    "Ext.event.Event": {
+      "idx": 63,
+      "alias": [],
+      "alternates": [
+        "Ext.EventObjectImpl"
+      ]
+    },
+    "Ext.event.gesture.DoubleTap": {
+      "idx": 369,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.gesture.Drag": {
+      "idx": 370,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.gesture.EdgeSwipe": {
+      "idx": 372,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.gesture.LongPress": {
+      "idx": 373,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.gesture.MultiTouch": {
+      "idx": 374,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.gesture.Pinch": {
+      "idx": 375,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.gesture.Recognizer": {
+      "idx": 367,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.gesture.Rotate": {
+      "idx": 376,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.gesture.SingleTouch": {
+      "idx": 368,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.gesture.Swipe": {
+      "idx": 371,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.gesture.Tap": {
+      "idx": 377,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.publisher.Dom": {
+      "idx": 66,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.publisher.ElementPaint": {
+      "idx": 79,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.publisher.ElementSize": {
+      "idx": 75,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.publisher.Focus": {
+      "idx": 378,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.publisher.Gesture": {
+      "idx": 68,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.publisher.MouseEnterLeave": {
+      "idx": 562,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.event.publisher.Publisher": {
+      "idx": 59,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.field.InputMask": {
+      "idx": 379,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.flash.Component": {
+      "idx": 563,
+      "alias": [
+        "widget.flash"
+      ],
+      "alternates": [
+        "Ext.FlashComponent"
+      ]
+    },
+    "Ext.form.Basic": {
+      "idx": 582,
+      "alias": [],
+      "alternates": [
+        "Ext.form.BasicForm"
+      ]
+    },
+    "Ext.form.CheckboxGroup": {
+      "idx": 591,
+      "alias": [
+        "widget.checkboxgroup"
+      ],
+      "alternates": []
+    },
+    "Ext.form.CheckboxManager": {
+      "idx": 587,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.form.FieldAncestor": {
+      "idx": 584,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.form.FieldContainer": {
+      "idx": 585,
+      "alias": [
+        "widget.fieldcontainer"
+      ],
+      "alternates": []
+    },
+    "Ext.form.FieldSet": {
+      "idx": 592,
+      "alias": [
+        "widget.fieldset"
+      ],
+      "alternates": []
+    },
+    "Ext.form.Label": {
+      "idx": 593,
+      "alias": [
+        "widget.label"
+      ],
+      "alternates": []
+    },
+    "Ext.form.Labelable": {
+      "idx": 570,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.form.Panel": {
+      "idx": 594,
+      "alias": [
+        "widget.form"
+      ],
+      "alternates": [
+        "Ext.FormPanel",
+        "Ext.form.FormPanel"
+      ]
+    },
+    "Ext.form.RadioGroup": {
+      "idx": 598,
+      "alias": [
+        "widget.radiogroup"
+      ],
+      "alternates": []
+    },
+    "Ext.form.RadioManager": {
+      "idx": 595,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.form.action.Action": {
+      "idx": 564,
+      "alias": [],
+      "alternates": [
+        "Ext.form.Action"
+      ]
+    },
+    "Ext.form.action.DirectAction": {
+      "idx": 599,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.form.action.DirectLoad": {
+      "idx": 600,
+      "alias": [
+        "formaction.directload"
+      ],
+      "alternates": [
+        "Ext.form.Action.DirectLoad"
+      ]
+    },
+    "Ext.form.action.DirectSubmit": {
+      "idx": 601,
+      "alias": [
+        "formaction.directsubmit"
+      ],
+      "alternates": [
+        "Ext.form.Action.DirectSubmit"
+      ]
+    },
+    "Ext.form.action.Load": {
+      "idx": 565,
+      "alias": [
+        "formaction.load"
+      ],
+      "alternates": [
+        "Ext.form.Action.Load"
+      ]
+    },
+    "Ext.form.action.StandardSubmit": {
+      "idx": 567,
+      "alias": [
+        "formaction.standardsubmit"
+      ],
+      "alternates": []
+    },
+    "Ext.form.action.Submit": {
+      "idx": 566,
+      "alias": [
+        "formaction.submit"
+      ],
+      "alternates": [
+        "Ext.form.Action.Submit"
+      ]
+    },
+    "Ext.form.field.Base": {
+      "idx": 573,
+      "alias": [
+        "widget.field"
+      ],
+      "alternates": [
+        "Ext.form.Field",
+        "Ext.form.BaseField"
+      ]
+    },
+    "Ext.form.field.Checkbox": {
+      "idx": 588,
+      "alias": [
+        "widget.checkbox",
+        "widget.checkboxfield"
+      ],
+      "alternates": [
+        "Ext.form.Checkbox"
+      ]
+    },
+    "Ext.form.field.ComboBox": {
+      "idx": 620,
+      "alias": [
+        "widget.combo",
+        "widget.combobox"
+      ],
+      "alternates": [
+        "Ext.form.ComboBox"
+      ]
+    },
+    "Ext.form.field.Date": {
+      "idx": 626,
+      "alias": [
+        "widget.datefield"
+      ],
+      "alternates": [
+        "Ext.form.DateField",
+        "Ext.form.Date"
+      ]
+    },
+    "Ext.form.field.Display": {
+      "idx": 627,
+      "alias": [
+        "widget.displayfield"
+      ],
+      "alternates": [
+        "Ext.form.DisplayField",
+        "Ext.form.Display"
+      ]
+    },
+    "Ext.form.field.Field": {
+      "idx": 572,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.form.field.File": {
+      "idx": 630,
+      "alias": [
+        "widget.filefield",
+        "widget.fileuploadfield"
+      ],
+      "alternates": [
+        "Ext.form.FileUploadField",
+        "Ext.ux.form.FileUploadField",
+        "Ext.form.File"
+      ]
+    },
+    "Ext.form.field.FileButton": {
+      "idx": 628,
+      "alias": [
+        "widget.filebutton"
+      ],
+      "alternates": []
+    },
+    "Ext.form.field.Hidden": {
+      "idx": 631,
+      "alias": [
+        "widget.hidden",
+        "widget.hiddenfield"
+      ],
+      "alternates": [
+        "Ext.form.Hidden"
+      ]
+    },
+    "Ext.form.field.HtmlEditor": {
+      "idx": 642,
+      "alias": [
+        "widget.htmleditor"
+      ],
+      "alternates": [
+        "Ext.form.HtmlEditor"
+      ]
+    },
+    "Ext.form.field.Number": {
+      "idx": 615,
+      "alias": [
+        "widget.numberfield"
+      ],
+      "alternates": [
+        "Ext.form.NumberField",
+        "Ext.form.Number"
+      ]
+    },
+    "Ext.form.field.Picker": {
+      "idx": 602,
+      "alias": [
+        "widget.pickerfield"
+      ],
+      "alternates": [
+        "Ext.form.Picker"
+      ]
+    },
+    "Ext.form.field.Radio": {
+      "idx": 596,
+      "alias": [
+        "widget.radio",
+        "widget.radiofield"
+      ],
+      "alternates": [
+        "Ext.form.Radio"
+      ]
+    },
+    "Ext.form.field.Spinner": {
+      "idx": 614,
+      "alias": [
+        "widget.spinnerfield"
+      ],
+      "alternates": [
+        "Ext.form.Spinner"
+      ]
+    },
+    "Ext.form.field.Tag": {
+      "idx": 645,
+      "alias": [
+        "widget.tagfield"
+      ],
+      "alternates": []
+    },
+    "Ext.form.field.Text": {
+      "idx": 577,
+      "alias": [
+        "widget.textfield"
+      ],
+      "alternates": [
+        "Ext.form.TextField",
+        "Ext.form.Text"
+      ]
+    },
+    "Ext.form.field.TextArea": {
+      "idx": 579,
+      "alias": [
+        "widget.textarea",
+        "widget.textareafield"
+      ],
+      "alternates": [
+        "Ext.form.TextArea"
+      ]
+    },
+    "Ext.form.field.Time": {
+      "idx": 649,
+      "alias": [
+        "widget.timefield"
+      ],
+      "alternates": [
+        "Ext.form.TimeField",
+        "Ext.form.Time"
+      ]
+    },
+    "Ext.form.field.Trigger": {
+      "idx": 650,
+      "alias": [
+        "widget.trigger",
+        "widget.triggerfield"
+      ],
+      "alternates": [
+        "Ext.form.TriggerField",
+        "Ext.form.TwinTriggerField",
+        "Ext.form.Trigger"
+      ]
+    },
+    "Ext.form.field.VTypes": {
+      "idx": 575,
+      "alias": [],
+      "alternates": [
+        "Ext.form.VTypes"
+      ]
+    },
+    "Ext.form.trigger.Component": {
+      "idx": 629,
+      "alias": [
+        "trigger.component"
+      ],
+      "alternates": []
+    },
+    "Ext.form.trigger.Spinner": {
+      "idx": 613,
+      "alias": [
+        "trigger.spinner"
+      ],
+      "alternates": []
+    },
+    "Ext.form.trigger.Trigger": {
+      "idx": 576,
+      "alias": [
+        "trigger.trigger"
+      ],
+      "alternates": []
+    },
+    "Ext.fx.Anim": {
+      "idx": 104,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.Animation": {
+      "idx": 389,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.Animator": {
+      "idx": 99,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.CubicBezier": {
+      "idx": 100,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.DrawPath": {
+      "idx": 102,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.Easing": {
+      "idx": 101,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.Manager": {
+      "idx": 98,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.PropertyHandler": {
+      "idx": 103,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.Queue": {
+      "idx": 97,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.Runner": {
+      "idx": 392,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.State": {
+      "idx": 380,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.animation.Abstract": {
+      "idx": 381,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.animation.Cube": {
+      "idx": 393,
+      "alias": [
+        "animation.cube"
+      ],
+      "alternates": []
+    },
+    "Ext.fx.animation.Fade": {
+      "idx": 384,
+      "alias": [
+        "animation.fade",
+        "animation.fadeIn"
+      ],
+      "alternates": [
+        "Ext.fx.animation.FadeIn"
+      ]
+    },
+    "Ext.fx.animation.FadeOut": {
+      "idx": 385,
+      "alias": [
+        "animation.fadeOut"
+      ],
+      "alternates": []
+    },
+    "Ext.fx.animation.Flip": {
+      "idx": 386,
+      "alias": [
+        "animation.flip"
+      ],
+      "alternates": []
+    },
+    "Ext.fx.animation.Pop": {
+      "idx": 387,
+      "alias": [
+        "animation.pop",
+        "animation.popIn"
+      ],
+      "alternates": [
+        "Ext.fx.animation.PopIn"
+      ]
+    },
+    "Ext.fx.animation.PopOut": {
+      "idx": 388,
+      "alias": [
+        "animation.popOut"
+      ],
+      "alternates": []
+    },
+    "Ext.fx.animation.Slide": {
+      "idx": 382,
+      "alias": [
+        "animation.slide",
+        "animation.slideIn"
+      ],
+      "alternates": [
+        "Ext.fx.animation.SlideIn"
+      ]
+    },
+    "Ext.fx.animation.SlideOut": {
+      "idx": 383,
+      "alias": [
+        "animation.slideOut"
+      ],
+      "alternates": []
+    },
+    "Ext.fx.animation.Wipe": {
+      "idx": 394,
+      "alias": [],
+      "alternates": [
+        "Ext.fx.animation.WipeIn"
+      ]
+    },
+    "Ext.fx.animation.WipeOut": {
+      "idx": 395,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.easing.Abstract": {
+      "idx": 142,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.easing.Bounce": {
+      "idx": 396,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.easing.BoundMomentum": {
+      "idx": 398,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.easing.EaseIn": {
+      "idx": 399,
+      "alias": [
+        "easing.ease-in"
+      ],
+      "alternates": []
+    },
+    "Ext.fx.easing.EaseOut": {
+      "idx": 400,
+      "alias": [
+        "easing.ease-out"
+      ],
+      "alternates": []
+    },
+    "Ext.fx.easing.Easing": {
+      "idx": 401,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.easing.Linear": {
+      "idx": 143,
+      "alias": [
+        "easing.linear"
+      ],
+      "alternates": []
+    },
+    "Ext.fx.easing.Momentum": {
+      "idx": 397,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.runner.Css": {
+      "idx": 390,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.runner.CssAnimation": {
+      "idx": 402,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.runner.CssTransition": {
+      "idx": 391,
+      "alias": [],
+      "alternates": [
+        "Ext.Animator"
+      ]
+    },
+    "Ext.fx.target.Component": {
+      "idx": 96,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.target.CompositeElement": {
+      "idx": 92,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.target.CompositeElementCSS": {
+      "idx": 93,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.target.CompositeSprite": {
+      "idx": 95,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.target.Element": {
+      "idx": 90,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.target.ElementCSS": {
+      "idx": 91,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.target.Sprite": {
+      "idx": 94,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.fx.target.Target": {
+      "idx": 89,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.CellContext": {
+      "idx": 651,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.CellEditor": {
+      "idx": 652,
+      "alias": [
+        "widget.celleditor"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.ColumnComponentLayout": {
+      "idx": 654,
+      "alias": [
+        "layout.columncomponent"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.ColumnLayout": {
+      "idx": 658,
+      "alias": [
+        "layout.gridcolumn"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.ColumnManager": {
+      "idx": 660,
+      "alias": [],
+      "alternates": [
+        "Ext.grid.ColumnModel"
+      ]
+    },
+    "Ext.grid.NavigationModel": {
+      "idx": 661,
+      "alias": [
+        "view.navigation.grid"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.Panel": {
+      "idx": 670,
+      "alias": [
+        "widget.grid",
+        "widget.gridpanel"
+      ],
+      "alternates": [
+        "Ext.list.ListView",
+        "Ext.ListView",
+        "Ext.grid.GridPanel"
+      ]
+    },
+    "Ext.grid.RowContext": {
+      "idx": 671,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.RowEditor": {
+      "idx": 673,
+      "alias": [
+        "widget.roweditor"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.RowEditorButtons": {
+      "idx": 672,
+      "alias": [
+        "widget.roweditorbuttons"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.Scroller": {
+      "idx": 675,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.ViewDropZone": {
+      "idx": 677,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.column.Action": {
+      "idx": 688,
+      "alias": [
+        "widget.actioncolumn"
+      ],
+      "alternates": [
+        "Ext.grid.ActionColumn"
+      ]
+    },
+    "Ext.grid.column.ActionProxy": {
+      "idx": 687,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.column.Boolean": {
+      "idx": 689,
+      "alias": [
+        "widget.booleancolumn"
+      ],
+      "alternates": [
+        "Ext.grid.BooleanColumn"
+      ]
+    },
+    "Ext.grid.column.Check": {
+      "idx": 690,
+      "alias": [
+        "widget.checkcolumn"
+      ],
+      "alternates": [
+        "Ext.ux.CheckColumn",
+        "Ext.grid.column.CheckColumn"
+      ]
+    },
+    "Ext.grid.column.Column": {
+      "idx": 684,
+      "alias": [
+        "widget.gridcolumn"
+      ],
+      "alternates": [
+        "Ext.grid.Column"
+      ]
+    },
+    "Ext.grid.column.Date": {
+      "idx": 692,
+      "alias": [
+        "widget.datecolumn"
+      ],
+      "alternates": [
+        "Ext.grid.DateColumn"
+      ]
+    },
+    "Ext.grid.column.Number": {
+      "idx": 693,
+      "alias": [
+        "widget.numbercolumn"
+      ],
+      "alternates": [
+        "Ext.grid.NumberColumn"
+      ]
+    },
+    "Ext.grid.column.RowNumberer": {
+      "idx": 694,
+      "alias": [
+        "widget.rownumberer"
+      ],
+      "alternates": [
+        "Ext.grid.RowNumberer"
+      ]
+    },
+    "Ext.grid.column.Template": {
+      "idx": 697,
+      "alias": [
+        "widget.templatecolumn"
+      ],
+      "alternates": [
+        "Ext.grid.TemplateColumn"
+      ]
+    },
+    "Ext.grid.column.Widget": {
+      "idx": 698,
+      "alias": [
+        "widget.widgetcolumn"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.feature.AbstractSummary": {
+      "idx": 700,
+      "alias": [
+        "feature.abstractsummary"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.feature.Feature": {
+      "idx": 699,
+      "alias": [
+        "feature.feature"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.feature.GroupStore": {
+      "idx": 701,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.feature.Grouping": {
+      "idx": 702,
+      "alias": [
+        "feature.grouping"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.feature.GroupingSummary": {
+      "idx": 703,
+      "alias": [
+        "feature.groupingsummary"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.feature.RowBody": {
+      "idx": 704,
+      "alias": [
+        "feature.rowbody"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.feature.Summary": {
+      "idx": 705,
+      "alias": [
+        "feature.summary"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.filters.Filters": {
+      "idx": 723,
+      "alias": [
+        "plugin.gridfilters"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.filters.filter.Base": {
+      "idx": 715,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.filters.filter.Boolean": {
+      "idx": 717,
+      "alias": [
+        "grid.filter.boolean"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.filters.filter.Date": {
+      "idx": 719,
+      "alias": [
+        "grid.filter.date"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.filters.filter.List": {
+      "idx": 720,
+      "alias": [
+        "grid.filter.list"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.filters.filter.Number": {
+      "idx": 721,
+      "alias": [
+        "grid.filter.number",
+        "grid.filter.numeric"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.filters.filter.SingleFilter": {
+      "idx": 716,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.filters.filter.String": {
+      "idx": 722,
+      "alias": [
+        "grid.filter.string"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.filters.filter.TriFilter": {
+      "idx": 718,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.header.Container": {
+      "idx": 683,
+      "alias": [
+        "widget.headercontainer"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.header.DragZone": {
+      "idx": 680,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.header.DropZone": {
+      "idx": 681,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.locking.HeaderContainer": {
+      "idx": 724,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.locking.Lockable": {
+      "idx": 727,
+      "alias": [],
+      "alternates": [
+        "Ext.grid.Lockable"
+      ]
+    },
+    "Ext.grid.locking.RowSynchronizer": {
+      "idx": 664,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.locking.View": {
+      "idx": 725,
+      "alias": [],
+      "alternates": [
+        "Ext.grid.LockingView"
+      ]
+    },
+    "Ext.grid.plugin.BufferedRenderer": {
+      "idx": 729,
+      "alias": [
+        "plugin.bufferedrenderer"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.plugin.CellEditing": {
+      "idx": 732,
+      "alias": [
+        "plugin.cellediting"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.plugin.Clipboard": {
+      "idx": 733,
+      "alias": [
+        "plugin.clipboard"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.plugin.DragDrop": {
+      "idx": 734,
+      "alias": [
+        "plugin.gridviewdragdrop"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.plugin.Editing": {
+      "idx": 731,
+      "alias": [
+        "editing.editing"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.plugin.HeaderReorderer": {
+      "idx": 682,
+      "alias": [
+        "plugin.gridheaderreorderer"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.plugin.HeaderResizer": {
+      "idx": 678,
+      "alias": [
+        "plugin.gridheaderresizer"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.plugin.RowEditing": {
+      "idx": 735,
+      "alias": [
+        "plugin.rowediting"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.plugin.RowExpander": {
+      "idx": 737,
+      "alias": [
+        "plugin.rowexpander"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.plugin.RowWidget": {
+      "idx": 739,
+      "alias": [
+        "plugin.rowwidget"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.property.Grid": {
+      "idx": 740,
+      "alias": [
+        "widget.propertygrid"
+      ],
+      "alternates": [
+        "Ext.grid.PropertyGrid"
+      ]
+    },
+    "Ext.grid.property.HeaderContainer": {
+      "idx": 741,
+      "alias": [],
+      "alternates": [
+        "Ext.grid.PropertyColumnModel"
+      ]
+    },
+    "Ext.grid.property.Property": {
+      "idx": 742,
+      "alias": [],
+      "alternates": [
+        "Ext.PropGridProperty"
+      ]
+    },
+    "Ext.grid.property.Reader": {
+      "idx": 743,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.property.Store": {
+      "idx": 744,
+      "alias": [],
+      "alternates": [
+        "Ext.grid.PropertyStore"
+      ]
+    },
+    "Ext.grid.selection.Cells": {
+      "idx": 746,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.selection.Columns": {
+      "idx": 747,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.selection.Replicator": {
+      "idx": 748,
+      "alias": [
+        "plugin.selectionreplicator"
+      ],
+      "alternates": []
+    },
+    "Ext.grid.selection.Rows": {
+      "idx": 749,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.selection.Selection": {
+      "idx": 745,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.selection.SelectionExtender": {
+      "idx": 750,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.grid.selection.SpreadsheetModel": {
+      "idx": 751,
+      "alias": [
+        "selection.spreadsheet"
+      ],
+      "alternates": []
+    },
+    "Ext.layout.Context": {
+      "idx": 756,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.layout.ContextItem": {
+      "idx": 754,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.layout.Layout": {
+      "idx": 468,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.layout.SizeModel": {
+      "idx": 467,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.layout.component.Auto": {
+      "idx": 482,
+      "alias": [
+        "layout.autocomponent"
+      ],
+      "alternates": []
+    },
+    "Ext.layout.component.Body": {
+      "idx": 758,
+      "alias": [
+        "layout.body"
+      ],
+      "alternates": []
+    },
+    "Ext.layout.component.BoundList": {
+      "idx": 610,
+      "alias": [
+        "layout.boundlist"
+      ],
+      "alternates": []
+    },
+    "Ext.layout.component.Component": {
+      "idx": 481,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.layout.component.Dock": {
+      "idx": 526,
+      "alias": [
+        "layout.dock"
+      ],
+      "alternates": [
+        "Ext.layout.component.AbstractDock"
+      ]
+    },
+    "Ext.layout.component.FieldSet": {
+      "idx": 759,
+      "alias": [
+        "layout.fieldset"
+      ],
+      "alternates": []
+    },
+    "Ext.layout.component.ProgressBar": {
+      "idx": 483,
+      "alias": [
+        "layout.progressbar"
+      ],
+      "alternates": []
+    },
+    "Ext.layout.component.field.FieldContainer": {
+      "idx": 583,
+      "alias": [
+        "layout.fieldcontainer"
+      ],
+      "alternates": []
+    },
+    "Ext.layout.component.field.HtmlEditor": {
+      "idx": 638,
+      "alias": [
+        "layout.htmleditor"
+      ],
+      "alternates": []
+    },
+    "Ext.layout.component.field.Text": {
+      "idx": 574,
+      "alias": [
+        "layout.textfield"
+      ],
+      "alternates": []
+    },
+    "Ext.layout.container.Absolute": {
+      "idx": 760,
+      "alias": [
+        "layout.absolute"
+      ],
+      "alternates": [
+        "Ext.layout.AbsoluteLayout"
+      ]
+    },
+    "Ext.layout.container.Accordion": {
+      "idx": 762,
+      "alias": [
+        "layout.accordion"
+      ],
+      "alternates": [
+        "Ext.layout.AccordionLayout"
+      ]
+    },
+    "Ext.layout.container.Anchor": {
+      "idx": 540,
+      "alias": [
+        "layout.anchor"
+      ],
+      "alternates": [
+        "Ext.layout.AnchorLayout"
+      ]
+    },
+    "Ext.layout.container.Auto": {
+      "idx": 470,
+      "alias": [
+        "layout.auto",
+        "layout.autocontainer"
+      ],
+      "alternates": []
+    },
+    "Ext.layout.container.Border": {
+      "idx": 764,
+      "alias": [
+        "layout.border"
+      ],
+      "alternates": [
+        "Ext.layout.BorderLayout"
+      ]
+    },
+    "Ext.layout.container.Box": {
+      "idx": 510,
+      "alias": [
+        "layout.box"
+      ],
+      "alternates": [
+        "Ext.layout.BoxLayout"
+      ]
+    },
+    "Ext.layout.container.Card": {
+      "idx": 766,
+      "alias": [
+        "layout.card"
+      ],
+      "alternates": [
+        "Ext.layout.CardLayout"
+      ]
+    },
+    "Ext.layout.container.Center": {
+      "idx": 767,
+      "alias": [
+        "layout.center",
+        "layout.ux.center"
+      ],
+      "alternates": [
+        "Ext.ux.layout.Center"
+      ]
+    },
+    "Ext.layout.container.CheckboxGroup": {
+      "idx": 586,
+      "alias": [
+        "layout.checkboxgroup"
+      ],
+      "alternates": []
+    },
+    "Ext.layout.container.Column": {
+      "idx": 543,
+      "alias": [
+        "layout.column"
+      ],
+      "alternates": [
+        "Ext.layout.ColumnLayout"
+      ]
+    },
+    "Ext.layout.container.ColumnSplitter": {
+      "idx": 549,
+      "alias": [
+        "widget.columnsplitter"
+      ],
+      "alternates": []
+    },
+    "Ext.layout.container.ColumnSplitterTracker": {
+      "idx": 548,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.layout.container.Container": {
+      "idx": 469,
+      "alias": [
+        "layout.container"
+      ],
+      "alternates": [
+        "Ext.layout.ContainerLayout"
+      ]
+    },
+    "Ext.layout.container.Dashboard": {
+      "idx": 550,
+      "alias": [
+        "layout.dashboard"
+      ],
+      "alternates": []
+    },
+    "Ext.layout.container.Editor": {
+      "idx": 474,
+      "alias": [
+        "layout.editor"
+      ],
+      "alternates": []
+    },
+    "Ext.layout.container.Fit": {
+      "idx": 655,
+      "alias": [
+        "layout.fit"
+      ],
+      "alternates": [
+        "Ext.layout.FitLayout",
+        "Ext.layout.Fit"
+      ]
+    },
+    "Ext.layout.container.Form": {
+      "idx": 768,
+      "alias": [
+        "layout.form"
+      ],
+      "alternates": [
+        "Ext.layout.FormLayout"
+      ]
+    },
+    "Ext.layout.container.HBox": {
+      "idx": 512,
+      "alias": [
+        "layout.hbox"
+      ],
+      "alternates": [
+        "Ext.layout.HBoxLayout"
+      ]
+    },
+    "Ext.layout.container.SegmentedButton": {
+      "idx": 494,
+      "alias": [
+        "layout.segmentedbutton"
+      ],
+      "alternates": []
+    },
+    "Ext.layout.container.Table": {
+      "idx": 534,
+      "alias": [
+        "layout.table"
+      ],
+      "alternates": [
+        "Ext.layout.TableLayout"
+      ]
+    },
+    "Ext.layout.container.VBox": {
+      "idx": 514,
+      "alias": [
+        "layout.vbox"
+      ],
+      "alternates": [
+        "Ext.layout.VBoxLayout"
+      ]
+    },
+    "Ext.layout.container.border.Region": {
+      "idx": 159,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.layout.container.boxOverflow.Menu": {
+      "idx": 640,
+      "alias": [
+        "box.overflow.Menu",
+        "box.overflow.menu"
+      ],
+      "alternates": [
+        "Ext.layout.boxOverflow.Menu"
+      ]
+    },
+    "Ext.layout.container.boxOverflow.None": {
+      "idx": 503,
+      "alias": [
+        "box.overflow.None",
+        "box.overflow.none"
+      ],
+      "alternates": [
+        "Ext.layout.boxOverflow.None"
+      ]
+    },
+    "Ext.layout.container.boxOverflow.Scroller": {
+      "idx": 504,
+      "alias": [
+        "box.overflow.Scroller",
+        "box.overflow.scroller"
+      ],
+      "alternates": [
+        "Ext.layout.boxOverflow.Scroller"
+      ]
+    },
+    "Ext.list.AbstractTreeItem": {
+      "idx": 403,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.list.RootTreeItem": {
+      "idx": 405,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.list.Tree": {
+      "idx": 410,
+      "alias": [
+        "widget.treelist"
+      ],
+      "alternates": []
+    },
+    "Ext.list.TreeItem": {
+      "idx": 407,
+      "alias": [
+        "widget.treelistitem"
+      ],
+      "alternates": []
+    },
+    "Ext.menu.Bar": {
+      "idx": 769,
+      "alias": [
+        "widget.menubar"
+      ],
+      "alternates": []
+    },
+    "Ext.menu.CheckItem": {
+      "idx": 708,
+      "alias": [
+        "widget.menucheckitem"
+      ],
+      "alternates": []
+    },
+    "Ext.menu.ColorPicker": {
+      "idx": 770,
+      "alias": [
+        "widget.colormenu"
+      ],
+      "alternates": []
+    },
+    "Ext.menu.DatePicker": {
+      "idx": 771,
+      "alias": [
+        "widget.datemenu"
+      ],
+      "alternates": []
+    },
+    "Ext.menu.Item": {
+      "idx": 706,
+      "alias": [
+        "widget.menuitem"
+      ],
+      "alternates": [
+        "Ext.menu.TextItem"
+      ]
+    },
+    "Ext.menu.Manager": {
+      "idx": 487,
+      "alias": [],
+      "alternates": [
+        "Ext.menu.MenuMgr"
+      ]
+    },
+    "Ext.menu.Menu": {
+      "idx": 711,
+      "alias": [
+        "widget.menu"
+      ],
+      "alternates": []
+    },
+    "Ext.menu.Separator": {
+      "idx": 709,
+      "alias": [
+        "widget.menuseparator"
+      ],
+      "alternates": []
+    },
+    "Ext.mixin.Accessible": {
+      "idx": 123,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Bindable": {
+      "idx": 116,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Bufferable": {
+      "idx": 46,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.ComponentDelegation": {
+      "idx": 117,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.ConfigProxy": {
+      "idx": 412,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.ConfigState": {
+      "idx": 413,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Container": {
+      "idx": 414,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Dirty": {
+      "idx": 246,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Factoryable": {
+      "idx": 38,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Focusable": {
+      "idx": 122,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.FocusableContainer": {
+      "idx": 417,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Hookable": {
+      "idx": 418,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Identifiable": {
+      "idx": 29,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Inheritable": {
+      "idx": 115,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.ItemRippler": {
+      "idx": 406,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Keyboard": {
+      "idx": 121,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Mashup": {
+      "idx": 419,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Observable": {
+      "idx": 30,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Pluggable": {
+      "idx": 120,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Queryable": {
+      "idx": 286,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Responsive": {
+      "idx": 126,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Selectable": {
+      "idx": 420,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.StoreWatcher": {
+      "idx": 421,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.StyleCacher": {
+      "idx": 422,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Templatable": {
+      "idx": 70,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Traversable": {
+      "idx": 423,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Watchable": {
+      "idx": 20,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.override.sparkline.Base": {
+      "idx": 434,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.GlobalEvents": {
+      "idx": 111,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.Progress": {
+      "idx": 130,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.Widget": {
+      "idx": 125,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.app.Application": {
+      "idx": 232,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.app.domain.Component": {
+      "idx": 164,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.app.domain.View": {
+      "idx": 235,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.dom.Element": {
+      "idx": 108,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.dom.Helper": {
+      "idx": 299,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.event.Event": {
+      "idx": 64,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.event.publisher.Dom": {
+      "idx": 67,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.event.publisher.Gesture": {
+      "idx": 69,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.list.AbstractTreeItem": {
+      "idx": 404,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.list.Tree": {
+      "idx": 411,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.list.TreeItem": {
+      "idx": 408,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.mixin.Focusable": {
+      "idx": 157,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.plugin.Abstract": {
+      "idx": 119,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.overrides.util.Positionable": {
+      "idx": 53,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.panel.Bar": {
+      "idx": 497,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.panel.DD": {
+      "idx": 525,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.panel.Header": {
+      "idx": 502,
+      "alias": [
+        "widget.header"
+      ],
+      "alternates": []
+    },
+    "Ext.panel.Panel": {
+      "idx": 531,
+      "alias": [
+        "widget.panel"
+      ],
+      "alternates": [
+        "Ext.Panel"
+      ]
+    },
+    "Ext.panel.Pinnable": {
+      "idx": 772,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.panel.Proxy": {
+      "idx": 524,
+      "alias": [],
+      "alternates": [
+        "Ext.dd.PanelProxy"
+      ]
+    },
+    "Ext.panel.Table": {
+      "idx": 656,
+      "alias": [
+        "widget.tablepanel"
+      ],
+      "alternates": []
+    },
+    "Ext.panel.Title": {
+      "idx": 499,
+      "alias": [
+        "widget.title"
+      ],
+      "alternates": []
+    },
+    "Ext.panel.Tool": {
+      "idx": 501,
+      "alias": [
+        "widget.tool"
+      ],
+      "alternates": []
+    },
+    "Ext.parse.Parser": {
+      "idx": 265,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.parse.Symbol": {
+      "idx": 259,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.parse.Tokenizer": {
+      "idx": 258,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.parse.symbol.Constant": {
+      "idx": 260,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.parse.symbol.Infix": {
+      "idx": 261,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.parse.symbol.InfixRight": {
+      "idx": 262,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.parse.symbol.Paren": {
+      "idx": 263,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.parse.symbol.Prefix": {
+      "idx": 264,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.perf.Accumulator": {
+      "idx": 424,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.perf.Monitor": {
+      "idx": 425,
+      "alias": [],
+      "alternates": [
+        "Ext.Perf"
+      ]
+    },
+    "Ext.picker.Color": {
+      "idx": 637,
+      "alias": [
+        "widget.colorpicker"
+      ],
+      "alternates": [
+        "Ext.ColorPalette"
+      ]
+    },
+    "Ext.picker.Date": {
+      "idx": 624,
+      "alias": [
+        "widget.datepicker"
+      ],
+      "alternates": [
+        "Ext.DatePicker"
+      ]
+    },
+    "Ext.picker.Month": {
+      "idx": 621,
+      "alias": [
+        "widget.monthpicker"
+      ],
+      "alternates": [
+        "Ext.MonthPicker"
+      ]
+    },
+    "Ext.picker.Time": {
+      "idx": 648,
+      "alias": [
+        "widget.timepicker"
+      ],
+      "alternates": []
+    },
+    "Ext.plugin.Abstract": {
+      "idx": 118,
+      "alias": [],
+      "alternates": [
+        "Ext.AbstractPlugin"
+      ]
+    },
+    "Ext.plugin.AbstractClipboard": {
+      "idx": 426,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.plugin.LazyItems": {
+      "idx": 773,
+      "alias": [
+        "plugin.lazyitems"
+      ],
+      "alternates": []
+    },
+    "Ext.plugin.Manager": {
+      "idx": 140,
+      "alias": [],
+      "alternates": [
+        "Ext.PluginManager",
+        "Ext.PluginMgr"
+      ]
+    },
+    "Ext.plugin.MouseEnter": {
+      "idx": 427,
+      "alias": [
+        "plugin.mouseenter"
+      ],
+      "alternates": []
+    },
+    "Ext.plugin.Responsive": {
+      "idx": 774,
+      "alias": [
+        "plugin.responsive"
+      ],
+      "alternates": []
+    },
+    "Ext.plugin.Viewport": {
+      "idx": 538,
+      "alias": [
+        "plugin.viewport"
+      ],
+      "alternates": []
+    },
+    "Ext.promise.Consequence": {
+      "idx": 33,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.promise.Deferred": {
+      "idx": 34,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.promise.Promise": {
+      "idx": 35,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.resizer.BorderSplitter": {
+      "idx": 763,
+      "alias": [
+        "widget.bordersplitter"
+      ],
+      "alternates": []
+    },
+    "Ext.resizer.BorderSplitterTracker": {
+      "idx": 775,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.resizer.Handle": {
+      "idx": 777,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.resizer.ResizeTracker": {
+      "idx": 778,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.resizer.Resizer": {
+      "idx": 780,
+      "alias": [],
+      "alternates": [
+        "Ext.Resizable"
+      ]
+    },
+    "Ext.resizer.Splitter": {
+      "idx": 507,
+      "alias": [
+        "widget.splitter"
+      ],
+      "alternates": []
+    },
+    "Ext.resizer.SplitterTracker": {
+      "idx": 546,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.route.Action": {
+      "idx": 168,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.route.Handler": {
+      "idx": 167,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.route.Mixin": {
+      "idx": 172,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.route.Route": {
+      "idx": 169,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.route.Router": {
+      "idx": 171,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.Component": {
+      "idx": 160,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.button.Button": {
+      "idx": 489,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.button.Segmented": {
+      "idx": 496,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.container.Container": {
+      "idx": 473,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.dd.DD": {
+      "idx": 520,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.dom.Element": {
+      "idx": 109,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.event.Event": {
+      "idx": 65,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.form.Labelable": {
+      "idx": 571,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.form.field.Tag": {
+      "idx": 646,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.grid.CellEditor": {
+      "idx": 653,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.grid.ColumnLayout": {
+      "idx": 659,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.grid.NavigationModel": {
+      "idx": 662,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.grid.column.Column": {
+      "idx": 685,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.grid.locking.Lockable": {
+      "idx": 728,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.grid.plugin.BufferedRenderer": {
+      "idx": 730,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.grid.plugin.HeaderResizer": {
+      "idx": 679,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.grid.plugin.RowEditing": {
+      "idx": 736,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.layout.ContextItem": {
+      "idx": 755,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.layout.component.Dock": {
+      "idx": 527,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.layout.container.Absolute": {
+      "idx": 761,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.layout.container.Border": {
+      "idx": 765,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.layout.container.Box": {
+      "idx": 511,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.layout.container.Column": {
+      "idx": 544,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.layout.container.HBox": {
+      "idx": 513,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.layout.container.VBox": {
+      "idx": 515,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.layout.container.boxOverflow.Menu": {
+      "idx": 641,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.layout.container.boxOverflow.Scroller": {
+      "idx": 505,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.panel.Bar": {
+      "idx": 498,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.panel.Panel": {
+      "idx": 532,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.panel.Title": {
+      "idx": 500,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.resizer.BorderSplitterTracker": {
+      "idx": 776,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.resizer.ResizeTracker": {
+      "idx": 779,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.resizer.SplitterTracker": {
+      "idx": 547,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.scroll.Scroller": {
+      "idx": 148,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.slider.Multi": {
+      "idx": 789,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.slider.Widget": {
+      "idx": 792,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.tab.Bar": {
+      "idx": 798,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.tip.QuickTipManager": {
+      "idx": 636,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.tree.Column": {
+      "idx": 804,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.util.Renderable": {
+      "idx": 152,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.view.NavigationModel": {
+      "idx": 606,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.rtl.view.Table": {
+      "idx": 668,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.scroll.LockingScroller": {
+      "idx": 726,
+      "alias": [
+        "scroller.locking"
+      ],
+      "alternates": []
+    },
+    "Ext.scroll.Scroller": {
+      "idx": 147,
+      "alias": [
+        "scroller.scroller"
+      ],
+      "alternates": [
+        "Ext.scroll.NativeScroller"
+      ]
+    },
+    "Ext.scroll.TableScroller": {
+      "idx": 666,
+      "alias": [
+        "scroller.table"
+      ],
+      "alternates": []
+    },
+    "Ext.selection.CellModel": {
+      "idx": 781,
+      "alias": [
+        "selection.cellmodel"
+      ],
+      "alternates": []
+    },
+    "Ext.selection.CheckboxModel": {
+      "idx": 783,
+      "alias": [
+        "selection.checkboxmodel"
+      ],
+      "alternates": []
+    },
+    "Ext.selection.DataViewModel": {
+      "idx": 604,
+      "alias": [
+        "selection.dataviewmodel"
+      ],
+      "alternates": []
+    },
+    "Ext.selection.Model": {
+      "idx": 603,
+      "alias": [
+        "selection.abstract"
+      ],
+      "alternates": [
+        "Ext.AbstractSelectionModel"
+      ]
+    },
+    "Ext.selection.RowModel": {
+      "idx": 782,
+      "alias": [
+        "selection.rowmodel"
+      ],
+      "alternates": []
+    },
+    "Ext.selection.TreeModel": {
+      "idx": 785,
+      "alias": [
+        "selection.treemodel"
+      ],
+      "alternates": []
+    },
+    "Ext.slider.Multi": {
+      "idx": 788,
+      "alias": [
+        "widget.multislider"
+      ],
+      "alternates": [
+        "Ext.slider.MultiSlider"
+      ]
+    },
+    "Ext.slider.Single": {
+      "idx": 790,
+      "alias": [
+        "widget.slider",
+        "widget.sliderfield"
+      ],
+      "alternates": [
+        "Ext.Slider",
+        "Ext.form.SliderField",
+        "Ext.slider.SingleSlider",
+        "Ext.slider.Slider"
+      ]
+    },
+    "Ext.slider.Thumb": {
+      "idx": 786,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.slider.Tip": {
+      "idx": 787,
+      "alias": [
+        "widget.slidertip"
+      ],
+      "alternates": []
+    },
+    "Ext.slider.Widget": {
+      "idx": 791,
+      "alias": [
+        "widget.sliderwidget"
+      ],
+      "alternates": []
+    },
+    "Ext.sparkline.Bar": {
+      "idx": 437,
+      "alias": [
+        "widget.sparklinebar"
+      ],
+      "alternates": []
+    },
+    "Ext.sparkline.BarBase": {
+      "idx": 435,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.sparkline.Base": {
+      "idx": 433,
+      "alias": [
+        "widget.sparkline"
+      ],
+      "alternates": []
+    },
+    "Ext.sparkline.Box": {
+      "idx": 438,
+      "alias": [
+        "widget.sparklinebox"
+      ],
+      "alternates": []
+    },
+    "Ext.sparkline.Bullet": {
+      "idx": 439,
+      "alias": [
+        "widget.sparklinebullet"
+      ],
+      "alternates": []
+    },
+    "Ext.sparkline.CanvasBase": {
+      "idx": 429,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.sparkline.CanvasCanvas": {
+      "idx": 430,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.sparkline.Discrete": {
+      "idx": 440,
+      "alias": [
+        "widget.sparklinediscrete"
+      ],
+      "alternates": []
+    },
+    "Ext.sparkline.Line": {
+      "idx": 441,
+      "alias": [
+        "widget.sparklineline"
+      ],
+      "alternates": []
+    },
+    "Ext.sparkline.Pie": {
+      "idx": 442,
+      "alias": [
+        "widget.sparklinepie"
+      ],
+      "alternates": []
+    },
+    "Ext.sparkline.RangeMap": {
+      "idx": 436,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.sparkline.Shape": {
+      "idx": 428,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.sparkline.TriState": {
+      "idx": 443,
+      "alias": [
+        "widget.sparklinetristate"
+      ],
+      "alternates": []
+    },
+    "Ext.sparkline.VmlCanvas": {
+      "idx": 431,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.state.CookieProvider": {
+      "idx": 793,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.state.LocalStorageProvider": {
+      "idx": 794,
+      "alias": [
+        "state.localstorage"
+      ],
+      "alternates": []
+    },
+    "Ext.state.Manager": {
+      "idx": 154,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.state.Provider": {
+      "idx": 153,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.state.Stateful": {
+      "idx": 155,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.tab.Bar": {
+      "idx": 797,
+      "alias": [
+        "widget.tabbar"
+      ],
+      "alternates": []
+    },
+    "Ext.tab.Panel": {
+      "idx": 799,
+      "alias": [
+        "widget.tabpanel"
+      ],
+      "alternates": [
+        "Ext.TabPanel"
+      ]
+    },
+    "Ext.tab.Tab": {
+      "idx": 795,
+      "alias": [
+        "widget.tab"
+      ],
+      "alternates": []
+    },
+    "Ext.theme.Material": {
+      "idx": 816,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.material.Component": {
+      "idx": 163,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.material.button.Button": {
+      "idx": 490,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.material.button.Split": {
+      "idx": 492,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.material.form.field.Checkbox": {
+      "idx": 590,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.material.form.field.Radio": {
+      "idx": 597,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.material.form.field.Tag": {
+      "idx": 647,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.material.form.field.Text": {
+      "idx": 578,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.material.menu.Menu": {
+      "idx": 714,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.material.tab.Tab": {
+      "idx": 796,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.material.tree.View": {
+      "idx": 807,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.material.view.Table": {
+      "idx": 669,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.material.window.MessageBox": {
+      "idx": 581,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.neptune.Component": {
+      "idx": 161,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.neptune.container.ButtonGroup": {
+      "idx": 536,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.neptune.form.field.HtmlEditor": {
+      "idx": 643,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.neptune.grid.RowEditor": {
+      "idx": 674,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.neptune.grid.column.RowNumberer": {
+      "idx": 695,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.neptune.layout.component.Dock": {
+      "idx": 528,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.neptune.menu.Menu": {
+      "idx": 712,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.neptune.menu.Separator": {
+      "idx": 710,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.neptune.panel.Panel": {
+      "idx": 533,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.neptune.panel.Table": {
+      "idx": 657,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.neptune.picker.Month": {
+      "idx": 622,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.neptune.resizer.Splitter": {
+      "idx": 508,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.neptune.toolbar.Paging": {
+      "idx": 617,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.neptune.toolbar.Toolbar": {
+      "idx": 517,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.triton.Component": {
+      "idx": 162,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.triton.form.field.Checkbox": {
+      "idx": 589,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.triton.grid.column.Check": {
+      "idx": 691,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.triton.grid.column.Column": {
+      "idx": 686,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.triton.grid.column.RowNumberer": {
+      "idx": 696,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.triton.grid.plugin.RowExpander": {
+      "idx": 738,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.triton.grid.selection.SpreadsheetModel": {
+      "idx": 752,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.triton.list.TreeItem": {
+      "idx": 409,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.triton.menu.Item": {
+      "idx": 707,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.triton.menu.Menu": {
+      "idx": 713,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.triton.picker.Date": {
+      "idx": 625,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.triton.picker.Month": {
+      "idx": 623,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.triton.resizer.Splitter": {
+      "idx": 509,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.triton.selection.CheckboxModel": {
+      "idx": 784,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.theme.triton.toolbar.Paging": {
+      "idx": 618,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.tip.QuickTip": {
+      "idx": 634,
+      "alias": [
+        "widget.quicktip"
+      ],
+      "alternates": [
+        "Ext.QuickTip"
+      ]
+    },
+    "Ext.tip.QuickTipManager": {
+      "idx": 635,
+      "alias": [],
+      "alternates": [
+        "Ext.QuickTips"
+      ]
+    },
+    "Ext.tip.Tip": {
+      "idx": 632,
+      "alias": [
+        "widget.tip"
+      ],
+      "alternates": [
+        "Ext.Tip"
+      ]
+    },
+    "Ext.tip.ToolTip": {
+      "idx": 633,
+      "alias": [
+        "widget.tooltip"
+      ],
+      "alternates": [
+        "Ext.ToolTip"
+      ]
+    },
+    "Ext.toolbar.Breadcrumb": {
+      "idx": 800,
+      "alias": [
+        "widget.breadcrumb"
+      ],
+      "alternates": []
+    },
+    "Ext.toolbar.Fill": {
+      "idx": 801,
+      "alias": [
+        "widget.tbfill"
+      ],
+      "alternates": [
+        "Ext.Toolbar.Fill"
+      ]
+    },
+    "Ext.toolbar.Item": {
+      "idx": 611,
+      "alias": [
+        "widget.tbitem"
+      ],
+      "alternates": [
+        "Ext.Toolbar.Item"
+      ]
+    },
+    "Ext.toolbar.Paging": {
+      "idx": 616,
+      "alias": [
+        "widget.pagingtoolbar"
+      ],
+      "alternates": [
+        "Ext.PagingToolbar"
+      ]
+    },
+    "Ext.toolbar.Separator": {
+      "idx": 639,
+      "alias": [
+        "widget.tbseparator"
+      ],
+      "alternates": [
+        "Ext.Toolbar.Separator"
+      ]
+    },
+    "Ext.toolbar.Spacer": {
+      "idx": 802,
+      "alias": [
+        "widget.tbspacer"
+      ],
+      "alternates": [
+        "Ext.Toolbar.Spacer"
+      ]
+    },
+    "Ext.toolbar.TextItem": {
+      "idx": 612,
+      "alias": [
+        "widget.tbtext"
+      ],
+      "alternates": [
+        "Ext.Toolbar.TextItem"
+      ]
+    },
+    "Ext.toolbar.Toolbar": {
+      "idx": 516,
+      "alias": [
+        "widget.toolbar"
+      ],
+      "alternates": [
+        "Ext.Toolbar"
+      ]
+    },
+    "Ext.tree.Column": {
+      "idx": 803,
+      "alias": [
+        "widget.treecolumn"
+      ],
+      "alternates": []
+    },
+    "Ext.tree.NavigationModel": {
+      "idx": 805,
+      "alias": [
+        "view.navigation.tree"
+      ],
+      "alternates": []
+    },
+    "Ext.tree.Panel": {
+      "idx": 808,
+      "alias": [
+        "widget.treepanel"
+      ],
+      "alternates": [
+        "Ext.tree.TreePanel",
+        "Ext.TreePanel"
+      ]
+    },
+    "Ext.tree.View": {
+      "idx": 806,
+      "alias": [
+        "widget.treeview"
+      ],
+      "alternates": []
+    },
+    "Ext.tree.ViewDragZone": {
+      "idx": 810,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.tree.ViewDropZone": {
+      "idx": 811,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.tree.plugin.TreeViewDragDrop": {
+      "idx": 812,
+      "alias": [
+        "plugin.treeviewdragdrop"
+      ],
+      "alternates": []
+    },
+    "Ext.util.AbstractMixedCollection": {
+      "idx": 84,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Animate": {
+      "idx": 105,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Bag": {
+      "idx": 237,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Base64": {
+      "idx": 444,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.BasicFilter": {
+      "idx": 81,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.CSS": {
+      "idx": 141,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.CSV": {
+      "idx": 446,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.ClickRepeater": {
+      "idx": 447,
+      "alias": [],
+      "alternates": [
+        "Ext.util.TapRepeater"
+      ]
+    },
+    "Ext.util.Collection": {
+      "idx": 177,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.CollectionKey": {
+      "idx": 175,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Color": {
+      "idx": 432,
+      "alias": [],
+      "alternates": [
+        "Ext.draw.Color"
+      ]
+    },
+    "Ext.util.ComponentDragger": {
+      "idx": 568,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Cookies": {
+      "idx": 448,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.DelimitedValue": {
+      "idx": 445,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.ElementContainer": {
+      "idx": 150,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Event": {
+      "idx": 28,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Filter": {
+      "idx": 82,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.FilterCollection": {
+      "idx": 222,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Floating": {
+      "idx": 149,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Fly": {
+      "idx": 257,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Format": {
+      "idx": 131,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Group": {
+      "idx": 214,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.GroupCollection": {
+      "idx": 223,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Grouper": {
+      "idx": 176,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.HashMap": {
+      "idx": 31,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.History": {
+      "idx": 170,
+      "alias": [],
+      "alternates": [
+        "Ext.History"
+      ]
+    },
+    "Ext.util.Inflector": {
+      "idx": 185,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.ItemCollection": {
+      "idx": 449,
+      "alias": [],
+      "alternates": [
+        "Ext.ItemCollection"
+      ]
+    },
+    "Ext.util.KeyMap": {
+      "idx": 415,
+      "alias": [],
+      "alternates": [
+        "Ext.KeyMap"
+      ]
+    },
+    "Ext.util.KeyNav": {
+      "idx": 416,
+      "alias": [],
+      "alternates": [
+        "Ext.KeyNav"
+      ]
+    },
+    "Ext.util.LocalStorage": {
+      "idx": 450,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.LruCache": {
+      "idx": 49,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Memento": {
+      "idx": 529,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.MixedCollection": {
+      "idx": 87,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.ObjectTemplate": {
+      "idx": 179,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Observable": {
+      "idx": 83,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Offset": {
+      "idx": 60,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.PaintMonitor": {
+      "idx": 78,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Point": {
+      "idx": 62,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Positionable": {
+      "idx": 52,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.ProtoElement": {
+      "idx": 138,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Queue": {
+      "idx": 753,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Region": {
+      "idx": 61,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Renderable": {
+      "idx": 151,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Schedulable": {
+      "idx": 248,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Scheduler": {
+      "idx": 238,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.SizeMonitor": {
+      "idx": 74,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Sortable": {
+      "idx": 86,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Sorter": {
+      "idx": 85,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.SorterCollection": {
+      "idx": 221,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Spans": {
+      "idx": 451,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.StoreHolder": {
+      "idx": 479,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.TaskManager": {
+      "idx": 453,
+      "alias": [],
+      "alternates": [
+        "Ext.TaskManager"
+      ]
+    },
+    "Ext.util.TaskRunner": {
+      "idx": 88,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.TextMetrics": {
+      "idx": 454,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.TsvDecoder": {
+      "idx": 452,
+      "alias": [],
+      "alternates": [
+        "Ext.util.TSV"
+      ]
+    },
+    "Ext.util.XTemplateCompiler": {
+      "idx": 134,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.XTemplateParser": {
+      "idx": 133,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.paintmonitor.Abstract": {
+      "idx": 76,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.paintmonitor.CssAnimation": {
+      "idx": 77,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.paintmonitor.OverflowChange": {
+      "idx": 455,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.sizemonitor.Abstract": {
+      "idx": 72,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.sizemonitor.OverflowChange": {
+      "idx": 456,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.sizemonitor.Scroll": {
+      "idx": 73,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.translatable.Abstract": {
+      "idx": 144,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.translatable.CssPosition": {
+      "idx": 457,
+      "alias": [
+        "translatable.cssposition"
+      ],
+      "alternates": []
+    },
+    "Ext.util.translatable.CssTransform": {
+      "idx": 458,
+      "alias": [
+        "translatable.csstransform"
+      ],
+      "alternates": []
+    },
+    "Ext.util.translatable.Dom": {
+      "idx": 145,
+      "alias": [
+        "translatable.dom"
+      ],
+      "alternates": []
+    },
+    "Ext.util.translatable.ScrollParent": {
+      "idx": 459,
+      "alias": [
+        "translatable.scrollparent"
+      ],
+      "alternates": []
+    },
+    "Ext.util.translatable.ScrollPosition": {
+      "idx": 146,
+      "alias": [
+        "translatable.scrollposition"
+      ],
+      "alternates": []
+    },
+    "Ext.view.AbstractView": {
+      "idx": 607,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.view.BoundList": {
+      "idx": 619,
+      "alias": [
+        "widget.boundlist"
+      ],
+      "alternates": [
+        "Ext.BoundList"
+      ]
+    },
+    "Ext.view.BoundListKeyNav": {
+      "idx": 609,
+      "alias": [
+        "view.navigation.boundlist"
+      ],
+      "alternates": []
+    },
+    "Ext.view.DragZone": {
+      "idx": 809,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.view.DropZone": {
+      "idx": 676,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.view.MultiSelector": {
+      "idx": 814,
+      "alias": [
+        "widget.multiselector"
+      ],
+      "alternates": []
+    },
+    "Ext.view.MultiSelectorSearch": {
+      "idx": 813,
+      "alias": [
+        "widget.multiselector-search"
+      ],
+      "alternates": []
+    },
+    "Ext.view.NavigationModel": {
+      "idx": 605,
+      "alias": [
+        "view.navigation.default"
+      ],
+      "alternates": []
+    },
+    "Ext.view.NodeCache": {
+      "idx": 665,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.view.Table": {
+      "idx": 667,
+      "alias": [
+        "widget.gridview",
+        "widget.tableview"
+      ],
+      "alternates": [
+        "Ext.grid.View"
+      ]
+    },
+    "Ext.view.TableLayout": {
+      "idx": 663,
+      "alias": [
+        "layout.tableview"
+      ],
+      "alternates": []
+    },
+    "Ext.view.TagKeyNav": {
+      "idx": 644,
+      "alias": [
+        "view.navigation.tagfield"
+      ],
+      "alternates": []
+    },
+    "Ext.view.View": {
+      "idx": 608,
+      "alias": [
+        "widget.dataview"
+      ],
+      "alternates": [
+        "Ext.DataView"
+      ]
+    },
+    "Ext.window.MessageBox": {
+      "idx": 580,
+      "alias": [
+        "widget.messagebox"
+      ],
+      "alternates": []
+    },
+    "Ext.window.Toast": {
+      "idx": 815,
+      "alias": [
+        "widget.toast"
+      ],
+      "alternates": []
+    },
+    "Ext.window.Window": {
+      "idx": 569,
+      "alias": [
+        "widget.window"
+      ],
+      "alternates": [
+        "Ext.Window"
+      ]
+    },
+    "MyAppName.view.main.MainViewModel": {
+      "idx": 842,
+      "alias": [
+        "viewmodel.mainviewmodel"
+      ],
+      "alternates": []
+    }
+  },
+  "packages": {
+    "classic": {
+      "css": true,
+      "extTier": "pro",
+      "included": true,
+      "language": {
+        "js": {
+          "input": {
+            "version": "ES5"
+          }
+        }
+      },
+      "namespace": "Ext",
+      "required": true,
+      "requires": [
+        "ext",
+        "core"
+      ],
+      "version": "7.0.0"
+    },
+    "cmd": {
+      "version": "7.0.0.40"
+    },
+    "core": {
+      "css": true,
+      "extTier": "pro",
+      "included": true,
+      "required": true,
+      "requires": [
+        "ext",
+        "classic"
+      ],
+      "version": "7.0.0"
+    },
+    "ext": {
+      "css": true,
+      "extTier": "pro",
+      "included": true,
+      "language": {
+        "js": {
+          "input": {
+            "version": "ES5"
+          }
+        }
+      },
+      "license": "gpl",
+      "namespace": "Ext",
+      "required": true,
+      "requires": [],
+      "version": "7.0.0"
+    },
+    "font-awesome": {
+      "css": true,
+      "extTier": "pro",
+      "included": true,
+      "namespace": "Ext",
+      "required": true,
+      "requires": [
+        "ext",
+        "core",
+        "classic",
+        "theme-base",
+        "theme-neutral",
+        "theme-neptune"
+      ],
+      "theme": "theme-neptune",
+      "version": "7.0.0"
+    },
+    "font-ext": {
+      "css": true,
+      "extTier": "pro",
+      "included": true,
+      "namespace": "Ext",
+      "required": true,
+      "requires": [
+        "ext",
+        "core",
+        "classic",
+        "theme-base",
+        "theme-neutral",
+        "theme-neptune"
+      ],
+      "theme": "theme-neptune",
+      "version": "7.0.0"
+    },
+    "theme-base": {
+      "css": true,
+      "extTier": "pro",
+      "included": true,
+      "namespace": "Ext",
+      "required": true,
+      "requires": [
+        "ext",
+        "core",
+        "classic"
+      ],
+      "version": "7.0.0"
+    },
+    "theme-material": {
+      "css": true,
+      "extTier": "pro",
+      "extend": "theme-triton",
+      "included": true,
+      "namespace": "Ext",
+      "required": true,
+      "requires": [
+        "ext",
+        "core",
+        "classic",
+        "theme-base",
+        "theme-neutral",
+        "theme-neptune",
+        "font-awesome",
+        "font-ext",
+        "theme-triton"
+      ],
+      "version": "7.0.0"
+    },
+    "theme-neptune": {
+      "css": true,
+      "extTier": "pro",
+      "extend": "theme-neutral",
+      "included": true,
+      "namespace": "Ext",
+      "required": true,
+      "requires": [
+        "ext",
+        "core",
+        "classic",
+        "theme-base",
+        "theme-neutral"
+      ],
+      "version": "7.0.0"
+    },
+    "theme-neutral": {
+      "css": true,
+      "extTier": "pro",
+      "extend": "theme-base",
+      "included": true,
+      "namespace": "Ext",
+      "required": true,
+      "requires": [
+        "ext",
+        "core",
+        "classic",
+        "theme-base"
+      ],
+      "version": "7.0.0"
+    },
+    "theme-triton": {
+      "css": true,
+      "extTier": "pro",
+      "extend": "theme-neptune",
+      "included": true,
+      "namespace": "Ext",
+      "required": true,
+      "requires": [
+        "ext",
+        "core",
+        "classic",
+        "theme-base",
+        "theme-neutral",
+        "theme-neptune",
+        "font-awesome",
+        "font-ext"
+      ],
+      "version": "7.0.0"
+    }
+  },
+  "js": [
+    {
+      "bootstrap": true,
+      "remote": true,
+      "platform": [
+        "fashion"
+      ],
+      "isSdk": false,
+      "path": "../../../../../../../~cmd/extensions/sencha-fashion/fashion/fashion.js/"
+    },
+    {
+      "path": "/admin/index/pimcoreEditmodeScriptsMinified.js"
+    },
+    {
+      "bootstrap": true,
+      "remote": true,
+      "platform": [
+        "fashion"
+      ],
+      "isSdk": false,
+      "path": "../../../../../../../~cmd/extensions/sencha-fashion/sass-compiler.js/"
+    }
+  ],
+  "css": [
+    {
+      "remote": false,
+      "exclude": [
+        "fashion"
+      ],
+      "path": "/bundles/pimcoreadmin/PimcoreApp-all_1.css"
+    },
+    {
+      "remote": false,
+      "exclude": [
+        "fashion"
+      ],
+      "path": "/bundles/pimcoreadmin/PimcoreApp-all_2.css"
+    }
+  ],
+  "cache": {
+    "enable": false,
+    "deltas": "desktop/deltas"
+  },
+  "fashion": {
+    "inliner": {
+      "enable": false
+    },
+    "missingParameters": "error"
+  },
+  "name": "Pimcore",
+  "namespace": "Pimcore",
+  "version": "1.0.0.0",
+  "framework": "ext",
+  "template": "classicdesktop",
+  "loader": {
+    "cache": false,
+    "cacheParam": "_dc"
+  },
+  "id": "64cb8a0f-c789-4c1a-9129-acc62dbafa54",
+  "watch": {
+    "delay": 250
+  },
+  "toolkit": "classic",
+  "theme": "theme-material",
+  "profile": "desktop",
+  "hash": "2706b525cd251c72bec5f5df7cc3642529747320",
+  "resources": {
+    "path": "../build/development/CoolClassicDesktopApp/desktop/resources",
+    "shared": "../build/development/CoolClassicDesktopApp/resources"
+  }
+}

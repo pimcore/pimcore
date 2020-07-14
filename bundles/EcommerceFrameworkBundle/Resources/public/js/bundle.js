@@ -77,46 +77,46 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
         var config = pimcore.bundle.EcommerceFramework.bundle.config;
 
         // pricing rules
-        if (perspectiveCfg.inToolbar("ecommerce.rules") && user.isAllowed("bundle_ecommerce_pricing_rules") && (!config.menu || config.menu.pricing_rules.enabled)) {
-            // add pricing rules to menu
-            // create item
-            var pricingPanelId = "bundle_ecommerce_pricing_config";
-            var item = {
-                text: t("bundle_ecommerce_pricing_rules"),
-                iconCls: "pimcore_nav_icon_commerce_pricing_rules",
-                handler: function () {
-                    try {
-                        pimcore.globalmanager.get(pricingPanelId).activate();
+        if (config) {
+            if (perspectiveCfg.inToolbar("ecommerce.rules") && user.isAllowed("bundle_ecommerce_pricing_rules") && (!config.menu || config.menu.pricing_rules.enabled)) {
+                // add pricing rules to menu
+                // create item
+                var pricingPanelId = "bundle_ecommerce_pricing_config";
+                var item = {
+                    text: t("bundle_ecommerce_pricing_rules"),
+                    iconCls: "pimcore_nav_icon_commerce_pricing_rules",
+                    handler: function () {
+                        try {
+                            pimcore.globalmanager.get(pricingPanelId).activate();
+                        } catch (e) {
+                            pimcore.globalmanager.add(pricingPanelId, new pimcore.bundle.EcommerceFramework.pricing.config.panel(pricingPanelId));
+                        }
                     }
-                    catch (e) {
-                        pimcore.globalmanager.add(pricingPanelId, new pimcore.bundle.EcommerceFramework.pricing.config.panel(pricingPanelId));
-                    }
-                }
-            };
+                };
 
-            // add to menu
-            menuItems.add(item);
-        }
+                // add to menu
+                menuItems.add(item);
+            }
 
-        // order backend
-        if (perspectiveCfg.inToolbar("ecommerce.orderbackend") && user.isAllowed("bundle_ecommerce_back-office_order") && (!config.menu || config.menu.order_list.enabled)) {
-            // create item
-            var orderPanelId = "bundle_ecommerce_back-office_order";
-            var item = {
-                text: t("bundle_ecommerce_back-office_order"),
-                iconCls: "pimcore_nav_icon_commerce_backoffice",
-                handler: function () {
-                    try {
-                        pimcore.globalmanager.get(orderPanelId).activate();
+            // order backend
+            if (perspectiveCfg.inToolbar("ecommerce.orderbackend") && user.isAllowed("bundle_ecommerce_back-office_order") && (!config.menu || config.menu.order_list.enabled)) {
+                // create item
+                var orderPanelId = "bundle_ecommerce_back-office_order";
+                var item = {
+                    text: t("bundle_ecommerce_back-office_order"),
+                    iconCls: "pimcore_nav_icon_commerce_backoffice",
+                    handler: function () {
+                        try {
+                            pimcore.globalmanager.get(orderPanelId).activate();
+                        } catch (e) {
+                            pimcore.globalmanager.add(orderPanelId, new pimcore.tool.genericiframewindow(orderPanelId, config.menu.order_list.route, "bundle_ecommerce_back-office_order", t('bundle_ecommerce_back-office_order')));
+                        }
                     }
-                    catch (e) {
-                        pimcore.globalmanager.add(orderPanelId, new pimcore.tool.genericiframewindow(orderPanelId, config.menu.order_list.route, "bundle_ecommerce_back-office_order", t('bundle_ecommerce_back-office_order')));
-                    }
-                }
-            };
+                };
 
-            // add to menu
-            menuItems.add(item);
+                // add to menu
+                menuItems.add(item);
+            }
         }
 
         if (user.isAllowed('piwik_reports')) {

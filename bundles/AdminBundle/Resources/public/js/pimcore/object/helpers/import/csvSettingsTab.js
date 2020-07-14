@@ -57,7 +57,7 @@ pimcore.object.helpers.import.csvSettingsTab = Class.create({
                 dialect: dialect
             },
             success: function (response) {
-                var rdata = Ext.decode(response.responseText);
+                var rdata = response.responseJson;
                 if (rdata && rdata.success) {
                     Ext.apply(this.callback.config, rdata.config);
                     this.callback.config.resolverSettings = this.callback.config.resolverSettings || {

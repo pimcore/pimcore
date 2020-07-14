@@ -377,11 +377,13 @@ pimcore.helpers.getTreeNodeLoadingIndicatorElements = function (type, id) {
             if (node) {
                 var view = tree.getView();
                 var nodeEl = Ext.fly(view.getNodeByRecord(node));
-                var icon = nodeEl.query(".x-tree-icon")[0];
+                if (nodeEl) {
+                    var icon = nodeEl.query(".x-tree-icon")[0];
 
-                var iconEl = Ext.get(icon);
-                if (iconEl) {
-                    elements.push(iconEl);
+                    var iconEl = Ext.get(icon);
+                    if (iconEl) {
+                        elements.push(iconEl);
+                    }
                 }
             }
         } catch (e) {

@@ -133,7 +133,7 @@ pimcore.element.dependencies = Class.create({
             callback : function(records, operation, success) {
                 if (success) {
                     var response = operation.getResponse();
-                    this.requiresData = Ext.decode(response.responseText);
+                    this.requiresData = response.responseJson;
 
                     if (this.requiresData.hasHidden) {
                         this.requiresNote.show();
@@ -233,7 +233,7 @@ pimcore.element.dependencies = Class.create({
             callback : function(records, operation, success) {
                 if (success) {
                     var response = operation.getResponse();
-                    this.requiredByData = Ext.decode(response.responseText);
+                    this.requiredByData = response.responseJson;
 
                     if (this.requiredByData.hasHidden) {
                         this.requiredByNote.show();
