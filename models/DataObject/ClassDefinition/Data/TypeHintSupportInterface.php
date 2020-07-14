@@ -21,8 +21,6 @@ interface TypeHintSupportInterface
 {
 
     /**
-     * Return an empty string if you do not want to add a type-hint input type
-     *
      * @return string|null
      */
     public function getParameterTypeDeclaration(): ?string;
