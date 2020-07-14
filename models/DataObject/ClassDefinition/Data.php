@@ -658,28 +658,40 @@ abstract class Data
      * @return string|null
      */
     public function getParameterTypeDeclaration(): ?string {
-        return '?' . $this->getPhpdocInputType();
+        if ($this->getPhpdocInputType()) {
+            return '?' . $this->getPhpdocInputType();
+        }
+        return null;
     }
 
     /**
      * @return string|null
      */
     public function getReturnTypeDeclaration(): ?string {
-        return '?' . $this->getPhpdocReturnType();
+        if ($this->getPhpdocReturnType()) {
+            return '?' . $this->getPhpdocReturnType();
+        }
+        return null;
     }
 
     /**
      * @return string|null
      */
     public function getPhpdocInputType(): ?string {
-        return $this->getPhpdocType();
+        if ($this->getPhpdocType()) {
+            return $this->getPhpdocType();
+        }
+        return null;
     }
 
     /**
      * @return string|null
      */
     public function getPhpdocReturnType(): ?string {
-        return $this->getPhpdocType();
+        if ($this->getPhpdocType()) {
+            return $this->getPhpdocType();
+        }
+        return null;
     }
 
     /**
