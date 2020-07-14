@@ -322,6 +322,15 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
         this.reload();
     },
 
+    getThumbnailConfig: function(additionalConfig) {
+        let merged = Ext.merge(this.datax, additionalConfig);
+        merged = Ext.clone(merged);
+        delete merged["hotspots"];
+        delete merged["path"];
+        return merged;
+
+    },
+
     updateImage: function () {
 
         var path = "";
@@ -337,23 +346,23 @@ pimcore.document.tags.image = Class.create(pimcore.document.tag, {
 
         if (!this.options["thumbnail"]) {
             if(!this.originalDimensions["width"] && !this.originalDimensions["height"]) {
-                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', Ext.merge(this.datax, {
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig(this.datax, {
                     'width': this.element.getWidth(),
                     'aspectratio': true
                 }));
             } else if (this.originalDimensions["width"]) {
-                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', Ext.merge(this.datax, {
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig(this.datax, {
                     'width': this.originalDimensions["width"],
                     'aspectratio': true
                 }));
             } else if (this.originalDimensions["height"]) {
-                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', Ext.merge(this.datax, {
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig(this.datax, {
                     'height': this.originalDimensions["height"],
                     'aspectratio': true
                 }));
             }
         } else if (typeof this.options.thumbnail == "string" || typeof this.options.thumbnail == "object") {
-                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', Ext.merge(this.datax, {
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig(this.datax, {
                     'height': this.originalDimensions["height"],
                     'thumbnail': this.options.thumbnail,
                     'pimcore_editmode': '1'
