@@ -694,7 +694,7 @@ abstract class Data
         $key = $this->getName();
 
 
-        if ($class->getUseTypeHints() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
             $typehint = ': ' . $this->getReturnTypeDeclaration();
 
         } else {
@@ -758,7 +758,7 @@ abstract class Data
         $key = $this->getName();
 
 
-        if ($class->getUseTypeHints() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+        if ($class->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
             $typehint = $this->getParameterTypeDeclaration() . ' ';
         } else {
             $typehint = '';
@@ -826,7 +826,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($brickClass->getUseTypeHints() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+        if ($brickClass->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
             $typehint = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typehint = '';
@@ -876,7 +876,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($brickClass->getUseTypeHints() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+        if ($brickClass->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
             $typehint = $this->getParameterTypeDeclaration() . ' ';
         } else {
             $typehint = '';
@@ -945,7 +945,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($fieldcollectionDefinition->getUseTypeHints() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
             $typehint = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typehint = '';
@@ -987,7 +987,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($fieldcollectionDefinition->getUseTypeHints() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
             $typehint = $this->getParameterTypeDeclaration() . ' ';
         } else {
             $typehint = '';
@@ -1047,7 +1047,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($class->getUseTypeHints() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
             $typehint = ': ' . $this->getReturnTypeDeclaration();
 
         } else {
@@ -1099,7 +1099,7 @@ abstract class Data
             $containerGetter = 'getClass';
         }
 
-        if ($class->getUseTypeHints() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+        if ($class->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
             $typehint = $this->getParameterTypeDeclaration() . ' ';
 
         } else {

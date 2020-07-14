@@ -57,7 +57,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     /**
      * @var bool
      */
-    public $useTypeHints = false;
+    public $generateTypeDeclarations = false;
 
     /**
      * @var Data[]
@@ -267,19 +267,19 @@ trait FieldcollectionObjectbrickDefinitionTrait
     /**
      * @return bool
      */
-    public function getUseTypeHints()
+    public function getGenerateTypeDeclarations()
     {
-        return (bool) $this->useTypeHints;
+        return (bool) $this->generateTypeDeclarations;
     }
 
     /**
-     * @param bool $useTypeHints
+     * @param bool $generateTypeDeclarations
      *
      * @return $this
      */
-    public function setUseTypeHints($useTypeHints)
+    public function setGenerateTypeDeclarations($generateTypeDeclarations)
     {
-        $this->useTypeHints = (bool) $useTypeHints;
+        $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
         return $this;
     }
 

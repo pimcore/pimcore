@@ -77,9 +77,9 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
                 },
                 {
                     xtype: "checkbox",
-                    fieldLabel: t("use_typehints"),
-                    name: "useTypeHints",
-                    checked: this.data.useTypeHints
+                    fieldLabel: t("generate_typedeclarations"),
+                    name: "generateTypeDeclarations",
+                    checked: this.data.generateTypeDeclarations
                 },
                 this.groupField,
                 this.getClassDefinitionPanel()

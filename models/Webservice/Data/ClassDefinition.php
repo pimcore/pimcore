@@ -105,7 +105,7 @@ class ClassDefinition extends Model\Webservice\Data
     /**
      * @var bool
      */
-    public $useTypeHints = false;
+    public $generateTypeDeclarations = false;
 
     /**
      * @var string

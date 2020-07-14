@@ -828,8 +828,10 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /** @inheritDoc */
-    public function getReturnTypeDeclaration(): ?string {
+    public function getReturnTypeDeclaration(): ?string
+    {
         return '?array';
+    }
 
     public function supportsInheritance()
     {

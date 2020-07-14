@@ -886,9 +886,9 @@ pimcore.object.classes.klass = Class.create({
                 this.showVariants,
                 {
                     xtype: "checkbox",
-                    fieldLabel: t("use_typehints"),
-                    name: "useTypeHints",
-                    checked: this.data.useTypeHints
+                    fieldLabel: t("generate_typedeclarations"),
+                    name: "generateTypeDeclarations",
+                    checked: this.data.generateTypeDeclarations
                 },
                 {
                     xtype: "checkbox",

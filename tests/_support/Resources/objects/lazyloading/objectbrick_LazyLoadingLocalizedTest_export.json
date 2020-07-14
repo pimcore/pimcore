@@ -293,5 +293,5 @@
         "locked": false,
         "icon": null
     },
-    "useTypeHints": true
+    "generateTypeDeclarations": true
 }

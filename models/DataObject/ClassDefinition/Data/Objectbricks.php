@@ -698,7 +698,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         // getter
 
-        if ($class->getUseTypeHints() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
             $typehint = ': ' . $this->getReturnTypeDeclaration();
 
         } else {

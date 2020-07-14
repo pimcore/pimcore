@@ -98,9 +98,9 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
                 },
                 {
                     xtype: "checkbox",
-                    fieldLabel: t("use_typehints"),
-                    name: "useTypeHints",
-                    checked: this.data.useTypeHints
+                    fieldLabel: t("generate_typedeclarations"),
+                    name: "generateTypeDeclarations",
+                    checked: this.data.generateTypeDeclarations
                 },
                 this.groupField,
                 {
