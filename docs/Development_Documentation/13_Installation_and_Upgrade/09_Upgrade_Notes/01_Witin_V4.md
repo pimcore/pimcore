@@ -52,6 +52,10 @@ More examples like a type specific configuration can be found [here](https://git
 - Document editable 'Date': if using Carbon (DateTime) the syntax for the config-option `format` changed from `date()` to `strftime()`
 - Keys and filenames starting or ending with `.` are no longer allowed. 
 
+#### Database
+
+MySQL database charset now defaults to `utf8mb4` instead of `utf8`. Consider manually converting existing tables of your database after the upgrade. See [#6698](https://github.com/pimcore/pimcore/issues/6698) for more details and [this Gist](https://gist.github.com/podarcis/cdce3371b8149e86924e9bb5f91e0961) for a shell script that may assist in conversion.
+
 ## Upgrade notes for 4.3.0
 #### Newsletter
 Newsletters are no longer managed in Marketing. 
