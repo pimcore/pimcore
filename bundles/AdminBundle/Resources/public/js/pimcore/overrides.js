@@ -248,6 +248,12 @@ Ext.define('pimcore.tree.View', {
                 record.ptb.destroy();
                 delete record.ptb;
             }
+        },
+
+        itemupdate: function(record) {
+            if (record.needsPaging && typeof record.ptb == "undefined") {
+                this.doUpdatePaging(record);
+            }
         }
     },
 
@@ -261,7 +267,7 @@ Ext.define('pimcore.tree.View', {
 
         me.superclass.renderRow.call(this, record, rowIdx, out);
 
-        if (record.needsPaging && typeof record.ptp == "undefined") {
+        if (record.needsPaging && typeof record.ptb == "undefined") {
             this.doUpdatePaging(record);
         }
 

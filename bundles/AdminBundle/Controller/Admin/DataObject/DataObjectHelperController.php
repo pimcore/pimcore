@@ -1734,7 +1734,7 @@ class DataObjectHelperController extends AdminController
 
                 $eventDispatcher->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
 
-                $object->setUserModification($this->getUser());
+                $object->setUserModification($this->getAdminUser()->getId());
                 $object->save();
 
                 $eventDispatcher->dispatch(DataObjectImportEvents::POST_SAVE, $eventData);
@@ -1863,6 +1863,10 @@ class DataObjectHelperController extends AdminController
 
         $firstLine = true;
         $lineCount = count($csv);
+
+        if (!$addTitles) {
+            fwrite($fp, "\r\n");
+        }
 
         for ($i = 0; $i < $lineCount; $i++) {
             $line = $csv[$i];

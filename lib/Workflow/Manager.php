@@ -23,6 +23,7 @@ use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ValidationException;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
+use Pimcore\Workflow\MarkingStore\StateTableMarkingStore;
 use Pimcore\Workflow\Place\PlaceConfig;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Workflow\Exception\InvalidArgumentException;
@@ -332,5 +333,74 @@ class Manager
         }
 
         return null;
+    }
+
+    /**
+     * Forces an initial place being set (and stored) if the current place is empty.
+     * We cannot apply a regular transition b/c it would be considered invalid by the state machine.
+     *
+     * As of Symfony 4.4.8 built-in implementations of @see \Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface
+     * use strict `null` comparison when retrieving the current marking and throw an exception otherwise.
+     *
+     * @param Asset|Concrete|PageSnippet $subject
+     *
+     * @return bool true if initial state was applied
+     *
+     * @throws \Exception
+     */
+    public function ensureInitialPlace(string $workflowName, $subject): bool
+    {
+        if (!$workflow = $this->getWorkflowIfExists($subject, $workflowName)) {
+            return false;
+        }
+
+        if (!$markingStore = $workflow->getMarkingStore()) {
+            return false;
+        }
+
+        // check that the subject has a non-empty place
+        $initialPlaces = $this->getInitialPlacesForWorkflow($workflow);
+        $markingObject = $markingStore->getMarking($subject);
+        foreach ($markingObject->getPlaces() as $placeName => $nbToken) {
+            if ('' !== $placeName) {
+                continue;
+            }
+
+            // fill empty place with initial place, if any
+            $markingObject->unmark($placeName);
+            foreach ($initialPlaces as $initialPlace) {
+                $markingObject->mark($initialPlace);
+            }
+
+            $markingStore->setMarking($subject, $markingObject);
+
+            // StateTableMarkingStore handles persistence of it's own
+            if ($markingStore instanceof StateTableMarkingStore === false) {
+                $wasOmitMandatoryCheck = $subject->getOmitMandatoryCheck();
+                $subject->setOmitMandatoryCheck(true);
+                $subject->save();
+                $subject->setOmitMandatoryCheck($wasOmitMandatoryCheck);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getInitialPlacesForWorkflow(Workflow $workflow): array
+    {
+        $initialPlaces = [];
+        $definition = $workflow->getDefinition();
+
+        if (method_exists($definition, 'getInitialPlaces')) {
+            // Symfony >= 4.3
+            $initialPlaces = $definition->getInitialPlaces();
+        } elseif (method_exists($definition, 'getInitialPlace')) {
+            // Symfony < 4.3
+            $initialPlaces = [$definition->getInitialPlace()];
+        }
+
+        return $initialPlaces;
     }
 }

@@ -26,6 +26,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
 use Pimcore\Model\DataObject\ImportDataServiceInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\FactoryInterface;
 
 class Filename extends AbstractResolver
@@ -42,8 +43,8 @@ class Filename extends AbstractResolver
 
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
-        $overwrite = filter_var($config->resolverSettings->overwrite, FILTER_VALIDATE_BOOLEAN);
-        $skipIfExists = filter_var($config->resolverSettings->skipIfExists, FILTER_VALIDATE_BOOLEAN);
+        $overwrite = filter_var($config->resolverSettings->overwrite ?? false, FILTER_VALIDATE_BOOLEAN);
+        $skipIfExists = filter_var($config->resolverSettings->skipIfExists ?? false, FILTER_VALIDATE_BOOLEAN);
         $prefix = (string)$config->resolverSettings->prefix;
         $service = ImportClassResolver::resolveClassOrService($config->resolverSettings->phpClassOrService);
 
@@ -56,21 +57,30 @@ class Filename extends AbstractResolver
             throw new ImportErrorException('not allowed to import into folder ' . $parent->getFullPath());
         }
 
-        if ($overwrite) {
-            $objectKey = $rowData[$this->getIdColumn($config)];
-        } else {
-            $objectKey = $prefix;
-        }
+        $object = null;
 
         $classId = $config->classId;
         $classDefinition = ClassDefinition::getById($classId);
         $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
 
+        $objectKey = $rowData[$this->getIdColumn($config)];
+        $objectKey = Service::getValidKey($objectKey, 'object');
         $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
-        $object = null;
 
-        if ($object = DataObject::getByPath($intendedPath) && $skipIfExists) {
-            throw new ImportWarningException('skipped filename exists: ' . $parent->getFullPath() . '/' . $objectKey);
+        if (!$overwrite) {
+            if (AbstractObject::getByPath($intendedPath)) {
+                $objectKey = $prefix;
+            } else {
+                $object = $this->modelFactory->build($className);
+                $object->setParent($parent);
+                $object->setKey($objectKey);
+            }
+        }
+
+        if (!$object) {
+            if ($object = DataObject::getByPath($intendedPath) && $skipIfExists) {
+                throw new ImportWarningException('skipped filename exists: ' . $parent->getFullPath() . '/' . $objectKey);
+            }
         }
 
         if ($overwrite && !$service) {
@@ -111,7 +121,9 @@ class Filename extends AbstractResolver
                     'classname' => $className,
                 ]);
             } else {
-                $object = $this->getAlternativeObject($prefix, $intendedPath, $parent, $className);
+                if (!$object) {
+                    $object = $this->getAlternativeObject($prefix, $intendedPath, $parent, $className);
+                }
             }
         }
 

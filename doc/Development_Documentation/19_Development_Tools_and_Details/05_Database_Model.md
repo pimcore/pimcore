@@ -94,6 +94,9 @@ added to the database. The tables have a numerical suffix, denoting the number
 | object_store_(id) Table | This is the main data storage table of an object class. It contains all "flat" data without any relations or external dependencies. |
 | objects Table | Contains an entry for each and every object in the system. The id field is an auto_increment and the source of the primary key for an object. Metadata about an object is stored in this table, too. |
 
+> When restore of query tables is necessary (for what ever reason) calling `DataObject\Concrete::disableDirtyDetection();` and 
+> saving all data objects of class will do the trick. When not disabling dirty detection, there might be data missing in query table. 
+
 
 #### Simple Data Field Types
 Following is an overview of how different object data types are stored in the database. This overview might not be complete.

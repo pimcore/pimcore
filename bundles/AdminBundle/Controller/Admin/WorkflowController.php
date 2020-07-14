@@ -329,19 +329,16 @@ class WorkflowController extends AdminController implements EventedControllerInt
                 $latestDoc = $latestVersion->loadData();
                 if ($latestDoc instanceof Document\PageSnippet) {
                     $element = $latestDoc;
-                    $element->setModificationDate($element->getModificationDate());
                 }
             }
         }
 
         if ($element instanceof DataObject\Concrete) {
-            $modificationDate = $element->getModificationDate();
             $latestVersion = $element->getLatestVersion();
             if ($latestVersion) {
                 $latestObj = $latestVersion->loadData();
                 if ($latestObj instanceof ConcreteObject) {
                     $element = $latestObj;
-                    $element->setModificationDate($modificationDate);
                 }
             }
         }
