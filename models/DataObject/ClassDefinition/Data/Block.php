@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeHintSupportInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Extension\ColumnType;

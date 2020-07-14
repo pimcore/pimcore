@@ -706,11 +706,11 @@ abstract class Data
         $key = $this->getName();
 
 
-        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
-            $typehint = ': ' . $this->getReturnTypeDeclaration();
+        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
 
         } else {
-            $typehint = '';
+            $typeDeclaration = '';
         }
 
         $code = '';
@@ -719,7 +719,7 @@ abstract class Data
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " ()" . $typehint . " {\n";
+        $code .= 'public function get' . ucfirst($key) . " ()" . $typeDeclaration . " {\n";
 
         $code .= $this->getPreGetValueHookCode($key);
 
@@ -770,10 +770,10 @@ abstract class Data
         $key = $this->getName();
 
 
-        if ($class->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
-            $typehint = $this->getParameterTypeDeclaration() . ' ';
+        if ($class->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
         } else {
-            $typehint = '';
+            $typeDeclaration = '';
         }
 
         $code = '';
@@ -782,7 +782,7 @@ abstract class Data
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . $typehint . '$' . $key . ") {\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ") {\n";
         $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -838,10 +838,10 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($brickClass->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
-            $typehint = ': ' . $this->getReturnTypeDeclaration();
+        if ($brickClass->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
-            $typehint = '';
+            $typeDeclaration = '';
         }
 
         $code = '';
@@ -849,7 +849,7 @@ abstract class Data
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " ()" . $typehint . " {\n";
+        $code .= 'public function get' . ucfirst($key) . " ()" . $typeDeclaration . " {\n";
 
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
@@ -888,10 +888,10 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($brickClass->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
-            $typehint = $this->getParameterTypeDeclaration() . ' ';
+        if ($brickClass->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
         } else {
-            $typehint = '';
+            $typeDeclaration = '';
         }
 
         $code = '';
@@ -900,7 +900,7 @@ abstract class Data
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickClass->getKey()) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . $typehint . '$' . $key . ") {\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ") {\n";
         $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -957,10 +957,10 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
-            $typehint = ': ' . $this->getReturnTypeDeclaration();
+        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
-            $typehint = '';
+            $typeDeclaration = '';
         }
 
         $code = '';
@@ -968,7 +968,7 @@ abstract class Data
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " ()" . $typehint . " {\n";
+        $code .= 'public function get' . ucfirst($key) . " ()" . $typeDeclaration . " {\n";
 
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$container = $this;' . "\n";
@@ -999,10 +999,10 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
-            $typehint = $this->getParameterTypeDeclaration() . ' ';
+        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
         } else {
-            $typehint = '';
+            $typeDeclaration = '';
         }
 
         $code = '';
@@ -1011,7 +1011,7 @@ abstract class Data
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . $typehint . '$' . $key . ") {\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ") {\n";
         $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -1059,18 +1059,18 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
-            $typehint = ': ' . $this->getReturnTypeDeclaration();
+        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
 
         } else {
-            $typehint = '';
+            $typeDeclaration = '';
         }
 
         $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . ' ($language = null)' . $typehint . ' {' . "\n";
+        $code .= 'public function get' . ucfirst($key) . ' ($language = null)' . $typeDeclaration . ' {' . "\n";
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
@@ -1111,11 +1111,11 @@ abstract class Data
             $containerGetter = 'getClass';
         }
 
-        if ($class->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
-            $typehint = $this->getParameterTypeDeclaration() . ' ';
+        if ($class->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
 
         } else {
-            $typehint = '';
+            $typeDeclaration = '';
         }
 
         $code = '/**' . "\n";
@@ -1123,7 +1123,7 @@ abstract class Data
         $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . $typehint . '$' . $key . ', $language = null) {' . "\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ', $language = null) {' . "\n";
         if ($this->supportsDirtyDetection()) {
             $code .= "\t" . '$fd = $this->' . $containerGetter . '()->getFieldDefinition("localizedfields")->getFieldDefinition("' . $key . '");' . "\n";
         }

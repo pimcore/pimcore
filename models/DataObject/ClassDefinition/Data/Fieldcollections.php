@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool\Cast;
 
-class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeHintSupportInterface
+class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface
 {
     /**
      * Static type of this element

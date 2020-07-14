@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeHintSupportInterface
+class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;

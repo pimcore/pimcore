@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 
-class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeHintSupportInterface
+class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface
 {
     /**
      * Static type of this element
@@ -698,7 +698,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         // getter
 
-        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeHintSupportInterface) {
+        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
             $typehint = ': ' . $this->getReturnTypeDeclaration();
 
         } else {

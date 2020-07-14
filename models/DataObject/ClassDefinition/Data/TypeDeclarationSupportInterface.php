@@ -17,7 +17,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-interface TypeHintSupportInterface
+interface TypeDeclarationSupportInterface
 {
 
     /**
