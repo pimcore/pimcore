@@ -76,6 +76,7 @@ npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic-theme-m
 npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic-theme-neptune
 npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic-theme-triton
 npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-ux
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-charts
 ```
 
 > Note that for now the fonts and images resources are packaged with pimcore.

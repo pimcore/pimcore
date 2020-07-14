@@ -138,6 +138,7 @@ Ext.onReady(function () {
             "/admin/misc/pimcoreInternalScripts"
         ];
 
+        var syncwas = Ext.Loader.syncModeEnabled;
 
         // hack: this friend is private
         Ext.Loader.syncModeEnabled = true;

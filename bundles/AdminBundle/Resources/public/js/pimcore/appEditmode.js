@@ -11,7 +11,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX start editmode");
+console.log("start appEditmode");
 
 // debug
 if (typeof console == "undefined") {
@@ -79,8 +79,6 @@ Ext.onReady(function () {
         ];
 
         var syncwas = Ext.Loader.syncModeEnabled;
-
-        console.log("syncwas: " + syncwas);
 
         // hack: this friend is private
         Ext.Loader.syncModeEnabled = true;

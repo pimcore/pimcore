@@ -2700,6 +2700,6 @@ Ext.Microloader = Ext.Microloader || (function () {
  */
 Ext.manifest = Ext.manifest || "bootstrap";
 
-console.log("start load");
+console.log("Bootstrap loaded");
 Ext.Microloader.run();
-console.log("after run");
+console.log("Microloading...");
