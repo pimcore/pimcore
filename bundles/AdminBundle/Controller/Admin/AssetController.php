@@ -906,7 +906,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $publicDir = new Asset\WebDAV\Folder($homeDir);
             $objectTree = new Asset\WebDAV\Tree($publicDir);
             $server = new \Sabre\DAV\Server($objectTree);
-            $server->setBaseUri($this->generateUrl('pimcore_admin_webdav'));
+            $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', [ 'path' => '/' ]));
 
             // lock plugin
             $lockBackend = new \Sabre\DAV\Locks\Backend\File(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/webdav-locks.dat');
