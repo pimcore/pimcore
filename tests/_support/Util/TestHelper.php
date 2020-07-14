@@ -486,6 +486,7 @@ class TestHelper
         $testDataHelper->fillMultiSelect($object, 'multiselect', $seed);
         $testDataHelper->fillUser($object, 'user', $seed);
         $testDataHelper->fillCheckbox($object, 'checkbox', $seed);
+        $testDataHelper->fillBooleanSelect($object, 'booleanSelect', $seed);
         $testDataHelper->fillWysiwyg($object, 'wysiwyg', $seed);
         $testDataHelper->fillPassword($object, 'password', $seed);
         $testDataHelper->fillMultiSelect($object, 'countries', $seed);
