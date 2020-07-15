@@ -459,12 +459,12 @@ $list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder $query
 });
 ```
 
-### Type Declaration
+### PHP Type Declarations
 
 > Experimental Feature
 
-If you want to add [Type Hints as described in](https://github.com/pimcore/pimcore/issues/6387) on generated PHP code
-please enable this feature in the you class definition.
+If you want to add [type declarations as described in](https://github.com/pimcore/pimcore/issues/6387) on the generated PHP code for your classes,
+please enable this feature in the class definition.
 
 If you have custom data types please implement the `Pimcore\Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface` interface. 
 
