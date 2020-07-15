@@ -257,6 +257,20 @@ $scriptLibs = array(
 <script src="<?= $view->router()->path('pimcore_admin_user_getcurrentuser') ?>?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
 <script src="<?= $view->router()->path('pimcore_admin_misc_availablelanguages', ['_dc' => \Pimcore\Version::getRevision()]) ?>"></script>
 
+<?php
+
+$pluginDcValue = time();
+if ($disableMinifyJs) {
+    $pluginDcValue = 1;
+}
+
+?>
+
+
+
+<?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
+    <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
+<?php endforeach; ?>
 
 <!-- library scripts -->
 <?php foreach ($scriptLibs as $scriptUrl) { ?>
