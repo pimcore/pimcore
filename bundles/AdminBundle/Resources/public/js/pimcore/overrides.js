@@ -244,7 +244,7 @@ Ext.define('pimcore.tree.View', {
             this.updatePaging();
         },
         beforeitemupdate: function(record) {
-            if(record.ptb) {
+            if(record.ptb && !record.needsPaging) {
                 record.ptb.destroy();
                 delete record.ptb;
             }
