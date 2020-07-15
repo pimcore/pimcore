@@ -84,7 +84,7 @@ abstract class AbstractRenderer implements RendererInterface
     protected $_skipPrefixForId = false;
 
     /**
-     * Wheter invisible items should be rendered by this helper
+     * Whether invisible items should be rendered by this helper
      *
      * @var bool
      */

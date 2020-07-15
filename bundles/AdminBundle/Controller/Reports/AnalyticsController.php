@@ -75,13 +75,28 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
             }
 
             foreach ($accountIds as $accountId) {
+                $propertyNames = [];
+                $properties = $this->service->management_webproperties->listManagementWebproperties($accountId);
+
+                if (is_array($properties['items'])) {
+                    foreach ($properties['items'] as $property) {
+                        $propertyNames[$property['id']] = $property['name'];
+                    }
+                }
+
                 $details = $this->service->management_profiles->listManagementProfiles($accountId, '~all');
 
                 if (is_array($details['items'])) {
                     foreach ($details['items'] as $detail) {
+                        $name = $detail['name'];
+
+                        if (array_key_exists($detail['webPropertyId'], $propertyNames)) {
+                            $name = $propertyNames[$detail['webPropertyId']] . ': ' . $name;
+                        }
+
                         $data['data'][] = [
                             'id' => $detail['id'],
-                            'name' => $detail['name'],
+                            'name' => $name,
                             'trackid' => $detail['webPropertyId'],
                             'internalid' => $detail['internalWebPropertyId'],
                             'accountid' => $detail['accountId'],

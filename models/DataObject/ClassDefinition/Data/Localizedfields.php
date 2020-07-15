@@ -729,6 +729,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      */
     public function classSaved($class, $params = [])
     {
+        // create a dummy instance just for updating the tables
         $localizedFields = new DataObject\Localizedfield();
         $localizedFields->setClass($class);
         $context = isset($params['context']) ? $params['context'] : null;

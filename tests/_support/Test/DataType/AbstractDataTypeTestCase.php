@@ -258,6 +258,13 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertCheckbox($this->testObject, 'checkbox', $this->seed);
     }
 
+    public function testBooleanSelect()
+    {
+        $this->createTestObject('booleanSelect');
+
+        $this->testDataHelper->assertBooleanSelect($this->testObject, 'booleanSelect', $this->seed);
+    }
+
     public function testWysiwyg()
     {
         $this->createTestObject('wysiwyg');

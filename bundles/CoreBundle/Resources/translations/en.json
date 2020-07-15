@@ -955,5 +955,6 @@
   "composite_indices": "Composite indices",
   "fieldlookup": "Field Lookup",
   "show_fieldlookup": "Show Field Lookup",
-  "no_value_set": "no value set"
+  "no_value_set": "no value set",
+  "brick_limit_reached": "Limit ({bricklimit}) reached for brick: {brickname}"
 }

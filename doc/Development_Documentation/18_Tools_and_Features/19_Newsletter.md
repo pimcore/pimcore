@@ -83,7 +83,7 @@ class NewsletterController extends FrontendController
 {
     public function subscribeAction(Request $request)
     {
-        $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
+        $newsletter = new Newsletter("person"); // replace "person" with the class name you have used for your class above (mailing list)
         $params = $request->request->all();
 
         $this->view->success = false;
@@ -118,7 +118,7 @@ class NewsletterController extends FrontendController
     {
         $this->view->success = false;
 
-        $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
+        $newsletter = new Newsletter("person"); // replace "person" with the class name you have used for your class above (mailing list)
 
         if ($newsletter->confirm($request->get("token"))) {
             $this->view->success = true;
@@ -127,7 +127,7 @@ class NewsletterController extends FrontendController
 
     public function unsubscribeAction(Request $request)
     {
-        $newsletter = new Newsletter("person"); // replace "crm" with the class name you have used for your class above (mailing list)
+        $newsletter = new Newsletter("person"); // replace "person" with the class name you have used for your class above (mailing list)
 
         $unsubscribeMethod = null;
         $success = false;

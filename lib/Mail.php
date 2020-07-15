@@ -618,7 +618,11 @@ class Mail extends \Swift_Message
                 $mailer->send($this, $failedRecipients);
             } catch (\Exception $e) {
                 $mailer->getTransport()->stop();
-                throw new \Exception($failedRecipients[0].' - '.$e->getMessage());
+                if (isset($failedRecipients[0])) {
+                    throw new \Exception($failedRecipients[0].' - '.$e->getMessage());
+                } else {
+                    throw new \Exception($e->getMessage());
+                }
             }
         }
 

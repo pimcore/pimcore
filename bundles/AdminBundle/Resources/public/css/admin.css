@@ -1459,12 +1459,12 @@ span.warning {
 }
 
 .pimcore_main_toolbar .x-btn.x-btn-disabled {
-    background-color: #393C3F;
+    background-color: #484B4E;
     opacity: 1;
 }
 
 .pimcore_main_toolbar .x-btn.x-btn-disabled .x-btn-inner {
-    color: #000;
+    color: #8e8e8e;
 }
 
 .pimcore_main_toolbar .x-btn.x-btn-disabled .x-btn-wrap {
