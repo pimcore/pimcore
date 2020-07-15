@@ -393,6 +393,7 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('image'));
             $panel->addChild($this->createDataChild('hotspotimage'));
             $panel->addChild($this->createDataChild('checkbox'));
+            $panel->addChild($this->createDataChild('booleanSelect'));
             $panel->addChild($this->createDataChild('table'));
             $panel->addChild($this->createDataChild('structuredTable', 'structuredtable')
                 ->setCols([

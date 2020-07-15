@@ -509,7 +509,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public function getOmitMandatoryCheck()
     {
-        if($this->omitMandatoryCheck === null) {
+        if ($this->omitMandatoryCheck === null) {
             return !$this->isPublished();
         }
 
