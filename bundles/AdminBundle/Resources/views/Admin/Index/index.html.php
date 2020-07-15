@@ -196,10 +196,6 @@ $styles = array(
     "/bundles/pimcoreadmin/css/icons.css",
     "/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css",
     "/bundles/pimcoreadmin/js/lib/leaflet.draw/leaflet.draw.css",
-//    "/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
-//    "/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/charts-all" . $debugSuffix . ".css",
-//    "/bundles/pimcoreadmin/css/admin.css"
-
     "/bundles/pimcoreadmin/PimcoreApp-all_1.css",
     "/bundles/pimcoreadmin/PimcoreApp-all_2.css",
     "/bundles/pimcoreadmin/css/admin.css"
@@ -226,6 +222,12 @@ $styles = array(
 <script type="text/javascript">
     var Ext = Ext || {};
     Ext.manifest = "/bundles/pimcoreadmin/js/pimcore.json";
+    Ext.beforeLoad = function(platformTags) {
+            console.log("BEFORE LOAD");
+
+            // this is used in bootstrap.js
+            Ext._customCachingParam = "?><?= \Pimcore\Version::getRevision();?>";
+    } ;
 </script>
 
 
@@ -236,18 +238,10 @@ $scriptLibs = array(
 
     // library
     "lib/class.js",
-    // TODO EXTJS7
-
-//    "lib/ext/classic/theme-triton/theme-triton" . $debugSuffix . ".js",
-//    "lib/ext/packages/charts/classic/charts" . $debugSuffix . ".js",
-
     "lib/ckeditor/ckeditor.js",
     "lib/leaflet/leaflet.js",
     "lib/leaflet.draw/leaflet.draw.js",
     "lib/vrview/build/vrview.min.js",
-//
-//    // locale
-//    "lib/ext/classic/locale/locale-" . $language . ".js",
     "bootstrap.js"
 );
 

@@ -261,6 +261,9 @@ class EditmodeListener implements EventSubscriberInterface
                 var Ext = Ext || {};
                 Ext.manifest = "/bundles/pimcoreadmin/js/pimcoreEditmodeMinimum.json";
                 Ext.platformTags = {};
+
+                // this is used in bootstrap.js
+                Ext._customCachingParam = "?><?= \Pimcore\Version::getRevision();?>";
         </script>';
 
          $headHtml .= '<script src="/bundles/pimcoreadmin/js/bootstrap.js"></script>' . "\n";
