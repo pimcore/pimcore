@@ -56,7 +56,7 @@ abstract class Data
     public $index;
 
     /**
-     * @deprecated
+     * @deprecated implement getPhpdocInputType() and getPhpdocReturnType() instead
      * @var string
      */
     public $phpdocType;
@@ -419,7 +419,7 @@ abstract class Data
     }
 
     /**
-     * @deprecated
+     * @deprecated use getPhpdocInputType() and getPhpdocReturnType() instead
      * @return string
      */
     public function getPhpdocType()
