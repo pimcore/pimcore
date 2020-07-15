@@ -198,6 +198,10 @@ $styles = array(
     "/bundles/pimcoreadmin/js/lib/leaflet.draw/leaflet.draw.css",
 //    "/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
 //    "/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/charts-all" . $debugSuffix . ".css",
+//    "/bundles/pimcoreadmin/css/admin.css"
+
+    "/bundles/pimcoreadmin/PimcoreApp-all_1.css",
+    "/bundles/pimcoreadmin/PimcoreApp-all_2.css",
     "/bundles/pimcoreadmin/css/admin.css"
 );
 ?>
