@@ -1692,7 +1692,7 @@ span.warning {
 
 .pimcore_main_toolbar .pimcore_save_button {
     background: #28a050;
-    text-transform: uppercase;
+    /*text-transform: uppercase;*/
 }
 
 .pimcore_main_toolbar .pimcore_save_button.x-btn-over, .pimcore_save_button.x-btn-pressed, .pimcore_save_button.x-btn-menu-active, .pimcore_save_button.x-btn-focus {
