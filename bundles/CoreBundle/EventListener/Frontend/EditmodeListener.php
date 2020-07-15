@@ -263,71 +263,14 @@ class EditmodeListener implements EventSubscriberInterface
                 Ext.platformTags = {};
         </script>';
 
-                 $headHtml .= '<script src="/bundles/pimcoreadmin/js/bootstrap.js"></script>' . "\n";
-
-//         $headHtml .= '<script src="/bundles/pimcoreadmin/js/bootstrap.js"></script>' . "\n";
-        // $headHtml .= '<script src="/admin/index/pimcoreEditmodeScriptsMinified.js"></script>';
-
-
-
-
-
+         $headHtml .= '<script src="/bundles/pimcoreadmin/js/bootstrap.js"></script>' . "\n";
 
         // include script libraries
         foreach ($libraries as $script) {
             $headHtml .= '<script src="' . $script . '?_dc=' . Version::getRevision() . '"></script>';
             $headHtml .= "\n";
         }
-        //TODO EXTJS7 cleanup
 
-        $manifest = PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/pimcore.json";
-        if (is_file($manifest)) {
-
-
-
-//            $headHtml .= '<script type="application/javascript">';
-
-//            $manifestContents = file_get_contents($manifest);
-//            $manifestContents = json_decode($manifestContents, true);
-////            //TODO EXTJS7 only load stuff which is needed
-//            $loadOrder = $manifestContents["loadOrder"];
-//            foreach ($loadOrder as $loadOrderItem) {
-//                $relativePath = $loadOrderItem["path"];
-//                $fullPath = PIMCORE_WEB_ROOT . $relativePath;
-//                if (is_file($fullPath)) {
-//                    $includeContents = file_get_contents($fullPath);
-//                    $headHtml .= $includeContents;
-//
-//                }
-//            }
-
-//            $headHtml .= '</script>';
-        }
-
-                // $headHtml .= '<script src="/admin/index/pimcoreEditmodeScriptsMinified"></script>' . "\n";
-
-//
-//        // combine the pimcore scripts in non-devmode
-//        if (\Pimcore::disableMinifyJs()) {
-//            foreach ($scripts as $script) {
-//                $headHtml .= '<script src="' . $script . '?_dc=' . Version::getRevision() . '"></script>';
-//                $headHtml .= "\n";
-//            }
-//        } else {
-//            $scriptContents = '';
-//            foreach ($scripts as $scriptUrl) {
-//                $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $scriptUrl) . "\n\n\n";
-//            }
-//
-//            $headHtml .= '<script src="' . $this->router->generate('pimcore_admin_misc_scriptproxy', \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents, false)) . '"></script>' . "\n";
-//        }
-//        $path = $this->router->generate('pimcore_admin_misc_jsontranslationssystem', [
-//            'language' => $language,
-//            '_dc' => Version::getRevision(),
-//        ]);
-//
-//        $headHtml .= '<script src="'.$path.'"></script>' . "\n";
-//        $headHtml .= '<script src="' . $this->router->generate('fos_js_routing_js', ['callback' => 'fos.Router.setData']) . '"></script>' . "\n";
         $headHtml .= "\n\n";
 
         // set var for editable configurations which is filled by Document\Tag::admin()

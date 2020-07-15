@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
+use MatthiasMullie\Minify\JS;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Config;
 use Pimcore\Controller\Config\ControllerDataProvider;
@@ -24,14 +25,17 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Tool;
 use Pimcore\Translation\Translator;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * @Route("/misc")
@@ -1311,6 +1315,203 @@ class MiscController extends AdminController
                 $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $scriptUrl) . "\n\n\n";
             } else {
                 Logger::error("could not find file " . $scriptUrl);
+            }
+        }
+
+        $lifetime = 86400;
+
+        $response = new Response($scriptContents);
+        $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 'application/javascript');
+        $response->headers->set('Cache-Control', 'max-age=' . $lifetime);
+        $response->headers->set('Pragma', '');
+        $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $lifetime) . ' GMT');
+        $response->headers->set('Content-Type', 'application/javascript');
+        return $response;
+
+    }
+
+
+    /**
+     * @Route("/extjsEditmodeScriptsMinified.js", name="pimcore_admin_extjs_editmode_scripts_minified", methods={"GET"})
+     *
+     * @throws \Exception
+     */
+    public function extjsEditmodeScriptsMinfiedAction(Request $request, Packages $packages, RouterInterface $router) {
+        $scriptContents = "";
+
+        $fosUrl = $packages->getUrl('bundles/fosjsrouting/js/router.js');
+
+        $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $fosUrl) . "\n\n\n";
+
+
+        $bundleManager = $this->get('pimcore.extension.bundle_manager');
+        $pluginJsPaths = $bundleManager->getEditmodeJsPaths();
+
+        $kernel = $this->container->get('http_kernel');
+        $subRequest = Request::create('/js/routing?callback=fos.Router.setData');
+        $response = $kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
+        $fosResponse = $response->getContent();
+
+        $scriptContents .= $fosResponse;
+
+
+        $manifest = PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/pimcoreEditmode.json";
+        if (is_file($manifest)) {
+            $manifestContents = file_get_contents($manifest);
+            $manifestContents = json_decode($manifestContents, true);
+
+            $loadOrder = $manifestContents["loadOrder"];
+
+            $count = 0;
+
+            // build dependencies
+
+
+            $main = $loadOrder[count($loadOrder) - 1];
+            $list = [
+                $main["idx"] => $main
+            ];
+
+            $this->populate($loadOrder, $list, $main);
+            ksort($list);
+
+            // replace this with loadOrder if we want to load the entire list
+            foreach ($loadOrder as $loadOrderIdx => $loadOrderItem) {
+                $count++;
+                $relativePath = $loadOrderItem["path"];
+                $fullPath = PIMCORE_WEB_ROOT . $relativePath;
+                if (is_file($fullPath)) {
+                    $scriptContents .= "\r\n\r\n//" . $fullPath . "\r\n";
+                    $includeContents = file_get_contents($fullPath);
+
+                    //TODO minify
+                    $minify = new JS($includeContents);
+//                    $includeContents = $minify->minify();
+
+                    $scriptContents .= $includeContents;
+
+                }
+            }
+        }
+
+
+        $lifetime = 86400;
+
+
+        $response = new Response($scriptContents);
+        $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 'application/javascript');
+        $response->headers->set('Cache-Control', 'max-age=' . $lifetime);
+        $response->headers->set('Pragma', '');
+        $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $lifetime) . ' GMT');
+        $response->headers->set('Content-Type', 'application/javascript');
+
+        return $response;
+
+    }
+
+    public function populate($loadOrder, &$list, $item) {
+
+        $depth  = count(debug_backtrace());;
+        if ($depth > 100) {
+            Logger::error($depth);
+        }
+
+        if (is_array($item["requires"])) {
+            foreach ($item["requires"] as $itemId) {
+                if (isset($list[$itemId])) {
+                    continue;
+                }
+                $subItem = $loadOrder[$itemId];
+                $list[$itemId] = $subItem;
+                $this->populate($loadOrder, $list, $subItem);
+            }
+        }
+
+
+        if (is_array($item["uses"])) {
+            foreach ($item["uses"] as $itemId) {
+                if (isset($list[$itemId])) {
+                    continue;
+                }
+                $subItem = $loadOrder[$itemId];
+                $list[$itemId] = $subItem;
+                $this->populate($loadOrder, $list, $subItem);
+            }
+        }
+
+
+
+    }
+
+
+
+    /**
+     * @Route("/pimcoreEditmodeScripts", name="pimcore_admin_pimcore_editmode_scripts", methods={"GET"})
+     *
+     * @throws \Exception
+     */
+    public function pimcoreEditmodeScriptsAction(Request $request, Packages $packages, RouterInterface $router) {
+        $scriptContents = "";
+
+        $bundleManager = $this->get('pimcore.extension.bundle_manager');
+        $pluginJsPaths = $bundleManager->getEditmodeJsPaths();
+
+        $scripts = [
+//            '/bundles/pimcoreadmin/js/pimcore/common.js',
+            '/bundles/pimcoreadmin/js/lib/class.js',
+            '/bundles/pimcoreadmin/js/lib/ckeditor/ckeditor.js',
+            '/bundles/pimcoreadmin/js/pimcore/functions.js',
+            '/bundles/pimcoreadmin/js/pimcore/overrides.js',
+            '/bundles/pimcoreadmin/js/pimcore/tool/milestoneslider.js',
+            '/bundles/pimcoreadmin/js/pimcore/element/tag/imagehotspotmarkereditor.js',
+            '/bundles/pimcoreadmin/js/pimcore/element/tag/imagecropper.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js',
+            '/bundles/pimcoreadmin/js/pimcore/elementservice.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/edit/dnd.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tag.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/block.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/scheduledblock.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/date.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/relation.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/relations.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/checkbox.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/image.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/input.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/link.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/select.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/snippet.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/textarea.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/numeric.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/wysiwyg.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/renderlet.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/table.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/video.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/multiselect.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/areablock.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/area.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/pdf.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/tags/embed.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js',
+
+
+            '/bundles/pimcoreadmin/js/pimcore/launcherEditmode.js',
+        ];
+
+
+
+        foreach ($scripts as $scriptUrl) {
+            if (is_file(PIMCORE_WEB_ROOT . $scriptUrl)) {
+                $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $scriptUrl) . "\n\n\n";
+            } else {
+                Logger::error("could not find file " . PIMCORE_WEB_ROOT . $scriptUrl);
+            }
+        }
+
+        foreach ($pluginJsPaths as $scriptUrl) {
+            if (is_file(PIMCORE_WEB_ROOT .  $scriptUrl)) {
+                $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $scriptUrl) . "\n\n\n";
+            } else {
+                Logger::error("could not find file " . PIMCORE_WEB_ROOT . $scriptUrl);
             }
         }
 

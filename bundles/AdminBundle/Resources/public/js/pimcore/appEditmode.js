@@ -75,7 +75,7 @@ Ext.onReady(function () {
 
 
         let internalScripts = [
-            "/admin/index/pimcoreEditmodeScripts"
+            "/admin/misc/pimcoreEditmodeScripts"
         ];
 
         var syncwas = Ext.Loader.syncModeEnabled;
