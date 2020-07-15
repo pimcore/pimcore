@@ -129,6 +129,12 @@ abstract class Data
      */
     public function reverseMap($object, $disableMappingExceptions = false, $idMapper = null)
     {
+        $fallbackProperties = [];
+        $existingObject = Element\Service::getElementByPath('document', $this->path.$this->key);
+        if($existingObject) {
+            $fallbackProperties = $existingObject->getProperties();
+        }
+
         $keys = get_object_vars($this);
         foreach ($keys as $key => $value) {
             $method = 'set' . ucfirst($key);
@@ -159,7 +165,10 @@ abstract class Data
                     }
 
                     if ($id) {
-                        $dat = Element\Service::getElementById($type, $id);
+                        try {
+                            $dat = Element\Service::getElementById($type, $id);
+                        } catch(\Exception $e) {
+                        }
                     }
 
                     if (is_numeric($propertyWs['data']) and !$dat) {
@@ -167,6 +176,12 @@ abstract class Data
                             throw new \Exception('cannot import property [ ' . $type . ' ] because it references unknown ' . $propertyWs['data']);
                         } else {
                             $idMapper->recordMappingFailure('object', $object->getId(), $type, $propertyWs['data']);
+                        }
+
+                        foreach($fallbackProperties as $fallbackProperty) {
+                            if($fallbackProperty->getName() == $propertyWs['name'] && $fallbackProperty->getType() == $propertyWs['type']) {
+                                $dat = $fallbackProperty->getData();
+                            }
                         }
                     }
                 } elseif ($type == 'date') {

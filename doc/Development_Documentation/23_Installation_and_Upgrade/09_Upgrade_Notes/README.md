@@ -5,6 +5,9 @@
 - Rules regarding default values in combination with inheritance enabled have been clarified. Read [this](../../05_Objects/01_Object_Classes/01_Data_Types/README.md) for details.
 - [Ecommerce] Deprecated FactFinder integration and will be removed in Pimcore 7.
 
+## 6.6.9
+- If you access `$this->view` in your controller before Symfony's `kernel.controller` event (e.g. with `onKernelController()` with higher priority than 3 or by overriding `Pimcore\Controller\setContainer()`), document routing may not work correctly. Please use `onKernelController()` with lower priority than 3 or `onKernelResponse()`.
+
 ## 6.6.4
 - If you are using the specific settings 'max. items' option for ObjectBricks & Fieldcollections on your class definition, then API will validate the max limit on save() calls from now on.
 
