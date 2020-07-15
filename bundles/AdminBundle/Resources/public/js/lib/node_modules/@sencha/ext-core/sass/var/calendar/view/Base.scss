@@ -1,0 +1,19 @@
+$calendar-background-color: dynamic(#fff);
+
+$calendar-font-size: dynamic($font-size);
+
+$calendar-large-font-size: dynamic($font-size);
+
+$calendar-small-font-size: dynamic($font-size);
+
+$calendar-font-family: dynamic($font-family);
+
+$calendar-border-color: dynamic(#ddd);
+
+$calendar-selection-color: dynamic(#cff);
+
+$calendar-tooltip-border-color: $panel-border-color;
+
+$calendar-tooltip-background-color: $panel-body-background-color;
+
+$calendar-today-background-color: dynamic(mix(#fff, $base-color, 65%));

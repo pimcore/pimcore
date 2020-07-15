@@ -1,0 +1,53 @@
+.#{$prefix}dd-drag-proxy {
+    color: $statusproxy-color;
+    @include font($statusproxy-font-weight, $statusproxy-font-size, $statusproxy-line-height, $statusproxy-font-family);
+    @include border($statusproxy-border-width, $statusproxy-border-style, $statusproxy-border-color);
+    background-color: $statusproxy-background-color;
+}
+
+.#{$prefix}dd-drag-ghost,
+.#{$prefix}dd-drop-icon {
+    padding: $statusproxy-padding;
+
+    @if $include-rtl {
+        .#{$prefix}rtl & {
+            padding: rtl($statusproxy-padding);
+        }
+    }
+}
+
+.#{$prefix}dd-drag-ghost {
+    padding-left: 0;
+
+    @if $include-rtl {
+        .#{$prefix}rtl & {
+            padding-left: right($statusproxy-padding);
+            padding-right:  0;
+        }
+    }
+}
+
+.#{$prefix}dd-drop-ok .#{$prefix}dd-drop-icon {
+    @if $enable-font-icons and ($statusproxy-ok-glyph != null) {
+        @include font-icon($statusproxy-ok-glyph, $color: $statusproxy-ok-glyph-color);
+    } @else {
+        background-image: theme-background-image('dd/drop-yes')
+    }
+}
+
+.#{$prefix}dd-drop-ok-add .#{$prefix}dd-drop-icon {
+    @if $enable-font-icons and ($statusproxy-add-glyph != null) {
+        @include font-icon($statusproxy-add-glyph, $color: $statusproxy-add-glyph-color);
+    } @else {
+        background-image: theme-background-image('dd/drop-add');
+    }
+}
+
+// nodrop rule must go at end to override drop OK icon rules
+.#{$prefix}dd-drop-nodrop div.#{$prefix}dd-drop-icon {
+    @if $enable-font-icons and ($statusproxy-nodrop-glyph != null) {
+        @include font-icon($statusproxy-nodrop-glyph, $color: $statusproxy-nodrop-glyph-color);
+    } @else {
+        background-image: theme-background-image('dd/drop-no');
+    }
+}

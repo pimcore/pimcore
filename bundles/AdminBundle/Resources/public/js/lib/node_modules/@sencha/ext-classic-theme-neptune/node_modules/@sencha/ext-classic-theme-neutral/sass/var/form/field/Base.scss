@@ -1,0 +1,1335 @@
+// NOTE: this file contains the variables for all types of form fields.  This is done
+// (as opposed to having separate files for Text.scss, Checkbox.scss etc) so that grid
+// editor sass vars (in Editor.scss) can derive from any of the form field vars simply
+// because Ext.grid.plugin.Editing requires Ext.form.field.Base.  Grid editor sass
+// vars cannot live in the same files as normal form field vars because they also derive
+// some of their values from grid vars.
+
+// <editor-fold desc="Base Variables">
+/**
+ * @class Ext.form.field.Base
+ */
+
+/**
+ * @var {number} $form-field-height
+ * Height for form fields.
+ */
+$form-field-height: dynamic(24px);
+
+/**
+ * @var {number} $form-toolbar-field-height
+ * Height for form fields in toolbar.
+ */
+$form-toolbar-field-height: dynamic($form-field-height);
+
+/**
+ * @var {number} $form-field-padding
+ * Padding around form fields.
+ */
+$form-field-padding: dynamic(1px 3px 2px);
+
+/**
+ * @var {number} $form-field-font-size
+ * Font size for form fields.
+ */
+$form-field-font-size: dynamic($font-size);
+
+/**
+ * @var {string} $form-field-font-family
+ * Font family for form fields.
+ */
+$form-field-font-family: dynamic($font-family);
+
+/**
+ * @var {string} $form-field-font-weight
+ * Font weight for form fields.
+ */
+$form-field-font-weight: dynamic($font-weight);
+
+/**
+ * @var {number} $form-toolbar-field-font-size
+ * Font size for toolbar form fields.
+ */
+$form-toolbar-field-font-size: dynamic($form-field-font-size);
+
+/**
+ * @var {string} $form-toolbar-field-font-family
+ * Font family for toolbar form fields.
+ */
+$form-toolbar-field-font-family: dynamic($form-field-font-family);
+/**
+ * @var {string} $form-toolbar-field-font-weight
+ * Font weight for toolbar form fields.
+ */
+$form-toolbar-field-font-weight: dynamic($form-field-font-weight);
+
+/**
+ * @var {color} $form-field-color
+ * Text color for form fields.
+ */
+$form-field-color: dynamic($color);
+
+/**
+ * @var {color} $form-field-empty-color
+ * Text color for empty form fields.
+ */
+$form-field-empty-color: dynamic(gray);
+
+/**
+ * @var {color} $form-field-border-color
+ * Border color for form fields.
+ */
+$form-field-border-color: dynamic($neutral-color);
+
+/**
+ * @var {number} $form-field-border-width
+ * Border width for form fields.
+ */
+$form-field-border-width: dynamic(1px);
+
+/**
+ * @var {string} $form-field-border-style
+ * Border style for form fields.
+ */
+$form-field-border-style: dynamic(solid);
+
+/**
+ * @var {color} $form-field-focus-border-color
+ * Border color for focused form fields.
+ *
+ * In the default Neptune color scheme this is the same as $base-highlight-color
+ * but it does not change automatically when one changes the $base-color.  This is because
+ * checkboxes and radio buttons have this focus color hard coded into their background
+ * images.  If this color is changed, you should also modify checkbox and radio button
+ * background images to match
+ */
+$form-field-focus-border-color: dynamic($base-color);
+
+/**
+ * @var {string} $form-field-focus-border-style
+ * Border style for focused form fields.
+ */
+$form-field-focus-border-style: dynamic($form-field-border-style);
+
+/**
+ * @var {number} $form-field-focus-border-width
+ * Border width for focused form fields.
+ */
+$form-field-focus-border-width: dynamic($form-field-border-width);
+
+/**
+ * @var {color} $form-field-invalid-border-color
+ * Border color for invalid form fields.
+ */
+$form-field-invalid-border-color: dynamic(#c30);
+
+/**
+ * @var {color} $form-field-background-color
+ * Background color for form fields.
+ */
+$form-field-background-color: dynamic(#fff);
+/**
+ * @var {string} $form-field-background-image
+ * Background image for form fields.
+ */
+$form-field-background-image: dynamic('form/text-bg');
+
+/**
+ * @var {color} $form-field-invalid-background-color
+ * Background color for invalid form fields.
+ */
+$form-field-invalid-background-color: dynamic(#fff);
+/**
+ * @var {string} $form-field-invalid-background-image
+ * Background image for invalid form fields.
+ */
+$form-field-invalid-background-image: dynamic('grid/invalid_line');
+/**
+ * @var {string} $form-field-invalid-background-repeat
+ * Background repeat for invalid form fields.
+ */
+$form-field-invalid-background-repeat: dynamic(repeat-x);
+/**
+ * @var {string/list} $form-field-invalid-background-position
+ * Background position for invalid form fields.
+ */
+$form-field-invalid-background-position: dynamic(bottom);
+
+/**
+ * @var {boolean}
+ * True to include the "default" field UI
+ */
+$include-field-default-ui: dynamic($include-default-uis);
+
+/**
+ * @var {boolean}
+ * True to include the "toolbar" field UI
+ */
+$include-field-toolbar-ui: dynamic(false);
+
+// </editor-fold>
+
+// <editor-fold desc="Labelable Variables">
+/**
+ * @class Ext.form.Labelable
+ */
+
+/**
+ * @var {color}
+ * The text color of form field labels
+ */
+$form-label-font-color: dynamic($color);
+
+/**
+ * @var {string}
+ * The font-weight of form field labels
+ */
+$form-label-font-weight: dynamic($font-weight);
+
+/**
+ * @var {number}
+ * The font-size of form field labels
+ */
+$form-label-font-size: dynamic($font-size);
+
+/**
+ * @var {string}
+ * The font-family of form field labels
+ */
+$form-label-font-family: dynamic($font-family);
+
+/**
+ * @var {number}
+ * The line-height of form field labels
+ */
+$form-label-line-height: dynamic(round($form-label-font-size * 1.15));
+
+/**
+ * @var {number}
+ * Horizontal space between the label and the field body when the label is left-aligned.
+ */
+$form-label-horizontal-spacing: dynamic(5px);
+
+/**
+ * @var {number}
+ * Vertical space between the label and the field body when the label is top-aligned.
+ */
+$form-label-vertical-spacing: dynamic(5px);
+
+/**
+ * @var {string}
+ * The background image for error icons
+ */
+$form-error-icon-background-image: dynamic('form/exclamation');
+
+/**
+ * @var {number}
+ * Width for form error icons.
+ */
+$form-error-icon-width: dynamic(16px);
+
+/**
+ * @var {number}
+ * Height for form error icons.
+ */
+$form-error-icon-height: dynamic(16px);
+
+/**
+ * @var {number/list}
+ * Margin for error icons that are aligned to the side of the field
+ */
+$form-error-icon-side-margin: dynamic(0 1px);
+
+/**
+ * @var {number}
+ * The space between the icon and the message for errors that display under the field
+ */
+$form-error-under-icon-spacing: dynamic(4px);
+
+/**
+ * @var {number/list}
+ * The padding on errors that display under the form field
+ */
+$form-error-under-padding: dynamic(2px 2px 2px 0);
+
+/**
+ * @var {color}
+ * The text color of form error messages
+ */
+$form-error-msg-color: dynamic($form-field-invalid-border-color);
+
+/**
+ * @var {string}
+ * The font-weight of form error messages
+ */
+$form-error-msg-font-weight: dynamic($font-weight);
+
+/**
+ * @var {number}
+ * The font-size of form error messages
+ */
+$form-error-msg-font-size: dynamic($font-size);
+
+/**
+ * @var {string}
+ * The font-family of form error messages
+ */
+$form-error-msg-font-family: dynamic($font-family);
+
+/**
+ * @var {number}
+ * The line-height of form error messages
+ */
+$form-error-msg-line-height: dynamic($form-error-icon-height);
+
+/**
+ * @var {number}
+ * The bottom margin to apply to form items when in auto, anchor, vbox, or table layout.
+ * This value is also used as the default border-spacing in a form-layout.
+ */
+$form-item-margin-bottom: dynamic(5px);
+
+/**
+ * @var {number}
+ * Opacity of disabled form fields
+ */
+$form-field-disabled-opacity: dynamic(.3);
+
+/**
+ * @var {color}
+ * The text color of toolbar form field labels
+ */
+$form-toolbar-label-font-color: dynamic($color);
+
+/**
+ * @var {string}
+ * The font-weight of toolbar form field labels
+ */
+$form-toolbar-label-font-weight: dynamic($font-weight);
+
+/**
+ * @var {number}
+ * The font-size of toolbar form field labels
+ */
+$form-toolbar-label-font-size: dynamic($font-size);
+
+/**
+ * @var {string}
+ * The font-family of toolbar form field labels
+ */
+$form-toolbar-label-font-family: dynamic($font-family);
+
+/**
+ * @var {number}
+ * The line-height of toolbar form field labels
+ */
+$form-toolbar-label-line-height: dynamic(round($form-toolbar-label-font-size * 1.15));
+
+/**
+ * @var {number}
+ * Horizontal space between the toolbar field's label and the field body when the label is left-aligned.
+ */
+$form-toolbar-label-horizontal-spacing: dynamic(5px);
+
+/**
+ * @var {number}
+ * Vertical space between the toolbar field's label and the field body when the label is top-aligned.
+ */
+$form-toolbar-label-vertical-spacing: dynamic(5px);
+
+/**
+ * @var {string}
+ * The background image for toolbar field error icons
+ */
+$form-toolbar-error-icon-background-image: dynamic('form/exclamation');
+
+/**
+ * @var {number}
+ * Width for toolbar field error icons.
+ */
+$form-toolbar-error-icon-width: dynamic(16px);
+
+/**
+ * @var {number}
+ * Height for toolbar field error icons.
+ */
+$form-toolbar-error-icon-height: dynamic(16px);
+
+/**
+ * @var {number/list}
+ * Margin for toolbar field error icons that are aligned to the side of the field
+ */
+$form-toolbar-error-icon-side-margin: dynamic(0 1px);
+
+/**
+ * @var {number}
+ * The space between the icon and the message for errors that display under a toolbar field
+ */
+$form-toolbar-error-under-icon-spacing: dynamic(4px);
+
+/**
+ * @var {number/list}
+ * The padding on errors that display under the toolbar form field
+ */
+$form-toolbar-error-under-padding: dynamic(2px 2px 2px 0);
+
+/**
+ * @var {color}
+ * The text color of toolbar form error messages
+ */
+$form-toolbar-error-msg-color: dynamic($form-field-invalid-border-color);
+
+/**
+ * @var {string}
+ * The font-weight of toolbar form field error messages
+ */
+$form-toolbar-error-msg-font-weight: dynamic($font-weight);
+
+/**
+ * @var {number}
+ * The font-size of toolbar form field error messages
+ */
+$form-toolbar-error-msg-font-size: dynamic($font-size);
+
+/**
+ * @var {string}
+ * The font-family of toolbar form field error messages
+ */
+$form-toolbar-error-msg-font-family: dynamic($font-family);
+
+/**
+ * @var {number}
+ * The line-height of toolbar form field error messages
+ */
+$form-toolbar-error-msg-line-height: dynamic($form-toolbar-error-icon-height);
+
+/**
+ * @var {number}
+ * Opacity of disabled toolbar form fields
+ */
+$form-toolbar-field-disabled-opacity: dynamic(.3);
+
+/**
+ * @var {boolean}
+ * True to include the "default" label UI
+ */
+$include-label-default-ui: dynamic($include-field-default-ui);
+
+/**
+ * @var {boolean}
+ * True to include the "default" label UI
+ */
+$include-label-toolbar-ui: dynamic($include-field-toolbar-ui);
+
+// </editor-fold>
+
+// <editor-fold desc="Text Field Variables">
+/**
+ * @class Ext.form.field.Text
+ */
+
+/**
+ * @var {number}
+ * The height of text fields
+ */
+$form-text-field-height: dynamic($form-field-height);
+
+/**
+ * @var {number}
+ * Font size for text fields.
+ */
+$form-text-field-font-size: dynamic($form-field-font-size);
+
+/**
+ * @var {string}
+ * Font family for text fields.
+ */
+$form-text-field-font-family: dynamic($form-field-font-family);
+
+/**
+ * @var {string}
+ * Font weight for text fields.
+ */
+$form-text-field-font-weight: dynamic($form-field-font-weight);
+
+/**
+ * @var {color}
+ * The color of the text field's input element
+ */
+$form-text-field-color: dynamic($form-field-color);
+
+/**
+ * @var {color}
+ * The background color of the text field's input element
+ */
+$form-text-field-background-color: dynamic($form-field-background-color);
+
+/**
+ * @var {number/list}
+ * The border width of text fields
+ */
+$form-text-field-border-width: dynamic($form-field-border-width);
+
+/**
+ * @var {string/list}
+ * The border style of text fields
+ */
+$form-text-field-border-style: dynamic($form-field-border-style);
+
+/**
+ * @var {color/list}
+ * The border color of text fields
+ */
+$form-text-field-border-color: dynamic($form-field-border-color);
+
+/**
+ * @var {color/list}
+ * The border color of the focused text field
+ */
+$form-text-field-focus-border-color: dynamic($form-field-focus-border-color);
+
+/**
+ * @var {color}
+ * Border color for invalid text fields.
+ */
+$form-text-field-invalid-border-color: dynamic($form-field-invalid-border-color);
+
+/**
+ * @var {number/list}
+ * Border radius for text fields
+ */
+$form-text-field-border-radius: dynamic(0);
+
+/**
+ * @var {string}
+ * The background image of the text field's input element
+ */
+$form-text-field-background-image: dynamic($form-field-background-image);
+
+/**
+ * @var {number/list}
+ * The padding of the text field's input element
+ */
+$form-text-field-padding: dynamic($form-field-padding);
+
+/**
+ * @var {color}
+ * Text color for empty text fields.
+ */
+$form-text-field-empty-color: dynamic($form-field-empty-color);
+
+/**
+ * @var {number}
+ * The default width of the text field's body element (the element that contains the input
+ * element and triggers) when the field is not sized explicitly using the {@link #width}
+ * config, or sized by it's containing layout.
+ */
+$form-text-field-body-width: dynamic(150px);
+
+/**
+ * @var {color}
+ * Background color of the text field's input element when the field value is invalid.
+ */
+$form-text-field-invalid-background-color: dynamic($form-field-invalid-background-color);
+
+/**
+ * @var {string}
+ * Background image of the text field's input element when the field value is invalid.
+ */
+$form-text-field-invalid-background-image: dynamic($form-field-invalid-background-image);
+
+/**
+ * @var {string}
+ * Background repeat of the text field's input element when the field value is invalid.
+ */
+$form-text-field-invalid-background-repeat: dynamic($form-field-invalid-background-repeat);
+
+/**
+ * @var {string/list}
+ * Background position of the text field's input element when the field value is invalid.
+ */
+$form-text-field-invalid-background-position: dynamic($form-field-invalid-background-position);
+
+/**
+ * @var {boolean}
+ * `true` to use classic-theme styled border for text fields.
+ */
+$form-text-field-classic-border: dynamic(false);
+
+/**
+ * @var {number} $form-textarea-line-height
+ * The line-height to use for the TextArea's text
+ */
+// 1.15 is a rough approximation of the ratio of a "normal" line-height to font-size.
+// we use this as opposed to using "normal" so it can be involved in the calculation of
+// $form-textarea-body-height
+$form-textarea-line-height: dynamic(round($form-text-field-font-size * 1.15));
+
+/**
+ * @var {number} $form-textarea-body-height
+ * The default width of the TextArea's body element (the element that contains the textarea
+ * html element when the field is not sized explicitly using the {@link #width}config, or
+ * sized by it's containing layout.
+ */
+// In 4.x the "rows" config defaulted to "4", so we attempt to preserves roughly the same
+// height using a multiple of line-height.
+$form-textarea-body-height: dynamic($form-textarea-line-height * 4);
+
+/**
+ * @var {color}
+ * Text color for file fields
+ */
+$form-file-field-color: dynamic($form-field-empty-color);
+
+/**
+ * @var {number}
+ * The width of the text field's trigger element
+ */
+$form-trigger-width: dynamic(22px);
+
+/**
+ * @var {number/list}
+ * The width of the text field's trigger's border
+ */
+$form-trigger-border-width: dynamic(0);
+
+/**
+ * @var {color/list}
+ * The color of the text field's trigger's border
+ */
+$form-trigger-border-color: dynamic($form-field-border-color);
+
+/**
+ * @var {string/list}
+ * The style of the text field's trigger's border
+ */
+$form-trigger-border-style: dynamic($form-field-border-style);
+
+/**
+ * @var {color}
+ * The color of the text field's trigger's border when hovered
+ */
+$form-trigger-border-color-over: dynamic($form-field-border-color);
+
+/**
+ * @var {color}
+ * The color of the text field's trigger's border when the field is focused
+ */
+$form-trigger-border-color-focus: dynamic($form-field-focus-border-color);
+
+/**
+ * @var {color}
+ * The color of the text field's trigger's border when the field is focused and the trigger is hovered
+ */
+$form-trigger-border-color-pressed: dynamic($form-trigger-border-color-over);
+
+/**
+ * @var {string}
+ * The default background image for text field triggers
+ */
+$form-trigger-background-image: dynamic('form/trigger');
+
+/**
+ * @var {color}
+ * The background color of the text field's trigger element
+ */
+$form-trigger-background-color: dynamic($form-field-background-color);
+
+/**
+ * @var {string/list}
+ * The default glyph for for text field triggers when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-trigger-glyph: dynamic($fa-var-caret-down 16px $font-icon-font-family);
+
+/**
+ * @var {color}
+ * The color of text field triggers when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-trigger-glyph-color: dynamic($form-text-field-color);
+
+/**
+ * @var {string/list}
+ * The default glyph for for the "search" trigger when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-search-trigger-glyph: dynamic($fa-var-search 16px $font-icon-font-family);
+
+/**
+ * @var {color}
+ * The color of the "search" trigger when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-search-trigger-glyph-color: dynamic($form-trigger-glyph-color);
+
+/**
+ * @var {string/list}
+ * The default glyph for for the "clear" trigger when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-clear-trigger-glyph: dynamic($fa-var-times 16px $font-icon-font-family);
+
+/**
+ * @var {color}
+ * The color of the "clear" trigger when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-clear-trigger-glyph-color: dynamic($form-trigger-glyph-color);
+
+/**
+ * @var {number}
+ * The height of toolbar text fields
+ */
+$form-toolbar-text-field-height: dynamic($form-toolbar-field-height);
+
+/**
+ * @var {number}
+ * Font size for toolbar text fields.
+ */
+$form-toolbar-text-field-font-size: dynamic($form-text-field-font-size);
+
+/**
+ * @var {string}
+ * Font family for toolbar text fields.
+ */
+$form-toolbar-text-field-font-family: dynamic($form-text-field-font-family);
+
+/**
+ * @var {string}
+ * Font weight for toolbar text fields.
+ */
+$form-toolbar-text-field-font-weight: dynamic($form-text-field-font-weight);
+
+/**
+ * @var {color}
+ * The color of the toolbar text field's input element
+ */
+$form-toolbar-text-field-color: dynamic($form-text-field-color);
+
+/**
+ * @var {color}
+ * The background color of the toolbar text field's input element
+ */
+$form-toolbar-text-field-background-color: dynamic($form-text-field-background-color);
+
+/**
+ * @var {number/list}
+ * The border width of toolbar text fields
+ */
+$form-toolbar-text-field-border-width: dynamic($form-text-field-border-width);
+
+/**
+ * @var {string/list}
+ * The border style of toolbar text fields
+ */
+$form-toolbar-text-field-border-style: dynamic($form-text-field-border-style);
+
+/**
+ * @var {color/list}
+ * The border color of toolbar text fields
+ */
+$form-toolbar-text-field-border-color: dynamic($form-text-field-border-color);
+
+/**
+ * @var {color/list}
+ * The border color of the focused toolbar text field
+ */
+$form-toolbar-text-field-focus-border-color: dynamic($form-text-field-focus-border-color);
+
+/**
+ * @var {color} $form-toolbar-text-field-invalid-border-color
+ * Border color for invalid toolbar text fields.
+ */
+$form-toolbar-text-field-invalid-border-color: dynamic($form-text-field-invalid-border-color);
+
+/**
+ * @var {number/list}
+ * Border radius for toolbar text fields
+ */
+$form-toolbar-text-field-border-radius: dynamic($form-text-field-border-radius);
+
+/**
+ * @var {string}
+ * The background image of the toolbar text field's input element
+ */
+$form-toolbar-text-field-background-image: dynamic($form-text-field-background-image);
+
+/**
+ * @var {number/list}
+ * The padding of the toolbar text field's input element
+ */
+$form-toolbar-text-field-padding: dynamic($form-text-field-padding);
+
+/**
+ * @var {color}
+ * Text color for empty toolbar text fields.
+ */
+$form-toolbar-text-field-empty-color: dynamic($form-text-field-empty-color);
+
+/**
+ * @var {number}
+ * The default width of the toolbar text field's body element (the element that contains the input
+ * element and triggers) when the field is not sized explicitly using the {@link #width}
+ * config, or sized by it's containing layout.
+ */
+$form-toolbar-text-field-body-width: dynamic($form-text-field-body-width);
+
+/**
+ * @var {color}
+ * Background color of the toolbar text field's input element when the field value is invalid.
+ */
+$form-toolbar-text-field-invalid-background-color: dynamic($form-text-field-invalid-background-color);
+
+/**
+ * @var {string}
+ * Background image of the toolbar text field's input element when the field value is invalid.
+ */
+$form-toolbar-text-field-invalid-background-image: dynamic($form-text-field-invalid-background-image);
+
+/**
+ * @var {string}
+ * Background repeat of the toolbar text field's input element when the field value is invalid.
+ */
+$form-toolbar-text-field-invalid-background-repeat: dynamic($form-text-field-invalid-background-repeat);
+
+/**
+ * @var {string/list}
+ * Background position of the toolbar text field's input element when the field value is invalid.
+ */
+$form-toolbar-text-field-invalid-background-position: dynamic($form-text-field-invalid-background-position);
+
+/**
+ * @var {boolean}
+ * `true` to use classic-theme styled border for toolbar text fields.
+ */
+$form-toolbar-text-field-classic-border: dynamic($form-text-field-classic-border);
+
+/**
+ * @var {number/string}
+ * The line-height to use for the toolbar TextArea's text
+ */
+$form-toolbar-textarea-line-height: dynamic($form-textarea-line-height);
+
+/**
+ * @var {number}
+ * The default width of the toolbar TextArea's body element (the element that contains the
+ * textarea html element when the field is not sized explicitly using the {@link #width}
+ * config, or sized by it's containing layout.
+ */
+$form-toolbar-textarea-body-height: dynamic($form-textarea-body-height);
+
+/**
+ * @var {color}
+ * Text color for toolbar file fields
+ */
+$form-toolbar-file-field-color: dynamic($form-file-field-color);
+
+/**
+ * @var {number}
+ * The width of the toolbar text field's trigger element
+ */
+$form-toolbar-trigger-width: dynamic($form-trigger-width);
+
+/**
+ * @var {number/list}
+ * The width of the toolbar text field's trigger's border
+ */
+$form-toolbar-trigger-border-width: dynamic($form-trigger-border-width);
+
+/**
+ * @var {color/list}
+ * The color of the toolbar text field's trigger's border
+ */
+$form-toolbar-trigger-border-color: dynamic($form-trigger-border-color);
+
+/**
+ * @var {string/list}
+ * The style of the toolbar text field's trigger's border
+ */
+$form-toolbar-trigger-border-style: dynamic($form-trigger-border-style);
+
+/**
+ * @var {color}
+ * The color of the toolbar text field's trigger's border when hovered
+ */
+$form-toolbar-trigger-border-color-over: dynamic($form-trigger-border-color);
+
+/**
+ * @var {color}
+ * The color of the toolbar text field's trigger's border when the field is focused
+ */
+$form-toolbar-trigger-border-color-focus: dynamic($form-trigger-border-color-focus);
+
+/**
+ * @var {color}
+ * The color of the toolbar text field's trigger's border when the field is focused and the trigger is hovered
+ */
+$form-toolbar-trigger-border-color-pressed: dynamic($form-toolbar-trigger-border-color-over);
+
+/**
+ * @var {string}
+ * The default background image for toolbar text field triggers
+ */
+$form-toolbar-trigger-background-image: dynamic($form-trigger-background-image);
+
+/**
+ * @var {color}
+ * The background color of the toolbar text field's trigger element
+ */
+$form-toolbar-trigger-background-color: dynamic($form-text-field-background-color);
+
+/**
+ * @var {string/list}
+ * The default glyph for for toolbar text field triggers when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-toolbar-trigger-glyph: dynamic($form-trigger-glyph);
+
+/**
+ * @var {color}
+ * The color of toolbar text field triggers when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-toolbar-trigger-glyph-color: dynamic($form-trigger-glyph-color);
+
+/**
+ * @var {number/list}
+ * The padding for toolbar tag fields
+ */
+$form-toolbar-tag-field-item-margin: dynamic($tag-field-item-margin);
+
+/**
+ * @var {number/list}
+ * The margin for toolbar tag field items
+ */
+$form-toolbar-tag-field-padding: dynamic($tag-field-padding);
+
+/**
+ * @var {boolean}
+ * True to include the "default" text field UI
+ */
+$include-text-field-default-ui: dynamic($include-field-default-ui);
+
+/**
+ * @var {boolean}
+ * True to include the "toolbar" text field UI
+ */
+$include-text-field-toolbar-ui: dynamic($include-field-toolbar-ui);
+
+/**
+ * @var {boolean}
+ * True to include the "toolbar" tag field UI
+ */
+$include-tag-field-toolbar-ui: dynamic($include-field-toolbar-ui);
+
+// </editor-fold>
+
+// <editor-fold desc="Spinner Variables"
+/**
+ * @class Ext.form.field.Spinner
+ */
+
+/**
+ * @var {boolean}
+ * True to use vertically oriented triggers. False to use horizontally oriented triggers.
+ * Themes that set this property to true must also override the
+ * {@link Ext.form.trigger.Spinner#vertical} config to match. Defaults to true.  When
+ * 'vertical' orientation is used, the background image for both triggers is
+ * 'form/spinner'.  When 'horizontal' is used, the triggers use separate background
+ * images - 'form/spinner-up', and 'form/spinner-down'.
+ */
+$spinner-trigger-vertical: dynamic(true);
+
+/**
+ * @var {string}
+ * Background image for vertically oriented spinner triggers
+ */
+$spinner-trigger-vertical-background-image: dynamic('form/spinner');
+
+/**
+ * @var {string}
+ * Background image for the "up" trigger when trigger buttons are horizontally aligned
+ */
+$spinner-trigger-up-background-image: dynamic('form/spinner-up');
+
+/**
+ * @var {string}
+ * Background image for the "down" trigger when trigger buttons are horizontally aligned
+ */
+$spinner-trigger-down-background-image: dynamic('form/spinner-down');
+
+/**
+ * @var {string/list}
+ * The glyph for the "up" spinner trigger trigger when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$spinner-trigger-up-glyph: dynamic($ext-var-spinner-up 16px ExtJS);
+
+/**
+ * @var {string/list}
+ * The glyph for the "down" spinner trigger trigger when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$spinner-trigger-down-glyph: dynamic($ext-var-spinner-down 16px ExtJS);
+
+/**
+ * @var {color}
+ * The color of spinner triggers when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$spinner-trigger-glyph-color: dynamic($form-trigger-glyph-color);
+
+/**
+ * @var {boolean}
+ * `true` to use vertically oriented triggers for fields with the 'toolbar' UI.
+ */
+$spinner-toolbar-trigger-vertical: dynamic(true);
+
+/**
+ * @var {string}
+ * Background image for vertically oriented toolbar spinner triggers
+ */
+$spinner-toolbar-trigger-vertical-background-image: dynamic($spinner-trigger-vertical-background-image);
+
+/**
+ * @var {string}
+ * Background image for the "up" toolbar spinner trigger when trigger buttons are horizontally aligned
+ */
+$spinner-toolbar-trigger-up-background-image: dynamic($spinner-trigger-up-background-image);
+
+/**
+ * @var {string}
+ * Background image for the "down" toolbar spinner trigger when trigger buttons are horizontally aligned
+ */
+$spinner-toolbar-trigger-down-background-image: dynamic($spinner-trigger-down-background-image);
+
+/**
+ * @var {string/list}
+ * The glyph for the "up" toolbar spinner trigger when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$spinner-toolbar-trigger-up-glyph: dynamic($fa-var-caret-up 16px $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * The glyph for the "down" toolbar spinner trigger when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$spinner-toolbar-trigger-down-glyph: dynamic($fa-var-caret-down 16px $font-icon-font-family);
+
+/**
+ * @var {color}
+ * The color of toolbar spinner triggers when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$spinner-toolbar-trigger-glyph-color: dynamic($form-trigger-glyph-color);
+
+/**
+ * @var {boolean}
+ * True to include the "default" spinner UI
+ */
+$include-spinner-trigger-default-ui: dynamic($include-default-uis);
+
+/**
+ * @var {boolean}
+ * True to include the "toolbar" spinner UI
+ */
+$include-spinner-trigger-toolbar-ui: dynamic($include-text-field-toolbar-ui);
+
+// </editor-fold>
+
+// <editor-fold desc="Checkbox Variables"
+/**
+ * @class Ext.form.field.Checkbox
+ */
+
+/**
+ * @var {number}
+ * The size of the checkbox
+ */
+$form-checkbox-size: dynamic(13px);
+
+/**
+ * @var {string}
+ * The background-image of the checkbox
+ */
+$form-checkbox-background-image: dynamic('form/checkbox');
+
+/**
+ * @var {string/list}
+ * The glyph for the checkbox when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-checkbox-glyph: dynamic($ext-var-checkbox-unchecked $form-checkbox-size ExtJS);
+
+/**
+ * @var {string/list}
+ * The glyph for the checkbox in "checked" state when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-checkbox-checked-glyph: dynamic($ext-var-checkbox-checked $form-checkbox-size ExtJS);
+
+/**
+ * @var {color}
+ * The color of the checkbox when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-checkbox-glyph-color: dynamic($form-field-border-color);
+
+/**
+ * @var {color}
+ * The color of the checkbox in "focused" state when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-checkbox-glyph-focus-color: dynamic($form-field-focus-border-color);
+
+/**
+ * @var {string}
+ * The background-image of the radio button
+ */
+$form-radio-background-image: dynamic('form/radio');
+
+/**
+ * @var {string/list}
+ * The glyph for the radio button when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-radio-glyph: dynamic($fa-var-circle $form-checkbox-size $font-icon-font-family-regular);
+
+/**
+ * @var {string/list}
+ * The glyph for the radio button in "checked" state when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-radio-checked-glyph: dynamic($fa-var-dot-circle $form-checkbox-size $font-icon-font-family-regular);
+
+/**
+ * @var {color}
+ * The color of the radio button when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-radio-glyph-color: dynamic($form-checkbox-glyph-color);
+
+/**
+ * @var {color}
+ * The color of the radio button in "focused" state when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-radio-glyph-focus-color: dynamic($form-checkbox-glyph-focus-color);
+
+/**
+ * @var {color}
+ * The color of the checkbox's {@link #boxLabel}
+ */
+$form-checkbox-label-color: dynamic($form-label-font-color);
+
+/**
+ * @var {string}
+ * The font-weight of the checkbox's {@link #boxLabel}
+ */
+$form-checkbox-label-font-weight: dynamic($form-label-font-weight);
+
+/**
+ * @var {string}
+ * The font-size of the checkbox's {@link #boxLabel}
+ */
+$form-checkbox-label-font-size: dynamic($form-label-font-size);
+
+/**
+ * @var {string}
+ * The font-family of the checkbox's {@link #boxLabel}
+ */
+$form-checkbox-label-font-family: dynamic($form-label-font-family);
+
+/**
+ * @var {string}
+ * The line-height of the checkbox's {@link #boxLabel}
+ */
+$form-checkbox-label-line-height: dynamic($form-label-line-height);
+
+/**
+ * @var {number}
+ * The space between the {@link #boxLabel} and the checkbox.
+ */
+$form-checkbox-label-spacing: dynamic(4px);
+
+/**
+ * @var {number}
+ * The size of the toolbar checkbox
+ */
+$form-toolbar-checkbox-size: dynamic(13px);
+
+/**
+ * @var {string}
+ * The background-image of the toolbar checkbox
+ */
+$form-toolbar-checkbox-background-image: dynamic('form/checkbox');
+
+/**
+ * @var {string}
+ * The background-image of the toolbar radio button
+ */
+$form-toolbar-radio-background-image: dynamic('form/radio');
+
+/**
+ * @var {color}
+ * The color of the toolbar checkbox's {@link #boxLabel}
+ */
+$form-toolbar-checkbox-label-color: dynamic($form-toolbar-label-font-color);
+
+/**
+ * @var {string}
+ * The font-weight of the toolbar checkbox's {@link #boxLabel}
+ */
+$form-toolbar-checkbox-label-font-weight: dynamic($form-toolbar-label-font-weight);
+
+/**
+ * @var {string}
+ * The font-size of the toolbar checkbox's {@link #boxLabel}
+ */
+$form-toolbar-checkbox-label-font-size: dynamic($form-toolbar-label-font-family);
+
+/**
+ * @var {string}
+ * The font-family of the toolbar checkbox's {@link #boxLabel}
+ */
+$form-toolbar-checkbox-label-font-family: dynamic($form-toolbar-label-font-family);
+
+/**
+ * @var {string}
+ * The line-height of the toolbar checkbox's {@link #boxLabel}
+ */
+$form-toolbar-checkbox-label-line-height: dynamic($form-toolbar-label-line-height);
+
+/**
+ * @var {number}
+ * The space between the {@link #boxLabel} and the toolbar checkbox.
+ */
+$form-toolbar-checkbox-label-spacing: dynamic(4px);
+
+/**
+ * @var {boolean}
+ * True to include the "default" checkbox UI
+ */
+$include-checkbox-default-ui: dynamic($include-field-default-ui);
+
+/**
+ * @var {boolean}
+ * True to include the "toolbar" checkbox UI
+ */
+$include-checkbox-toolbar-ui: dynamic($include-field-toolbar-ui);
+
+// </editor-fold>
+
+// <editor-fold desc="Display Field Variables">
+/**
+ * @class Ext.form.field.Display
+ */
+
+/**
+ * @var {color}
+ * The text color of display fields
+ */
+$form-display-field-color: dynamic($form-field-color);
+
+/**
+ * @var {number}
+ * The font-size of display fields
+ */
+$form-display-field-font-size: dynamic($form-field-font-size);
+
+/**
+ * @var {string}
+ * The font-family of display fields
+ */
+$form-display-field-font-family: dynamic($form-field-font-family);
+
+/**
+ * @var {string}
+ * The font-weight of display fields
+ */
+$form-display-field-font-weight: dynamic($form-field-font-weight);
+
+/**
+ * @var {number}
+ * The line-height of display fields
+ */
+$form-display-field-line-height: dynamic(round($form-display-field-font-size * 1.15));
+
+/**
+ * @var {color}
+ * Border or outline color for focused display fields.
+ */
+$form-display-field-focus-border-color: dynamic($form-field-focus-border-color);
+
+/**
+ * @var {string}
+ * Border or outline style for focused display fields.
+ */
+$form-display-field-focus-border-style: dynamic($form-field-focus-border-style);
+
+/**
+ * @var {number}
+ * Border or outline width for focused display fields.
+ */
+$form-display-field-focus-border-width: dynamic($form-field-focus-border-width);
+
+/**
+ * @var {color}
+ * The text color of toolbar display fields
+ */
+$form-toolbar-display-field-color: dynamic($form-display-field-color);
+
+/**
+ * @var {number}
+ * The font-size of toolbar display fields
+ */
+$form-toolbar-display-field-font-size: dynamic($form-display-field-font-size);
+
+/**
+ * @var {string}
+ * The font-family of toolbar display fields
+ */
+$form-toolbar-display-field-font-family: dynamic($form-display-field-font-family);
+
+/**
+ * @var {string}
+ * The font-weight of toolbar display fields
+ */
+$form-toolbar-display-field-font-weight: dynamic($form-display-field-font-weight);
+
+/**
+ * @var {number}
+ * The line-height of toolbar display fields
+ */
+$form-toolbar-display-field-line-height: dynamic(round($form-toolbar-display-field-font-size * 1.15));
+
+/**
+ * @var {color}
+ * Border or outline color for focused toolbar display fields
+ */
+$form-toolbar-display-field-focus-border-color: dynamic($form-display-field-focus-border-color);
+
+/**
+ * @var {string}
+ * Border or outline style for focused toolbar display fields
+ */
+$form-toolbar-display-field-focus-border-style: dynamic($form-display-field-focus-border-style);
+
+/**
+ * @var {number}
+ * Border or outline width for focused toolbar display fields
+ */
+$form-toolbar-display-field-focus-border-width: dynamic($form-display-field-focus-border-width);
+
+/**
+ * @var {boolean}
+ * True to include the "default" display field UI
+ */
+$include-display-field-default-ui: dynamic($include-field-default-ui);
+
+/**
+ * @var {boolean}
+ * True to include the "toolbar" display field UI
+ */
+$include-display-field-toolbar-ui: dynamic($include-field-toolbar-ui);
+
+// </editor-fold>
+
+// <editor-fold desc="Date Field Variables">
+/**
+ * @class Ext.form.field.Date
+ */
+
+/**
+ * @var {string/list}
+ * The glyph for the date field trigger when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-date-trigger-glyph: dynamic($fa-var-calendar 16px $font-icon-font-family);
+
+/**
+ * @var {color}
+ * The color of the date field trigger when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$form-date-trigger-glyph-color: dynamic($form-trigger-glyph-color);
+
+// </editor-fold>

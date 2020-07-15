@@ -1,0 +1,30 @@
+{
+    "mount": "${workspace.dir}",
+    "pages": {
+        "strict": "index.html"
+    },
+    "scripts": [
+        "../../.sencha/test/jasmine.js",
+        "../../.sencha/test/Ext.cmd.api.adapter.js",
+        "../resources/init.js",
+        "../../../packages/core/test/resources/helpers.js"
+    ],
+    "specs": {
+        "shuffle": 39,
+        "src": [
+            "../../../../packages/core/test/specs",
+            ".",
+            "../../../../packages/charts/test/specs",
+            "../../../../packages/charts/test/specs-classic",
+            "../../../../../packages/d3/test/specs",
+            "../../../../../packages/d3/test/specs-classic",
+            "../../../../packages/ux/test/specs",
+            "../../../../packages/ux/test/classic/specs",
+            "../../../../../packages/calendar/test/specs",
+            "../../../../../packages/pivot/test/specs",
+            "../../../../../packages/pivot/test/classic/specs",
+            "../../../../../packages/exporter/test/specs",
+            "../../../../../packages/exporter/test/classic/specs"
+        ]
+    } 
+}

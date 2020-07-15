@@ -1,0 +1,11 @@
+$panel-header-background-color: dynamic($base-color);
+$panel-base-color: dynamic($base-color);
+$panel-header-font-size: dynamic(18px);
+$panel-frame-border-width: 4px;
+$panel-header-padding: dynamic(16px);
+$panel-header-line-height: dynamic(22px);
+$panel-body-background-color: dynamic($reverse-color);
+$panel-frame-background-color: dynamic($reverse-color);
+$panel-frame-border-color: dynamic(#e1e1e1);
+$panel-frame-border-width: dynamic(1px);
+$panel-frame-header-border-width: dynamic(1px);

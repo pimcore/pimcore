@@ -1,0 +1,4 @@
+@import '../../../build/classic/theme-classic/resources/theme-classic-all-debug.css';
+@import '../../../build/packages/charts/classic/classic/resources/charts-all-debug.css';
+@import '../../../build/packages/ux/classic/classic/resources/ux-all-debug.css';
+@import '../../../../packages/d3/build/classic/classic/resources/d3-all-debug.css';

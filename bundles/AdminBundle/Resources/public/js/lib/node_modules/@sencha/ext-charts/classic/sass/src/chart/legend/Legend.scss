@@ -1,0 +1,32 @@
+.#{$prefix}legend-inner {
+    display: table; // for IE8 vertical centering
+    text-align: center;
+    padding: $chart-legend-padding;
+}
+
+.#{$prefix}legend-horizontal {
+    .#{$prefix}legend-inner {
+        min-width: 100%;
+    }
+}
+
+.#{$prefix}legend-vertical {
+    .#{$prefix}legend-inner {
+        min-height: 100%;
+    }
+}
+
+.#{$prefix}legend-container {
+    display: table-cell;     // for IE8 vertical centering
+    vertical-align: middle;  // for IE8 vertical centering
+    white-space: nowrap;
+
+    line-height: 0;
+    background: $chart-legend-background-color;
+
+    @if (lightness($chart-legend-background-color) > 30) {
+        @include box-shadow(rgba(#fff, .6) 0 1px 1px);
+    } @else {
+        @include box-shadow(rgba(#fff, .2) 0 1px 0);
+    }
+}

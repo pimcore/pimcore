@@ -1,0 +1,346 @@
+/**
+ * @class Ext.view.Table
+ */
+
+/**
+ * @var {color}
+ * The color of the text in the grid cells
+ */
+$grid-row-cell-color: dynamic($color);
+
+/**
+ * @var {number}
+ * The font size of the text in the grid cells
+ */
+$grid-row-cell-font-size: dynamic($font-size);
+/**
+ * @var {number}
+ * The line-height of the text inside the grid cells.
+ */
+$grid-row-cell-line-height: dynamic(round($grid-row-cell-font-size * 1.15));
+
+/**
+ * @var {string}
+ * The font-weight of the text in the grid cells
+ */
+$grid-row-cell-font-weight: dynamic($font-weight);
+
+/**
+ * @var {string}
+ * The font-family of the text in the grid cells
+ */
+$grid-row-cell-font-family: dynamic($font-family);
+
+// private
+$grid-row-cell-font: dynamic($grid-row-cell-font-weight #{$grid-row-cell-font-size}/#{$grid-row-cell-line-height} $grid-row-cell-font-family);
+
+/**
+ * @var {color}
+ * The background-color of the grid cells
+ */
+$grid-row-cell-background-color: dynamic(#fff);
+
+/**
+ * @var {color}
+ * The border-color of row/column borders. Can be specified as a single color, or as a list
+ * of colors containing the row border color followed by the column border color.
+ */
+$grid-row-cell-border-color: dynamic(#ededed);
+
+/**
+ * @var {string}
+ * The border-style of the row/column borders.
+ */
+$grid-row-cell-border-style: dynamic(solid);
+
+/**
+ * @var {number}
+ * The border-width of the row and column borders.
+ */
+$grid-row-cell-border-width: dynamic(1px);
+
+/**
+ * @var {color}
+ * The background-color of "special" cells.  Special cells are created by {@link
+ * Ext.grid.RowNumberer RowNumberer}, {@link Ext.selection.CheckboxModel Checkbox Selection
+ * Model} and {@link Ext.grid.plugin.RowExpander RowExpander}.
+ */
+$grid-cell-special-background-color: dynamic($grid-row-cell-background-color);
+
+/**
+ * @var {string}
+ * The background-gradient to use for "special" cells.  Special cells are created by {@link
+ * Ext.grid.RowNumberer RowNumberer}, {@link Ext.selection.CheckboxModel Checkbox Selection
+ * Model} and {@link Ext.grid.plugin.RowExpander RowExpander}.
+ */
+$grid-cell-special-background-gradient: dynamic('none');
+
+/**
+ * @var {number}
+ * The border-width of "special" cells.  Special cells are created by {@link
+ * Ext.grid.RowNumberer RowNumberer}, {@link Ext.selection.CheckboxModel Checkbox Selection
+ * Model} and {@link Ext.grid.plugin.RowExpander RowExpander}.
+ * Only applies to the vertical border, since the row border width is determined by
+ * {#$grid-row-cell-border-width}.
+ */
+$grid-cell-special-border-width: dynamic($grid-row-cell-border-width);
+
+/**
+ * @var {color}
+ * The border-color of "special" cells.  Special cells are created by {@link
+ * Ext.grid.RowNumberer RowNumberer}, {@link Ext.selection.CheckboxModel Checkbox Selection
+ * Model} and {@link Ext.grid.plugin.RowExpander RowExpander}.
+ * Only applies to the vertical border, since the row border color is determined by
+ * {#$grid-row-cell-border-color}.
+ */
+$grid-cell-special-border-color: dynamic(right($grid-row-cell-border-color));
+
+/**
+ * @var {string}
+ * The border-style of "special" cells.  Special cells are created by {@link
+ * Ext.grid.RowNumberer RowNumberer}, {@link Ext.selection.CheckboxModel Checkbox Selection
+ * Model} and {@link Ext.grid.plugin.RowExpander RowExpander}.
+ * Only applies to the vertical border, since the row border style is determined by
+ * {#$grid-row-cell-border-style}.
+ */
+$grid-cell-special-border-style: dynamic($grid-row-cell-border-style);
+
+/**
+ * @var {color}
+ * The border-color of "special" cells when the row is selected using a {@link
+ * Ext.selection.RowModel Row Selection Model}.  Special cells are created by {@link
+ * Ext.grid.RowNumberer RowNumberer}, {@link Ext.selection.CheckboxModel Checkbox Selection
+ * Model} and {@link Ext.grid.plugin.RowExpander RowExpander}.
+ * Only applies to the vertical border, since the selected row border color is determined by
+ * {#$grid-row-cell-selected-border-color}.
+ */
+$grid-cell-special-selected-border-color: dynamic(right($grid-row-cell-border-color));
+
+/**
+ * @var {color}
+ * The background-color of "special" cells when the row is hovered. Special cells are
+ * created by {@link Ext.grid.RowNumberer RowNumberer}, {@link Ext.selection.CheckboxModel
+ * Checkbox Selection Model} and {@link Ext.grid.plugin.RowExpander RowExpander}.
+ */
+$grid-cell-special-over-background-color: dynamic($grid-row-cell-over-background-color);
+
+/**
+ * @var {color}
+ * The background-color color of odd-numbered rows when the table view is configured with
+ * `{@link Ext.view.Table#stripeRows stripeRows}: true`.
+ */
+$grid-row-cell-alt-background-color: dynamic(darken($grid-row-cell-background-color, 2));
+
+/**
+ * @var {string}
+ * The border-style of the hovered row
+ */
+$grid-row-cell-over-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The text color of the hovered row
+ */
+$grid-row-cell-over-color: dynamic($grid-row-cell-color);
+
+/**
+ * @var {color}
+ * The background-color of the hovered row
+ */
+$grid-row-cell-over-background-color: dynamic(#ddd);
+
+/**
+ * @var {color}
+ * The border-color of the hovered row
+ */
+$grid-row-cell-over-border-color: dynamic(top($grid-row-cell-border-color));
+
+/**
+ * @var {string}
+ * The border-style of the selected row
+ */
+$grid-row-cell-selected-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The text color of the selected row
+ */
+$grid-row-cell-selected-color: dynamic($grid-row-cell-color);
+
+/**
+ * @var {color}
+ * The background-color of the selected row
+ */
+$grid-row-cell-selected-background-color: dynamic(#ccc);
+
+/**
+ * @var {color}
+ * The border-color of the selected row
+ */
+$grid-row-cell-selected-border-color: dynamic(top($grid-row-cell-border-color));
+
+/**
+ * @var {number}
+ * The border-width of the focused cell
+ */
+$grid-row-cell-focus-border-width: dynamic(1px);
+
+/**
+ * @var {color}
+ * The border-color of the focused cell
+ */
+$grid-row-cell-focus-border-color: dynamic(#808080);
+
+/**
+ * @var {string}
+ * The border-style of the focused cell
+ */
+$grid-row-cell-focus-border-style: dynamic(dotted);
+
+/**
+ * @var {number}
+ * The spacing between grid cell border and inner focus border
+ */
+$grid-row-cell-focus-border-inset: dynamic(0px);
+
+/**
+ * @var {color}
+ * The text color of the focused cell
+ */
+$grid-row-cell-focus-color: dynamic($grid-row-cell-color);
+
+/**
+ * @var {color}
+ * The background-color of the focused cell
+ */
+$grid-row-cell-focus-background-color: dynamic('none');
+
+/**
+ * @var {boolean}
+ * True to show the focus border when a row is focused even if the grid has no
+ * {@link Ext.panel.Table#rowLines rowLines}.
+ */
+$grid-no-row-lines-show-focus-border: dynamic(false);
+
+/**
+ * @var {color}
+ * The text color of a selected cell when using a {@link Ext.selection.CellModel
+ * Cell Selection Model}.
+ */
+$grid-cell-selected-color: dynamic($grid-row-cell-selected-color);
+
+/**
+ * @var {color}
+ * The background-color of a selected cell when using a {@link Ext.selection.CellModel
+ * Cell Selection Model}.
+ */
+$grid-cell-selected-background-color: dynamic($grid-row-cell-selected-background-color);
+
+/**
+ * @var {number}
+ * The amount of padding to apply to the grid cell's inner div element
+ */
+$grid-cell-inner-padding: dynamic(3px 6px);
+
+/**
+ * @var {string}
+ * The type of text-overflow to use on the grid cell's inner div element
+ */
+$grid-cell-inner-text-overflow: dynamic(ellipsis);
+
+/**
+ * @var {color}
+ * The border-color of the grid body
+ */
+$grid-body-border-color: dynamic($panel-body-border-color);
+
+/**
+ * @var {number}
+ * The border-width of the grid body border
+ */
+$grid-body-border-width: dynamic($panel-body-border-width);
+
+/**
+ * @var {string}
+ * The border-style of the grid body border
+ */
+$grid-body-border-style: dynamic($panel-body-border-style);
+
+/**
+ * @var {color}
+ * The background-color of the grid body
+ */
+$grid-body-background-color: dynamic($panel-body-background-color);
+
+/**
+ * @var {number}
+ * The amount of padding to apply to the grid body when the grid contains no data.
+ */
+$grid-empty-padding: dynamic(10px);
+
+/**
+ * @var {color}
+ * The text color of the {@link Ext.view.Table#emptyText emptyText} in the grid body when
+ * the grid contains no data.
+ */
+$grid-empty-color: dynamic(#808080);
+
+/**
+ * @var {color}
+ * The background color of the grid body when the grid contains no data.
+ */
+$grid-empty-background-color: dynamic($panel-body-background-color);
+
+/**
+ * @var {number}
+ * The font-size of the {@link Ext.view.Table#emptyText emptyText} in the grid body when
+ * the grid contains no data.
+ */
+$grid-empty-font-size: dynamic($grid-row-cell-font-size);
+
+/**
+ * @var {number}
+ * The font-weight of the {@link Ext.view.Table#emptyText emptyText} in the grid body when
+ * the grid contains no data.
+ */
+$grid-empty-font-weight: dynamic($font-weight);
+
+/**
+ * @var {number}
+ * The font-family of the {@link Ext.view.Table#emptyText emptyText} in the grid body when
+ * the grid contains no data.
+ */
+$grid-empty-font-family: dynamic($font-family);
+
+/**
+ * @var {color}
+ * The color of the resize markers that display when dragging a column border to resize
+ * the column
+ */
+$grid-resize-marker-background-color: dynamic(#0f0f0f);
+
+/**
+ * @var {color}
+ * The color of the grid cell dirty indicator when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-cell-dirty-glyph-color: dynamic(#c30);
+
+/**
+ * @var {string/list}
+ * Glyph for the grid cell dirty indicator when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-cell-dirty-glyph: dynamic($ext-var-dirty 14px ExtJS);
+
+/**
+ * @var {string/list}
+ * Glyph for the grid cell dirty indicator in rtl mode
+ * when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-cell-dirty-glyph-rtl: dynamic($ext-var-dirty-rtl 14px ExtJS);
+
+// private
+$grid-row-height: dynamic($grid-row-cell-line-height + vertical($grid-cell-inner-padding));
+// private
+$grid-row-border-color: top($grid-row-cell-border-color);
+// private
+$grid-col-border-color: right($grid-row-cell-border-color);

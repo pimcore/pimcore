@@ -1,0 +1,82 @@
+@if $enable-font-open-sans {
+    $triton-font-path: get-resource-path('fonts', 'shared');
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-Light.ttf');
+        src: local("OpenSans-Light");
+        font-weight: 300;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-LightItalic.ttf');
+        src: local("OpenSans-LightItalic");
+        font-weight: 300;
+        font-style: italic;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-Regular.ttf');
+        src: local("OpenSans-Regular");
+        font-weight: 400;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-Italic.ttf');
+        src: local("OpenSans-Italic");
+        font-weight: 400;
+        font-style: italic;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-Semibold.ttf');
+        src: local("OpenSans-Semibold");
+        font-weight: 600;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-SemiboldItalic.ttf');
+        src: local("OpenSans-SemiboldItalic");
+        font-weight: 600;
+        font-style: italic;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-Bold.ttf');
+        src: local("OpenSans-Bold");
+        font-weight: 700;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-BoldItalic.ttf');
+        src: local("OpenSans-BoldItalic");
+        font-weight: 700;
+        font-style: italic;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-ExtraBold.ttf');
+        src: local("OpenSans-ExtraBold");
+        font-weight: 800;
+        font-style: normal;
+    }
+
+    @font-face {
+        font-family: 'Open Sans';
+        src: url('#{$triton-font-path}/OpenSans-ExtraBoldItalic.ttf');
+        src: local("OpenSans-ExtraBoldItalic");
+        font-weight: 800;
+        font-style: italic;
+    }
+}

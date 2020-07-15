@@ -1,0 +1,101 @@
+.#{$prefix}grid-scroll-container {
+    position: absolute;
+    z-index: 1;
+}
+
+// For when it's overlaid during float out.
+.#{$prefix}grid-scrollbar-clipper-floated,
+.#{$prefix}grid-scrollbar-floated {
+    z-index: 2;
+}
+
+.#{$prefix}grid-scroll-body {
+    width: 100%;
+    position: relative;
+}
+
+.#{$prefix}grid-scrollbar-clipper {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    > .#{$prefix}grid-view,
+    > .#{$prefix}tree-view {
+        overflow-y: hidden !important
+    }
+}
+
+.#{$prefix}grid-with-col-lines .#{$prefix}grid-scrollbar-clipper-locked .#{$prefix}grid-cell-last {
+    border-right-width: 0;
+}
+
+@if $include-rtl {
+    .#{$prefix}rtl.#{$prefix}grid-scrollbar-clipper {
+        left: auto;
+        right: 0;
+    }
+    .#{$prefix}grid-with-col-lines .#{$prefix}rtl.#{$prefix}grid-scrollbar-clipper-locked .#{$prefix}grid-cell-last {
+        border-left-width: 0;
+    }
+}
+
+.#{$prefix}grid-scrollbar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: none;
+}
+
+@if $include-rtl {
+    .#{$prefix}rtl.#{$prefix}grid-scrollbar {
+        left: auto;
+        right: 0;
+    }
+}
+.#{$prefix}grid-scrollbar-visible {
+    display: block;
+}
+
+.#{$prefix}grid-locking-body {
+    > .#{$prefix}grid {
+        z-index: 2;
+        pointer-events: none;
+
+        .#{$prefix}docked {
+            pointer-events: auto;
+        }
+    }
+
+    .#{$prefix}grid-body {
+        background: transparent;
+    }
+
+    > .#{$prefix}splitter {
+        z-index: 2;
+    }
+
+    // Active and focus states are the same as default splitters but they are needed
+    // again here to override the higher specificity splitter rule above.
+    > .#{$prefix}splitter-active {
+        z-index: 4;
+    }
+
+    > .#{$prefix}splitter-focus {
+        z-index: 4;
+    }
+}
+
+// Floated out collapsed view must have no scrollbars
+.#{$prefix}grid-inner-locked.#{$prefix}border-region-slide-in {
+    > .#{$prefix}panel-bodyWrap > .#{$prefix}grid-body {
+       > .#{$prefix}grid-view,
+       > .#{$prefix}tree-view {
+           overflow-y: hidden !important
+       }
+   }
+
+    // Must be higher so that the floated state is on top.
+    z-index: 3;
+}
+

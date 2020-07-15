@@ -1,0 +1,22 @@
+.#{$prefix}progress {
+    overflow: hidden;
+    position: relative;
+}
+
+.#{$prefix}progress-bar {
+    height: 100%;
+    width: 0;
+}
+
+.#{$prefix}progress-text {
+    overflow: hidden;
+}
+
+.#{$prefix}progress-bar {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}

@@ -1,0 +1,26 @@
+@function contrast_color_by($base_color_var, $percent) {
+  @return if(lightness($base_color_var) > 50, darken($base_color_var, $percent), lighten($base_color_var, $percent));
+}
+@function reverse_gradient_for($gradient) {
+  @if $gradient == 'matte' {
+    @return 'matte-reverse';
+  }
+  @else if $gradient == 'matte-reverse' {
+    @return 'matte';
+  }
+  @else if $gradient == 'bevel' {
+    @return 'recessed';
+  }
+  @else if $gradient == 'recessed' {
+    @return 'bevel';
+  }
+  @else if $gradient == 'glossy' {
+    @return 'glossy-reverse';
+  }
+  @else if $gradient == 'glossy-reverse' {
+    @return 'glossy';
+  }
+  @else {
+    @return $gradient;
+  }
+}

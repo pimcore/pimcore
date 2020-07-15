@@ -1,0 +1,112 @@
+/**
+ * @class Ext.dd.StatusProxy
+ */
+
+/**
+ * @var {number/list}
+ * StatusProxy padding
+ */
+$statusproxy-padding: dynamic(5px);
+
+/**
+ * @var {number/list}
+ * StatusProxy text color
+ */
+$statusproxy-color: dynamic($color);
+
+/**
+ * @var {color/list}
+ * StatusProxy border-color
+ */
+$statusproxy-border-color: dynamic($neutral-color);
+
+/**
+ * @var {number/list}
+ * StatusProxy border-width
+ */
+$statusproxy-border-width: dynamic(1px);
+
+/**
+ * @var {string/list}
+ * StatusProxy border-style
+ */
+$statusproxy-border-style: dynamic(solid);
+
+/**
+ * @var {color/list}
+ * StatusProxy background-color
+ */
+$statusproxy-background-color: dynamic(#fff);
+
+/**
+ * @var {string/number}
+ * Button font-weight
+ */
+$statusproxy-font-weight: dynamic($font-weight);
+
+/**
+ * @var {number}
+ * Button font-size
+ */
+$statusproxy-font-size: dynamic($font-size);
+
+/**
+ * @var {number}
+ * Button line-height
+ */
+$statusproxy-line-height: dynamic($line-height);
+
+/**
+ * @var {string}
+ * Button font-family
+ */
+$statusproxy-font-family: dynamic($font-family);
+
+/**
+ * @var {number}
+ * StatusProxy icon size
+ */
+$statusproxy-icon-size: dynamic(16px);
+
+/**
+ * @var {number}
+ * The font size to use for StatusProxy icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$statusproxy-glyph-font-size: dynamic($statusproxy-icon-size);
+
+/**
+ * @var {string/list}
+ * Glyph for the "ok" StatusProxy icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$statusproxy-ok-glyph: dynamic($fa-var-check-circle $statusproxy-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {color}
+ * Color for the "ok" StatusProxy icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$statusproxy-ok-glyph-color: dynamic(red);
+
+/**
+ * @var {string/list}
+ * Glyph for the "add" StatusProxy icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$statusproxy-add-glyph: dynamic($statusproxy-ok-glyph);
+
+/**
+ * @var {color}
+ * Color for the "add" StatusProxy icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$statusproxy-add-glyph-color: dynamic($statusproxy-ok-glyph-color);
+
+/**
+ * @var {string/list}
+ * Glyph for the "nodrop" StatusProxy icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$statusproxy-nodrop-glyph: dynamic($fa-var-times-circle $statusproxy-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {color}
+ * Color for the "nodrop" StatusProxy icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$statusproxy-nodrop-glyph-color: dynamic(green);
+

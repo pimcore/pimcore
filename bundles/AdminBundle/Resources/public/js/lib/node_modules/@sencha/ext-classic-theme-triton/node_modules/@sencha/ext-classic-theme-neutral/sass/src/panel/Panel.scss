@@ -1,0 +1,29 @@
+.#{$prefix}panel-ghost {
+    @include opacity($panel-ghost-opacity);
+}
+
+@if $include-panel-default-ui {
+    @include extjs-panel-ui(
+        $ui: 'default'
+    );
+}
+
+@if $include-panel-default-framed-ui {
+    @include extjs-panel-ui(
+        $ui: 'default-framed',
+
+        $ui-border-color: $panel-frame-border-color,
+        $ui-border-width: $panel-frame-border-width,
+        $ui-border-radius: $panel-frame-border-radius,
+        $ui-padding: $panel-frame-padding,
+
+        $ui-header-border-color: $panel-frame-border-color,
+        $ui-header-border-width: $panel-frame-header-border-width,
+        $ui-header-inner-border-color: $panel-frame-header-inner-border-color,
+        $ui-header-inner-border-width: $panel-frame-header-inner-border-width,
+        $ui-header-padding: $panel-frame-header-padding,
+
+        $ui-body-border-width: $panel-frame-body-border-width,
+        $ui-body-background-color: $panel-frame-background-color
+    );
+}

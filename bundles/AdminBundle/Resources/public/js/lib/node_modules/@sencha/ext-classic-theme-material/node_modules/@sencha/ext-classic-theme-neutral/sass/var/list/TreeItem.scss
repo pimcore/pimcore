@@ -1,0 +1,74 @@
+/**
+ * @class Ext.list.TreeItem
+ */
+
+/**
+ * @var {Color} $treelist-background-color
+ */
+$treelist-background-color: dynamic($grid-body-background-color);
+
+$treelist-color: dynamic($grid-row-cell-color);
+
+$treelist-left-padding: dynamic(left($tree-cell-inner-padding));
+$treelist-right-padding: dynamic(right($tree-cell-inner-padding));
+
+$treelist-padding: 0 $treelist-right-padding 0 $treelist-left-padding;
+
+//--------------------------------------------------------------------------
+
+$treelist-item-line-height: dynamic($grid-row-height);
+
+// $treelist-item-color inherits $treelist-color
+
+//--------------------------------------------------------------------------
+// The main item element
+
+// $treelist-item-text-color inherits $treelist-color
+
+$treelist-item-text-icon-gap: dynamic($tree-icon-spacing);
+
+$treelist-item-text-over-color: dynamic($grid-row-cell-over-color);
+
+$treelist-item-text-font-size: dynamic($grid-row-cell-font-size);
+
+$treelist-item-text-overflow: dynamic($grid-cell-inner-text-overflow);
+
+//--------------------------------------------------------------------------
+// The expander arrow.
+
+$treelist-item-expander-color: dynamic($tree-arrow-glyph-color);
+
+// $treelist-item-expander-over-color inherits $treelist-item-expander-color
+
+$treelist-item-expander-glyph: dynamic($tree-arrow-glyph);
+$treelist-item-expander-expanded-glyph: dynamic($tree-arrow-expanded-glyph);
+
+$treelist-item-expander-width: dynamic($tree-elbow-width);
+
+//--------------------------------------------------------------------------
+// The optional tree node icon
+
+$treelist-item-icon-color: dynamic($tree-glyph-color);
+
+$treelist-item-icon-width: dynamic($tree-icon-width);
+
+$treelist-item-icon-font-size: dynamic($tree-glyph-font-size);
+
+
+//--------------------------------------------------------------------------
+
+/*  No classic equivalents for the indicator element
+    $treelist-row-indicator-selected-color: dynamic($grid-row-cell-focus-border-color);
+
+    $treelist-row-indicator-selected-over-color: dynamic($grid-row-cell-focus-border-color);
+
+    $treelist-row-indicator-over-color: dynamic($grid-row-cell-focus-border-color);
+
+    $treelist-row-indicator-width: dynamic(5px);
+*/
+
+$treelist-row-selected-background-color: dynamic($grid-row-cell-selected-background-color);
+
+$treelist-row-selected-over-background-color: dynamic($grid-row-cell-selected-background-color);
+
+$treelist-row-over-background-color: dynamic($grid-row-cell-over-background-color);

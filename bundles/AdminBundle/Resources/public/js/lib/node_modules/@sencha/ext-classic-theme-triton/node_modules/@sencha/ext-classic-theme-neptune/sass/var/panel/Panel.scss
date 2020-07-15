@@ -1,0 +1,65 @@
+/** @class Ext.panel.Panel */
+//
+
+$panel-header-color: dynamic(#fff);
+$panel-header-text-transform: dynamic(none);
+$panel-header-line-height: dynamic(16px);
+$panel-header-font-weight: dynamic($font-weight-bold);
+$panel-header-padding: dynamic(9px 9px 10px);
+$panel-border-width: dynamic(1px);
+$panel-body-border-color: dynamic($neutral-medium-dark-color);
+$panel-header-border-width: dynamic(1px);
+$panel-body-border-width: dynamic(1px);
+$panel-frame-border-width: dynamic(5px);
+$panel-frame-header-border-width: dynamic($panel-frame-border-width);
+$panel-tool-spacing: dynamic(6px);
+$panel-frame-padding: dynamic(0);
+
+$panel-frame-header-padding: dynamic(
+    max(top($panel-header-padding) + top($panel-header-border-width) - top($panel-frame-header-border-width), 0)
+    max(right($panel-header-padding) + right($panel-header-border-width) - right($panel-frame-header-border-width), 0)
+    max(bottom($panel-header-padding) - bottom($panel-frame-header-border-width), 0)
+    max(left($panel-header-padding) + left($panel-header-border-width) - left($panel-frame-header-border-width), 0)
+);
+
+$panel-header-icon-width: dynamic(16px);
+$panel-header-icon-height: dynamic(16px);
+$panel-header-icon-spacing: dynamic(6px);
+
+$panel-header-focus-outline-color: dynamic(#fff);
+$panel-header-focus-outline-offset: dynamic(2px);
+
+$panel-tool-focus-outline-color: dynamic(#fff);
+$panel-tool-focus-outline-offset: dynamic(2px);
+
+// panel-light vars
+$panel-light-header-font-family: dynamic($font-family);
+$panel-light-header-font-size: dynamic($font-size);
+$panel-light-header-font-weight: dynamic($panel-header-font-weight);
+$panel-light-header-color: dynamic(#666);
+$panel-light-header-glyph-color: dynamic($panel-light-header-color);
+$panel-light-header-background-color: dynamic(mix($base-light-color, $neutral-light-color, 30%));
+$panel-light-header-text-transform: dynamic(none);
+$panel-light-header-focus-outline-color: dynamic($base-color);
+$panel-light-border-color: dynamic($panel-light-header-background-color);
+$panel-light-header-border-color: dynamic($panel-light-border-color);
+$panel-light-body-border-color: dynamic($panel-light-border-color);
+$panel-light-tool-background-image: dynamic('tools/tool-sprites-dark');
+$panel-light-tool-focus-outline-color: dynamic($base-color);
+$panel-light-tool-glyph-color: dynamic($panel-light-header-color);
+$panel-light-tool-focus-background-image: dynamic($panel-light-tool-background-image);
+
+$panel-light-frame-border-color: dynamic($panel-light-border-color);
+$panel-include-border-management-rules: dynamic(true);
+
+/**
+ * @var {boolean}
+ * True to include the "light" panel UI
+ */
+$include-panel-light-ui: dynamic($include-default-uis);
+
+/**
+ * @var {boolean}
+ * True to include the "light-framed" panel UI
+ */
+$include-panel-light-framed-ui: dynamic($include-default-uis);

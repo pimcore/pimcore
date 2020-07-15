@@ -1,0 +1,8 @@
+$grid-font-weight: $grid-row-cell-font-weight;
+$grid-font-size: $grid-row-cell-font-size;
+$grid-line-height: $grid-row-cell-line-height;
+$grid-font-family: $grid-row-cell-font-family;
+
+.#{$prefix}grid-item {
+   @include font($grid-font-weight, $grid-font-size, $grid-line-height, $grid-font-family);
+}

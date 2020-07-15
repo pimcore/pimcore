@@ -1,0 +1,13 @@
+$grid-header-background-color: dynamic($reverse-color);
+$grid-header-border-color: dynamic(#e2e2e2);
+$grid-header-border-width : dynamic(1px);
+$grid-header-open-background-color: dynamic($reverse-color);
+$grid-header-over-background-color: dynamic($reverse-color);
+$grid-header-padding: dynamic(16px 8px);
+$grid-header-sorted-background-color: dynamic($reverse-color);
+$grid-header-trigger-background-color-open: dynamic($reverse-color);
+$grid-header-menu-sort-asc-glyph: dynamic('arrow_upward');
+$grid-header-menu-sort-desc-glyph: dynamic('arrow_downward');
+$grid-header-sort-asc-glyph: dynamic('arrow_upward');
+$grid-header-sort-desc-glyph: dynamic('arrow_downward');
+$grid-header-menu-glyph-font-size: dynamic(16px);

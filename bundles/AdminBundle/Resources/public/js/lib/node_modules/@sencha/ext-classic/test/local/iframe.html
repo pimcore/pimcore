@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="../bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="../../../../build/packages/ux/classic/classic/resources/ux-all-rtl-debug.css">
+    <link rel="stylesheet" type="text/css" href="../../../../build/packages/charts/classic/classic/resources/charts-all-rtl-debug.css">
+    <link rel="stylesheet" type="text/css" href="../../../../../packages/calendar/build/classic/classic/resources/calendar-all-rtl-debug.css">
+    <link rel="stylesheet" type="text/css" href="../../../../../packages/d3/build/classic/classic/resources/d3-all-rtl-debug.css">
+    <link rel="stylesheet" type="text/css" href="../../../../../packages/pivot/build/classic/classic/resources/pivot-all-rtl-debug.css">
+    
+    <!--
+        This file is used to load every asset that is necessary for running tests
+        for particular toolkit, barring the test specs themselves. We do that
+        in order to share as much as possible between different test runners:
+        local, Cmd, and Orion.
+        
+        The list of scripts below should include:
+            - Test scaffold and necessary 3rd party libs (Jazzman, etc)
+            - Ext bootstrap appropriate for the toolkit (ext-debug.js or ext-modern-debug.js)
+            - Theme overrides appropriate for the toolkit. Loader will wait for the classes
+              not yet available.
+            - Utility and initialization scripts, either shared between toolkits or
+              specific to the toolkit this reporter will be testing
+        
+        This list should NOT include:
+            - Either individual test spec files or bootstrapper that will load them.
+              Specs will be loaded by the test runner. For the local runner, the list
+              of files to load is provided in the main index.html
+            - Any scripts or code that is specific to the runner. This includes Cmd
+              stuff like cmd.js and cmd-jasmine.js
+            - Any code that kicks off the actual test run. It is runner's responsibility
+              to do that.
+    -->
+    
+    <script type="text/javascript">
+        if (!top.Test || !top.Test.SandBox) {
+            alert("top.Test object not found! Cannot continue with tests.");
+        }
+        
+        top.Test.SandBox.reportProgress("Loading Ext JS and runner scripts...");
+    </script>
+    <script type="text/javascript" src="../../../../test/lib/jazzman.js"></script>
+    <script type="text/javascript" src="../../../../test/shared/pre-ext.js"></script>
+    <script type="text/javascript" src="../../../../ext-debug.js"></script>
+    <script type="text/javascript" src="../../../../build/classic/theme-classic/theme-classic-debug.js"></script>
+    <script type="text/javascript">
+        if (!Ext.isIE10m) {
+            Ext.Loader.loadScript("../../../../../packages/d3/d3.js");
+        }
+    </script>
+    <script type="text/javascript" src="../../../../test/lib/ext-jazzman.js"></script>
+    <script type="text/javascript" src="../../../../test/shared/post-ext.js"></script>
+    <script type="text/javascript">
+        top.Test.SandBox.reportProgress("Loading test spec files...");
+    </script>
+    <script type="text/javascript" src="../bootstrap-specs.js"></script>
+</head>
+<body class="x-border-box"></body>
+</html>

@@ -1,0 +1,14 @@
+/** @class Ext.container.ButtonGroup */
+//
+
+$btn-group-header-background-color: dynamic($panel-light-header-background-color);
+$btn-group-border-color: dynamic($btn-group-header-background-color);
+$btn-group-border-width: dynamic(1px);
+$btn-group-framed-border-width: dynamic(3px);
+$btn-group-framed-border-radius: dynamic(3px);
+$btn-group-header-color: dynamic($panel-light-header-color);
+$btn-group-header-font-size: dynamic($panel-light-header-font-size);
+$btn-group-header-font-weight: dynamic($font-weight);
+$btn-group-header-font-family: dynamic($panel-light-header-font-family);
+$btn-group-border-spacing: dynamic(5px);
+$btn-group-tool-background-image: dynamic('tools/tool-sprites-dark');

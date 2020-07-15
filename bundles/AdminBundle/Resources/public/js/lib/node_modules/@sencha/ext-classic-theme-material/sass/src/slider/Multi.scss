@@ -1,0 +1,6 @@
+.#{$prefix}item-disabled {
+    opacity: 0.8;
+    .#{$prefix}slider-thumb {
+        background-color: $slider-thumb-disabled-background-color;
+    }
+}

@@ -1,0 +1,212 @@
+/**
+ * @class Ext.calendar.Event
+ */
+
+/**
+ * @var {number/list}
+ * The padding for the time portion of an event.
+ */
+$calendar-event-time-padding: dynamic(0 4px 0 0);
+
+/**
+ * @var {string}
+ * The font family for an event.
+ */
+$calendar-event-font-family: dynamic($calendar-font-family);
+
+/**
+ * @var {number}
+ * The opacity to be used when dragging an event.
+ */
+$calendar-event-dragging-opacity: dynamic(0.8);
+
+/**
+ * @var {number}
+ * The font size for the resizer for an event.
+ */
+$calendar-event-resizer-font-size: dynamic($calendar-large-font-size);
+
+/**
+ * @var {string}
+ * The font family for the resizer for an event.
+ */
+$calendar-event-resizer-font-family: dynamic(monospace);
+
+/**
+ * @var {string}
+ * The content for the resizer for an event.
+ */
+$calendar-event-resizer-content: dynamic("=");
+
+/**
+ * @var {number}
+ * The opacity when resizing an event.
+ */
+$calendar-event-resizing-opacity: dynamic($calendar-event-dragging-opacity);
+
+/**
+ * @var {number/list}
+ * The margin for a week event.
+ */
+$calendar-event-week-margin: dynamic(3px);
+
+/**
+ * @var {number}
+ * The font size for a week event.
+ */
+$calendar-event-week-font-size: dynamic($calendar-font-size);
+
+/**
+ * @var {number/list}
+ * The padding for a week event that spans (all day, or multiple days).
+ */
+$calendar-event-week-span-padding: dynamic(1px 1px 1px 3px);
+
+/**
+ * @var {number/list}
+ * The padding for a week event that is inline (occurs only one day and is not all day).
+ */
+$calendar-event-week-inline-padding: dynamic(0 0 0 3px);
+
+/**
+ * @var {number/list}
+ * The margin for a day event.
+ */
+$calendar-event-day-margin: dynamic(1px 0);
+
+/**
+ * @var {number/list}
+ * The padding for a day event.
+ */
+$calendar-event-day-padding: dynamic(2px 4px);
+
+/**
+ * @var {number}
+ * The font size for a day event.
+ */
+$calendar-event-day-font-size: dynamic($calendar-small-font-size);
+
+/**
+ * @var {number}
+ * The border width for a day event.
+ */
+$calendar-event-day-border-width: dynamic(1px);
+
+/**
+ * @var {number}
+ * The border style for a day event.
+ */
+$calendar-event-day-border-style: dynamic(solid);
+
+@mixin calendar-event-ui(
+    $ui: null,
+
+    $margin: null,
+    $padding: null,
+
+    $font-family: null,
+    $font-size: null,
+
+    $border-width: null,
+    $border-style: null,
+
+    $time-padding: null,
+
+    $dragging-opacity: null,
+
+    $resizer-font-size: null,
+    $resizer-font-family: null,
+    $resizer-content: null,
+
+    $resizing-opacity: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}calendar-event#{$ui-suffix} {
+        margin: $margin;
+
+        border-width: $border-width;
+        border-style: $border-style;
+
+        .#{$prefix}calendar-event-inner {
+            padding: $padding;
+            font-size: $font-size;
+            font-family: $font-family;
+        }
+
+        .#{$prefix}calendar-event-time {
+            padding: $time-padding;
+        }
+
+        .#{$prefix}calendar-event-resizer:after {
+            font-size: $resizer-font-size;
+            font-family: $resizer-font-family;
+            content: $resizer-content;
+        }
+
+        @if $dragging-opacity != null {
+            &.#{$prefix}calendar-event-dragging {
+                @include opacity($dragging-opacity);
+            }
+        }
+
+        @if $resizing-opacity != null {
+            &.#{$prefix}calendar-event-resizing {
+                @include opacity($resizing-opacity);
+            }
+        }
+    }
+}
+
+@mixin calendar-event-default-ui() {
+    @include calendar-event-ui(
+        $time-padding: $calendar-event-time-padding,
+        $font-family: $calendar-event-font-family,
+        $dragging-opacity: $calendar-event-dragging-opacity,
+        $resizer-font-size: $calendar-event-resizer-font-size,
+        $resizer-font-family: $calendar-event-resizer-font-family,
+        $resizer-content: $calendar-event-resizer-content,
+        $resizing-opacity: $calendar-event-resizing-opacity
+    );
+}
+
+@mixin calendar-event-week-span-ui() {
+    .#{$prefix}calendar-event-week-span {
+        .#{$prefix}calendar-event-time {
+            display: none;
+        }
+    }
+
+    @include calendar-event-ui(
+        $ui: 'week-span',
+        $margin: $calendar-event-week-margin,
+        $font-size: $calendar-event-week-font-size,
+        $padding: $calendar-event-week-span-padding
+    );
+}
+
+@mixin calendar-event-week-inline-ui() {
+    .#{$prefix}calendar-event-week-inline {
+        .#{$prefix}calendar-event-time-separator, .#{$prefix}calendar-event-time-end {
+            display: none;
+        }
+    }
+
+    @include calendar-event-ui(
+        $ui: 'week-inline',
+        $margin: $calendar-event-week-margin,
+        $font-size: $calendar-event-week-font-size,
+        $padding: $calendar-event-week-inline-padding
+    );
+}
+
+@mixin calendar-event-day-ui() {
+    @include calendar-event-ui(
+        $ui: 'day',
+        $margin: $calendar-event-day-margin,
+        $padding: $calendar-event-day-padding,
+        $font-size: $calendar-event-day-font-size,
+        $border-width: $calendar-event-day-border-width,
+        $border-style: $calendar-event-day-border-style
+    );
+}

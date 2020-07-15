@@ -1,0 +1,18 @@
+.#{$prefix}grid-row-editor-wrap {
+    position: absolute;
+    overflow: visible;
+    // Floating editor's z-index must be higher than z-index of focused grid-cell-inner
+    z-index: 2;
+}
+
+.#{$prefix}grid-row-editor {
+    position: absolute;
+
+    // Needs z-index:0 to avoid visual issues with clipped editor obscuring scrollbars
+    z-index: 0;
+}
+
+.#{$prefix}grid-row-editor-buttons {
+    position: absolute;
+    white-space: nowrap;
+}

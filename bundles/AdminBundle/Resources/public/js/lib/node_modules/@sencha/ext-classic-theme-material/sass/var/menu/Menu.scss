@@ -1,0 +1,17 @@
+$menu-item-icon-horizontal-spacing: dynamic(16px);
+$menu-item-text-horizontal-spacing: dynamic(16px);
+$menu-padding: dynamic(8px 0);
+$menu-separator-border-color: dynamic(#e0e0e0);
+$menu-text-color: dynamic($color);
+$menu-item-height: dynamic(32px);
+$menu-item-font-size: dynamic(14px);
+$menu-item-checkbox-glyph-color: dynamic($highlight-color);
+$menu-item-active-background-color: dynamic($base-highlight-color);
+$menu-background-color: dynamic($reverse-color);
+$menu-item-active-text-color: dynamic($color);
+$menu-border-color: dynamic($divider-color);
+$menu-glyph-color: dynamic($color);
+$menu-item-icon-size: dynamic(16px);
+$menu-item-checkbox-glyph: dynamic('check_box_outline_blank');
+$menu-item-checkbox-checked-glyph: dynamic('check_box');
+$menu-item-checkbox-checked-glyph-color: dynamic($base-color);

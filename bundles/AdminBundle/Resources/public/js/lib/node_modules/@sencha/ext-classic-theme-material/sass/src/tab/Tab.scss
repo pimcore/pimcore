@@ -1,0 +1,13 @@
+.#{$prefix}tab-default {
+    text-transform: $tab-text-transform;
+}
+
+.#{$prefix}keyboard-mode {
+    .#{$prefix}tab-focus {
+        &.#{$prefix}tab-active {
+            &.#{$prefix}tab-default {
+                background-color: $tab-background-color-active;
+            }
+        }
+    }
+}

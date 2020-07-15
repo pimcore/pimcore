@@ -1,0 +1,266 @@
+@if $slider-imageless {
+    .#{$prefix}slider:before {
+        @if $slider-track-border-width != null and $slider-track-border-width != 0 {
+            border: $slider-track-border-width $slider-track-border-style $slider-track-border-color;
+        }
+        content: '';
+        position: absolute;
+        @if $slider-track-border-radius != 0 {
+            border-radius: $slider-track-border-radius;
+        }
+        background-color: $slider-track-background-color;
+
+        // pseudo elements don't inheit box sizing via the global * rule
+        box-sizing:border-box;
+        -moz-box-sizing:border-box;
+        -ms-box-sizing:border-box;
+        -webkit-box-sizing:border-box;
+    }
+
+    .#{$prefix}slider-thumb {
+        background-color: $slider-thumb-background-color;
+        @if $slider-thumb-border-width != null and $slider-thumb-border-width != 0 {
+            border: $slider-thumb-border-width $slider-thumb-border-style $slider-thumb-border-color;
+        }
+        @if $slider-thumb-border-radius != 0 {
+            border-radius: $slider-thumb-border-radius;
+        }
+        &:before {
+            color: $slider-thumb-glyph-color;
+        }
+    }
+
+    .#{$prefix}slider-thumb-over {
+        background-color: $slider-thumb-background-color-over;
+        border-color: $slider-thumb-border-color-over;
+        &:before {
+            color: $slider-thumb-glyph-color-over;
+        }
+    }
+
+    .#{$prefix}slider-focus .#{$prefix}slider-thumb {
+        .#{$prefix}keyboard-mode & {
+            background-color: $slider-thumb-background-color-focus;
+            border-color: $slider-thumb-border-color-focus;
+            &:before {
+                color: $slider-thumb-glyph-color-focus;
+            }
+        }
+    }
+
+    .#{$prefix}slider-focus .#{$prefix}slider-thumb-over {
+        .#{$prefix}keyboard-mode & {
+            background-color: $slider-thumb-background-color-over;
+        }
+    }
+
+    .#{$prefix}slider-thumb-drag {
+        background-color: $slider-thumb-background-color-drag;
+        border-color: $slider-thumb-border-color-drag;
+        &:before {
+            color: $slider-thumb-glyph-color-drag;
+        }
+    }
+
+    .#{$prefix}slider-focus .#{$prefix}slider-thumb-drag {
+        .#{$prefix}keyboard-mode & {
+            background-color: $slider-thumb-background-color-drag;
+        }
+    }
+}
+
+/* Horizontal styles */
+
+// private
+$slider-vert-margin: ($form-field-height - $horizontal-slider-thumb-height) / 2;
+$slider-top-margin: ceil($slider-vert-margin);
+$slider-bottom-margin: floor($slider-vert-margin);
+
+.#{$prefix}slider-horz {
+    padding-left: $horizontal-slider-start-cap-width;
+    background: no-repeat 0 (-$horizontal-slider-thumb-height);
+
+    // make sure the slider is vertically centered in form-field space
+    margin: $slider-top-margin 0 $slider-bottom-margin;
+
+    .#{$prefix}slider-end {
+        padding-right: $horizontal-slider-end-cap-width;
+        background: no-repeat right (-$horizontal-slider-thumb-height * 2);
+    }
+
+    .#{$prefix}slider-inner {
+        height: $horizontal-slider-thumb-height;
+    }
+
+    @if $slider-imageless {
+        &:before {
+            height: $slider-track-size;
+            width: 100%;
+            top: 50%;
+            left: 0;
+            margin-top: -($slider-track-size / 2);
+        }
+    }
+}
+
+.#{$prefix}slider-horz .#{$prefix}slider-thumb {
+    width: $horizontal-slider-thumb-width;
+    height: $horizontal-slider-thumb-height;
+    margin-left: -$horizontal-slider-start-cap-width;
+    @if not $slider-imageless {
+        background-image: theme-background-image('slider/slider-thumb', 'png');
+    }
+
+    @if $enable-font-icons and ($horizontal-slider-thumb-glyph != null) {
+        @include font-icon($horizontal-slider-thumb-glyph);
+    }
+}
+
+@if not $slider-imageless {
+    .#{$prefix}slider-horz.#{$prefix}slider-focus .#{$prefix}slider-thumb {
+        .#{$prefix}keyboard-mode & {
+            background-position: (-$horizontal-slider-thumb-width * 3) (-$horizontal-slider-thumb-height * 3);
+        }
+    }
+
+    .#{$prefix}slider-horz .#{$prefix}slider-thumb-over {
+        background-position: (-$horizontal-slider-thumb-width) (-$horizontal-slider-thumb-height);
+    }
+
+    .#{$prefix}slider-horz.#{$prefix}slider-focus .#{$prefix}slider-thumb-over {
+        .#{$prefix}keyboard-mode & {
+            background-position: (-$horizontal-slider-thumb-width * 4) (-$horizontal-slider-thumb-height * 4);
+        }
+    }
+
+    .#{$prefix}slider-horz .#{$prefix}slider-thumb-drag {
+        background-position: (-$horizontal-slider-thumb-width * 2) (-$horizontal-slider-thumb-height * 2);
+    }
+
+    .#{$prefix}slider-horz.#{$prefix}slider-focus .#{$prefix}slider-thumb-drag {
+        .#{$prefix}keyboard-mode & {
+            background-position: (-$horizontal-slider-thumb-width * 5) (-$horizontal-slider-thumb-height * 5);
+        }
+    }
+}
+
+@if $include-rtl {
+    .#{$prefix}rtl.#{$prefix}slider-horz {
+        padding-left: 0;
+        padding-right: $horizontal-slider-start-cap-width;
+        @if not $slider-imageless {
+            background-position: right (-$horizontal-slider-thumb-height * 2);
+        }
+        
+        .#{$prefix}slider-end {
+            padding-right: 0;
+            padding-left: $horizontal-slider-end-cap-width;
+            @if not $slider-imageless {
+                background-position: left (-$horizontal-slider-thumb-height);
+            }
+        }
+        
+        .#{$prefix}slider-thumb {
+            margin-right: -$horizontal-slider-end-cap-width;
+        }
+    }
+}
+
+/* Vertical styles */
+.#{$prefix}slider-ct-vert {
+    height: 100%;
+}
+
+.#{$prefix}slider-vert {
+    padding-top: $vertical-slider-start-cap-height;
+    @if not $slider-imageless {
+        background: no-repeat (-$vertical-slider-thumb-width * 2) 0;
+    }
+    height: 100%;
+
+    > .#{$prefix}slider-end {
+        height: 100%;
+        > .#{$prefix}slider-inner {
+            height: 100%;
+        }
+    }
+
+    @if $slider-imageless {
+        &:before {
+            width: $slider-track-size;
+            height: 100%;
+            left: $vertical-slider-thumb-width / 2;
+            top: 0;
+            margin-left: -($slider-track-size / 2);
+        }
+    }
+}
+
+.#{$prefix}slider-vert .#{$prefix}slider-end {
+    padding-bottom: $vertical-slider-end-cap-height;
+    background: no-repeat (-$vertical-slider-thumb-width) bottom;
+    width: $vertical-slider-thumb-width;
+}
+
+.#{$prefix}slider-vert .#{$prefix}slider-inner {
+    width: $vertical-slider-thumb-width;
+}
+
+.#{$prefix}slider-vert .#{$prefix}slider-thumb {
+    width: $vertical-slider-thumb-width;
+    height: $vertical-slider-thumb-height;
+    margin-bottom: -$vertical-slider-end-cap-height;
+    @if not $slider-imageless {
+        background-image: theme-background-image('slider/slider-v-thumb', 'png');
+    }
+
+    @if $enable-font-icons and ($vertical-slider-thumb-glyph != null) {
+        @include font-icon($vertical-slider-thumb-glyph);
+    }
+}
+
+@if not $slider-imageless {
+    .#{$prefix}slider-vert.#{$prefix}slider-focus .#{$prefix}slider-thumb {
+        .#{$prefix}keyboard-mode & {
+            background-position: (-$vertical-slider-thumb-width * 3) (-$vertical-slider-thumb-height * 3);
+        }
+    }
+
+    .#{$prefix}slider-vert .#{$prefix}slider-thumb-over {
+        background-position: (-$vertical-slider-thumb-width) (-$vertical-slider-thumb-height);
+    }
+
+    .#{$prefix}slider-vert.#{$prefix}slider-focus .#{$prefix}slider-thumb-over {
+        .#{$prefix}keyboard-mode & {
+            background-position: (-$vertical-slider-thumb-width * 4) (-$vertical-slider-thumb-height * 4);
+        }
+    }
+
+    .#{$prefix}slider-vert .#{$prefix}slider-thumb-drag {
+        background-position: (-$vertical-slider-thumb-width * 2) (-$vertical-slider-thumb-height * 2);
+    }
+
+    .#{$prefix}slider-vert.#{$prefix}slider-focus .#{$prefix}slider-thumb-drag {
+        .#{$prefix}keyboard-mode & {
+            background-position: (-$vertical-slider-thumb-width * 5) (-$vertical-slider-thumb-height * 5);
+        }
+    }
+
+    .#{$prefix}slider-horz,
+    .#{$prefix}slider-horz .#{$prefix}slider-end,
+    .#{$prefix}slider-horz .#{$prefix}slider-inner {
+        background-image: theme-background-image('slider/slider-bg', 'png');
+    }
+
+    .#{$prefix}slider-vert,
+    .#{$prefix}slider-vert .#{$prefix}slider-end,
+    .#{$prefix}slider-vert .#{$prefix}slider-inner {
+        background-image: theme-background-image('slider/slider-v-bg', 'png');
+    }
+}
+
+.#{$prefix}slider-default-cell > .#{$prefix}grid-cell-inner,
+.#{$prefix}sliderwidget-default-cell > .#{$prefix}grid-cell-inner {
+    padding-top: max(floor(($grid-row-height - $horizontal-slider-thumb-height) / 2) - $slider-top-margin, 0);
+    padding-bottom:  max(ceil(($grid-row-height - $horizontal-slider-thumb-height) / 2) - $slider-bottom-margin, 0);
+}

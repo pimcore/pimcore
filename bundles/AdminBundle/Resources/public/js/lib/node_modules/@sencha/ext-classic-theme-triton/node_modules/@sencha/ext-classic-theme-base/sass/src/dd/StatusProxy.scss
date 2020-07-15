@@ -1,0 +1,49 @@
+.#{$prefix}dd-drag-proxy {
+    display: table;
+}
+
+.#{$prefix}dd-drag-repair {
+    .#{$prefix}dd-drag-ghost {
+        @include opacity(.6);
+    }
+
+    .#{$prefix}dd-drop-icon {
+        display: none;
+    }
+}
+
+.#{$prefix}dd-drag-ghost,
+.#{$prefix}dd-drop-icon {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.#{$prefix}dd-drag-ghost {
+    @include opacity(.85);
+    white-space: nowrap;
+}
+
+.#{$prefix}dd-drop-icon {
+    height: $statusproxy-icon-size + vertical($statusproxy-padding);
+    width: $statusproxy-icon-size + horizontal($statusproxy-padding);
+    background-color: transparent;
+    background-position:  center;
+    background-repeat:  no-repeat;
+}
+
+@if $include-rtl {
+    .#{$prefix}rtl {
+        // These rules do not account for applications that contain nested rtl/ltr
+        // components, because it's a challenge to determine what the direction
+        // of the drag StatusProxy should be.  For now we just switch it to rtl styling
+        // if any ancestor has the x-rtl class.
+        .#{$prefix}dd-drag-ghost {
+            padding-left: 5px;
+            padding-right: 20px;
+        }
+        .#{$prefix}dd-drop-icon {
+            left: auto;
+            right: 3px;
+        }
+    }
+}

@@ -1,0 +1,9 @@
+$form-field-padding: dynamic(5px 10px 4px);
+$form-item-margin-bottom: dynamic(10px);
+$form-field-border-color: dynamic($neutral-color);
+$form-field-height: dynamic(32px);
+$form-trigger-width: dynamic(32px);
+$form-trigger-glyph-color: dynamic($neutral-dark-color);
+$form-checkbox-size: dynamic(20px);
+$form-checkbox-glyph-color: dynamic($neutral-dark-color);
+$form-textarea-line-height: dynamic(round($form-text-field-font-size * 1.5));

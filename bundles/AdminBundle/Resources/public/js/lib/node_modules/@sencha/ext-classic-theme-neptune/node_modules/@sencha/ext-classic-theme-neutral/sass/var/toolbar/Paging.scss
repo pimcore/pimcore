@@ -1,0 +1,51 @@
+/**
+ * @class Ext.toolbar.Paging
+ */
+
+/**
+ * @var {boolean}
+ * True to include different icons when the paging toolbar buttons are disabled.
+ */
+$grid-paging-toolbar-include-disabled-icons: dynamic(true);
+
+/**
+ * @var {color}
+ * The color to use for paging toolbar icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-paging-toolbar-glyph-color: dynamic($button-toolbar-glyph-color);
+
+/**
+ * @var {number}
+ * The font size to use for paging toolbar icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-paging-toolbar-glyph-font-size: dynamic(16px);
+
+/**
+ * @var {string/list}
+ * Glyph for the "first" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-paging-toolbar-first-glyph: dynamic($ext-var-double-chevron-left $grid-paging-toolbar-glyph-font-size ExtJS);
+
+/**
+ * @var {string/list}
+ * Glyph for the "prev" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-paging-toolbar-prev-glyph: dynamic($ext-var-chevron-left $grid-paging-toolbar-glyph-font-size ExtJS);
+
+/**
+ * @var {string/list}
+ * Glyph for the "next" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-paging-toolbar-next-glyph: dynamic($ext-var-chevron-right $grid-paging-toolbar-glyph-font-size ExtJS);
+
+/**
+ * @var {string/list}
+ * Glyph for the "last" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-paging-toolbar-last-glyph: dynamic($ext-var-double-chevron-right $grid-paging-toolbar-glyph-font-size ExtJS);
+
+/**
+ * @var {string/list}
+ * Glyph for the "refresh" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-paging-toolbar-refresh-glyph: dynamic($fa-var-sync $grid-paging-toolbar-glyph-font-size $font-icon-font-family);

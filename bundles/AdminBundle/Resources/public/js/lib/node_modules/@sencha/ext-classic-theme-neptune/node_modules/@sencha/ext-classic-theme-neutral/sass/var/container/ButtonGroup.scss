@@ -1,0 +1,286 @@
+/**
+ * @class Ext.container.ButtonGroup
+ */
+
+/**
+ * @var {color}
+ * The background-color of the ButtonGroup
+ */
+$btn-group-background-color: dynamic(#fff);
+
+/**
+ * @var {color}
+ * The border-color of the ButtonGroup
+ */
+$btn-group-border-color: dynamic($base-color);
+
+/**
+ * @var {number}
+ * The border-radius of the ButtonGroup
+ */
+$btn-group-border-radius: dynamic(0px);
+
+/**
+ * @var {number}
+ * The border-radius of framed ButtonGroups
+ */
+$btn-group-framed-border-radius: dynamic(2px);
+
+/**
+ * @var {number}
+ * The border-width of the ButtonGroup
+ */
+$btn-group-border-width: dynamic(1px);
+
+/**
+ * @var {number/list}
+ * The body padding of the ButtonGroup
+ */
+$btn-group-padding: dynamic(0 1px);
+
+/**
+ * @var {number/list}
+ * The inner border-width of the ButtonGroup
+ */
+$btn-group-inner-border-width: dynamic(1px);
+
+/**
+ * @var {color}
+ * The inner border-color of the ButtonGroup
+ */
+$btn-group-inner-border-color: dynamic(#fff);
+
+/**
+ * @var {number/list}
+ * The margin of the header element. Used to add space around the header.
+ */
+$btn-group-header-margin: dynamic(0);
+
+/**
+ * @var {number}
+ * The font-size of the header
+ */
+$btn-group-header-font-size: dynamic($font-size);
+
+/**
+ * @var {number}
+ * The font-weight of the header
+ */
+$btn-group-header-font-weight: dynamic($font-weight);
+
+/**
+ * @var {number}
+ * The font-family of the header
+ */
+$btn-group-header-font-family: dynamic($font-family);
+
+// private
+$btn-group-header-font: dynamic($btn-group-header-font-weight $btn-group-header-font-size $btn-group-header-font-family);
+
+/**
+ * @var {number}
+ * The line-height of the header
+ */
+$btn-group-header-line-height: dynamic(16px);
+
+/**
+ * @var {number}
+ * The text color of the header
+ */
+$btn-group-header-color: dynamic(#000);
+
+/**
+ * @var {number}
+ * The padding of the header
+ */
+$btn-group-header-padding: dynamic(4px 5px);
+
+/**
+ * @var {number}
+ * The background-color of the header
+ */
+$btn-group-header-background-color: dynamic($base-color);
+
+/**
+ * @var {number}
+ * The border-spacing to use on the table layout element
+ */
+$btn-group-border-spacing: dynamic(0);
+
+/**
+ * @var {number}
+ * The background-color of framed ButtonGroups
+ */
+$btn-group-framed-background-color: dynamic($btn-group-background-color);
+
+/**
+ * @var {number}
+ * The border-width of framed ButtonGroups
+ */
+$btn-group-framed-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * Sprite image to use for header {@link Ext.panel.Tool Tools}
+ */
+$btn-group-tool-background-image: dynamic('tools/tool-sprites');
+
+/**
+ * @var {boolean}
+ * True to include the "default" button group UI
+ */
+$include-btn-group-default-ui: dynamic($include-default-uis);
+
+/**
+ * @var {boolean}
+ * True to include the "default-framed" button group UI
+ */
+$include-btn-group-default-framed-ui: dynamic($include-default-uis);
+
+/**
+ * Creates a visual theme for a ButtonGroup.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {color} [$ui-background-color=$btn-group-background-color]
+ * The background-color of the button group
+ *
+ * @param {color} [$ui-border-color=$btn-group-border-color]
+ * The border-color of the button group
+ *
+ * @param {number} [$ui-border-width=$btn-group-border-width]
+ * The border-width of the button group
+ *
+ * @param {number} [$ui-border-radius=$btn-group-border-radius]
+ * The border-radius of the button group
+ *
+ * @param {color} [$ui-inner-border-color=$btn-group-inner-border-color]
+ * The inner border-color of the button group
+ *
+ * @param {color} [$ui-header-background-color=$btn-group-header-background-color]
+ * The background-color of the header
+ *
+ * @param {string} [$ui-header-font=$btn-group-header-font]
+ * The font of the header
+ *
+ * @param {color} [$ui-header-color=$btn-group-header-color]
+ * The text color of the header
+ *
+ * @param {number} [$ui-header-line-height=$btn-group-header-line-height]
+ * The line-height of the header
+ *
+ * @param {number} [$ui-header-padding=$btn-group-header-padding]
+ * The padding of the header
+ *
+ * @param {number} [$ui-body-padding=$btn-group-padding]
+ * The padding of the body element
+ *
+ * @param {string} [$ui-tool-background-image=$btn-group-tool-background-image]
+ * Sprite image to use for header {@link Ext.panel.Tool Tools}
+ *
+ * @param [$ui-label=null]
+ * $ui-label is deprecated. Use $ui instead.
+ *
+ * @member Ext.container.ButtonGroup
+ */
+@mixin extjs-btn-group-ui(
+    $ui: null,
+
+    // background
+    $ui-background-color: $btn-group-background-color,
+
+    // borders
+    $ui-border-color: $btn-group-border-color,
+    $ui-border-width: $btn-group-border-width,
+    $ui-border-radius: $btn-group-border-radius,
+    $ui-inner-border-color: $btn-group-inner-border-color,
+
+    //header
+    $ui-header-background-color: $btn-group-header-background-color,
+    $ui-header-font: $btn-group-header-font,
+    $ui-header-color: $btn-group-header-color,
+    $ui-header-line-height: $btn-group-header-line-height,
+    $ui-header-padding: $btn-group-header-padding,
+
+    $ui-body-padding: $btn-group-padding,
+    $ui-tool-background-image: $btn-group-tool-background-image,
+
+    // deprecated - use $ui instead
+    $ui-label: null
+){
+    @if $ui == null {
+        @if $ui-label != null {
+            @warn '$ui-label is deprecated.  Use $ui instead';
+            $ui: $ui-label;
+        } @else {
+            @warn "#{error('$ui is required')}";
+        }
+    }
+
+    @if $ui-border-radius != 0 {
+        @include x-frame(
+            'btn-group',
+            $ui: '#{$ui}',
+
+            $border-radius: $ui-border-radius,
+            $border-width: $ui-border-width,
+            $padding: $btn-group-padding,
+            $background-color: $ui-background-color
+        );
+        @include x-frame(
+            'btn-group',
+            $ui: '#{$ui}-notitle',
+
+            $border-radius: $ui-border-radius,
+            $border-width: $ui-border-width,
+            $padding: $btn-group-padding,
+            $background-color: $ui-background-color
+        );
+    }
+
+    .#{$prefix}btn-group-#{$ui} {
+        border-color: $ui-border-color;
+        @include inner-border(
+            $width: $btn-group-inner-border-width,
+            $color: $ui-inner-border-color
+        );
+
+    }
+
+    .#{$prefix}btn-group-header-#{$ui} {
+        @if $btn-group-header-margin != 0 {
+            margin: $btn-group-header-margin;
+        }
+        padding: $ui-header-padding;
+        line-height: $ui-header-line-height;
+        background: $ui-header-background-color;
+        @if not is-null($ui-border-radius) {
+            @include border-top-radius($ui-border-radius);
+        }
+
+        .#{$prefix}tool-img {
+            @if $ui-tool-background-image != $tool-background-image {
+                background-image: theme-background-image($ui-tool-background-image);
+            }
+            // EXTJSIV-8846: partially transparent png images do not display correctly
+            // in winXP/IE8m when the image element has a transparent background.
+            // to fix this, we give the element the same background-color as the ButtonGroup.
+            background-color: $ui-header-background-color;
+        }
+    }
+
+    .#{$prefix}btn-group-header-title-#{$ui} {
+        font: $ui-header-font;
+        line-height: $ui-header-line-height;
+        color: $ui-header-color;
+    }
+
+    .#{$prefix}btn-group-body-#{$ui} {
+        padding: $btn-group-padding;
+        .#{$prefix}table-layout {
+            border-spacing: $btn-group-border-spacing;
+        }
+    }
+}

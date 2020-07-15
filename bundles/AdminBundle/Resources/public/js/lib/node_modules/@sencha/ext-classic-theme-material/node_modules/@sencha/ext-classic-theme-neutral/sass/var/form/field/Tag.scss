@@ -1,0 +1,432 @@
+/**
+ * @class Ext.form.field.Tag
+ */
+
+/**
+ * @var {number/list}
+ * Tag field padding
+ */
+$tag-field-padding: dynamic(2px 0 0 4px);
+
+/**
+ * @var {number}
+ * The height of tag field items
+ */
+$tag-field-item-height: dynamic(18px);
+
+/**
+ * @var {number/list}
+ * The border-radius of tag field items
+ */
+$tag-field-item-border-radius: dynamic(3px);
+
+/**
+ * @var {color}
+ * The text color of tag field items
+ */
+$tag-field-item-color: dynamic($color);
+
+/**
+ * @var {color}
+ * The text color of tag field items when hovered
+ */
+$tag-field-item-over-color: dynamic($tag-field-item-color);
+
+/**
+ * @var {color}
+ * The text color of tag field items when selected
+ */
+$tag-field-item-selected-color: dynamic(#fff);
+
+/**
+ * @var {color}
+ * The background-color of tag field items
+ */
+$tag-field-item-background-color: dynamic(mix(#fff, $neutral-color, 15%));
+
+/**
+ * @var {color}
+ * The background-color of tag field items when hovered
+ */
+$tag-field-item-over-background-color: dynamic(mix(#000, $tag-field-item-background-color, 5%));
+
+/**
+ * @var {color}
+ * The background-color of tag field items when selected
+ */
+$tag-field-item-selected-background-color: dynamic($base-highlight-color);
+
+/**
+ * @var {color}
+ * The border-width of tag field items
+ */
+$tag-field-item-border-width: dynamic(1px);
+
+/**
+ * @var {color}
+ * The border-style of tag field items
+ */
+$tag-field-item-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The border-color of tag field items
+ */
+$tag-field-item-border-color: dynamic($tag-field-item-background-color);
+
+/**
+ * @var {color}
+ * The border-color of tag field items when hovered
+ */
+$tag-field-item-over-border-color: dynamic($tag-field-item-over-background-color);
+
+/**
+ * @var {color}
+ * The border-color of tag field items when selected
+ */
+$tag-field-item-selected-border-color: dynamic($base-color);
+
+/**
+ * @var {number/list}
+ * The padding of tag field items
+ */
+$tag-field-item-padding: dynamic(0 5px);
+
+/**
+ * @var {number/list}
+ * The margin of tag field items
+ */
+$tag-field-item-margin: dynamic(0 4px 2px 0);
+
+/**
+ * @var {number}
+ * The size of the close icon
+ */
+$tag-field-item-close-icon-size: dynamic(12px);
+
+/**
+ * @var {number}
+ * Number of pixels to offset the close icon from the top of the item
+ */
+$tag-field-item-close-icon-top: dynamic(1px);
+
+/**
+ * @var {number}
+ * Number of pixels to offset the close icon from the right of the item
+ */
+$tag-field-item-close-icon-right: dynamic(1px);
+
+/**
+ * @var {number}
+ * Number of pixels of space between the tag field item text and close icon
+ */
+$tag-field-item-close-icon-spacing: dynamic(6px);
+
+/**
+ * @var {color}
+ * The color to use for the "close" icon of items in a tag field when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$tag-field-item-close-icon-glyph-color: dynamic($tag-field-item-color);
+
+/**
+ * @var {color}
+ * The color to use for the "close" icon of selected items in a tag field when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$tag-field-item-selected-close-icon-glyph-color: dynamic($tag-field-item-selected-color);
+
+/**
+ * @var {color}
+ * The color to use for the "close" icon of hovered items in a tag field when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$tag-field-item-over-close-icon-glyph-color: dynamic($tag-field-item-over-color);
+
+/**
+ * @var {color}
+ * The color to use for the "close" icon of selected and hovered items in a tag field when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$tag-field-item-selected-over-close-icon-glyph-color: dynamic($tag-field-item-selected-close-icon-glyph-color);
+
+/**
+ * @var {string/list}
+ * Glyph for the "close" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$tag-field-item-close-icon-glyph: dynamic($fa-var-times 16px $font-icon-font-family);
+
+/**
+ * @var {color}
+ * Opacity of the "close" icon
+ */
+$tag-field-item-close-icon-opacity: dynamic(null);
+
+/**
+ * @var {color}
+ * Opacity of the "close" icon when hovered
+ */
+$tag-field-item-close-icon-opacity-over: dynamic($tag-field-item-close-icon-opacity);
+
+/**
+ * @var {color}
+ * Opacity of the "close" icon when pressed
+ */
+$tag-field-item-close-icon-opacity-pressed: dynamic($tag-field-item-close-icon-opacity-over);
+
+/**
+ * @var {boolean}
+ * True to include the "default" tag field UI
+ */
+$include-tag-field-default-ui: dynamic($include-text-field-default-ui);
+
+/**
+ * Creates a visual theme for tag fields.  Note this mixin only provides styling
+ * for the tag field's items, The label and error are styled by {@link #extjs-label-ui},
+ * and the field body is styled by {@link #extjs-text-field-ui}
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {number/list} [$ui-padding=$tag-field-padding]
+ * Tag field padding
+ *
+ * @param {number} [$ui-item-height=$tag-field-item-height]
+ * The height of tag field items
+ *
+ * @param {number/list} [$ui-item-border-radius=$tag-field-item-border-radius]
+ * The border-radius of tag field items
+ *
+ * @param {color} [$ui-item-color=$tag-field-item-color]
+ * The text color of tag field items
+ *
+ * @param {color} [$ui-item-over-color=$tag-field-item-over-color]
+ * The text color of tag field items when hovered
+ *
+ * @param {color} [$ui-item-selected-color=$tag-field-item-selected-color]
+ * The text color of tag field items when selected
+ *
+ * @param {color} [$ui-item-background-color=$tag-field-item-background-color]
+ * The background-color of tag field items
+ *
+ * @param {color} [$ui-item-over-background-color=$tag-field-item-over-background-color]
+ * The background-color of tag field items when hovered
+ *
+ * @param {color} [$ui-item-selected-background-color=$tag-field-item-selected-background-color]
+ * The background-color of tag field items when selected
+ *
+ * @param {color} [$ui-item-border-width=$tag-field-item-border-width]
+ * The border-width of tag field items
+ *
+ * @param {color} [$ui-item-border-style=$tag-field-item-border-style]
+ * The border-style of tag field items
+ *
+ * @param {color} [$ui-item-border-color=$tag-field-item-border-color]
+ * The border-color of tag field items
+ *
+ * @param {color} [$ui-item-over-border-color=$tag-field-item-over-border-color]
+ * The border-color of tag field items when hovered
+ *
+ * @param {color} [$ui-item-selected-border-color=$tag-field-item-selected-border-color]
+ * The border-color of tag field items when selected
+ *
+ * @param {number/list} [$ui-item-padding=$tag-field-item-padding]
+ * The padding of tag field items
+ *
+ * @param {number/list} [$ui-item-margin=$tag-field-item-margin]
+ * The margin of tag field items
+ *
+ * @param {number} [$ui-item-close-icon-size=$tag-field-item-close-icon-size]
+ * The size of the close icon
+ *
+ * @param {number} [$ui-item-close-icon-top=$tag-field-item-close-icon-top]
+ * Number of pixels to offset the close icon from the top of the item
+ *
+ * @param {number} [$ui-item-close-icon-right=$tag-field-item-close-icon-right]
+ * Number of pixels to offset the close icon from the right of the item
+ *
+ * @param {number} [$ui-item-close-icon-spacing=$tag-field-item-close-icon-spacing]
+ * Number of pixels of space between the tag field item text and close icon
+ *
+ * @param {color} [$ui-item-close-icon-glyph-color=$tag-field-item-close-icon-glyph-color]
+ * The color to use for the "close" icon of items in a tag field when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ *
+ * @param {color} [$ui-item-selected-close-icon-glyph-color=$tag-field-item-selected-close-icon-glyph-color]
+ * The color to use for the "close" icon of selected items in a tag field when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ *
+ * @param {color} [$ui-item-over-close-icon-glyph-color=$tag-field-item-over-close-icon-glyph-color]
+ * The color to use for the "close" icon of hovered items in a tag field when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ *
+ * @param {color} [$ui-item-selected-over-close-icon-glyph-color=$tag-field-item-selected-over-close-icon-glyph-color]
+ * The color to use for the "close" icon of selected and hovered items in a tag field when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ *
+ * @param {string/list} [$ui-item-close-icon-glyph=$tag-field-item-close-icon-glyph]
+ * Glyph for the "close" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ *
+ * @param {color} [$ui-item-close-icon-opacity=$tag-field-item-close-icon-opacity]
+ * Opacity of the "close" icon
+ *
+ * @param {color} [$ui-item-close-icon-opacity-over=$tag-field-item-close-icon-opacity-over]
+ * Opacity of the "close" icon when hovered
+ *
+ * @param {color} [$ui-item-close-icon-opacity-pressed=$tag-field-item-close-icon-opacity-pressed]
+ * Opacity of the "close" icon when pressed
+ *
+ * @member Ext.form.field.Tag
+ */
+@mixin extjs-tag-field-ui(
+    $ui,
+    $ui-padding: $tag-field-padding,
+    $ui-item-height: $tag-field-item-height,
+    $ui-item-border-radius: $tag-field-item-border-radius,
+    $ui-item-color: $tag-field-item-color,
+    $ui-item-over-color: $tag-field-item-over-color,
+    $ui-item-selected-color: $tag-field-item-selected-color,
+    $ui-item-background-color: $tag-field-item-background-color,
+    $ui-item-over-background-color: $tag-field-item-over-background-color,
+    $ui-item-selected-background-color: $tag-field-item-selected-background-color,
+    $ui-item-border-width: $tag-field-item-border-width,
+    $ui-item-border-style: $tag-field-item-border-style,
+    $ui-item-border-color: $tag-field-item-border-color,
+    $ui-item-over-border-color: $tag-field-item-over-border-color,
+    $ui-item-selected-border-color: $tag-field-item-selected-border-color,
+    $ui-item-padding: $tag-field-item-padding,
+    $ui-item-margin: $tag-field-item-margin,
+    $ui-item-close-icon-size: $tag-field-item-close-icon-size,
+    $ui-item-close-icon-top: $tag-field-item-close-icon-top,
+    $ui-item-close-icon-right: $tag-field-item-close-icon-right,
+    $ui-item-close-icon-spacing: $tag-field-item-close-icon-spacing,
+    $ui-item-close-icon-glyph-color: $tag-field-item-close-icon-glyph-color,
+    $ui-item-selected-close-icon-glyph-color: $tag-field-item-selected-close-icon-glyph-color,
+    $ui-item-over-close-icon-glyph-color: $tag-field-item-over-close-icon-glyph-color,
+    $ui-item-selected-over-close-icon-glyph-color: $tag-field-item-selected-over-close-icon-glyph-color,
+    $ui-item-close-icon-glyph: $tag-field-item-close-icon-glyph,
+    $ui-item-close-icon-opacity: $tag-field-item-close-icon-opacity,
+    $ui-item-close-icon-opacity-over: $tag-field-item-close-icon-opacity-over,
+    $ui-item-close-icon-opacity-pressed: $tag-field-item-close-icon-opacity-pressed
+) {
+    $ui-item-padding:
+            top($ui-item-padding)
+            max(right($ui-item-padding), $ui-item-close-icon-size + $ui-item-close-icon-right + $ui-item-close-icon-spacing)
+            bottom($ui-item-padding)
+            left($ui-item-padding);
+
+    .#{$prefix}form-text-#{$ui} {
+        &.#{$prefix}tagfield {
+            padding: $ui-padding;
+        }
+
+        .#{$prefix}tagfield-input {
+            margin: $ui-item-margin;
+        }
+
+        .#{$prefix}tagfield-input-field {
+            height: $ui-item-height;
+            line-height: $ui-item-height;
+        }
+
+        .#{$prefix}tagfield-item {
+            @include border-radius($ui-item-border-radius);
+            background-color: $ui-item-background-color;
+            @if ($ui-item-border-width != null) and ($ui-item-border-width != 0) {
+                border: $ui-item-border-width $ui-item-border-style $ui-item-border-color;
+            }
+            padding: $ui-item-padding;
+            margin: $ui-item-margin;
+            color: $ui-item-color;
+            line-height: $ui-item-height - vertical($ui-item-border-width);
+
+            &:hover {
+                background-color: $ui-item-over-background-color;
+                @if $ui-item-over-border-color != $ui-item-border-color {
+                    border-color: $ui-item-over-border-color;
+                }
+                color: $ui-item-over-color;
+            }
+
+            &.#{$prefix}tagfield-item-selected {
+                background-color: $ui-item-selected-background-color;
+                @if $ui-item-selected-border-color != $ui-item-border-color {
+                    border-color: $ui-item-selected-border-color;
+                }
+                color: $ui-item-selected-color;
+            }
+
+            @if $include-rtl {
+                &.#{$prefix}rtl {
+                    padding: rtl($ui-item-padding);
+                }
+            }
+        }
+
+        .#{$prefix}tagfield-item-close {
+            width: $ui-item-close-icon-size;
+            height: $ui-item-close-icon-size;
+            top: $ui-item-close-icon-top;
+            right: $ui-item-close-icon-right;
+
+            @if $ui-item-close-icon-opacity != null {
+                @include opacity($ui-item-close-icon-opacity);
+            }
+
+            @if $enable-font-icons and ($ui-item-close-icon-glyph != null) {
+                @include font-icon($ui-item-close-icon-glyph);
+                color: $ui-item-close-icon-glyph-color;
+            } @else {
+                background-image: theme-background-image('form/tag-field-item-close');
+            }
+
+            &:hover {
+                @if $ui-item-close-icon-opacity-over != null {
+                    @include opacity($ui-item-close-icon-opacity-over);
+                }
+                @if $enable-font-icons and ($ui-item-close-icon-glyph != null) {
+                    color: $ui-item-over-close-icon-glyph-color;
+                } @else {
+                    background-position: (-$ui-item-close-icon-size) 0;
+                }
+            }
+
+            &:active {
+                @if $ui-item-close-icon-opacity-pressed != null {
+                    @include opacity($ui-item-close-icon-opacity-pressed);
+                }
+                @if (not $enable-font-icons) or ($ui-item-close-icon-glyph == null) {
+                    background-position: (-$ui-item-close-icon-size * 2) 0;
+                }
+            }
+
+            @if $include-rtl {
+                &.#{$prefix}rtl {
+                    right: auto;
+                    left: $ui-item-close-icon-right;
+                }
+            }
+        }
+
+        .#{$prefix}tagfield-item-selected .#{$prefix}tagfield-item-close {
+            @if $enable-font-icons and ($ui-item-close-icon-glyph != null) {
+                color: $ui-item-selected-close-icon-glyph-color;
+
+                &:hover {
+                    color: $ui-item-selected-over-close-icon-glyph-color;
+                }
+            } @else {
+                background-position: 0 (-$ui-item-close-icon-size);
+
+                &:hover {
+                    background-position: (-$ui-item-close-icon-size) (-$ui-item-close-icon-size);
+                }
+
+                &:active {
+                    background-position: (-$ui-item-close-icon-size * 2) (-$ui-item-close-icon-size);
+                }
+            }
+        }
+    }
+}

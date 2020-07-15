@@ -83,6 +83,8 @@ function importScripts(scripts, callback) {
 
 Ext.onReady(function () {
 
+    console.log("Ext core version is " + Ext.versions.core.version);
+
     var xhrActive = 0; // number of active xhr requests
 
     Ext.Loader.setConfig({

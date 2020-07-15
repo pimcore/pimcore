@@ -1,0 +1,6 @@
+$tip-border-radius: dynamic(2px);
+$tip-body-color: dynamic($light-color);
+$tip-background-color: dynamic(mix(#000, $neutral-dark-color, 20%));
+$tip-border-color: dynamic($tip-background-color);
+$tip-body-padding: dynamic(6px 8px);
+$tip-anchor-height: 10px;

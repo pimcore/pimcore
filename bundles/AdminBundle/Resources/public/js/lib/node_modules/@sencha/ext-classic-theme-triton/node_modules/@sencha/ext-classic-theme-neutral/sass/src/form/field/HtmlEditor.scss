@@ -1,0 +1,179 @@
+.#{$prefix}html-editor-tb .#{$prefix}btn-icon-el {
+    @if $enable-font-icons {
+        color: $html-editor-glyph-color;
+    }
+}
+
+.#{$prefix}html-editor-tb .#{$prefix}edit-bold,
+.#{$prefix}menu-item div.#{$prefix}edit-bold {
+    @if $enable-font-icons and ($html-editor-bold-glyph != null) {
+        @include font-icon($html-editor-bold-glyph);
+        background: none;
+    } @else {
+        background-position: 0 0;
+        background-image: theme-background-image('editor/tb-sprite');
+    }
+}
+
+.#{$prefix}html-editor-tb .#{$prefix}edit-italic,
+.#{$prefix}menu-item div.#{$prefix}edit-italic {
+    @if $enable-font-icons and ($html-editor-italic-glyph != null) {
+        @include font-icon($html-editor-italic-glyph);
+        background: none;
+    } @else {
+        background-position: (-$html-editor-toolbar-icon-size) 0;
+        background-image: theme-background-image('editor/tb-sprite');
+    }
+}
+
+.#{$prefix}html-editor-tb .#{$prefix}edit-underline,
+.#{$prefix}menu-item div.#{$prefix}edit-underline {
+    @if $enable-font-icons and ($html-editor-underline-glyph != null) {
+        @include font-icon($html-editor-underline-glyph);
+        background: none;
+    } @else {
+        background-position: (-$html-editor-toolbar-icon-size * 2) 0;
+        background-image: theme-background-image('editor/tb-sprite');
+    }
+}
+
+.#{$prefix}html-editor-tb .#{$prefix}edit-forecolor,
+.#{$prefix}menu-item div.#{$prefix}edit-forecolor {
+    @if $enable-font-icons and ($html-editor-forecolor-glyph != null) {
+        @include font-icon($html-editor-forecolor-glyph);
+        background: none;
+    } @else {
+        background-position: (-$html-editor-toolbar-icon-size * 10) 0;
+        background-image: theme-background-image('editor/tb-sprite');
+    }
+}
+
+.#{$prefix}html-editor-tb .#{$prefix}edit-backcolor,
+.#{$prefix}menu-item div.#{$prefix}edit-backcolor {
+    @if $enable-font-icons and ($html-editor-backcolor-glyph != null) {
+        @include font-icon($html-editor-backcolor-glyph);
+        background: none;
+    } @else {
+        background-position: (-$html-editor-toolbar-icon-size * 11) 0;
+        background-image: theme-background-image('editor/tb-sprite');
+    }
+}
+
+.#{$prefix}html-editor-tb .#{$prefix}edit-justifyleft,
+.#{$prefix}menu-item div.#{$prefix}edit-justifyleft {
+    @if $enable-font-icons and ($html-editor-alignleft-glyph != null) {
+        @include font-icon($html-editor-alignleft-glyph);
+        background: none;
+    } @else {
+        background-position: (-$html-editor-toolbar-icon-size * 7) 0;
+        background-image: theme-background-image('editor/tb-sprite');
+    }
+}
+
+.#{$prefix}html-editor-tb .#{$prefix}edit-justifycenter,
+.#{$prefix}menu-item div.#{$prefix}edit-justifycenter {
+    @if $enable-font-icons and ($html-editor-aligncenter-glyph != null) {
+        @include font-icon($html-editor-aligncenter-glyph);
+        background: none;
+    } @else {
+        background-position: (-$html-editor-toolbar-icon-size * 8) 0;
+        background-image: theme-background-image('editor/tb-sprite');
+    }
+}
+
+.#{$prefix}html-editor-tb .#{$prefix}edit-justifyright,
+.#{$prefix}menu-item div.#{$prefix}edit-justifyright {
+    @if $enable-font-icons and ($html-editor-alignright-glyph != null) {
+        @include font-icon($html-editor-alignright-glyph);
+        background: none;
+    } @else {
+        background-position: (-$html-editor-toolbar-icon-size * 9) 0;
+        background-image: theme-background-image('editor/tb-sprite');
+    }
+}
+
+.#{$prefix}html-editor-tb .#{$prefix}edit-insertorderedlist,
+.#{$prefix}menu-item div.#{$prefix}edit-insertorderedlist {
+    @if $enable-font-icons and ($html-editor-numberedlist-glyph != null) {
+        @include font-icon($html-editor-numberedlist-glyph);
+        background: none;
+    } @else {
+        background-position: (-$html-editor-toolbar-icon-size * 5) 0;
+        background-image: theme-background-image('editor/tb-sprite');
+    }
+}
+
+.#{$prefix}html-editor-tb .#{$prefix}edit-insertunorderedlist,
+.#{$prefix}menu-item div.#{$prefix}edit-insertunorderedlist {
+    @if $enable-font-icons and ($html-editor-bulletlist-glyph != null) {
+        @include font-icon($html-editor-bulletlist-glyph);
+        background: none;
+    } @else {
+        background-position: (-$html-editor-toolbar-icon-size * 6) 0;
+        background-image: theme-background-image('editor/tb-sprite');
+    }
+}
+
+.#{$prefix}html-editor-tb .#{$prefix}edit-increasefontsize,
+.#{$prefix}menu-item div.#{$prefix}edit-increasefontsize {
+    @if $enable-font-icons and ($html-editor-growtext-glyph != null) {
+        @include font-icon($html-editor-growtext-glyph);
+        background: none;
+    } @else {
+        background-position: (-$html-editor-toolbar-icon-size * 3) 0;
+        background-image: theme-background-image('editor/tb-sprite');
+    }
+}
+
+.#{$prefix}html-editor-tb .#{$prefix}edit-decreasefontsize,
+.#{$prefix}menu-item div.#{$prefix}edit-decreasefontsize {
+    @if $enable-font-icons and ($html-editor-shrinktext-glyph != null) {
+        @include font-icon($html-editor-shrinktext-glyph);
+        background: none;
+    } @else {
+        background-position: (-$html-editor-toolbar-icon-size * 4) 0;
+        background-image: theme-background-image('editor/tb-sprite');
+    }
+}
+
+.#{$prefix}html-editor-tb .#{$prefix}edit-sourceedit,
+.#{$prefix}menu-item div.#{$prefix}edit-sourceedit {
+    @if $enable-font-icons and ($html-editor-sourceedit-glyph != null) {
+        @include font-icon($html-editor-sourceedit-glyph);
+        background: none;
+    } @else {
+        background-position: (-$html-editor-toolbar-icon-size * 12) 0;
+        background-image: theme-background-image('editor/tb-sprite');
+    }
+}
+
+.#{$prefix}html-editor-tb .#{$prefix}edit-createlink,
+.#{$prefix}menu-item div.#{$prefix}edit-createlink {
+    @if $enable-font-icons and ($html-editor-hyperlink-glyph != null) {
+        @include font-icon($html-editor-hyperlink-glyph);
+        background: none;
+    } @else {
+        background-position: (-$html-editor-toolbar-icon-size * 13) 0;
+        background-image: theme-background-image('editor/tb-sprite');
+    }
+}
+
+.#{$prefix}html-editor-tip .#{$prefix}tip-bd .#{$prefix}tip-bd-inner {
+    padding: 5px;
+    padding-bottom: 1px;
+}
+
+.#{$prefix}html-editor-tb .#{$prefix}font-select {
+    font-size: $html-editor-font-select-font-size;
+    font-family: $html-editor-font-select-font-family;
+}
+
+.#{$prefix}html-editor-wrap textarea {
+    font: $form-field-font-weight $form-field-font-size $form-field-font-family;
+    background-color: $html-editor-background-color;
+    resize: none;
+}
+
+.#{$prefix}htmleditor-iframe {
+    background-color: $html-editor-background-color;
+}

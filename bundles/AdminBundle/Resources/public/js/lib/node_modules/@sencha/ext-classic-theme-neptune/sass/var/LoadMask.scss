@@ -1,0 +1,15 @@
+/** @class Ext.LoadMask */
+//
+
+$loadmask-opacity: dynamic(0.7);
+$loadmask-background-color: dynamic(#fff);
+$loadmask-msg-padding: dynamic(8px);
+$loadmask-msg-background-color: dynamic(#e5e5e5);
+$loadmask-msg-inner-icon-position: dynamic(center 0);
+$loadmask-msg-inner-color: dynamic(#666);
+$loadmask-msg-inner-background-color: dynamic(transparent);
+$loadmask-msg-inner-padding: dynamic(0);
+$loadmask-msg-text-padding: dynamic(21px 0 0);
+$loadmask-msg-border-width: dynamic(0);
+$loadmask-msg-inner-border-width: dynamic(0);
+$loadmask-msg-border-radius: dynamic(3px);

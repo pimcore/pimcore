@@ -1,0 +1,68 @@
+/** @class Ext.resizer.Resizer */
+//
+
+/**
+ * @var {number}
+ * The size of resizer handles
+ */
+$resizer-handle-size: dynamic($panel-frame-border-width);
+
+/**
+ * @var {number}
+ * border-radius of resizer handles
+ */
+$resizer-handle-border-radius: dynamic($resizer-handle-size);
+
+/**
+ * @var {color}
+ * background-color of resizer handles
+ */
+$resizer-handle-background-color: dynamic($panel-body-border-color);
+
+/**
+ * @var {color}
+ * The color to use for resizer handle icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$resizer-handle-glyph-color: dynamic(#404040);
+
+/**
+ * @var {number}
+ * The font size to use for resizer handle icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$resizer-handle-glyph-font-size: dynamic(16px);
+
+/**
+ * @var {string/list}
+ * Glyph for the vertical (east/west) resizer handle when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$resizer-handle-vertical-glyph: dynamic($fa-var-ellipsis-v $resizer-handle-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the horizontal (north/south) resizer handle when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$resizer-handle-horizontal-glyph: dynamic($fa-var-ellipsis-h $resizer-handle-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the northwest resizer handle when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$resizer-handle-northwest-glyph: dynamic($ext-var-nw-handle $resizer-handle-glyph-font-size ExtJS);
+
+/**
+ * @var {string/list}
+ * Glyph for the northeast resizer handle when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$resizer-handle-northeast-glyph: dynamic($ext-var-ne-handle $resizer-handle-glyph-font-size ExtJS);
+
+/**
+ * @var {string/list}
+ * Glyph for the southeast resizer handle when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$resizer-handle-southeast-glyph: dynamic($ext-var-se-handle $resizer-handle-glyph-font-size ExtJS);
+
+/**
+ * @var {string/list}
+ * Glyph for the southwest resizer handle when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$resizer-handle-southwest-glyph: dynamic($ext-var-sw-handle $resizer-handle-glyph-font-size ExtJS);

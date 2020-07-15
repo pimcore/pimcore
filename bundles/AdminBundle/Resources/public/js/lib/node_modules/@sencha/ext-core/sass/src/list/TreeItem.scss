@@ -1,0 +1,724 @@
+/**
+ * @class Ext.list.TreeItem
+ */
+
+@function add-if ($value1, $value2) {
+    @if $value1 == null or $value2 == null {
+        @return null;
+    }
+
+    @return $value1 + $value2;
+}
+
+/**
+ * This private mixin handle styling all elements inside the x-treelist root element.
+ * The public treelist-ui mixin calls this inside a proper selector for the ui while
+ * the default styling (handled below) call this mixin at global scope (to produce a
+ * set of single-class selectors).
+ *
+ * The outer container is a DOM structure like this:
+ *
+ *      +-div--------------------------+  x-treelist
+ *      | +-ul-----------------------+ |     x-treelist-root-container
+ *      | |                          | |
+ *      | +--------------------------+ |
+ *      +------------------------------+
+ *
+ * Each item looks like this:
+ *
+ *      +-li-----------------------------------+  x-treelist-item
+ *      | +-div------------------------------+ |    x-treelist-row
+ *      | | +-div--------------------------+ | |      x-treelist-item-wrap
+ *      | | | +-div-+ +-div------+ +-div-+ | | |        x-treelist-item-icon, text, expander
+ *      | | | | </> | | Text     | |  >  | | | |
+ *      | | | +-----+ +----------+ +-----+ | | |
+ *      | | +------------------------------+ | |
+ *      | +----------------------------------+ |
+ *      | +-ul-------------------------------+ |    x-treelist-container
+ *      | |                                  | |
+ *      | +----------------------------------+ |
+ *      +--------------------------------------+
+ *
+ * @private
+ */
+@mixin treelist-ui-body (
+    $padding-left,
+    $padding-right,
+
+    $toolstrip-background-color: null,
+
+    $tool-float-indicator-color: null,
+    $tool-float-indicator-width: null,
+
+    $tool-selected-color: null,
+    $tool-selected-background-color: null,
+
+    $tool-indicator-selected-color: null,
+    $tool-indicator-selected-width: null,
+
+    $item-expanded-background-color: null,
+    $item-expanded-child-background-color: null,
+
+    $item-line-height : null,
+    $item-line-height-big: null,
+
+    $item-selected-background-color: null,
+
+    $item-icon-color: null,
+    $item-icon-over-color: null,
+    $item-icon-font-size: null,
+    $item-icon-font-size-big: null,
+    $item-icon-width: null,
+    $item-icon-width-big: null,
+
+    $item-expander-color: null,
+    $item-expander-over-color: null,
+    $item-expander-font-size: null,
+    $item-expander-font-size-big: null,
+    $item-expander-width: null,
+    $item-expander-width-big: null,
+
+    $item-expander-glyph: null,
+    $item-expander-expanded-glyph: null,
+
+    $item-text-color: null,
+    $item-text-icon-gap: null,
+    $item-text-over-color: null,
+    $item-text-font-size: null,
+    $item-text-overflow: null,
+
+    $item-icon-over-transition: null,
+    $item-text-over-transition: null,
+    $item-expander-over-transition: null,
+
+    $row-indicator-selected-color: null,
+    $row-indicator-selected-over-color: null, 
+    $row-indicator-over-color: null,
+    $row-indicator-width: null,
+    $row-selected-background-color: null,
+    $row-selected-over-background-color: null,
+    $row-over-background-color: null,
+    $row-over-transition: null
+) {
+    .#{$prefix}treelist-toolstrip {
+        background-color: $toolstrip-background-color;
+    }
+
+    .#{$prefix}treelist-item-selected {
+        &.#{$prefix}treelist-item {
+            background-color: $item-selected-background-color;
+        }
+
+        &.#{$prefix}treelist-item-tool {
+            color: $tool-selected-color;
+            background-color: $tool-selected-background-color;
+
+            @if $tool-indicator-selected-width != null {
+                &:after {
+                    height: $item-line-height;
+                    @if $enable-big {
+                        .x-big & {
+                            height: $item-line-height-big;
+                        }
+                    }
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    content: " ";
+                    width: $tool-indicator-selected-width;
+                    background-color: $tool-indicator-selected-color;
+                }
+            }
+        }
+
+        > .#{$prefix}treelist-row {
+            background-color: $row-selected-background-color;
+        }
+
+        > .#{$prefix}treelist-row-over {
+            background-color: $row-selected-over-background-color;
+        }
+    }
+
+    .#{$prefix}treelist-item-tool {
+        padding-left: $padding-left;
+        padding-right: $padding-right;
+    }
+
+    @if $tool-float-indicator-color != null and $tool-float-indicator-width != null {
+        // Use after here because we use :before for the icon
+        .#{$prefix}treelist-item-tool-floated:after {
+            height: $item-line-height;
+            @if $enable-big {
+                .x-big & {
+                    height: $item-line-height-big;
+                }
+            }
+            position: absolute;
+            top: 0;
+            left: 0;
+            content: " ";
+            width: $tool-float-indicator-width;
+            background-color: $tool-float-indicator-color;
+        }
+    }
+
+    .#{$prefix}treelist-item-icon:before,
+    .#{$prefix}treelist-item-tool:before, // only size the glyph pseudo-el on a tool
+    .#{$prefix}treelist-item-expander {
+        line-height: $item-line-height;
+
+        @if $enable-big {
+            .x-big & {
+                line-height: $item-line-height-big;
+            }
+        }
+    }
+
+    .#{$prefix}treelist-item-icon,
+    .#{$prefix}treelist-item-tool,
+    .#{$prefix}treelist-item-expander {
+        text-align: center;
+
+        // Loading status may use a background image.
+        background-repeat: no-repeat;
+        background-position: 0 center;
+    }
+
+    .#{$prefix}treelist-item-loading .#{$prefix}treelist-item-icon {
+        background-image: theme-background-image('tree/loading', 'gif');
+        color: transparent;
+    }
+
+    .#{$prefix}treelist-item-icon,
+    .#{$prefix}treelist-item-tool {
+        color: $item-icon-color;
+        font-size: $item-icon-font-size;
+        width: $item-icon-width;
+        @if $enable-big {
+            .x-big & {
+                font-size: $item-icon-font-size-big;
+                width: $item-icon-width-big;
+            }
+        }
+    }
+
+    .#{$prefix}treelist-item-tool {
+        width: add-if($padding-left, add-if($padding-right, $item-icon-width));
+
+        @if $enable-big {
+            .x-big & {
+                width: add-if($padding-left, add-if($padding-right, $item-icon-width-big));
+            }
+        }
+    }
+
+    .#{$prefix}treelist-item-expander {
+        color: $item-expander-color;
+        font-size: $item-expander-font-size;
+        @if $enable-big {
+            .x-big & {
+                font-size: $item-expander-font-size-big;
+            }
+        }
+        width: $item-expander-width;
+        @if $enable-big {
+            .x-big & {
+                width: $item-expander-width-big;
+            }
+        }
+    }
+
+    .#{$prefix}treelist-item-expander:after {
+        @include font-icon(
+            $item-expander-glyph,
+            $pseudo: false,
+            $line-height: $item-line-height
+        );
+    }
+
+    .#{$prefix}treelist-item-expanded > * > * > .#{$prefix}treelist-item-expander:after {
+        @include font-icon(
+            $item-expander-expanded-glyph, 
+            $pseudo: false, $line-height: 
+            $item-line-height
+        );
+    }
+
+    $text-indent: $item-text-icon-gap;
+    @if $text-indent == null {
+        $text-indent: $treelist-item-text-icon-gap;
+    }
+
+    .#{$prefix}treelist-item-text {
+        color: $item-text-color;
+        margin-left: add-if($item-icon-width, $text-indent);
+        margin-right: $item-expander-width;
+        font-size: $item-text-font-size;
+        line-height: $item-line-height;
+        @if $enable-big {
+            .x-big & {
+                margin-left: add-if($item-icon-width-big, $text-indent);;
+                line-height: $item-line-height-big;
+                margin-right: $item-expander-width-big;
+            }
+        }
+
+        text-overflow: $item-text-overflow;
+    }
+
+    .#{$prefix}treelist-row {
+        padding-left: $padding-left;
+        padding-right: $padding-right;
+    }
+
+    @if $row-indicator-width != null {
+        .#{$prefix}treelist-row-over:before,
+        .#{$prefix}treelist-item-selected > .#{$prefix}treelist-row:before {
+            content: " ";
+            position: absolute;
+            display: block;
+            left: 0;
+            top: 0;
+            width: $row-indicator-width;
+            height: 100%;
+        }
+
+        .#{$prefix}treelist-row-over:before {
+            background-color: $row-indicator-over-color;
+        }
+
+        .#{$prefix}treelist-item-selected > .#{$prefix}treelist-row-over:before {
+            background-color: $row-indicator-selected-over-color;
+        }
+
+        .#{$prefix}treelist-item-selected > .#{$prefix}treelist-row:before {
+            background-color: $row-indicator-selected-color;
+        }
+    }
+
+    .#{$prefix}treelist-item-floated {
+        .#{$prefix}treelist-container {
+            width: auto;
+        }
+        > .#{$prefix}treelist-row {
+            background-color: $toolstrip-background-color;
+        }
+
+        > .#{$prefix}treelist-container {
+            margin-left: -$padding-left;
+            @if $enable-big {
+                .x-big & {
+                    margin-left: -$padding-left;
+                }
+            }
+        }
+
+        > * > * > .#{$prefix}treelist-item-text {
+            margin-left: 0;
+        }
+
+        > * .#{$prefix}treelist-row {
+            cursor: pointer;
+            padding-left: 0;
+        }
+
+        .#{$prefix}treelist-row:before {
+            width: 0;
+        }
+
+        > .#{$prefix}treelist-row-over {
+            background-color: $toolstrip-background-color;
+
+            > * > .#{$prefix}treelist-item-text {
+                color: $item-text-color;
+            }
+        }
+    }
+
+    .#{$prefix}treelist-item-expanded {
+        background-color: $item-expanded-background-color;
+
+        & .#{$prefix}treelist-item {
+            background-color: $item-expanded-child-background-color;
+        }
+
+        & > .#{$prefix}treelist-item-expander:after {
+            @include font-icon($item-expander-expanded-glyph, $pseudo: false);
+        }
+    }
+
+    .#{$prefix}treelist-item-collapsed > * > .#{$prefix}treelist-item-expander:after {
+        @include font-icon($item-expander-glyph, $pseudo: false);
+    }
+
+    .#{$prefix}treelist-highlight-path {
+        .#{$prefix}treelist-item-over > * > * {
+            > .#{$prefix}treelist-item-icon {
+                color: $item-icon-over-color;
+                transition: $item-icon-over-transition;
+            }
+            > .#{$prefix}treelist-item-text {
+                color: $item-text-over-color;
+                transition: $item-text-over-transition;
+            }
+            > .#{$prefix}treelist-item-expander {
+                color: $item-expander-over-color;
+                transition: $item-expander-over-transition;
+            }
+        }
+    }
+
+    .#{$prefix}treelist-row-over {
+        background-color: $row-over-background-color;
+        transition: $row-over-transition;
+
+        > * > .#{$prefix}treelist-item-icon {
+            color: $item-icon-over-color;
+            transition: $item-icon-over-transition;
+        }
+        > * > .#{$prefix}treelist-item-text {
+            color: $item-text-over-color;
+            transition: $item-text-over-transition;
+        }
+        > * > .#{$prefix}treelist-item-expander {
+            color: $item-expander-over-color;
+            transition: $item-expander-over-transition;
+        }
+    }
+
+    .#{$prefix}treelist-expander-first {
+        .#{$prefix}treelist-item-icon {
+            left: $item-expander-width;
+            @if $enable-big {
+                .x-big & {
+                    left: $item-expander-width-big;
+                }
+            }
+        }
+
+        .#{$prefix}treelist-item-text {
+            margin-left: add-if($item-expander-width, add-if($item-icon-width, $text-indent));
+            @if $enable-big {
+                .x-big & {
+                    margin-left: add-if($item-expander-width-big, add-if($item-icon-width-big, $text-indent));
+                }
+            }
+            margin-right: 0;
+        }
+
+        .#{$prefix}treelist-item-hide-icon > * > * > .#{$prefix}treelist-item-text {
+            margin-left: add-if($item-expander-width, $text-indent / 2);
+            @if $enable-big {
+                .x-big & {
+                    margin-left: add-if($item-expander-width-big, $text-indent / 2);
+                }
+            }
+        }
+    }
+
+    .#{$prefix}treelist-item-hide-icon > * > * > .#{$prefix}treelist-item-text {
+        margin-left: $text-indent / 2;
+    }
+}
+
+//------------------------------------------------------------------------------------
+
+/**
+ * This mixin generates styles for `{@link Ext.list.Tree treelist}` widgets.
+ */
+@mixin treelist-ui (
+    $ui,
+
+    $background-color: null,
+    $padding: null,
+
+    $toolstrip-background-color: null,
+
+    $tool-float-indicator-color: null,
+    $tool-float-indicator-width: null,
+
+    $tool-selected-color: null,
+    $tool-selected-background-color: null,
+
+    $tool-indicator-selected-color: null,
+    $tool-indicator-selected-width: null,
+
+    $item-expanded-background-color: null,
+    $item-expanded-child-background-color: null,
+
+    $item-line-height : null,
+    $item-line-height-big : null,
+
+    $item-selected-background-color: null,
+
+    $item-icon-color: null,
+    $item-icon-over-color: null,
+    $item-icon-font-size: null,
+    $item-icon-font-size-big: null,
+    $item-icon-width: null,
+    $item-icon-width-big: null,
+
+    $item-expander-color: null,
+    $item-expander-over-color: null,
+    $item-expander-font-size: null,
+    $item-expander-font-size-big: null,
+    $item-expander-width: null,
+    $item-expander-width-big: null,
+
+    $item-expander-glyph: null,
+    $item-expander-expanded-glyph: null,
+
+    $item-text-color: null,
+    $item-text-icon-gap: null,
+    $item-text-over-color: null,
+    $item-text-font-size: null,
+    $item-text-overflow: null,
+
+    $item-icon-over-transition: null,
+    $item-text-over-transition: null,
+    $item-expander-over-transition: null,
+
+    $row-indicator-selected-color: null,
+    $row-indicator-selected-over-color: null, 
+    $row-indicator-over-color: null,
+    $row-indicator-width: null,
+    $row-selected-background-color: null,
+    $row-selected-over-background-color: null,
+    $row-over-background-color: null,
+    $row-over-transition: null
+) {
+    // Sass will remove any styles (margin or padding) that have null values. Further,
+    // it will remove empty rulesets... so we don't need to conditionalize these rules
+    // and it will reduce down to potentially nothing as appropriate.
+    //
+    .#{$prefix}treelist-#{$ui} {
+        background-color: $background-color;
+        // Some browsers (FF, IE) don't support reading background-position-x
+        background-position: $item-icon-width 0%;
+        @if $enable-big {
+            .x-big & {
+                background-position: $item-icon-width-big 0%;
+            }
+        }
+
+        @if $padding != null {
+            padding: top($padding) 0 bottom($padding) 0;
+        }
+
+        @include treelist-ui-body(
+            $padding-left: if($padding == null, null, left($padding)),
+            $padding-right: if($padding == null, null, right($padding)),
+
+            $toolstrip-background-color: $toolstrip-background-color,
+
+            $tool-float-indicator-color: $tool-float-indicator-color,
+            $tool-float-indicator-width: $tool-float-indicator-width,
+
+            $tool-selected-color: $tool-selected-color,
+            $tool-selected-background-color: $tool-selected-background-color,
+
+            $tool-indicator-selected-color: $tool-indicator-selected-color,
+            $tool-indicator-selected-width: $tool-indicator-selected-width,
+
+            $item-expanded-background-color: $item-expanded-background-color,
+            $item-expanded-child-background-color: $item-expanded-child-background-color,
+
+            $item-line-height : $item-line-height,
+            $item-line-height-big: $item-line-height-big,
+
+            $item-selected-background-color: $item-selected-background-color,
+
+            $item-icon-color: $item-icon-color,
+            $item-icon-over-color: $item-icon-over-color,
+            $item-icon-font-size: $item-icon-font-size,
+            $item-icon-font-size-big: $item-icon-font-size-big,
+            $item-icon-width: $item-icon-width,
+            $item-icon-width-big: $item-icon-width-big,
+
+            $item-expander-color: $item-expander-color,
+            $item-expander-over-color: $item-expander-over-color,
+            $item-expander-font-size: $item-expander-font-size,
+            $item-expander-font-size-big: $item-expander-font-size-big,
+            $item-expander-width: $item-expander-width,
+            $item-expander-width-big: $item-expander-width-big,
+
+            $item-expander-glyph: $item-expander-glyph,
+            $item-expander-expanded-glyph: $item-expander-expanded-glyph,
+
+            $item-text-color: $item-text-color,
+            $item-text-icon-gap: $item-text-icon-gap,
+            $item-text-over-color: $item-text-over-color,
+            $item-text-font-size: $item-text-font-size,
+            $item-text-overflow: $item-text-overflow,
+
+            $item-icon-over-transition: $item-icon-over-transition,
+            $item-text-over-transition: $item-text-over-transition,
+            $item-expander-over-transition: $item-expander-over-transition,
+
+            $row-indicator-selected-color: $row-indicator-selected-color,
+            $row-indicator-selected-over-color: $row-indicator-selected-over-color, 
+            $row-indicator-over-color: $row-indicator-over-color,
+            $row-indicator-width: $row-indicator-width,
+            $row-selected-background-color: $row-selected-background-color,
+            $row-selected-over-background-color: $row-selected-over-background-color,
+            $row-over-background-color: $row-over-background-color,
+            $row-over-transition: $row-over-transition
+        );
+    }
+}
+
+//------------------------------------------------------------------------------------
+// Since the treelist-ui-body mixin can only style the child elements of the treelist,
+// we have to style x-treelist here. Further, styles that are ui-independent are also
+// placed here.
+//
+.#{$prefix}treelist {
+    background-color: $treelist-background-color;
+    // Some browsers (FF, IE) don't support reading background-position-x
+    background-position: $treelist-item-icon-width 0%;
+    @if $enable-big {
+        .x-big & {
+            background-position: $treelist-item-icon-width-big 0%;
+        }
+    }
+    overflow: hidden;
+    padding: top($treelist-padding) 0 bottom($treelist-padding) 0;
+}
+
+.#{$prefix}treelist-container,
+.#{$prefix}treelist-root-container {
+    width: 100%;
+}
+
+.#{$prefix}treelist-toolstrip {
+    display: none;
+}
+
+.#{$prefix}treelist-micro {
+    > .#{$prefix}treelist-toolstrip {
+        display: inline-block;
+    }
+    > .#{$prefix}treelist-root-container {
+        display: none;
+    }
+}
+
+.#{$prefix}treelist-item,
+.#{$prefix}treelist-container,
+.#{$prefix}treelist-root-container {
+    position: relative;
+    overflow: hidden;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.#{$prefix}treelist-item-tool,
+.#{$prefix}treelist-row,
+.#{$prefix}treelist-item-wrap {
+    position: relative;
+}
+
+.#{$prefix}treelist-item-icon,
+.#{$prefix}treelist-item-expander {
+    display: none;
+    position: absolute;
+    top: 0;
+}
+
+.#{$prefix}treelist-item-expander {
+    right: 0;
+    cursor: pointer;
+}
+
+.#{$prefix}treelist-expander-only .#{$prefix}treelist-item-expandable > * > .#{$prefix}treelist-item-wrap > * {
+    cursor: pointer;
+}
+
+.#{$prefix}treelist-item-text {
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.#{$prefix}treelist-item-collapsed > .#{$prefix}treelist-container {
+    display: none;
+}
+
+.#{$prefix}treelist-item-expandable > * > * > .#{$prefix}treelist-item-expander,
+.#{$prefix}treelist-item-icon {
+    display: block;
+}
+
+.#{$prefix}treelist-item-floated > * > * > .#{$prefix}treelist-item-expander,
+.#{$prefix}treelist-item-floated > * > * > .#{$prefix}treelist-item-icon {
+    display: none;
+}
+
+.#{$prefix}treelist-expander-first .#{$prefix}treelist-item-expander {
+    left: 0;
+    right: auto;
+}
+
+@include treelist-ui-body(
+    $padding-left: left($treelist-padding),
+    $padding-right: right($treelist-padding),
+
+    $toolstrip-background-color: $treelist-toolstrip-background-color,
+
+    $tool-float-indicator-color: $treelist-tool-float-indicator-color,
+    $tool-float-indicator-width: $treelist-tool-float-indicator-width,
+
+    $tool-selected-color: $treelist-tool-selected-color,
+    $tool-selected-background-color: $treelist-tool-selected-background-color,
+
+    $tool-indicator-selected-color: $treelist-tool-indicator-selected-color,
+    $tool-indicator-selected-width: $treelist-tool-indicator-selected-width,
+
+    $item-expanded-background-color: $treelist-item-expanded-background-color,
+    $item-expanded-child-background-color: $treelist-item-expanded-child-background-color,
+
+    $item-line-height : $treelist-item-line-height,
+    $item-line-height-big: $treelist-item-line-height-big,
+
+    $item-icon-color: $treelist-item-icon-color,
+    $item-icon-over-color: $treelist-item-icon-over-color,
+    $item-icon-font-size: $treelist-item-icon-font-size,
+    $item-icon-font-size-big: $treelist-item-icon-font-size-big,
+    $item-icon-width: $treelist-item-icon-width,
+    $item-icon-width-big: $treelist-item-icon-width-big,
+
+    $item-expander-color: $treelist-item-expander-color,
+    $item-expander-over-color: $treelist-item-expander-over-color,
+    $item-expander-font-size: $treelist-item-expander-font-size,
+    $item-expander-font-size-big: $treelist-item-expander-font-size-big,
+    $item-expander-width: $treelist-item-expander-width,
+    $item-expander-width-big: $treelist-item-expander-width-big,
+
+    $item-expander-glyph: $treelist-item-expander-glyph,
+    $item-expander-expanded-glyph: $treelist-item-expander-expanded-glyph,
+
+    $item-text-color: $treelist-item-text-color,
+    $item-text-icon-gap: $treelist-item-text-icon-gap,
+    $item-text-over-color: $treelist-item-text-over-color,
+    $item-text-font-size: $treelist-item-text-font-size,
+    $item-text-overflow: $treelist-item-text-overflow,
+
+    $item-icon-over-transition: $item-icon-over-transition,
+    $item-text-over-transition: $item-text-over-transition,
+    $item-expander-over-transition: $item-expander-over-transition,
+
+    $row-indicator-selected-color: $treelist-row-indicator-selected-color,
+    $row-indicator-selected-over-color: $treelist-row-indicator-selected-over-color, 
+    $row-indicator-over-color: $treelist-row-indicator-over-color,
+    $row-indicator-width: $treelist-row-indicator-width,
+    $row-selected-background-color: $treelist-row-selected-background-color,
+    $row-selected-over-background-color: $treelist-row-selected-over-background-color,
+    $row-over-background-color: $treelist-row-over-background-color,
+    $row-over-transition: $treelist-row-over-transition
+);
+
+@if $treelist-nav-ui != null {
+    @include treelist-ui(map-merge((ui: nav), $treelist-nav-ui)...);
+}

@@ -1,0 +1,110 @@
+/**
+ * @class Ext.grid.feature.Grouping
+ */
+
+/**
+ * @var {color}
+ * The background color of group headers
+ */
+$grid-grouped-header-background-color: dynamic(#fff);
+
+/**
+ * @var {number/list}
+ * The border-width of group headers
+ */
+$grid-grouped-header-border-width: dynamic(0 0 2px 0);
+
+/**
+ * @var {string}
+ * The border-style of group headers
+ */
+$grid-grouped-header-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The border-color of group headers
+ */
+$grid-grouped-header-border-color: dynamic(adjust-color($base-color, $hue: 0.844deg, $saturation: 7.644%, $lightness: -8.627%));
+
+/**
+ * @var {number/list}
+ * The padding of group headers
+ */
+$grid-grouped-header-padding: dynamic(10px 4px 4px 4px);
+
+/**
+ * @var {string}
+ * The cursor of group headers
+ */
+$grid-grouped-header-cursor: dynamic(pointer);
+
+/**
+ * @var {color}
+ * The text color of group header titles
+ */
+$grid-grouped-title-color: dynamic(adjust-color($base-color, $hue: 0.952deg, $saturation: -6.718%, $lightness: -41.961%));
+
+/**
+ * @var {string}
+ * The font-family of group header titles
+ */
+$grid-grouped-title-font-family: dynamic($font-family);
+
+/**
+ * @var {number}
+ * The font-size of group header titles
+ */
+$grid-grouped-title-font-size: dynamic($font-size);
+
+/**
+ * @var {string}
+ * The font-weight of group header titles
+ */
+$grid-grouped-title-font-weight: dynamic($font-weight-bold);
+
+/**
+ * @var {number}
+ * The line-height of group header titles
+ */
+$grid-grouped-title-line-height: dynamic(round($grid-grouped-title-font-size * 1.15));
+
+/**
+ * @var {string/list}
+ * Glyph for the "group by this field" menu icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-grouped-menu-group-by-glyph: dynamic($ext-var-group-by $grid-header-menu-glyph-font-size ExtJS);
+
+/**
+ * @var {color}
+ * The color to use for the group title's expand and collapse icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-grouped-title-glyph-color: dynamic($color);
+
+/**
+ * @var {number}
+ * The font size for the group title's expand and collapse icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-grouped-title-glyph-font-size: dynamic(14px);
+
+/**
+ * @var {string/list}
+ * Glyph for the group title's "expand" group icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-grouped-title-expand-glyph: dynamic($fa-var-plus-square $grid-grouped-title-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the group title's "collapse" group icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-grouped-title-collapse-glyph: dynamic($fa-var-minus-square $grid-grouped-title-glyph-font-size $font-icon-font-family);
+
+// private
+$grid-grouped-title-font: dynamic($grid-grouped-title-font-weight #{$grid-grouped-title-font-size}/#{$grid-grouped-title-line-height} $grid-grouped-title-font-family);
+
+/**
+ * @var {number/list}
+ * The amount of padding to add to the group title element.  This is typically used
+ * to reserve space for an icon by setting the amountof space to be reserved for the icon
+ * as the left value and setting the remaining sides to 0.
+ */
+$grid-grouped-icon-padding: dynamic(0 0 0 14px);

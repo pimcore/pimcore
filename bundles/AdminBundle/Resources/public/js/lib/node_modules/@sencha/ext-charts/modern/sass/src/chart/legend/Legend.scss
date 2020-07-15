@@ -1,0 +1,56 @@
+/*
+ * The DOM looks like this:
+ *
+ *     ext-legend
+ *         x-legend-body-el x-legend-horizontal/vertical
+ *             x-legend-item
+ *             x-legend-item
+ *
+ * The `x-legend-body-el` is what is being scrolled.
+ */
+
+.#{$prefix}legend {
+    .#{$prefix}legend-body-el {
+        display: inline-block;
+        margin: auto;
+        white-space: nowrap !important;
+        line-height: 0;
+        background: $chart-legend-background-color;
+
+        @if (lightness($chart-legend-background-color) > 30) {
+            @include box-shadow(rgba(#fff, .6) 0 1px 1px);
+        } @else {
+            @include box-shadow(rgba(#fff, .2) 0 1px 0);
+        }
+    }
+}
+
+.#{$prefix}legend-horizontal {
+    .#{$prefix}legend-body-el {
+        display: table;
+        margin: 0 auto;
+    }
+}
+
+.#{$prefix}legend-item {
+    font-size: $font-size;
+    line-height: $font-size;
+}
+
+.#{$prefix}legend-item-marker {
+    top: .95em;
+}
+
+.#{$prefix}legend-body-el {
+    white-space: nowrap;
+    padding: $chart-legend-padding;
+}
+
+.#{$prefix}legend-horizontal {
+    overflow-x: auto;
+}
+
+.#{$prefix}legend-vertical .#{$prefix}legend-body-el {
+    overflow-y: auto;
+    flex: none;
+}

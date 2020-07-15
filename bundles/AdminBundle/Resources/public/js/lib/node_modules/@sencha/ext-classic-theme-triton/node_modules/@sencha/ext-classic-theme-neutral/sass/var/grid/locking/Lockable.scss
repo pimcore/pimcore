@@ -1,0 +1,40 @@
+/**
+ * @class Ext.grid.locking.Lockable
+ */
+
+/**
+ * @var {number}
+ * The width of the border between the locked views
+ */
+$grid-lockable-separator-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * The border-style of the border between the locked views
+ */
+$grid-lockable-separator-border-style: dynamic(solid);
+
+/**
+ * @var {string}
+ * The border-color of the border between the locked views. Defaults to the
+ * panel border color. May be overridden in a theme.
+ */
+$grid-lockable-separator-border-color: dynamic($panel-border-color);
+
+/**
+ * @var {string/list}
+ * Glyph for the grid header menu "lock" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-lockable-header-menu-lock-glyph: dynamic($fa-var-lock $grid-header-menu-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the grid header menu "unlock" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$grid-lockable-header-menu-unlock-glyph: dynamic($fa-var-unlock $grid-header-menu-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {number}
+ * The border-width of the lockable grid body border
+ */
+$grid-lockable-body-border-width: dynamic($grid-body-border-width);

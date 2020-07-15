@@ -1,0 +1,11 @@
+$grid-row-cell-alt-background-color:dynamic($reverse-color);
+$grid-row-cell-background-color: dynamic($reverse-color);
+$grid-row-cell-focus-border-color: dynamic($reverse-color);
+$grid-row-cell-over-background-color: dynamic($hovered-background-color);
+$grid-row-cell-selected-background-color: dynamic($selected-background-color);
+$grid-empty-padding: dynamic(16px 8px);
+$grid-cell-inner-padding: dynamic(12px);
+$grid-row-cell-border-width: dynamic(0px);
+$grid-row-cell-focus-border-width: dynamic(0px);
+$grid-row-cell-line-height: dynamic(16px);
+$grid-row-cell-focus-border-color: dynamic($base-color);

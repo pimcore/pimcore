@@ -1,0 +1,36 @@
+/**
+ * @class Ext.grid.feature.RowBody
+ */
+
+/**
+ * @var {number}
+ * The font-size of the RowBody
+ */
+$grid-row-body-font-size: dynamic($grid-row-cell-font-size);
+
+/**
+ * @var {number}
+ * The line-height of the RowBody
+ */
+$grid-row-body-line-height: dynamic($grid-row-cell-line-height);
+
+/**
+ * @var {string}
+ * The font-family of the RowBody
+ */
+$grid-row-body-font-family: dynamic($grid-row-cell-font-family);
+
+/**
+ * @var {number}
+ * The font-weight of the RowBody
+ */
+$grid-row-body-font-weight: dynamic($grid-row-cell-font-weight);
+
+// private
+$grid-row-body-font: dynamic($grid-row-body-font-weight #{$grid-row-body-font-size}/#{$grid-row-body-line-height} $grid-row-body-font-family);
+
+/**
+ * @var {number/list}
+ * The padding of the RowBody
+ */
+$grid-row-body-padding: dynamic(5px right($grid-cell-inner-padding) 5px left($grid-cell-inner-padding));

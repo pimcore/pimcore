@@ -1,0 +1,74 @@
+/**
+ * @var {color}
+ * The button icon color.
+ */
+$fr-btn-glyph-color: dynamic(#333333);
+
+/**
+ * @var {color}
+ * The button background color on hover.
+ */
+$fr-btn-background-hover: dynamic(rgba(#111111, 0.075));
+
+/**
+ * @var {number}
+ * The button font size.
+ */
+$fr-btn-font-size: dynamic(13px);
+
+/**
+ * @var {number}
+ * The editor border radius for top and bottom toolbar.
+ */
+$fr-toolbar-border-radius: dynamic(0px);
+
+/**
+ * @var {color}
+ * The text editor  and footer background color.
+ */
+$fr-editor-background-color: dynamic(#ffffff);
+
+/**
+ * @var {color}
+ * The toolbar background color.
+ */
+$fr-editor-toolbar-background-color: dynamic(#ffffff);
+
+/**
+ * @var {color}
+ * The text editor default font color.
+ */
+$fr-editor-font-color: dynamic(#414141);
+
+/**
+ * @var {color}
+ * The text editor border color.
+ */
+$fr-editor-border-color: dynamic(#cccccc);
+
+/**
+ * @var {color}
+ * The toolbar border bottom color.
+ */
+$fr-toolbar-border-bottom-color: dynamic(#cccccc);
+
+/**
+ * @var {string}
+ * The editor border style.
+ */
+$fr-editor-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The toolbar menu expanded background color .
+ */
+$fr-menu-expanded-background-color: dynamic(#f5f5f5);
+
+/**
+ * @var {number/list}
+ * The height of border bottom for toolbar.
+ */
+$fr-toolbar-border-bottom-height: dynamic(2px);
+
+
+$fr-toolbar-active-background-color: dynamic(#ebebeb)

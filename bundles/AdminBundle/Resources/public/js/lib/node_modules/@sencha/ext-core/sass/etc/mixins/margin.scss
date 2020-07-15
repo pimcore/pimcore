@@ -1,0 +1,46 @@
+/**
+ * Creates a margin on an element.
+ * If any item in the list is null it will be excluded.
+ *
+ * @param {number/list} $margin
+ * The margin size.
+ *
+ * @param {Number} $len
+ *
+ * @param {Number} $top
+ * Top margin
+ *
+ * @param {Number} $right
+ * Right margin
+ *
+ * @param {Number} $bottom
+ * Bottom margin
+ *
+ * @param {Number} $left
+ * Left margin
+ *
+ * @member Global_CSS
+ * @private
+ */
+@mixin margin($margin: null) {
+    @if $margin != null {
+        $len: length($margin);
+        @if $len == 1 {
+            margin: $margin;
+        } @else {
+            $top: top($margin);
+            $right: right($margin);
+            $bottom: bottom($margin);
+            $left: left($margin);
+
+            @if $top != null and $top == $bottom and $right != null and $right == $left {
+                margin: $top $right;
+            } @else {
+                margin-top: $top;
+                margin-right: $right;
+                margin-bottom: $bottom;
+                margin-left: $left;
+            }
+        }
+    }
+}

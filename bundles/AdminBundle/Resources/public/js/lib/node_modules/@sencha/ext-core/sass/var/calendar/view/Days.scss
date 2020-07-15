@@ -1,0 +1,511 @@
+/**
+ * @class Ext.calendar.view.Days
+ */
+
+/**
+ * @var {color}
+ * The background color.
+ */
+$calendar-days-background-color: dynamic($calendar-background-color);
+
+/**
+ * @var {number} 
+ * The height for a single hour in the view.
+ */
+$calendar-days-hour-height: dynamic(42px);
+
+/**
+ * @var {number} 
+ * The width for the day gutter.
+ */
+$calendar-days-day-gutter-width: dynamic(15px);
+
+/**
+ * @var {number} 
+ * The width for the day gutter when in compact mode.
+ */
+$calendar-days-compact-day-gutter-width: dynamic(0);
+
+/**
+ * @var {number} 
+ * The start margin for the day container.
+ */
+$calendar-days-day-start-margin: dynamic(5px);
+
+/**
+ * @var {number} 
+ * The start margin for the day container when in compact mode.
+ */
+$calendar-days-compact-day-start-margin: dynamic(0);
+
+/**
+ * @var {number}
+ * The border width for hour markers.
+ */
+$calendar-days-marker-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * The border style for hour markers.
+ */
+$calendar-days-marker-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The border color for hour markers.
+ */
+$calendar-days-marker-border-color: dynamic($calendar-border-color);
+
+/**
+ * @var {number}
+ * The border width for half hour markers.
+ */
+$calendar-days-marker-alt-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * The border style for half hour markers.
+ */
+$calendar-days-marker-alt-border-style: dynamic(dotted);
+
+/**
+ * @var {color}
+ * The border color for half hour markers.
+ */
+$calendar-days-marker-alt-border-color: dynamic($calendar-border-color);
+
+/**
+ * @var {number}
+ * The border width for days.
+ */
+$calendar-days-day-border-width: dynamic($calendar-days-marker-border-width);
+
+/**
+ * @var {string}
+ * The border style for days.
+ */
+$calendar-days-day-border-style: dynamic($calendar-days-marker-border-style);
+
+/**
+ * @var {color}
+ * The border color for days.
+ */
+$calendar-days-day-border-color: dynamic($calendar-days-marker-border-color);
+
+/**
+ * @var {number}
+ * The opacity for the current time marker.
+ */
+$calendar-days-now-marker-opacity: dynamic(0.7);
+
+/**
+ * @var {number/list}
+ * The margin for the current time marker.
+ */
+$calendar-days-now-marker-margin: dynamic(0 5px);
+
+/**
+ * @var {number}
+ * The height for the current time marker.
+ */
+$calendar-days-now-marker-border-width: dynamic(2px 0 0 0);
+
+/**
+ * @var {string}
+ * The style for the current time marker.
+ */
+$calendar-days-now-marker-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The color for the current time marker.
+ */
+$calendar-days-now-marker-border-color: dynamic(#a94442);
+
+/**
+ * @var {number}
+ * The width for the time display.
+ */
+$calendar-days-time-width: dynamic(48px);
+
+/**
+ * @var {number}
+ * The width for the time display when in compact mode.
+ */
+$calendar-days-compact-time-width: dynamic(24px);
+
+/**
+ * @var {number/list}
+ * The padding for the time display.
+ */
+$calendar-days-time-padding: dynamic(2px 2px 0 0);
+
+/**
+ * @var {number/list}
+ * The padding for the time display when in compact mode.
+ */
+$calendar-days-compact-time-padding: dynamic(2px 2px 0 0);
+
+/**
+ * @var {number}
+ * The font size for the time display.
+ */
+$calendar-days-time-font-size: dynamic($calendar-font-size);
+
+/**
+ * @var {number}
+ * The font size for the time display when in compact mode.
+ */
+$calendar-days-compact-time-font-size: dynamic($calendar-small-font-size);
+
+/**
+ * @var {string}
+ * The font family for the time display.
+ */
+$calendar-days-time-font-family: dynamic($calendar-font-family);
+
+/**
+ * @var {string}
+ * The color for the time display.
+ */
+$calendar-days-time-color: dynamic(#666);
+
+/**
+ * @var {string}
+ * The background color for the time display.
+ */
+$calendar-days-time-background-color: dynamic(#F7F9FD);
+
+/**
+ * @var {string}
+ * The text align for the time display.
+ */
+$calendar-days-time-text-align: dynamic(right);
+
+/**
+ * @var {number}
+ * The line height for the am/pm text when used in the time gutter.
+ */
+$calendar-days-time-ampm-line-height: dynamic(12px);
+
+/**
+ * @var {number}
+ * The height for the empty all day row to allow creation.
+ */
+$calendar-days-allday-empty-height: dynamic(10px);
+
+/**
+ * @var {color}
+ * The background color for a selection.
+ */
+$calendar-days-selection-background-color: dynamic($calendar-selection-color);
+
+/**
+ * @var {number}
+ * The opacity for a selection.
+ */
+$calendar-days-selection-opacity: dynamic(0.3);
+
+/**
+ * @var {color}
+ * The background color for a today.
+ */
+$calendar-today-highlight-background-color: dynamic($calendar-today-background-color);
+
+/**
+ * Creates a visual theme for the calendar days view.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {color} [$background-color]
+ * The background color.
+ *
+ * @param {number} [$hour-height]
+ * The height for a single hour in the view.
+ *
+ * @param {number} [$day-gutter-width]
+ * The width for the day gutter.
+ *
+ * @param {number} [$day-start-margin]
+ * The start margin for the day container.
+ *
+ * @param {number} [$marker-border-width]
+ * The border width for hour markers.
+ *
+ * @param {string} [$marker-border-style]
+ * The border style for hour markers.
+ *
+ * @param {color} [$marker-border-color]
+ * The border color for hour markers.
+ *
+ * @param {number} [$marker-alt-border-width]
+ * The border width for half hour markers.
+ *
+ * @param {string} [$marker-alt-border-style]
+ * The border style for half hour markers.
+ *
+ * @param {color} [$marker-alt-border-color]
+ * The border color for half hour markers.
+ *
+ * @param {number} [$day-border-width]
+ * The border width for days.
+ *
+ * @param {string} [$day-border-style]
+ * The border style for days.
+ *
+ * @param {color} [$day-border-color]
+ * The border color for days.
+ *
+ * @param {number} [$now-marker-opacity]
+ * The opacity for the current time marker.
+ *
+ * @param {number/list} [$now-marker-margin]
+ * The margin for the current time marker.
+ *
+ * @param {number/list} [$now-marker-border-width]
+ * The border width for the current time marker.
+ *
+ * @param {String} [$now-marker-border-style]
+ * The border style for the current time marker.
+ *
+ * @param {color} [$now-marker-border-color]
+ * The border color for the current time marker.
+ *
+ * @param {Number} [$time-width]
+ * The width of the current time
+ *
+ * @param {color} [$time-background-color]
+ * The background color for the current time
+ *
+ * @param {color} [$time-color]
+ * The color for the current time
+ *
+ * @param {String} [$time-font-family]
+ * The font family for the current time
+ *
+ * @param {Number} [$time-font-size]
+ * The font size for the current time
+ *
+ * @param {String} [$time-text-align]
+ * The font alignment for the current time
+ *
+ * @param {Number} [$time-padding]
+ * The padding for the current time
+ *
+ * @param {String} [$time-ampm-line-height]
+ * The line height for the current time
+ *
+ * @param {Number} [$allday-empty-height]
+ * The height for the empty all day row to allow creation.
+ *
+ * @param {color} [$selection-background-color]
+ * The background color for a selection.
+ *
+ * @param {number} [$selection-opacity]
+ * The background color for a selection.
+ */
+@mixin calendar-days-ui(
+    $ui: null,
+
+    $background-color: null,
+
+    $hour-height: null,
+
+    $day-gutter-width: null,
+    $day-start-margin: null,
+
+    $marker-border-width: null,
+    $marker-border-style: null,
+    $marker-border-color: null,
+
+    $marker-alt-border-width: null,
+    $marker-alt-border-style: null,
+    $marker-alt-border-color: null,
+
+    $day-border-width: null,
+    $day-border-style: null,
+    $day-border-color: null,
+
+    $now-marker-opacity: null,
+    $now-marker-margin: null,
+    $now-marker-border-width: null,
+    $now-marker-border-style: null,
+    $now-marker-border-color: null,
+
+    $time-width: null,
+    $time-background-color: null,
+    $time-color: null,
+    $time-font-family: null,
+    $time-font-size: null,
+    $time-text-align: null,
+    $time-padding: null,
+    $time-ampm-line-height: null,
+
+    $allday-empty-height: $calendar-days-allday-empty-height,
+
+    $selection-background-color: null,
+    $selection-opacity: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}today-cell-highlight-day {
+        background-color: $calendar-today-highlight-background-color;
+    }
+
+    .#{$prefix}calendar-days#{$ui-suffix} {
+
+        background-color: $background-color;
+
+        .#{$prefix}calendar-days-day-event-container {
+            margin-right: $day-gutter-width;
+            margin-left: $day-start-margin;
+        }
+
+        .#{$prefix}calendar-days-header-gutter {
+            width: $time-width;
+            background-color: $time-background-color;
+            @include border($day-border-width, $day-border-style, $day-border-color);
+        }
+
+        .#{$prefix}calendar-days-allday-background-cell {
+            @if $day-border-width != null {
+                border-right: $day-border-width $day-border-style $day-border-color;
+                border-top: $day-border-width $day-border-style $day-border-color;
+            }
+        }
+
+        .#{$prefix}calendar-days-time-ct {
+            background-color: $time-background-color;
+            width: $time-width;
+            @if $day-border-width != null {
+                border-left: $day-border-width $day-border-style $day-border-color;
+                border-right: $day-border-width $day-border-style $day-border-color;
+            }
+        }
+
+        .#{$prefix}calendar-days-time {
+            height: $hour-height;
+            color: $time-color;
+            padding: $time-padding;
+            text-align: $time-text-align;
+            font-family: $time-font-family;
+            font-size: $time-font-size;
+            @if $marker-border-width != null {
+                border-bottom: $marker-border-width $marker-border-style $marker-border-color;
+            }
+        }
+
+        .#{$prefix}calendar-days-time-ampm {
+            line-height: $time-ampm-line-height;
+        }
+
+        .#{$prefix}calendar-days-day-column {
+            @if $day-border-width != null {
+                border-right: $day-border-width $day-border-style $day-border-color;
+            }
+        }
+
+        .#{$prefix}calendar-days-marker {
+            height: $hour-height;
+            @if $marker-border-width != null {
+                border-bottom: $marker-border-width $marker-border-style $marker-border-color;
+            }
+        }
+
+        .#{$prefix}calendar-days-marker-alt {
+            height: $hour-height / 2;
+            @if $marker-alt-border-width != null {
+                border-bottom: $marker-alt-border-width $marker-alt-border-style $marker-alt-border-color;
+            }
+        }
+
+        .#{$prefix}calendar-days-now-marker {
+            margin: $now-marker-margin;
+            @if $now-marker-opacity != null {
+                @include opacity($now-marker-opacity);
+            }
+            @include border($now-marker-border-width, $now-marker-border-style, $now-marker-border-color);
+        }
+
+        .#{$prefix}calendar-days-allday-empty-cell {
+            line-height: $allday-empty-height;
+            @if $day-border-width != null {
+                border-bottom: $day-border-width $day-border-style $day-border-color;
+            }
+        }
+
+        .#{$prefix}calendar-days-selection {
+            background-color: $selection-background-color;
+            @if $selection-opacity != null {
+                @include opacity($selection-opacity);
+            }
+        }
+    }
+}
+
+@mixin calendar-days-default-ui {
+    @include calendar-days-ui(
+        $ui: null,
+
+        $background-color: $calendar-days-background-color,
+
+        $hour-height: $calendar-days-hour-height,
+
+        $marker-border-width: $calendar-days-marker-border-width,
+        $marker-border-style: $calendar-days-marker-border-style,
+        $marker-border-color: $calendar-days-marker-border-color,
+
+        $marker-alt-border-width: $calendar-days-marker-alt-border-width,
+        $marker-alt-border-style: $calendar-days-marker-alt-border-style,
+        $marker-alt-border-color: $calendar-days-marker-alt-border-color,
+
+        $day-border-width: $calendar-days-day-border-width,
+        $day-border-style: $calendar-days-day-border-style,
+        $day-border-color: $calendar-days-day-border-color,
+
+        $now-marker-opacity: $calendar-days-now-marker-opacity,
+        $now-marker-margin: $calendar-days-now-marker-margin,
+        $now-marker-border-width: $calendar-days-now-marker-border-width,
+        $now-marker-border-style: $calendar-days-now-marker-border-style,
+        $now-marker-border-color: $calendar-days-now-marker-border-color,
+
+        $time-background-color: $calendar-days-time-background-color,
+        $time-color: $calendar-days-time-color,
+        $time-font-family: $calendar-days-time-font-family,
+        $time-text-align: $calendar-days-time-text-align,
+        $time-ampm-line-height: $calendar-days-time-ampm-line-height,
+
+        $allday-empty-height: $calendar-days-allday-empty-height,
+
+        $selection-background-color: $calendar-days-selection-background-color,
+        $selection-opacity: $calendar-days-selection-opacity
+    );
+}
+
+@mixin calendar-days-large-ui {
+    @include calendar-days-ui(
+        $ui: 'large',
+
+        $time-width: $calendar-days-time-width,
+        $time-font-size: $calendar-days-time-font-size,
+        $time-padding: $calendar-days-time-padding,
+
+        $day-gutter-width: $calendar-days-day-gutter-width,
+        $day-start-margin: $calendar-days-day-start-margin
+    );
+}
+
+@mixin calendar-days-compact-ui {
+    @include calendar-days-ui(
+        $ui: 'compact',
+
+        $time-width: $calendar-days-compact-time-width,
+        $time-font-size: $calendar-days-compact-time-font-size,
+        $time-padding: $calendar-days-compact-time-padding,
+
+        $day-gutter-width: $calendar-days-compact-day-gutter-width,
+        $day-start-margin: $calendar-days-compact-day-start-margin
+    );
+}

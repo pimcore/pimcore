@@ -1,0 +1,66 @@
+$gauge-track-fill-opacity: dynamic(1);
+$gauge-track-stroke-opacity: dynamic(1);
+$gauge-track-stroke-width: dynamic(1);
+
+$gauge-value-fill-opacity: dynamic(1);
+$gauge-value-stroke: dynamic(none);
+$gauge-value-stroke-opacity: dynamic(1);
+$gauge-value-stroke-width: dynamic(1);
+
+$gauge-needle-fill-opacity: dynamic(1);
+$gauge-needle-stroke: dynamic(none);
+$gauge-needle-stroke-opacity: dynamic(1);
+$gauge-needle-stroke-width: dynamic(1);
+
+@mixin gauge-ui(
+    $ui: null,
+
+    $track-fill: null,
+    $track-fill-opacity: null,
+    $track-stroke: null,
+    $track-stroke-opacity: null,
+    $track-stroke-width: null,
+
+    $value-fill: null,
+    $value-fill-opacity: null,
+    $value-stroke: null,
+    $value-stroke-opacity: null,
+    $value-stroke-width: null,
+
+    $needle-fill: null,
+    $needle-fill-opacity: null,
+    $needle-stroke: null,
+    $needle-stroke-opacity: null,
+    $needle-stroke-width: null
+) {
+    $ui-suffix: ui-suffix($ui);
+    
+    .#{$prefix}gauge#{$ui-suffix} {
+        svg {
+            display: block;
+        }
+        .#{$prefix}gauge-track {
+            fill: $track-fill;
+            fill-opacity: $track-fill-opacity;
+            stroke: $track-stroke;
+            stroke-opacity: $track-stroke-opacity;
+            stroke-width: $track-stroke-width;
+        }
+
+        .#{$prefix}gauge-value {
+            fill: $value-fill;
+            fill-opacity: $value-fill-opacity;
+            stroke: $value-stroke;
+            stroke-opacity: $value-stroke-opacity;
+            stroke-width: $value-stroke-width;
+        }
+
+        .#{$prefix}gauge-needle {
+            fill: $needle-fill;
+            fill-opacity: $needle-fill-opacity;
+            stroke: $needle-stroke;
+            stroke-opacity: $needle-stroke-opacity;
+            stroke-width: $needle-stroke-width;
+        }
+    }
+}

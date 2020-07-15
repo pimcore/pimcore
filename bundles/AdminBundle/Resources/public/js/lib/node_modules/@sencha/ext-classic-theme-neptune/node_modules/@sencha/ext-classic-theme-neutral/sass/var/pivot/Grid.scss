@@ -1,0 +1,181 @@
+/** @class Ext.pivot.Grid */
+
+$grid-header-trigger-border:
+    $grid-column-header-border-width
+    $grid-column-header-border-style
+    $grid-header-border-color;
+
+/**
+ * @var {number/list}
+ * The border-width of group headers
+ */
+$pivot-grid-group-header-border-width: dynamic(0 1px);
+/**
+ * @var {string}
+ * The border-style of group headers
+ */
+$pivot-grid-group-header-border-style: dynamic(solid);
+/**
+ * @var {color}
+ * The border color of group headers
+ */
+$pivot-grid-group-header-border-color: dynamic($grid-row-cell-border-color);
+
+/**
+ * @var {color}
+ * The background color of group headers
+ */
+$pivot-grid-group-header-background-color: dynamic(transparent);
+
+/**
+ * @var {string}
+ * The cursor of group headers
+ */
+$pivot-grid-group-header-cursor: dynamic(pointer);
+
+/**
+ * @var {color}
+ * The text color of group header titles
+ */
+$pivot-grid-group-title-color: dynamic(adjust-color($base-color, $hue: 0.952deg, $saturation: -6.718%, $lightness: -41.961%));
+
+/**
+ * @var {string}
+ * The font-family of group header titles
+ */
+$pivot-grid-group-title-font-family: dynamic($font-family);
+
+/**
+ * @var {number}
+ * The font-size of group header titles
+ */
+$pivot-grid-group-title-font-size: dynamic($font-size);
+
+/**
+ * @var {string}
+ * The font-weight of group header titles
+ */
+$pivot-grid-group-title-font-weight: dynamic(bold);
+
+/**
+ * @var {number}
+ * The line-height of group header titles
+ */
+$pivot-grid-group-title-line-height: dynamic($grid-row-cell-line-height);
+
+// private
+$pivot-grid-group-title-font: dynamic($pivot-grid-group-title-font-weight #{$pivot-grid-group-title-font-size}/#{$pivot-grid-group-title-line-height} $pivot-grid-group-title-font-family);
+
+/**
+ * @var {number/list}
+ * The amount of padding to add to the group title element.  This is typically used
+ * to reserve space for an icon by setting the amount of space to be reserved for the icon
+ * as the left value and setting the remaining sides to 0.
+ */
+$pivot-grid-group-icon-padding: dynamic(0 0 0 14px);
+
+/**
+ * @var {string}
+ * The font-family of group totals
+ */
+$pivot-grid-group-total-font-family: dynamic($pivot-grid-group-title-font-family);
+
+/**
+ * @var {number}
+ * The font-size of group totals
+ */
+$pivot-grid-group-total-font-size: dynamic($pivot-grid-group-title-font-size);
+
+/**
+ * @var {string}
+ * The font-weight of group totals
+ */
+$pivot-grid-group-total-font-weight: dynamic($pivot-grid-group-title-font-weight);
+
+/**
+ * @var {number}
+ * The line-height of group totals
+ */
+$pivot-grid-group-total-line-height: dynamic($pivot-grid-group-title-line-height);
+
+// private
+$pivot-grid-group-total-font: dynamic($pivot-grid-group-total-font-weight #{$pivot-grid-group-total-font-size}/#{$pivot-grid-group-total-line-height} $pivot-grid-group-total-font-family);
+
+/**
+ * @var {color}
+ * The text color of group totals
+ */
+$pivot-grid-group-total-color: dynamic($pivot-grid-group-title-color);
+
+/**
+ * @var {color} $pivot-grid-group-total-background-color
+ * The background color of group totals
+ */
+//$pivot-grid-group-total-background-color: inherit !dynamic;
+
+/**
+ * @var {string}
+ * The font-family of group totals
+ */
+$pivot-grid-grand-total-font-family: dynamic($pivot-grid-group-title-font-family);
+
+/**
+ * @var {number}
+ * The font-size of group totals
+ */
+$pivot-grid-grand-total-font-size: dynamic($pivot-grid-group-title-font-size);
+
+/**
+ * @var {string}
+ * The font-weight of group totals
+ */
+$pivot-grid-grand-total-font-weight: dynamic($pivot-grid-group-title-font-weight);
+
+/**
+ * @var {number}
+ * The line-height of group totals
+ */
+$pivot-grid-grand-total-line-height: dynamic($pivot-grid-group-title-line-height);
+
+// private
+$pivot-grid-grand-total-font: dynamic($pivot-grid-grand-total-font-weight #{$pivot-grid-grand-total-font-size}/#{$pivot-grid-grand-total-line-height} $pivot-grid-grand-total-font-family);
+
+/**
+ * @var {color}
+ * The text color of grand totals
+ */
+$pivot-grid-grand-total-color: dynamic($pivot-grid-group-title-color);
+
+/**
+ * @var {color} $pivot-grid-grand-total-background-color
+ * The background color of grand totals
+ */
+//$pivot-grid-grand-total-background-color: inherit !dynamic;
+
+/* outline view */
+
+
+/* compact view */
+
+/**
+ * @var {number/list}
+ * The border-width of group headers in compact view
+ */
+$pivot-grid-group-header-compact-border-width: dynamic(0 1px 0);
+/**
+ * @var {string}
+ * The border-style of group headers in compact view
+ */
+$pivot-grid-group-header-compact-border-style: dynamic($pivot-grid-group-header-border-style);
+/**
+ * @var {color}
+ * The border color of group headers in compact view
+ */
+$pivot-grid-group-header-compact-border-color: dynamic($pivot-grid-group-header-border-color);
+/**
+ * @var {color}
+ * The background color of group headers in compact view
+ */
+$pivot-grid-group-header-compact-background-color: dynamic($pivot-grid-group-header-background-color);
+
+$ext-pivot-trial: false !default; // Updated automatically by the build script.

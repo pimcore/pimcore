@@ -1,0 +1,142 @@
+
+.#{$prefix}unselectable {
+    @include no-select;
+}
+
+// A hide method which is still accessible to screen readers
+.#{$prefix}hidden-clip {
+    position: absolute !important;
+    clip: rect(0,0,0,0);
+}
+
+.#{$prefix}hidden-display {
+    display: none !important;
+}
+
+.#{$prefix}hidden-offsets {
+    // to deal with inline elements that can't be position:absolute
+    display: block !important;
+    // ensure the browser disallows tabbing into this element
+    visibility: hidden !important;
+    position: absolute !important;
+    // hide using top since left  can trigger a horizontal scrollbar in rtl mode.
+    top: -10000px !important;
+}
+
+.#{$prefix}hidden-opacity {
+    opacity: 0 !important;
+    pointer-events: none;
+}
+
+.#{$prefix}hidden-visibility {
+    visibility: hidden !important;
+}
+
+// Ripple Effects
+.#{$prefix}pressed .#{$prefix}ripple-transition, .#{$prefix}pressing .#{$prefix}ripple-transition {
+    transition: $ripple-transition;
+
+    // pass transition onto button inner el's, icon and arrow elements inside of a rippling element
+    .#{$prefix}icon-el, .#{$prefix}arrow-el {
+        transition: $ripple-transition;
+    }
+}
+
+.#{$prefix}rippling {
+    position: relative;
+
+    &.#{$prefix}component-confirm .#{$prefix}ripple {
+        background-color: $ripple-confirm-background-color;
+    }
+
+    &.#{$prefix}component-decline .#{$prefix}ripple {
+        background-color: $ripple-decline-background-color;
+    }
+}
+
+.#{$prefix}rippling.#{$prefix}rippling-unbound {
+    overflow: visible !important;
+    .#{$prefix}ripple-container {
+        overflow: visible;
+        position: absolute;
+    }
+}
+
+// For Safari Bound ripples we need to force the container into the GPU
+// this allows for rounded corners to be properly handled
+// Bug reference: https://bugs.webkit.org/show_bug.cgi?id=68196
+.#{$prefix}safari .#{$prefix}rippling:not(.#{$prefix}rippling-unbound) .#{$prefix}ripple-container {
+    @include rotate(0);
+}
+
+.#{$prefix}ripple-container {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+}
+
+// Used for unbound ripples, needs to be on a high index so ripple appears above other itesm
+.#{$prefix}ripple-wrapper {
+    z-index: 1000;
+}
+
+// ripples inside round buttons and FAB's need to have rounded corners to match
+.#{$prefix}button-fab .#{$prefix}ripple-container, .#{$prefix}button-round .#{$prefix}ripple-container {
+    border-radius: 10000px;
+}
+
+// ripples inside round buttons and FAB's need to have rounded corners to match
+.#{$prefix}splitButton-fab .#{$prefix}ripple-container, .#{$prefix}splitButton-round .#{$prefix}ripple-container {
+    border-radius: 10000px;
+}
+
+.#{$prefix}ripple {
+  position: absolute;
+  border-radius: 50%;
+  background-color: $ripple-background-color;
+  @include scale(1);
+  opacity: .4;
+  pointer-events: none;
+}
+
+.#{$prefix}rippling.#{$prefix}rippling-unbound .#{$prefix}ripple {
+  @include animation(#{$prefix}ripple-unbound-animation .30s ease-out forwards);
+}
+
+.#{$prefix}rippling:not(.#{$prefix}rippling-unbound) .#{$prefix}ripple {
+  @include animation(#{$prefix}ripple-animation .35s ease-out forwards);
+}
+
+@include keyframes(#{$prefix}ripple-animation) {
+    0% {
+        @include scale(0);
+        opacity: 0.4;
+    }
+    75% {
+        @include scale(2);
+        opacity: .2;
+    }
+    100% {
+        @include scale(2.35);
+        opacity: 0;
+    }
+}
+
+@include keyframes(#{$prefix}ripple-unbound-animation) {
+    0% {
+        @include scale(0);
+        opacity: 0.4;
+    }
+    75% {
+        @include scale(1.75);
+        opacity: .2;
+    }
+    100% {
+        @include scale(2);
+        opacity: 0;
+    }
+}

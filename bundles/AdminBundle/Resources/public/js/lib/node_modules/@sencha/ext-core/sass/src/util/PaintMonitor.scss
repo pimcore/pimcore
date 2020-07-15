@@ -1,0 +1,49 @@
+/**
+ * @class Ext.util.PaintMonitor
+ */
+
+@-webkit-keyframes #{$prefix}paint-monitor-helper {
+    from {
+        zoom: 1
+    }
+    to {
+        zoom: 1
+    }
+}
+
+@keyframes #{$prefix}paint-monitor-helper {
+    from {
+        zoom: 1
+    }
+    to {
+        zoom: 1
+    }
+}
+
+.#{$prefix}paint-monitored {
+    position: relative;
+}
+
+.#{$prefix}paint-monitor {
+    width: 0 !important;
+    height: 0 !important;
+    visibility: hidden;
+
+    &.cssanimation {
+        -webkit-animation-duration: 0.0001ms;
+        -webkit-animation-name: #{$prefix}paint-monitor-helper;
+        animation-duration: 0.0001ms;
+        animation-name: #{$prefix}paint-monitor-helper;
+    }
+
+    &.overflowchange {
+        overflow: hidden;
+
+        &::after {
+            content: '';
+            display: block;
+            width: 1px !important;
+            height: 1px !important;
+        }
+    }
+}

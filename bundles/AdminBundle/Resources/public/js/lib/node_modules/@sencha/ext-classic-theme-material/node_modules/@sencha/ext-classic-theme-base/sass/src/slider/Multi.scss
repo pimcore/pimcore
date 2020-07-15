@@ -1,0 +1,41 @@
+.#{$prefix}slider {
+    outline: none; // prevent dotted outline in firefox when focused
+    position: relative;
+}
+
+.#{$prefix}slider-inner {
+    position:relative;
+    left:0;
+    top:0;
+    overflow:visible;
+    .#{$prefix}slider-vert & {
+        background: repeat-y 0 0;
+    }
+}
+
+.#{$prefix}slider-thumb {
+    position: absolute;
+    background: no-repeat 0 0;
+    .#{$prefix}slider-horz & {
+        left: 0;
+    }
+    .#{$prefix}slider-vert & {
+        bottom: 0;
+    }
+    // IE uses cursor:text
+    cursor: default;
+
+    // Disable magnifier on touchhold
+    -webkit-user-callout: none;
+
+    @if $enable-font-icons {
+        // vertical and horizontal centering of the glyph
+        display: table;
+        table-layout: fixed;
+        &:before {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+        }
+    }
+}

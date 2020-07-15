@@ -1,0 +1,6 @@
+$btn-group-border-color: dynamic($panel-light-border-color);
+$btn-group-framed-border-width: dynamic(1px);
+$btn-group-framed-border-radius: dynamic(2px);
+$btn-group-header-font-size: dynamic(round($font-size * 1.1));
+$btn-group-header-padding: dynamic(8px 8px 7px);
+$btn-group-border-spacing: dynamic(6px);

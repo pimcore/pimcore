@@ -1,0 +1,10 @@
+.#{$prefix}grid-item-selected, 
+.#{$prefix}grid-cell-selected {
+    .#{$prefix}grid-checkcolumn:after {
+        color: $form-checkbox-glyph-checked-color;
+    }
+}
+
+.#{$prefix}grid-checkcolumn-checked:after {
+        color: $form-checkbox-glyph-checked-color;
+}

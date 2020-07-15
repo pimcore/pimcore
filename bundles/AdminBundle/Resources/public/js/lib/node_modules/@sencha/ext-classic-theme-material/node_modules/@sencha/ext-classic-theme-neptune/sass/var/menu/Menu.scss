@@ -1,0 +1,17 @@
+/** @class Ext.menu.Menu */
+//
+
+$menu-separator-size: dynamic(1px);
+$menu-item-active-background-color: dynamic(mix(#fff, $base-light-color, 50%));
+$menu-item-border-width: dynamic(0);
+$menu-padding: dynamic(0);
+$menu-glyph-color: dynamic(#808080);
+$menu-item-text-vertical-offset: dynamic(1px);
+
+$menu-item-icon-horizontal-spacing: dynamic(5px);
+$menu-item-text-horizontal-spacing: dynamic(5px);
+
+// Margins for non-MenuItem components in menus
+$menu-component-margin: dynamic(2px);
+
+$menubar-item-arrow-vertical-offset: dynamic(1px);

@@ -1,0 +1,305 @@
+/**
+ * @class Ext.list.TreeItem
+ * This file contains the base variables for styling a treelist.
+ */
+
+/**
+ * @var {color}
+ * The tree background color
+ */
+$treelist-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The background color of the tool strip
+ */
+$treelist-toolstrip-background-color: dynamic(#f8f8f8);
+
+/**
+ * @var {color}
+ * The color of text in the tree
+ */
+$treelist-color: dynamic(null);
+
+/**
+ * @var {string}
+ * The padding for tree items
+ */
+$treelist-padding: dynamic(0 8px);
+
+//--------------------------------------------------------------------------
+
+/**
+ * @var {number}
+ * The line height for tree items
+ */
+$treelist-item-line-height: dynamic(36px);
+
+/**
+ * @var {number}
+ * The line height for tree items in the {@link Global_CSS#css_var-S-$enable-big big} sizing scheme
+ */
+$treelist-item-line-height-big: dynamic(null);
+
+/**
+ * @var {color}
+ * The tree item text color
+ */
+$treelist-item-color: dynamic($treelist-color);
+
+//--------------------------------------------------------------------------
+
+/**
+ * @var {color}
+ * The color of the tool float indicator.
+ */
+$treelist-tool-float-indicator-color: dynamic(null);
+
+/**
+ * @var {number}
+ * The width for the tool float indicator.
+ */
+$treelist-tool-float-indicator-width: dynamic(null);
+
+/**
+ * @var {color}
+ * The tool color when a tree item is selected
+ */
+$treelist-tool-selected-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The tool background color when a tree item is selected
+ */
+$treelist-tool-selected-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The tool indicator color when a tree item is selected
+ */
+$treelist-tool-indicator-selected-color: dynamic(null);
+
+/**
+ * @var {number}
+ * The tool indicator width when a tree item is selected
+ */
+$treelist-tool-indicator-selected-width: dynamic(null);
+
+//--------------------------------------------------------------------------
+
+/**
+ * @var {color}
+ * The text color of tree items
+ */
+$treelist-item-text-color: dynamic($treelist-color);
+
+/**
+ * @var {number}
+ * The gap between icon and text in tree items
+ */
+$treelist-item-text-icon-gap: dynamic(4px);
+
+/**
+ * @var {color}
+ * The text color when hovering over a tree item
+ */
+$treelist-item-text-over-color: dynamic($treelist-item-text-color);
+
+/**
+ * @var {number}
+ * The size of the font
+ */
+$treelist-item-text-font-size: dynamic(null);
+
+/**
+ * @var
+ * The CSS overflow setting for tree items
+ */
+$treelist-item-text-overflow: dynamic(ellipsis);
+
+//--------------------------------------------------------------------------
+
+/**
+ * @var {color}
+ * The color of the expander icon
+ */
+$treelist-item-expander-color: dynamic($treelist-color);
+
+/**
+ * @var {color}
+ * The color of the expander icon on hover
+ */
+$treelist-item-expander-over-color: dynamic($treelist-item-expander-color);
+
+/**
+ * @var {string}
+ * The font icon to use for the expander when collapsed
+ */
+$treelist-item-expander-glyph: dynamic($fa-var-angle-right $font-icon-font-family);
+
+/**
+ * @var {string}
+ * The font icon to use for the expander when expanded
+ */
+$treelist-item-expander-expanded-glyph: dynamic($fa-var-angle-down $font-icon-font-family);
+
+/**
+ * @var {number}
+ * The width of the expander icon
+ */
+$treelist-item-expander-width: dynamic(18px);
+
+/**
+ * @var {number}
+ * The width of the expander icon in the {@link Global_CSS#css_var-S-$enable-big big} sizing scheme
+ */
+$treelist-item-expander-width-big: dynamic(null);
+
+/**
+ * @var {number}
+ * The size of the expander icon font
+ */
+$treelist-item-expander-font-size: dynamic(16px);
+
+/**
+ * @var {number}
+ * The size of the expander icon font in the {@link Global_CSS#css_var-S-$enable-big big} sizing scheme
+ */
+$treelist-item-expander-font-size-big: dynamic(null);
+
+//--------------------------------------------------------------------------
+
+/**
+ * @var {color}
+ * The color of the item icon
+ */
+$treelist-item-icon-color: dynamic($treelist-color);
+
+/**
+ * @var {color}
+ * The color of the item icon on hover
+ */
+$treelist-item-icon-over-color: dynamic($treelist-item-icon-color);
+
+/**
+ * @var {number}
+ * The width of the item icon
+ */
+$treelist-item-icon-width: dynamic(22px);
+
+/**
+ * @var {number}
+ * The width of the item icon in the {@link Global_CSS#css_var-S-$enable-big big} sizing scheme
+ */
+$treelist-item-icon-width-big: dynamic(null);
+
+/**
+ * @var {number}
+ * The size of the item icon font
+ */
+$treelist-item-icon-font-size: dynamic(18px);
+
+/**
+ * @var {number}
+ * The size of the item icon font in the {@link Global_CSS#css_var-S-$enable-big big} sizing scheme
+ */
+$treelist-item-icon-font-size-big: dynamic(null);
+
+//--------------------------------------------------------------------------
+
+$item-icon-over-transition: color 0.5s;
+$item-text-over-transition: color 0.5s;
+$item-expander-over-transition: color 0.5s;
+
+//--------------------------------------------------------------------------
+
+/**
+ * @var {color}
+ * The background color of expanded items
+ */
+$treelist-item-expanded-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The background color of child items
+ */
+$treelist-item-expanded-child-background-color: dynamic(null);
+
+//--------------------------------------------------------------------------
+
+/**
+ * @var {color}
+ * The color of the row indicator when selected
+ */
+$treelist-row-indicator-selected-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The color of the row indicator on hover when selected
+ */
+$treelist-row-indicator-selected-over-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The color of the row indicator on hover
+ */
+$treelist-row-indicator-over-color: dynamic(null);
+
+/**
+ * @var {number}
+ * The width of the row indicator
+ */
+$treelist-row-indicator-width: dynamic(null);
+
+/**
+ * @var {color}
+ * The background color of a row when selected
+ */
+$treelist-row-selected-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The background color of a row on hover when selected
+ */
+$treelist-row-selected-over-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The background color of a row on hover
+ */
+$treelist-row-over-background-color: dynamic(null);
+
+$treelist-row-over-transition: dynamic(null);
+
+/**
+ * @var {Map} $treelist-nav-ui
+ * This map holds the treelist mixin parameters used to produce the nav UI for treelist.
+ */
+$treelist-nav-ui: dynamic((
+    padding: 0 10px,
+    background-color: #32404e,
+    toolstrip-background-color: #32404e,
+    tool-selected-color: #f0f0f0,
+    tool-selected-background-color: #5fa2dd,
+    tool-float-indicator-width: 4px,
+    tool-float-indicator-color: #5fa2dd,
+    item-expanded-background-color: #2c3845,
+    item-line-height: 44px,
+    item-icon-color: #ADB3B8,
+    item-expander-color: #ADB3B8,
+    item-text-color: #ADB3B8,
+    row-over-background-color: #4f606f,
+    item-icon-over-color: #fff,
+    item-expander-over-color: #fff,
+    item-text-over-color: #fff,
+    row-indicator-width: 6px,
+    row-indicator-selected-color: $base-color,
+    row-indicator-selected-over-color: lighten($base-color, 10%),
+    row-indicator-over-color: lighten($base-color, 10%),
+    item-text-font-size: 16px,
+    item-icon-font-size: 18px,
+    item-icon-width: 24px,
+    item-expander-font-size: 16px,
+    item-expander-width: 24px,
+    row-selected-background-color: #3f505f
+));

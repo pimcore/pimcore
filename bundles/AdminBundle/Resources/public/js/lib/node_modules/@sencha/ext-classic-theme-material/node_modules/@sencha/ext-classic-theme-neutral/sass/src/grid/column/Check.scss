@@ -1,0 +1,82 @@
+// Padding round header inner element and data cell inner element
+.#{$prefix}column-header-checkbox .#{$prefix}column-header-inner,
+.#{$prefix}grid-checkcolumn-cell-inner {
+    padding: top($grid-checkcolumn-cell-padding)
+             right($grid-checkcolumn-cell-padding) - 2
+             bottom($grid-checkcolumn-cell-padding)
+             left($grid-checkcolumn-cell-padding) - 2;
+
+    @if $grid-no-row-lines-show-focus-border {
+        .#{$prefix}grid-no-row-lines .#{$prefix}grid-row-focused & {
+            .#{$prefix}keyboard-mode & {
+                padding-top: top($grid-checkcolumn-cell-padding) - $grid-row-cell-border-width;
+                padding-bottom: bottom($grid-checkcolumn-cell-padding) - $grid-row-cell-border-width;
+            }
+        }
+    }
+    text-overflow: clip;
+}
+
+.#{$prefix}column-header-checkbox {
+    border-color: $grid-header-border-color;
+    .#{$prefix}column-header-text {
+        overflow: visible;
+    }
+}
+
+// Unchecked checkbox image for data cell and header
+.#{$prefix}column-header-checkbox .#{$prefix}column-header-checkbox,
+.#{$prefix}grid-checkcolumn {
+
+    @if $enable-font-icons and ($grid-checkcolumn-glyph != null) {
+        @include font-icon($grid-checkcolumn-glyph, "after", $color: $grid-checkcolumn-glyph-color, $style-pseudo: true);
+    } @else {
+        &:after {
+            content: " ";
+            height: $form-checkbox-size;
+            width: $form-checkbox-size;
+            background-image: theme-background-image($form-checkbox-background-image);
+            display: inline-block;
+        }
+    }
+    .#{$prefix}item-disabled & {
+        @include opacity($grid-checkcolumn-disabled-opacity);
+    }
+}
+
+// Checked checkbox image for data cell and header
+.#{$prefix}grid-hd-checker-on .#{$prefix}column-header-checkbox,
+.#{$prefix}grid-checkcolumn-checked {
+    @if $enable-font-icons and ($grid-checkcolumn-checked-glyph != null) {
+        @include font-icon($grid-checkcolumn-checked-glyph, "after", $color: $grid-checkcolumn-glyph-color, $style-pseudo: true);
+    } @else {
+        &:after {
+            background-position: 0 (-$form-checkbox-size);
+        }
+    }
+}
+
+
+/*
+ *
+ * Rules when the column is for a selection model.
+ * See vars from /sass/var/selection/CheckboxModel.scss
+ *
+ */
+
+// Checked checkbox image for data cell when it's a selection model column
+.#{$prefix}grid-item-selected .#{$prefix}selmodel-column .#{$prefix}grid-checkcolumn {
+    @if $enable-font-icons and ($checkbox-selection-model-checked-glyph != null) {
+        @include font-icon($checkbox-selection-model-checked-glyph, "after", $color: $checkbox-selection-model-glyph-color, $style-pseudo: true);
+    } @else {
+        &:after {
+            background-position: 0 (-$form-checkbox-size);
+        }
+    }
+}
+
+.#{$prefix}selmodel-checkbox, .#{$prefix}selmodel-column {
+    .#{$prefix}grid-checkcolumn {
+        pointer-events: none;
+    }
+}

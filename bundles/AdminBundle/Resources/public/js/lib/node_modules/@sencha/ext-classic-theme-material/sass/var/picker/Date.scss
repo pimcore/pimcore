@@ -1,0 +1,26 @@
+$datepicker-header-background-color: dynamic($reverse-color);
+$datepicker-background-color: dynamic($reverse-color);
+$datepicker-footer-background-color: dynamic($reverse-color);
+$datepicker-item-height: dynamic(40px);
+$datepicker-item-hover-background-color: dynamic(transparent);
+$datepicker-item-prev-next-color: dynamic(#111111);
+$datepicker-item-selected-background-color: dynamic($base-color);
+$datepicker-item-selected-border-color: dynamic(transparent);
+$datepicker-item-selected-border-style: dynamic(none);
+$datepicker-item-selected-color: dynamic(#ffffff);
+$datepicker-item-selected-font-weight: dynamic(600);
+$datepicker-item-today-border-style: dynamic(none);
+$datepicker-item-width: dynamic(40px);
+$datepicker-month-button-arrow-glyph-color: dynamic(#111111);
+$datepicker-item-text-align: dynamic(right);
+$datepicker-next-glyph: dynamic($fa-var-angle-right 18px $font-icon-font-family);
+$datepicker-prev-glyph: dynamic($fa-var-angle-left 18px $font-icon-font-family);
+$datepicker-item-disabled-background-color: dynamic(none);
+$datepicker-item-today-background-color: dynamic(none);
+$datepicker-month-button-font-size: dynamic(14px);
+
+//new variable introduced to assign minWidth 
+$datepicker-min-width: dynamic(260px);
+$datepicker-selected-border-radius: dynamic(50%);
+$datepicker-box-shadow: dynamic($material-shadow-1);
+$datepicker-column-header-color: dynamic(#919191);

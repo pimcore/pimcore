@@ -1,0 +1,485 @@
+.#{$prefix}btn-inner {
+    text-transform: $button-text-transform;
+}
+.#{$prefix}btn-raised {
+    box-shadow: $button-shadow;
+}
+$button-default-color: $base-color;
+
+.#{$prefix}btn-pressed,
+.#{$prefix}btn-menu-active,
+.#{$prefix}btn-focus {
+    .#{$prefix}btn-icon-el,
+    .#{$prefix}btn-arrow:after {
+        color: $button-default-color-focus;
+    }
+}
+
+.#{$prefix}btn-button-left {
+    .#{$prefix}btn-icon-el {
+        text-align: left;
+        padding: $btn-icon-el-padding;
+    }
+} 
+
+.#{$prefix}btn-button-right {
+    .#{$prefix}btn-icon-el {
+        text-align: right;
+        padding: $btn-icon-el-padding;
+    }
+}
+
+.#{$prefix}keyboard-mode {
+    .#{$prefix}btn-focus {
+        &.#{$prefix}btn-default-toolbar-small,
+        &.#{$prefix}btn-plain-toolbar-small {
+            background-color: $button-toolbar-background-color-focus;
+        }
+    }
+}
+
+.#{$prefix}btn-disabled {
+    &.#{$prefix}split-button {
+        &.#{$prefix}btn-default-small,
+        &.#{$prefix}btn-default-medium,
+        &.#{$prefix}btn-default-large {
+            .#{$prefix}btn-icon-el-default-small,
+            .#{$prefix}btn-wrap-default-small,
+            .#{$prefix}btn-icon-el-default-medium,
+            .#{$prefix}btn-wrap-default-medium,
+            .#{$prefix}btn-icon-el-default-large,
+            .#{$prefix}btn-wrap-default-large {
+                &.#{$prefix}btn-icon-el,
+                &.#{$prefix}btn-inner,
+                &.#{$prefix}btn-split:after {
+                    color: $button-default-color-disabled;
+                }
+                .#{$prefix}btn-inner-default-small,
+                .#{$prefix}btn-inner-default-medium,
+                .#{$prefix}btn-inner-default-large {
+                    color: $button-default-color-disabled;
+                }
+            }
+        }
+    }
+
+    .#{$prefix}btn-icon-el,
+    .#{$prefix}btn-inner,
+    .#{$prefix}btn-arrow:after {
+        color: $button-default-color-disabled;
+    }
+    &.#{$prefix}btn-default-toolbar-small,
+    &.#{$prefix}btn-plain-toolbar-small {
+        opacity: 1;
+    }
+    .#{$prefix}btn-split-bottom {
+       .#{$prefix}btn-button:after {
+            border-bottom: $button-split-border;
+        } 
+    }
+    .#{$prefix}btn-split-right {
+       .#{$prefix}btn-button:after {
+            border-right: $button-split-border;
+        } 
+    }
+}
+.#{$prefix}form-file-wrap {
+    .#{$prefix}form-trigger {
+        & .#{$prefix}form-trigger-over {
+            cursor: initial;
+        }
+    }
+    .#{$prefix}form-trigger-cmp {
+        .#{$prefix}form-file-btn {
+            background: $base-color;
+            .#{$prefix}btn-icon-el,
+            .#{$prefix}btn-inner {
+                color: $button-default-color-pressed;
+            }
+        }
+    }
+}
+
+.#{$prefix}keyboard-mode {
+    .#{$prefix}breadcrumb-btn.#{$prefix}btn-pressed,
+    .#{$prefix}breadcrumb-btn.#{$prefix}btn-menu-active,
+    .#{$prefix}breadcrumb-btn.#{$prefix}btn-focus,
+    .#{$prefix}breadcrumb-btn.#{$prefix}arrow-focus {
+        .#{$prefix}btn-icon-el,
+        .#{$prefix}btn-arrow:after,
+        .#{$prefix}btn-split:after {
+            color: $button-default-color-focus;
+        }
+    }
+
+    .#{$prefix}btn-plain-toolbar-small.#{$prefix}arrow-focus {
+        background-color: $button-toolbar-background-color-focus;
+        .#{$prefix}btn-inner {
+            color: $button-default-color-focus;
+        }
+        .#{$prefix}btn-arrow-el {
+            border: none;
+        }
+    }
+} 
+
+.#{$prefix}form-layout-wrap[id*=segmented],
+.#{$prefix}container[id*=vertical-segmented] {
+    .#{$prefix}form-item-label {
+        @include transform(translateY(0px));
+    }
+}
+
+ @include extjs-material-segmentedButton-ui(
+        $ui: 'default-material-split',
+        $color: $button-toolbar-color-pressed,
+        $background-color: $base-color,
+        $background-color-over: $base-dark-color,
+        $background-color-focus: $base-focused-color,
+        $background-color-pressed: $base-highlight-color
+ );
+
+.#{$prefix}split-button {
+    .#{$prefix}btn-wrap {
+        &.#{$prefix}btn-split-right {
+            &:before {
+                position: absolute;
+                content: ' ';
+                top: 0;
+                left: 0;
+                bottom: 0;
+            }
+            
+            & + .#{$prefix}btn-arrow-el {
+                top: 0;
+                width: 0;
+                height: 100%;
+                
+                &:before {
+                    content: ' ';
+                    position: absolute;
+                    display: block;
+                    height: 100%;
+                    top: 0;
+                }
+            }
+        }
+        
+        &.#{$prefix}btn-split-bottom {
+            &:before {
+                position: absolute;
+                content: ' ';
+                top: 0;
+                left: 0;
+                right: 0;
+            }
+            
+            & + .#{$prefix}btn-arrow-el {
+                top: 0;
+                left: 0;
+                right: auto;
+                width: 0;
+                height: 0;
+                clip: rect(0, 0, 0, 0);
+            }
+        }
+        
+        &.#{$prefix}btn-split-right:after {
+            z-index: 1;
+        }
+    }
+}
+
+ @if $include-button-default-small-ui {
+   
+    @include extjs-material-splitbutton-ui(
+        $ui: 'default-small',
+        
+        $split-width: $button-small-split-width,
+        $split-height: $button-small-split-height,
+        $split-line-width: $button-small-split-line-width,
+        
+        $padding: $button-small-padding,
+        
+        $border-color: $button-default-border-color,
+        
+        $background-color: $button-default-background-color,
+        $background-color-over: $button-default-background-color-over,
+        $background-color-focus: $button-default-background-color-focus,
+        $background-color-focus-over: $button-default-background-color-focus-over,
+        $background-color-pressed: $button-default-background-color-pressed,
+        $background-color-pressed-over: $button-default-background-color-pressed-over,
+        $background-color-focus-pressed: $button-default-background-color-focus-pressed,
+        
+        $color-focus: $button-default-color-focus,
+        $color-focus-over: $button-default-color-focus-over,
+        $color-pressed: $button-default-color-pressed,
+        $color-pressed-over: $button-default-color-pressed-over,
+        $color-focus-pressed: $button-default-color-focus-pressed,
+        
+        $separator-color: $button-default-split-line-color,
+        $separator-color-over: $button-default-split-line-color-over,
+        $separator-color-over: $button-default-split-line-color,
+        $separator-color-focus: $button-default-split-line-color-focus,
+        $separator-color-focus-over: $button-default-split-line-color-focus-over,
+        $separator-color-pressed: $button-default-split-line-color-pressed,
+        $separator-color-pressed-over: $button-default-split-line-color-pressed-over,
+        $separator-color-pressed-over: $button-default-split-line-color-pressed,
+        $separator-color-focus-pressed: $button-default-split-line-color-focus-pressed,
+        
+        $inner-border-width-focus-over: $button-default-focus-over-border-width,
+        $inner-border-color-focus-over: $button-default-focus-over-border-color
+    );
+}
+
+@if $include-button-default-medium-ui {
+
+    @include extjs-material-splitbutton-ui(
+        $ui: 'default-medium',
+        
+        $split-width: $button-medium-split-width,
+        $split-height: $button-medium-split-height,
+        $split-line-width: $button-medium-split-line-width,
+        
+        $padding: $button-medium-padding,
+        
+        $border-color: $button-default-border-color,
+        
+        $background-color: $button-default-background-color,
+        $background-color-over: $button-default-background-color-over,
+        $background-color-focus: $button-default-background-color-focus,
+        $background-color-focus-over: $button-default-background-color-focus-over,
+        $background-color-pressed: $button-default-background-color-pressed,
+        $background-color-pressed-over: $button-default-background-color-pressed-over,
+        $background-color-focus-pressed: $button-default-background-color-focus-pressed,
+        
+        $color: $button-default-color,
+        $color-over: $button-default-color-over,
+        $color-focus: $button-default-color-focus,
+        $color-focus-over: $button-default-color-focus-over,
+        $color-pressed: $button-default-color-pressed,
+        $color-pressed-over: $button-default-color-pressed-over,
+        $color-focus-pressed: $button-default-color-focus-pressed,
+        
+        $separator-color: $button-default-split-line-color,
+        $separator-color-over: $button-default-split-line-color-over,
+        $separator-color-focus: $button-default-split-line-color-focus,
+        $separator-color-focus-over: $button-default-split-line-color-focus-over,
+        $separator-color-pressed: $button-default-split-line-color-pressed,
+        $separator-color-pressed-over: $button-default-split-line-color-pressed-over,
+        $separator-color-focus-pressed: $button-default-split-line-color-focus-pressed,
+        
+        $inner-border-width-focus-over: $button-default-focus-over-border-width,
+        $inner-border-color-focus-over: $button-default-focus-over-border-color
+    );
+}
+
+@if $include-button-default-large-ui { 
+    @include extjs-material-splitbutton-ui(
+        $ui: 'default-large',
+        
+        $split-width: $button-large-split-width,
+        $split-height: $button-large-split-height,
+        $split-line-width: $button-large-split-line-width,
+        
+        $padding: $button-large-padding,
+        
+        $border-color: $button-default-border-color,
+        
+        $background-color: $button-default-background-color,
+        $background-color-over: $button-default-background-color-over,
+        $background-color-focus: $button-default-background-color-focus,
+        $background-color-focus-over: $button-default-background-color-focus-over,
+        $background-color-pressed: $button-default-background-color-pressed,
+        $background-color-pressed-over: $button-default-background-color-pressed-over,
+        $background-color-focus-pressed: $button-default-background-color-focus-pressed,
+        
+        $color: $button-default-color,
+        $color-over: $button-default-color-over,
+        $color-focus: $button-default-color-focus,
+        $color-focus-over: $button-default-color-focus-over,
+        $color-pressed: $button-default-color-pressed,
+        $color-pressed-over: $button-default-color-pressed-over,
+        $color-focus-pressed: $button-default-color-focus-pressed,
+        
+        $separator-color: $button-default-split-line-color,
+        $separator-color-over: $button-default-split-line-color-over,
+        $separator-color-focus: $button-default-split-line-color-focus,
+        $separator-color-focus-over: $button-default-split-line-color-focus-over,
+        $separator-color-pressed: $button-default-split-line-color-pressed,
+        $separator-color-pressed-over: $button-default-split-line-color-pressed-over,
+        $separator-color-focus-pressed: $button-default-split-line-color-focus-pressed,
+        
+        $inner-border-width-focus-over: $button-default-focus-over-border-width,
+        $inner-border-color-focus-over: $button-default-focus-over-border-color
+    );
+}
+
+
+@if $include-ext-toolbar-toolbar {
+    @if $include-button-default-toolbar-small-ui {
+        
+        @include extjs-material-splitbutton-ui(
+            $ui: 'default-toolbar-small',
+            
+            $split-width: $button-small-split-width,
+            $split-height: $button-small-split-height,
+            $split-line-width: $button-small-split-line-width,
+            
+            $padding: $button-small-padding,
+            
+            $border-color: $button-toolbar-border-color,
+            
+            $background-color: $button-toolbar-background-color,
+            $background-color-over: $button-toolbar-background-color-over,
+            $background-color-focus: $button-toolbar-background-color-focus,
+            $background-color-focus-over: $button-toolbar-background-color-focus-over,
+            $background-color-pressed: $button-toolbar-background-color-pressed,
+            $background-color-pressed-over: $button-toolbar-background-color-pressed-over,
+            $background-color-focus-pressed: $button-toolbar-background-color-focus-pressed,
+            
+            $color: $button-toolbar-color,
+            $color-over: $button-toolbar-color-over,
+            $color-focus: $button-toolbar-color-focus,
+            $color-focus-over: $button-toolbar-color-focus-over,
+            $color-pressed: $button-toolbar-color-pressed,
+            $color-pressed-over: $button-toolbar-color-pressed-over,
+            $color-focus-pressed: $button-toolbar-color-focus-pressed,
+            
+            $separator-color: $button-toolbar-split-line-color,
+            $separator-color-over: $button-toolbar-split-line-color-over,
+            $separator-color-focus: $button-toolbar-split-line-color-focus,
+            $separator-color-focus-over: $button-toolbar-split-line-color-focus-over,
+            $separator-color-pressed: $button-toolbar-split-line-color-pressed,
+            $separator-color-pressed-over: $button-toolbar-split-line-color-pressed-over,
+            $separator-color-focus-pressed: $button-toolbar-split-line-color-focus-pressed,
+            
+            $inner-border-width-focus-over: $button-toolbar-focus-over-border-width,
+            $inner-border-color-focus-over: $button-toolbar-focus-over-border-color
+        );
+    
+        
+        @include extjs-material-splitbutton-ui(
+            $ui: 'plain-toolbar-small',
+            
+            $split-width: $button-small-split-width,
+            $split-height: $button-small-split-height,
+            $split-line-width: $button-small-split-line-width,
+            
+            $padding: $button-small-padding,
+            
+            $border-color: $button-toolbar-border-color,
+            
+            $background-color: transparent,
+            $background-color-over: $button-toolbar-background-color-over,
+            $background-color-focus: $button-toolbar-background-color-focus,
+            $background-color-focus-over: $button-toolbar-background-color-focus-over,
+            $background-color-pressed: $button-toolbar-background-color-pressed,
+            $background-color-pressed-over: $button-toolbar-background-color-pressed-over,
+            $background-color-focus-pressed: $button-toolbar-background-color-focus-pressed,
+            
+            $color: $button-plain-toolbar-color,
+            $color-over: $button-toolbar-color-over,
+            $color-focus: $button-toolbar-color-focus,
+            $color-focus-over: $button-toolbar-color-focus-over,
+            $color-pressed: $button-toolbar-color-pressed,
+            $color-pressed-over: $button-toolbar-color-pressed-over,
+            $color-focus-pressed: $button-toolbar-color-focus-pressed,
+            
+            $separator-color: $button-toolbar-split-line-color,
+            $separator-color-over: $button-toolbar-split-line-color-over,
+            $separator-color-focus: $button-toolbar-split-line-color-focus,
+            $separator-color-focus-over: $button-toolbar-split-line-color-focus-over,
+            $separator-color-pressed: $button-toolbar-split-line-color-pressed,
+            $separator-color-pressed-over: $button-toolbar-split-line-color-pressed-over,
+            $separator-color-focus-pressed: $button-toolbar-split-line-color-focus-pressed,
+            
+            $inner-border-width-focus-over: $button-toolbar-focus-over-border-width,
+            $inner-border-color-focus-over: $button-toolbar-focus-over-border-color
+        );
+    }
+    
+    @if $include-button-default-toolbar-medium-ui {
+       
+        @include extjs-material-splitbutton-ui(
+            $ui: 'default-toolbar-medium',
+            
+            $split-width: $button-medium-split-width,
+            $split-height: $button-medium-split-height,
+            $split-line-width: $button-medium-split-line-width,
+            
+            $padding: $button-medium-padding,
+            
+            $border-color: $button-toolbar-border-color,
+            
+            $background-color: $button-toolbar-background-color,
+            $background-color-over: $button-toolbar-background-color-over,
+            $background-color-focus: $button-toolbar-background-color-focus,
+            $background-color-focus-over: $button-toolbar-background-color-focus-over,
+            $background-color-pressed: $button-toolbar-background-color-pressed,
+            $background-color-pressed-over: $button-toolbar-background-color-pressed-over,
+            $background-color-focus-pressed: $button-toolbar-background-color-focus-pressed,
+            
+            $color: $button-toolbar-color,
+            $color-over: $button-toolbar-color-over,
+            $color-focus: $button-toolbar-color-focus,
+            $color-focus-over: $button-toolbar-color-focus-over,
+            $color-pressed: $button-toolbar-color-pressed,
+            $color-pressed-over: $button-toolbar-color-pressed-over,
+            $color-focus-pressed: $button-toolbar-color-focus-pressed,
+            
+            $separator-color: $button-toolbar-split-line-color,
+            $separator-color-over: $button-toolbar-split-line-color-over,
+            $separator-color-focus: $button-toolbar-split-line-color-focus,
+            $separator-color-focus-over: $button-toolbar-split-line-color-focus-over,
+            $separator-color-pressed: $button-toolbar-split-line-color-pressed,
+            $separator-color-pressed-over: $button-toolbar-split-line-color-pressed-over,
+            $separator-color-focus-pressed: $button-toolbar-split-line-color-focus-pressed,
+            
+            $inner-border-width-focus-over: $button-toolbar-focus-over-border-width,
+            $inner-border-color-focus-over: $button-toolbar-focus-over-border-color
+        );
+    }
+    
+    @if $include-button-default-toolbar-large-ui {
+        
+        @include extjs-material-splitbutton-ui(
+            $ui: 'default-toolbar-large',
+            
+            $split-width: $button-large-split-width,
+            $split-height: $button-large-split-height,
+            $split-line-width: $button-large-split-line-width,
+            
+            $padding: $button-large-padding,
+            
+            $border-color: $button-toolbar-border-color,
+            
+            $background-color: $button-toolbar-background-color,
+            $background-color-over: $button-toolbar-background-color-over,
+            $background-color-focus: $button-toolbar-background-color-focus,
+            $background-color-focus-over: $button-toolbar-background-color-focus-over,
+            $background-color-pressed: $button-toolbar-background-color-pressed,
+            $background-color-pressed-over: $button-toolbar-background-color-pressed-over,
+            $background-color-focus-pressed: $button-toolbar-background-color-focus-pressed,
+            
+            $color: $button-toolbar-color,
+            $color-over: $button-toolbar-color-over,
+            $color-focus: $button-toolbar-color-focus,
+            $color-focus-over: $button-toolbar-color-focus-over,
+            $color-pressed: $button-toolbar-color-pressed,
+            $color-pressed-over: $button-toolbar-color-pressed-over,
+            $color-focus-pressed: $button-toolbar-color-focus-pressed,
+            
+            $separator-color: $button-toolbar-split-line-color,
+            $separator-color-over: $button-toolbar-split-line-color-over,
+            $separator-color-focus: $button-toolbar-split-line-color-focus,
+            $separator-color-focus-over: $button-toolbar-split-line-color-focus-over,
+            $separator-color-pressed: $button-toolbar-split-line-color-pressed,
+            $separator-color-pressed-over: $button-toolbar-split-line-color-pressed-over,
+            $separator-color-focus-pressed: $button-toolbar-split-line-color-focus-pressed,
+            
+            $inner-border-width-focus-over: $button-toolbar-focus-over-border-width,
+            $inner-border-color-focus-over: $button-toolbar-focus-over-border-color
+        );
+    }
+}

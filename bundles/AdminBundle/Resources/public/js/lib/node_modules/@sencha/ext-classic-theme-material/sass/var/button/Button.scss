@@ -1,0 +1,457 @@
+$button-default-base-color: dynamic($base-highlight-color);
+$button-default-background-color: dynamic(transparent);
+$button-default-color-focus: dynamic(#ffffff);
+$button-default-color-over: dynamic($base-color);
+$button-default-background-color-focus: dynamic($base-focused-color);
+$button-default-background-color-focus-over: dynamic(rgba($color, 0.075));
+$button-default-background-color-pressed-over: dynamic(rgba($color, 0.075));
+$button-default-background-color-focus-pressed: dynamic($base-pressed-color);
+$button-default-background-color-over: dynamic(rgba($color, 0.075));
+$button-default-background-color-disabled: dynamic(transparent);
+$button-default-border-color-pressed:  dynamic(null);
+$button-default-color-pressed-over: dynamic($button-default-color-pressed);
+$button-default-color-disabled: dynamic(rgba(0, 0, 0, 0.26));
+$button-default-inner-border-width-focus-pressed: dynamic(0px);
+$button-default-inner-border-width-focus: dynamic(0px);
+$button-default-focus-over-border-width: dynamic(0px);
+$button-default-focus-over-border-color: dynamic(transparent);
+
+$button-small-border-radius: dynamic(2px);
+$button-small-border-width: dynamic(0px);
+$button-small-font-size: dynamic(13px);
+$button-small-line-height: dynamic(15px);
+$button-small-font-weight: dynamic(600);
+$button-small-padding: dynamic(8px 16px);
+$button-small-split-height: dynamic(16px);
+$button-small-split-line-width: dynamic(1px);
+$button-small-split-width: dynamic(16px);
+
+$button-large-padding: dynamic(8px 16px);
+$button-large-split-height: dynamic(32px);
+$button-large-split-line-width: dynamic(1px);
+$button-large-split-width: dynamic(32px);
+
+$button-medium-font-size: dynamic(14px);
+$button-medium-line-height: dynamic(16px);
+$button-medium-padding: dynamic(8px 16px);
+$button-medium-split-line-width: dynamic(1px);
+$button-medium-split-width: dynamic(24px);
+
+$button-split-border: dynamic(1px solid $button-default-color-disabled);
+
+$button-opacity-disabled: dynamic(null);
+
+$button-default-base-color-pressed: dynamic($pressed-color);
+$button-default-color-pressed: dynamic(#ffffff);
+
+$button-large-border-width: dynamic(0px);
+$button-medium-border-width: dynamic(0px);
+
+$button-large-arrow-glyph: dynamic('arrow_drop_down' 24px);
+$button-medium-arrow-glyph: dynamic('arrow_drop_down'  20px);
+$button-small-arrow-glyph: dynamic('arrow_drop_down'  16px);
+
+$button-default-split-line-color: dynamic($button-default-color);
+$button-default-split-line-color-over: dynamic($button-default-color-over);
+$button-default-split-line-color-focus: dynamic($button-default-color-focus);
+$button-default-split-line-color-pressed: dynamic($button-default-color-pressed);
+$button-default-split-line-color-pressed-over: dynamic($button-default-color-pressed-over);
+$button-default-split-line-color-focus-over: dynamic($button-default-color-focus-over);
+$button-default-split-line-color-focus-pressed: dynamic($button-default-split-line-color-focus);
+
+$button-toolbar-background-color: dynamic(transparent);
+$button-toolbar-background-color-over: dynamic(rgba($color, 0.075));
+$button-toolbar-color: dynamic($base-color);
+$button-toolbar-color-over: dynamic($button-toolbar-color);
+$button-toolbar-background-color-pressed: dynamic($base-color);
+$button-toolbar-background-color-pressed-over: dynamic(rgba($color, 0.075));
+$button-toolbar-color-pressed: dynamic(#ffffff);
+$button-toolbar-color-pressed-over: dynamic($button-toolbar-color-pressed);
+$button-toolbar-inner-border-color-pressed:  dynamic(null);
+$button-toolbar-inner-border-width-pressed:  dynamic(0px);
+$button-toolbar-background-color-focus: dynamic($base-focused-color);
+$button-toolbar-color-focus: dynamic(#ffffff);
+$button-toolbar-color-focus-over: dynamic($button-toolbar-color-focus);
+$button-toolbar-glyph-color: dynamic($base-color);
+
+$button-toolbar-focus-over-border-width: dynamic(0px);
+$button-toolbar-focus-over-border-color: dynamic(transparent);
+
+$button-toolbar-split-line-color-over: dynamic($button-toolbar-color-over);
+$button-toolbar-split-line-color-pressed-over: dynamic($button-toolbar-color-pressed-over);
+$button-toolbar-split-line-color: dynamic($button-toolbar-color);
+$button-toolbar-split-line-color-focus: dynamic($button-toolbar-color);
+$button-toolbar-split-line-color-pressed: dynamic($button-toolbar-color-pressed);
+$button-toolbar-split-line-color-focus-over: dynamic($button-toolbar-color-focus-over);
+$button-toolbar-split-line-color-focus-pressed: dynamic($button-toolbar-split-line-color-focus);
+
+$button-plain-toolbar-color: dynamic($base-color);
+
+//New Variables included
+$button-text-transform: dynamic(uppercase);
+$button-shadow: dynamic($material-shadow-1);
+$btn-icon-el-padding: dynamic(0 8px);
+
+
+@mixin extjs-material-segmentedButton-ui(
+    $ui,
+
+    $color: null,
+
+    $background-color: null,
+    $background-color-over: null,
+    $background-color-focus: null,
+    $background-color-pressed: null
+){
+    .#{$prefix}segmented-button {
+        .#{$prefix}segmented-button-item,
+        .#{$prefix}split-button.#{$prefix}btn-default-small,
+        .#{$prefix}split-button.#{$prefix}btn-default-small.#{$prefix}btn-menu-active {
+            background-color: $background-color;
+            .#{$prefix}btn-icon-el,
+            .#{$prefix}btn-arrow-right:after,
+            .#{$prefix}btn-split-right:after,
+            .#{$prefix}btn-inner {
+                color: $color;
+            }
+        }
+
+        &.#{$prefix}item-disabled {
+            .#{$prefix}segmented-button-item,
+            .#{$prefix}split-button.#{$prefix}btn-default-small,
+            .#{$prefix}split-button.#{$prefix}btn-default-small.#{$prefix}btn-menu-active {
+                background-color: transparent;
+                .#{$prefix}btn-icon-el,
+                .#{$prefix}btn-arrow-right:after,
+                .#{$prefix}btn-split-right:after,
+                .#{$prefix}btn-inner {
+                    color: $button-default-color-disabled;
+                }                
+            }
+        }
+        
+        .#{$prefix}btn-over {
+            &.#{$prefix}btn-default-small {
+                background-color: $background-color-over;
+            }
+        }
+
+        .#{$prefix}btn-focus {
+            background-color: $background-color-focus;
+        }
+
+        .#{$prefix}btn-pressed {
+            background-color: $background-color-pressed;
+        }
+    }
+}
+
+
+@mixin extjs-material-splitbutton-ui(
+    $ui,
+    
+    $split-width: null,
+    $split-height: null,
+    $split-line-width: null,
+    
+    $padding: null,
+
+    $border-color: null,
+    
+    $background-color: null,
+    $background-color-over: null,
+    $background-color-focus: null,
+    $background-color-focus-over: null,
+    $background-color-pressed: null,
+    $background-color-pressed-over: null,
+    $background-color-focus-pressed: null,
+
+    $color: null,
+    $color-over: null,
+    $color-focus: null,
+    $color-focus-over: null,
+    $color-pressed: null,
+    $color-pressed-over: null,
+    $color-focus-pressed: null,
+    
+    $separator-color: $color,
+    $separator-color-over: $color-over,
+    $separator-color-focus: $color-focus,
+    $separator-color-focus-over: $color-focus-over,
+    $separator-color-pressed: $color-pressed,
+    $separator-color-pressed-over: $color-pressed-over,
+    $separator-color-focus-pressed: $color-focus-pressed,
+    
+    $inner-border-width-focus-over: null,
+    $inner-border-color-focus-over: null
+) {
+    @mixin separator($divider-color, $ui: $ui) {
+        @if $divider-color != null {
+            .#{$prefix}btn-wrap-#{$ui} {
+                // Right side separator line color
+                &.#{$prefix}btn-split-right > .#{$prefix}btn-button:after {
+                    border-right-color: $divider-color;
+                    
+                    content: '';
+                }
+                
+                // Bottom separator line color
+                &.#{$prefix}btn-split-bottom > .#{$prefix}btn-button:after {
+                    border-bottom-color: $divider-color;
+                    
+                    content: '';
+                }
+            }
+        }
+    }
+    
+    @mixin left-side($background-color: null, $color: null, $divider-color: null, $ui: $ui) {
+        @if $background-color != null or $color != null or $divider-color != null {
+            .#{$prefix}btn-wrap-#{$ui} {
+                // Left side background color
+                @if @background-color != null {
+                    &.#{$prefix}btn-split:before {
+                        background-color: $background-color;
+                    }
+                }
+                
+                @if $color != null {
+                    // Icon text color
+                    .#{$prefix}btn-icon-el-#{$ui} {
+                        color: $color;
+                    }
+                    
+                    // Button text color
+                    .#{$prefix}btn-inner-#{$ui} {
+                        color: $color;
+                    }
+                }
+                
+                @if $divider-color != null {
+                    @include separator($divider-color);
+                }
+            }
+        }
+    }
+    
+    @mixin right-side($background-color: null, $color: null, $divider-color: null, $ui: $ui) {
+        @if $background-color != null or $color != null or $divider-color != null {
+            .#{$prefix}btn-wrap-#{$ui} {
+                // Right arrow icon color
+                @if $color != null {
+                    &.#{$prefix}btn-split:after {
+                        color: $color;
+                    }
+                }
+                
+                @if $background-color != null {
+                    // Right arrow background color
+                    &.#{$prefix}btn-split-right + .#{$prefix}btn-arrow-el:before {
+                        background-color: $background-color;
+                    }
+                    
+                    // Bottom arrow background color
+                    &.#{$prefix}btn-split-bottom:after {
+                        background-color: $background-color;
+                    }
+                }
+                
+                @if $divider-color != null {
+                    @include separator($divider-color);
+                }
+            }
+        }
+    }
+    
+    @mixin left-focus-frame(
+        $focus-frame-width: $inner-border-width-focus-over,
+        $focus-frame-color: $inner-border-color-focus-over,
+        $ui: $ui
+    ) {
+        @if $focus-frame-width != null {
+            .#{$prefix}btn-wrap-#{$ui} {
+                // Left side focus frame
+                &.#{$prefix}btn-split:before {
+                    @include inner-border($focus-frame-width, $focus-frame-color);
+                }
+            }
+        }
+    }
+    
+    @mixin right-focus-frame(
+        $focus-frame-width: $inner-border-width-focus-over,
+        $focus-frame-color: $inner-border-color-focus-over,
+        $ui: $ui
+    ) {
+        @if $focus-frame-width != null {
+            .#{$prefix}btn-wrap-#{$ui} {
+                &.#{$prefix}btn-split-right {
+                    // Right arrow focus border
+                    & + .#{$prefix}btn-arrow-el:before {
+                        @include inner-border($focus-frame-width, $focus-frame-color);
+                    }
+                }
+                
+                &.#{$prefix}btn-split-bottom {
+                    // Bottom arrow focus frame
+                    &:after {
+                        @include inner-border($focus-frame-width, $focus-frame-color);
+                    }
+                }
+            }
+        }
+    }
+    
+    .#{$prefix}split-button.#{$prefix}btn-#{$ui} {
+        // Reset default states
+        @if $background-color != null {
+            background-color: $background-color;
+            
+            &.#{$prefix}btn-pressed, &.#{$prefix}btn-menu-active {
+                background-color: $background-color;
+            }
+            
+            .#{$prefix}keyboard-mode &.#{$prefix}btn-focus {
+                background-color: $background-color;
+                @include inner-border(null, null);
+            }
+        }
+        
+        .#{$prefix}keyboard-mode &.#{$prefix}arrow-focus {
+            .#{$prefix}btn-arrow-el {
+                border-width: 0;
+            }
+        }
+        
+        .#{$prefix}btn-wrap-#{$ui} {
+            &.#{$prefix}btn-split-right {
+                $split-pseudo-width: $split-width + right($padding);
+                
+                &:before {
+                    right: $split-pseudo-width + $split-line-width;
+                    background-color: transparent;
+                }
+                
+                & + .#{$prefix}btn-arrow-el{
+                    right: $split-pseudo-width;
+                    
+                    &:before {
+                        right: -$split-pseudo-width;
+                        width: $split-pseudo-width;
+                    }
+                }
+                
+                .#{$prefix}btn-button:before {
+                    width: $split-pseudo-width;
+                    right: -$split-pseudo-width;
+                }
+            }
+            
+            &.#{$prefix}btn-split-bottom:before {
+                bottom: $split-height + $split-line-width;
+                background-color: transparent;
+            }
+            
+            &.#{$prefix}btn-split-bottom:after {
+                background-color: transparent;
+                margin-left: -(left($padding));
+                margin-right: -(right($padding));
+            }
+            
+            &.#{$prefix}btn-split:after {
+                color: $color;
+            }
+            
+            .#{$prefix}btn-inner-#{$ui} {
+                color: $color;
+            }
+            
+            .#{$prefix}btn-icon-el-#{$ui} {
+                color: $color;
+            }
+            
+            .#{$prefix}btn-button {
+                &.#{$prefix}btn-icon-top,
+                &.#{$prefix}btn-icon-bottom {
+                    .#{$prefix}ie10p & {
+                        overflow: visible;
+                    }
+                }
+            }
+        }
+        
+        // Left side states
+        &.#{$prefix}btn-over:not(.#{$prefix}arrow-over) {
+            @include left-side($background-color-over, $color-over, $separator-color-over);
+        }
+        
+        &.#{$prefix}btn-menu-active {
+            @include left-side($background-color, $color, $separator-color);
+        }
+        
+        &.#{$prefix}btn-pressed {
+            @include left-side($background-color-pressed, $color-pressed, $separator-color-pressed);
+            
+            &.#{$prefix}btn-over:not(.#{$prefix}arrow-over) {
+                @include left-side(
+                    $background-color-pressed-over,
+                    $color-pressed-over,
+                    $separator-color-pressed-over
+                );
+            }
+        }
+        
+        .#{$prefix}keyboard-mode &.#{$prefix}btn-focus {
+            @include left-side($background-color-focus, $color-focus, $separator-color-focus);
+            
+            &.#{$prefix}btn-pressed {
+                @include left-side(
+                    $background-color-focus-pressed,
+                    $color-focus-pressed,
+                    $separator-color-focus-pressed
+                );
+            }
+            
+            &.#{$prefix}btn-over:not(.#{$prefix}arrow-over) {
+                @include separator(transparent);
+                @include left-focus-frame;
+            }
+        }
+        
+        // Right side states
+        &.#{$prefix}btn-over.#{$prefix}arrow-over {
+            @include right-side($background-color-over, $color-over);
+        }
+        
+        &.#{$prefix}btn-menu-active,
+        &.#{$prefix}arrow-pressed {
+            @include right-side($background-color-pressed, $color-pressed);
+            
+            &.#{$prefix}btn-over.#{$prefix}arrow-over {
+                @include right-side($background-color-pressed-over, $color-pressed-over);
+            }
+        }
+        
+        &.#{$prefix}btn-menu-active {
+            @include separator(transparent);
+        }
+        
+        .#{$prefix}keyboard-mode &.#{$prefix}arrow-focus {
+            @include right-side($background-color-focus, $color-focus);
+            
+            &.#{$prefix}btn-menu-active,
+            &.#{$prefix}arrow-pressed {
+                @include right-side($background-color-focus-pressed, $color-focus-pressed);
+            }
+            
+            &.#{$prefix}btn-pressed {
+                @include separator(transparent);
+            }
+            
+            &.#{$prefix}btn-over.#{$prefix}arrow-over {
+                @include separator(transparent);
+                @include right-focus-frame;
+            }
+        }
+    }
+}

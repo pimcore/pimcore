@@ -1,0 +1,5 @@
+@if $include-breadcrumb-default-ui {
+    @include extjs-breadcrumb-ui(
+        $ui: 'default'
+    );
+}

@@ -1,0 +1,31 @@
+.#{$prefix}grid-editor {
+    background-color: #FFFFFF;
+    @if $include-ext-form-field-text {
+        .#{$prefix}form-item-body {
+                padding: 9px;
+        }
+
+        .#{$prefix}form-type-text.#{$prefix}form-readonly {
+            .#{$prefix}form-item-body {
+                border-bottom: 0px; 
+                padding: 0 9px;
+            }
+        }
+
+        .#{$prefix}form-type-text {
+            .#{$prefix}form-item-body {
+                border-bottom: 2px solid $base-color;
+                .#{$prefix}form-text,
+                .#{$prefix}form-trigger {
+                    border-bottom: none;
+                }
+            }
+        }
+    }
+}
+
+.#{$prefix}grid-row-editor {
+    .#{$prefix}panel-body {
+            background: $reverse-color;
+    }
+}

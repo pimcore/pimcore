@@ -1,0 +1,220 @@
+/**
+ * @class Ext.calendar.header.Base
+ */
+
+/**
+ * @var {color}
+ * The background color for the headers.
+ */
+$calendar-header-background-color: dynamic($calendar-background-color);
+
+/**
+ * @var {number}
+ * The font size for the headers.
+ */
+$calendar-header-font-size: dynamic($calendar-font-size);
+
+/**
+ * @var {number}
+ * The font size for the headers when in compact mode.
+ */
+$calendar-header-compact-font-size: dynamic($calendar-font-size);
+
+/**
+ * @var {string}
+ * The font family for the headers.
+ */
+$calendar-header-font-family: dynamic($calendar-font-family);
+
+/**
+ * @var {number/string}
+ * The font weight for the headers.
+ */
+$calendar-header-font-weight: dynamic(normal);
+
+/**
+ * @var {color}
+ * The color for the headers.
+ */
+$calendar-header-color: dynamic($color);
+
+/**
+ * @var {number}
+ * The gutter width. Used when the paired view has a gutter.
+ */
+$calendar-header-gutter-width: dynamic($calendar-days-time-width);
+
+/**
+ * @var {number}
+ * The gutter width when in compact mode. Used when the paired view has a gutter.
+ */
+$calendar-header-compact-gutter-width: dynamic($calendar-days-compact-time-width);
+
+/**
+ * @var {color}
+ * The gutter background color. Used when the paired view has a gutter.
+ */
+$calendar-header-gutter-background-color: dynamic($calendar-days-time-background-color);
+
+/**
+ * @var {string}
+ * The horizontal alignment for the headers.
+ */
+$calendar-header-cell-text-align: dynamic(center);
+
+/**
+ * @var {number/list}
+ * The padding for the headers.
+ */
+$calendar-header-cell-padding: dynamic(8px 2px);
+
+/**
+ * @var {number/list}
+ * The padding for the headers when in compact mode.
+ */
+$calendar-header-compact-cell-padding: dynamic(3px 2px);
+
+/**
+ * @var {number}
+ * The border width for the headers.
+ */
+$calendar-header-cell-border-width: dynamic(1px);
+
+/**
+ * @var {color}
+ * The border color for the headers.
+ */
+$calendar-header-cell-border-color: dynamic($calendar-border-color);
+
+/**
+ * @var {string}
+ * The border style for the headers.
+ */
+$calendar-header-cell-border-style: dynamic(solid);
+
+
+/**
+ * Creates a visual theme for the calendar header view.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {color} [$background-color]
+ * The background color for the headers.
+ *
+ * @param {number} [$font-size]
+ * The font size for the headers.
+ *
+ * @param {string} [$font-family]
+ * The font family for the headers.
+ *
+ * @param {number/string} [$font-weight]
+ * The font weight for the headers.
+ *
+ * @param {color} [$color]
+ * The color for the headers.
+ *
+ * @param {number} [$gutter-width]
+ * The width for the header gutter. Used when the paired view has a gutter.
+ *
+ * @param {color} [$gutter-background-color]
+ * The background color for the header gutter. Used when the paired view has a gutter.
+ *
+ * @param {string} [$cell-text-align]
+ * The horizontal alignment for the headers.
+ *
+ * @param {number/list} [$cell-padding]
+ * The padding for the headers.
+ *
+ * @param {number} [$cell-border-width]
+ * The border width for the headers.
+ *
+ * @param {color} [$cell-border-color]
+ * The border color for the headers.
+ *
+ * @param {string} [$cell-border-style]
+ * The border style for the headers.
+ */
+@mixin calendar-header-ui(
+    $ui: null,
+
+    $background-color: null,
+
+    $font-size: null,
+    $font-family: null,
+    $font-weight: null,
+    $color: null,
+
+    $gutter-width: null,
+    $gutter-background-color: null,
+
+    $cell-text-align: null,
+    $cell-padding: null,
+
+    $cell-border-width: null,
+    $cell-border-color: null,
+    $cell-border-style: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}calendar-header#{$ui-suffix} {
+        background-color: $background-color;
+
+        .#{$prefix}calendar-header-cell {
+            @include font($font-weight, $font-size, $line-height, $font-family);
+            @include border($cell-border-width, $cell-border-style, $cell-border-color);
+            border-bottom-width: 0;
+            text-align: $cell-text-align;
+            color: $color;
+            padding: $cell-padding;
+        }
+
+        .#{$prefix}calendar-header-gutter {
+            width: $gutter-width;
+            background-color: $gutter-background-color;
+        }
+    }
+}
+
+@mixin calendar-header-default-ui {
+    @include calendar-header-ui(
+        $background-color: $calendar-header-background-color,
+        
+        $font-family: $calendar-header-font-family,
+        $font-weight: $calendar-header-font-weight,
+        $color: $calendar-header-color,
+
+        $gutter-background-color: $calendar-header-gutter-background-color,
+
+        $cell-text-align: $calendar-header-cell-text-align,
+
+        $cell-border-width: $calendar-header-cell-border-width,
+        $cell-border-color: $calendar-header-cell-border-color,
+        $cell-border-style: $calendar-header-cell-border-style
+    );
+}
+
+@mixin calendar-header-large-ui {
+    @include calendar-header-ui(
+        $ui: 'large',
+
+        $font-size: $calendar-header-font-size,
+
+        $gutter-width: $calendar-header-gutter-width,
+
+        $cell-padding: $calendar-header-cell-padding
+    );
+}
+
+@mixin calendar-header-compact-ui {
+    @include calendar-header-ui(
+        $ui: 'compact',
+        
+        $font-size: $calendar-header-compact-font-size,
+
+        $gutter-width: $calendar-header-compact-gutter-width,
+
+        $cell-padding: $calendar-header-compact-cell-padding
+    );
+}

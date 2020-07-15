@@ -1,0 +1,65 @@
+$button-default-color: dynamic($light-color);
+$button-default-base-color: dynamic($base-color);
+$button-default-background-gradient: dynamic(null);
+$button-default-background-gradient-over: dynamic(null);
+$button-default-background-gradient-focus: dynamic(null);
+$button-default-background-gradient-pressed: dynamic(null);
+$button-default-background-gradient-focus-over: dynamic(null);
+$button-default-background-gradient-focus-pressed: dynamic(null);
+$button-default-background-gradient-disabled: dynamic(null);
+
+$button-toolbar-background-gradient: dynamic(null);
+$button-toolbar-background-gradient-over: dynamic(null);
+$button-toolbar-background-gradient-focus: dynamic(null);
+$button-toolbar-background-gradient-pressed: dynamic(null);
+$button-toolbar-background-gradient-focus-over: dynamic(null);
+$button-toolbar-background-gradient-focus-pressed: dynamic(null);
+$button-toolbar-background-gradient-disabled: dynamic(null);
+
+$button-toolbar-color: dynamic($highlight-color);
+$button-toolbar-border-color: dynamic(mix(#000, $neutral-light-color, 7%));
+$button-toolbar-split-line-color: dynamic($button-toolbar-border-color);
+$button-toolbar-inner-border-color-focus: dynamic($base-color);
+
+$button-default-border-color: dynamic(mix(#000, $button-default-base-color, 7%));
+
+$button-small-border-radius: dynamic(0);
+$button-medium-border-radius: dynamic(0);
+$button-large-border-radius: dynamic(0);
+$button-grid-cell-border-radius: dynamic(0);
+
+$button-small-font-weight: dynamic($font-weight-bold);
+$button-medium-font-weight: dynamic($font-weight-bold);
+$button-large-font-weight: dynamic($font-weight-bold);
+
+$button-split-line-width: dynamic(1px);
+
+$button-icon-spacing: dynamic(8px);
+$button-small-padding: dynamic(7px);
+$button-small-icon-size: dynamic(16px);
+$button-medium-padding: dynamic(8px);
+$button-medium-icon-size: dynamic(20px);
+$button-large-padding: dynamic(9px);
+$button-large-icon-size: dynamic(24px);
+
+$button-small-arrow-width: dynamic(18px);
+$button-small-arrow-height: dynamic(12px);
+$button-medium-arrow-width: dynamic(20px);
+$button-medium-arrow-height: dynamic(14px);
+$button-large-arrow-width: dynamic(22px);
+$button-large-arrow-height: dynamic(16px);
+
+$button-small-split-width: dynamic(20px);
+$button-small-split-height: dynamic(20px);
+$button-medium-split-width: dynamic(26px);
+$button-medium-split-height: dynamic(24px);
+$button-large-split-width: dynamic(32px);
+$button-large-split-height: dynamic(28px);
+
+$button-small-glyph-font-size: dynamic(16px);
+$button-medium-glyph-font-size: dynamic(20px);
+$button-large-glyph-font-size: dynamic(24px);
+
+$button-default-glyph-opacity: dynamic(1);
+$button-toolbar-glyph-opacity: dynamic(1);
+$button-toolbar-glyph-color: dynamic($neutral-dark-color);

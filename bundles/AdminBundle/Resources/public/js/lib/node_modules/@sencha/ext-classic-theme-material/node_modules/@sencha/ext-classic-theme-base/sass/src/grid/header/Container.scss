@@ -1,0 +1,5 @@
+.#{$prefix}grid-header-ct {
+    cursor: default;
+    // z-index has to be higher than the spreadsheet selection extender's z-index
+    z-index: 3;
+}

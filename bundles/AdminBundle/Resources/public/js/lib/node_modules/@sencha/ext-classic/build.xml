@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="classic" default=".help">
+    <!--
+    The build-impl.xml file imported here contains the guts of the build process. It is
+    a great idea to read that file to understand how the process works, but it is best to
+    limit your changes to this file.
+    -->
+    <script language="javascript">
+        <![CDATA[
+            var dir = project.getProperty("basedir"),
+                cmdDir = project.getProperty("cmd.dir"),
+                cmdLoaded = project.getReference("senchaloader");
+            
+            if (!cmdLoaded) {
+                function echo(message, file) {
+                    var e = project.createTask("echo");
+                    e.setMessage(message);
+                    if (file) {
+                        e.setFile(file);
+                    }
+                    e.execute();
+                };
+
+                if (!cmdDir) {
+                    
+                    function exec(args) {
+                        var process = java.lang.Runtime.getRuntime().exec(args),
+                            input = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream())),
+                            headerFound = false,
+                            line;
+
+                        while (line = input.readLine()) {
+                            line = line + '';
+                            java.lang.System.out.println(line);
+                            if (line.indexOf("Sencha Cmd") > -1) {
+                                headerFound = true;
+                            }
+                            else if (headerFound && !cmdDir) {
+                                cmdDir = line;
+                                project.setProperty("cmd.dir", cmdDir);
+                            }
+                        }
+                        process.waitFor();
+                        return !!cmdDir;
+                    }
+                    
+                    if (!exec(["sencha", "which"])) {
+                        var tmpFile = "tmp.sh";
+                        echo("source ~/.bash_profile; sencha " + whichArgs.join(" "), tmpFile);
+                        exec(["/bin/sh", tmpFile]);
+                        new java.io.File(tmpFile)['delete'](); 
+                    }
+                }
+            }
+            
+            if (cmdDir && !project.getTargets().containsKey("init-cmd")) {
+                var importTask = project.createTask("import");
+                importTask.setOwningTarget(self.getOwningTarget());
+                importTask.setLocation(self.getLocation());
+                importTask.setFile(cmdDir + "/ant/build/package/build-impl.xml");
+                importTask.execute();
+            }
+        ]]>
+    </script>
+    <import file="${basedir}/.sencha/test/test-impl.xml"/>
+
+    <target name="-js" depends="init">
+
+        <local name="manifest.wrapper"/>
+        <local name="concat.options"/>
+
+        <property name="concat.options">
+            -remove-text-references=false
+            -optimize-string-references=false
+            -remove-requirement-nodes=false
+        </property>
+
+        <property name="manifest.wrapper"><![CDATA[
+var Ext = Ext || {};
+(function(manifest){
+    if(!Ext.manifest) {
+        Ext.manifest = manifest;
+    } else {
+        for(var name in manifest) {
+            Ext.manifest[name] = manifest[name];
+        }
+    }
+})]]></property>
+
+        <echo file="${build.dir}/ext-debug.js" message="${manifest.wrapper}"/>
+        <echo file="${build.dir}/ext.js" message="${manifest.wrapper}"/>
+
+        <property name="build.optimize"><![CDATA[
+            optimize
+                -css-prefix=true
+                -call-parent=true
+                -define-rewrite=true
+                -include-metadata=false
+        ]]></property>
+
+        <property name="build.compress"><![CDATA[
+             #+closure
+        ]]></property>
+
+        <!--
+        Ext JS produces a few additional flavors of compiled code, so we just reject the
+        provided build.compile.command property and substitute our own.
+        -->
+        <x-compile refid="${compiler.ref.id}">
+            <![CDATA[
+                -ignore=diag
+
+                    exclude
+                        -all
+                    and
+                    include
+                        +recursive
+                        -includeUses=false
+                        -class=Ext.Loader
+                    and
+                    include
+                        -tag=overrides
+                    and
+                    save
+                        corefiles
+                    and
+                    include
+                        -tag=package-core,package-classic
+                    and
+                    save
+                        allfiles
+                    and
+
+                # Build *-debug.js files - these have all "debug" conditional code active
+                # for use in development mode.
+
+                -options=debug:true
+                    restore
+                        allfiles
+                    and
+                    concatenate
+                        ${concat.options}
+                        -output-file=${build.dir}/ext-all-rtl-debug.js
+                    and
+
+
+                    exclude
+                        -namespace=Ext.rtl
+                    and
+
+                    concatenate
+                        ${concat.options}
+                        -output-file=${build.dir}/ext-all-debug.js
+                    and
+
+                    exclude
+                        -set=corefiles
+                    and
+                    metadata
+                        +append
+                        -tpl=({0});
+                        -info=AppManifest
+                        -basePath=${build.dir}
+                        +bootRelative
+                        -excludeDisabled=true
+                        -output-file=${build.dir}/ext-debug.js
+                    and
+                    metadata
+                        +append
+                        -tpl=({0});
+                        -info=AppManifest
+                        -basePath=${build.dir}
+                        +bootRelative
+                        -excludeDisabled=true
+                        -output-file=${build.dir}/ext.js
+                    and
+
+                    restore
+                        corefiles
+                    and
+
+                    concatenate
+                        +append
+                        ${concat.options}
+                        -output-file=${build.dir}/ext-debug.js
+                    and
+                    concatenate
+                        +append
+                        ${concat.options}
+                        ${build.compress}
+                        -output-file=${build.dir}/ext.js
+                    and
+
+                # Optimize and compress the builds
+                -options=debug:false
+                    restore
+                        allfiles
+                    and
+
+                    ${build.optimize}
+                    and
+
+                    concatenate
+                        ${concat.options}
+                        ${build.compress}
+                        -output-file=${build.dir}/ext-all-rtl.js
+                    and
+
+                    exclude
+                        -namespace=Ext.rtl
+                    and
+                    concatenate
+                        ${concat.options}
+                        ${build.compress}
+                        -output-file=${build.dir}/ext-all.js
+                    and
+            ]]>
+        </x-compile>
+
+        <if>
+            <not><isset property="skip.post.compress"/></not>
+            <then>
+                <for list="ext,ext-all,ext-all-rtl" param="file">
+                    <sequential>
+                        <x-echo>Compressing ${build.dir}/@{file}.js</x-echo>
+                        <x-compress-js srcfile="${build.dir}/@{file}.js"/>
+                    </sequential>
+                </for>
+            </then>
+        </if>
+    </target>
+
+    <target name="perf">
+        <property name="skip.post.compress" value="1"/>
+    </target>
+
+    <target name="calendar" depends="init">
+        <x-compile refid="${compiler.ref.id}">
+            <![CDATA[
+            classpath
+                +new
+                -name=calendar
+                -path=${framework.dir}/../packages/calendar/classic/src
+            and
+            classpath
+                -name=calendar
+                -path=${framework.dir}/../packages/calendar/src
+            and
+            classpath
+                -name=calendar
+                -path=${framework.dir}/../packages/calendar/classic/overrides
+                -tags=overrides
+            and
+            classpath
+                -name=calendar
+                -path=${framework.dir}/../packages/calendar/overrides
+                -tags=overrides
+            and
+            include
+                -all
+        ]]>
+        </x-compile>
+    </target>
+
+    <target name="charts" depends="init">
+        <x-compile refid="${compiler.ref.id}">
+            <![CDATA[
+            classpath
+                +new
+                -name=charts
+                -path=${framework.dir}/packages/charts/classic/src
+            and
+            classpath
+                -name=charts
+                -path=${framework.dir}/packages/charts/src
+            and
+            classpath
+                -name=charts
+                -path=${framework.dir}/packages/charts/classic/overrides
+                -tags=overrides
+            and
+            classpath
+                -name=charts
+                -path=${framework.dir}/packages/charts/overrides
+                -tags=overrides
+            and
+            include
+                -all
+        ]]>
+        </x-compile>
+    </target>
+
+    <target name="d3" depends="init">
+        <x-compile refid="${compiler.ref.id}">
+            <![CDATA[
+            classpath
+                +new
+                -name=d3
+                -path=${framework.dir}/../packages/d3/classic/src
+            and
+            classpath
+                -name=d3
+                -path=${framework.dir}/../packages/d3/src
+            and
+            classpath
+                -name=d3
+                -path=${framework.dir}/../packages/d3/classic/overrides
+                -tags=overrides
+            and
+            classpath
+                -name=d3
+                -path=${framework.dir}/../packages/d3/overrides
+                -tags=overrides
+            and
+            include
+                -all
+        ]]>
+        </x-compile>
+    </target>
+
+    <target name="ux" depends="init">
+        <x-compile refid="${compiler.ref.id}">
+            <![CDATA[
+            classpath
+                +new
+                -name=ux
+                -path=${framework.dir}/packages/ux/classic/src
+            and
+            classpath
+                -name=ux
+                -path=${framework.dir}/packages/ux/src
+            and
+            classpath
+                -name=ux
+                -path=${framework.dir}/packages/ux/classic/overrides
+                -tags=overrides
+            and
+            classpath
+                -name=ux
+                -path=${framework.dir}/packages/ux/overrides
+                -tags=overrides
+            and
+            include
+                -all
+        ]]>
+        </x-compile>
+    </target>
+
+    <target name="exporter" depends="init">
+        <x-compile refid="${compiler.ref.id}">
+            <![CDATA[
+            classpath
+                +new
+                -name=exporter
+                -path=${framework.dir}/../packages/exporter/classic/src
+            and
+            classpath
+                -name=exporter
+                -path=${framework.dir}/../packages/exporter/src
+            and
+            classpath
+                -name=exporter
+                -path=${framework.dir}/../packages/exporter/classic/overrides
+                -tags=overrides
+            and
+            classpath
+                -name=exporter
+                -path=${framework.dir}/../packages/exporter/overrides
+                -tags=overrides
+            and
+            include
+                -all
+        ]]>
+        </x-compile>
+    </target>
+
+    <target name="pivot" depends="init">
+        <x-compile refid="${compiler.ref.id}">
+            <![CDATA[
+            classpath
+                +new
+                -name=pivot
+                -path=${framework.dir}/../packages/pivot/classic/src
+            and
+            classpath
+                -name=pivot
+                -path=${framework.dir}/../packages/pivot/src
+            and
+            classpath
+                -name=pivot
+                -path=${framework.dir}/../packages/pivot/classic/overrides
+                -tags=overrides
+            and
+            classpath
+                -name=pivot
+                -path=${framework.dir}/../packages/pivot/overrides
+                -tags=overrides
+            and
+            include
+                -all
+        ]]>
+        </x-compile>
+    </target>
+
+    <target name="pivot-d3" depends="init,pivot,d3">
+        <x-compile refid="${compiler.ref.id}">
+            <![CDATA[
+            classpath
+                +new
+                -name=pivot-d3
+                -path=${framework.dir}/../packages/pivot-d3/classic/src
+            and
+            classpath
+                -name=pivot-d3
+                -path=${framework.dir}/../packages/pivot-d3/src
+            and
+            classpath
+                -name=pivot-d3
+                -path=${framework.dir}/../packages/pivot-d3/classic/overrides
+                -tags=overrides
+            and
+            classpath
+                -name=pivot-d3
+                -path=${framework.dir}/../packages/pivot-d3/overrides
+                -tags=overrides
+            and
+            include
+                -all
+        ]]>
+        </x-compile>
+    </target>
+
+    <target name="core-bootstrap" depends="init">
+        <local name="base.path"/>
+        <property name="base.path" value="${framework.dir}"/>
+
+        <delete file="${base.path}/bootstrap-manifest.js"/>
+
+        <x-compile refid="${compiler.ref.id}">
+            <![CDATA[
+                include
+                    -all
+                and
+                exclude
+                    +recursive
+                    -class=Ext.Loader
+                and
+                metadata
+                    -tpl=var Ext = Ext || '{' '}'; Ext.manifest = {0};
+                    -info=AppManifest
+                    -basePath=${base.path}
+                    +append
+                    +bootRelative
+                    -output-file=${base.path}/bootstrap-manifest.js
+            ]]>
+        </x-compile>
+
+        <x-bootstrap file="${base.path}/bootstrap.js"
+                     basedir="${base.path}"
+                     coreFilesFile="${base.path}/bootstrap-files.js"
+                     classMetadataFile="${base.path}/bootstrap-data.js"
+                     overridesFile="${base.path}/bootstrap-data.js"
+                     includeBoot="true"
+                     includeCoreFiles="true"
+                     appendCoreFiles="false"
+                     appendClassMetadata="false"
+                     appendOverrides="true"
+                     coreFilesJsonpTpl="Ext.Boot.loadSyncBasePrefix"
+                     loaderConfigJsonpTpl="Ext.Loader.addBaseUrlClassPathMappings"
+                     overrideTpl="Ext.Loader.loadScriptsSyncBasePrefix"
+                     overrideTplType="jsonp"
+                     overrideExcludeTags="">
+<![CDATA[
+Ext.Boot.loadSyncBasePrefix([
+    "bootstrap-manifest.js",
+    "bootstrap-files.js"
+]);
+]]>
+        </x-bootstrap>
+
+        <!--
+        Duplicate the "ext.js" dev-mode bootstrap file to the other deployed names
+        -->
+        <for list="ext,ext-all,ext-all-rtl" param="part1">
+            <sequential>
+                <for list=".,-debug." param="part2">
+                    <sequential>
+                        <local name="out"/>
+                        <property name="out" value="@{part1}@{part2}js"/>
+                        <echo>Generating ${out}</echo>
+                        <copy file="${base.path}/bootstrap.js" tofile="${base.path}/${out}"
+                              overwrite="true"/>
+                        <replace file="${base.path}/${out}"
+                                 token="bootstrapper"
+                                 value="bootstrapper :: GENERATED COPY! Edit &quot;core/bootstrap.js&quot;"/>
+                    </sequential>
+                </for>
+            </sequential>
+        </for>
+        <delete file="${base.path}/bootstrap.js"/>
+    </target>
+
+    <target name="bootstrap"
+            description="*** Regenerate files needed by standalone examples and unit tests ***"
+            depends="calendar,charts,d3,ux,exporter,pivot,pivot-d3,core-bootstrap,test-bootstrap"/>
+</project>

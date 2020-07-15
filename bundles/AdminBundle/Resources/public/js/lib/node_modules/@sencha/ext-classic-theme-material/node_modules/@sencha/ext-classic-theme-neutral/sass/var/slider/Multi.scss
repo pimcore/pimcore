@@ -1,0 +1,201 @@
+/**
+ * @class Ext.slider.Multi
+ */
+
+/**
+ * @var {number}
+ * The horizontal slider thumb width
+ */
+$horizontal-slider-thumb-width: dynamic(15px);
+
+/**
+ * @var {number}
+ * The horizontal slider thumb height
+ */
+$horizontal-slider-thumb-height: dynamic(15px);
+
+/**
+ * @var {number}
+ * The width of the horizontal slider start cap
+ */
+$horizontal-slider-start-cap-width: dynamic(floor($horizontal-slider-thumb-width / 2));
+
+/**
+ * @var {number}
+ * The width of the horizontal slider end cap
+ */
+$horizontal-slider-end-cap-width: dynamic(ceil($horizontal-slider-thumb-width / 2));
+
+/**
+ * @var {number}
+ * The vertical slider thumb width
+ */
+$vertical-slider-thumb-width: dynamic(15px);
+
+/**
+ * @var {number}
+ * The vertical slider thumb height
+ */
+$vertical-slider-thumb-height: dynamic(15px);
+
+/**
+ * @var {number}
+ * The height of the vertical slider start cap
+ */
+$vertical-slider-start-cap-height: dynamic(floor($vertical-slider-thumb-height / 2));
+
+/**
+ * @var {number}
+ * The height of the vertical slider end cap
+ */
+$vertical-slider-end-cap-height: dynamic(ceil($vertical-slider-thumb-height / 2));
+
+/**
+ * @var {boolean}
+ * `true` to use imageless sliders
+ */
+$slider-imageless: dynamic($enable-font-icons);
+
+/**
+ * @var {number}
+ * The size of the slider track when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-track-size: dynamic(10px);
+
+/**
+ * @var {number}
+ * The border-radius of the slider track when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-track-border-radius: dynamic(2px);
+
+/**
+ * @var {number}
+ * The border-width of the slider track when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-track-border-width: dynamic(1px);
+
+/**
+ * @var {number}
+ * The border-style of the slider track when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-track-border-style: dynamic(solid);
+
+/**
+ * @var {number}
+ * The border-color of the slider track when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-track-border-color: dynamic($base-color);
+
+/**
+ * @var {number}
+ * The background-color of the slider track when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-track-background-color: dynamic($neutral-color);
+
+/**
+ * @var {number}
+ * The border-radius of the slider thumb when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-thumb-border-radius: dynamic(2px);
+
+/**
+ * @var {number}
+ * The border-width of the slider thumb when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-thumb-border-width: dynamic(1px);
+
+/**
+ * @var {number}
+ * The border-style of the slider thumb when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-thumb-border-style: dynamic(solid);
+
+/**
+ * @var {number}
+ * The border-color of the slider thumb when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-thumb-border-color: dynamic($neutral-color);
+
+/**
+ * @var {number}
+ * The border-color of the hovered slider thumb when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-thumb-border-color-over: dynamic($slider-thumb-border-color);
+
+/**
+ * @var {number}
+ * The border-color of the focused slider thumb when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-thumb-border-color-focus: dynamic($base-color);
+
+/**
+ * @var {number}
+ * The border-color of the slider thumb while dragging when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-thumb-border-color-drag: dynamic($slider-thumb-border-color);
+
+/**
+ * @var {number}
+ * The background-color of the slider thumb when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-thumb-background-color: dynamic(#fff);
+
+/**
+ * @var {number}
+ * The background-color of the hovered slider thumb when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-thumb-background-color-over: dynamic($slider-thumb-background-color);
+
+/**
+ * @var {number}
+ * The background-color of the focused slider thumb when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-thumb-background-color-focus: dynamic($slider-thumb-background-color);
+
+/**
+ * @var {number}
+ * The background-color of the slider thumb while dragging when using {@link #$slider-imageless imageless} sliders
+ */
+$slider-thumb-background-color-drag: dynamic($slider-thumb-background-color);
+
+/**
+ * @var {color}
+ * The color to use for the slider thumb glyph when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$slider-thumb-glyph-color: dynamic($neutral-color);
+
+/**
+ * @var {number}
+ * The color to use for the slider thumb glyph when hovered.
+ */
+$slider-thumb-glyph-color-over: dynamic($slider-thumb-glyph-color);
+
+/**
+ * @var {number}
+ * The color to use for the slider thumb glyph when focused.
+ */
+$slider-thumb-glyph-color-focus: dynamic($slider-thumb-border-color-focus);
+
+/**
+ * @var {number}
+ * The color to use for the slider thumb glyph while dragging.
+ */
+$slider-thumb-glyph-color-drag: dynamic($slider-thumb-glyph-color);
+
+/**
+ * @var {number}
+ * The font-size to use for the slider thumb glyph when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$slider-thumb-glyph-font-size: dynamic(12px);
+
+/**
+ * @var {string/list}
+ * Glyph to display inside of the slider thumb when {@link Global_CSS#$enable-font-icons} is `true`
+ */
+$horizontal-slider-thumb-glyph: dynamic($ext-var-equals-vertical $slider-thumb-glyph-font-size ExtJS);
+
+/**
+ * @var {string/list}
+ * Glyph to display inside of the slider thumb when {@link Global_CSS#$enable-font-icons} is `true`
+ */
+$vertical-slider-thumb-glyph: dynamic($ext-var-equals $slider-thumb-glyph-font-size ExtJS);

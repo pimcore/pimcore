@@ -1,0 +1,82 @@
+/**
+ * @class Ext.util.SizeMonitor
+ */
+
+.#{$prefix}size-monitored {
+    position: relative;
+}
+
+.#{$prefix}size-monitors {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+    overflow: hidden;
+
+    > * {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    &.scroll > * {
+        &.shrink::after {
+            content: '';
+            display: block;
+            width: 200%;
+            height: 200%;
+            min-width: 1px;
+            min-height: 1px;
+        }
+
+        &.expand::after {
+            content: '';
+            display: block;
+            width: 100000px;
+            height: 100000px;
+        }
+    }
+
+    &.overflowchanged > * {
+        &.shrink {
+            > * {
+                width: 100%;
+                height: 100%;
+            }
+        }
+
+        &.expand {
+            > * {
+                width: 200%;
+                height: 200%;
+            }
+        }
+    }
+}
+
+.#{$prefix}size-change-detector {
+    visibility: hidden;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.#{$prefix}size-change-detector > * {
+    visibility: hidden;
+}
+
+.#{$prefix}size-change-detector-shrink > * {
+    width: 200%;
+    height: 200%;
+}
+
+.#{$prefix}size-change-detector-expand > * {
+    width: 100000px;
+    height: 100000px;
+}

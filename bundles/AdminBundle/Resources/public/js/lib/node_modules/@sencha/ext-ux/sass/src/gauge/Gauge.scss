@@ -1,0 +1,29 @@
+.#{$prefix}gauge svg {
+    // A gauge may progressively increase in size without this.
+    display: block;
+}
+
+.#{$prefix}gauge-text {
+    position: absolute;
+    text-align: center;
+}
+
+@include gauge-ui(
+    $track-fill: $gauge-track-fill,
+    $track-fill-opacity: $gauge-track-fill-opacity,
+    $track-stroke: $gauge-track-stroke,
+    $track-stroke-opacity: $gauge-track-stroke-opacity,
+    $track-stroke-width: $gauge-track-stroke-width,
+
+    $value-fill: $gauge-value-fill,
+    $value-fill-opacity: $gauge-value-fill-opacity,
+    $value-stroke: $gauge-value-stroke,
+    $value-stroke-opacity: $gauge-value-stroke-opacity,
+    $value-stroke-width: $gauge-value-stroke-width,
+
+    $needle-fill: $gauge-needle-fill,
+    $needle-fill-opacity: $gauge-needle-fill-opacity,
+    $needle-stroke: $gauge-needle-stroke,
+    $needle-stroke-opacity: $gauge-needle-stroke-opacity,
+    $needle-stroke-width: $gauge-needle-stroke-width
+);

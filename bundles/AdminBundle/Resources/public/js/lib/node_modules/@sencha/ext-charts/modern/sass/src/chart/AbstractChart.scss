@@ -1,0 +1,37 @@
+.#{$prefix}chart-toolbar {
+  position: absolute;
+  z-index: 9;
+  @include display-box;
+  padding: .6em;
+
+  .#{$prefix}button {
+    margin: .2em;
+  }
+
+  &[data-side=left], &[data-side=right] {
+    top: 0;
+    @include box-orient(vertical);
+  }
+
+  &[data-side=left] {
+    left: 0;
+  }
+
+  &[data-side=right] {
+    right: 0;
+  }
+
+  &[data-side=top], &[data-side=bottom] {
+    @include box-orient(horizontal);
+    right: 0;
+  }
+
+  &[data-side=top] {
+    top: 0;
+  }
+
+  &[data-side=bottom] {
+    bottom: 0;
+    @include box-orient(horizontal);
+  }
+}

@@ -1,0 +1,340 @@
+/**
+ * @class Ext.calendar.view.Weeks
+ */
+
+/**
+ * @var {color}
+ * The background color.
+ */
+$calendar-weeks-background-color: dynamic($calendar-background-color);
+
+/**
+ * @var {number}
+ * The border width for the day cells.
+ */
+$calendar-weeks-day-border-width: dynamic(1px);
+
+/**
+ * @var {color}
+ * The border color for the day cells.
+ */
+$calendar-weeks-day-border-color: dynamic($calendar-border-color);
+
+/**
+ * @var {string}
+ * The border style for the day cells.
+ */
+$calendar-weeks-day-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The background color for a selection.
+ */
+$calendar-weeks-selection-background-color: dynamic($calendar-selection-color);
+
+/**
+ * @var {number}
+ * The opacity for a selection.
+ */
+$calendar-weeks-selection-opacity: dynamic(0.3);
+
+/**
+ * @var {number/list}
+ * The padding for the day number.
+ */
+$calendar-weeks-day-number-padding: dynamic(2px 0 4px 4px);
+
+/**
+ * @var {string}
+ * The horizontal alignment for the day number.
+ */
+$calendar-weeks-day-number-text-align: dynamic(left);
+
+/**
+ * @var {number}
+ * The font size for the day number.
+ */
+$calendar-weeks-day-number-font-size: dynamic($calendar-font-size);
+
+/**
+ * @var {number}
+ * The font size for the day number when in compact mode.
+ */
+$calendar-weeks-compact-day-number-font-size: dynamic($calendar-weeks-day-number-font-size);
+
+/**
+ * @var {string}
+ * The font family for the day number.
+ */
+$calendar-weeks-day-number-font-family: dynamic($calendar-font-family);
+
+/**
+ * @var {color}
+ * The color for the day number.
+ */
+$calendar-weeks-day-number-color: dynamic(#000);
+
+/**
+ * @var {color}
+ * The background color for day cells.
+ */
+$calendar-weeks-day-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The color for the day number when the day is outside the current month. This style is
+ * only applied when using the month view.
+ */
+$calendar-weeks-day-number-outside-color: dynamic(#aaa);
+
+/**
+ * @var {color}
+ * The background color for day cells when the day is outside the current month. This style is
+ * only applied when using the month view.
+ */
+$calendar-weeks-day-outside-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The color for the day number when the day is a weekend.
+ */
+$calendar-weeks-day-number-weekend-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The background color for day cells when the day is a weekend.
+ */
+$calendar-weeks-day-weekend-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The color for the "show more" text.
+ */
+$calendar-weeks-overflow-color: dynamic(#15c);
+
+/**
+ * @var {number}
+ * The font size for the "show more" text.
+ */
+$calendar-weeks-overflow-font-size: dynamic($calendar-small-font-size);
+
+/**
+ * @var {number}
+ * The font size for the "show more" text when in compact mode.
+ */
+$calendar-weeks-compact-overflow-font-size: dynamic($calendar-weeks-overflow-font-size);
+
+/**
+ * @var {string}
+ * The font family for the "show more" text.
+ */
+$calendar-weeks-overflow-font-family: dynamic($calendar-font-family);
+
+$calendar-weeks-day-vertical-align: dynamic(top);
+
+/**
+ * @var {color}
+ * The background color for a today.
+ */
+$calendar-today-highlight-background-color: dynamic($calendar-today-background-color);
+
+/**
+ * Creates a visual theme for the calendar weeks view.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ * 
+ * @param {color} [$background-color]
+ * The background color.
+ *
+ * @param {color} [$selection-background-color]
+ * The background color for a selection.
+ *
+ * @param {number} [$selection-opacity]
+ * The opacity for a selection.
+ *
+ * @param {number} [$day-border-width]
+ * The border width for the day cells.
+ *
+ * @param {number} [$day-border-color]
+ * The border color for the day cells.
+ *
+ * @param {number} [$day-border-style]
+ * The border style for the day cells.
+ *
+ * @param {number/list} [$day-number-padding]
+ * The padding for the day number.
+ * 
+ * @param {string} [$day-number-text-align]
+ * The horizontal alignment for the day number.
+ *
+ * @param {number} [$day-number-font-size]
+ * The font size for the day number.
+ *
+ * @param {string} [$day-number-font-family]
+ * The font family for the day number.
+ *
+ * @param {color} [$day-number-color]
+ * The color for the day number.
+ *
+ * @param {color} [$day-background-color]
+ * The background color for day cells.
+ *
+ * @param {color} [$day-number-outside-color]
+ * The color for the day number when the day is outside the current month range. This style is
+ * only applied when using the month view.
+ *
+ * @param {color} [$day-outside-background-color]
+ * The background color for day cells when the day is outside the current month range. This style is
+ * only applied when using the month view.
+ *
+ * @param {color} [$day-number-weekend-color]
+ * The color for the day number when the day is a weekend.
+ *
+ * @param {color} [$day-weekend-background-color]
+ * The background color for day cells when the day is a weekend.
+ *
+ * @param {color} [$day-vertical-align]
+ * The vertical alignment for the day number.
+ *
+ * @param {color} [$overflow-color]
+ * The color for the "show more" text when a cell overflows.
+ *
+ * @param {number} [$overflow-font-size]
+ * The font size for the "show more" text when a cell overflows.
+ *
+ * @param {number} [$overflow-font-family]
+ * The font family for the "show more" text when a cell overflows.
+ */
+@mixin calendar-weeks-ui(
+    $ui: null,
+    $background-color: null,
+    $selection-background-color: null,
+    $selection-opacity: null,
+    $day-border-width: null,
+    $day-border-color: null,
+    $day-border-style: null,
+    $day-number-padding: null,
+    $day-number-text-align: null,
+    $day-number-font-size: null,
+    $day-number-font-family: null,
+    $day-number-color: null,
+    $day-background-color: null,
+    $day-number-outside-color: null,
+    $day-outside-background-color: null,
+    $day-number-weekend-color: null,
+    $day-weekend-background-color: null,
+    $day-vertical-align: null,
+    $overflow-color: null,
+    $overflow-font-size: null,
+    $overflow-font-family: null
+) {
+    $ui-suffix: ui-suffix($ui);
+
+    .#{$prefix}calendar-weeks#{$ui-suffix} {
+
+        background-color: $background-color;
+
+        .#{$prefix}calendar-weeks-cell {
+            border-style: $day-border-style;
+            border-color: $day-border-color;
+            border-width: $day-border-width;
+            background-color: $day-background-color;
+            vertical-align: $day-vertical-align;
+        }
+
+        .#{$prefix}calendar-weeks-cell-inner {
+            padding: $day-number-padding;
+            text-align: $day-number-text-align;
+        }
+
+        .#{$prefix}calendar-weeks-day-text {
+            font-size: $day-number-font-size;
+            font-family: $day-number-font-family;
+            color: $day-number-color;
+        }
+
+        .#{$prefix}today-cell-highlight-weeks-day {
+            .#{$prefix}calendar-weeks-day-text {
+                background-color: $calendar-today-highlight-background-color;
+            }
+        }
+
+        .#{$prefix}calendar-weeks-outside-cell {
+            background-color: $day-outside-background-color;
+
+            .#{$prefix}calendar-weeks-day-text {
+                color: $day-number-outside-color;
+            }
+        }
+
+        .#{$prefix}calendar-weeks-weekend-cell {
+            background-color: $day-weekend-background-color;
+
+            .#{$prefix}calendar-weeks-day-text {
+                color: $day-number-weekend-color;
+            }
+        }
+
+        .#{$prefix}calendar-weeks-selection {
+            background-color: $selection-background-color;
+            @if $selection-opacity != null {
+                @include opacity($selection-opacity);
+            }
+        }
+
+        .#{$prefix}calendar-weeks-overflow {
+            color: $overflow-color;
+            font-size: $overflow-font-size;
+            font-family: $overflow-font-family;
+        }
+    }
+}
+
+@mixin calendar-weeks-default-ui {
+    @include calendar-weeks-ui(
+        $background-color: $calendar-weeks-background-color,
+
+        $selection-background-color: $calendar-weeks-selection-background-color,
+        $selection-opacity: $calendar-weeks-selection-opacity,
+
+        $day-border-width: $calendar-weeks-day-border-width,
+        $day-border-color: $calendar-weeks-day-border-color,
+        $day-border-style: $calendar-weeks-day-border-style,
+
+        $day-number-padding: $calendar-weeks-day-number-padding,
+        $day-number-text-align: $calendar-weeks-day-number-text-align,
+        $day-number-font-family: $calendar-weeks-day-number-font-family,
+
+        $day-number-color: $calendar-weeks-day-number-color,
+        $day-background-color: $calendar-weeks-day-background-color,
+
+        $day-number-outside-color: $calendar-weeks-day-number-outside-color,
+        $day-outside-background-color: $calendar-weeks-day-outside-background-color,
+
+        $day-number-weekend-color: $calendar-weeks-day-number-weekend-color,
+        $day-weekend-background-color: $calendar-weeks-day-weekend-background-color,
+
+        $day-vertical-align: $calendar-weeks-day-vertical-align,
+
+        $overflow-color: $calendar-weeks-overflow-color,
+        $overflow-font-family: $calendar-weeks-overflow-font-family
+    );
+}
+
+@mixin calendar-weeks-large-ui {
+    @include calendar-weeks-ui(
+        $ui: 'large',
+        $day-number-font-size: $calendar-weeks-day-number-font-size,
+        $overflow-font-size: $calendar-weeks-overflow-font-size
+    );
+}
+
+@mixin calendar-weeks-compact-ui {
+    @include calendar-weeks-ui(
+        $ui: 'compact',
+        $day-number-font-size: $calendar-weeks-compact-day-number-font-size,
+        $overflow-font-size: $calendar-weeks-compact-overflow-font-size
+    );
+}

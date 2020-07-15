@@ -1,0 +1,5 @@
+@if $include-fieldset-default-ui {
+    @include extjs-fieldset-ui(
+        $ui: 'default'
+    );
+}

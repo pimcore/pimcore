@@ -1,0 +1,651 @@
+/**
+ * @class Ext.picker.Date
+ */
+
+/**
+ * @var {number}
+ * The border-width of the DatePicker
+ */
+$datepicker-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * The border-style of the DatePicker
+ */
+$datepicker-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The background-color of the DatePicker
+ */
+$datepicker-background-color: dynamic(#fff);
+
+/**
+ * @var {string}
+ * The background-image of the DatePicker next arrow
+ */
+$datepicker-next-image: dynamic('datepicker/arrow-right');
+
+/**
+ * @var {list}
+ * The background-position of the DatePicker next arrow
+ */
+$datepicker-next-background-position: dynamic(0 0);
+
+/**
+ * @var {string}
+ * The background-image of the DatePicker previous arrow
+ */
+$datepicker-prev-image: dynamic('datepicker/arrow-left');
+
+/**
+ * @var {list}
+ * The background-position of the DatePicker previous arrow
+ */
+$datepicker-prev-background-position: dynamic(0 0);
+
+/**
+ * @var {color}
+ * Color of the Date Picker arrows when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$datepicker-arrow-glyph-color: dynamic($color);
+
+/**
+ * @var {string/list}
+ * Glyph for the Date Picker next arrow when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$datepicker-next-glyph: dynamic($fa-var-angle-double-right 16px $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the Date Picker previous arrow when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$datepicker-prev-glyph: dynamic($fa-var-angle-double-left 16px $font-icon-font-family);
+
+/**
+ * @var {number}
+ * The width of DatePicker arrows
+ */
+$datepicker-arrow-width: dynamic(16px);
+
+/**
+ * @var {number}
+ * The height of DatePicker arrows
+ */
+$datepicker-arrow-height: dynamic(16px);
+
+/**
+ * @var {string}
+ * The type of cursor to display when the cursor is over a DatePicker arrow
+ */
+$datepicker-arrow-cursor: dynamic(pointer);
+
+/**
+ * @var {number}
+ * The opacity of the DatePicker arrows
+ */
+$datepicker-arrow-opacity: dynamic(1);
+
+/**
+ * @var {number}
+ * The opacity of the DatePicker arrows when hovered
+ */
+$datepicker-arrow-opacity-over: dynamic(1);
+
+/**
+ * @var {color} $datepicker-header-background-color
+ * The Date Picker header background color.
+ */
+
+/**
+ * @var {string/list}
+ * The Date Picker header background gradient. Can be either the name of a predefined gradient
+ * or a list of color stops. Used as the `$type` parameter for {@link Global_CSS#background-gradient}.
+ */
+$datepicker-header-background-gradient: dynamic('none');
+
+/**
+ * @var {number/list}
+ * The padding of the Date Picker header
+ */
+$datepicker-header-padding: dynamic(4px 6px);
+
+/**
+ * @var {color}
+ * The color of the Date Picker month button
+ */
+$datepicker-month-button-color: dynamic(#fff);
+
+/**
+ * @var {color}
+ * The background-color of the Date Picker month button
+ */
+$datepicker-month-button-background-color: dynamic(transparent);
+
+/**
+ * @var {color}
+ * The background-color of the Date Picker month button when hovered
+ */
+$datepicker-month-button-over-background-color: dynamic($datepicker-month-button-background-color);
+
+/**
+ * @var {color}
+ * The background-color of the Date Picker month button when pressed
+ */
+$datepicker-month-button-pressed-background-color: dynamic($datepicker-month-button-over-background-color);
+
+/**
+ * @var {number}
+ * The font-size of the Date Picker month button
+ */
+$datepicker-month-button-font-size: dynamic($button-small-font-size);
+
+/**
+ * @var {number/list}
+ * The padding of the Date Picker month button
+ */
+$datepicker-month-button-padding: dynamic($button-small-padding);
+
+/**
+ * @var {number}
+ * The width of the arrow on the Date Picker month button
+ */
+$datepicker-month-button-arrow-width: dynamic($button-small-arrow-width);
+
+/**
+ * @var {string}
+ * The background-image of the arrow on the Date Picker month button
+ */
+$datepicker-month-button-arrow-image: dynamic('datepicker/month-arrow');
+
+/**
+ * @var {string/list}
+ * Glyph for the arrow on the Date Picker month button when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$datepicker-month-button-arrow-glyph: dynamic($fa-var-angle-down 16px $font-icon-font-family);
+
+/**
+ * @var {color}
+ * Color of the arrow on the Date Picker month button when
+ * {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$datepicker-month-button-arrow-glyph-color: dynamic($button-toolbar-arrow-glyph-color);
+
+/**
+ * @var {string}
+ * The text-align of the Date Picker header
+ */
+$datepicker-header-text-align: dynamic(center);
+
+/**
+ * @var {number}
+ * The height of Date Picker items
+ */
+$datepicker-item-height: dynamic(25px);
+
+/**
+ * @var {number}
+ * The width of Date Picker items
+ */
+$datepicker-item-width: dynamic(30px);
+
+/**
+ * @var {number/list}
+ * The padding of Date Picker items
+ */
+$datepicker-item-padding: dynamic(0 7px 0 0);
+
+/**
+ * @var {string}
+ * The font-family of Date Picker items
+ */
+$datepicker-item-font-family: dynamic($font-family);
+
+/**
+ * @var {number}
+ * The font-size of Date Picker items
+ */
+$datepicker-item-font-size: dynamic($font-size);
+
+/**
+ * @var {string}
+ * The font-weight of Date Picker items
+ */
+$datepicker-item-font-weight: dynamic($font-weight);
+
+/**
+ * @var {string}
+ * The text-align of Date Picker items
+ */
+$datepicker-item-text-align: dynamic(right);
+
+/**
+ * @var {color}
+ * The text color of Date Picker items
+ */
+$datepicker-item-color: dynamic($color);
+
+/**
+ * @var {string}
+ * The type of cursor to display when the cursor is over a Date Picker item
+ */
+$datepicker-item-cursor: dynamic(pointer);
+
+/**
+ * @var {string}
+ * The font-family of Date Picker column headers
+ */
+$datepicker-column-header-font-family: dynamic($datepicker-item-font-family);
+
+/**
+ * @var {number}
+ * The font-size of Date Picker column headers
+ */
+$datepicker-column-header-font-size: dynamic($datepicker-item-font-size);
+
+/**
+ * @var {string}
+ * The font-weight of Date Picker column headers
+ */
+$datepicker-column-header-font-weight: dynamic($datepicker-item-font-weight);
+
+/**
+ * @var {string/list}
+ * The background-gradient of Date Picker column headers. Can be either the name of a
+ * predefined gradient or a list of color stops. Used as the `$type` parameter for
+ * {@link Global_CSS#background-gradient}.
+ */
+$datepicker-column-header-background-gradient: dynamic('none');
+
+/**
+ * @var {string}
+ * The border-style of Date Picker column headers
+ */
+$datepicker-column-header-border-style: dynamic(solid);
+
+/**
+ * @var {number}
+ * The border-width of Date Picker column headers
+ */
+$datepicker-column-header-border-width: dynamic(0 0 1px);
+
+/**
+ * @var {string}
+ * The text-align of Date Picker column headers
+ */
+$datepicker-column-header-text-align: dynamic($datepicker-item-text-align);
+
+/**
+ * @var {number}
+ * The height of Date Picker column headers
+ */
+$datepicker-column-header-height: dynamic($datepicker-item-height);
+
+/**
+ * @var {number/list}
+ * The padding of Date Picker column headers
+ */
+$datepicker-column-header-item-padding: dynamic(0 9px 0 0);
+
+/**
+ * @var {number}
+ * The border-width of Date Picker items
+ */
+$datepicker-item-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * The border-style of Date Picker items
+ */
+$datepicker-item-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The border-color of Date Picker items
+ */
+$datepicker-item-border-color: dynamic($datepicker-background-color);
+
+/**
+ * @var {string}
+ * The border-style of today's date on the Date Picker
+ */
+$datepicker-item-today-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The background-color of today's date on the Date Picker
+ */
+$datepicker-item-today-background-color: dynamic($datepicker-background-color);
+
+/**
+ * @var {color}
+ * The background-color of hovered Date Picker items
+ */
+$datepicker-item-hover-background-color: dynamic($datepicker-background-color);
+
+/**
+ * @var {color}
+ * The text color of selected Date Picker items
+ */
+$datepicker-item-selected-color: dynamic($datepicker-item-color);
+
+/**
+ * @var {color}
+ * The background-color of selected Date Picker items
+ */
+$datepicker-item-selected-background-color: dynamic($datepicker-background-color);
+
+/**
+ * @var {string}
+ * The border-style of selected Date Picker itemds
+ */
+$datepicker-item-selected-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The border-color of selected Date Picker items
+ */
+$datepicker-item-selected-border-color: dynamic($datepicker-item-border-color);
+
+/**
+ * @var {string}
+ * The font-weight of the selected item
+ */
+$datepicker-item-selected-font-weight: dynamic($font-weight-bold);
+
+/**
+ * @var {color}
+ * The text color of the items in the previous and next months
+ */
+$datepicker-item-prev-next-color: dynamic(lighten($datepicker-item-color,  75%));
+
+/**
+ * @var {string}
+ * The type of cursor to display when the cursor is over a disabled item
+ */
+$datepicker-item-disabled-cursor: dynamic(default);
+
+/**
+ * @var {color}
+ * The text color of disabled Date Picker items
+ */
+$datepicker-item-disabled-color: dynamic(lighten($datepicker-item-color,  50%));
+
+/**
+ * @var {color}
+ * The background-color of disabled Date Picker items
+ */
+$datepicker-item-disabled-background-color: dynamic(#eee);
+
+/**
+ * @var {color}
+ * The background-color of the Date Picker footer
+ */
+$datepicker-footer-background-color: dynamic($datepicker-column-header-background-color);
+
+/**
+ * @var {string/list}
+ * The background-gradient of the Date Picker footer. Can be either the name of a
+ * predefined gradient or a list of color stops. Used as the `$type` parameter for
+ * {@link Global_CSS#background-gradient}.
+ */
+$datepicker-footer-background-gradient: dynamic('none');
+
+/**
+ * @var {number/list}
+ * The border-width of the Date Picker footer
+ */
+$datepicker-footer-border-width: dynamic(1px 0 0);
+
+/**
+ * @var {string}
+ * The border-style of the Date Picker footer
+ */
+$datepicker-footer-border-style: dynamic(solid);
+
+/**
+ * @var {string}
+ * The text-align of the Date Picker footer
+ */
+$datepicker-footer-text-align: dynamic(center);
+
+/**
+ * @var {number/list}
+ * The padding of the Date Picker footer
+ */
+$datepicker-footer-padding: dynamic(3px 0);
+
+/**
+ * @var {number}
+ * The space between the footer buttons
+ */
+$datepicker-footer-button-spacing: dynamic(4px);
+
+/**
+ * @var {color}
+ * The border-color of the Month Picker
+ */
+$datepicker-monthpicker-border-color: dynamic($datepicker-border-color);
+
+/**
+ * @var {number}
+ * The border-width of the Month Picker
+ */
+$datepicker-monthpicker-border-width: dynamic($datepicker-border-width);
+
+/**
+ * @var {string}
+ * The border-style of the Month Picker
+ */
+$datepicker-monthpicker-border-style: dynamic($datepicker-border-style);
+
+/**
+ * @var {color}
+ * The text color of Month Picker items
+ */
+$datepicker-monthpicker-item-color: dynamic($color);
+
+/**
+ * @var {color}
+ * The text color of Month Picker items
+ */
+$datepicker-monthpicker-item-border-width: dynamic($datepicker-item-border-width);
+
+/**
+ * @var {color}
+ * The border-color of Month Picker items
+ */
+$datepicker-monthpicker-item-border-color: dynamic($datepicker-item-border-color);
+
+/**
+ * @var {string}
+ * The border-style of Month Picker items
+ */
+$datepicker-monthpicker-item-border-style: dynamic($datepicker-item-border-style);
+
+/**
+ * @var {string}
+ * The font-family of Month Picker items
+ */
+$datepicker-monthpicker-item-font-family: dynamic($datepicker-item-font-family);
+
+/**
+ * @var {number}
+ * The font-size of Month Picker items
+ */
+$datepicker-monthpicker-item-font-size: dynamic($datepicker-item-font-size);
+
+/**
+ * @var {string}
+ * The font-weight of Month Picker items
+ */
+$datepicker-monthpicker-item-font-weight: dynamic($datepicker-item-font-weight);
+
+/**
+ * @var {number/list}
+ * The margin of Month Picker items
+ */
+$datepicker-monthpicker-item-margin: dynamic(5px);
+
+/**
+ * @var {string}
+ * The text-align of Month Picker items
+ */
+$datepicker-monthpicker-item-text-align: dynamic(center);
+
+/**
+ * @var {number}
+ * The height of Month Picker items
+ */
+$datepicker-monthpicker-item-height: dynamic(24px);
+
+/**
+ * @var {string}
+ * The type of cursor to display when the cursor is over a Month Picker item
+ */
+$datepicker-monthpicker-item-cursor: dynamic(pointer);
+
+/**
+ * @var {color}
+ * The background-color of hovered Month Picker items
+ */
+$datepicker-monthpicker-item-hover-background-color: dynamic($datepicker-item-hover-background-color);
+
+/**
+ * @var {color}
+ * The background-color of selected Month Picker items
+ */
+$datepicker-monthpicker-item-selected-background-color: dynamic($datepicker-item-selected-background-color);
+
+/**
+ * @var {color}
+ * The text color of selected Month Picker items
+ */
+$datepicker-monthpicker-item-selected-color: dynamic($datepicker-item-selected-color);
+
+/**
+ * @var {string}
+ * The border-style of selected Month Picker items
+ */
+$datepicker-monthpicker-item-selected-border-style: dynamic($datepicker-item-selected-border-style);
+
+/**
+ * @var {color}
+ * The border-color of selected Month Picker items
+ */
+$datepicker-monthpicker-item-selected-border-color: dynamic($datepicker-item-selected-border-color);
+
+/**
+ * @var {number}
+ * The height of the Month Picker year navigation buttons 
+ */
+$datepicker-monthpicker-yearnav-button-height: dynamic(16px);
+
+/**
+ * @var {number}
+ * The width of the Month Picker year navigation buttons 
+ */
+$datepicker-monthpicker-yearnav-button-width: dynamic(16px);
+
+/**
+ * @var {string}
+ * The type of cursor to display when the cursor is over a Month Picker year navigation button 
+ */
+$datepicker-monthpicker-yearnav-button-cursor: dynamic(pointer);
+
+/**
+ * @var {number}
+ * The opacity of the Month Picker year navigation buttons 
+ */
+$datepicker-monthpicker-yearnav-button-opacity: dynamic(1);
+
+/**
+ * @var {number}
+ * The opacity of hovered Month Picker year navigation buttons 
+ */
+$datepicker-monthpicker-yearnav-button-opacity-over: dynamic(1);
+
+/**
+ * @var {string}
+ * The background-image of the Month Picker next year navigation button
+ */
+$datepicker-monthpicker-next-image: dynamic('datepicker/arrow-right');
+
+/**
+ * @var {string}
+ * The background-image of the Month Picker previous year navigation button
+ */
+$datepicker-monthpicker-prev-image: dynamic('datepicker/arrow-left');
+
+/**
+ * @var {list}
+ * The background-poisition of the Month Picker next year navigation button
+ */
+$datepicker-monthpicker-next-background-position: dynamic(0 0);
+
+/**
+ * @var {list}
+ * The background-poisition of the hovered Month Picker next year navigation button
+ */
+$datepicker-monthpicker-next-background-position-over: dynamic(0 0);
+
+/**
+ * @var {list}
+ * The background-poisition of the Month Picker previous year navigation button
+ */
+$datepicker-monthpicker-prev-background-position: dynamic(0 0);
+
+/**
+ * @var {list}
+ * The background-poisition of the hovered Month Picker previous year navigation button
+ */
+$datepicker-monthpicker-prev-background-position-over: dynamic(0 0);
+
+/**
+ * @var {color}
+ * Color of the Month Picker arrows when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$datepicker-monthpicker-arrow-glyph-color: dynamic($datepicker-arrow-glyph-color);
+
+/**
+ * @var {string/list}
+ * Glyph for the Month Picker next year arrow when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$datepicker-monthpicker-next-glyph: dynamic($datepicker-next-glyph);
+
+/**
+ * @var {string/list}
+ * Glyph for the Month Picker previous year arrow when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$datepicker-monthpicker-prev-glyph: dynamic($datepicker-prev-glyph);
+
+/**
+ * @var {string}
+ * The border-style of the Month Picker separator
+ */
+$datepicker-monthpicker-separator-border-style: dynamic(solid);
+
+/**
+ * @var {number}
+ * The border-width of the Month Picker separator
+ */
+$datepicker-monthpicker-separator-border-width: dynamic(1px);
+
+/**
+ * @var {color}
+ * The border-color of the Month Picker separator
+ */
+$datepicker-monthpicker-separator-border-color: dynamic($datepicker-border-color);
+
+/**
+ * @var {number/list}
+ * The margin of Month Picker items when the datepicker does not have footer buttons
+ */
+$datepicker-monthpicker-small-item-margin: dynamic(2px 5px);
+
+/**
+ * @var {number}
+ * The height of Month Picker items when the datepicker does not have footer buttons
+ */
+$datepicker-monthpicker-small-item-height: dynamic($datepicker-monthpicker-item-height);

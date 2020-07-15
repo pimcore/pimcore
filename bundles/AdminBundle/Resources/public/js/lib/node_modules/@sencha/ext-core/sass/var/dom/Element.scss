@@ -1,0 +1,27 @@
+/**
+ * @class Global_CSS
+ */
+
+/**
+ * @var {transition} $ripple-transition
+ * Transition used for ripple effects
+ */
+$ripple-transition: dynamic(background-color .15s 0.2s cubic-bezier(0.4, 0, 0.2, 1), color .15s 0.2s cubic-bezier(0.4, 0, 0.2, 1));
+
+/**
+ * @var {color} $ripple-background-color
+ * Default background color to use for ripple effects
+ */
+$ripple-background-color: dynamic(white);
+
+/**
+ * @var {color} $ripple-confirm-background-color
+ * Background color to use for ripple effects on confirm UIs
+ */
+$ripple-confirm-background-color: dynamic(green);
+
+/**
+ * @var {color} $ripple-decline-background-color
+ * Background color to use for ripple effects on decline UIs
+ */
+$ripple-decline-background-color: dynamic(red);

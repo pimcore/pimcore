@@ -1,0 +1,5 @@
+@if $include-checkboxgroup-default-ui {
+    @include extjs-checkboxgroup-ui(
+        $ui: 'default'
+    );
+}

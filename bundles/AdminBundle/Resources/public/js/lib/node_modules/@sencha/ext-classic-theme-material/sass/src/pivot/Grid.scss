@@ -1,0 +1,24 @@
+.#{$prefix}pivot-grid-group {
+        &:before {
+            font-family: $pivot-grid-collapse-glyph-font-family;
+            font-weight: $pivot-grid-glyph-font-weight;
+            padding-right: 8px;
+        }
+    }
+
+.#{$prefix}pivot-grid-group-header-collapsible {
+    .#{$prefix}pivot-grid-group {
+        background-image: none;
+        &:before {
+            content: $pivot-grid-collapse-glyph;
+        }
+    }
+} 
+.#{$prefix}pivot-grid-group-header-collapsed {
+    .#{$prefix}pivot-grid-group {
+        background-image: none;
+        &:before {
+            content: $pivot-grid-expand-glyph;
+        }
+    }
+}

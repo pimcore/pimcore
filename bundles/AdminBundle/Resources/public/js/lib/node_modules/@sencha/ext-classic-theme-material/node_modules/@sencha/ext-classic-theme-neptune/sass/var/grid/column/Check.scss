@@ -1,0 +1,5 @@
+// Check column header width is hardcoded, so we fudge padding as well
+$grid-checkcolumn-cell-padding:
+    max(ceil(($grid-row-height - $form-checkbox-size) / 2), 0)
+    6px
+    max(floor(($grid-row-height - $form-checkbox-size) / 2), 0);

@@ -1,0 +1,24 @@
+$textfield-input-background-color: dynamic(transparent);
+$form-trigger-background-color: dynamic($background-color);
+$form-label-font-color: dynamic($highlight-color);
+$form-label-line-height: dynamic(16px);
+$form-textarea-line-height:  dynamic(16px);
+$form-text-field-border-width : 0 0 3px 0;
+$form-field-line-height: dynamic(16px);
+$form-item-label-height: dynamic(16px);
+$form-text-default-padding: dynamic(0px);
+$form-item-label-padding: dynamic(0px);
+$form-item-label-inner-padding: dynamic(0px);
+$form-text-file-height: dynamic(32px); 
+$form-trigger-wrap-invalid-border: dynamic(1px solid $alert-color);
+$webkit-form-text-height: dynamic(calc(100% - 21px));
+$form-type-text-margin: dynamic(17px);
+$form-item-label-margin: dynamic(4px);
+$form-item-label-font-size: dynamic(12px);
+$form-item-label: dynamic(13px);
+$form-focused-item-label-font-size: dynamic(13px);
+$form-text-field-body-default-min-width: dynamic(150px);
+$form-text-default-border: dynamic(1px solid $base-color);
+
+$form-text-default-border-bottom: dynamic(1px solid #9e9e9e);
+$form-colorpicker-field-padding-left: dynamic(32px);

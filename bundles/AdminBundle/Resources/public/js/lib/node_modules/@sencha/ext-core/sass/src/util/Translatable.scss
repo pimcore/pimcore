@@ -1,0 +1,41 @@
+/**
+ * @class Ext.util.Translatable
+ */
+
+.#{$prefix}translatable {
+    position: absolute !important;
+    top:  500000px !important;
+    left: 500000px !important;
+    overflow: visible !important;
+    z-index: 1;
+}
+
+.#{$prefix}translatable-hboxfix {
+  position: absolute;
+  min-width: 100%;
+  top: 0;
+  left: 0;
+
+  > .#{$prefix}translatable {
+      position: relative !important;
+  }
+}
+
+.#{$prefix}translatable-container {
+    overflow: hidden;
+    width: auto;
+    height: auto;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    &::before {
+        content: '';
+        display: block;
+        width:  1000000px;
+        height: 1000000px;
+        visibility: hidden;
+    }
+}

@@ -1,0 +1,542 @@
+/** @class Ext.toolbar.Breadcrumb */
+
+// Some breadcrumb vars derive their values from toolbar vars, so make sure we have imported
+// the Toolbar vars first since there is no dependency at the class-level.  This means
+// Toolbar vars might get imported twice but that is not a problem since the variables
+// are !default - the second import will be effectively ignored.
+@import 'Toolbar';
+
+/**
+ * @var {string}
+ * The UI of buttons that are used in the "default" breadcrumb UI
+ */
+$breadcrumb-button-ui: dynamic('default-toolbar');
+
+/**
+ * @var {number}
+ * The space between the breadcrumb buttons
+ */
+$breadcrumb-button-spacing: dynamic(0px);
+
+/**
+ * @var {number}
+ * The width of breadcrumb arrows when {@link #useSplitButtons} is `false`
+ */
+$breadcrumb-arrow-width: dynamic($button-small-split-width);
+
+/**
+ * @var {number}
+ * The width of breadcrumb arrows when {@link #useSplitButtons} is `true`
+ */
+$breadcrumb-split-width: dynamic($button-small-split-width);
+
+/**
+ * @var {string}
+ * The background-image for the default "folder" icon
+ */
+$breadcrumb-folder-icon: dynamic('tree/folder');
+
+/**
+ * @var {string}
+ * The background-image for the default "open folder" icon
+ */
+$breadcrumb-folder-open-icon: dynamic('tree/folder-open');
+
+/**
+ * @var {string}
+ * The background-image for the default "leaf" icon
+ */
+$breadcrumb-leaf-icon: dynamic('tree/leaf');
+
+/**
+ * @var {number}
+ * The font size to use for breadcrumb icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$breadcrumb-glyph-font-size: dynamic(16px);
+
+/**
+ * @var {color}
+ * The color to use for breadcrumb icons when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$breadcrumb-glyph-color: dynamic($button-toolbar-glyph-color);
+
+/**
+ * @var {string/list}
+ * Glyph for the "folder" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$breadcrumb-folder-glyph: dynamic($fa-var-folder $breadcrumb-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {color}
+ * The color to use for the "folder" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$breadcrumb-folder-glyph-color: dynamic($breadcrumb-glyph-color);
+
+/**
+ * @var {string/list}
+ * Glyph for the "open folder" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$breadcrumb-folder-open-glyph: dynamic($fa-var-folder-open $breadcrumb-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {color}
+ * The color to use for the "open folder" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$breadcrumb-folder-open-glyph-color: dynamic($breadcrumb-folder-glyph-color);
+
+/**
+ * @var {string/list}
+ * Glyph for the "leaf" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$breadcrumb-leaf-glyph: dynamic($fa-var-file $breadcrumb-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {color}
+ * The color to use for the "leaf" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$breadcrumb-leaf-glyph-color: dynamic($breadcrumb-glyph-color);
+
+/**
+ * @var {string/list}
+ * Glyph for the "arrow" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$breadcrumb-arrow-glyph: dynamic($fa-var-angle-right $breadcrumb-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {string/list}
+ * Glyph for the "arrow" icon when {@link Global_CSS#$enable-font-icons} is `true` and rtl is `true`.
+ */
+$breadcrumb-arrow-glyph-rtl: dynamic($fa-var-angle-left $breadcrumb-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {color}
+ * The color to use for the "arrow" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$breadcrumb-arrow-glyph-color: dynamic($breadcrumb-glyph-color);
+
+/**
+ * @var {string/list}
+ * Glyph for the "expanded arrow" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$breadcrumb-arrow-expanded-glyph: dynamic($fa-var-angle-down $breadcrumb-glyph-font-size $font-icon-font-family);
+
+/**
+ * @var {color}
+ * The color to use for the "expanded arrow" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ */
+$breadcrumb-arrow-expanded-glyph-color: dynamic($breadcrumb-arrow-glyph-color);
+
+/**
+ * @var {boolean}
+ * `true` to include a separate background-image for menu arrows when a breadcrumb button's
+ * menu is open
+ */
+$breadcrumb-include-menu-active-arrow: dynamic(true);
+
+/**
+ * @var {boolean}
+ * `true` to include a separate background-image for split arrows when a breadcrumb button's
+ * arrow is hovered
+ */
+$breadcrumb-include-split-over-arrow: dynamic(true);
+
+/**
+ * @var {number}
+ * The width of Breadcrumb scrollers
+ */
+$breadcrumb-scroller-width: dynamic($toolbar-scroller-width);
+
+/**
+ * @var {number}
+ * The height of Breadcrumb scrollers
+ */
+$breadcrumb-scroller-height: dynamic($toolbar-scroller-height);
+
+/**
+ * @var {color}
+ * The border-color of Breadcrumb scrollers
+ */
+$breadcrumb-scroller-border-color: dynamic($toolbar-scroller-border-color);
+
+/**
+ * @var {number}
+ * The border-width of Breadcrumb scrollers
+ */
+$breadcrumb-scroller-border-width: dynamic($toolbar-scroller-border-width);
+
+/**
+ * @var {number/list}
+ * The margin of "top" Breadcrumb scroller buttons
+ */
+$breadcrumb-scroller-top-margin: dynamic($toolbar-scroller-top-margin);
+
+/**
+ * @var {number/list}
+ * The margin of "right" Breadcrumb scroller buttons
+ */
+$breadcrumb-scroller-right-margin: dynamic($toolbar-scroller-right-margin);
+
+/**
+ * @var {number/list}
+ * The margin of "bottom" Breadcrumb scroller buttons
+ */
+$breadcrumb-scroller-bottom-margin: dynamic($toolbar-scroller-bottom-margin);
+
+/**
+ * @var {number/list}
+ * The margin of "left" Breadcrumb scroller buttons
+ */
+$breadcrumb-scroller-left-margin: dynamic($toolbar-scroller-left-margin);
+
+/**
+ * @var {string}
+ * The cursor of Breadcrumb scrollers
+ */
+$breadcrumb-scroller-cursor: dynamic($toolbar-scroller-cursor);
+
+/**
+ * @var {string}
+ * The cursor of disabled Breadcrumb scrollers
+ */
+$breadcrumb-scroller-cursor-disabled: dynamic($toolbar-scroller-cursor-disabled);
+
+/**
+ * @var {number}
+ * The opacity of Breadcrumb scroller buttons. Only applicable when
+ * {@link #$breadcrumb-classic-scrollers} is `false`.
+ */
+$breadcrumb-scroller-opacity: dynamic($toolbar-scroller-opacity);
+
+/**
+ * @var {number}
+ * The opacity of hovered Breadcrumb scroller buttons. Only applicable when
+ * {@link #$breadcrumb-classic-scrollers} is `false`.
+ */
+$breadcrumb-scroller-opacity-over: dynamic($toolbar-scroller-opacity-over);
+
+/**
+ * @var {number}
+ * The opacity of pressed Breadcrumb scroller buttons. Only applicable when
+ * {@link #$breadcrumb-classic-scrollers} is `false`.
+ */
+$breadcrumb-scroller-opacity-pressed: dynamic($toolbar-scroller-opacity-pressed);
+
+/**
+ * @var {number}
+ * The opacity of disabled Breadcrumb scroller buttons. Only applicable when
+ * {@link #$breadcrumb-classic-scrollers} is `false`.
+ */
+$breadcrumb-scroller-opacity-disabled: dynamic($toolbar-scroller-opacity-disabled);
+
+/**
+ * @var {boolean}
+ * `true` to use classic-style scroller buttons.  When `true` scroller buttons are given their
+ * hover state by changing their background-position,  When `false` scroller buttons are
+ * given their hover state by applying opacity.
+ */
+$breadcrumb-classic-scrollers: dynamic($toolbar-classic-scrollers);
+
+/**
+ * @var {boolean}
+ * `true` to include the "default" breadcrumb UI
+ */
+$include-breadcrumb-default-ui: dynamic(true);
+
+/**
+ * Creates a visual theme for a Breadcrumb.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {string} [$ui-button-ui=$breadcrumb-button-ui]
+ * The name of the button UI that will be used with this breadcrumb UI. Used for overriding
+ * the button arrows for the given button UI when it is used inside a breadcrumb with this UI.
+ *
+ * @param {number} [$ui-button-spacing=$breadcrumb-button-spacing]
+ * The space between the breadcrumb buttons
+ *
+ * @param {number} [$ui-arrow-width=$breadcrumb-arrow-width]
+ * The width of the breadcrumb arrows when
+ * {@link Ext.toolbar.Breadcrumb#useSplitButtons} is `false`
+ *
+ * @param {number} [$ui-split-width=$breadcrumb-split-width]
+ * The width of breadcrumb arrows when {@link Ext.toolbar.Breadcrumb#useSplitButtons}
+ * is `true`
+ *
+ * @param {boolean} [$ui-include-menu-active-arrow=$breadcrumb-include-menu-active-arrow]
+ * `true` to include a separate background-image for menu arrows when a breadcrumb button's
+ * menu is open
+ *
+ * @param {boolean} [$ui-include-split-over-arrow=$breadcrumb-include-split-over-arrow]
+ * `true` to include a separate background-image for split arrows when a breadcrumb button's
+ * arrow is hovered
+ *
+ * @param {string} [$ui-folder-icon=$breadcrumb-folder-icon]
+ * The background-image for the "folder" icon
+ *
+ * @param {string} [$ui-folder-open-icon=$breadcrumb-folder-open-icon]
+ * The background-image for the "open folder" icon
+ *
+ * @param {string} [$ui-leaf-icon=$breadcrumb-leaf-icon]
+ * The background-image for the "leaf" icon
+ *
+ * @param {string/list} [$ui-folder-glyph=$breadcrumb-folder-glyph]
+ * Glyph for the "folder" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ *
+ * @param {color} [$ui-folder-glyph-color=$breadcrumb-folder-glyph-color]
+ * The color to use for the "folder" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ *
+ * @param {string/list} [$ui-folder-open-glyph=$breadcrumb-folder-open-glyph]
+ * Glyph for the "open folder" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ *
+ * @param {color} [$ui-folder-open-glyph-color=$breadcrumb-folder-open-glyph-color]
+ * The color to use for the "open folder" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ *
+ * @param {string/list} [$ui-leaf-glyph=$breadcrumb-leaf-glyph]
+ * Glyph for the "leaf" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ *
+ * @param {color} [$ui-leaf-glyph-color=$breadcrumb-leaf-glyph-color]
+ * The color to use for the "leaf" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ *
+ * @param {string/list} [$ui-arrow-glyph=$breadcrumb-arrow-glyph]
+ * Glyph for the "arrow" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ *
+ * @param {string/list} [$ui-arrow-glyph-rtl=$breadcrumb-arrow-glyph-rtl]
+ * Glyph for the "arrow" icon when {@link Global_CSS#$enable-font-icons} is `true` and rtl is `true`.
+ *
+ * @param {color} [$ui-arrow-glyph-color=$breadcrumb-arrow-glyph-color]
+ * The color to use for the "arrow" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ *
+ * @param {string/list} [$ui-arrow-expanded-glyph=$breadcrumb-arrow-expanded-glyph]
+ * Glyph for the "expanded arrow" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ *
+ * @param {color} [$ui-arrow-expanded-glyph-color=$breadcrumb-arrow-expanded-glyph-color]
+ * The color to use for the "expanded arrow" icon when {@link Global_CSS#$enable-font-icons} is `true`.
+ *
+ * @param {number} [$ui-scroller-width=$breadcrumb-scroller-width]
+ * The width of Breadcrumb scrollers
+ *
+ * @param {number} [$ui-scroller-height=$breadcrumb-scroller-height]
+ * The height of Breadcrumb scrollers
+ *
+ * @param {color} [$ui-scroller-border-color=$breadcrumb-scroller-border-color]
+ * The border-color of Breadcrumb scrollers
+ *
+ * @param {number} [$ui-scroller-border-width=$breadcrumb-scroller-border-width]
+ * The border-width of Breadcrumb scrollers
+ *
+ * @param {string} [$ui-scroller-cursor=$breadcrumb-scroller-cursor]
+ * The cursor of Breadcrumb scrollers
+ *
+ * @param {string} [$ui-scroller-cursor-disabled=$breadcrumb-scroller-cursor-disabled]
+ * The cursor of disabled Breadcrumb scrollers
+ *
+ * @param {number/list} [$ui-scroller-top-margin=$breadcrumb-scroller-top-margin]
+ * The margin of "top" scroller buttons
+ *
+ * @param {number/list} [$ui-scroller-right-margin=$breadcrumb-scroller-right-margin]
+ * The margin of "right" scroller buttons
+ *
+ * @param {number/list} [$ui-scroller-bottom-margin=$breadcrumb-scroller-bottom-margin]
+ * The margin of "bottom" scroller buttons
+ *
+ * @param {number/list} [$ui-scroller-left-margin=$breadcrumb-scroller-left-margin]
+ * The margin of "left" scroller buttons
+ *
+ * @param {number} [$ui-scroller-opacity=$breadcrumb-scroller-opacity]
+ * The opacity of Breadcrumb scroller buttons. Only applicable when
+ * `$ui-classic-scrollers` is `false`.
+ *
+ * @param {number} [$ui-scroller-opacity-over=$breadcrumb-scroller-opacity-over]
+ * The opacity of hovered Breadcrumb scroller buttons. Only applicable when
+ * `$ui-classic-scrollers` is `false`.
+ *
+ * @param {number} [$ui-scroller-opacity-pressed=$breadcrumb-scroller-opacity-pressed]
+ * The opacity of pressed Breadcrumb scroller buttons. Only applicable when
+ * `$ui-classic-scrollers` is `false`.
+ *
+ * @param {number} [$ui-scroller-opacity-disabled=$breadcrumb-scroller-opacity-disabled]
+ * The opacity of disabled Breadcrumb scroller buttons.
+ *
+ * @param {boolean} [$ui-classic-scrollers=$breadcrumb-classic-scrollers]
+ * `true` to use classic-style scroller buttons.  When `true` scroller buttons are given
+ * their hover state by changing their background-position,  When `false` scroller buttons
+ * are given their hover state by applying opacity.
+ * @member Ext.toolbar.Breadcrumb
+ */
+@mixin extjs-breadcrumb-ui(
+    $ui: null,
+    $ui-button-ui: $breadcrumb-button-ui,
+    $ui-button-spacing: $breadcrumb-button-spacing,
+    $ui-arrow-width: $breadcrumb-arrow-width,
+    $ui-split-width: $breadcrumb-split-width,
+    $ui-include-menu-active-arrow: $breadcrumb-include-menu-active-arrow,
+    $ui-include-split-over-arrow: $breadcrumb-include-split-over-arrow,
+    $ui-folder-icon: $breadcrumb-folder-icon,
+    $ui-folder-open-icon: $breadcrumb-folder-open-icon,
+    $ui-leaf-icon: $breadcrumb-leaf-icon,
+    $ui-folder-glyph: $breadcrumb-folder-glyph,
+    $ui-folder-glyph-color: $breadcrumb-folder-glyph-color,
+    $ui-folder-open-glyph: $breadcrumb-folder-open-glyph,
+    $ui-folder-open-glyph-color: $breadcrumb-folder-open-glyph-color,
+    $ui-leaf-glyph: $breadcrumb-leaf-glyph,
+    $ui-leaf-glyph-color: $breadcrumb-leaf-glyph-color,
+    $ui-arrow-glyph: $breadcrumb-arrow-glyph,
+    $ui-arrow-glyph-rtl: $breadcrumb-arrow-glyph-rtl,
+    $ui-arrow-glyph-color: $breadcrumb-arrow-glyph-color,
+    $ui-arrow-expanded-glyph: $breadcrumb-arrow-expanded-glyph,
+    $ui-arrow-expanded-glyph-color: $breadcrumb-arrow-expanded-glyph-color,
+    $ui-scroller-width: $breadcrumb-scroller-width,
+    $ui-scroller-height: $breadcrumb-scroller-height,
+    $ui-scroller-border-color: $breadcrumb-scroller-border-color,
+    $ui-scroller-border-width: $breadcrumb-scroller-border-width,
+    $ui-scroller-cursor: $breadcrumb-scroller-cursor,
+    $ui-scroller-cursor-disabled: $breadcrumb-scroller-cursor-disabled,
+    $ui-scroller-top-margin: $breadcrumb-scroller-top-margin,
+    $ui-scroller-right-margin: $breadcrumb-scroller-right-margin,
+    $ui-scroller-bottom-margin: $breadcrumb-scroller-bottom-margin,
+    $ui-scroller-left-margin: $breadcrumb-scroller-left-margin,
+    $ui-scroller-opacity: $breadcrumb-scroller-opacity,
+    $ui-scroller-opacity-over: $breadcrumb-scroller-opacity-over,
+    $ui-scroller-opacity-pressed: $breadcrumb-scroller-opacity-pressed,
+    $ui-scroller-opacity-disabled: $breadcrumb-scroller-opacity-disabled,
+    $ui-classic-scrollers: $breadcrumb-classic-scrollers
+) {
+    .#{$prefix}breadcrumb-btn-#{$ui} {
+        margin: 0 0 0 $ui-button-spacing;
+    }
+
+    .#{$prefix}breadcrumb-icon-folder-#{$ui} {
+        @if $enable-font-icons and ($ui-folder-glyph != null) {
+            @include font-icon($ui-folder-glyph);
+            color: $ui-folder-glyph-color;
+        } @else {
+            background-image: theme-background-image($ui-folder-icon);
+        }
+
+        .#{$prefix}btn-menu-active & {
+            @if $enable-font-icons and ($ui-folder-open-glyph != null) {
+                @include font-icon($ui-folder-open-glyph);
+                color: $ui-folder-open-glyph-color;
+            } @else {
+                background-image: theme-background-image($ui-folder-open-icon);
+            }
+        }
+    }
+
+    .#{$prefix}breadcrumb-icon-leaf-#{$ui} {
+        @if $enable-font-icons and ($ui-leaf-glyph != null) {
+            @include font-icon($ui-leaf-glyph);
+            color: $ui-leaf-glyph-color;
+        } @else {
+            background-image: theme-background-image($ui-leaf-icon);
+        }
+    }
+
+    .#{$prefix}btn-wrap-#{$ui-button-ui}-small.#{$prefix}btn-arrow:after {
+        .#{$prefix}breadcrumb-btn & {
+            width: $ui-arrow-width;
+            background-image: theme-background-image('breadcrumb/#{$ui}-arrow');
+        }
+
+        @if $include-rtl {
+            .#{$prefix}rtl.#{$prefix}breadcrumb-btn & {
+                background-image: theme-background-image('breadcrumb/#{$ui}-arrow-rtl');
+            }
+        }
+
+        @if $ui-include-menu-active-arrow {
+            .#{$prefix}btn-menu-active.#{$prefix}breadcrumb-btn & {
+                background-image: theme-background-image('breadcrumb/#{$ui}-arrow-open');
+            }
+
+            @if $include-rtl {
+                .#{$prefix}rtl.#{$prefix}btn-menu-active.#{$prefix}breadcrumb-btn & {
+                    background-image: theme-background-image('breadcrumb/#{$ui}-arrow-open-rtl');
+                }
+            }
+        }
+    }
+
+    .#{$prefix}btn-wrap-#{$ui-button-ui}-small.#{$prefix}btn-split:after {
+        .#{$prefix}breadcrumb-btn & {
+            width: $ui-split-width;
+
+            @if $enable-font-icons and ($ui-arrow-glyph !=  null) {
+                @include font-icon($ui-arrow-glyph, $pseudo: false);
+                color: $ui-arrow-glyph-color;
+                // !important needed to override base button styles which are far more specific
+                background: none !important;
+            } @else {
+                background-image: theme-background-image('breadcrumb/#{$ui}-split-arrow');
+            }
+        }
+
+        @if $include-rtl {
+            .#{$prefix}rtl.#{$prefix}breadcrumb-btn & {
+                @if $enable-font-icons and ($ui-arrow-glyph-rtl !=  null) {
+                    @include font-icon($ui-arrow-glyph-rtl, $pseudo: false);
+                    background: none !important;
+                } @else {
+                    background-image: theme-background-image('breadcrumb/#{$ui}-split-arrow-rtl');
+                }
+            }
+        }
+
+        @if $ui-include-split-over-arrow and ((not $enable-font-icons) or ($ui-arrow-glyph == null)) {
+            .#{$prefix}btn-over.#{$prefix}breadcrumb-btn & {
+                background-image: theme-background-image('breadcrumb/#{$ui}-split-arrow-over');
+            }
+
+            @if $include-rtl {
+                .#{$prefix}rtl.#{$prefix}btn-over.#{$prefix}breadcrumb-btn & {
+                    background-image: theme-background-image('breadcrumb/#{$ui}-split-arrow-over-rtl');
+                }
+            }
+        }
+
+        @if $ui-include-menu-active-arrow {
+            .#{$prefix}btn-menu-active.#{$prefix}breadcrumb-btn & {
+                @if $enable-font-icons and ($ui-arrow-expanded-glyph !=  null) {
+                    @include font-icon($ui-arrow-expanded-glyph, $pseudo: false);
+                    color: $ui-arrow-expanded-glyph-color;
+                    // !important needed to override base button styles which are far more specific
+                    background: none !important;
+                } @else {
+                    background-image: theme-background-image('breadcrumb/#{$ui}-split-arrow-open');
+                }
+            }
+
+            @if $include-rtl and ((not $enable-font-icons) or ($ui-arrow-glyph == null)) {
+                .#{$prefix}rtl.#{$prefix}btn-menu-active.#{$prefix}breadcrumb-btn & {
+                    background-image: theme-background-image('breadcrumb/#{$ui}-split-arrow-open-rtl');
+                }
+            }
+        }
+    }
+
+    @if $include-ext-layout-container-boxoverflow-scroller {
+        @include extjs-box-scroller-ui(
+            $ui: $ui,
+            $type: 'breadcrumb',
+            $horizontal-width: $ui-scroller-width,
+            $horizontal-height: $ui-scroller-height,
+            $top-margin: $ui-scroller-top-margin,
+            $right-margin: $ui-scroller-right-margin,
+            $bottom-margin: $ui-scroller-bottom-margin,
+            $left-margin: $ui-scroller-left-margin,
+            $horizontal-border-color: $ui-scroller-border-color,
+            $horizontal-border-width: $ui-scroller-border-width,
+            $cursor: $ui-scroller-cursor,
+            $cursor-disabled: $ui-scroller-cursor-disabled,
+            $align: middle,
+            $opacity: $ui-scroller-opacity,
+            $opacity-over: $ui-scroller-opacity-over,
+            $opacity-pressed: $ui-scroller-opacity-pressed,
+            $opacity-disabled: $ui-scroller-opacity-disabled,
+            $classic: $ui-classic-scrollers,
+            $include-vertical: false
+        );
+    }
+}

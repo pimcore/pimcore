@@ -1,0 +1,17 @@
+$tag-field-padding: dynamic(3px 0 0 4px);
+$tag-field-item-height: dynamic(24px);
+$tag-field-item-margin: dynamic(0 4px 3px 0);
+
+$tag-field-item-close-icon-size: dynamic(12px);
+$tag-field-item-close-icon-top: dynamic(5px);
+$tag-field-item-close-icon-right: dynamic(3px);
+$tag-field-item-close-icon-opacity: dynamic(.85);
+$tag-field-item-close-icon-opacity-over: dynamic(.93);
+$tag-field-item-close-icon-opacity-pressed: dynamic(1);
+$tag-field-item-background-color: dynamic($neutral-highlight-color);
+$tag-field-item-over-background-color: dynamic(mix(#000, $tag-field-item-background-color, 3%));
+$tag-field-item-close-icon-glyph-color: dynamic($neutral-dark-color);
+$tag-field-item-over-close-icon-glyph-color: dynamic($tag-field-item-close-icon-glyph-color);
+
+$tag-field-item-border-radius: dynamic(0);
+$tag-field-item-close-icon-glyph: dynamic($fa-var-times 12px $font-icon-font-family);

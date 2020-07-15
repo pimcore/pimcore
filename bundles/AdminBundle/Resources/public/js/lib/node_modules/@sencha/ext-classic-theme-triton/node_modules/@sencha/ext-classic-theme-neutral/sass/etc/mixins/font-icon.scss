@@ -1,0 +1,189 @@
+@import "font-icon.js";
+
+/**
+ * Applies a font icon to an element.
+ *
+ * @param {list/string} $glyph
+ * A unicode character to use as the icon, or a list specifying the character to use
+ * followed by font-size, font-family, and degrees of rotation (90, 180, or 270).
+ * All parameters in the list are optional except for glyph.  For example, each of the
+ * following is valid:
+ *
+ * Use the letter "A" as the icon, inherit the font-size from the parent element,
+ * and use the default font-family specified by {@link Global_CSS#$font-icon-font-family}.
+ *
+ *     .my-icon {
+ *         @include font-icon('\0041');
+ *     }
+ *
+ * Use the letter "A" as the icon with a font-size of 16px, and the default font-family
+ *
+ *     .my-icon {
+ *         @include font-icon('\0041' 16px);
+ *     }
+ *
+ * Use the letter "A" as the icon, inherit font-size, and use FontAwesome as the font-family
+ *
+ *     .my-icon {
+ *         @include font-icon('\0041' FontAwesome);
+ *     }
+ *
+ * Use the letter "A" as the icon, inherit font-size, use the default font-family, and rotate
+ * the icon 90 degrees clockwise.
+ *
+ *     .my-icon {
+ *         @include font-icon('\0041' 90);
+ *     }
+ *
+ * Use the letter "A" as the icon with a 16px font-size, and a FontAwesome as the font-family.
+ *
+ *     .my-icon {
+ *         @include font-icon('\0041' 16px FontAwesome);
+ *     }
+ *
+ * Use the letter "A" as the icon with a 16px font-size, default font-family, and rotate
+ * the icon 90 degrees clockwise.
+ *
+ *     .my-icon {
+ *         @include font-icon('\0041' 16px 90);
+ *     }
+ *
+ * Use the letter "A" as the icon, inherit the font-size, use FontAwesome as the font-family,
+ * and rotate the icon 90 degrees clockwise.
+ *
+ *     .my-icon {
+ *         @include font-icon('\0041' FontAwesome 90);
+ *     }
+ *
+ * Use the letter "A" as the icon with a font-size of 16px, use FontAwesome as the font-family,
+ * and rotate the icon 90 degrees clockwise.
+ *
+ *     .my-icon {
+ *         @include font-icon('\0041' 16px FontAwesome 90);
+ *     }
+ *
+ * NOTE: Only numeric values with units are accepted for font-size, e.g. `16px` or `2em`.
+ *
+ * @param {boolean/string} [$pseudo=true]
+ * By default this mixin generates a "before" pseudo element ruleset to contain the icon.
+ * Set this parameter to "after" to use an after pseudo element.  Set to `false` if you are
+ * invoking the font-icon() mixin from within a pseudo element ruleset.
+ *
+ * @param {number} [$line-height=1]
+ * Optional line-height to apply to the icon.
+ * Pass `null` to avoid setting line-height and inherit from parent element.
+ *
+ * @param {color} $color
+ * Optional color for the glyph.
+ *
+ * @param {boolean} [$style-pseudo=false]
+ * By default, font and color styles are placed on the icon-containing element, not the
+ * pseudo.  This allows for easier customization of font-icons by users since many
+ * font-icon generators also place the font styles on the containing element.
+ * Set this to `true` to set font and color styles on the pseudo element instead.  This
+ * is necessary in cases where the icon-containing element is not exclusively dedicated
+ * to containing the icon and may contain other text as well, for example, grid headers
+ * and grid grouping headers.
+ * 
+ * @member Global_CSS
+ * @private
+ */
+@mixin font-icon(
+    $glyph,
+    $pseudo: true,
+    $line-height: 1,
+    $color: null,
+    $style-pseudo: false
+) {
+    $args: parseFontIconArgs($glyph);
+
+    $char: nth($args, 1);
+    $font-size: nth($args, 2);
+    $font-family: nth($args, 3);
+    @if $font-family == null {
+        $font-family: $font-icon-font-family;
+    }
+    $angle: nth($args, 4);
+    $rotation: null;
+    $rotation-origin: 50% 50%;
+    $ie-rotation: null;
+
+    @if $angle != null {
+        $rotation: rotate(#{$angle}deg);
+        @if $angle == 90 {
+            $ie-rotation: 1;
+        } @else if $angle == 180 {
+            $ie-rotation: 2;
+        } @else if $angle == 270 {
+            $ie-rotation: 3;
+        }
+    }
+
+    @if $char != null {
+        @if $pseudo == false {
+            @include font-icon-pseudo-content($char, $rotation, $rotation-origin);
+            @include font-icon-style($font-size, $line-height, $font-family, $color);
+        } @else {
+            @if not $style-pseudo {
+                @include font-icon-style($font-size, $line-height, $font-family, $color);
+            }
+
+            @if $pseudo == before or $pseudo == true {
+                &:before {
+                    @include font-icon-pseudo-content($char, $rotation, $rotation-origin);
+                    @if $style-pseudo {
+                        @include font-icon-style($font-size, $line-height, $font-family, $color);
+                    }
+                }
+            } @else if $pseudo == after {
+                &:after {
+                    @include font-icon-pseudo-content($char, $rotation, $rotation-origin);
+                    @if $style-pseudo {
+                        @include font-icon-style($font-size, $line-height, $font-family, $color);
+                    }
+                }
+            }
+        }
+
+        @if ($rotation != null) and $pseudo and $include-ie {
+            // IE8 does not support filters on pseudo elements, so we have to rotate the
+            // containing element instead of the pseudo element
+            .#{$prefix}ie8 & {
+                -ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=#{$ie-rotation})";
+            }
+        }
+    }
+}
+
+@mixin font-icon-style($font-size, $line-height, $font-family, $color) {
+    @if $font-size != null {
+        @if $line-height != null {
+            font: #{$font-size}/#{$line-height} $font-family;
+        } @else {
+            // use separate properties for font-size and font-family so that line-height
+            // will be preserved from prior font declarations
+            font-size: $font-size;
+            font-family: $font-family;
+        }
+    } @else {
+        font-family: $font-family;
+        line-height: $line-height;
+    }
+    color: $color;
+}
+
+@mixin font-icon-pseudo-content($char, $rotation, $rotation-origin) {
+    content: $char;
+
+    @if $rotation != null {
+        display: inline-block;
+        -webkit-transform: $rotation;
+        -webkit-transform-origin: $rotation-origin;
+        -moz-transform: $rotation;
+        -moz-transform-origin: $rotation-origin;
+        -ms-transform: $rotation;
+        -ms-transform-origin: $rotation-origin;
+        transform: $rotation;
+        transform-origin: $rotation-origin;
+    }
+}

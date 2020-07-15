@@ -1,0 +1,9 @@
+/** @class Ext.grid.feature.Grouping */
+//
+
+$grid-grouped-title-color: dynamic(#666);
+$grid-grouped-header-border-width: dynamic(0 0 1px 0);
+$grid-grouped-header-border-color: dynamic($grid-header-border-color);
+$grid-grouped-header-padding: dynamic(7px 4px);
+$grid-grouped-icon-padding: dynamic(0 0 0 17px);
+$grid-grouped-header-background-color: dynamic($neutral-light-color);

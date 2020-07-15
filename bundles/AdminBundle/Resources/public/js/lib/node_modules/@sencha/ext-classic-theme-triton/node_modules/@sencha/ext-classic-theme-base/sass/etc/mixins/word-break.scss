@@ -1,0 +1,17 @@
+@mixin ext-word-break() {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -ms-word-break: break-all;
+
+    /* This is dangerous in WebKit as it breaks things at random points */
+    word-break: break-all;
+
+    /* Use this non-standard instead */
+    word-break: break-word;
+
+    /* Adds a hyphen where the word breaks, if supported (No Blink) */
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
+}

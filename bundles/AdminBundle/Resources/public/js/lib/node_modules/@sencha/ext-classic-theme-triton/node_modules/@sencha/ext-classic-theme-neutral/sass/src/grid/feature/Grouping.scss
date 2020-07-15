@@ -1,0 +1,65 @@
+.#{$prefix}grid-group-hd {
+    border-width: $grid-grouped-header-border-width;
+    border-style: $grid-grouped-header-border-style;
+    border-color: $grid-grouped-header-border-color;
+    padding: $grid-grouped-header-padding;
+    background: $grid-grouped-header-background-color;
+    cursor: $grid-grouped-header-cursor;
+}
+
+.#{$prefix}grid-group-hd-not-collapsible {
+    cursor: default; 
+}
+
+.#{$prefix}grid-group-hd-collapsible .#{$prefix}grid-group-title {
+    padding: $grid-grouped-icon-padding;
+
+    @if $enable-font-icons and ($grid-grouped-title-collapse-glyph != null) {
+        @include font-icon(
+            $glyph: $grid-grouped-title-collapse-glyph,
+            $color: $grid-grouped-title-glyph-color,
+            $line-height: null,
+            $style-pseudo: true
+        );
+    } @else {
+        background: theme-background-image('grid/group-collapse') no-repeat left center;
+    }
+}
+
+@if $include-rtl {
+    .#{$prefix}rtl.#{$prefix}grid-view .#{$prefix}grid-group-hd-collapsible .#{$prefix}grid-group-title {
+        background-position: right center;
+        padding: rtl($grid-grouped-icon-padding);
+    }
+}
+
+.#{$prefix}grid-group-title {
+    color: $grid-grouped-title-color;
+    font: $grid-grouped-title-font;
+}
+
+.#{$prefix}grid-group-hd-collapsed .#{$prefix}grid-group-title {
+    @if $enable-font-icons and ($grid-grouped-title-expand-glyph != null) {
+        @include font-icon(
+            $glyph: $grid-grouped-title-expand-glyph,
+            $color: $grid-grouped-title-glyph-color,
+            $line-height: null,
+            $style-pseudo: true
+        );
+    } @else {
+        background-image: theme-background-image('grid/group-expand');
+    }
+}
+
+.#{$prefix}group-by-icon {
+    @if $enable-font-icons and ($grid-grouped-menu-group-by-glyph != null) {
+        @include font-icon($grid-grouped-menu-group-by-glyph, $line-height: $menu-item-icon-size);
+        @if $grid-header-menu-glyph-color != $menu-glyph-color {
+            color: $grid-header-menu-glyph-color;
+        }
+    } @else {
+        background-image: theme-background-image('grid/group-by');
+    }
+}
+
+

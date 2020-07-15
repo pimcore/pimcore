@@ -1,0 +1,248 @@
+.#{$prefix}resizable-handle {
+    position: absolute;
+    z-index: 100;
+    font-size: 1px;
+    line-height: $resizer-handle-size;
+    @include opacity(0);
+    background-color: $resizer-handle-background-color;
+
+    // Rounded corners if the  theme specifies them
+    @if not is-null($resizer-handle-border-radius) and $resizer-handle-border-radius != 0 {
+        @include border-radius($resizer-handle-border-radius);
+    }
+    @if $enable-font-icons {
+        color: $resizer-handle-glyph-color;
+        text-align: center;
+    }
+}
+
+// Collapsed Components cannot be resized
+.#{$prefix}collapsed .#{$prefix}resizable-handle {
+    display: none;
+}
+
+.#{$prefix}resizable-handle-southeast {
+    cursor: se-resize;
+    @if $enable-font-icons {
+        &:before {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+    }
+}
+.#{$prefix}resizable-handle-northwest {
+    cursor: nw-resize;
+    @if $enable-font-icons {
+        &:before {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
+}
+.#{$prefix}resizable-handle-northeast {
+    cursor: ne-resize;
+    @if $enable-font-icons {
+        &:before {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+    }
+}
+.#{$prefix}resizable-handle-southwest {
+    cursor: sw-resize;
+    @if $enable-font-icons {
+        &:before {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+    }
+}
+
+@if $enable-font-icons {
+    .#{$prefix}resizable-handle-east,
+    .#{$prefix}resizable-handle-west {
+        &:before {
+            display: block;
+            position: absolute;
+            top: 50%;
+            margin-top: -0.5em;
+            width: 100%;
+        }
+    }
+}
+
+.#{$prefix}resizable-handle-east {
+    cursor: e-resize;
+    width: $resizer-handle-size;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.#{$prefix}resizable-handle-south {
+    cursor: s-resize;
+    height: $resizer-handle-size;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.#{$prefix}resizable-handle-west {
+    cursor: w-resize;
+    width: $resizer-handle-size;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.#{$prefix}resizable-handle-north {
+    cursor: n-resize;
+    height: $resizer-handle-size;
+    left: 0;
+    right: 0;
+    top: 0;
+}
+
+.#{$prefix}resizable-handle-southeast {
+    width: $resizer-handle-size;
+    height: $resizer-handle-size;
+    right: 0;
+    bottom: 0;
+    z-index: 101;
+}
+
+.#{$prefix}resizable-handle-northwest {
+    width: $resizer-handle-size;
+    height: $resizer-handle-size;
+    left: 0;
+    top: 0;
+    z-index: 101;
+}
+
+.#{$prefix}resizable-handle-northeast {
+    width: $resizer-handle-size;
+    height: $resizer-handle-size;
+    right: 0;
+    top: 0;
+    z-index: 101;
+}
+
+.#{$prefix}resizable-handle-southwest {
+    width: $resizer-handle-size;
+    height: $resizer-handle-size;
+    left: 0;
+    bottom: 0;
+    z-index: 101;
+}
+
+// Make handles bigger on tablets.
+// Do not support this on phones!
+.#{$prefix}tablet {
+    .#{$prefix}resizable-handle-north,
+    .#{$prefix}resizable-handle-south {
+        height: $resizer-handle-size * 2;
+    }
+    .#{$prefix}resizable-handle-east,
+    .#{$prefix}resizable-handle-west {
+        width: $resizer-handle-size * 2;
+    }
+    .#{$prefix}resizable-handle-northwest,
+    .#{$prefix}resizable-handle-northeast,
+    .#{$prefix}resizable-handle-southwest,
+    .#{$prefix}resizable-handle-southeast {
+        width: $resizer-handle-size * 2;
+        height: $resizer-handle-size * 2;
+    }
+}
+
+@if $include-ext-window-window {
+    .#{$prefix}window .#{$prefix}window-handle {
+        @include opacity(0);
+    }
+
+    .#{$prefix}window-collapsed .#{$prefix}window-handle {
+        display: none;
+    }
+}
+
+.#{$prefix}resizable-proxy {
+    border: 1px dashed #3b5a82;
+    position: absolute;
+    overflow: hidden;
+    z-index: 50000;
+}
+
+// If the pinned config is set, then handles are visible
+.#{$prefix}resizable-handle-over,
+.#{$prefix}resizable-pinned .#{$prefix}resizable-handle {
+    @include opacity(1);
+}
+
+// themes provide position-x based upon image width
+.#{$prefix}resizable-handle-east-over,
+.#{$prefix}resizable-handle-west-over,
+.#{$prefix}resizable-pinned > .#{$prefix}resizable-handle-east,
+.#{$prefix}resizable-pinned > .#{$prefix}resizable-handle-west {
+    @if $enable-font-icons and ($resizer-handle-vertical-glyph != null) {
+        @include font-icon($resizer-handle-vertical-glyph);
+    } @else {
+        background-image: theme-background-image('sizer/e-handle');
+    }
+}
+
+// themes provide position-y based upon image height
+.#{$prefix}resizable-handle-south-over,
+.#{$prefix}resizable-handle-north-over,
+.#{$prefix}resizable-pinned > .#{$prefix}resizable-handle-south,
+.#{$prefix}resizable-pinned > .#{$prefix}resizable-handle-north {
+    @if $enable-font-icons and ($resizer-handle-horizontal-glyph != null) {
+        @include font-icon($resizer-handle-horizontal-glyph, $line-height: $resizer-handle-size);
+    } @else {
+        background-image: theme-background-image('sizer/s-handle');
+    }
+}
+
+// themes provide position x y based upon image size
+.#{$prefix}resizable-handle-southeast-over,
+.#{$prefix}resizable-pinned > .#{$prefix}resizable-handle-southeast {
+    @if $enable-font-icons and ($resizer-handle-southeast-glyph != null) {
+        @include font-icon($resizer-handle-southeast-glyph);
+    } @else {
+        background-position: top left;
+        background-image: theme-background-image('sizer/se-handle');
+    }
+}
+
+.#{$prefix}resizable-handle-northwest-over,
+.#{$prefix}resizable-pinned > .#{$prefix}resizable-handle-northwest {
+    @if $enable-font-icons and ($resizer-handle-northwest-glyph != null) {
+        @include font-icon($resizer-handle-northwest-glyph);
+    } @else {
+        background-position: bottom right;
+        background-image: theme-background-image('sizer/nw-handle');
+    }
+}
+
+.#{$prefix}resizable-handle-northeast-over,
+.#{$prefix}resizable-pinned > .#{$prefix}resizable-handle-northeast {
+    @if $enable-font-icons and ($resizer-handle-northeast-glyph != null) {
+        @include font-icon($resizer-handle-northeast-glyph);
+    } @else {
+        background-position: bottom left;
+        background-image: theme-background-image('sizer/ne-handle');
+    }
+}
+
+.#{$prefix}resizable-handle-southwest-over,
+.#{$prefix}resizable-pinned > .#{$prefix}resizable-handle-southwest {
+    @if $enable-font-icons and ($resizer-handle-southwest-glyph != null) {
+        @include font-icon($resizer-handle-southwest-glyph);
+    } @else {
+        background-position: top right;
+        background-image: theme-background-image('sizer/sw-handle');
+    }
+}

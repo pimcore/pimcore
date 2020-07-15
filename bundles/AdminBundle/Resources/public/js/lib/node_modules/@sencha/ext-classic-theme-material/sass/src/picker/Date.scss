@@ -1,0 +1,26 @@
+.#{$prefix}datepicker {
+    //min-width: $datepicker-min-width;
+    box-shadow: $datepicker-box-shadow;
+
+    .#{$prefix}datepicker-disabled {
+        // include the element name to increase the specificity over the :hover rule
+        .#{$prefix}datepicker-date {
+            border-radius: $datepicker-selected-border-radius;
+        }
+    }
+
+    .#{$prefix}datepicker-selected {
+        .#{$prefix}datepicker-date{
+            border-radius: $datepicker-selected-border-radius;
+            padding: 0 15px 0 13px;
+        }
+    }
+
+    .#{$prefix}datepicker-prevday {
+        visibility: hidden;
+    }
+
+    .#{$prefix}datepicker-column-header {
+        color: $datepicker-column-header-color;
+    }
+}

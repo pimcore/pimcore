@@ -1,0 +1,129 @@
+/**
+ * @class Ext.picker.Color
+ */
+
+/**
+ * @var {color}
+ * The background-color of Color Pickers
+ */
+$colorpicker-background-color: dynamic(#fff);
+
+/**
+ * @var {color}
+ * The border-color of Color Pickers
+ */
+$colorpicker-border-color: dynamic($colorpicker-background-color);
+
+/**
+ * @var {number}
+ * The border-width of Color Pickers
+ */
+$colorpicker-border-width: dynamic(0);
+
+/**
+ * @var {string}
+ * The border-style of Color Pickers
+ */
+$colorpicker-border-style: dynamic(solid);
+
+/**
+ * @var {number}
+ * The number of columns to display in the Color Picker
+ */
+$colorpicker-columns: dynamic(8);
+
+/**
+ * @var {number}
+ * The number of rows to display in the Color Picker
+ */
+$colorpicker-rows: dynamic(5);
+
+/**
+ * @var {number}
+ * The height of each Color Picker item
+ */
+$colorpicker-item-height: dynamic(18px);
+
+/**
+ * @var {number}
+ * The width of each Color Picker item
+ */
+$colorpicker-item-width: dynamic(18px);
+
+/**
+ * @var {number}
+ * The padding of each Color Picker item
+ */
+$colorpicker-item-padding: dynamic(2px);
+
+/**
+ * @var {string}
+ * The cursor to display when the mouse is over a Color Picker item
+ */
+$colorpicker-item-cursor: dynamic(pointer);
+
+/**
+ * @var {color}
+ * The border-color of Color Picker items
+ */
+$colorpicker-item-border-color: dynamic($colorpicker-background-color);
+
+/**
+ * @var {number}
+ * The border-width of Color Picker items
+ */
+$colorpicker-item-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * The border-style of Color Picker items
+ */
+$colorpicker-item-border-style: dynamic(solid);
+
+/**
+ * @var {color}
+ * The border-color of hovered Color Picker items
+ */
+$colorpicker-item-border-color-over: dynamic($neutral-color);
+
+/**
+ * @var {color}
+ * The background-color of Color Picker items
+ */
+$colorpicker-item-background-color: dynamic($colorpicker-background-color);
+
+/**
+ * @var {color}
+ * The background-color of hovered Color Picker items
+ */
+$colorpicker-item-background-color-over: dynamic(#fff);
+
+/**
+ * @var {color}
+ * The border-color of the selected Color Picker item
+ */
+$colorpicker-item-border-color-selected: dynamic($colorpicker-item-border-color-over);
+
+/**
+ * @var {color}
+ * The background-color of the selected Color Picker item
+ */
+$colorpicker-item-background-color-selected: dynamic($colorpicker-item-background-color-over);
+
+/**
+ * @var {color}
+ * The inner border-color of Color Picker items
+ */
+$colorpicker-item-inner-border-color: dynamic($neutral-color);
+
+/**
+ * @var {number}
+ * The inner border-width of Color Picker items
+ */
+$colorpicker-item-inner-border-width: dynamic(1px);
+
+/**
+ * @var {string}
+ * The inner border-style of Color Picker items
+ */
+$colorpicker-item-inner-border-style: dynamic(solid);

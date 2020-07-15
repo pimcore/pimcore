@@ -94,7 +94,7 @@ class IndexController extends AdminController implements EventedControllerInterf
         if (is_file($manifest)) {
             $manifestContents = file_get_contents($manifest);
             $manifestContents = json_decode($manifestContents, true);
-//            //TODO EXTJS7 only load stuff which is needed
+
             $loadOrder = $manifestContents["loadOrder"];
 
             $count = 0;

@@ -1,0 +1,154 @@
+.#{$prefix}tbar-page-number {
+    width: 30px;
+}
+
+.#{$prefix}btn-icon-el {
+    // The extra "x-btn-icon-el" class is added to the selector to increase specificity
+    // of these rules over the default button rules since there is no way to control the
+    // ordering of this file relative to Button.scss without creating an explicit dependency
+
+    &.#{$prefix}tbar-page-first {
+        @if $enable-font-icons and ($grid-paging-toolbar-first-glyph != null) {
+            @include font-icon($grid-paging-toolbar-first-glyph, $line-height: $button-small-icon-size);
+            color: $grid-paging-toolbar-glyph-color;
+        } @else {
+            background-image: theme-background-image('grid/page-first');
+        }
+    }
+
+    &.#{$prefix}tbar-page-prev {
+        @if $enable-font-icons and ($grid-paging-toolbar-prev-glyph != null) {
+            @include font-icon($grid-paging-toolbar-prev-glyph, $line-height: $button-small-icon-size);
+            color: $grid-paging-toolbar-glyph-color;
+        } @else {
+            background-image: theme-background-image('grid/page-prev');
+        }
+    }
+
+    &.#{$prefix}tbar-page-next {
+        @if $enable-font-icons and ($grid-paging-toolbar-next-glyph != null) {
+            @include font-icon($grid-paging-toolbar-next-glyph, $line-height: $button-small-icon-size);
+            color: $grid-paging-toolbar-glyph-color;
+        } @else {
+            background-image: theme-background-image('grid/page-next');
+        }
+    }
+
+    &.#{$prefix}tbar-page-last {
+        @if $enable-font-icons and ($grid-paging-toolbar-last-glyph != null) {
+            @include font-icon($grid-paging-toolbar-last-glyph, $line-height: $button-small-icon-size);
+            color: $grid-paging-toolbar-glyph-color;
+        } @else {
+            background-image: theme-background-image('grid/page-last');
+        }
+    }
+
+    &.#{$prefix}tbar-loading {
+        @if $enable-font-icons and ($grid-paging-toolbar-refresh-glyph != null) {
+            @include font-icon($grid-paging-toolbar-refresh-glyph, $line-height: $button-small-icon-size);
+            color: $grid-paging-toolbar-glyph-color;
+        } @else {
+            background-image: theme-background-image('grid/refresh');
+        }
+    }
+}
+
+@if $grid-paging-toolbar-include-disabled-icons {
+    .#{$prefix}item-disabled {
+        @if (not $enable-font-icons) or ($grid-paging-toolbar-first-glyph == null) {
+            .#{$prefix}tbar-page-first {
+                background-image: theme-background-image('grid/page-first-disabled');
+            }
+        }
+
+        @if (not $enable-font-icons) or ($grid-paging-toolbar-prev-glyph == null) {
+            .#{$prefix}tbar-page-prev {
+                background-image: theme-background-image('grid/page-prev-disabled');
+            }
+        }
+
+        @if (not $enable-font-icons) or ($grid-paging-toolbar-next-glyph == null) {
+            .#{$prefix}tbar-page-next {
+                background-image: theme-background-image('grid/page-next-disabled');
+            }
+        }
+
+        @if (not $enable-font-icons) or ($grid-paging-toolbar-last-glyph == null) {
+            .#{$prefix}tbar-page-last {
+                background-image: theme-background-image('grid/page-last-disabled');
+            }
+        }
+
+        @if (not $enable-font-icons) or ($grid-paging-toolbar-refresh-glyph == null) {
+            .#{$prefix}tbar-loading {
+                background-image: theme-background-image('grid/refresh-disabled');
+            }
+        }
+    }
+}
+
+@if $include-rtl {
+    .#{$prefix}rtl {
+        &.#{$prefix}tbar-page-first {
+            @if $enable-font-icons and ($grid-paging-toolbar-last-glyph != null) {
+                @include font-icon($grid-paging-toolbar-last-glyph, $line-height: $button-small-icon-size);
+            } @else {
+                background-image: theme-background-image('grid/page-last');
+            }
+        }
+
+        &.#{$prefix}tbar-page-prev {
+            @if $enable-font-icons and ($grid-paging-toolbar-next-glyph != null) {
+                @include font-icon($grid-paging-toolbar-next-glyph, $line-height: $button-small-icon-size);
+            } @else {
+                background-image: theme-background-image('grid/page-next');
+            }
+        }
+
+        &.#{$prefix}tbar-page-next {
+            @if $enable-font-icons and ($grid-paging-toolbar-prev-glyph != null) {
+                @include font-icon($grid-paging-toolbar-prev-glyph, $line-height: $button-small-icon-size);
+            } @else {
+                background-image: theme-background-image('grid/page-prev');
+            }
+        }
+
+        &.#{$prefix}tbar-page-last {
+            @if $enable-font-icons and ($grid-paging-toolbar-first-glyph != null) {
+                @include font-icon($grid-paging-toolbar-first-glyph, $line-height: $button-small-icon-size);
+            } @else {
+                background-image: theme-background-image('grid/page-first');
+            }
+        }
+    }
+
+    @if $grid-paging-toolbar-include-disabled-icons {
+        .#{$prefix}item-disabled {
+            .#{$prefix}rtl {
+                @if (not $enable-font-icons) or ($grid-paging-toolbar-last-glyph == null) {
+                    &.#{$prefix}tbar-page-first {
+                        background-image: theme-background-image('grid/page-last-disabled');
+                    }
+                }
+
+                @if (not $enable-font-icons) or ($grid-paging-toolbar-next-glyph == null) {
+                    &.#{$prefix}tbar-page-prev {
+                        background-image: theme-background-image('grid/page-next-disabled');
+                    }
+                }
+
+                @if (not $enable-font-icons) or ($grid-paging-toolbar-prev-glyph == null) {
+                    &.#{$prefix}tbar-page-next {
+                        background-image: theme-background-image('grid/page-prev-disabled');
+                    }
+                }
+
+                @if (not $enable-font-icons) or ($grid-paging-toolbar-first-glyph == null) {
+                    &.#{$prefix}tbar-page-last {
+                        background-image: theme-background-image('grid/page-first-disabled');
+                    }
+                }
+            }
+        }
+    }
+}

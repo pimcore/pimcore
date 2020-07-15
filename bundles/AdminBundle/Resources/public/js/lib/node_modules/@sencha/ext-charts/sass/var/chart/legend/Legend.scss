@@ -1,0 +1,9 @@
+$chart-legend-border-color: dynamic(#ccc);
+$chart-legend-border: dynamic(1px solid $chart-legend-border-color);
+$chart-legend-background-color: dynamic(#fff);
+$chart-legend-z-index: dynamic(10);
+$chart-legend-padding: dynamic(10px);
+$chart-legend-item-border: dynamic(1px solid $chart-legend-border-color);
+$chart-legend-item-background: dynamic(rgba(#fff, 0));
+$chart-legend-item-color: dynamic(#333);
+$chart-legend-marker-size: dynamic(.8em);

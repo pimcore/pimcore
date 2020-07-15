@@ -1,0 +1,105 @@
+.#{$prefix}legend {
+    background: $chart-legend-background-color;
+    outline: none; // hide dotted focus outline in Firefox
+}
+
+.#{$prefix}legend-horizontal {
+
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    .#{$prefix}legend-item {
+        display: inline-block;
+
+        border-right: $chart-legend-item-border;
+        border-top: $chart-legend-item-border;
+        border-bottom: $chart-legend-item-border;
+
+        &:first-child {
+            border-left: $chart-legend-item-border;
+            border-bottom-left-radius: $chart-legend-border-radius;
+            border-top-left-radius: $chart-legend-border-radius;
+        }
+
+        &:last-child {
+            border-bottom-right-radius: $chart-legend-border-radius;
+            border-top-right-radius: $chart-legend-border-radius;
+        }
+    }
+    &.#{$prefix}rtl .#{$prefix}legend-item {
+        &:first-child {
+            border-right: $chart-legend-item-border;
+            border-bottom-right-radius: $chart-legend-border-radius;
+            border-top-right-radius: $chart-legend-border-radius;
+        }
+        &:last-child {
+            border-right: none;
+            border-bottom-left-radius: $chart-legend-border-radius;
+            border-top-left-radius: $chart-legend-border-radius;
+        }
+    }
+}
+
+.#{$prefix}legend-vertical {
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    .#{$prefix}legend-item {
+        border-left: $chart-legend-item-border;
+        border-right: $chart-legend-item-border;
+        border-bottom: $chart-legend-item-border;
+
+        &:first-child {
+            border-top: $chart-legend-item-border;
+            border-top-left-radius: $chart-legend-border-radius;
+            border-top-right-radius: $chart-legend-border-radius;
+        }
+
+        &:last-child {
+            border-bottom-left-radius: $chart-legend-border-radius;
+            border-bottom-right-radius: $chart-legend-border-radius;
+        }
+    }
+}
+
+.#{$prefix}legend-item-inactive {
+    @include opacity(.3);
+}
+
+.#{$prefix}legend-item {
+    padding: .8em .6em .8em $chart-legend-marker-size + 1em;
+    color: $chart-legend-item-color;
+    background: $chart-legend-item-background;
+    max-width: 16em;
+    min-width: 0;
+    font-size: $font-size;
+    font-family: $font-family;
+    line-height: $font-size;
+    font-weight: $font-weight;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+}
+
+.#{$prefix}rtl > * > .#{$prefix}legend-item {
+    padding: .8em $chart-legend-marker-size + 1em .8em 1em;
+}
+
+.#{$prefix}legend-item-marker {
+    position: absolute;
+    width: $chart-legend-marker-size;
+    height: $chart-legend-marker-size;
+    @if ($chart-legend-border-radius) {
+        @include border-radius($chart-legend-marker-size / 2);
+    }
+    @include box-shadow(rgba(#fff, .3) 0 1px 0, rgba(#000, .4) 0 1px 0 inset);
+    left: .7em;
+    top: .85em;
+}
+
+.#{$prefix}rtl > * > * > .#{$prefix}legend-item-marker {
+    right: .7em;
+}

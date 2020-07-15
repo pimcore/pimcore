@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="theme-triton" default=".help">
+    <!--
+    The build-impl.xml file imported here contains the guts of the build process. It is
+    a great idea to read that file to understand how the process works, but it is best to
+    limit your changes to this file.
+    -->
+    <script language="javascript">
+        <![CDATA[
+            var dir = project.getProperty("basedir"),
+                cmdDir = project.getProperty("cmd.dir"),
+                cmdLoaded = project.getReference("senchaloader");
+            
+            if (!cmdLoaded) {
+                function echo(message, file) {
+                    var e = project.createTask("echo");
+                    e.setMessage(message);
+                    if (file) {
+                        e.setFile(file);
+                    }
+                    e.execute();
+                };
+
+                if (!cmdDir) {
+                    
+                    function exec(args) {
+                        var process = java.lang.Runtime.getRuntime().exec(args),
+                            input = new java.io.BufferedReader(new java.io.InputStreamReader(process.getInputStream())),
+                            headerFound = false,
+                            line;
+
+                        while (line = input.readLine()) {
+                            line = line + '';
+                            java.lang.System.out.println(line);
+                            if (line.indexOf("Sencha Cmd") > -1) {
+                                headerFound = true;
+                            }
+                            else if (headerFound && !cmdDir) {
+                                cmdDir = line;
+                                project.setProperty("cmd.dir", cmdDir);
+                            }
+                        }
+                        process.waitFor();
+                        return !!cmdDir;
+                    }
+                    
+                    if (!exec(["sencha", "which"])) {
+                        var tmpFile = "tmp.sh";
+                        echo("source ~/.bash_profile; sencha " + whichArgs.join(" "), tmpFile);
+                        exec(["/bin/sh", tmpFile]);
+                        new java.io.File(tmpFile)['delete'](); 
+                    }
+                }
+            }
+            
+            if (cmdDir && !project.getTargets().containsKey("init-cmd")) {
+                var importTask = project.createTask("import");
+                importTask.setOwningTarget(self.getOwningTarget());
+                importTask.setLocation(self.getLocation());
+                importTask.setFile(cmdDir + "/ant/build/package/build-impl.xml");
+                importTask.execute();
+            }
+        ]]>
+    </script>
+
+    <!--
+    The following targets can be provided to inject logic before and/or after key steps
+    of the build process:
+
+        The "init-local" target is used to initialize properties that may be personalized
+        for the local machine.
+
+            <target name="-before-init-local"/>
+            <target name="-after-init-local"/>
+
+        The "clean" target is used to clean build output from the build.dir.
+
+            <target name="-before-clean"/>
+            <target name="-after-clean"/>
+
+        The general "init" target is used to initialize all other properties, including
+        those provided by Sencha Cmd.
+
+            <target name="-before-init"/>
+            <target name="-after-init"/>
+        
+        The "build" target performs the call to Sencha Cmd to build the application.
+
+            <target name="-before-build"/>
+            <target name="-after-build"/>
+    -->
+
+</project>

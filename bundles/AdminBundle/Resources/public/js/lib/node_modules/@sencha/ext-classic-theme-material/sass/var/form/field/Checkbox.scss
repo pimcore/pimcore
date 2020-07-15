@@ -1,0 +1,12 @@
+$form-checkbox-glyph-focus-color: dynamic($base-color);
+
+$form-checkbox-glyph-color: dynamic($highlight-color);
+$form-checkbox-label-color: dynamic($color);
+$form-checkbox-label-font-size: dynamic(12px);
+$form-checkbox-label-font-weight: dynamic(400);
+$form-checkbox-label-line-height: dynamic(16px);
+$form-checkbox-label-spacing: dynamic(12px);
+$form-checkbox-size: dynamic(18px);
+$form-checkbox-glyph: dynamic('check_box_outline_blank');
+$form-checkbox-checked-glyph: dynamic('check_box');
+$form-checkbox-glyph-checked-color: dynamic($base-color);

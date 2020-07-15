@@ -1,0 +1,7 @@
+.#{$prefix}chart-preview > img {
+    width: 100% !important;
+    height: auto !important;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+}

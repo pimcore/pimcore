@@ -1,0 +1,51 @@
+/** @class Ext.button.Button */
+//
+
+$button-icon-spacing: dynamic(5px);
+$button-small-font-size: dynamic(12px);
+$button-small-font-weight: dynamic($font-weight-bold);
+$button-small-padding: dynamic(3px);
+$button-small-text-padding: dynamic(5px);
+$button-medium-font-size: dynamic(14px);
+$button-medium-line-height: dynamic(18px);
+$button-medium-font-weight: dynamic($font-weight-bold);
+$button-medium-padding: dynamic(3px);
+$button-medium-text-padding: dynamic(8px);
+$button-large-font-size: dynamic(16px);
+$button-large-line-height: dynamic(20px);
+$button-large-font-weight: dynamic($font-weight-bold);
+$button-large-padding: dynamic(3px);
+$button-large-text-padding: dynamic(10px);
+
+$button-default-color: dynamic(#fff);
+$button-default-base-color: dynamic($base-highlight-color);
+$button-default-border-color: dynamic($base-dark-color);
+$button-default-inner-border-width-focus: dynamic(1px);
+
+$button-include-ui-menu-arrows: dynamic(true);
+$button-include-ui-split-arrows: dynamic(true);
+
+$button-small-arrow-width: dynamic(16px);
+$button-small-arrow-height: dynamic(13px);
+$button-medium-arrow-width: dynamic(24px);
+$button-medium-arrow-height: dynamic(18px);
+$button-large-arrow-width: dynamic(28px);
+$button-large-arrow-height: dynamic(20px);
+
+$button-small-split-width: dynamic(20px);
+$button-small-split-height: dynamic(15px);
+$button-medium-split-width: dynamic(28px);
+$button-medium-split-height: dynamic(24px);
+$button-large-split-width: dynamic(35px);
+$button-large-split-height: dynamic(29px);
+
+$button-toolbar-color: dynamic(#666);
+$button-toolbar-background-color: dynamic($neutral-light-color);
+$button-toolbar-border-color: dynamic($neutral-color);
+$button-toolbar-inner-border-width-focus: dynamic(1px);
+$button-toolbar-inner-border-color-focus: dynamic(mix($button-toolbar-background-color, $base-color, 20%));
+$button-toolbar-inner-border-color-focus-over: dynamic($button-toolbar-inner-border-color-focus);
+$button-toolbar-inner-border-color-focus-pressed: dynamic($button-toolbar-inner-border-color-focus);
+
+$button-toolbar-plain-border-color: dynamic(transparent);
+$button-toolbar-plain-background-color: dynamic(transparent);

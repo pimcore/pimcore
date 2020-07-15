@@ -1,0 +1,6 @@
+@mixin ext-hyphens($value: auto) {
+    -ms-hyphens: $value;
+    -moz-hyphens: $value;
+    -webkit-hyphens: $value;
+    hyphens: $value;
+}
