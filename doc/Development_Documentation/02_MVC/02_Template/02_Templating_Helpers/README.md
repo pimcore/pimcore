@@ -301,7 +301,7 @@ index.html.twig
 IndexController.php (whatever controller / method is designated for /some/other/document in the document tree)
 ```php
 public function otherDocumentAction(Request $request) {
-    $this->view->parameterToPass = $request->get('parameterToPass');
+    return ['parameterToPass' => $request->get('parameterToPass')];
 }
 ```
 
