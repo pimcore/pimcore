@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Linfo;
-use MatthiasMullie\Minify\JS;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
@@ -27,7 +26,6 @@ use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Google;
-use Pimcore\Logger;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
 use Pimcore\Model\Element\Service;
@@ -37,18 +35,13 @@ use Pimcore\Tool;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Session;
 use Pimcore\Version;
-use Symfony\Component\Asset\Packages;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\RouterInterface;
 
 class IndexController extends AdminController implements EventedControllerInterface
 {

@@ -1336,62 +1336,73 @@ class MiscController extends AdminController
      *
      * @throws \Exception
      */
-    public function extjsEditmodeScriptsMinfiedAction(Request $request, Packages $packages, RouterInterface $router) {
+    public function extjsEditmodeScriptsMinifiedAction(Request $request, Packages $packages, RouterInterface $router) {
         $scriptContents = "";
 
-        $fosUrl = $packages->getUrl('bundles/fosjsrouting/js/router.js');
 
-        $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $fosUrl) . "\n\n\n";
+        $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/minified_extjs.js';
 
+        if (!is_file($scriptPath)) {
 
-        $bundleManager = $this->get('pimcore.extension.bundle_manager');
-        $pluginJsPaths = $bundleManager->getEditmodeJsPaths();
+            $fosUrl = $packages->getUrl('bundles/fosjsrouting/js/router.js');
 
-        $kernel = $this->container->get('http_kernel');
-        $subRequest = Request::create('/js/routing?callback=fos.Router.setData');
-        $response = $kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
-        $fosResponse = $response->getContent();
-
-        $scriptContents .= $fosResponse;
+            $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $fosUrl) . "\n\n\n";
 
 
-        $manifest = PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/pimcoreEditmode.json";
-        if (is_file($manifest)) {
-            $manifestContents = file_get_contents($manifest);
-            $manifestContents = json_decode($manifestContents, true);
+            $bundleManager = $this->get('pimcore.extension.bundle_manager');
+            $pluginJsPaths = $bundleManager->getEditmodeJsPaths();
 
-            $loadOrder = $manifestContents["loadOrder"];
+            $kernel = $this->container->get('http_kernel');
+            $subRequest = Request::create('/js/routing?callback=fos.Router.setData');
+            $response = $kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
+            $fosResponse = $response->getContent();
 
-            $count = 0;
-
-            // build dependencies
+            $scriptContents .= $fosResponse;
 
 
-            $main = $loadOrder[count($loadOrder) - 1];
-            $list = [
-                $main["idx"] => $main
-            ];
+            $manifest = PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/pimcoreEditmode.json";
+            if (is_file($manifest)) {
+                $manifestContents = file_get_contents($manifest);
+                $manifestContents = json_decode($manifestContents, true);
 
-            $this->populate($loadOrder, $list, $main);
-            ksort($list);
+                $loadOrder = $manifestContents["loadOrder"];
 
-            // replace this with loadOrder if we want to load the entire list
-            foreach ($loadOrder as $loadOrderIdx => $loadOrderItem) {
-                $count++;
-                $relativePath = $loadOrderItem["path"];
-                $fullPath = PIMCORE_WEB_ROOT . $relativePath;
-                if (is_file($fullPath)) {
-                    $scriptContents .= "\r\n\r\n//" . $fullPath . "\r\n";
-                    $includeContents = file_get_contents($fullPath);
+                $count = 0;
 
-                    //TODO minify
-                    $minify = new JS($includeContents);
-//                    $includeContents = $minify->minify();
+                // build dependencies
 
-                    $scriptContents .= $includeContents;
 
+                $main = $loadOrder[count($loadOrder) - 1];
+                $list = [
+                    $main["idx"] => $main
+                ];
+
+                $this->populate($loadOrder, $list, $main);
+                ksort($list);
+
+                // replace this with loadOrder if we want to load the entire list
+                foreach ($loadOrder as $loadOrderIdx => $loadOrderItem) {
+                    $count++;
+                    $relativePath = $loadOrderItem["path"];
+                    $fullPath = PIMCORE_WEB_ROOT . $relativePath;
+                    if (is_file($fullPath)) {
+                        $scriptContents .= "\r\n\r\n// " . $fullPath . "\r\n";
+                        $includeContents = file_get_contents($fullPath);
+
+                        $minify = new JS($includeContents);
+                        $includeContents = $minify->minify();
+
+                        $scriptContents .= ";\r\n";
+                        $scriptContents .= $includeContents;
+
+                    }
                 }
+
             }
+            file_put_contents($scriptPath, $scriptContents);
+
+        } else {
+            $scriptContents = file_get_contents($scriptPath);
         }
 
 
