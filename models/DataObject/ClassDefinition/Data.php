@@ -56,6 +56,7 @@ abstract class Data
     public $index;
 
     /**
+     * @deprecated
      * @var string
      */
     public $phpdocType;
@@ -418,6 +419,7 @@ abstract class Data
     }
 
     /**
+     * @deprecated
      * @return string
      */
     public function getPhpdocType()
