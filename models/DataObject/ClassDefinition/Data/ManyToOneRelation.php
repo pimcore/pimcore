@@ -718,7 +718,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @return bool
      */
-    public function isEqual($value1, $value2)
+    public function isEqual($value1, $value2): bool
     {
         $value1 = $value1 ? $value1->getType() . $value1->getId() : null;
         $value2 = $value2 ? $value2->getType() . $value2->getId() : null;

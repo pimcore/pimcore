@@ -1693,6 +1693,9 @@ abstract class Data
      */
     public function isEqual($oldValue, $newValue)
     {
+        @trigger_error('Calling '.__METHOD__.' is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+            'Implement `' . DataObject\ClassDefinition\Data\EqualComparisonInterface::class . '` instead.', E_USER_DEPRECATED);
+
         return false;
     }
 

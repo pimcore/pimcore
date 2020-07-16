@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Tool\Serialize;
 
-class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -358,5 +358,37 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
         }
 
         return null;
+    }
+
+    /**
+     *
+     * @param DataObject\Data\Geopoint[]|null $oldValue
+     * @param DataObject\Data\Geopoint[]|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!is_array($oldValue) || !is_array($newValue)
+            || count($oldValue) != count($newValue)) {
+            return false;
+        }
+
+        $fd = new Geopoint();
+
+        $oldValue = array_values($oldValue);
+        $newValue = array_values($newValue);
+
+        foreach ($oldValue as $p => $point) {
+            if (!$fd->isEqual($oldValue[$p], $newValue[$p])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
