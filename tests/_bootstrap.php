@@ -18,8 +18,8 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
 \Pimcore\Bootstrap::bootstrap();
 
 Autoloader::addNamespace('Pimcore\Model\DataObject', __DIR__ . '/_output/var/classes/DataObject');
-Autoloader::addNamespace('Pimcore\Tests', __DIR__ );
-Autoloader::addNamespace('Pimcore\Tests', __DIR__ . '/_support' );
+Autoloader::addNamespace('Pimcore\Tests', __DIR__);
+Autoloader::addNamespace('Pimcore\Tests', __DIR__ . '/_support');
 
 if (!defined('TESTS_PATH')) {
     define('TESTS_PATH', __DIR__);

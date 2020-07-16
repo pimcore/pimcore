@@ -497,14 +497,16 @@ abstract class AbstractRelations extends Data implements
     /**
      * @inheritDoc
      */
-    public function getParameterTypeDeclaration(): ?string {
+    public function getParameterTypeDeclaration(): ?string
+    {
         return '?array';
     }
 
     /**
      * @inheritDoc
      */
-    public function getReturnTypeDeclaration(): ?string {
+    public function getReturnTypeDeclaration(): ?string
+    {
         return 'array';
     }
 }

@@ -1196,7 +1196,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     /**
      * @inheritDoc
      */
-    public function getParameterTypeDeclaration(): ?string {
+    public function getParameterTypeDeclaration(): ?string
+    {
         return '?array';
     }
 

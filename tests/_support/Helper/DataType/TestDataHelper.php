@@ -2,7 +2,6 @@
 
 namespace Pimcore\Tests\Helper\DataType;
 
-use Carbon\Carbon;
 use Codeception\Module;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;

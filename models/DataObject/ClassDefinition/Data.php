@@ -57,6 +57,7 @@ abstract class Data
 
     /**
      * @deprecated implement getPhpdocInputType() and getPhpdocReturnType() instead
+     *
      * @var string
      */
     public $phpdocType;
@@ -420,6 +421,7 @@ abstract class Data
 
     /**
      * @deprecated use getPhpdocInputType() and getPhpdocReturnType() instead
+     *
      * @return string
      */
     public function getPhpdocType()
@@ -659,40 +661,48 @@ abstract class Data
     /**
      * @return string|null
      */
-    public function getParameterTypeDeclaration(): ?string {
+    public function getParameterTypeDeclaration(): ?string
+    {
         if ($this->getPhpdocInputType()) {
             return '?' . $this->getPhpdocInputType();
         }
+
         return null;
     }
 
     /**
      * @return string|null
      */
-    public function getReturnTypeDeclaration(): ?string {
+    public function getReturnTypeDeclaration(): ?string
+    {
         if ($this->getPhpdocReturnType()) {
             return '?' . $this->getPhpdocReturnType();
         }
+
         return null;
     }
 
     /**
      * @return string|null
      */
-    public function getPhpdocInputType(): ?string {
+    public function getPhpdocInputType(): ?string
+    {
         if ($this->getPhpdocType()) {
             return $this->getPhpdocType();
         }
+
         return null;
     }
 
     /**
      * @return string|null
      */
-    public function getPhpdocReturnType(): ?string {
+    public function getPhpdocReturnType(): ?string
+    {
         if ($this->getPhpdocType()) {
             return $this->getPhpdocType();
         }
+
         return null;
     }
 
@@ -707,10 +717,8 @@ abstract class Data
     {
         $key = $this->getName();
 
-
         if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
-
         } else {
             $typeDeclaration = '';
         }
@@ -721,7 +729,7 @@ abstract class Data
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " ()" . $typeDeclaration . " {\n";
+        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
 
         $code .= $this->getPreGetValueHookCode($key);
 
@@ -770,7 +778,6 @@ abstract class Data
         }
 
         $key = $this->getName();
-
 
         if ($class->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
             $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
@@ -851,7 +858,7 @@ abstract class Data
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " ()" . $typeDeclaration . " {\n";
+        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
 
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
@@ -970,7 +977,7 @@ abstract class Data
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
         $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " ()" . $typeDeclaration . " {\n";
+        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
 
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$container = $this;' . "\n";
@@ -1063,7 +1070,6 @@ abstract class Data
 
         if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
-
         } else {
             $typeDeclaration = '';
         }
@@ -1115,7 +1121,6 @@ abstract class Data
 
         if ($class->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
             $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
-
         } else {
             $typeDeclaration = '';
         }

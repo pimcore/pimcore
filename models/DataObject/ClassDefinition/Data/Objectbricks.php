@@ -700,7 +700,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
         if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
-
         } else {
             $typeDeclaration = '';
         }
@@ -713,7 +712,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         $code .= '/**' . "\n";
         $code .= '* @return ' . $classname . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " ()" . $typeDeclaration .  " {\n";
+        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration .  " {\n";
 
         $code .= "\t" . '$data = $this->' . $key . ";\n";
         $code .= "\t" . 'if(!$data) { ' . "\n";

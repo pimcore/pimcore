@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 interface TypeDeclarationSupportInterface
 {
-
     /**
      * @return string|null
      */
@@ -39,5 +38,4 @@ interface TypeDeclarationSupportInterface
      * @return string|null
      */
     public function getPhpdocReturnType(): ?string;
-
 }

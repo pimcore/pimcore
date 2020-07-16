@@ -280,7 +280,7 @@ trait FieldcollectionObjectbrickDefinitionTrait
     public function setGenerateTypeDeclarations($generateTypeDeclarations)
     {
         $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
+
         return $this;
     }
-
 }
