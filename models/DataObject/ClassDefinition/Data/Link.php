@@ -24,7 +24,7 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
+class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -111,7 +111,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         if ($link instanceof DataObject\Data\Link) {
             if (isset($params['owner'])) {
-                $link->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                $link->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
             }
 
             try {

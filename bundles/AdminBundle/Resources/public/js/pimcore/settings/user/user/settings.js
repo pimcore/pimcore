@@ -150,31 +150,57 @@ pimcore.settings.user.user.settings = Class.create({
             }]
         });
 
-        var getPreviewImageHTML = function () {
-            var date = new Date();
-            var image = Routing.generate('pimcore_admin_user_getimage', {id: this.currentUser.id, '_dc': date.getTime()});
-
-            return '<img src="'+image+'" style="width: 46px" />'
-        }.bind(this);
-
         generalItems.push({
             xtype: "fieldset",
             title: t("image"),
-            items: [{
-                xtype: "container",
-                id: "pimcore_user_image_" + this.currentUser.id,
-                html: getPreviewImageHTML()
-            }, {
-                xtype: "button",
-                text: t("upload"),
-                handler: function () {
-                    pimcore.helpers.uploadDialog(Routing.generate('pimcore_admin_user_uploadimage', {id: this.currentUser.id}), null,
-                        function () {
-                            var cont = Ext.getCmp("pimcore_user_image_" + this.currentUser.id);
-                            cont.update(getPreviewImageHTML());
-                        }.bind(this));
-                }.bind(this)
-            }]
+            items: [
+                {
+                    xtype: "container",
+                    items: [{
+                        xtype: "image",
+                        id: "pimcore_user_image_" + this.currentUser.id,
+                        src: Routing.generate(
+                            'pimcore_admin_user_getimage',
+                            {id: this.currentUser.id, '_dc': Ext.Date.now()}
+                        ),
+                        width: 45,
+                        height: 45
+                    }],
+                },
+                {
+                    xtype: "button",
+                    text: t("upload"),
+                    handler: function () {
+                        pimcore.helpers.uploadDialog(
+                            Routing.generate('pimcore_admin_user_uploadimage', {id: this.currentUser.id}),
+                            null,
+                            function () {
+                                Ext.getCmp("pimcore_user_delete_image_" + this.currentUser.id).setVisible(true);
+                                pimcore.helpers.reloadUserImage(this.currentUser.id);
+                                this.currentUser.hasImage = true;
+                            }.bind(this)
+                        );
+                    }.bind(this)
+                },
+                {
+                    xtype: "button",
+                    iconCls: "pimcore_icon_cancel",
+                    tooltip: t("remove"),
+                    id: "pimcore_user_delete_image_" + this.currentUser.id,
+                    hidden: !this.currentUser.hasImage,
+                    handler: function () {
+                        Ext.Ajax.request({
+                            url: Routing.generate('pimcore_admin_user_deleteimage', {id: this.currentUser.id}),
+                            method: 'DELETE',
+                            success: function() {
+                                Ext.getCmp("pimcore_user_delete_image_" + this.currentUser.id).setVisible(false);
+                                pimcore.helpers.reloadUserImage(this.currentUser.id);
+                                this.currentUser.hasImage = false;
+                            }.bind(this)
+                        });
+                    }.bind(this)
+                }
+            ]
         });
 
         generalItems.push({

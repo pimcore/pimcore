@@ -8,6 +8,7 @@
     "allowInherit": false,
     "allowVariants": false,
     "showVariants": false,
+    "generateTypeDeclarations": true,
     "implementsInterfaces": null,
     "layoutDefinitions": {
         "fieldtype": "panel",

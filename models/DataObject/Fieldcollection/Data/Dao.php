@@ -62,6 +62,11 @@ class Dao extends Model\Dao\AbstractDao
                     ],
                 ]);
 
+                if ($fd instanceof Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations
+                            && ($params['saveRelationalData']['saveFieldcollectionRelations'] ?? false)) {
+                    $params['forceSave'] = true;
+                }
+
                 $fd->save(
                     $this->model, $params
                 );
@@ -75,6 +80,7 @@ class Dao extends Model\Dao\AbstractDao
                 } else {
                     $data[$fd->getName()] = $fd->getDataForResource($this->model->$getter(), $object, [
                         'owner' => $this->model, //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao
+                        'fieldname' => $fd->getName(),
                     ]);
                 }
             }

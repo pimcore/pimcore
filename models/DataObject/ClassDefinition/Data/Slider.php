@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Slider extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
+class Slider extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -403,7 +403,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         if (abs($oldValue - $newValue) < 0.00001) {
             return true;
         }
-        
+
         return false;
     }
 }

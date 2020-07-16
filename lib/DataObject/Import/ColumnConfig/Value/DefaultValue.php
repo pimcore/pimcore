@@ -44,9 +44,9 @@ class DefaultValue extends AbstractConfigElement implements ValueInterface
     {
         parent::__construct($config, $context);
 
-        $this->mode = $config->mode;
-        $this->doNotOverwrite = (bool)$config->doNotOverwrite;
-        $this->skipEmptyValues = (bool)$config->skipEmptyValues;
+        $this->mode = $config->mode ?? 'default';
+        $this->doNotOverwrite = $config->doNotOverwrite ?? false;
+        $this->skipEmptyValues = $config->skipEmptyValues ?? false;
     }
 
     public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])

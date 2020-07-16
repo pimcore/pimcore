@@ -453,8 +453,18 @@ You can access and print the internal query which is based on `\Pimcore\Db\ZendC
 $list = new Pimcore\Model\DataObject\News\Listing();
  
 // set onCreateQuery callback
-$list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder query) {
+$list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder $query) {
     // echo query
     echo $query;
 });
 ```
+
+### PHP Type Declarations
+
+> Experimental Feature
+
+If you want to add [type declarations as described here](https://github.com/pimcore/pimcore/issues/6387) on the generated PHP code for your classes,
+please enable this feature in the class definition.
+
+If you have custom data types please implement the `Pimcore\Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface` interface. 
+

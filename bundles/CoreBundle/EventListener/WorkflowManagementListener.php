@@ -82,6 +82,9 @@ class WorkflowManagementListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
+            DataObjectEvents::PRE_ADD => 'onElementPreAdd',
+            DocumentEvents::PRE_ADD => 'onElementPreAdd',
+            AssetEvents::PRE_ADD => 'onElementPreAdd',
 
             DataObjectEvents::POST_DELETE => 'onElementPostDelete',
             DocumentEvents::POST_DELETE => 'onElementPostDelete',
@@ -91,6 +94,29 @@ class WorkflowManagementListener implements EventSubscriberInterface
             AdminEvents::ASSET_GET_PRE_SEND_DATA => 'onAdminElementGetPreSendData',
             AdminEvents::DOCUMENT_GET_PRE_SEND_DATA => 'onAdminElementGetPreSendData',
         ];
+    }
+
+    /**
+     * Set initial place if defined on element create.
+     */
+    public function onElementPreAdd(ElementEventInterface $e): void
+    {
+        /** @var Asset|Document|ConcreteObject $element */
+        $element = $e->getElement();
+
+        foreach ($this->workflowManager->getAllWorkflows() as $workflowName) {
+            $workflow = $this->workflowManager->getWorkflowIfExists($element, $workflowName);
+            if (!$workflow) {
+                continue;
+            }
+
+            $hasInitialPlaceConfig = count($this->workflowManager->getInitialPlacesForWorkflow($workflow)) > 0;
+
+            // calling getMarking will ensure the initial place is set
+            if ($hasInitialPlaceConfig) {
+                $workflow->getMarking($element);
+            }
+        }
     }
 
     /**
@@ -141,6 +167,9 @@ class WorkflowManagementListener implements EventSubscriberInterface
 
             $data['workflowManagement']['hasWorkflowManagement'] = true;
             $data['workflowManagement']['workflows'] = $data['workflowManagement']['workflows'] ?? [];
+
+            // Fix: places stored as empty string ("") considered uninitialized prior to Symfony 4.4.8
+            $this->workflowManager->ensureInitialPlace($workflowName, $element);
 
             $allowedTransitions = $this->actionsButtonService->getAllowedTransitions($workflow, $element);
             $globalActions = $this->actionsButtonService->getGlobalActions($workflow, $element);

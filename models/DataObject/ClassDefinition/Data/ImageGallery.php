@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
+class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;

@@ -22,6 +22,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         this.id = id;
         this.name = name;
         this.elements = [];
+        this.brickTypeUsageCounter = [];
         this.options = this.parseOptions(options);
 
         this.initNamingStrategies();
@@ -49,6 +50,10 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         if(!this.options['controlsTrigger']) {
             this.options['controlsTrigger'] = 'hover';
+        }
+
+        for (var i=0; i<data.length; i++) {
+            this.brickTypeUsageCounter[data[i].type] = this.brickTypeUsageCounter[data[i].type]+1 || 1;
         }
 
         // type mapping
@@ -712,6 +717,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
     getTypeMenu: function (scope, element, insertPosition) {
         var menu = [];
         var groupMenu;
+        var limits = this.options["limits"] || {};
 
         if(typeof this.options.group != "undefined") {
             var groups = Object.keys(this.options.group);
@@ -726,7 +732,11 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
                     for (var i=0; i<this.options.types.length; i++) {
                         if(in_array(this.options.types[i].type,this.options.group[groups[g]])) {
-                            groupMenu.menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element, insertPosition));
+                            let type = this.options.types[i].type;
+                            if (typeof limits[type] == "undefined" ||
+                                typeof this.brickTypeUsageCounter[type] == "undefined" || this.brickTypeUsageCounter[type] < limits[type]) {
+                                    groupMenu.menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element, insertPosition));
+                            }
                         }
                     }
                     menu.push(groupMenu);
@@ -734,7 +744,11 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             }
         } else {
             for (var i=0; i<this.options.types.length; i++) {
-                menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element, insertPosition));
+                let type = this.options.types[i].type;
+                if (typeof limits[type] == "undefined" ||
+                    typeof this.brickTypeUsageCounter[type] == "undefined" || this.brickTypeUsageCounter[type] < limits[type]) {
+                    menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element, insertPosition));
+                }
             }
         }
 
@@ -751,7 +765,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         if(!insertPosition) {
             insertPosition = 'after';
         }
-        
+
         var addBLockFunction = "addBlock" + ucfirst(insertPosition);
 
         var tmpEntry = {
@@ -795,9 +809,20 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
     },
 
     addBlockAt: function (type, index) {
+        var limits = this.options["limits"] || {};
 
         if(typeof this.options["limit"] != "undefined" && this.elements.length >= this.options.limit) {
             Ext.MessageBox.alert(t("error"), t("limit_reached"));
+            return;
+        }
+
+        if(typeof limits[type] != "undefined" && this.brickTypeUsageCounter[type] >= limits[type]) {
+            let brickName = type;
+            let brickIndex = this.allowedTypes.indexOf(brickName);
+            if (brickIndex >= 0 && typeof this.options.types[brickIndex].name != "undefined") {
+                brickName = this.options.types[brickIndex].name;
+            }
+            Ext.MessageBox.alert(t("error"), t("brick_limit_reached", null ,{bricklimit: limits[type], brickname: brickName}));
             return;
         }
 

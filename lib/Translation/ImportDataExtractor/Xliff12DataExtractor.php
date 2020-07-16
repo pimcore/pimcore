@@ -74,6 +74,11 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
 
         foreach ($file->body->{'trans-unit'} as $transUnit) {
             list($type, $name) = explode(Xliff12Exporter::DELIMITER, $transUnit['id']);
+
+            if (!isset($transUnit->target)) {
+                continue;
+            }
+
             $content = $transUnit->target->asXml();
             $content = $this->xliffEscaper->unescapeXliff($content);
 

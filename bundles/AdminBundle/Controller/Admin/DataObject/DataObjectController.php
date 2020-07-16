@@ -2180,13 +2180,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      */
     protected function getLatestVersion(DataObject\Concrete $object)
     {
-        $modificationDate = $object->getModificationDate();
         $latestVersion = $object->getLatestVersion();
         if ($latestVersion) {
             $latestObj = $latestVersion->loadData();
             if ($latestObj instanceof DataObject\Concrete) {
                 $object = $latestObj;
-                $object->setModificationDate($modificationDate); // set de modification-date from published version to compare it in js-frontend
             }
         }
 
