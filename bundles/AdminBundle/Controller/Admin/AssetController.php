@@ -1666,7 +1666,9 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $conditionFilters = [];
         $list = new Asset\Listing();
-        $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%')) ." AND type != 'folder'";
+        $quotedWildcardPath = $list->quote(str_replace('//', '/', $folder->getRealFullPath() . '/') . '%');
+        $quotedWildcardPath = str_replace("_", '\\_', $quotedWildcardPath);
+        $conditionFilters[] = 'path LIKE ' . $quotedWildcardPath ." AND type != 'folder'";
 
         if (!$this->getAdminUser()->isAdmin()) {
             $userIds = $this->getAdminUser()->getRoles();

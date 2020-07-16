@@ -692,7 +692,9 @@ class GridHelperService
         if (isset($allParams['only_direct_children']) && $allParams['only_direct_children'] == 'true') {
             $conditionFilters[] = 'parentId = ' . $folder->getId();
         } else {
-            $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() === '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
+            $quotedWildcardPath = $list->quote(str_replace('//', '/', $folder->getRealFullPath() . '/') . '%');
+            $quotedWildcardPath = str_replace("_", '\\_', $quotedWildcardPath);
+            $conditionFilters[] = 'path LIKE ' . $quotedWildcardPath;
         }
 
         if (isset($allParams['only_unreferenced']) && $allParams['only_unreferenced'] === 'true') {
