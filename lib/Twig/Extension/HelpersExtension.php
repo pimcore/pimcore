@@ -18,6 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension;
 
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 use Twig\TwigTest;
 
 /**
@@ -25,6 +27,29 @@ use Twig\TwigTest;
  */
 class HelpersExtension extends AbstractExtension
 {
+    public function getFilters()
+    {
+        return [
+            new TwigFilter('basename', [$this, 'basenameFilter']),
+        ];
+    }
+
+    public function getFunctions()
+    {
+        return [
+            new TwigFunction('callStatic', function ($class, $method, $args = array()) {
+                if (class_exists($class) && method_exists($class, $method)) {
+                    return call_user_func_array(array($class, $method), $args);
+                }
+
+                return null;
+            }),
+            new TwigFunction('fileExists', function ($file) {
+                return file_exists($file);
+            }),
+        ];
+    }
+
     public function getTests()
     {
         return [
@@ -32,5 +57,16 @@ class HelpersExtension extends AbstractExtension
                 return is_object($object) && $object instanceof $class;
             }),
         ];
+    }
+
+    /**
+     * @param string $value
+     * @param string $suffix
+     *
+     * @return string
+     */
+    public function basenameFilter($value, $suffix = '')
+    {
+        return basename($value, $suffix);
     }
 }

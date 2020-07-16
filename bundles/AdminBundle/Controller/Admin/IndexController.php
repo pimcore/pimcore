@@ -20,8 +20,9 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Config;
-use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\TemplateControllerInterface;
+use Pimcore\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
@@ -43,8 +44,9 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-class IndexController extends AdminController implements EventedControllerInterface
+class IndexController extends AdminController implements EventedControllerInterface, TemplateControllerInterface
 {
+    use TemplateControllerTrait;
     /**
      * @var EventDispatcherInterface
      */
@@ -60,7 +62,6 @@ class IndexController extends AdminController implements EventedControllerInterf
 
     /**
      * @Route("/", name="pimcore_admin_index", methods={"GET"})
-     * @TemplatePhp()
      *
      * @param Request $request
      * @param SiteConfigProvider $siteConfigProvider
@@ -283,6 +284,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             'document_tree_paging_limit' => $config['documents']['tree_paging_limit'],
             'object_tree_paging_limit' => $config['objects']['tree_paging_limit'],
             'maxmind_geoip_installed' => (bool) $this->getParameter('pimcore.geoip.db_file'),
+            'hostname' => htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8'),
         ]);
 
         $dashboardHelper = new \Pimcore\Helper\Dashboard($user);
@@ -448,6 +450,8 @@ class IndexController extends AdminController implements EventedControllerInterf
 
     public function onKernelController(FilterControllerEvent $event)
     {
+        // enable view auto-rendering
+        $this->setViewAutoRender($event->getRequest(), true, 'twig');
     }
 
     public function onKernelResponse(FilterResponseEvent $event)

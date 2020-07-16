@@ -21,6 +21,8 @@ use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\TemplateControllerInterface;
+use Pimcore\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Event\Admin\Login\LostPasswordEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
@@ -39,8 +41,10 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class LoginController extends AdminController implements BruteforceProtectedControllerInterface, EventedControllerInterface
+class LoginController extends AdminController implements BruteforceProtectedControllerInterface, EventedControllerInterface, TemplateControllerInterface
 {
+    use TemplateControllerTrait;
+
     public function onKernelController(FilterControllerEvent $event)
     {
         // use browser language for login page if possible
@@ -55,6 +59,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         }
 
         $this->get('translator')->setLocale($locale);
+
+        // enable view auto-rendering
+        $this->setViewAutoRender($event->getRequest(), true, 'twig');
     }
 
     public function onKernelResponse(FilterResponseEvent $event)
@@ -66,7 +73,6 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      * @Route("/login", name="pimcore_admin_login")
      * @Route("/login/", name="pimcore_admin_login_fallback")
      *
-     * @TemplatePhp()
      */
     public function loginAction(Request $request, CsrfProtectionListener $csrfProtectionListener, Config $config)
     {
@@ -89,6 +95,8 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         if ($request->get('session_expired')) {
             $view->error = 'error_session_expired';
         }
+
+        $view->browserSupported = $this->detectBrowser();
 
         return $view;
     }
@@ -116,7 +124,6 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
     /**
      * @Route("/login/lostpassword", name="pimcore_admin_login_lostpassword")
-     * @TemplatePhp()
      */
     public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionListener $csrfProtectionListener, Config $config)
     {
@@ -184,7 +191,6 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
     /**
      * @Route("/login/deeplink", name="pimcore_admin_login_deeplink")
-     * @TemplatePhp()
      */
     public function deeplinkAction(Request $request)
     {
@@ -258,11 +264,27 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     }
 
     /**
-     * @Route("/login/2fa-verify", name="pimcore_admin_2fa-verify")
-     *
-     * @param Request $request
+     * @return bool
      */
-    public function twoFactorAuthenticationVerifyAction(Request $request)
+    public function detectBrowser()
     {
+        $supported      = false;
+        $browser        = new \Pimcore\Browser();
+        $browserVersion = (int)$browser->getVersion();
+
+        if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_FIREFOX && $browserVersion >= 52) {
+            $supported = true;
+        }
+        if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_CHROME && $browserVersion >= 52) { // Edge identifies currently as Chrome 52
+            $supported = true;
+        }
+        if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_SAFARI && $browserVersion >= 10) {
+            $supported = true;
+        }
+        if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion >= 42) {
+            $supported = true;
+        }
+
+        return $supported;
     }
 }

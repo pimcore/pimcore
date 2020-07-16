@@ -22,6 +22,8 @@ services:
 
     Pimcore\Twig\Extension\PimcoreObjectExtension: ~
 
+    Pimcore\Twig\Extension\PimcoreToolExtension: ~
+
     Pimcore\Twig\Extension\TemplatingHelperExtension:
         arguments:
             $phpEngine: '@templating.engine.php'
