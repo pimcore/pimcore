@@ -104,7 +104,7 @@ jobs:
       php: 7.2
       env:
         - SYMFONY_VERSION="^3.4"
-        - PIMCORE_TEST_SUITE=rest
+        - PIMCORE_TEST_SUITE=Rest
         - PIMCORE_TEST_ENV=http
         - DATABASE_SERVER="mysql-8.0"
 
@@ -114,7 +114,7 @@ jobs:
       php: 7.3
       env:
         - SYMFONY_VERSION="^3.4"
-        - PIMCORE_TEST_SUITE=rest
+        - PIMCORE_TEST_SUITE=Rest
         - PIMCORE_TEST_ENV=http
 
     # Test Stan - see https://github.com/phpstan/phpstan
