@@ -55,6 +55,11 @@ trait FieldcollectionObjectbrickDefinitionTrait
     public $layoutDefinitions;
 
     /**
+     * @var bool
+     */
+    public $generateTypeDeclarations = false;
+
+    /**
      * @var Data[]
      */
     protected $fieldDefinitions = [];
@@ -258,4 +263,24 @@ trait FieldcollectionObjectbrickDefinitionTrait
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function getGenerateTypeDeclarations()
+    {
+        return (bool) $this->generateTypeDeclarations;
+    }
+
+    /**
+     * @param bool $generateTypeDeclarations
+     *
+     * @return $this
+     */
+    public function setGenerateTypeDeclarations($generateTypeDeclarations)
+    {
+        $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
+        return $this;
+    }
+
 }

@@ -22,7 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface
 {
     use DataObject\Traits\DefaultValueTrait;
 

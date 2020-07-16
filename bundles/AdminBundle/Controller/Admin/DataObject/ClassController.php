@@ -706,6 +706,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $values = $this->decodeJson($request->get('values'));
                 $fcDef->setParentClass($values['parentClass']);
                 $fcDef->setImplementsInterfaces($values['implementsInterfaces']);
+                $fcDef->setGenerateTypeDeclarations($values['generateTypeDeclarations']);
             }
 
             if ($request->get('configuration')) {
@@ -1082,6 +1083,7 @@ class ClassController extends AdminController implements EventedControllerInterf
                 $brickDef->setParentClass($values['parentClass']);
                 $brickDef->setImplementsInterfaces($values['implementsInterfaces']);
                 $brickDef->setClassDefinitions($values['classDefinitions']);
+                $brickDef->setGenerateTypeDeclarations($values['generateTypeDeclarations']);
             }
 
             if ($request->get('configuration')) {

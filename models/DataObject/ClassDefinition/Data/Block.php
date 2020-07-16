@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Extension\ColumnType;
@@ -1191,6 +1191,21 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 }
             }
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getParameterTypeDeclaration(): ?string {
+        return '?array';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?array';
     }
 
     private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, $params = [])

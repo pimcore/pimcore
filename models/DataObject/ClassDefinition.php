@@ -164,6 +164,13 @@ class ClassDefinition extends Model\AbstractModel
      */
     public $compositeIndices = [];
 
+
+    /**
+     * @var bool
+     */
+    public $generateTypeDeclarations = false;
+
+
     /**
      * @var bool
      */
@@ -1423,4 +1430,24 @@ class ClassDefinition extends Model\AbstractModel
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function getGenerateTypeDeclarations()
+    {
+        return (bool) $this->generateTypeDeclarations;
+    }
+
+    /**
+     * @param bool $generateTypeDeclarations
+     *
+     * @return $this
+     */
+    public function setGenerateTypeDeclarations($generateTypeDeclarations)
+    {
+        $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
+        return $this;
+    }
+
 }

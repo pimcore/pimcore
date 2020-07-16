@@ -956,5 +956,6 @@
   "fieldlookup": "Field Lookup",
   "show_fieldlookup": "Show Field Lookup",
   "no_value_set": "no value set",
+  "generate_type_declarations" : "Generate Type Declarations",
   "brick_limit_reached": "Limit ({bricklimit}) reached for brick: {brickname}"
 }
