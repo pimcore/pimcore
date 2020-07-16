@@ -687,3 +687,26 @@ body > .x-mask {
 .x-btn-default-toolbar-small {
     border-color: #e4e4e4;
 }
+
+
+.x-form-cb-label-default {
+    color: #404040;
+    font-size: 13px;
+    font-weight: 300;
+    font-family: 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    // font: 400 12px/16px Roboto, sans-serif;
+}
+
+.x-grid-item {
+    color: #404040;
+    font: 300 13px/19px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    background-color: #fff;
+}
+
+.x-panel-header-title-default > .x-title-text-default:after {
+    visibility: hidden;
+}
+
+.x-window-header-title-default > .x-title-text-default:after {
+    visibility: hidden;
+}

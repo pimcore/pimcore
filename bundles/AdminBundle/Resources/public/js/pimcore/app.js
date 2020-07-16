@@ -82,7 +82,6 @@ function importScripts(scripts, callback) {
 
 
 Ext.onReady(function () {
-
     console.log("Ext core version is " + Ext.versions.core.version);
 
     var xhrActive = 0; // number of active xhr requests
@@ -94,6 +93,7 @@ Ext.onReady(function () {
 
     Ext.Loader.setPath('Ext.ux', '/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-ux/classic/src');
     Ext.Loader.setPath('Ext', '/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src');
+    Ext.Loader.setPath('Ext.chart', '/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-charts/src/chart');
 
     console.log("Ext.require...");
 
@@ -132,7 +132,18 @@ Ext.onReady(function () {
         'Ext.ux.TabCloseMenu',
         'Ext.ux.TabReorderer',
         'Ext.ux.grid.SubTable',
-        'Ext.window.Toast'
+        'Ext.window.Toast',
+
+        // charts
+        'Ext.chart.interactions.ItemHighlight',
+        'Ext.chart.axis.Numeric',
+        'Ext.chart.axis.Category',
+        'Ext.chart.series.Line',
+        'Ext.chart.PolarChart',
+        'Ext.chart.series.Pie',
+        'Ext.chart.theme.DefaultGradients',
+        'Ext.chart.interactions.Rotate',
+        'Ext.chart.series.Bar'
     ], function () {
         console.log("load pimcore core sripts ...");
 

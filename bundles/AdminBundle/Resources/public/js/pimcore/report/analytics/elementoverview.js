@@ -161,6 +161,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                         width: '100%',
                         height: 300,
                         store: this.sourceStore,
+                        theme: 'default-gradients',
                         flex: 1,
                         scrollable: false,
                         series: [{
@@ -187,7 +188,9 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                         }],
                         legend: {
                             docked: 'bottom',
-                            border: 0
+                            border: {
+                                type: 'line'
+                            }
                         }
                     }
                     ]
