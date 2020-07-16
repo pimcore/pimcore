@@ -639,7 +639,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd instanceof Model\DataObject\ClassDefinition\Data) {

@@ -683,7 +683,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         $oldData = [];
         $newData = [];

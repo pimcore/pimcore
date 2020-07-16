@@ -27,5 +27,5 @@ interface EqualComparisonInterface
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue);
+    public function isEqual($oldValue, $newValue): bool;
 }

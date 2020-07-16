@@ -463,7 +463,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         $oldValue = $oldValue instanceof Model\DataObject\Data\RgbaColor ? $oldValue->getHex(true, false) : null;
         $newValue = $newValue instanceof Model\DataObject\Data\RgbaColor ? $newValue->getHex(true, false) : null;

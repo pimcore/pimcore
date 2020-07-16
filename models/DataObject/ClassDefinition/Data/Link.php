@@ -547,7 +547,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         if ($oldValue === null && $newValue === null) {
             return true;

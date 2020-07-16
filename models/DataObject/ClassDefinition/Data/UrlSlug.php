@@ -457,7 +457,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         $oldData = [];
         $newData = [];

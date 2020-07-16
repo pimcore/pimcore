@@ -606,7 +606,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      *
      * @return bool
      */
-    public function isEqual($value1, $value2)
+    public function isEqual($value1, $value2): bool
     {
         return $this->isEqualArray($value1, $value2);
     }

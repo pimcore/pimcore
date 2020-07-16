@@ -25,7 +25,7 @@ trait SimpleComparisonTrait
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         return $oldValue == $newValue;
     }
@@ -36,7 +36,7 @@ trait SimpleComparisonTrait
      *
      * @return bool
      */
-    protected function isEqualArray($array1, $array2)
+    protected function isEqualArray($array1, $array2): bool
     {
         $array1 = array_filter(is_array($array1) ? $array1 : []);
         $array2 = array_filter(is_array($array2) ? $array2 : []);

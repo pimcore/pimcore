@@ -361,7 +361,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         $oldValue = $oldValue instanceof DataObject\Data\ExternalImage ? $oldValue->getUrl() : null;
         $newValue = $newValue instanceof DataObject\Data\ExternalImage ? $newValue->getUrl() : null;

@@ -469,7 +469,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         $oldValue = $oldValue instanceof DataObject\Data\Consent ? $oldValue->getConsent() : null;
         $newValue = $newValue instanceof DataObject\Data\Consent ? $newValue->getConsent() : null;

@@ -567,7 +567,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         return $oldValue === $newValue;
     }

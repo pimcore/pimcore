@@ -668,7 +668,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         $oldData = $oldValue instanceof DataObject\Data\StructuredTable ? $oldValue->getData() : [];
         $newData = $newValue instanceof DataObject\Data\StructuredTable ? $newValue->getData() : [];

@@ -347,7 +347,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @return bool
      */
-    public function isEqual($array1, $array2)
+    public function isEqual($array1, $array2): bool
     {
         $array1 = array_filter(is_array($array1) ? $array1 : []);
         $array2 = array_filter(is_array($array2) ? $array2 : []);

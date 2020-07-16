@@ -396,7 +396,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         $oldValue = (float) $oldValue;
         $newValue = (float) $newValue;

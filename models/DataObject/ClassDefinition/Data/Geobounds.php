@@ -371,7 +371,7 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         if ($oldValue === null && $newValue === null) {
             return true;

@@ -494,7 +494,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         $oldValue = $oldValue instanceof \DateTimeInterface ? $oldValue->format('Y-m-d') : null;
         $newValue = $newValue instanceof \DateTimeInterface ? $newValue->format('Y-m-d') : null;

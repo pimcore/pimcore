@@ -357,7 +357,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         return $oldValue === $newValue;
     }

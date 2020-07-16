@@ -670,7 +670,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         $oldValue = $oldValue instanceof DataObject\Data\ImageGallery ? $oldValue->getItems() : [];
         $newValue = $newValue instanceof DataObject\Data\ImageGallery ? $newValue->getItems() : [];

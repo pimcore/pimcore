@@ -529,7 +529,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         $oldValue = $oldValue instanceof Asset ? $oldValue->getId() : null;
         $newValue = $newValue instanceof Asset ? $newValue->getId() : null;

@@ -625,7 +625,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         return $oldValue === $newValue;
     }
