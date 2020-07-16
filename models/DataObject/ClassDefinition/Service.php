@@ -347,8 +347,9 @@ class Service
                     $default = null;
                 }
 
-                if ($colDefinition['Type'] == $type && strtolower($colDefinition['Null']) == strtolower($null)
-                    && $colDefinition['Default'] == $default) {
+                if (str_replace(' ', '', strtolower($colDefinition["Type"])) === str_replace(' ', '', strtolower($type)) && 
+                        strtolower($colDefinition["Null"]) == strtolower($null) &&
+                        $colDefinition["Default"] == $default) {
                     return true;
                 }
             }
