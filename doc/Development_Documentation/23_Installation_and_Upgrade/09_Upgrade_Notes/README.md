@@ -4,6 +4,8 @@
 - [Ecommerce][IndexService] Elastic Search worker does not use mockup cache anymore. Now mockup objects are build directly based on information in response of ES response (_source flag). Therefore `AbstractElasticSearch` Worker does not extend `AbstractMockupCacheWorker` anymore. 
 - Rules regarding default values in combination with inheritance enabled have been clarified. Read [this](../../05_Objects/01_Object_Classes/01_Data_Types/README.md) for details.
 - [Ecommerce] Deprecated FactFinder integration and will be removed in Pimcore 7.
+- Saving unpublished data objects via API will not throw Validation exceptions anymore (just like Admin UI). Please set `omitMandatoryCheck` explicitly to `false` to force mandatory checks.
+- `\Pimcore\DataObject\GridColumnConfig\Operator\ObjectBrickGetter` operator is deprecated and will be removed in 7.0.0
 
 ## 6.6.9
 - If you access `$this->view` in your controller before Symfony's `kernel.controller` event (e.g. with `onKernelController()` with higher priority than 3 or by overriding `Pimcore\Controller\setContainer()`), document routing may not work correctly. Please use `onKernelController()` with lower priority than 3 or `onKernelResponse()`.
