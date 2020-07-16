@@ -264,6 +264,9 @@ class AnalyticsController extends ReportsControllerBase implements EventedContro
             foreach ($result['columnHeaders'] as $index => $metric) {
                 if ($index) {
                     $dailyDataGrouped[$metric['name']][] = $row[$index];
+                    if (!isset($data[$metric['name']])) {
+                        $data[$metric['name']] = 0;
+                    }
                     $data[$metric['name']] += $row[$index];
                 }
             }
