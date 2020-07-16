@@ -713,7 +713,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         $code .= '/**' . "\n";
         $code .= '* @return ' . $classname . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " ()" . $typehint .  " {\n";
+        $code .= 'public function get' . ucfirst($key) . " ()" . $typeDeclaration .  " {\n";
 
         $code .= "\t" . '$data = $this->' . $key . ";\n";
         $code .= "\t" . 'if(!$data) { ' . "\n";
