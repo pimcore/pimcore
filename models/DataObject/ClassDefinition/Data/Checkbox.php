@@ -56,7 +56,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     /**
      * Type for the generated phpdoc. Do not use boolean here because boolean is an alias for bool and
-     * aliases don't work in type hints.
+     * aliases don't work in type declarations.
      *
      * @var string
      */
