@@ -111,7 +111,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param ViewModel|null $view
      * @param bool|null $editmode
      *
-     * @return mixed
+     * @return Tag
      */
     public static function factory($type, $name, $documentId, $config = null, $controller = null, $view = null, $editmode = null)
     {
