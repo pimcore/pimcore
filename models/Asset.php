@@ -1743,8 +1743,9 @@ class Asset extends Element\AbstractElement
             ];
 
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-            /** @var Data $instance */
+
             try {
+                /** @var Data $instance */
                 $instance = $loader->build($item['type']);
                 $transformedData = $instance->transformSetterData($data, $item);
                 $item["data"] = $transformedData;
@@ -2063,7 +2064,7 @@ class Asset extends Element\AbstractElement
      */
     public function resolveDependencies()
     {
-        $dependencies = parent::resolveDependencies(null, null, false, true);
+        $dependencies = parent::resolveDependencies();
 
         if ($this->hasMetaData) {
             $metaData = $this->getMetadata();

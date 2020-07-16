@@ -92,9 +92,8 @@ use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data; ?>
                                 if (is_array($metaData) && count($metaData) > 0) {
                                     foreach ($metaData as $data) {
                                         $preview = $data["data"];
-                                        /** @var Data $instance */
-
                                         try {
+                                            /** @var Data $instance */
                                             $instance = $loader->build($data['type']);
                                             $preview = $instance->getVersionPreview($preview, $data);
                                         } catch (\Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException $e) {

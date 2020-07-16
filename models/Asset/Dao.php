@@ -50,11 +50,11 @@ class Dao extends Model\Element\Dao
                 foreach ($metadataRaw as $md) {
 
                     $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-                    /** @var Data $instance */
 
                     $transformedData = $md["data"];
 
                     try {
+                        /** @var Data $instance */
                         $instance = $loader->build($md['type']);
                         $transformedData = $instance->getDataFromResource($md["data"], $md);
                     } catch (UnsupportedException $e) {
@@ -127,11 +127,11 @@ class Dao extends Model\Element\Dao
                 unset($metadataItem['config']);
 
                 $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-                /** @var Data $instance */
 
                 $dataForResource = $metadataItem['data'];
 
                 try {
+                    /** @var Data $instance */
                     $instance = $loader->build($metadataItem['type']);
                     $dataForResource = $instance->getDataForResource($metadataItem['data'], $metadataItem);
                 } catch (UnsupportedException $e) {
