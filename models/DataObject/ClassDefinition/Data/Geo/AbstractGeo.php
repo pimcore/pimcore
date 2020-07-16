@@ -19,7 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data\Geo;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
 
-abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data
+abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data implements Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface
 {
     /**
      * @var float

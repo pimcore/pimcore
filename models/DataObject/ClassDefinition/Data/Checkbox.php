@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface
 {
     use DataObject\Traits\DefaultValueTrait;
 
@@ -55,11 +55,12 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $columnType = 'tinyint(1)';
 
     /**
-     * Type for the generated phpdoc
+     * Type for the generated phpdoc. Do not use boolean here because boolean is an alias for bool and
+     * aliases don't work in type declarations.
      *
      * @var string
      */
-    public $phpdocType = 'boolean';
+    public $phpdocType = 'bool';
 
     /**
      * @return int|null

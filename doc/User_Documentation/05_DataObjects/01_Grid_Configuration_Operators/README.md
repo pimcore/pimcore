@@ -19,6 +19,7 @@ In the following example, the image (the result of getImage_1()) would be render
 
 ## Operator Overview
 
+* [Alias](./Operators/Alias.md) 
 * [Anonymizer](./Operators/Anonymizer.md) 
 * [AnyGetter](./Operators/AnyGetter.md)
 * [Arithmetic](./Operators/Arithmethic.md)

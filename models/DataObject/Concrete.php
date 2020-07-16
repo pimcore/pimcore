@@ -76,9 +76,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     protected $scheduledTasks = null;
 
     /**
-     * @var bool
+     * @var bool|null
      */
-    protected $omitMandatoryCheck = false;
+    protected $omitMandatoryCheck;
 
     /**
      * @var bool
@@ -509,6 +509,10 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public function getOmitMandatoryCheck()
     {
+        if ($this->omitMandatoryCheck === null) {
+            return !$this->isPublished();
+        }
+
         return $this->omitMandatoryCheck;
     }
 

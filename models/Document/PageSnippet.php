@@ -23,6 +23,7 @@ use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Tag\Loader\TagLoaderInterface;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
@@ -349,6 +350,7 @@ abstract class PageSnippet extends Model\Document
     {
         try {
             if ($type) {
+                /** @var TagLoaderInterface $loader */
                 $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
                 $element = $loader->build($type);
 

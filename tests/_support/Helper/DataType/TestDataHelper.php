@@ -411,7 +411,8 @@ class TestDataHelper extends Module
     public function fillDate(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
-        $date = new \DateTime();
+
+        $date = new \Carbon\Carbon();
         $date->setDate(2000, 12, 24);
 
         $object->$setter($date);
@@ -548,6 +549,31 @@ class TestDataHelper extends Module
      * @param int      $seed
      */
     public function assertCheckbox(Concrete $object, $field, $seed = 1)
+    {
+        $getter = 'get' . ucfirst($field);
+        $value = $object->$getter();
+        $expected = ($seed % 2) == true;
+
+        $this->assertEquals($expected, $value);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string   $field
+     * @param int      $seed
+     */
+    public function fillBooleanSelect(Concrete $object, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+        $object->$setter(($seed % 2) == true);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string   $field
+     * @param int      $seed
+     */
+    public function assertBooleanSelect(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
