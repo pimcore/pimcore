@@ -703,22 +703,36 @@ body > .x-mask {
     background-color: #fff;
 }
 
+/* watermark */
 .x-panel-header-title-default > .x-title-text-default:after {
-    /* watermark */
     visibility: hidden;
 }
 
+/* watermark */
 .x-window-header-title-default > .x-title-text-default:after {
-    /* watermark */
     visibility: hidden;
 }
 
+/* watermark */
 .x-panel-header-title-default-framed > .x-title-text-default-framed:after {
-    /* watermark */
     visibility: hidden;
 }
 
+/* watermark */
 .x-panel-header-title-light > .x-title-text-light:after {
-    /* watermark */
     visibility: hidden;
+}
+
+/* portlet */
+.x-panel-header-default-framed-top {
+    background-color: #3c3f41;
+}
+
+/* portlet */
+.x-panel-default-framed {
+    border-color: #3c3f41;
+}
+
+.x-btn-default-small {
+    background-color: #3c3f41 !important;
 }

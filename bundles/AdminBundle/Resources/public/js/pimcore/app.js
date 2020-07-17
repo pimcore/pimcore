@@ -144,7 +144,8 @@ Ext.onReady(function () {
         'Ext.chart.series.Pie',
         'Ext.chart.theme.DefaultGradients',
         'Ext.chart.interactions.Rotate',
-        'Ext.chart.series.Bar'
+        'Ext.chart.series.Bar',
+        'Ext.chart.interactions.PanZoom'
     ], function () {
         console.log("load pimcore core sripts ...");
 
