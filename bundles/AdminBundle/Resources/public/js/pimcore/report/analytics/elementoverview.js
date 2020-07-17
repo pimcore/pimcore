@@ -164,8 +164,10 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                         theme: 'default-gradients',
                         flex: 1,
                         scrollable: false,
+                        interactions: ['rotate'],
                         series: [{
                             type: 'pie',
+                            xField: 'pageviews',
                             angleField: 'pageviews',
                             label: {
                                 field: 'source',
@@ -185,12 +187,10 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                                     tooltip.setHtml(storeItem.get('source') + ' ' + views + ' (' + percent + '%)');
                                 }
                             }
-                        }],
+                        }]
+                            ,
                         legend: {
-                            docked: 'bottom',
-                            border: {
-                                type: 'line'
-                            }
+                            docked: 'bottom'
                         }
                     }
                     ]

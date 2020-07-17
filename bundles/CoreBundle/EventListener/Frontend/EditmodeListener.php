@@ -217,7 +217,6 @@ class EditmodeListener implements EventSubscriberInterface
             }
 
             if ($skipCheck || ($headElement && $bodyElement && $htmlElement)) {
-                //TODO EXTJS7 only add if condition is satisfied
                 // $startupJavascript = '/bundles/pimcoreadmin/js/pimcore/document/edit/startup.js';
 
                 $headHtml = $this->buildHeadHtml($document, $user->getLanguage());
@@ -292,10 +291,6 @@ class EditmodeListener implements EventSubscriberInterface
      */
     protected function getEditmodeLibraries()
     {
-        $disableMinifyJs = \Pimcore::disableMinifyJs();
-
-        //TODO EXTJS7 documents
-
         return [
             '/bundles/pimcoreadmin/js/pimcore/common.js',
             '/bundles/pimcoreadmin/js/lib/class.js',

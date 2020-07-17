@@ -445,6 +445,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
                 }]
             });
 
+            //TODO EXTJS7 already verified, this is still needed :-(
             //this is needed to display correct data in legend when no label is defined
             //label cannot be defined, because there is a bug when reloading chartstore with another amount of data entries
             var series = chart.getSeries()[0];
