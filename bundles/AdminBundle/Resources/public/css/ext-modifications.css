@@ -646,6 +646,7 @@ body > .x-mask {
 
 
 /** ExtJS7 changes starting from here */
+/* base color is #5fa2dd */
 .x-window-header-default {
     border-color: #3c3f41;
     background-color: #404040;
@@ -741,4 +742,8 @@ body > .x-mask {
 
 .x-window-default {
     border-color: #3c3f41;
+}
+
+.x-keyboard-mode .x-tab-focus.x-tab-default {
+    outline: none;
 }
