@@ -694,7 +694,7 @@ body > .x-mask {
     font-size: 13px;
     font-weight: 300;
     font-family: 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
-    // font: 400 12px/16px Roboto, sans-serif;
+    /* font: 400 12px/16px Roboto, sans-serif; */
 }
 
 .x-grid-item {
@@ -704,9 +704,21 @@ body > .x-mask {
 }
 
 .x-panel-header-title-default > .x-title-text-default:after {
+    /* watermark */
     visibility: hidden;
 }
 
 .x-window-header-title-default > .x-title-text-default:after {
+    /* watermark */
+    visibility: hidden;
+}
+
+.x-panel-header-title-default-framed > .x-title-text-default-framed:after {
+    /* watermark */
+    visibility: hidden;
+}
+
+.x-panel-header-title-light > .x-title-text-light:after {
+    /* watermark */
     visibility: hidden;
 }

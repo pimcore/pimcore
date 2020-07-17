@@ -901,7 +901,7 @@
 @font-face {
     font-family: 'ext-watermark';
     src: url(../../desktop/resources/ext/ext-watermark/fonts/ext-watermark.eot?n6lnws);
-    src: url(../../desktop/resources/ext/ext-watermark/fonts/ext-watermark.eot?#iefixn6lnws) format('embedded-opentype'), url(../../desktop/resources/ext/ext-watermark/fonts/ext-watermark.woff?n6lnws) format('woff'), url(../../desktop/resources/ext/ext-watermark/fonts/ext-watermark.ttf?n6lnws) format('truetype'), url(../../desktop/resources/ext/ext-watermark/fonts/ext-watermark.svg?n6lnws#ext-watermark) format('svg');
+    src: url(../../desktop/resources/ext/ext-watermark/fonts/ext-watermark.eot?#iefixn6lnws) format('embedded-opentype'), url(/bundles/pimcoreadmin/js/lib/desktop/resources/ext/ext-watermark/fonts/ext-watermark.woff?n6lnws) format('woff'), url(../../desktop/resources/ext/ext-watermark/fonts/ext-watermark.ttf?n6lnws) format('truetype'), url(../../desktop/resources/ext/ext-watermark/fonts/ext-watermark.svg?n6lnws#ext-watermark) format('svg');
     font-weight: normal;
     font-style: normal;
 }

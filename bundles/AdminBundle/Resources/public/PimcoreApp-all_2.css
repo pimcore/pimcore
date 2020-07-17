@@ -10984,7 +10984,7 @@
 @font-face {
     font-family: 'ExtJS';
     src: url('../../desktop/resources/font-ext/fonts/ExtJS.eot?-tqegh9');
-    src: url('../../desktop/resources/font-ext/fonts/ExtJS.eot?#iefix-tqegh9') format('embedded-opentype'), url('../../desktop/resources/font-ext/fonts/ExtJS.ttf?-tqegh9') format('truetype'), url('../../desktop/resources/font-ext/fonts/ExtJS.woff?-tqegh9') format('woff'), url('../../desktop/resources/font-ext/fonts/ExtJS.svg?-tqegh9#ExtJS') format('svg');
+    src: url('../../desktop/resources/font-ext/fonts/ExtJS.eot?#iefix-tqegh9') format('embedded-opentype'), url('/bundles/pimcoreadmin/js/lib/desktop/resources/font-ext/fonts/ExtJS.ttf?-tqegh9') format('truetype'), url('../../desktop/resources/font-ext/fonts/ExtJS.woff?-tqegh9') format('woff'), url('../../desktop/resources/font-ext/fonts/ExtJS.svg?-tqegh9#ExtJS') format('svg');
     font-weight: normal;
     font-style: normal;
 }

@@ -133,6 +133,7 @@ Ext.onReady(function () {
         'Ext.ux.TabReorderer',
         'Ext.ux.grid.SubTable',
         'Ext.window.Toast',
+        'Ext.slider.Single',
 
         // charts
         'Ext.chart.interactions.ItemHighlight',
