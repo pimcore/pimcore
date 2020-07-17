@@ -747,3 +747,12 @@ body > .x-mask {
 .x-keyboard-mode .x-tab-focus.x-tab-default {
     outline: none;
 }
+
+
+.x-keyboard-mode .x-panel-header-title-light.x-title-focus {
+    outline: none;
+}
+
+.x-keyboard-mode .x-accordion-hd .x-panel-header-title.x-title-focus {
+    outline: none;
+}
