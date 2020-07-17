@@ -53,8 +53,8 @@ Ext.onReady(function () {
     Ext.Loader.setConfig({
         enabled: true
     });
-    Ext.enableAriaButtons = false;
 
+    Ext.enableAria = false;
 
 
     console.log("EXT.onReady in EDITMODE");

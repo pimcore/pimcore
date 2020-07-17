@@ -89,7 +89,7 @@ Ext.onReady(function () {
     Ext.Loader.setConfig({
         enabled: true
     });
-    Ext.enableAriaButtons = false;
+    Ext.enableAria = false;
 
     Ext.Loader.setPath('Ext.ux', '/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-ux/classic/src');
     Ext.Loader.setPath('Ext', '/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src');
@@ -134,6 +134,7 @@ Ext.onReady(function () {
         'Ext.ux.grid.SubTable',
         'Ext.window.Toast',
         'Ext.slider.Single',
+        'Ext.form.field.Tag',
 
         // charts
         'Ext.chart.interactions.ItemHighlight',
