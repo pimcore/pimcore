@@ -618,7 +618,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return $this->getDefaultValue() ?? null;
     }
 
-
     /**
      * @param float|int|string $oldValue
      * @param float|int|string $newValue

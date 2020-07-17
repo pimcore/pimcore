@@ -45,11 +45,12 @@ trait PackageVersionTrait
         return $version;
     }
 
-    public function getDescription() {
+    public function getDescription()
+    {
         $packageInfo = new PackageInfo();
 
-        foreach($packageInfo->getInstalledPackages('pimcore-bundle') as $bundle) {
-            if($bundle['name'] === $this->getComposerPackageName()) {
+        foreach ($packageInfo->getInstalledPackages('pimcore-bundle') as $bundle) {
+            if ($bundle['name'] === $this->getComposerPackageName()) {
                 return $bundle['description'];
             }
         }

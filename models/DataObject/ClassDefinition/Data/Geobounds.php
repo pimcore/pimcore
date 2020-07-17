@@ -382,18 +382,18 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             return false;
         }
 
-        $oldValue =  [
+        $oldValue = [
             'NElongitude' => $oldValue->getNorthEast()->getLongitude(),
             'NElatitude' => $oldValue->getNorthEast()->getLatitude(),
             'SWlongitude' => $oldValue->getSouthWest()->getLongitude(),
-            'SWlatitude' => $oldValue->getSouthWest()->getLatitude()
+            'SWlatitude' => $oldValue->getSouthWest()->getLatitude(),
         ];
 
-        $newValue =  [
+        $newValue = [
             'NElongitude' => $newValue->getNorthEast()->getLongitude(),
             'NElatitude' => $newValue->getNorthEast()->getLatitude(),
             'SWlongitude' => $newValue->getSouthWest()->getLongitude(),
-            'SWlatitude' => $newValue->getSouthWest()->getLatitude()
+            'SWlatitude' => $newValue->getSouthWest()->getLatitude(),
         ];
 
         foreach ($oldValue as $key => $oValue) {

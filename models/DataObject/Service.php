@@ -1736,13 +1736,13 @@ class Service extends Model\Element\Service
             $objectData = $tmp;
         }
 
-        $event = new DataObjectEvent($object,['objectData' => $objectData,
+        $event = new DataObjectEvent($object, ['objectData' => $objectData,
             'context' => $context,
             'requestedLanguage' => $requestedLanguage,
             'fields' => $fields,
             'helperDefinitions' => $helperDefinitions,
             'localeService' => $localeService,
-            'returnMappedFieldNames' => $returnMappedFieldNames
+            'returnMappedFieldNames' => $returnMappedFieldNames,
         ]);
 
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_CSV_ITEM_EXPORT, $event);

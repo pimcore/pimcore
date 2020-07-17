@@ -63,7 +63,7 @@ class LongRunningHelper
                 if (!($connection instanceof Connection)) {
                     throw new \LogicException('Expected only instances of Connection');
                 }
-                if($connection->isTransactionActive() === false){
+                if ($connection->isTransactionActive() === false) {
                     $connection->close();
                 }
             }

@@ -770,7 +770,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
         if (!$oldValue instanceof DataObject\Data\Hotspotimage
             || !$newValue instanceof DataObject\Data\Hotspotimage) {
-           return false;
+            return false;
         }
 
         $fd = new Image();
@@ -781,13 +781,13 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         $oldValue = [
             'hotspots' => $oldValue->getHotspots(),
             'marker' => $oldValue->getMarker(),
-            'crop' => $oldValue->getCrop()
+            'crop' => $oldValue->getCrop(),
         ];
 
         $newValue = [
             'hotspots' => $newValue->getHotspots(),
             'marker' => $newValue->getMarker(),
-            'crop' => $newValue->getCrop()
+            'crop' => $newValue->getCrop(),
         ];
 
         if (!$this->isEqualArray($oldValue, $newValue)) {

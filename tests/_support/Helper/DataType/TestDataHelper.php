@@ -213,7 +213,7 @@ class TestDataHelper extends Module
         $expectedArray = array_slice($objects, 0, 4);
 
         $this->assertCount(count($expectedArray), $value);
-        $this->assertIsEqual($object, $field,$expectedArray, $value);
+        $this->assertIsEqual($object, $field, $expectedArray, $value);
 
         for ($i = 0; $i < count($expectedArray); $i++) {
             $this->assertNotNull($value[$i]);
@@ -445,7 +445,7 @@ class TestDataHelper extends Module
         $expected->setDate(2000, 12, 24);
 
         //set time for datetime isEqual comparison
-        if($field == 'datetime') {
+        if ($field == 'datetime') {
             $expected->setTime($value->format('H'), $value->format('i'), $value->format('s'));
         }
 
@@ -1340,7 +1340,7 @@ class TestDataHelper extends Module
 
         $fieldLazyRelation = $value->getFieldLazyRelation();
         $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
-        
+
         //isEqual() should return false as there is no implementation
         $fd = $object->getClass()->getFieldDefinition($field);
         $this->assertFalse($fd->isEqual($value, $value));
@@ -1457,7 +1457,7 @@ class TestDataHelper extends Module
     {
         $fd = $object->getClass()->getFieldDefinition($field);
         if ($fd instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
-            $this->assertTrue($fd->isEqual($expected, $value), sprintf("Expected isEqual() returns true for data type: %s", ucfirst($field)));
+            $this->assertTrue($fd->isEqual($expected, $value), sprintf('Expected isEqual() returns true for data type: %s', ucfirst($field)));
         }
     }
 }

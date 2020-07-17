@@ -20,7 +20,6 @@ use Pimcore\Model;
 
 class Firstname extends Model\DataObject\ClassDefinition\Data\Input
 {
-
     /**
      * Static type of this element
      *
