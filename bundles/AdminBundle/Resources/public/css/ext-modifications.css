@@ -735,4 +735,9 @@ body > .x-mask {
 
 .x-btn-default-small {
     background-color: #3c3f41 !important;
+    border-color: #000 !important;
+}
+
+.x-window-default {
+    border-color: #3c3f41;
 }
