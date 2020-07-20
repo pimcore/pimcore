@@ -122,7 +122,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
     /**
      * @inheritDoc
      * parameter configuration see https://hobex.docs.oppwa.com/reference/parameters
-     * @param $requestConfig HobexRequest
+     * @param HobexRequest $requestConfig
      * @return HobexResponse
      */
     public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $requestConfig): StartPaymentResponseInterface
@@ -139,10 +139,10 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
             $params =  [
                 'entityId' => $this->config->getEntityId(),
-                'amount' => "12.00", //@todo $price->getAmount()->asString(2),
-                'taxAmount' => "2.00", //@todo $price->getAmount()->sub($price->getNetAmount())->asString(2),
+                'amount' => $price->getAmount()->asString(2),
+                'taxAmount' =>$price->getAmount()->sub($price->getNetAmount())->asString(2),
                 'currency' => $price->getCurrency()->getShortName(),
-                'paymentType' => static::PAYMENT_TYPE_DEBIT, //@todo preauthorization?
+                'paymentType' => static::PAYMENT_TYPE_DEBIT,
                 'merchantTransactionId' => $orderAgent->getOrder()->getLastPaymentInfo()->getInternalPaymentId(),
                 'transactionCategory' => static::TRANSACTION_CATEGORY_ECOMMERCE
             ];
@@ -224,11 +224,8 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
     /**
      * Handles response of payment provider and creates payment status object.
-     *
-     * @param array $response
-     *
+     * @param array|StatusInterface $response
      * @return StatusInterface
-     *
      * @throws \Exception
      */
     public function handleResponse($response)
@@ -357,7 +354,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
      *
      * @param PriceInterface $price
      * @param string $reference
-     * @param $transactionId
+     * @param string $transactionId
      *
      * @return StatusInterface
      *
