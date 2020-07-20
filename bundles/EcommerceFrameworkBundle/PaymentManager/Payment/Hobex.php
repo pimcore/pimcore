@@ -136,6 +136,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
         );
 
         try {
+            $response = null;
 
             $params =  [
                 'entityId' => $this->config->getEntityId(),
