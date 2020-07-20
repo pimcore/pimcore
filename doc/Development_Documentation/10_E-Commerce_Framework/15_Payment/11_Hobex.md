@@ -52,7 +52,7 @@ Hobex is compatible with Pimcore V7, so for Pimcore 6 you may have to add the fo
 ## Implementation
 
 CheckoutController.php
-```
+```php
   /**
      * Payment step of the checkout.
      * This is where the payment widget is initialized and displayed.
