@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;
@@ -78,7 +79,7 @@ class ThumbnailsVideoCommand extends AbstractCommand
         if ($input->getOption('parent')) {
             $parent = Asset::getById($input->getOption('parent'));
             if ($parent instanceof Asset\Folder) {
-                $conditions[] = "path LIKE '" . $parent->getRealFullPath() . "/%'";
+                $conditions[] = "path LIKE '" . Db::get()->escapeLike($parent->getRealFullPath()) . "/%'";
             } else {
                 $this->writeError($input->getOption('parent') . ' is not a valid asset folder ID!');
                 exit;
