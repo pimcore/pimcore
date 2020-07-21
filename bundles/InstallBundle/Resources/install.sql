@@ -465,7 +465,7 @@ CREATE TABLE `search_backend_data` (
   `maintype` varchar(8) NOT NULL DEFAULT '',
   `type` varchar(20) DEFAULT NULL,
   `subtype` varchar(190) DEFAULT NULL,
-  `published` int(11) unsigned DEFAULT NULL,
+  `published` tinyint(1) unsigned DEFAULT NULL,
   `creationDate` int(11) unsigned DEFAULT NULL,
   `modificationDate` int(11) unsigned DEFAULT NULL,
   `userOwner` int(11) DEFAULT NULL,
