@@ -643,7 +643,7 @@ trait PimcoreExtensionsTrait
      * @return string
      */
     public function escapeLike(string $like) : string {
-        return str_replace("_", '\\_', $like);
+        return str_replace(['_','%'], ['\\_', '\\%'], $like);
     }
 
 }
