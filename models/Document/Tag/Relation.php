@@ -71,7 +71,7 @@ class Relation extends Model\Document\Tag
     /**
      * @see Document\Tag\TagInterface::getData
      *
-     * @return mixed
+     * @return array
      */
     public function getData()
     {
@@ -85,7 +85,7 @@ class Relation extends Model\Document\Tag
     /**
      * Converts the data so it's suitable for the editmode
      *
-     * @return mixed
+     * @return array|null
      */
     public function getDataEditmode()
     {
@@ -181,7 +181,7 @@ class Relation extends Model\Document\Tag
     /**
      * Returns one of them: Document, Object, Asset
      *
-     * @return mixed
+     * @return Element\ElementInterface|false
      */
     public function getElement()
     {
@@ -198,7 +198,7 @@ class Relation extends Model\Document\Tag
     /**
      * Returns teh path of the linked element
      *
-     * @return mixed
+     * @return string|false|null
      */
     public function getFullPath()
     {
@@ -363,7 +363,7 @@ class Relation extends Model\Document\Tag
     /**
      * @param int $id
      *
-     * @return self
+     * @return $this
      */
     public function setId($id)
     {
@@ -383,7 +383,7 @@ class Relation extends Model\Document\Tag
     /**
      * @param string $subtype
      *
-     * @return self
+     * @return $this
      */
     public function setSubtype($subtype)
     {
