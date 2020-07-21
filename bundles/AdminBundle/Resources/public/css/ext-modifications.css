@@ -346,7 +346,7 @@ body > .x-mask {
 
 .x-panel-default {
     background: #f6f6f6;
-    border-color: #d0d0d0;
+    border-color: #FFd0d0;
 }
 .x-panel  .x-panel-default-outer-border-l,
 .x-panel  .x-panel-default-outer-border-b,
@@ -674,11 +674,19 @@ body > .x-mask {
     font: 300 13px/16px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
 }
 
-.x-tab-bar-default {
-    background: #404040;
-    border-top: 0;
-    border-left: 0;
-    border-right: 0;
+/*.x-tab-bar-default {*/
+/*    background: #404040;*/
+/*    border-top: 0;*/
+/*    border-left: 0;*/
+/*    border-right: 0;*/
+/*}*/
+
+#pimcore_panel_tabs > .x-tab-bar {
+    background: #0C0F12;
+    background-image: url(/bundles/pimcoreadmin/img/logo-gray.svg);
+    background-repeat: no-repeat;
+    background-position: right 5px top 4px;
+    background-size: 105px;
 }
 
 
@@ -755,4 +763,9 @@ body > .x-mask {
 
 .x-keyboard-mode .x-accordion-hd .x-panel-header-title.x-title-focus {
     outline: none;
+}
+
+.x-accordion-hd .x-tool-img {
+    background-image: url(images/tools/tool-sprites-dark.png);
+    color: #3c3f41;
 }
