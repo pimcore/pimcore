@@ -4,7 +4,6 @@ namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
-use Pimcore\Model\DataObject;
 
 class Version20200721123847 extends AbstractPimcoreMigration
 {
