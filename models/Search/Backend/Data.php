@@ -516,7 +516,7 @@ class Data extends \Pimcore\Model\AbstractModel
         $words = explode(' ', $data);
 
         $wordOccurrences = [];
-        foreach($words as $key => &$word) {
+        foreach($words as $key => $word) {
             $wordLength = \mb_strlen($word);
             if($wordLength < $minWordLength || $wordLength > $maxWordLength) {
                 unset($words[$key]);
@@ -528,7 +528,6 @@ class Data extends \Pimcore\Model\AbstractModel
                 unset($words[$key]);
             }
         }
-        unset($word);
 
         $data = implode(' ', $words);
 
