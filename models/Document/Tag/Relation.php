@@ -113,7 +113,7 @@ class Relation extends Model\Document\Tag
         $this->setElement();
 
         //don't give unpublished elements in frontend
-        if (Document::doHideUnpublished() and !Element\Service::isPublished($this->element)) {
+        if (Element\Service::doHideUnpublished($this->element) && !Element\Service::isPublished($this->element)) {
             return '';
         }
 
@@ -181,14 +181,14 @@ class Relation extends Model\Document\Tag
     /**
      * Returns one of them: Document, Object, Asset
      *
-     * @return Element\ElementInterface|false
+     * @return Element\ElementInterface|false|null
      */
     public function getElement()
     {
         $this->setElement();
 
         //don't give unpublished elements in frontend
-        if (Document::doHideUnpublished() and !Element\Service::isPublished($this->element)) {
+        if (Element\Service::doHideUnpublished($this->element) && !Element\Service::isPublished($this->element)) {
             return false;
         }
 
@@ -205,7 +205,7 @@ class Relation extends Model\Document\Tag
         $this->setElement();
 
         //don't give unpublished elements in frontend
-        if (Document::doHideUnpublished() and !Element\Service::isPublished($this->element)) {
+        if (Element\Service::doHideUnpublished($this->element) && !Element\Service::isPublished($this->element)) {
             return false;
         }
         if ($this->element instanceof Element\ElementInterface) {
@@ -415,7 +415,7 @@ class Relation extends Model\Document\Tag
      */
     public function rewriteIds($idMapping)
     {
-        if (array_key_exists($this->type, $idMapping) and array_key_exists($this->getId(), $idMapping[$this->type])) {
+        if (array_key_exists($this->type, $idMapping) && array_key_exists($this->getId(), $idMapping[$this->type])) {
             $this->id = $idMapping[$this->type][$this->getId()];
         }
     }
