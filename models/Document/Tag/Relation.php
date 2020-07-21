@@ -196,7 +196,7 @@ class Relation extends Model\Document\Tag
     }
 
     /**
-     * Returns teh path of the linked element
+     * Returns the path of the linked element
      *
      * @return string|false|null
      */
@@ -212,7 +212,7 @@ class Relation extends Model\Document\Tag
             return $this->element->getFullPath();
         }
 
-        return;
+        return null;
     }
 
     /**
