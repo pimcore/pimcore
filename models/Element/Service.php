@@ -268,6 +268,17 @@ class Service extends Model\AbstractModel
     }
 
     /**
+     * @static
+     *
+     * @return bool
+     */
+    public static function doHideUnpublished($element)
+    {
+        return ($element instanceof DataObject && DataObject::doHideUnpublished())
+            || ($element instanceof Document && Document::doHideUnpublished());
+    }
+
+    /**
      * determines whether an element is published
      *
      * @static

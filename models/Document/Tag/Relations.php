@@ -89,7 +89,7 @@ class Relations extends Model\Document\Tag implements \Iterator
     /**
      * Converts the data so it's suitable for the editmode
      *
-     * @return mixed
+     * @return array
      */
     public function getDataEditmode()
     {
@@ -172,11 +172,7 @@ class Relations extends Model\Document\Tag implements \Iterator
         $elements = [];
 
         foreach ($this->elements as $element) {
-            if (
-                ($element instanceof DataObject && DataObject::doHideUnpublished())
-                ||
-                ($element instanceof Document && Document::doHideUnpublished())
-            ) {
+            if (Element\Service::doHideUnpublished($element)) {
                 if (Element\Service::isPublished($element)) {
                     $elements[] = $element;
                 }
@@ -396,11 +392,7 @@ class Relations extends Model\Document\Tag implements \Iterator
         $this->setElements();
 
         $el = $this->current();
-        if (
-            ($el instanceof DataObject && DataObject::doHideUnpublished())
-            ||
-            ($el instanceof Document && Document::doHideUnpublished())
-        ) {
+        if (Element\Service::doHideUnpublished($el)) {
             if (!Element\Service::isPublished($el)) {
                 $this->next();
             }
