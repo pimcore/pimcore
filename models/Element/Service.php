@@ -1212,6 +1212,21 @@ class Service extends Model\AbstractModel
             }
         });
 
+        if ($element instanceof Concrete) {
+            $deepCopy->addFilter(
+                new PimcoreClassDefinitionReplaceFilter(
+                    function (Concrete $object, Data $fieldDefinition, $property, $currentValue) {
+                        if ($fieldDefinition instanceof Data\CustomDataCopyInterface) {
+                            return $fieldDefinition->createDataCopy($object, $currentValue);
+                        }
+
+                        return $currentValue;
+                    }
+                ),
+                new PimcoreClassDefinitionMatcher(Data\CustomDataCopyInterface::class)
+            );
+        }
+
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('dao'));
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('resource'));
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('writeResource'));
