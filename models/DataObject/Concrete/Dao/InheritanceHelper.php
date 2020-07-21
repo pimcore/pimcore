@@ -282,7 +282,7 @@ class InheritanceHelper
                 $query = 'SELECT b.o_id AS id '
                     . ' FROM objects b LEFT JOIN ' . $this->querytable . ' a ON b.o_id = a.' . $this->idField
                     . ' WHERE b.o_classId = ' . $this->db->quote($classId)
-                    . ' AND o_path LIKE '. $this->db->quote($this->db->escapeLike($object->getRealFullPath().'/%'))
+                    . ' AND o_path LIKE '. $this->db->quote($this->db->escapeLike($object->getRealFullPath()).'/%')
                     . ' AND ISNULL(a.' . $this->queryIdField . ')';
                 $missingIds = $this->db->fetchCol($query);
 
@@ -423,11 +423,11 @@ class InheritanceHelper
         if (!$parentIdGroups) {
             $object = DataObject::getById($currentParentId);
             if (isset($params['language'])) {
-                $query = "SELECT a.language as language, b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($this->db->escapeLike($object->getRealFullPath() . '/%'))
+                $query = "SELECT a.language as language, b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($this->db->escapeLike($object->getRealFullPath()) . '/%')
                     . ' HAVING `language` = "' . $params['language'] . '" OR ISNULL(`language`)'
                     . ' ORDER BY LENGTH(o_path) ASC';
             } else {
-                $query = "SELECT b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($this->db->escapeLike($object->getRealFullPath().'/%')) . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
+                $query = "SELECT b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($this->db->escapeLike($object->getRealFullPath()).'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
             }
             $queryCacheKey = 'tree_'.md5($query);
 

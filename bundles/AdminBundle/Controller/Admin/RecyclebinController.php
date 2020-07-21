@@ -60,7 +60,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
             $conditionFilters = [];
 
             if ($request->get('filterFullText')) {
-                $conditionFilters[] = 'path LIKE ' . $list->quote(Db::get()->escapeLike('%'.$request->get('filterFullText').'%'));
+                $conditionFilters[] = 'path LIKE ' . $list->quote('%'. Db::get()->escapeLike($request->get('filterFullText')) .'%');
             }
 
             $filters = $request->get('filter');
@@ -175,7 +175,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
                 $baseClass = Element\Service::getBaseClassNameForElement($type);
                 $listClass = '\\Pimcore\\Model\\' . $baseClass . '\\Listing';
                 $list = new $listClass();
-                $list->setCondition((($type == 'object') ? 'o_' : '') . 'path LIKE ' . $list->quote(Db::get()->escapeLike($element->getRealFullPath() . '/%')));
+                $list->setCondition((($type == 'object') ? 'o_' : '') . 'path LIKE ' . $list->quote(Db::get()->escapeLike($element->getRealFullPath()) . '/%'));
                 $children = $list->getTotalCount();
 
                 if ($children <= 100) {

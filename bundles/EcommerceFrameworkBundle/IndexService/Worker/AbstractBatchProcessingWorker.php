@@ -382,7 +382,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
         if ($object instanceof Concrete) {
 
             //need check, if there are sub objects because update on empty result set is too slow
-            $objects = $this->db->fetchCol('SELECT o_id FROM objects WHERE o_path LIKE ?', [Db::get()->escapeLike($object->getFullPath() . '/%')]);
+            $objects = $this->db->fetchCol('SELECT o_id FROM objects WHERE o_path LIKE ?', [Db::get()->escapeLike($object->getFullPath()) . '/%']);
             if ($objects) {
                 $this->executeTransactionalQuery(function () use ($objects) {
                     $updateStatement = 'UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 1 WHERE tenant = ? AND o_id IN ('.implode(',', $objects).')';
