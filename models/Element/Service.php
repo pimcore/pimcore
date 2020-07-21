@@ -309,7 +309,7 @@ class Service extends Model\AbstractModel
      */
     public static function filterUnpublishedAdvancedElements($data)
     {
-        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
+        if (DataObject\AbstractObject::doHideUnpublished() && is_array($data)) {
             $publishedList = [];
             $mapping = [];
             foreach ($data as $advancedElement) {

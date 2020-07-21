@@ -241,7 +241,7 @@ class Relations extends Model\Document\Tag implements \Iterator
             $type = $elementId['type'];
             $id = $elementId['id'];
 
-            if (array_key_exists($type, $idMapping) and array_key_exists((int) $id, $idMapping[$type])) {
+            if (array_key_exists($type, $idMapping) && array_key_exists((int) $id, $idMapping[$type])) {
                 $elementId['id'] = $idMapping[$type][$id];
             }
         }
