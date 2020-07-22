@@ -308,7 +308,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                 }
             ];
 
-            var languagestore = [];
+            var languagestore = [["none",t("none")]];
             for (let i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
                 languagestore.push([pimcore.settings.websiteLanguages[i],
                     pimcore.available_languages[pimcore.settings.websiteLanguages[i]]]);
