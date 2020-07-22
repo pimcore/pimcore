@@ -59,7 +59,7 @@ final class AssetEvents
      *
      * @var string
      */
-    const PRE_GETMETADATA = 'pimcore.asset.preGetMetadata';
+    const PRE_GET_METADATA = 'pimcore.asset.preGetMetadata';
 
 
     /**

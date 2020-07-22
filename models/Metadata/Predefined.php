@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Metadata;
 
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
+use Pimcore\Logger;
 use Pimcore\Model;
 
 /**
@@ -330,6 +331,7 @@ class Predefined extends Model\AbstractModel
             $instance = $loader->build($this->type);
             $this->data = $instance->marshal($this->data);
         } catch (UnsupportedException $e) {
+            Logger::error("could not resolve asset metadata implementation for " . $this->type);
 
         }
     }
@@ -342,8 +344,7 @@ class Predefined extends Model\AbstractModel
             $instance = $loader->build($this->type);
             $this->data = $instance->unmarshal($this->data);
         } catch (UnsupportedException $e) {
-
+            Logger::error("could not resolve asset metadata implementation for " . $this->type);
         }
-
     }
 }

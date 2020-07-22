@@ -139,7 +139,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
         } else {
             var columnsPostData = Ext.encode(this.data.columns);
             Ext.Ajax.request({
-                url: "/admin/aset-helper/prepare-helper-column-configs",
+                url: Routing.generate('pimcore_admin_asset_assethelper_preparehelpercolumnconfigs'),
                 method: 'POST',
                 params: {
                     columns: columnsPostData

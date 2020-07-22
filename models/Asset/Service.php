@@ -354,12 +354,6 @@ class Service extends Model\Element\Service
         return $asset;
     }
 
-    public static function getListfolderGridData($item) {
-
-
-    }
-
-
 
     /**
      * @internal

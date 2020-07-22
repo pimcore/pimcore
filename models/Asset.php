@@ -1776,7 +1776,7 @@ class Asset extends Element\AbstractElement
 
         $preEvent = new AssetEvent($this);
         $preEvent->setArgument("metadata", $this->metadata);
-        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_GETMETADATA, $preEvent);
+        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_GET_METADATA, $preEvent);
         $this->metadata = $preEvent->getArgument("metadata");
 
         $convert = function ($metaData) {
