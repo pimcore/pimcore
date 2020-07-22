@@ -244,7 +244,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
             $this->getDao()->deleteAllTasks();
 
-            parent::delete(true);
+            parent::delete($isNested);
 
             $this->commit();
         } catch (\Exception $e) {

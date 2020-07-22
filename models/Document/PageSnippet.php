@@ -194,7 +194,7 @@ abstract class PageSnippet extends Model\Document
             // remove all tasks
             $this->getDao()->deleteAllTasks();
 
-            parent::delete(true);
+            parent::delete($isNested);
 
             $this->commit();
         } catch (\Exception $e) {
