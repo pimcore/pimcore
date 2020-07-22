@@ -85,6 +85,10 @@
     border-color: #d0d0d0;
 }
 
+
+
+
+
 .x-tab.x-tab-active.x-tab-default .x-tab-inner-default {
     color: #404040;
 }
@@ -775,4 +779,22 @@ body > .x-mask {
 .x-accordion-hd .x-tool-img {
     background-image: url(images/tools/tool-sprites-dark.png);
     color: #3c3f41;
+}
+
+.x-keyboard-mode .x-tab-focus.x-tab-over.x-tab-default {
+    border-color: #d0d0d0;
+    background-image: none;
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.x-keyboard-mode .x-grid-item-focused .x-grid-cell-inner:before {
+    border: 0;
+}
+
+.x-keyboard-mode .x-grid-cell-inner-action-col :focus {
+    outline: none;
+}
+
+.x-column-header {
+    font-weight: 300;
 }
