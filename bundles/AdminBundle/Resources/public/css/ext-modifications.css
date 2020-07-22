@@ -824,3 +824,8 @@ body > .x-mask {
     background: #3c3f41;
     border-color: #3c3f41;
 }
+
+/** multiselect unselect */
+.x-keyboard-mode .x-view-item-focused {
+    outline: 1px dashed #3c3f41 !important;
+}
