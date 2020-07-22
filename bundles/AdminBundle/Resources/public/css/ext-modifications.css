@@ -73,7 +73,14 @@
     min-height: 30px;
 }
 
+/* car object > basedata -> german tab active */
 .x-tab.x-tab-active.x-tab-default {
+    background-color: #f6f6f6;
+    border-color: #d0d0d0;
+}
+
+/* car object > basedata -> click on german tab (focus) */
+.x-keyboard-mode .x-tab-focus.x-tab-active.x-tab-default {
     background-color: #f6f6f6;
     border-color: #d0d0d0;
 }
