@@ -114,7 +114,7 @@ class DataObject extends Data
     /** @inheritDoc */
     public function getDataForEditMode($data, $params = []) {
         if (is_numeric($data)) {
-            $data = Service::getElementById("asset", $data);
+            $data = Service::getElementById("object", $data);
         }
         if ($data instanceof ElementInterface) {
             return $data->getRealFullPath();
