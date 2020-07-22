@@ -811,3 +811,16 @@ body > .x-mask {
 .x-keyboard-mode .x-form-cb-checked .x-form-checkbox-focus.x-form-checkbox-default {
     color: #919191;
 }
+
+/* e.g. combobox */
+.x-boundlist-selected {
+    color: #fff;
+    background: #3c3f41;
+    border-color: #3c3f41;
+}
+
+.x-boundlist-item-over {
+    color: #fff;
+    background: #3c3f41;
+    border-color: #3c3f41;
+}
