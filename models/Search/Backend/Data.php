@@ -516,15 +516,15 @@ class Data extends \Pimcore\Model\AbstractModel
         $words = explode(' ', $data);
 
         $wordOccurrences = [];
-        foreach($words as $key => $word) {
+        foreach ($words as $key => $word) {
             $wordLength = \mb_strlen($word);
-            if($wordLength < $minWordLength || $wordLength > $maxWordLength) {
+            if ($wordLength < $minWordLength || $wordLength > $maxWordLength) {
                 unset($words[$key]);
                 continue;
             }
 
             $wordOccurrences[$word] = ($wordOccurrences[$word] ?? 0) + 1;
-            if($wordOccurrences[$word] > self::MAX_WORD_OCCURENCES) {
+            if ($wordOccurrences[$word] > self::MAX_WORD_OCCURENCES) {
                 unset($words[$key]);
             }
         }
