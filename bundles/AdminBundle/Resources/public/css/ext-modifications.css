@@ -798,3 +798,16 @@ body > .x-mask {
 .x-column-header {
     font-weight: 300;
 }
+
+.x-keyboard-mode .x-form-checkbox-focus.x-form-radio-default {
+    color: #919191;
+}
+.x-keyboard-mode .x-form-checkbox-focus.x-form-checkbox-default {
+    color: #919191;
+}
+.x-keyboard-mode .x-form-cb-checked .x-form-checkbox-focus.x-form-radio-default {
+    color: #919191;
+}
+.x-keyboard-mode .x-form-cb-checked .x-form-checkbox-focus.x-form-checkbox-default {
+    color: #919191;
+}
