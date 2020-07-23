@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\Parallelization;
-use Pimcore\Db;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Asset\Image;
 use Symfony\Component\Console\Input\InputInterface;
