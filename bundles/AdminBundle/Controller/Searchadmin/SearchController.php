@@ -210,7 +210,7 @@ class SearchController extends AdminController
                         $tag = Element\Tag::getById($tagId);
                         if ($tag) {
                             $tagPath = $tag->getFullIdPath();
-                            $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE ctype = ' . $db->quote($type) . ' AND (id = ' . intval($tagId) . ' OR idPath LIKE ' . $db->quote(Db::get()->escapeLike($tagPath) . '%') . '))';
+                            $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE ctype = ' . $db->quote($type) . ' AND (id = ' . intval($tagId) . ' OR idPath LIKE ' . $db->quote($db->escapeLike($tagPath) . '%') . '))';
                         }
                     } else {
                         $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment WHERE ctype = ' . $db->quote($type) . ' AND tagid = ' . intval($tagId) . ')';
