@@ -2487,7 +2487,7 @@ class AssetController extends ElementControllerBase implements EventedController
                                     $dataImpl = $loader->build($newEm["type"]);
                                     $newEm["data"] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
                                 } catch (UnsupportedException $le) {
-                                    Logger::error("could not resolve metadata implementation for " . $em["type"]);
+                                    Logger::error("could not resolve metadata implementation for " . $newEm["type"]);
                                 }
 
                                 $metadata[] = $newEm;

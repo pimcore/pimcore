@@ -1024,7 +1024,7 @@ class AssetHelperController extends AdminController
                                 ];
 
                                 try {
-                                    $dataImpl = $loader->build($em["type"]);
+                                    $dataImpl = $loader->build($newEm["type"]);
                                     $newEm["data"] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
                                 } catch (UnsupportedException $le) {
                                     Logger::error("could not resolve metadata implementation for " . $newEm["type"]);
