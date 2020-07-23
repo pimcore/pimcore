@@ -1,5 +1,3 @@
-
-
 # CKEDITOR (use builder: http://ckeditor.com/builder);
 current version: 4.14.0
 upload build-config.js
@@ -50,6 +48,7 @@ needed components:
 #7fb5e4 => #3c3f41
 
 # fixes the problem with font-rendering in chrome (gray instead of black)
+[see commit](https://github.com/pimcore/pimcore/commit/3c641580dbe2efa30e539006ee7166b519ffd832#diff-250264cb98391c6be4d4720f7d887c86)
 fonts/OpenSans-LightItalic.ttf => fonts/OpenSans-Italic.ttf
 fonts/OpenSans-Light.ttf => fonts/OpenSans-Regular.ttf
 

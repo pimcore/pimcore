@@ -31,6 +31,10 @@ pimcore.object.helpers.edit = {
 
         context.objectId = this.object.id;
 
+        if (this.object.data.currentLayoutId) {
+            context.layoutId = this.object.data.currentLayoutId;
+        }
+
         var panelListenerConfig = {};
 
         var tabpanelCorrection = function (panel) {

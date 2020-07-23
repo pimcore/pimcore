@@ -85,4 +85,22 @@ class Dao extends \Pimcore\Model\Dao\AbstractDao
             Logger::alert('Cannot delete Search\\Backend\\Data, ID is empty');
         }
     }
+
+    public function getMinWordLengthForFulltextIndex()
+    {
+        try {
+            return $this->db->fetchOne('SELECT @@innodb_ft_min_token_size');
+        } catch (\Exception $e) {
+            return 3;
+        }
+    }
+
+    public function getMaxWordLengthForFulltextIndex()
+    {
+        try {
+            return $this->db->fetchOne('SELECT @@innodb_ft_max_token_size');
+        } catch (\Exception $e) {
+            return 84;
+        }
+    }
 }

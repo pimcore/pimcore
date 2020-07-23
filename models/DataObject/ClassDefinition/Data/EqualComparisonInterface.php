@@ -9,6 +9,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
+ * @package    Element
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
@@ -16,14 +17,15 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model;
-
-class NewsletterConfirmed extends Model\DataObject\ClassDefinition\Data\Checkbox
+interface EqualComparisonInterface
 {
     /**
-     * Static type of this element
+     * Returns if old data and new data is equal
      *
-     * @var string
+     * @param mixed $oldValue
+     * @param mixed $newValue
+     *
+     * @return bool
      */
-    public $fieldtype = 'newsletterConfirmed';
+    public function isEqual($oldValue, $newValue): bool;
 }

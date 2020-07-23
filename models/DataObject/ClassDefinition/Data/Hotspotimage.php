@@ -25,6 +25,7 @@ use Pimcore\Tool\Serialize;
 
 class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 {
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -753,5 +754,46 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
             return $image;
         }
+    }
+
+    /**
+     * @param DataObject\Data\Hotspotimage|null $oldValue
+     * @param DataObject\Data\Hotspotimage|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!$oldValue instanceof DataObject\Data\Hotspotimage
+            || !$newValue instanceof DataObject\Data\Hotspotimage) {
+            return false;
+        }
+
+        $fd = new Image();
+        if (!$fd->isEqual($oldValue->getImage(), $newValue->getImage())) {
+            return false;
+        }
+
+        $oldValue = [
+            'hotspots' => $oldValue->getHotspots(),
+            'marker' => $oldValue->getMarker(),
+            'crop' => $oldValue->getCrop(),
+        ];
+
+        $newValue = [
+            'hotspots' => $newValue->getHotspots(),
+            'marker' => $newValue->getMarker(),
+            'crop' => $newValue->getCrop(),
+        ];
+
+        if (!$this->isEqualArray($oldValue, $newValue)) {
+            return false;
+        }
+
+        return true;
     }
 }

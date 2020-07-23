@@ -103,7 +103,7 @@
   "require-dev": {
     "cache/integration-tests": "^0.16.0",
     "codeception/codeception": "~2.4.5",
-    "phpstan/phpstan": "^0.12.18",
+    "phpstan/phpstan": "^0.12.26",
     "phpstan/phpstan-symfony": "^0.12",
     "heidelpay/heidelpay-php": "^1.2.5.1",
     "klarna/checkout": "^3.0.0",

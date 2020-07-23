@@ -9,6 +9,7 @@
  * LICENSE.md which is distributed with this source code.
  *
  * @category   Pimcore
+ * @package    Element
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
@@ -16,14 +17,15 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model;
+use Pimcore\Model\DataObject\Concrete;
 
-class NewsletterConfirmed extends Model\DataObject\ClassDefinition\Data\Checkbox
+interface CustomDataCopyInterface
 {
     /**
-     * Static type of this element
+     * @param Concrete $object
+     * @param mixed $data
      *
-     * @var string
+     * @return mixed
      */
-    public $fieldtype = 'newsletterConfirmed';
+    public function createDataCopy(Concrete $object, $data);
 }

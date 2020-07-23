@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 
-class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -346,5 +346,27 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     public function getDataForGrid($data, $object = null, $params = [])
     {
         return $this->getDataForEditmode($data, $object, $params);
+    }
+
+    /**
+     *
+     * @param DataObject\Data\Geopoint|null $oldValue
+     * @param DataObject\Data\Geopoint|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!$oldValue instanceof DataObject\Data\Geopoint
+            || !$newValue instanceof DataObject\Data\Geopoint) {
+            return false;
+        }
+
+        return (abs($oldValue->getLongitude() - $newValue->getLongitude()) < 0.000000000001)
+            && (abs($oldValue->getLatitude() - $newValue->getLatitude()) < 0.000000000001);
     }
 }

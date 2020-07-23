@@ -20,11 +20,10 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface
+class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use DataObject\Traits\DefaultValueTrait;
 
-    use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -351,5 +350,16 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     protected function doGetDefaultValue($object, $context = [])
     {
         return $this->getDefaultValue() ?? null;
+    }
+
+    /**
+     * @param bool|null $oldValue
+     * @param bool|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        return $oldValue === $newValue;
     }
 }

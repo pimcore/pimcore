@@ -1695,10 +1695,11 @@ class Service extends Model\Element\Service
      * @param array $helperDefinitions
      * @param LocaleServiceInterface $localeService
      * @param bool $returnMappedFieldNames
+     * @param array $context
      *
      * @return array
      */
-    public static function getCsvDataForObject(AbstractObject $object, $requestedLanguage, $fields, $helperDefinitions, LocaleServiceInterface $localeService, $returnMappedFieldNames = false)
+    public static function getCsvDataForObject(AbstractObject $object, $requestedLanguage, $fields, $helperDefinitions, LocaleServiceInterface $localeService, $returnMappedFieldNames = false, $context = [])
     {
         $objectData = [];
         $mappedFieldnames = [];
@@ -1732,9 +1733,20 @@ class Service extends Model\Element\Service
             foreach ($mappedFieldnames as $key => $value) {
                 $tmp[$value] = $objectData[$key];
             }
-
-            return $tmp;
+            $objectData = $tmp;
         }
+
+        $event = new DataObjectEvent($object, ['objectData' => $objectData,
+            'context' => $context,
+            'requestedLanguage' => $requestedLanguage,
+            'fields' => $fields,
+            'helperDefinitions' => $helperDefinitions,
+            'localeService' => $localeService,
+            'returnMappedFieldNames' => $returnMappedFieldNames,
+        ]);
+
+        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_CSV_ITEM_EXPORT, $event);
+        $objectData = $event->getArgument('objectData');
 
         return $objectData;
     }
@@ -1745,10 +1757,11 @@ class Service extends Model\Element\Service
      * @param DataObject\Listing $list
      * @param string[] $fields
      * @param bool $addTitles
+     * @param array $context
      *
      * @return array
      */
-    public static function getCsvData($requestedLanguage, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true)
+    public static function getCsvData($requestedLanguage, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true, $context = [])
     {
         $mappedFieldnames = [];
 
@@ -1761,14 +1774,14 @@ class Service extends Model\Element\Service
             if ($fields) {
                 if ($addTitles && empty($data)) {
                     $tmp = [];
-                    $mapped = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, true);
+                    $mapped = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, true, $context);
                     foreach ($mapped as $key => $value) {
                         $tmp[] = '"' . $key . '"';
                     }
                     $data[] = $tmp;
                 }
 
-                $data[] = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService);
+                $data[] = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $context);
             }
         }
 

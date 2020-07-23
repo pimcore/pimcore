@@ -79,7 +79,7 @@ class Dao extends Model\Dao\AbstractDao
 
             //check for id-path and update it, if path has changed -> update all other tags that have idPath == idPath/id
             if ($originalIdPath && $originalIdPath != $this->model->getIdPath()) {
-                $this->db->query('UPDATE tags SET idPath = REPLACE(idPath, ?, ?)  WHERE idPath LIKE ?;', [$originalIdPath, $this->model->getIdPath(), $originalIdPath . $this->model->getId() . '/%']);
+                $this->db->query('UPDATE tags SET idPath = REPLACE(idPath, ?, ?)  WHERE idPath LIKE ?;', [$originalIdPath, $this->model->getIdPath(), $this->db->escapeLike($originalIdPath) . $this->model->getId() . '/%']);
             }
 
             $this->db->commit();
@@ -101,10 +101,10 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->beginTransaction();
         try {
             $this->db->delete('tags_assignment', ['tagid' => $this->model->getId()]);
-            $this->db->deleteWhere('tags_assignment', $this->db->quoteInto('tagid IN (SELECT id FROM tags WHERE idPath LIKE ?)', $this->model->getIdPath() . $this->model->getId() . '/%'));
+            $this->db->deleteWhere('tags_assignment', $this->db->quoteInto('tagid IN (SELECT id FROM tags WHERE idPath LIKE ?)', $this->db->escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
 
             $this->db->delete('tags', ['id' => $this->model->getId()]);
-            $this->db->deleteWhere('tags', $this->db->quoteInto('idPath LIKE ?', $this->model->getIdPath() . $this->model->getId() . '/%'));
+            $this->db->deleteWhere('tags', $this->db->quoteInto('idPath LIKE ?', $this->db->escapeLike($this->model->getIdPath()) . $this->model->getId() . '/%'));
 
             $this->db->commit();
         } catch (\Exception $e) {
@@ -255,7 +255,7 @@ class Dao extends Model\Dao\AbstractDao
             $select->where(
                 '(' .
                 $this->db->quoteInto('tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
-                $this->db->quoteInto('tags.idPath LIKE ?', $tag->getFullIdPath() . '%') . ')'
+                $this->db->quoteInto('tags.idPath LIKE ?', $this->db->escapeLike($tag->getFullIdPath()) . '%' . ')')
             );
         } else {
             $select->where('tags_assignment.tagid = ?', $tag->getId());

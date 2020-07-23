@@ -114,7 +114,7 @@ class Xliff12Escaper
             return (string) $node;
         }
 
-        $content = $node->asXml();
+        $content = (string) $node;
 
         $content = preg_replace("/<\/?(target|mrk)([^>.]+)?>/i", '', $content);
         // we have to do this again but with html entities because of CDATA content

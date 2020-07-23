@@ -20,8 +20,6 @@ use Pimcore\Model;
 
 class Gender extends Model\DataObject\ClassDefinition\Data\Select
 {
-    use Model\DataObject\Traits\SimpleComparisonTrait;
-
     /**
      * Static type of this element
      *
