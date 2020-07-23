@@ -796,6 +796,7 @@ class MiscController extends AdminController
         $bundleManager = $this->get('pimcore.extension.bundle_manager');
 
         $pluginJsPaths = $bundleManager->getJsPaths();
+        $locale = \Pimcore::getContainer()->get('pimcore.locale')->getLocale();
 
         $scripts = [
 
@@ -803,6 +804,8 @@ class MiscController extends AdminController
             "lib/ext-plugins/portlet/Portlet.js",
             "lib/ext-plugins/portlet/PortalColumn.js",
             "lib/ext-plugins/portlet/PortalPanel.js",
+
+            "lib/node_modules/@sencha/ext-classic-locale/overrides/" . $locale . "/ext-locale-" . $locale . ".js",
 
             // runtime
             "pimcore/functions.js",
@@ -1303,18 +1306,37 @@ class MiscController extends AdminController
 
         $scriptContents = "";
         foreach ($scripts as $scriptUrl) {
-            if (is_file(PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/" . $scriptUrl)) {
-                $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/" . $scriptUrl) . "\n\n\n";
+            $fullPath = PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/" . $scriptUrl;
+            if (is_file($fullPath)) {
+                $scriptContents .= "\r\n\r\n// " . $fullPath . "\r\n";
+                $scriptContents .= file_get_contents($fullPath) . "\n\n\n";
             } else {
-                Logger::error("could not find file " . $scriptUrl);
+                try {
+                    $kernel = $this->container->get('http_kernel');
+                    $subRequest = Request::create("/bundles/pimcoreadmin/js/" . $scriptUrl);
+                    $response = $kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
+                    $subResponse = $response->getContent();
+                    $scriptContents .= $subResponse;
+                } catch (\Exception $e) {
+                    Logger::error("could not find file " . $fullPath);
+                }
             }
         }
 
         foreach ($pluginJsPaths as $scriptUrl) {
-            if (is_file(PIMCORE_WEB_ROOT .  $scriptUrl)) {
-                $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $scriptUrl) . "\n\n\n";
+            $fullPath = PIMCORE_WEB_ROOT .  $scriptUrl;
+            if (is_file($fullPath)) {
+                $scriptContents .= file_get_contents($fullPath) . "\n\n\n";
             } else {
-                Logger::error("could not find file " . $scriptUrl);
+                try {
+                    $kernel = $this->container->get('http_kernel');
+                    $subRequest = Request::create($scriptUrl);
+                    $response = $kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
+                    $subResponse = $response->getContent();
+                    $scriptContents .= $subResponse;
+                } catch (\Exception $e) {
+                    Logger::error("could not find file " . $fullPath);
+                }
             }
         }
 

@@ -41,6 +41,7 @@ npm login --registry=https://sencha.myget.org/F/gpl/npm/ --scope=@sencha
 
 # you will be prompted for Sencha username and password.
 
+# see https://docs.sencha.com/extjs/7.0.0/guides/using_systems/using_npm/extjs_packages.html
 npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-core
 npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic
 npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic-theme-material
@@ -48,6 +49,7 @@ npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic-theme-n
 npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic-theme-triton
 npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-ux
 npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-charts
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic-locale
 ```
 
 
