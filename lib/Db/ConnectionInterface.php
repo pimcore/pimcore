@@ -262,7 +262,8 @@ interface ConnectionInterface extends Connection
 
     /**
      * @param string $like
+     *
      * @return string
      */
-    public function escapeLike(string $like) : string;
+    public function escapeLike(string $like): string;
 }

@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;

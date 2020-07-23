@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\DataObject\Concrete\Dao;
 
-use Pimcore\Db;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Model\DataObject;
 

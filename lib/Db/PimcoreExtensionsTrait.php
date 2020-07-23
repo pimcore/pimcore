@@ -636,14 +636,13 @@ trait PimcoreExtensionsTrait
         }
     }
 
-
-
     /**
      * @param string $like
+     *
      * @return string
      */
-    public function escapeLike(string $like) : string {
-        return str_replace(['_','%'], ['\\_', '\\%'], $like);
+    public function escapeLike(string $like): string
+    {
+        return str_replace(['_', '%'], ['\\_', '\\%'], $like);
     }
-
 }

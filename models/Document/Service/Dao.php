@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document\Service;
 
-use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;

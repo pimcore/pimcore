@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Element\Tag;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;

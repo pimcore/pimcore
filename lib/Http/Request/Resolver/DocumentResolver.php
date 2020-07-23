@@ -65,7 +65,7 @@ class DocumentResolver extends AbstractRequestResolver implements TemplateVarsPr
 
         // update the view model on the current request if exists
         $viewModel = $this->viewModelResolver->getViewModel($request, false);
-        if($viewModel) {
+        if ($viewModel) {
             $viewModel->getParameters()->set('document', $document);
         }
     }

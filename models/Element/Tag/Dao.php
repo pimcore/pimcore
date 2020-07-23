@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Element\Tag;
 
-use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\Element\Tag;
 

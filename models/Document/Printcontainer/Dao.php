@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document\Printcontainer;
 
-use Pimcore\Db;
 use Pimcore\Model\Document;
 
 /**
