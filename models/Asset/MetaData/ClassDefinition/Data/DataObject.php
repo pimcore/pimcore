@@ -129,7 +129,11 @@ class DataObject extends Data
      * @return mixed
      */
     public function getDataForListfolderGrid($data, $params = []) {
-        if ($data instanceof AbstractElement) {
+        if (is_numeric($data)) {
+            $data = AbstractObject::getById($data);
+        };
+
+        if ($data instanceof AbstractObject) {
             return $data->getFullPath();
         }
         return $data;

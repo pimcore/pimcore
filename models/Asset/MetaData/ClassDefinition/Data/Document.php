@@ -128,7 +128,12 @@ class Document extends Data
      * @return mixed
      */
     public function getDataForListfolderGrid($data, $params = []) {
-        if ($data instanceof AbstractElement) {
+        if (is_numeric($data)) {
+            $data = \Pimcore\Model\Document::getById($data);
+        };
+
+
+        if ($data instanceof \Pimcore\Model\Document) {
             return $data->getFullPath();
         }
         return $data;
