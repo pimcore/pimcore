@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Element\Tag;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -327,7 +328,7 @@ class TagsController extends AdminController
              )';
         }
 
-        $childsList->setCondition($condition, $object->getRealFullPath() . '/%');
+        $childsList->setCondition($condition, $childsList->escapeLike($object->getRealFullPath()) . '/%');
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $childsList,
@@ -359,7 +360,7 @@ class TagsController extends AdminController
             )';
         }
 
-        $childsList->setCondition($condition, $asset->getRealFullPath() . '/%');
+        $childsList->setCondition($condition, $childsList->escapeLike($asset->getRealFullPath()) . '/%');
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $childsList,
@@ -391,7 +392,7 @@ class TagsController extends AdminController
             )';
         }
 
-        $childsList->setCondition($condition, $document->getRealFullPath() . '/%');
+        $childsList->setCondition($condition, $childsList->escapeLike($document->getRealFullPath()) . '/%');
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $childsList,

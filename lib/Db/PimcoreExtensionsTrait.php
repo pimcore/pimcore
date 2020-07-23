@@ -147,7 +147,7 @@ trait PimcoreExtensionsTrait
 
             Db::getLogger()->debug('QueryBuilder instance was normalized to string.', [
                 'query' => $query,
-                'params' => $params
+                'params' => $params,
             ]);
         }
 
@@ -635,4 +635,15 @@ trait PimcoreExtensionsTrait
             }
         }
     }
+
+
+
+    /**
+     * @param string $like
+     * @return string
+     */
+    public function escapeLike(string $like) : string {
+        return str_replace(['_','%'], ['\\_', '\\%'], $like);
+    }
+
 }

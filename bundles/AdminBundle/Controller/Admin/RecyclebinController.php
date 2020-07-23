@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Db;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\Recyclebin;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -59,7 +60,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
             $conditionFilters = [];
 
             if ($request->get('filterFullText')) {
-                $conditionFilters[] = 'path LIKE ' . $list->quote('%'.$request->get('filterFullText').'%');
+                $conditionFilters[] = 'path LIKE ' . $list->quote('%'. $list->escapeLike($request->get('filterFullText')) .'%');
             }
 
             $filters = $request->get('filter');
@@ -174,7 +175,7 @@ class RecyclebinController extends AdminController implements EventedControllerI
                 $baseClass = Element\Service::getBaseClassNameForElement($type);
                 $listClass = '\\Pimcore\\Model\\' . $baseClass . '\\Listing';
                 $list = new $listClass();
-                $list->setCondition((($type == 'object') ? 'o_' : '') . 'path LIKE ' . $list->quote($element->getRealFullPath() . '/%'));
+                $list->setCondition((($type == 'object') ? 'o_' : '') . 'path LIKE ' . $list->quote($list->escapeLike($element->getRealFullPath()) . '/%'));
                 $children = $list->getTotalCount();
 
                 if ($children <= 100) {

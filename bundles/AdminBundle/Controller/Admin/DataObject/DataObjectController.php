@@ -948,7 +948,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $parentObject = DataObject::getById($request->get('id'));
 
             $list = new DataObject\Listing();
-            $list->setCondition('o_path LIKE ' . $list->quote($parentObject->getRealFullPath() . '/%'));
+            $list->setCondition('o_path LIKE ' . $list->quote($list->escapeLike($parentObject->getRealFullPath()) . '/%'));
             $list->setLimit(intval($request->get('amount')));
             $list->setOrderKey('LENGTH(o_path)', false);
             $list->setOrder('DESC');
@@ -1869,7 +1869,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if ($object->hasChildren([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_VARIANT])) {
                 // get amount of children
                 $list = new DataObject\Listing();
-                $list->setCondition('o_path LIKE ' . $list->quote($object->getRealFullPath() . '/%'));
+                $list->setCondition('o_path LIKE ' . $list->quote($list->escapeLike($object->getRealFullPath()) . '/%'));
                 $list->setOrderKey('LENGTH(o_path)', false);
                 $list->setOrder('ASC');
                 $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT, DataObject\AbstractObject::OBJECT_TYPE_FOLDER, DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);

@@ -383,7 +383,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $parentDocument = Document::getById($request->get('id'));
 
             $list = new Document\Listing();
-            $list->setCondition('path LIKE ?', [$parentDocument->getRealFullPath() . '/%']);
+            $list->setCondition('path LIKE ?', [$list->escapeLike($parentDocument->getRealFullPath()) . '/%']);
             $list->setLimit(intval($request->get('amount')));
             $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
@@ -552,7 +552,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     if ($document->hasChildren()) {
                         $list = new Document\Listing();
                         $list->setCondition('path LIKE :path', [
-                            'path' => $document->getRealFullPath() . '/%'
+                            'path' => $list->escapeLike($document->getRealFullPath()) . '/%'
                         ]);
 
                         $childrenList = $list->loadIdPathList();
@@ -869,7 +869,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($document->hasChildren()) {
                 // get amount of childs
                 $list = new Document\Listing();
-                $list->setCondition('path LIKE ?', [$document->getRealFullPath() . '/%']);
+                $list->setCondition('path LIKE ?', [$list->escapeLike($document->getRealFullPath()) . '/%']);
                 $list->setOrderKey('LENGTH(path)', false);
                 $list->setOrder('ASC');
                 $childIds = $list->loadIdList();
@@ -1333,7 +1333,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 // only display document if listing is allowed for the current user
                 if ($childDocument->isAllowed('list')) {
                     $list = new Document\Listing();
-                    $list->setCondition('path LIKE ? and type = ?', [$childDocument->getRealFullPath() . '/%', 'page']);
+                    $list->setCondition('path LIKE ? and type = ?', [$list->escapeLike($childDocument->getRealFullPath() ). '/%', 'page']);
 
                     if ($childDocument instanceof Document\Page || $list->getTotalCount() > 0) {
                         $documents[] = $this->getSeoNodeConfig($childDocument);

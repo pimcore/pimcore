@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Db;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
@@ -714,7 +715,7 @@ class TranslationController extends AdminController
                     }
                     $list->setCondition(
                         ($el instanceof DataObject\AbstractObject ? 'o_' : '') . 'path LIKE ?',
-                        [$el->getRealFullPath() . ($el->getRealFullPath() != '/' ? '/' : '') . '%']
+                        [$list->escapeLike($el->getRealFullPath() . ($el->getRealFullPath() != '/' ? '/' : '')) . '%']
                     );
                     $childs = $list->load();
 
