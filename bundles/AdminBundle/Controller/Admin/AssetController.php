@@ -26,6 +26,7 @@ use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
 use Pimcore\File;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -2410,6 +2411,8 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
+        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+
         if (isset($allParams['data']) && $allParams['data']) {
             $this->checkCsrfToken($request);
             if ($allParams['xaction'] == 'update') {
@@ -2443,7 +2446,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         throw $this->createAccessDeniedException("Permission denied. You don't have the rights to save this asset.");
                     }
 
-                    $metadata = $asset->getMetadata();
+                    $metadata = $asset->getMetadata(null, null, false, true);
                     $dirty = false;
 
                     unset($data['id']);
@@ -2456,6 +2459,14 @@ class AssetController extends ElementControllerBase implements EventedController
 
                         foreach ($metadata as $idx => &$em) {
                             if ($em['name'] == $key && $em['language'] == $language) {
+
+                                try {
+                                    $dataImpl = $loader->build($em["type"]);
+                                    $value = $dataImpl->getDataFromListfolderGrid($value, $em);
+                                } catch (UnsupportedException $le) {
+                                    Logger::error("could not resolve metadata implementation for " . $em["type"]);
+                                }
+
                                 $em['data'] = $value;
                                 $dirty = true;
                                 break;
@@ -2465,23 +2476,43 @@ class AssetController extends ElementControllerBase implements EventedController
                         if (!$dirty) {
                             $defaulMetadata = ['title', 'alt', 'copyright'];
                             if (in_array($key, $defaulMetadata)) {
-                                $metadata[] = [
+                                $newEm = [
                                     'name' => $key,
                                     'language' => $language,
                                     'type' => 'input',
                                     'data' => $value,
                                 ];
+
+                                try {
+                                    $dataImpl = $loader->build($newEm["type"]);
+                                    $newEm["data"] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
+                                } catch (UnsupportedException $le) {
+                                    Logger::error("could not resolve metadata implementation for " . $em["type"]);
+                                }
+
+                                $metadata[] = $newEm;
+
+
                                 $dirty = true;
                             } else {
                                 $predefined = Model\Metadata\Predefined::getByName($key);
                                 if ($predefined && (empty($predefined->getTargetSubtype())
                                         || $predefined->getTargetSubtype() == $asset->getType())) {
-                                    $metadata[] = [
+                                    $newEm = [
                                         'name' => $key,
                                         'language' => $language,
                                         'type' => $predefined->getType(),
                                         'data' => $value,
                                     ];
+
+                                    try {
+                                        $dataImpl = $loader->build($newEm["type"]);
+                                        $newEm["data"] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
+                                    } catch (UnsupportedException $le) {
+                                        Logger::error("could not resolve metadata implementation for " . $newEm["type"]);
+                                    }
+
+                                    $metadata[] = $newEm;
                                     $dirty = true;
                                 }
                             }
@@ -2489,7 +2520,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     }
 
                     if ($dirty) {
-                        $metadata = Asset\Service::minimizeMetadata($metadata, "grid");
+                        // $metadata = Asset\Service::minimizeMetadata($metadata, "grid");
                         $asset->setMetadataRaw($metadata);
                         $asset->save();
 

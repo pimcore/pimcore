@@ -20,6 +20,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -931,6 +932,8 @@ class AssetHelperController extends AdminController
     {
         try {
             if ($request->get('data')) {
+                $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+
                 $data = $this->decodeJson($request->get('data'), true);
 
                 $updateEvent = new GenericEvent($this, [
@@ -958,7 +961,7 @@ class AssetHelperController extends AdminController
                         throw new \Exception("Permission denied. You don't have the rights to save this asset.");
                     }
 
-                    $metadata = $asset->getMetadata();
+                    $metadata = $asset->getMetadata(null, null, false, true);
                     $dirty = false;
 
                     $name = $data['name'];
@@ -976,6 +979,12 @@ class AssetHelperController extends AdminController
 
                     foreach ($metadata as $idx => &$em) {
                         if ($em['name'] == $name && $em['language'] == $language) {
+                            try {
+                                $dataImpl = $loader->build($em["type"]);
+                                $value = $dataImpl->getDataFromListfolderGrid($value, $em);
+                            } catch (UnsupportedException $le) {
+                                Logger::error("could not resolve metadata implementation for " . $em["type"]);
+                            }
                             $em['data'] = $value;
                             $dirty = true;
                             break;
@@ -985,23 +994,45 @@ class AssetHelperController extends AdminController
                     if (!$dirty) {
                         $defaulMetadata = ['title', 'alt', 'copyright'];
                         if (in_array($name, $defaulMetadata)) {
-                            $metadata[] = [
+
+                            $newEm = [
                                 'name' => $name,
                                 'language' => $language,
                                 'type' => 'input',
                                 'data' => $value,
                             ];
+
+                            try {
+                                $dataImpl = $loader->build($newEm["type"]);
+                                $newEm["data"] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
+                            } catch (UnsupportedException $le) {
+                                Logger::error("could not resolve metadata implementation for " . $newEm["type"]);
+                            }
+
+                            $metadata[] = $newEm;
                             $dirty = true;
                         } else {
                             $predefined = Metadata\Predefined::getByName($name);
                             if ($predefined && (empty($predefined->getTargetSubtype())
                                     || $predefined->getTargetSubtype() == $asset->getType())) {
-                                $metadata[] = [
+
+                                $newEm = [
                                     'name' => $name,
                                     'language' => $language,
                                     'type' => $predefined->getType(),
                                     'data' => $value,
                                 ];
+
+                                try {
+                                    $dataImpl = $loader->build($em["type"]);
+                                    $newEm["data"] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
+                                } catch (UnsupportedException $le) {
+                                    Logger::error("could not resolve metadata implementation for " . $newEm["type"]);
+                                }
+
+                                $metadata[] = $newEm;
+
+
                                 $dirty = true;
                             }
                         }
@@ -1009,8 +1040,8 @@ class AssetHelperController extends AdminController
 
                     try {
                         if ($dirty) {
-                            $metadata = Asset\Service::minimizeMetadata($metadata, "grid");
-                            $asset->setMetadata($metadata);
+                            // $metadata = Asset\Service::minimizeMetadata($metadata, "grid");
+                            $asset->setMetadataRaw($metadata);
                             $asset->save();
 
                             return $this->adminJson(['success' => true]);
