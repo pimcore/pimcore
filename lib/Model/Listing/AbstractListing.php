@@ -423,8 +423,17 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     public function quote($value, $type = null)
     {
         $db = Db::get();
-
         return $db->quote($value, $type);
+    }
+
+    /**
+     * @param string $value
+     * @return string
+     */
+    public function escapeLike($value): string
+    {
+        $db = Db::get();
+        return $db->escapeLike($value);
     }
 
     /**
