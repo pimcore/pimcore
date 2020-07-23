@@ -220,17 +220,15 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                     }
                     child = child[0];
                 } else {
-                    let text = nodeConf.label;
-                    if (!text) {
-                        if (nodeConf.layout) {
-                            text = nodeConf.layout.name;
-                            let subType = nodeConf.layout.subtype;
-                            if (nodeConf.dataType !== "system" && subType) {
-                                text = text + " (" + subType + ")";
-                            }
-                        } else {
-                            text = nodeConf.key;
-                        }
+                    if(nodeConf.layout) {
+                        var text = nodeConf.layout.name;
+                        var subType = nodeConf.layout.subtype;
+                    } else {
+                        var text = nodeConf.label;
+                    }
+
+                    if (nodeConf.dataType !== "system" && subType) {
+                        text = text + " (" + subType + ")";
                     }
 
                     var child = {
