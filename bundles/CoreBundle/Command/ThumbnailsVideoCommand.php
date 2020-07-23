@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\CoreBundle\Command;
 
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Console\Traits\Parallelization;
+use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Version;

@@ -255,12 +255,12 @@ class AssetController extends ElementControllerBase implements EventedController
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
 
-                $condition = 'parentId = ' . $db->quote($asset->getId()) . ' and
+                $condition = 'parentId = ' . $db->quote($asset->getId()) . ' AND
                 (
-                (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                or
-                (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                    )';
+                    (SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
+                    or
+                    (SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(path,filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
+                )';
             }
 
             if (! is_null($filter)) {
@@ -630,7 +630,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $parentAsset = Asset::getById($request->get('id'));
 
             $list = new Asset\Listing();
-            $list->setCondition('path LIKE ?', [$parentAsset->getRealFullPath() . '/%']);
+            $list->setCondition('path LIKE ?', [$list->escapeLike($parentAsset->getRealFullPath()) . '/%']);
             $list->setLimit(intval($request->get('amount')));
             $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
@@ -699,7 +699,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $folderThumbs = [];
             $children = new Asset\Listing();
-            $children->setCondition('path LIKE ?', [$asset->getRealFullPath() . '/%']);
+            $children->setCondition('path LIKE ?', [$children->escapeLike($asset->getRealFullPath()) . '/%']);
             $children->addConditionParam('type IN (\'image\', \'video\', \'document\')', 'AND');
             $children->setLimit(35);
 
@@ -906,7 +906,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $publicDir = new Asset\WebDAV\Folder($homeDir);
             $objectTree = new Asset\WebDAV\Tree($publicDir);
             $server = new \Sabre\DAV\Server($objectTree);
-            $server->setBaseUri($this->generateUrl('pimcore_admin_webdav'));
+            $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', [ 'path' => '/' ]));
 
             // lock plugin
             $lockBackend = new \Sabre\DAV\Locks\Backend\File(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/webdav-locks.dat');
@@ -1671,7 +1671,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $conditionFilters = [];
         $list = new Asset\Listing();
-        $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%')) ." AND type != 'folder'";
+        $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($list->escapeLike($folder->getRealFullPath()) . '/%')) ." AND type != 'folder'";
 
         if (!$this->getAdminUser()->isAdmin()) {
             $userIds = $this->getAdminUser()->getRoles();
@@ -1778,7 +1778,7 @@ class AssetController extends ElementControllerBase implements EventedController
             if ($asset->hasChildren()) {
                 // get amount of children
                 $list = new Asset\Listing();
-                $list->setCondition('path LIKE ?', [$asset->getRealFullPath() . '/%']);
+                $list->setCondition('path LIKE ?', [$list->escapeLike($asset->getRealFullPath()) . '/%']);
                 $list->setOrderKey('LENGTH(path)', false);
                 $list->setOrder('ASC');
                 $childIds = $list->loadIdList();
@@ -1923,7 +1923,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 //add a condition if id numbers are specified
                 $conditionFilters[] = 'id IN (' . implode(',', $quotedSelectedIds) . ')';
             }
-            $conditionFilters[] = 'path LIKE ' . $db->quote($parentPath . '/%') .' AND type != ' . $db->quote('folder');
+            $conditionFilters[] = 'path LIKE ' . $db->quote($db->escapeLike($parentPath) . '/%') .' AND type != ' . $db->quote('folder');
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
@@ -2004,7 +2004,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     //add a condition if id numbers are specified
                     $conditionFilters[] = 'id IN (' . implode(',', $selectedIds) . ')';
                 }
-                $conditionFilters[] = "type != 'folder' AND path LIKE " . $db->quote($parentPath . '/%');
+                $conditionFilters[] = "type != 'folder' AND path LIKE " . $db->quote($db->escapeLike($parentPath) . '/%');
                 if (!$this->getAdminUser()->isAdmin()) {
                     $userIds = $this->getAdminUser()->getRoles();
                     $userIds[] = $this->getAdminUser()->getId();
