@@ -91,6 +91,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
 
                     if (child.data.language) {
                         obj.key = child.data.layout.name + '~' + child.data.language;
+                        obj.label = child.data.layout.title = child.data.text + ' (' + child.data.language + ')';
                     }
 
                     obj.language = child.data.language;

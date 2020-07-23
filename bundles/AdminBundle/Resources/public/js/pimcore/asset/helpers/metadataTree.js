@@ -209,13 +209,15 @@ pimcore.asset.helpers.metadataTree = Class.create({
             var key = initData.name;
 
             var text = initData.title;
-            var copyText = initData.copyTitle ? initData.copyTitle : text;
+
 
             var subType = initData.subtype;
 
             if(subType) {
                 text += " (" + subType + ")";
             }
+
+            var copyText = initData.copyTitle ? initData.copyTitle : text;
 
             var newNode = {
                 text: text,
