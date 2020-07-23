@@ -146,7 +146,7 @@ class Imagick extends Adapter
 
             // check for the existence of an embedded clipping path (8BIM / Adobe profile meta data)
             $identifyRaw = $i->identifyImage(true)['rawOutput'];
-            if(strpos($identifyRaw, 'Clipping path') && strpos($identifyRaw, '<svg')) {
+            if (strpos($identifyRaw, 'Clipping path') && strpos($identifyRaw, '<svg')) {
                 // if there's a clipping path embedded, apply the first one
 
                 // known issue: it seems that -clip doesnt work with the ImageMagick version
