@@ -423,9 +423,8 @@ class Data extends \Pimcore\Model\AbstractModel
                             $this->data .= ' ' . $dataForSearchIndex;
                         }
                     } catch (UnsupportedException $e) {
-
+                        Logger::error("asset metadata type " . $md['type'] . " could not be resolved");
                     }
-
                 }
             }
 
