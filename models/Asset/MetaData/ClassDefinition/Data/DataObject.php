@@ -167,6 +167,9 @@ class DataObject extends Data
      */
     public function getDataFromListfolderGrid($data, $params = []) {
         $data = AbstractObject::getByPath($data);
-        return $data;
+        if ($data instanceof AbstractElement) {
+            return $data->getId();
+        }
+        return null;
     }
 }

@@ -167,6 +167,11 @@ class Document extends Data
      */
     public function getDataFromListfolderGrid($data, $params = []) {
         $data = \Pimcore\Model\Document::getByPath($data);
-        return $data;
+
+        if ($data instanceof AbstractElement) {
+            return $data->getId();
+        }
+
+        return null;
     }
 }

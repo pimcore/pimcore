@@ -174,6 +174,9 @@ class Asset extends Data
      */
     public function getDataFromListfolderGrid($data, $params = []) {
         $data = \Pimcore\Model\Asset::getByPath($data);
-        return $data;
+        if ($data instanceof AbstractElement) {
+            return $data->getId();
+        }
+        return null;
     }
 }
