@@ -184,6 +184,22 @@ final class AdminEvents
      */
     const ASSET_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.asset.list.beforeListLoad';
 
+
+
+    /**
+     * Arguments:
+     *  - field
+     *  - language
+     *  - keyPrefix
+     *  - processed
+     *  - result
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_GET_FIELD_GRID_CONFIG = 'pimcore.admin.asset.getFieldGridConfig';
+
     /**
      * Allows you to modify the the result after the list was loaded. This event apply to both the folder content preview list and the grid list.
      *
