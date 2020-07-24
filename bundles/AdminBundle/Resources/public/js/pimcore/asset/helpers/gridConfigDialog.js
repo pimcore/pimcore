@@ -418,6 +418,9 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                     store.each(function(record, id) {
                         let value = this.languageField.getValue();
                         if (record.data.dataType != "system"  && !(record.data.layout && record.data.layout.isUnlocalized)) {
+                            if (value === "default") {
+                                value = "";
+                            }
                             record.set("language", value);
                             this.updatePreview();
                         }
@@ -427,7 +430,6 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
             };
 
             this.languageSelection = this.getLanguageSelection({
-                omitDefault: true,
                 additionalItem: additionalItem,
                 emptyText: t("batch_change_language"),
                 disablePreviewUpdate: true
