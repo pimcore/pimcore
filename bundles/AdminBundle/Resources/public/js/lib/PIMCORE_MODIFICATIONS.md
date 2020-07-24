@@ -50,6 +50,8 @@ npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic-theme-t
 npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-ux
 npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-charts
 npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-classic-locale
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-font-awesome
+npm install --prefix web/bundles/pimcoreadmin/js/ -g @sencha/ext-font-ext
 ```
 
 
