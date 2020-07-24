@@ -71,8 +71,8 @@ class ThumbnailsVideoCommand extends AbstractCommand
             }
         }
 
-
         $list->setCondition(implode(' AND ', $conditions));
+
         return $list->loadIdList();
     }
 
