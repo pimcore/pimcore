@@ -85,7 +85,7 @@ pimcore.asset.helpers.gridTabAbstract = Class.create(pimcore.element.helpers.gri
 
         var resetCallback = function () {
             Ext.Ajax.request({
-                url: "/admin/asset-helper/grid-get-column-config",
+                url: Routing.generate('pimcore_admin_asset_assethelper_gridgetcolumnconfig'),
                 params: {
                     gridtype: "grid",
                     searchType: this.searchType
