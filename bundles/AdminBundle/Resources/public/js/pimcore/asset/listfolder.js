@@ -92,11 +92,11 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             this.availableConfigs = response.availableConfigs;
             this.sharedConfigs = response.sharedConfigs;
 
-            if (response.onlyDirectChildren) {
+            if (typeof response.onlyDirectChildren != "undefined") {
                 this.onlyDirectChildren = response.onlyDirectChildren;
             }
 
-            if (response.onlyUnreferenced) {
+            if (typeof response.onlyUnreferenced != "undefined") {
                 this.onlyUnreferenced = response.onlyUnreferenced;
             }
         } else {
