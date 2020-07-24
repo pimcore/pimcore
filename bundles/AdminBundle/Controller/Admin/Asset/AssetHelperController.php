@@ -728,27 +728,28 @@ class AssetHelperController extends AdminController
 
         foreach ($list->load() as $asset) {
             if ($fields) {
-                $a = [];
+                $dataRows = [];
                 foreach ($fields as $field) {
                     $fieldDef = explode('~', $field);
                     $getter = 'get' . ucfirst($fieldDef[0]);
 
-                    if ($fieldDef[1] == 'system' && method_exists($asset, $getter)) {
-                        $a[] = $asset->$getter($language);
-                    } else {
-                        if (isset($fieldDef[1])) {
-                            $fieldDef[1] = str_replace('none', '', $fieldDef[1]);
-                            $a[] = $asset->getMetadata($fieldDef[0], $fieldDef[1], true);
+                    if (isset($fieldDef[1])) {
+                        if ($fieldDef[1] == 'system' && method_exists($asset, $getter)) {
+                            $data = $asset->$getter($language);
                         } else {
-                            $a[] = $asset->getMetadata($field, $language, true);
+                            $fieldDef[1] = str_replace('none', '', $fieldDef[1]);
+                            $data = $asset->getMetadata($fieldDef[0], $fieldDef[1], true);
                         }
-
-                        if ($a instanceof Element\AbstractElement) {
-                            $a = $a->getFullPath();
-                        }
+                    } else {
+                        $data = $asset->getMetadata($field, $language, true);
                     }
+
+                    if ($data instanceof Element\AbstractElement) {
+                        $data = $data->getFullPath();
+                    }
+                    $dataRows[] = $data;
                 }
-                $csv[] = $a;
+                $csv[] = $dataRows;
             }
         }
 
