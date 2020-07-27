@@ -17,6 +17,8 @@
 
 namespace Pimcore\Model\Metadata;
 
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
+use Pimcore\Logger;
 use Pimcore\Model;
 
 /**
@@ -323,17 +325,26 @@ class Predefined extends Model\AbstractModel
 
     public function minimize()
     {
-        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-        /** @var Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
-        $instance = $loader->build($this->type);
-        $this->data = $instance->marshal($this->data);
+        try {
+            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            /** @var Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
+            $instance = $loader->build($this->type);
+            $this->data = $instance->marshal($this->data);
+        } catch (UnsupportedException $e) {
+            Logger::error("could not resolve asset metadata implementation for " . $this->type);
+
+        }
     }
 
     public function expand()
     {
-        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-        /** @var Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
-        $instance = $loader->build($this->type);
-        $this->data = $instance->unmarshal($this->data);
+        try {
+            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            /** @var Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
+            $instance = $loader->build($this->type);
+            $this->data = $instance->unmarshal($this->data);
+        } catch (UnsupportedException $e) {
+            Logger::error("could not resolve asset metadata implementation for " . $this->type);
+        }
     }
 }

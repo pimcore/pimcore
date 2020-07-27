@@ -17,6 +17,9 @@
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
 class DataObject extends Data
@@ -56,5 +59,117 @@ class DataObject extends Data
         }
 
         return $value;
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function transformGetterData($data, $params = []) {
+        if (is_numeric($data)) {
+            return \Pimcore\Model\DataObject\Service::getElementById("object", $data);
+        }
+        return $data;
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function transformSetterData($data, $params = []) {
+        if ($data instanceof AbstractObject) {
+            return $data->getId();
+        }
+        return $data;
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataFromEditMode($data, $params = []) {
+        $element = Service::getElementByPath("object", $data);
+        if ($element) {
+            return $element->getId();
+        }
+        return "";
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataForResource($data, $params = []) {
+        if ($data instanceof ElementInterface) {
+            return $data->getId();
+        }
+
+        return $data;
+    }
+
+    /** @inheritDoc */
+    public function getDataForEditMode($data, $params = []) {
+        if (is_numeric($data)) {
+            $data = Service::getElementById("object", $data);
+        }
+        if ($data instanceof ElementInterface) {
+            return $data->getRealFullPath();
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataForListfolderGrid($data, $params = []) {
+        if (is_numeric($data)) {
+            $data = AbstractObject::getById($data);
+        };
+
+        if ($data instanceof AbstractObject) {
+            return $data->getFullPath();
+        }
+        return $data;
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return array
+     */
+    public function resolveDependencies($data, $params = [])
+    {
+        if (isset($params['data'])) {
+            $elementId = $params['data'];
+            $elementType = $params['type'];
+
+            $key = $elementType . '_' . $elementId;
+            return [
+                $key => [
+                    'id' => $elementId,
+                    'type' => $elementType
+                ]];
+        }
+        return [];
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     * @return mixed
+     */
+    public function getDataFromListfolderGrid($data, $params = []) {
+        $data = AbstractObject::getByPath($data);
+        if ($data instanceof AbstractElement) {
+            return $data->getId();
+        }
+        return null;
     }
 }

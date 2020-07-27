@@ -19,8 +19,10 @@ namespace Pimcore\Model\Asset;
 
 use Pimcore\Event\AssetEvents;
 use Pimcore\Event\Model\AssetEvent;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
+use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Element;
 
 /**
@@ -188,6 +190,7 @@ class Service extends Model\Element\Service
     public static function gridAssetData($asset, $fields = null, $requestedLanguage = null, $params = [])
     {
         $data = Element\Service::gridElementData($asset);
+        $loader = null;
 
         if ($asset instanceof Asset && !empty($fields)) {
             $data = [
@@ -217,13 +220,28 @@ class Service extends Model\Element\Service
                 } else {
                     if (isset($fieldDef[1])) {
                         $language = ($fieldDef[1] === 'none' ? '' : $fieldDef[1]);
-                        $metaData = $asset->getMetadata($fieldDef[0], $language, true);
+                        $rawMetaData = $asset->getMetadata($fieldDef[0], $language, true, true);
                     } else {
-                        $metaData = $asset->getMetadata($field, $requestedLanguage, true);
+                        $rawMetaData = $asset->getMetadata($field, $requestedLanguage, true, true);
                     }
 
-                    if ($metaData instanceof Model\Element\AbstractElement) {
-                        $metaData = $metaData->getFullPath();
+                    $metaData = $rawMetaData["data"] ?? null;
+
+                    if ($rawMetaData) {
+                        $type = $rawMetaData["type"];
+                        if (!$loader) {
+                            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+                        }
+
+
+                        $metaData = $rawMetaData["data"] ?? null;
+                        try {
+                            /** @var Data $instance */
+                            $instance = $loader->build($type);
+                            $metaData = $instance->getDataForListfolderGrid($rawMetaData["data"] ?? null, $rawMetaData);
+                        } catch (UnsupportedException $e) {
+
+                        }
                     }
 
                     $data[$field] = $metaData;
@@ -336,12 +354,16 @@ class Service extends Model\Element\Service
         return $asset;
     }
 
+
     /**
+     * @internal
+     *
      * @param array $metadata
+     * @param string $mode
      *
      * @return array
      */
-    public static function minimizeMetadata($metadata)
+    public static function minimizeMetadata($metadata, string $mode)
     {
         if (!is_array($metadata)) {
             return $metadata;
@@ -349,24 +371,23 @@ class Service extends Model\Element\Service
 
         $result = [];
         foreach ($metadata as $item) {
-            $type = $item['type'];
-            switch ($type) {
-                case 'document':
-                case 'asset':
-                case 'object':
-                    {
-                        $element = Element\Service::getElementByPath($type, $item['data']);
-                        if ($element) {
-                            $item['data'] = $element->getId();
-                        } else {
-                            $item['data'] = '';
-                        }
-                    }
 
-                    break;
-                default:
-                    //nothing to do
+            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            try {
+                /** @var Data $instance */
+                $instance = $loader->build($item['type']);
+
+                if ($mode == "grid") {
+                    $transformedData = $instance->getDataFromListfolderGrid($item['data'], $item);
+                } else {
+                    $transformedData = $instance->getDataFromEditMode($item['data'], $item);
+                }
+
+                $item["data"] = $transformedData;
+            } catch (UnsupportedException $e) {
+
             }
+
             $result[] = $item;
         }
 
@@ -384,37 +405,30 @@ class Service extends Model\Element\Service
             return $metadata;
         }
 
+
         $result = [];
         foreach ($metadata as $item) {
-            $type = $item['type'];
-            switch ($type) {
-                case 'document':
-                case 'asset':
-                case 'object':
-                {
-                    $element = $item['data'];
-                    if (is_numeric($item['data'])) {
-                        $element = Element\Service::getElementById($type, $item['data']);
-                    }
-                    if ($element instanceof Element\ElementInterface) {
-                        $item['data'] = $element->getRealFullPath();
-                    } else {
-                        $item['data'] = '';
-                    }
-                }
 
-                    break;
-                default:
-                    //nothing to do
+            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            $transformedData = $item['data'];
+
+            try {
+                /** @var Data $instance */
+                $instance = $loader->build($item['type']);
+                $transformedData = $instance->getDataForEditMode($item['data'], $item);
+            } catch (UnsupportedException $e) {
+
             }
 
+            $item["data"] = $transformedData;
             //get the config from an predefined property-set (eg. select)
             $predefined = Model\Metadata\Predefined::getByName($item['name']);
             if ($predefined && $predefined->getType() == $item['type'] && $predefined->getConfig()) {
                 $item['config'] = $predefined->getConfig();
             }
 
-            $result[] = $item;
+            $key = $item['name'] . "~" . $item['language'];
+            $result[$key] = $item;
         }
 
         return $result;

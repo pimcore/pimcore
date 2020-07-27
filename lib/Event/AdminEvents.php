@@ -184,6 +184,22 @@ final class AdminEvents
      */
     const ASSET_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.asset.list.beforeListLoad';
 
+
+
+    /**
+     * Arguments:
+     *  - field
+     *  - language
+     *  - keyPrefix
+     *  - processed
+     *  - result
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_GET_FIELD_GRID_CONFIG = 'pimcore.admin.asset.getFieldGridConfig';
+
     /**
      * Allows you to modify the the result after the list was loaded. This event apply to both the folder content preview list and the grid list.
      *
@@ -197,6 +213,34 @@ final class AdminEvents
      * @var string
      */
     const ASSET_LIST_AFTER_LIST_LOAD = 'pimcore.admin.asset.list.afterListLoad';
+
+    /**
+     * Allows you to modify the data from the listfolder grid before it gets processed
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - data | raw data as an array
+     *  - processed | true to stop processing
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_LIST_BEFORE_UPDATE = 'pimcore.admin.asset.list.beforeUpdate';
+
+    /**
+     * Allows you to modify the batch update data from the listfolder grid before it gets processed
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - params |
+     *  - processed | true to stop processing
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_LIST_BEFORE_BATCH_UPDATE = 'pimcore.admin.asset.list.beforeBatchUpdate';
 
     /**
      * Fired before the request params are parsed. This event apply to the seo panel tree.
@@ -430,4 +474,16 @@ final class AdminEvents
      * @var string
      */
     const ELEMENT_PERMISSION_IS_ALLOWED = 'pimcore.admin.permissions.elementIsAllowed';
+
+    /**
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\AssetController
+     * Arguments:
+     *  - id | int | asset id
+     *  - metadata | array | contains the data received from the editor UI
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_METADATA_PRE_SET = 'pimcore.admin.asset.metadata.preSave';
 }

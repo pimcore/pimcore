@@ -19,6 +19,7 @@ namespace Pimcore\Model\Asset\Metadata\Loader;
 
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
+use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 
 interface DataLoaderInterface extends LoaderInterface
 {
@@ -30,5 +31,5 @@ interface DataLoaderInterface extends LoaderInterface
      *
      * @return Data
      */
-    public function build(string $name, array $params = []): Data;
+    public function build(string $name, array $params = []): DataDefinitionInterface;
 }

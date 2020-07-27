@@ -19,6 +19,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Db;
+use Pimcore\Event\AdminEvents;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
@@ -30,6 +32,8 @@ use Pimcore\Model\Metadata;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -236,12 +240,8 @@ class AssetHelperController extends AdminController
             }
         }
 
-        $language = 'default';
-        if (!empty($gridConfig) && !empty($gridConfig['language'])) {
-            $language = $gridConfig['language'];
-        }
-
         $availableFields = [];
+        $language = '';
 
         if (empty($gridConfig)) {
             $availableFields = $this->getDefaultGridFields(
@@ -269,11 +269,6 @@ class AssetHelperController extends AdminController
             return ($a['position'] < $b['position']) ? -1 : 1;
         });
 
-        $language = 'default';
-        if (!empty($gridConfig) && !empty($gridConfig['language'])) {
-            $language = $gridConfig['language'];
-        }
-
         $availableConfigs = $classId ? $this->getMyOwnGridColumnConfigs($userId, $classId, $searchType) : [];
         $sharedConfigs = $classId ? $this->getSharedGridColumnConfigs($this->getAdminUser(), $classId, $searchType) : [];
         $settings = $this->getShareSettings((int)$gridConfigId);
@@ -285,7 +280,6 @@ class AssetHelperController extends AdminController
 
         return [
             'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
-            'language' => $language,
             'availableFields' => $availableFields,
             'settings' => $settings,
             'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,
@@ -326,10 +320,6 @@ class AssetHelperController extends AdminController
         } elseif (in_array($fieldDef[0], $defaulMetadataFields)) {
             $type = 'input';
         } else {
-            //check if predefined metadata exists, otherwise ignore
-            if (empty($predefined) || ($predefined->getType() != $field['fieldConfig']['type'])) {
-                return null;
-            }
             $type = $field['fieldConfig']['type'];
             if (isset($fieldDef[1])) {
                 $field['fieldConfig']['label'] = $field['fieldConfig']['layout']['title'] = $fieldDef[0] . ' (' . $fieldDef[1] . ')';
@@ -351,7 +341,7 @@ class AssetHelperController extends AdminController
             $result['locked'] = $field['locked'];
         }
 
-        if ($type === 'select') {
+        if ($type === 'select' && $predefined) {
             $field['fieldConfig']['layout']['config'] = $predefined->getConfig();
             $result['layout'] = $field['fieldConfig']['layout'];
         } elseif ($type === 'document' || $type === 'asset' || $type === 'object') {
@@ -738,27 +728,28 @@ class AssetHelperController extends AdminController
 
         foreach ($list->load() as $asset) {
             if ($fields) {
-                $a = [];
+                $dataRows = [];
                 foreach ($fields as $field) {
                     $fieldDef = explode('~', $field);
                     $getter = 'get' . ucfirst($fieldDef[0]);
 
-                    if ($fieldDef[1] == 'system' && method_exists($asset, $getter)) {
-                        $a[] = $asset->$getter($language);
-                    } else {
-                        if (isset($fieldDef[1])) {
-                            $fieldDef[1] = str_replace('none', '', $fieldDef[1]);
-                            $a[] = $asset->getMetadata($fieldDef[0], $fieldDef[1], true);
+                    if (isset($fieldDef[1])) {
+                        if ($fieldDef[1] == 'system' && method_exists($asset, $getter)) {
+                            $data = $asset->$getter($language);
                         } else {
-                            $a[] = $asset->getMetadata($field, $language, true);
+                            $fieldDef[1] = str_replace('none', '', $fieldDef[1]);
+                            $data = $asset->getMetadata($fieldDef[0], $fieldDef[1], true);
                         }
-
-                        if ($a instanceof Element\AbstractElement) {
-                            $a = $a->getFullPath();
-                        }
+                    } else {
+                        $data = $asset->getMetadata($field, $language, true);
                     }
+
+                    if ($data instanceof Element\AbstractElement) {
+                        $data = $data->getFullPath();
+                    }
+                    $dataRows[] = $data;
                 }
-                $csv[] = $a;
+                $csv[] = $dataRows;
             }
         }
 
@@ -934,43 +925,67 @@ class AssetHelperController extends AdminController
      * @Route("/batch", name="pimcore_admin_asset_assethelper_batch", methods={"PUT"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function batchAction(Request $request)
+    public function batchAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         try {
             if ($request->get('data')) {
-                $params = $this->decodeJson($request->get('data'), true);
-                $language = $params['language'] != 'default' ? $params['language'] : null;
+                $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
-                $asset = Asset::getById($params['job']);
+                $data = $this->decodeJson($request->get('data'), true);
+
+                $updateEvent = new GenericEvent($this, [
+                    'data' => $data,
+                    'processed' => false
+                ]);
+
+                $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_BATCH_UPDATE, $updateEvent);
+
+                $processed = $updateEvent->getArgument('processed');
+
+                if ($processed) {
+                    return $this->adminJson(['success' => true]);
+                }
+
+                $language = null;
+                if (isset($data["language"])) {
+                    $language = $data['language'] != 'default' ? $data['language'] : null;
+                }
+
+                $asset = Asset::getById($data['job']);
 
                 if ($asset) {
                     if (!$asset->isAllowed('publish')) {
                         throw new \Exception("Permission denied. You don't have the rights to save this asset.");
                     }
 
-                    $metadata = $asset->getMetadata();
+                    $metadata = $asset->getMetadata(null, null, false, true);
                     $dirty = false;
 
-                    $name = $params['name'];
-                    $value = $params['value'];
+                    $name = $data['name'];
+                    $value = $data['value'];
 
-                    if ($params['valueType'] == 'object') {
+                    if ($data['valueType'] == 'object') {
                         $value = $this->decodeJson($value);
                     }
 
-                    if (strpos($name, '~') !== false) {
-                        $fieldDef = explode('~', $name);
-                        $name = $fieldDef[0];
-                        if (isset($fieldDef[1])) {
-                            $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
-                        }
+                    $fieldDef = explode('~', $name);
+                    $name = $fieldDef[0];
+                    if (count($fieldDef) > 1) {
+                        $language = ($fieldDef[1] == 'none' ? '' : $fieldDef[1]);
                     }
 
                     foreach ($metadata as $idx => &$em) {
                         if ($em['name'] == $name && $em['language'] == $language) {
+                            try {
+                                $dataImpl = $loader->build($em["type"]);
+                                $value = $dataImpl->getDataFromListfolderGrid($value, $em);
+                            } catch (UnsupportedException $le) {
+                                Logger::error("could not resolve metadata implementation for " . $em["type"]);
+                            }
                             $em['data'] = $value;
                             $dirty = true;
                             break;
@@ -980,23 +995,45 @@ class AssetHelperController extends AdminController
                     if (!$dirty) {
                         $defaulMetadata = ['title', 'alt', 'copyright'];
                         if (in_array($name, $defaulMetadata)) {
-                            $metadata[] = [
+
+                            $newEm = [
                                 'name' => $name,
                                 'language' => $language,
                                 'type' => 'input',
                                 'data' => $value,
                             ];
+
+                            try {
+                                $dataImpl = $loader->build($newEm["type"]);
+                                $newEm["data"] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
+                            } catch (UnsupportedException $le) {
+                                Logger::error("could not resolve metadata implementation for " . $newEm["type"]);
+                            }
+
+                            $metadata[] = $newEm;
                             $dirty = true;
                         } else {
                             $predefined = Metadata\Predefined::getByName($name);
                             if ($predefined && (empty($predefined->getTargetSubtype())
                                     || $predefined->getTargetSubtype() == $asset->getType())) {
-                                $metadata[] = [
+
+                                $newEm = [
                                     'name' => $name,
                                     'language' => $language,
                                     'type' => $predefined->getType(),
                                     'data' => $value,
                                 ];
+
+                                try {
+                                    $dataImpl = $loader->build($newEm["type"]);
+                                    $newEm["data"] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
+                                } catch (UnsupportedException $le) {
+                                    Logger::error("could not resolve metadata implementation for " . $newEm["type"]);
+                                }
+
+                                $metadata[] = $newEm;
+
+
                                 $dirty = true;
                             }
                         }
@@ -1004,8 +1041,8 @@ class AssetHelperController extends AdminController
 
                     try {
                         if ($dirty) {
-                            $metadata = Asset\Service::minimizeMetadata($metadata);
-                            $asset->setMetadata($metadata);
+                            // $metadata = Asset\Service::minimizeMetadata($metadata, "grid");
+                            $asset->setMetadataRaw($metadata);
                             $asset->save();
 
                             return $this->adminJson(['success' => true]);
