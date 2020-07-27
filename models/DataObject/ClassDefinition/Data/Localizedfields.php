@@ -19,12 +19,13 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
 
-class Localizedfields extends Data implements CustomResourcePersistingInterface
+class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface
 {
     use Element\ChildsCompatibilityTrait;
 
@@ -123,7 +124,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      * @see Data::getDataForEditmode
      *
      * @param DataObject\Localizedfield $localizedField
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -151,7 +152,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
                     $childData->setContextualData($ownerType, $ownerName, $index, $language, null, null, $fieldDefinition);
                     $value = $fieldDefinition->getDataForEditmode($childData, $object, $params);
                 } else {
-                    $value = $fieldDefinition->getDataForEditmode($value, $object, $params);
+                    $value = $fieldDefinition->getDataForEditmode($value, $object, array_merge($params, $localizedField->getDao()->getFieldDefinitionParams($fieldDefinition->getName(), $language)));
                 }
             }
         }
@@ -284,7 +285,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Localizedfield
@@ -402,9 +403,15 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
         if ($lfData instanceof DataObject\Localizedfield) {
             foreach ($lfData->getInternalData(true) as $language => $values) {
-                foreach ($values as $lData) {
-                    if (is_string($lData)) {
-                        $dataString .= $lData.' ';
+                foreach ($values as $fieldname => $lData) {
+                    $fd = $this->getFieldDefinition($fieldname);
+                    if ($fd) {
+                        $forSearchIndex = $fd->getDataForSearchIndex($lfData, [
+                            'injectedData' => $lData,
+                        ]);
+                        if ($forSearchIndex) {
+                            $dataString .= $forSearchIndex . ' ';
+                        }
                     }
                 }
             }
@@ -416,7 +423,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
     /**
      * @deprecated
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -722,6 +729,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
      */
     public function classSaved($class, $params = [])
     {
+        // create a dummy instance just for updating the tables
         $localizedFields = new DataObject\Localizedfield();
         $localizedFields->setClass($class);
         $context = isset($params['context']) ? $params['context'] : null;
@@ -1110,16 +1118,52 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
             $languages = explode(',', $config['valid_languages']);
         }
 
-        $data = $this->getDataForValidity($data, $languages);
+        $dataForValidityCheck = $this->getDataForValidity($data, $languages);
         $validationExceptions = [];
         if (!$omitMandatoryCheck) {
             foreach ($languages as $language) {
                 foreach ($this->getFieldDefinitions() as $fd) {
                     try {
-                        if (isset($data[$language]) && isset($data[$language][$fd->getName()])) {
-                            $fd->checkValidity($data[$language][$fd->getName()]);
-                        } else {
-                            $fd->checkValidity(null);
+                        try {
+                            if (isset($dataForValidityCheck[$language]) && isset($dataForValidityCheck[$language][$fd->getName()])) {
+                                $fd->checkValidity($dataForValidityCheck[$language][$fd->getName()]);
+                            } else {
+                                $fd->checkValidity(null);
+                            }
+                        } catch (\Exception $e) {
+                            if ($data->getObject()->getClass()->getAllowInherit()) {
+                                //try again with parent data when inheritance is activated
+                                try {
+                                    $getInheritedValues = AbstractObject::doGetInheritedValues();
+                                    AbstractObject::setGetInheritedValues(true);
+
+                                    $value = null;
+                                    $context = $data->getContext();
+                                    $containerType = $context['containerType'] ?? null;
+                                    if ($containerType === 'objectbrick') {
+                                        $brickContainer = $data->getObject()->{'get' . ucfirst($context['fieldname'])}();
+                                        $brick = $brickContainer->{'get' . ucfirst($context['containerKey'])}();
+                                        if ($brick) {
+                                            $value = $brick->{'get' . ucfirst($fd->getName())}($language);
+                                        }
+                                    } elseif ($containerType === null || $containerType === 'object') {
+                                        $getter = 'get' . ucfirst($fd->getName());
+                                        $value = $data->getObject()->$getter($language);
+                                    }
+
+                                    $fd->checkValidity($value, $omitMandatoryCheck);
+                                    AbstractObject::setGetInheritedValues($getInheritedValues);
+                                } catch (\Exception $e) {
+                                    if ($e instanceof Model\Element\ValidationException) {
+                                        throw $e;
+                                    }
+                                    $exceptionClass = get_class($e);
+                                    throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
+                                }
+                            } else {
+                                $exceptionClass = get_class($e);
+                                throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
+                            }
                         }
                     } catch (Model\Element\ValidationException $ve) {
                         $ve->addContext($this->getName() . '-' . $language);
@@ -1396,7 +1440,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -1434,7 +1478,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed

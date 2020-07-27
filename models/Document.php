@@ -300,6 +300,8 @@ class Document extends Element\AbstractElement
                 $document->getDao()->getById($id);
                 $document->__setDataVersionTimestamp($document->getModificationDate());
 
+                $document->resetDirtyMap();
+
                 \Pimcore\Cache::save($document, $cacheKey);
             } else {
                 \Pimcore\Cache\Runtime::set($cacheKey, $document);
@@ -850,7 +852,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Returns the full path of the document including the key (path+key)
+     * Returns the frontend path to the document respecting the current site and pretty-URLs
      *
      * @param bool $force
      *
@@ -955,7 +957,7 @@ class Document extends Element\AbstractElement
             $path = urlencode_ignore_slash($path);
 
             $event = new GenericEvent($this, [
-                'frontendPath' => $path
+                'frontendPath' => $path,
             ]);
             \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::DOCUMENT_PATH, $event);
             $path = $event->getArgument('frontendPath');
@@ -1054,7 +1056,7 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Returns the full real path of the document.
+     * Returns the internal real full path of the document. (not for frontend use!)
      *
      * @return string
      */
@@ -1116,6 +1118,8 @@ class Document extends Element\AbstractElement
      */
     public function setModificationDate($modificationDate)
     {
+        $this->markFieldDirty('modificationDate');
+
         $this->modificationDate = (int) $modificationDate;
 
         return $this;
@@ -1229,6 +1233,8 @@ class Document extends Element\AbstractElement
      */
     public function setUserModification($userModification)
     {
+        $this->markFieldDirty('userModification');
+
         $this->userModification = (int) $userModification;
 
         return $this;

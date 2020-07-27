@@ -183,7 +183,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface
                     $tokenInfo['token'],
                     (int) $tokenInfo['usages'],
                     (int) $tokenInfo['length'],
-                    $tokenInfo['timestamp']
+                    $tokenInfo['timestamp'],
                 ]);
             }
         }

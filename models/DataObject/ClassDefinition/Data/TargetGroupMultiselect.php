@@ -41,7 +41,7 @@ class TargetGroupMultiselect extends Model\DataObject\ClassDefinition\Data\Multi
         foreach ($targetGroups as $targetGroup) {
             $options[] = [
                 'value' => $targetGroup->getId(),
-                'key' => $targetGroup->getName()
+                'key' => $targetGroup->getName(),
             ];
         }
 

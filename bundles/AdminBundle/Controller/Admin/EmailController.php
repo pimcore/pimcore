@@ -30,7 +30,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class EmailController extends AdminController
 {
     /**
-     * @Route("/email-logs", methods={"GET", "POST"})
+     * @Route("/email-logs", name="pimcore_admin_email_emaillogs", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -101,12 +101,12 @@ class EmailController extends AdminController
         return $this->adminJson([
             'data' => $jsonData,
             'success' => true,
-            'total' => $list->getTotalCount()
+            'total' => $list->getTotalCount(),
         ]);
     }
 
     /**
-     * @Route("/show-email-log", methods={"GET"})
+     * @Route("/show-email-log", name="pimcore_admin_email_showemaillog", methods={"GET"})
      *
      * @param Request $request
      * @param Profiler $profiler
@@ -134,7 +134,7 @@ class EmailController extends AdminController
             return new Response('<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><style>body{background-color:#fff;}</style></head><body><pre>' . $templatingEnginePhp->escape($emailLog->getTextLog()) . '</pre></body></html>');
         } elseif ($request->get('type') == 'html') {
             return new Response($emailLog->getHtmlLog(), 200, [
-                'Content-Security-Policy' => "default-src 'self'; style-src 'self' 'unsafe-inline'"
+                'Content-Security-Policy' => "default-src 'self'; style-src 'self' 'unsafe-inline'",
             ]);
         } elseif ($request->get('type') == 'params') {
             try {
@@ -236,7 +236,7 @@ class EmailController extends AdminController
     }
 
     /**
-     * @Route("/delete-email-log", methods={"DELETE"})
+     * @Route("/delete-email-log", name="pimcore_admin_email_deleteemaillog", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -263,7 +263,7 @@ class EmailController extends AdminController
     }
 
     /**
-     * @Route("/resend-email", methods={"POST"})
+     * @Route("/resend-email", name="pimcore_admin_email_resendemail", methods={"POST"})
      *
      * @param Request $request
      *
@@ -360,7 +360,7 @@ class EmailController extends AdminController
     }
 
     /**
-     * @Route("/send-test-email", methods={"POST"})
+     * @Route("/send-test-email", name="pimcore_admin_email_sendtestemail", methods={"POST"})
      *
      * @param Request $request
      *
@@ -425,7 +425,7 @@ class EmailController extends AdminController
     }
 
     /**
-     * @Route("/blacklist", methods={"POST"})
+     * @Route("/blacklist", name="pimcore_admin_email_blacklist", methods={"POST"})
      *
      * @param Request $request
      *
@@ -495,7 +495,7 @@ class EmailController extends AdminController
             return $this->adminJson([
                 'success' => true,
                 'data' => $data,
-                'total' => $list->getTotalCount()
+                'total' => $list->getTotalCount(),
             ]);
         }
 

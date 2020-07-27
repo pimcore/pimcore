@@ -1,4 +1,5 @@
 <?php
+    /** @var \Pimcore\Templating\PhpEngine $view */
     /**
      * @var \Pimcore\Model\Asset\Image|\Pimcore\Model\Asset\Document|\Pimcore\Model\Asset\Video $element
      */
@@ -6,14 +7,21 @@
     $this->get("translate")->setDomain("admin");
 
     $previewImage = null;
+    $params = [
+        'id' => $element->getId(),
+        'treepreview' => true,
+        'hdpi' => true,
+    ];
+
     try {
-        $suffix = '&hdpi=true';
         if ($element instanceof \Pimcore\Model\Asset\Image) {
-            $previewImage = '/admin/asset/get-image-thumbnail?id=' . $element->getId() . '&treepreview=true' . $suffix;
-        } elseif ($element instanceof \Pimcore\Model\Asset\Video && \Pimcore\Video::isAvailable()) {
-            $previewImage = '/admin/asset/get-video-thumbnail?id=' . $element->getId() . '&treepreview=true'. $suffix;
-        } elseif ($element instanceof \Pimcore\Model\Asset\Document && \Pimcore\Document::isAvailable()) {
-            $previewImage = '/admin/asset/get-document-thumbnail?id=' . $element->getId() . '&treepreview=true' . $suffix;
+             $previewImage = $view->router()->path('pimcore_admin_asset_getimagethumbnail', $params);
+        }
+        elseif ($element instanceof \Pimcore\Model\Asset\Video && \Pimcore\Video::isAvailable()) {
+            $previewImage = $view->router()->path('pimcore_admin_asset_getvideothumbnail', $params);
+        }
+        if ($element instanceof \Pimcore\Model\Asset\Document && \Pimcore\Document::isAvailable()) {
+            $previewImage = $view->router()->path('pimcore_admin_asset_getdocumentthumbnail', $params);
         }
     } catch (\Exception $e) {
 

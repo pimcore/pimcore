@@ -22,7 +22,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use DataObject\Traits\DefaultValueTrait;
 
@@ -71,7 +71,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param \DateTime $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int|null
@@ -96,7 +96,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param int $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return \Carbon\Carbon|null
@@ -123,7 +123,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param \DateTime $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int
@@ -137,7 +137,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getDataForEditmode
      *
      * @param \DateTime $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return int|null
@@ -168,7 +168,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getDataFromEditmode
      *
      * @param int $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return \Carbon\Carbon|null
@@ -239,9 +239,9 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         if ($this->defaultValue !== null) {
             return $this->defaultValue;
-        } else {
-            return 0;
         }
+
+        return 0;
     }
 
     /**
@@ -329,7 +329,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @deprecated
      *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -486,5 +486,19 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         }
 
         return null;
+    }
+
+    /**
+     * @param \DateTimeInterface|null $oldValue
+     * @param \DateTimeInterface|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldValue = $oldValue instanceof \DateTimeInterface ? $oldValue->format('Y-m-d') : null;
+        $newValue = $newValue instanceof \DateTimeInterface ? $newValue->format('Y-m-d') : null;
+
+        return $oldValue === $newValue;
     }
 }

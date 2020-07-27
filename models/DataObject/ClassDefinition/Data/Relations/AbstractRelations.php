@@ -26,7 +26,8 @@ use Pimcore\Model\Element;
 abstract class AbstractRelations extends Data implements
     CustomResourcePersistingInterface,
     DataObject\ClassDefinition\PathFormatterAwareInterface,
-    Data\LazyLoadingSupportInterface
+    Data\LazyLoadingSupportInterface,
+    Data\EqualComparisonInterface
 {
     use DataObject\Traits\ContextPersistenceTrait;
 
@@ -91,10 +92,10 @@ abstract class AbstractRelations extends Data implements
         }
         $context = $params['context'];
 
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
             if (!isset($context['containerType']) || $context['containerType'] !== 'fieldcollection') {
                 if ($object instanceof DataObject\Localizedfield) {
-                    if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface && !$object->hasDirtyFields()) {
+                    if ($object->getObject() instanceof Element\DirtyIndicatorInterface && !$object->hasDirtyFields()) {
                         return;
                     }
                 } elseif ($this->supportsDirtyDetection() && !$object->isFieldDirty($this->getName())) {
@@ -173,7 +174,7 @@ abstract class AbstractRelations extends Data implements
         });
 
         $data = $this->loadData($relations, $object, $params);
-        if ($object instanceof DataObject\DirtyIndicatorInterface && $data['dirty']) {
+        if ($object instanceof Element\DirtyIndicatorInterface && $data['dirty']) {
             $object->markFieldDirty($this->getName(), true);
         }
 
@@ -346,7 +347,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @return bool
      */
-    public function isEqual($array1, $array2)
+    public function isEqual($array1, $array2): bool
     {
         $array1 = array_filter(is_array($array1) ? $array1 : []);
         $array2 = array_filter(is_array($array2) ? $array2 : []);
@@ -433,7 +434,7 @@ abstract class AbstractRelations extends Data implements
     {
         if (
             (!is_array($data) || count($data) < 2)
-            || !$container instanceof DataObject\DirtyIndicatorInterface
+            || !$container instanceof Element\DirtyIndicatorInterface
             || ($container instanceof DataObject\Concrete && !$container->isFieldDirty($this->getName()))
             || (($container instanceof DataObject\Fieldcollection\Data\AbstractData
                 || $container instanceof DataObject\Localizedfield
@@ -492,5 +493,21 @@ abstract class AbstractRelations extends Data implements
         }
 
         return $data;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return 'array';
     }
 }

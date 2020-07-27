@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 
 /**
@@ -38,7 +37,8 @@ class Service
      */
     public static function generateClassDefinitionJson($class)
     {
-        $data = Webservice\Data\Mapper::map($class, '\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out', 'out');
+        $class = clone $class;
+        $data = json_decode(json_encode($class));
         unset($data->name);
         unset($data->creationDate);
         unset($data->modificationDate);
@@ -48,12 +48,7 @@ class Service
 
         self::removeDynamicOptionsFromLayoutDefinition($data->layoutDefinitions);
 
-        //add propertyVisibility to export data
-        $data->propertyVisibility = $class->propertyVisibility;
-
-        $json = json_encode($data, JSON_PRETTY_PRINT);
-
-        return $json;
+        return json_encode($data, JSON_PRETTY_PRINT);
     }
 
     public static function removeDynamicOptionsFromLayoutDefinition(&$layout)
@@ -109,7 +104,7 @@ class Service
 
         foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'showVariants', 'parentClass',
                     'implementsInterfaces', 'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
-                    'linkGeneratorReference'] as $importPropertyName) {
+                    'linkGeneratorReference', 'compositeIndices', 'generateTypeDeclarations', ] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $class->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
@@ -150,7 +145,7 @@ class Service
             $fieldCollection->setLayoutDefinitions($layout);
         }
 
-        foreach (['parentClass', 'implementsInterfaces', 'title', 'group'] as $importPropertyName) {
+        foreach (['parentClass', 'implementsInterfaces', 'title', 'group', 'generateTypeDeclarations'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $fieldCollection->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
@@ -229,6 +224,7 @@ class Service
         $objectBrick->setClassDefinitions($toAssignClassDefinitions);
         $objectBrick->setParentClass($importData['parentClass']);
         $objectBrick->setImplementsInterfaces($importData['implementsInterfaces'] ?? null);
+        $objectBrick->setGenerateTypeDeclarations($importData['generateTypeDeclarations'] ?? null);
         if (isset($importData['title'])) {
             $objectBrick->setTitle($importData['title']);
         }
@@ -351,8 +347,9 @@ class Service
                     $default = null;
                 }
 
-                if ($colDefinition['Type'] == $type && strtolower($colDefinition['Null']) == strtolower($null)
-                    && $colDefinition['Default'] == $default) {
+                if (str_replace(' ', '', strtolower($colDefinition['Type'])) === str_replace(' ', '', strtolower($type)) &&
+                        strtolower($colDefinition['Null']) == strtolower($null) &&
+                        $colDefinition['Default'] == $default) {
                     return true;
                 }
             }

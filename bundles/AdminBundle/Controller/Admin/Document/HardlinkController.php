@@ -30,7 +30,37 @@ class HardlinkController extends DocumentControllerBase
     use ElementEditLockHelperTrait;
 
     /**
-     * @Route("/get-data-by-id", methods={"GET"})
+     * @Route("/save-to-session", name="pimcore_admin_document_hardlink_savetosession", methods={"POST"})
+     *
+     * {@inheritDoc}
+     */
+    public function saveToSessionAction(Request $request)
+    {
+        return parent::saveToSessionAction($request);
+    }
+
+    /**
+     * @Route("/remove-from-session", name="pimcore_admin_document_hardlink_removefromsession", methods={"DELETE"})
+     *
+     * {@inheritDoc}
+     */
+    public function removeFromSessionAction(Request $request)
+    {
+        return parent::removeFromSessionAction($request);
+    }
+
+    /**
+     * @Route("/change-master-document", name="pimcore_admin_document_hardlink_changemasterdocument", methods={"PUT"})
+     *
+     * {@inheritDoc}
+     */
+    public function changeMasterDocumentAction(Request $request)
+    {
+        return parent::changeMasterDocumentAction($request);
+    }
+
+    /**
+     * @Route("/get-data-by-id", name="pimcore_admin_document_hardlink_getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -55,12 +85,12 @@ class HardlinkController extends DocumentControllerBase
         $link = clone $link;
         $link->setLocked($link->isLocked());
         $link->setParent(null);
-
-        $this->addTranslationsData($link);
-        $this->minimizeProperties($link);
         $link->getScheduledTasks();
 
         $data = $link->getObjectVars();
+
+        $this->addTranslationsData($link, $data);
+        $this->minimizeProperties($link, $data);
 
         if ($link->getSourceDocument()) {
             $data['sourcePath'] = $link->getSourceDocument()->getRealFullPath();
@@ -76,7 +106,7 @@ class HardlinkController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/save", methods={"POST", "PUT"})
+     * @Route("/save", name="pimcore_admin_document_hardlink_save", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -114,9 +144,9 @@ class HardlinkController extends DocumentControllerBase
                 'success' => true,
                  'data' => [
                      'versionDate' => $link->getModificationDate(),
-                     'versionCount' => $link->getVersionCount()
+                     'versionCount' => $link->getVersionCount(),
                  ],
-                'treeData' => $treeData
+                'treeData' => $treeData,
             ]);
         } else {
             throw $this->createAccessDeniedHttpException();

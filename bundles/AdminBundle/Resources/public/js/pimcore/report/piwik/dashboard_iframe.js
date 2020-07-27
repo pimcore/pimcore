@@ -108,7 +108,7 @@ pimcore.report.piwik.dashboard_iframe = Class.create(pimcore.report.abstract, {
         if (!this.configPromise) {
             this.configPromise = new Ext.Promise(function (resolve, reject) {
                 Ext.Ajax.request({
-                    url: '/admin/reports/piwik/reports/' + that.config.id,
+                    url: Routing.generate('pimcore_admin_reports_piwik_report', {report: that.config.id}),
                     success: function (response) {
                         resolve(Ext.decode(response.responseText));
                     }

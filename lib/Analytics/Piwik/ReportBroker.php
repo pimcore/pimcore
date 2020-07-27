@@ -177,7 +177,7 @@ class ReportBroker
             'period' => 'week',
             'date' => 'yesterday',
             'idSite' => $config->getPiwikSiteId($configKey),
-            'token_auth' => $config->getReportToken()
+            'token_auth' => $config->getReportToken(),
         ], $parameters);
 
         return sprintf(

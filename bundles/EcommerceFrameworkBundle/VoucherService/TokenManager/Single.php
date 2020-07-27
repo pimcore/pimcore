@@ -186,7 +186,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
             'usageCount' => $usageCount,
             'freeCount' => $overallCount - $usageCount - $reservedTokenCount,
             'reservedCount' => $reservedTokenCount,
-            'usage' => $usage
+            'usage' => $usage,
         ];
     }
 

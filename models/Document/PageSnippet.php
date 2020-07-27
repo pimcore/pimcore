@@ -23,6 +23,7 @@ use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Model\Document\Tag\Loader\TagLoaderInterface;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
@@ -135,7 +136,7 @@ abstract class PageSnippet extends Model\Document
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_UPDATE, new DocumentEvent($this, [
-                    'saveVersionOnly' => true
+                    'saveVersionOnly' => true,
                 ]));
             }
 
@@ -162,7 +163,7 @@ abstract class PageSnippet extends Model\Document
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE, new DocumentEvent($this, [
-                    'saveVersionOnly' => true
+                    'saveVersionOnly' => true,
                 ]));
             }
 
@@ -170,7 +171,7 @@ abstract class PageSnippet extends Model\Document
         } catch (\Exception $e) {
             \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_UPDATE_FAILURE, new DocumentEvent($this, [
                 'saveVersionOnly' => true,
-                'exception' => $e
+                'exception' => $e,
             ]));
 
             throw $e;
@@ -241,7 +242,7 @@ abstract class PageSnippet extends Model\Document
             $key = 'document_' . $this->getContentMasterDocument()->getId();
             $dependencies[$key] = [
                 'id' => $this->getContentMasterDocument()->getId(),
-                'type' => 'document'
+                'type' => 'document',
             ];
         }
 
@@ -349,6 +350,7 @@ abstract class PageSnippet extends Model\Document
     {
         try {
             if ($type) {
+                /** @var TagLoaderInterface $loader */
                 $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
                 $element = $loader->build($type);
 
@@ -469,8 +471,6 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @return Document|null
-     *
-     * @throws \Exception
      */
     public function getContentMasterDocument()
     {

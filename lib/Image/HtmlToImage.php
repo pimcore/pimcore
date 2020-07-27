@@ -59,7 +59,7 @@ class HtmlToImage
 
         $options = [
             '--width ' . $screenWidth,
-            '--format ' . $format
+            '--format ' . $format,
         ];
 
         if (php_sapi_name() !== 'cli') {

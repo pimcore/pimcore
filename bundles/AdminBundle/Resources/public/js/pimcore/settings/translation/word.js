@@ -239,7 +239,7 @@ pimcore.settings.translation.word = Class.create({
         }
 
         Ext.Ajax.request({
-            url: "/admin/translation/content-export-jobs",
+            url: Routing.generate('pimcore_admin_translation_contentexportjobs'),
             method: 'POST',
             params: {
                 source: this.exportSourceLanguageSelector.getValue(),
@@ -276,7 +276,7 @@ pimcore.settings.translation.word = Class.create({
                         this.exportProgressbar = null;
                         this.exportProgressWin = null;
 
-                        pimcore.helpers.download('/admin/translation/word-export-download?id='+ id);
+                        pimcore.helpers.download(Routing.generate('pimcore_admin_translation_wordexportdownload', {id: id}));
                     }.bind(this, res.id),
                     update: function (currentStep, steps, percent) {
                         if(this.exportProgressbar) {

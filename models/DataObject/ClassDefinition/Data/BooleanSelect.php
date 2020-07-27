@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -42,16 +42,16 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     const DEFAULT_OPTIONS = [
         [
             'key' => 'empty',
-            'value' => self::EMPTY_VALUE_EDITMODE
+            'value' => self::EMPTY_VALUE_EDITMODE,
         ],
         [
             'key' => 'yes',
-            'value' => self::YES_VALUE
+            'value' => self::YES_VALUE,
         ],
         [
             'key' => 'no',
-            'value' => self::NO_VALUE
-        ]
+            'value' => self::NO_VALUE,
+        ],
     ];
     /**
      * Static type of this element
@@ -91,7 +91,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @var string
      */
-    public $phpdocType = 'boolean';
+    public $phpdocType = 'bool';
 
     /**
      * @return array
@@ -136,7 +136,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param int|null $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool|null
@@ -160,7 +160,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param int|bool|null $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return int|null
@@ -174,7 +174,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param int|bool|null $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return int|null
@@ -313,8 +313,8 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
         if (!is_array($this->options)) {
             $this->options = [
                 ['key' => $label,
-                'value' => $value
-                ]
+                'value' => $value,
+                ],
 
             ];
         } else {
@@ -376,7 +376,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int
@@ -408,7 +408,7 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool|null
@@ -422,5 +422,16 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
         }
 
         return null;
+    }
+
+    /**
+     * @param mixed $oldValue
+     * @param mixed $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        return $oldValue === $newValue;
     }
 }

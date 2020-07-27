@@ -82,7 +82,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
             // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible
             // is also Basic
-            if (!this.options["toolbarGroups"]) {
+            if(!this.options["toolbarGroups"] && this.options['toolbarGroups'] !== false){
                 eConfig.toolbarGroups = [
                     { name: 'basicstyles', groups: [ 'undo', "find", 'basicstyles', 'list'] },
                     '/',
@@ -95,7 +95,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                     { name: 'tools', groups: ['colors', "tools", 'cleanup', 'mode', "others"] }
                 ];
             }
-
+            
             delete specificConfig.width;
 
             eConfig.language = pimcore.settings["language"];
@@ -212,7 +212,15 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 var additionalAttributes = "";
 
                 if(typeof data.imageWidth != "undefined") {
-                    uri = "/admin/asset/get-image-thumbnail?id=" + id + "&width=" + defaultWidth + "&aspectratio=true";
+                    var route = 'pimcore_admin_asset_getimagethumbnail';
+                    var params = {
+                        id: id,
+                        width: defaultWidth,
+                        aspectratio: true
+                    };
+
+                    uri = Routing.generate(route, params);
+
                     if(data.imageWidth < defaultWidth
                             && in_arrayi(pimcore.helpers.getFileExtension(data.text),
                                         browserPossibleExtensions)) {

@@ -32,13 +32,22 @@ and may be extended:
   - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ElasticSearch`: Provides a default [elastic search](https://www.elastic.co/) 
   implementation of the product index.
   - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFactFinder`: Provides a default [fact finder](http://www.fact-finder.de/) 
-  implementation of the product index.
+  implementation of the product index. (Deprecated since version 6.7.0 and will be removed in 7.)
   - `Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\DefaultFindologic`: Provides a default [findologic](https://www.findologic.com/) 
   implementation of the product index.
 
-- **Configuring Assortment Tenants within configuration:** 
+- **Configuring Assortment Tenants within configuration:**
 Each tenant has to be configured within the `index_service` configuration by defining the tenant config class and index 
 attributes. Depending on the *Product Index* implementation, additional configuration may be necessary. 
+
+- **Declare the service:**
+You need to declare the service as well so the class can be used. On your service configuration or for instance at the top of the ecommerce configuration file:
+```
+services:
+    MyBundle\Service\MySubtenantConfig:
+        calls:
+            - [setAttributeFactory, ['@Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\AttributeFactory']]
+```
 
 
 ### Setting current Assortment Tenant for Frontend
@@ -77,7 +86,7 @@ provides following methods to set the current Assortment Tenant when working wit
     public function getCurrentAssortmentSubTenant();
 ```
 
-The current Assortment Tenant have to be set in the application controllers, e.g. after the login of a specific customer. 
+The current Assortment Tenant has to be set in the application controllers, e.g. after the login of a specific customer. 
 The Index Service provides the corresponding Product List implementation based on the current tenant.
 
 

@@ -72,7 +72,7 @@ class ProductDiscount implements ProductDiscountInterface
         return json_encode([
             'type' => 'ProductDiscount',
             'amount' => $this->getAmount(),
-            'percent' => $this->getPercent()
+            'percent' => $this->getPercent(),
         ]);
     }
 

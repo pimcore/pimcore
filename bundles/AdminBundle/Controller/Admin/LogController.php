@@ -48,7 +48,7 @@ class LogController extends AdminController implements EventedControllerInterfac
     }
 
     /**
-     * @Route("/log/show", methods={"GET", "POST"})
+     * @Route("/log/show", name="pimcore_admin_log_show", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -144,7 +144,7 @@ class LogController extends AdminController implements EventedControllerInterfac
                 'relatedobject' => $row['relatedobject'],
                 'relatedobjecttype' => $row['relatedobjecttype'],
                 'component' => $row['component'],
-                'source' => $row['source']
+                'source' => $row['source'],
             ];
 
             $logEntries[] = $logEntry;
@@ -152,7 +152,7 @@ class LogController extends AdminController implements EventedControllerInterfac
 
         return $this->adminJson([
             'p_totalCount' => $total,
-            'p_results' => $logEntries
+            'p_results' => $logEntries,
         ]);
     }
 
@@ -195,7 +195,7 @@ class LogController extends AdminController implements EventedControllerInterfac
     }
 
     /**
-     * @Route("/log/priority-json", methods={"GET"})
+     * @Route("/log/priority-json", name="pimcore_admin_log_priorityjson", methods={"GET"})
      *
      * @param Request $request
      *
@@ -212,7 +212,7 @@ class LogController extends AdminController implements EventedControllerInterfac
     }
 
     /**
-     * @Route("/log/component-json", methods={"GET"})
+     * @Route("/log/component-json", name="pimcore_admin_log_componentjson", methods={"GET"})
      *
      * @param Request $request
      *
@@ -229,7 +229,7 @@ class LogController extends AdminController implements EventedControllerInterfac
     }
 
     /**
-     * @Route("/log/show-file-object", methods={"GET"})
+     * @Route("/log/show-file-object", name="pimcore_admin_log_showfileobject", methods={"GET"})
      *
      * @param Request $request
      *

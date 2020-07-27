@@ -104,8 +104,7 @@ class Bootstrap
 
     public static function setProjectRoot()
     {
-        // this should already be defined at this point, but we include a fallback here
-        // fot backwards compatibility
+        // this should already be defined at this point, but we include a fallback for backwards compatibility here
         if (!defined('PIMCORE_PROJECT_ROOT')) {
             define(
                 'PIMCORE_PROJECT_ROOT',
@@ -210,13 +209,13 @@ class Bootstrap
 
     public static function defineConstants()
     {
+        self::prepareEnvVariables();
+
         // load custom constants
         $customConstantsFile = PIMCORE_PROJECT_ROOT . '/app/constants.php';
         if (file_exists($customConstantsFile)) {
             include_once $customConstantsFile;
         }
-
-        self::prepareEnvVariables();
 
         $resolveConstant = function (string $name, $default, bool $define = true) {
             // return constant if defined

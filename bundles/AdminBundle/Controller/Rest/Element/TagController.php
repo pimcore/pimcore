@@ -32,7 +32,7 @@ class TagController extends AbstractElementController
     const TAG_DOES_NOT_EXIST = -1;
 
     /**
-     * @Route("/tag-list", methods={"GET"})
+     * @Route("/tag-list", name="pimcore_api_rest_element_tag_taglist", methods={"GET"})
      *
      * Returns a list of all tags.
      *  GET http://[YOUR-DOMAIN]/webservice/rest/tag-list?apikey=[API-KEY]
@@ -54,7 +54,7 @@ class TagController extends AbstractElementController
             $item = [
                 'id' => $tag->getId(),
                 'parentId' => $tag->getParentId(),
-                'name' => $tag->getName()
+                'name' => $tag->getName(),
             ];
 
             $result[] = $item;
@@ -64,7 +64,7 @@ class TagController extends AbstractElementController
     }
 
     /**
-     * @Route("/tags-element-list", methods={"GET"})
+     * @Route("/tags-element-list", name="pimcore_api_rest_element_tag_tagselementlist", methods={"GET"})
      *
      * Returns a list of all tags for an element.
      *  GET http://[YOUR-DOMAIN]/webservice/rest/tags-element-list?apikey=[API-KEY]&id=1281&type=object
@@ -103,7 +103,7 @@ class TagController extends AbstractElementController
         if (!$element) {
             return $this->createErrorResponse([
                 'msg' => 'Element does not exist',
-                'code' => static::ELEMENT_DOES_NOT_EXIST
+                'code' => static::ELEMENT_DOES_NOT_EXIST,
             ], Response::HTTP_NOT_FOUND);
         }
 
@@ -116,7 +116,7 @@ class TagController extends AbstractElementController
             $item = [
                 'id' => $tag->getId(),
                 'parentId' => $tag->getParentId(),
-                'name' => $tag->getName()
+                'name' => $tag->getName(),
             ];
 
             $result[] = $item;
@@ -126,7 +126,7 @@ class TagController extends AbstractElementController
     }
 
     /**
-     * @Route("/elements-tag-list", methods={"GET"})
+     * @Route("/elements-tag-list", name="pimcore_api_rest_element_tag_elementstaglist", methods={"GET"})
      *
      * Returns a list of elements id/type pairs for a tag.
      *  GET http://[YOUR-DOMAIN]/webservice/rest/elements-tag-list?apikey=[API-KEY]&id=12&type=object
@@ -158,7 +158,7 @@ class TagController extends AbstractElementController
         if (!$tag) {
             return $this->createErrorResponse([
                 'msg' => 'Tag does not exist',
-                'code' => static::TAG_DOES_NOT_EXIST
+                'code' => static::TAG_DOES_NOT_EXIST,
             ], Response::HTTP_NOT_FOUND);
         }
 
@@ -170,7 +170,7 @@ class TagController extends AbstractElementController
         foreach ($elementsForTag as $element) {
             $item = [
                 'id' => $element->getId(),
-                'type' => $element->getType()
+                'type' => $element->getType(),
             ];
 
             if (method_exists($element, 'getPublished')) {

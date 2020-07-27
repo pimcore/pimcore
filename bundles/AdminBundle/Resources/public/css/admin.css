@@ -1333,14 +1333,6 @@ span.warning {
 
 
 /* ExtJS 6.0 specific styles */
-
-#pimcore_panel_tabs-body {
-    background-image: url(/admin/settings/display-custom-logo);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: 500px auto;
-}
-
 #pimcore_panel_tabs > .x-tab-bar {
     background: #0C0F12;
     background-image: url(/bundles/pimcoreadmin/img/logo-gray.svg);
@@ -1467,12 +1459,12 @@ span.warning {
 }
 
 .pimcore_main_toolbar .x-btn.x-btn-disabled {
-    background-color: #393C3F;
+    background-color: #484B4E;
     opacity: 1;
 }
 
 .pimcore_main_toolbar .x-btn.x-btn-disabled .x-btn-inner {
-    color: #000;
+    color: #8e8e8e;
 }
 
 .pimcore_main_toolbar .x-btn.x-btn-disabled .x-btn-wrap {

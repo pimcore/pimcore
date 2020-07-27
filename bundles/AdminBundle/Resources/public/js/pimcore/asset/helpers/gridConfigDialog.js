@@ -94,6 +94,11 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                         obj.width = child.data.width;
                     }
                 }
+
+                if (child.data.locked) {
+                    obj.locked = child.data.locked;
+                }
+
                 this.data.columns.push(obj);
             }.bind(this));
         }
@@ -128,7 +133,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
         } else {
             var columnsPostData = Ext.encode(this.data.columns);
             Ext.Ajax.request({
-                url: "/admin/aset-helper/prepare-helper-column-configs",
+                url: Routing.generate('pimcore_admin_asset_assethelper_preparehelpercolumnconfigs'),
                 method: 'POST',
                 params: {
                     columns: columnsPostData
@@ -161,7 +166,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
         }
 
         Ext.Ajax.request({
-            url: "/admin/asset/grid-proxy",
+            url: Routing.generate('pimcore_admin_asset_gridproxy'),
             params: {
                 "folderId": this.previewSettings.folderId,
                 "fields[]": keys,
@@ -237,6 +242,11 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                         child.width = nodeConf.width;
                     }
                 }
+
+                if (nodeConf.locked) {
+                    child.locked = nodeConf.locked;
+                }
+
                 childs.push(child);
             }
 
@@ -347,11 +357,11 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                                 var fieldType = record.data.dataType;
 
                                 try {
-                                    if (record.data.isOperator && record.data.configAttributes && pimcore.asset.tags[record.data.configAttributes.renderer]) {
+                                    if (record.data.isOperator && record.data.configAttributes && pimcore.asset.metadata.tags[record.data.configAttributes.renderer]) {
                                         var rendererType = record.data.configAttributes.renderer;
-                                        var tag = pimcore.asset.tags[rendererType];
+                                        var tag = pimcore.asset.metadata.tags[rendererType];
                                     } else {
-                                        var tag = pimcore.asset.tags[fieldType];
+                                        var tag = pimcore.asset.metadata.tags[fieldType];
                                     }
 
                                     if (tag) {
@@ -548,7 +558,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
 
     getMetadataTreePanel: function () {
         if (!this.metadataTreePanel) {
-            this.metadataTreePanel = this.getMetadataTree("/admin/asset-helper/get-metadata-for-column-config");
+            this.metadataTreePanel = this.getMetadataTree(Routing.generate('pimcore_admin_asset_assethelper_getmetadataforcolumnconfig'));
         }
 
         return this.metadataTreePanel;

@@ -351,6 +351,17 @@ final class AdminEvents
     const CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA = 'pimcore.admin.class.objectbrickList.preSendData';
 
     /**
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ClassController
+     * Arguments:
+     *  - brickDefinition | the brick definition
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const CLASS_OBJECTBRICK_UPDATE_DEFINITION = 'pimcore.admin.class.objectbrick.updateDefinition';
+
+    /**
      * Allows you to modify the search backend list before it is loaded.
      *
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController

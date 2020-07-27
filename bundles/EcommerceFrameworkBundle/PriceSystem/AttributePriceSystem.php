@@ -70,13 +70,13 @@ class AttributePriceSystem extends CachingPriceSystem implements PriceSystemInte
     {
         $resolver->setRequired([
             'attribute_name',
-            'price_class'
+            'price_class',
         ]);
 
         $resolver->setDefaults([
             'attribute_name' => 'price',
             'price_class' => Price::class,
-            'price_type' => TaxCalculationService::CALCULATION_FROM_GROSS
+            'price_type' => TaxCalculationService::CALCULATION_FROM_GROSS,
         ]);
 
         $resolver->setAllowedTypes('attribute_name', 'string');

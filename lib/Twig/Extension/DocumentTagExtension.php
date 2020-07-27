@@ -45,7 +45,7 @@ class DocumentTagExtension extends AbstractExtension
                 'needs_context' => true,
                 'is_safe' => ['html'],
             ]),
-            new TwigFunction('pimcore_iterate_block', [$this, 'getBlockIterator'])
+            new TwigFunction('pimcore_iterate_block', [$this, 'getBlockIterator']),
         ];
 
         // those are just for auto-complete, not nice, but works ;-)

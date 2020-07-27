@@ -162,22 +162,42 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var array
      */
+    public $compositeIndices = [];
+
+    /**
+     * @var bool
+     */
+    public $generateTypeDeclarations = false;
+
+    /**
+     * @var bool
+     */
+    public $showFieldLookup = false;
+
+    /**
+     * @var array
+     */
     public $propertyVisibility = [
         'grid' => [
             'id' => true,
             'path' => true,
             'published' => true,
             'modificationDate' => true,
-            'creationDate' => true
+            'creationDate' => true,
         ],
         'search' => [
             'id' => true,
             'path' => true,
             'published' => true,
             'modificationDate' => true,
-            'creationDate' => true
-        ]
+            'creationDate' => true,
+        ],
     ];
+
+    /**
+     * @var bool
+     */
+    public $enableGridLocking = false;
 
     /**
      * @param string $id
@@ -218,7 +238,7 @@ class ClassDefinition extends Model\AbstractModel
 
                 \Pimcore\Cache\Runtime::set($cacheKey, $class);
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::info($e->getMessage());
 
                 return null;
             }
@@ -347,6 +367,34 @@ class ClassDefinition extends Model\AbstractModel
 
         $this->getDao()->save($isUpdate);
 
+        $this->generateClassFiles($saveDefinitionFile);
+
+        // empty object cache
+        try {
+            Cache::clearTag('class_'.$this->getId());
+        } catch (\Exception $e) {
+        }
+
+        if ($isUpdate) {
+            \Pimcore::getEventDispatcher()->dispatch(
+                DataObjectClassDefinitionEvents::POST_UPDATE,
+                new ClassDefinitionEvent($this)
+            );
+        } else {
+            \Pimcore::getEventDispatcher()->dispatch(
+                DataObjectClassDefinitionEvents::POST_ADD,
+                new ClassDefinitionEvent($this)
+            );
+        }
+    }
+
+    /**
+     * @param bool $generateDefinitionFile
+     *
+     * @throws \Exception
+     */
+    public function generateClassFiles($generateDefinitionFile = true)
+    {
         $infoDocBlock = $this->getInfoDocBlock();
 
         // create class for object
@@ -381,7 +429,7 @@ class ClassDefinition extends Model\AbstractModel
                             $this->getName()
                         ).' getBy'.ucfirst(
                             $def->getName()
-                        ).' ($field, $value, $locale = null, $limit = 0) '."\n";
+                        ).' ($field, $value, $locale = null, $limit = 0, $offset = 0) '."\n";
 
                     foreach ($def->getFieldDefinitions() as $localizedFieldDefinition) {
                         $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
@@ -390,29 +438,27 @@ class ClassDefinition extends Model\AbstractModel
                                 $this->getName()
                             ).' getBy'.ucfirst(
                                 $localizedFieldDefinition->getName()
-                            ).' ($value, $locale = null, $limit = 0) '."\n";
+                            ).' ($value, $locale = null, $limit = 0, $offset = 0) '."\n";
                     }
                 } elseif ($def->isFilterable()) {
                     $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                             $this->getName()
                         ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
                             $this->getName()
-                        ).' getBy'.ucfirst($def->getName()).' ($value, $limit = 0) '."\n";
+                        ).' getBy'.ucfirst($def->getName()).' ($value, $limit = 0, $offset = 0) '."\n";
                 }
             }
         }
         $cd .= "*/\n\n";
 
-        $implementsParts = ['\\Pimcore\\Model\\DataObject\\DirtyIndicatorInterface'];
+        $implementsParts = [];
 
         $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
 
         $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . ' {';
         $cd .= "\n\n";
 
-        $useParts = [
-            '\Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait'
-        ];
+        $useParts = [];
 
         $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode($useParts, $this->getUseTraits());
 
@@ -524,15 +570,15 @@ class ClassDefinition extends Model\AbstractModel
         }
         File::put($classListFile, $cd);
 
-        // save definition as a php file
-        $definitionFile = $this->getDefinitionFile();
-        if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
-            throw new \Exception(
-                'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
-            );
-        }
+        if ($generateDefinitionFile) {
+            // save definition as a php file
+            $definitionFile = $this->getDefinitionFile();
+            if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
+                throw new \Exception(
+                    'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
+                );
+            }
 
-        if ($saveDefinitionFile) {
             $clone = clone $this;
             $clone->setDao(null);
             unset($clone->fieldDefinitions);
@@ -550,24 +596,6 @@ class ClassDefinition extends Model\AbstractModel
 
             \Pimcore\File::putPhpFile($definitionFile, $data);
         }
-
-        // empty object cache
-        try {
-            Cache::clearTag('class_'.$this->getId());
-        } catch (\Exception $e) {
-        }
-
-        if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::POST_UPDATE,
-                new ClassDefinitionEvent($this)
-            );
-        } else {
-            \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::POST_ADD,
-                new ClassDefinitionEvent($this)
-            );
-        }
     }
 
     /**
@@ -579,18 +607,8 @@ class ClassDefinition extends Model\AbstractModel
 
         $cd .= '/** ';
         $cd .= "\n";
-        $cd .= '* Generated at: '.date('c')."\n";
         $cd .= '* Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
         $cd .= '* Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
-
-        $user = Model\User::getById($this->getUserModification());
-        if ($user) {
-            $cd .= '* Changed by: '.$user->getName().' ('.$user->getId().')'."\n";
-        }
-
-        if (isset($_SERVER['REMOTE_ADDR'])) {
-            $cd .= '* IP: '.$_SERVER['REMOTE_ADDR']."\n";
-        }
 
         if ($this->getDescription()) {
             $description = str_replace(['/**', '*/', '//'], '', $this->getDescription());
@@ -1308,6 +1326,26 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @return bool
+     */
+    public function getShowFieldLookup()
+    {
+        return $this->showFieldLookup;
+    }
+
+    /**
+     * @param bool $showFieldLookup
+     *
+     * @return $this
+     */
+    public function setShowFieldLookup($showFieldLookup)
+    {
+        $this->showFieldLookup = (bool) $showFieldLookup;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getLinkGeneratorReference()
@@ -1328,13 +1366,27 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return DataObject\ClassDefinition\LinkGeneratorInterface
+     * @return DataObject\ClassDefinition\LinkGeneratorInterface|null
      */
     public function getLinkGenerator()
     {
-        $generator = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
+        return DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
+    }
 
-        return $generator;
+    /**
+     * @return bool
+     */
+    public function isEnableGridLocking(): bool
+    {
+        return $this->enableGridLocking;
+    }
+
+    /**
+     * @param bool $enableGridLocking
+     */
+    public function setEnableGridLocking(bool $enableGridLocking): void
+    {
+        $this->enableGridLocking = $enableGridLocking;
     }
 
     /**
@@ -1353,6 +1405,46 @@ class ClassDefinition extends Model\AbstractModel
     public function setImplementsInterfaces(?string $implementsInterfaces)
     {
         $this->implementsInterfaces = $implementsInterfaces;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCompositeIndices(): array
+    {
+        return $this->compositeIndices;
+    }
+
+    /**
+     * @param array $compositeIndices
+     *
+     * @return $this
+     */
+    public function setCompositeIndices($compositeIndices)
+    {
+        $this->compositeIndices = $compositeIndices ?? [];
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getGenerateTypeDeclarations()
+    {
+        return (bool) $this->generateTypeDeclarations;
+    }
+
+    /**
+     * @param bool $generateTypeDeclarations
+     *
+     * @return $this
+     */
+    public function setGenerateTypeDeclarations($generateTypeDeclarations)
+    {
+        $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
 
         return $this;
     }

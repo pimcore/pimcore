@@ -20,8 +20,6 @@ use Pimcore\Model;
 
 class Firstname extends Model\DataObject\ClassDefinition\Data\Input
 {
-    use Model\DataObject\Traits\SimpleComparisonTrait;
-
     /**
      * Static type of this element
      *

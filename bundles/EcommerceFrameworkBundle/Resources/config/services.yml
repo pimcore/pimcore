@@ -32,14 +32,6 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    #
-    # COMMANDS
-    #
-
-    # auto-register all commands as services
-    Pimcore\Bundle\EcommerceFrameworkBundle\Command\:
-        resource: '../../Command'
-
 
     #
     # REPORTS

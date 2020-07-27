@@ -127,7 +127,8 @@ pimcore.object.helpers.import.reportTab = Class.create({
             this.importProgressBar = new Ext.ProgressBar({
                 text: t('initializing'),
                 style: "margin: 10px;",
-                width: 500
+                width: 500,
+                height: 25
             });
 
             this.stopButton = new Ext.button.Button(
@@ -151,9 +152,11 @@ pimcore.object.helpers.import.reportTab = Class.create({
 
             this.reportPanel = new Ext.panel.Panel({
                 disabled: true,
+                autoScroll: true,
                 title: t("import_report"),
                 iconCls: 'pimcore_icon_import_report',
-                items: [this.statusBar, dataGrid]
+                items: [this.statusBar, dataGrid],
+                overflowY: 'scroll'
             });
         }
 

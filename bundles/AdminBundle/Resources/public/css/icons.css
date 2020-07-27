@@ -96,16 +96,6 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/overlay-error.svg) center center no-repeat !important;
 }
 
-
-
-
-
-.................... overlay-error.svg
-
-
-
-
-
 .pimcore_icon_overlay_reading:before {
     position: absolute;
     width: 14px;
@@ -404,11 +394,11 @@
 }
 
 .pimcore_nav_icon_export {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/internal.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/external.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_import {
-    background: url(/bundles/pimcoreadmin/img/flat-white-icons/external.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/internal.svg) center center no-repeat !important;
 }
 
 .pimcore_nav_icon_routes {
@@ -475,6 +465,10 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/bar_chart.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_asset_unknown, .pimcore_icon_asset_default {
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/unknown.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_site {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/home.svg) center center no-repeat !important;
 }
@@ -491,7 +485,7 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/opened_folder.svg) center center no-repeat !important;
 }
 
-.pimcore_icon_alphabetical_sorting_az {
+.pimcore_icon_alphabetical_sorting_az, .pimcore_icon_operator_alias {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/alphabetical_sorting_az.svg) center center no-repeat !important;
 }
 
@@ -626,10 +620,6 @@
 .pimcore_icon_pcx, .pimcore_icon_iff, .pimcore_icon_pct, .pimcore_icon_wmf, .pimcore_icon_svg, .pimcore_icon_dng,
 .pimcore_icon_heic,.pimcore_icon_heif, pimcore_icon_ico, pimcore_icon_tiff {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/asset.svg) center center no-repeat !important;
-}
-
-.pimcore_icon_asset_unknown, .pimcore_icon_asset_default {
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/unknown.svg) center center no-repeat !important;
 }
 
 .x-tree-icon-custom.pimcore_icon_asset_default {
@@ -1195,11 +1185,11 @@
 }
 
 .pimcore_icon_export{
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/internal.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/external.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_import{
-    background: url(/bundles/pimcoreadmin/img/flat-color-icons/external.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/internal.svg) center center no-repeat !important;
 }
 
 .pimcore_icon_clone  {
@@ -1781,6 +1771,10 @@
 
 .pimcore_material_icon_info {
     background: url(/bundles/pimcoreadmin/img/material-icons/outline-info-24px.svg) center center no-repeat;
+}
+
+.pimcore_material_fieldlookup {
+    background: url(/bundles/pimcoreadmin/img/material-icons/outline-search-24px.svg) center center no-repeat;
 }
 
 .pimcore_material_icon_translation {

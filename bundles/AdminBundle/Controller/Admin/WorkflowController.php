@@ -49,7 +49,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
     /**
      * Returns a JSON of the available workflow actions to the admin panel
      *
-     * @Route("/get-workflow-form")
+     * @Route("/get-workflow-form", name="pimcore_admin_workflow_getworkflowform")
      *
      * @param Request $request
      *
@@ -63,7 +63,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
 
             if (empty($workflow) || empty($workflowConfig)) {
                 $wfConfig = [
-                    'message' => 'workflow not found'
+                    'message' => 'workflow not found',
                 ];
             } else {
 
@@ -72,7 +72,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
                     'message' => '',
                     'notes_enabled' => false,
                     'notes_required' => false,
-                    'additional_fields' => []
+                    'additional_fields' => [],
                 ];
 
                 $enabledTransitions = $workflow->getEnabledTransitions($this->element);
@@ -98,7 +98,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
     }
 
     /**
-     * @Route("/submit-workflow-transition", methods={"POST"})
+     * @Route("/submit-workflow-transition", name="pimcore_admin_workflow_submitworkflowtransition", methods={"POST"})
      *
      * @param Request $request
      *
@@ -115,7 +115,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
 
                 $data = [
                     'success' => true,
-                    'callback' => 'reloadObject'
+                    'callback' => 'reloadObject',
                 ];
             } catch (ValidationException $e) {
                 $reason = '';
@@ -128,21 +128,21 @@ class WorkflowController extends AdminController implements EventedControllerInt
                 $data = [
                     'success' => false,
                     'message' => $e->getMessage(),
-                    'reason' => $reason
+                    'reason' => $reason,
 
                 ];
             } catch (\Exception $e) {
                 $data = [
                     'success' => false,
                     'message' => 'error performing action on this element',
-                    'reason' => $e->getMessage()
+                    'reason' => $e->getMessage(),
                 ];
             }
         } else {
             $data = [
                 'success' => false,
                 'message' => 'error validating the action on this element, element cannot peform this action',
-                'reason' => 'transition is currently not allowed'
+                'reason' => 'transition is currently not allowed',
             ];
         }
 
@@ -150,7 +150,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
     }
 
     /**
-     * @Route("/submit-global-action", methods={"POST"})
+     * @Route("/submit-global-action", name="pimcore_admin_workflow_submitglobal", methods={"POST"})
      *
      * @param Request $request
      *
@@ -166,7 +166,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
 
             $data = [
                 'success' => true,
-                'callback' => 'reloadObject'
+                'callback' => 'reloadObject',
             ];
         } catch (ValidationException $e) {
             $reason = '';
@@ -179,14 +179,14 @@ class WorkflowController extends AdminController implements EventedControllerInt
             $data = [
                 'success' => false,
                 'message' => $e->getMessage(),
-                'reason' => $reason
+                'reason' => $reason,
 
             ];
         } catch (\Exception $e) {
             $data = [
                 'success' => false,
                 'message' => 'error performing action on this element',
-                'reason' => $e->getMessage()
+                'reason' => $e->getMessage(),
             ];
         }
 
@@ -196,7 +196,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
     /**
      * Returns the JSON needed by the workflow elements detail tab store
      *
-     * @Route("/get-workflow-details")
+     * @Route("/get-workflow-details", name="pimcore_admin_workflow_getworkflowdetailsstore")
      *
      * @param Request $request
      * @param Manager $workflowManager
@@ -227,7 +227,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
                 [
                     'cid' => $request->get('cid'),
                     'ctype' => $request->get('ctype'),
-                    'workflow' => $workflow->getName()
+                    'workflow' => $workflow->getName(),
                 ]
             );
 
@@ -239,14 +239,14 @@ class WorkflowController extends AdminController implements EventedControllerInt
                 'placeInfo' => $placeStatusInfo->getAllPalacesHtml($this->element, $workflow->getName()),
                 'graph' => $msg ?: '<a href="' . $url .'" target="_blank"><div class="workflow-graph-preview">'.$svg.'</div></a>',
                 'allowedTransitions' => $allowedTransitions,
-                'globalActions' => $globalActions
+                'globalActions' => $globalActions,
             ];
         }
 
         return $this->adminJson([
             'data' => $data,
             'success' => true,
-            'total' => sizeof($data)
+            'total' => sizeof($data),
         ]);
     }
 
@@ -329,19 +329,16 @@ class WorkflowController extends AdminController implements EventedControllerInt
                 $latestDoc = $latestVersion->loadData();
                 if ($latestDoc instanceof Document\PageSnippet) {
                     $element = $latestDoc;
-                    $element->setModificationDate($element->getModificationDate());
                 }
             }
         }
 
         if ($element instanceof DataObject\Concrete) {
-            $modificationDate = $element->getModificationDate();
             $latestVersion = $element->getLatestVersion();
             if ($latestVersion) {
                 $latestObj = $latestVersion->loadData();
                 if ($latestObj instanceof ConcreteObject) {
                     $element = $latestObj;
-                    $element->setModificationDate($modificationDate);
                 }
             }
         }

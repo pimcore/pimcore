@@ -116,7 +116,7 @@ class GridHelperService
                             $filter['value'],
                             $operator,
                             [
-                                'name' => $mappedKey]
+                                'name' => $mappedKey, ]
                         );
 
                         $featureConditions[$mappedKey] = $featureCondition;
@@ -148,7 +148,7 @@ class GridHelperService
                         $filter['value'],
                         $operator,
                         [
-                            'name' => $slugKey]
+                            'name' => $slugKey, ]
                     );
 
                     $slugConditions[$mappedKey] = $slugCondition;
@@ -160,7 +160,7 @@ class GridHelperService
             'featureJoins' => $featureJoins,
             'slugJoins' => $slugJoins,
             'featureConditions' => $featureConditions,
-            'slugConditions' => $slugConditions
+            'slugConditions' => $slugConditions,
         ];
 
         return $result;
@@ -221,6 +221,7 @@ class GridHelperService
                 $brickKey = null;
                 $brickType = null;
                 $brickDescriptor = null;
+                $isLocalized = false;
                 if (!$field) {
 
                     // if the definition doesn't exist check for a localized field
@@ -252,14 +253,18 @@ class GridHelperService
 
                         $brickClass = Objectbrick\Definition::getByKey($brickType);
 
-                        if ($brickDescriptor) {
+                        $brickFieldKey = $brickDescriptor ? $brickDescriptor['brickfield'] : $brickKey;
+
+                        $brickClassDefinitions = $brickClass->getFieldDefinitions();
+                        if (array_key_exists($brickFieldKey, $brickClassDefinitions)) {
+                            $brickField = $brickClass->getFieldDefinition($brickFieldKey);
+                        } else {
                             /** @var ClassDefinition\Data\Localizedfields|null $localizedFields */
                             $localizedFields = $brickClass->getFieldDefinition('localizedfields');
                             if ($localizedFields) {
-                                $brickField = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
+                                $brickField = $localizedFields->getFieldDefinition($brickFieldKey);
+                                $isLocalized = true;
                             }
-                        } else {
-                            $brickField = $brickClass->getFieldDefinition($brickKey);
                         }
                     }
                 }
@@ -268,43 +273,33 @@ class GridHelperService
                     if ($brickDescriptor) {
                         $brickFilterField = $brickDescriptor['fieldname'];
                     } else {
-                        $brickFilterField = $filterField;
+                        $brickFilterField = $field->getName();
                     }
 
                     $db = \Pimcore\Db::get();
-                    $brickPrefix = '';
 
-                    $ommitPrefix = false;
-
-                    if ($brickField instanceof Model\DataObject\ClassDefinition\Data\Checkbox
-                        || (($brickField instanceof Model\DataObject\ClassDefinition\Data\Date || $brickField instanceof Model\DataObject\ClassDefinition\Data\Datetime) && $brickField->getColumnType() == 'datetime')
-                    ) {
-                        $ommitPrefix = true;
-                    }
-
-                    if (!$ommitPrefix) {
-                        if ($brickDescriptor) {
-                            $brickPrefix = $db->quoteIdentifier($brickType . '_localized') . '.';
+                    if ($isLocalized) {
+                        $brickPrefix = $db->quoteIdentifier($brickType . '_localized') . '.';
+                    } else {
+                        if ($brickField instanceof ClassDefinition\Data\UrlSlug) {
+                            $brickPrefix = $db->quoteIdentifier($brickKey) . '.';
                         } else {
-                            if ($brickField instanceof ClassDefinition\Data\UrlSlug) {
-                                $brickPrefix = $db->quoteIdentifier($brickKey) . '.';
-                            } else {
-                                $brickPrefix = $db->quoteIdentifier($brickType) . '.';
-                            }
+                            $brickPrefix = $db->quoteIdentifier($brickType) . '.';
                         }
                     }
+
                     if (is_array($filter['value'])) {
                         $fieldConditions = [];
                         foreach ($filter['value'] as $filterValue) {
-                            $brickCondition = '(' . $brickPrefix . $brickField->getFilterCondition($filterValue, $operator,
-                                    ['brickType' => $brickType]
-                                ) . ' AND fieldname = ' . $db->quote($brickFilterField) . ')';
+                            $brickCondition = '(' . $brickField->getFilterCondition($filterValue, $operator,
+                                    ['brickPrefix' => $brickPrefix]
+                                ) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';
                             $fieldConditions[] = $brickCondition;
                         }
                         $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
                     } else {
-                        $brickCondition = '(' . $brickPrefix . $brickField->getFilterCondition($filter['value'], $operator,
-                                ['brickType' => $brickType]) . ' AND fieldname = ' . $db->quote($brickFilterField) . ')';
+                        $brickCondition = '(' . $brickField->getFilterCondition($filter['value'], $operator,
+                                ['brickPrefix' => $brickPrefix]) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';
                         $conditionPartsFilters[] = $brickCondition;
                     }
                 } elseif ($field instanceof ClassDefinition\Data\UrlSlug) {
@@ -421,7 +416,7 @@ class GridHelperService
                         . ' and ' . $mappedKey . '.language = ' . $db->quote($featureJoin['language'])
                         . ')',
                         [
-                            $mappedKey => 'value'
+                            $mappedKey => 'value',
                         ]
                     );
                 }
@@ -465,7 +460,7 @@ class GridHelperService
                         . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
                         . ')',
                         [
-                            $mappedKey => 'slug'
+                            $mappedKey => 'slug',
                         ]
                     );
                 }
@@ -496,7 +491,7 @@ class GridHelperService
             'id' => 'oo_id',
             'published' => 'o_published',
             'modificationDate' => 'o_modificationDate',
-            'creationDate' => 'o_creationDate'
+            'creationDate' => 'o_creationDate',
         ];
 
         $start = 0;
@@ -558,7 +553,7 @@ class GridHelperService
             $conditionFilters[] = 'o_parentId = ' . $folder->getId();
         } else {
             $quotedPath = $list->quote($folder->getRealFullPath());
-            $quotedWildcardPath = $list->quote(str_replace('//', '/', $folder->getRealFullPath() . '/') . '%');
+            $quotedWildcardPath = $list->quote($list->escapeLike(str_replace('//', '/', $folder->getRealFullPath() . '/')) . '%');
             $conditionFilters[] = '(o_path = ' . $quotedPath . ' OR o_path LIKE ' . $quotedWildcardPath . ')';
         }
 
@@ -696,7 +691,7 @@ class GridHelperService
         if (isset($allParams['only_direct_children']) && $allParams['only_direct_children'] == 'true') {
             $conditionFilters[] = 'parentId = ' . $folder->getId();
         } else {
-            $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() === '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
+            $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() === '/' ? "'/%'" : $list->quote($list->escapeLike($folder->getRealFullPath()) . '/%'));
         }
 
         if (isset($allParams['only_unreferenced']) && $allParams['only_unreferenced'] === 'true') {
@@ -744,7 +739,7 @@ class GridHelperService
                     $filter['value'] = (int) $filter['value'];
                 }
                 // system field
-                $value = $filter['value'];
+                $value = $filter['value'] ?? '';
                 if ($operator == 'LIKE') {
                     $value = $db->quote('%' . $value . '%');
                 } elseif ($operator == 'IN') {

@@ -66,7 +66,7 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
 
         $this->logger->info('Checking bruteforce protection for user {username} with ip {ip}', [
             'username' => $username,
-            'ip' => $ip
+            'ip' => $ip,
         ]);
 
         $matchesIpOnly = 0;
@@ -99,7 +99,7 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
         if ($matchesIpOnly > 49 || $matchesUserOnly > 9 || $matchesUserIp > 4) {
             $this->logger->warning('Security Alert: Too many login attempts for username {username} with IP {ip}', [
                 'username' => $username,
-                'ip' => $ip
+                'ip' => $ip,
             ]);
 
             throw new BruteforceProtectionException('Security Alert: Too many login attempts, please wait 5 minutes and try again.');
@@ -119,7 +119,7 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
 
         $this->logger->warning('Adding bruteforce entry for username {username} with IP {ip}', [
             'username' => $username,
-            'ip' => $ip
+            'ip' => $ip,
         ]);
 
         $this->writeLogEntry($username, $ip);
@@ -181,7 +181,7 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
         $entries[] = [
             date(\DateTime::ISO8601),
             $ip ?: '',
-            $username ?: ''
+            $username ?: '',
         ];
 
         $this->writeLogFile($entries);
@@ -200,7 +200,7 @@ class BruteforceProtectionHandler implements LoggerAwareInterface
 
         if (!is_writable($this->logFile)) {
             $this->logger->critical('It seems that the log file {logfile} is not writable.', [
-                'logfile' => $this->logFile
+                'logfile' => $this->logFile,
             ]);
 
             throw new BruteforceProtectionException('It seems that the log file is not writable.');

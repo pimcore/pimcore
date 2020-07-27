@@ -27,6 +27,7 @@ use Pimcore\Model\Element;
 class AdvancedManyToManyRelation extends ManyToManyRelation
 {
     use DataObject\Traits\ElementWithMetadataComparisonTrait;
+
     /**
      * @var array
      */
@@ -105,7 +106,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     {
         $list = [
             'dirty' => false,
-            'data' => []
+            'data' => [],
         ];
 
         if (is_array($data) && count($data) > 0) {
@@ -224,7 +225,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @see Data::getDataForEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -346,7 +347,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -589,7 +590,13 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
                     foreach ($this->getColumns() as $c) {
                         $getter = 'get' . ucfirst($c['key']);
-                        $item[$c['key']] = $metaObject->$getter();
+                        $value = $metaObject->$getter();
+
+                        if ($c['type'] == 'bool' || $c['type'] == 'columnbool') {
+                            $value = (int)$value;
+                        }
+
+                        $item[$c['key']] = $value;
                     }
                     $items[] = $item;
                 }
@@ -667,9 +674,9 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
      */
     public function save($object, $params = [])
     {
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
             if ($object instanceof DataObject\Localizedfield) {
-                if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface) {
+                if ($object->getObject() instanceof Element\DirtyIndicatorInterface) {
                     if (!$object->hasDirtyFields()) {
                         return;
                     }
@@ -739,7 +746,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $sql .= ' AND ' . $db->quoteInto('ownername = ?', $context['fieldname']);
                 }
 
-                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if ($context['containerType']) {
                         $sql .= ' AND ' . $db->quoteInto('ownertype = ?', $context['containerType']);
                     }
@@ -842,7 +849,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $deleteCondition['ownername'] = $context['fieldname'];
                 }
 
-                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if (!empty($context['containerType'])) {
                         $deleteCondition['ownertype'] = $context['containerType'];
                     }
@@ -868,7 +875,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $this->columns = [];
         $this->columnKeys = [];
         foreach ($columns as $c) {
-            $c['key'] = strtolower($c['key']);
             $this->columns[] = $c;
             $this->columnKeys[] = $c['key'];
         }
@@ -1108,7 +1114,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                         'title' => $item['path'],
                         'raw' => $raw,
                         'gridrow' => $item,
-                        'unique' => $unique
+                        'unique' => $unique,
                     ];
                 }
                 $data['data'] = $newItems;
@@ -1118,14 +1124,14 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                 'type' => 'grid',
                 'columnConfig' => [
                     'id' => [
-                        'width' => 60
+                        'width' => 60,
                     ],
                     'path' => [
-                        'flex' => 2
-                    ]
+                        'flex' => 2,
+                    ],
 
                 ],
-                'html' => $this->getVersionPreview($originalData, $object, $params)
+                'html' => $this->getVersionPreview($originalData, $object, $params),
             ];
 
             $newData = [];

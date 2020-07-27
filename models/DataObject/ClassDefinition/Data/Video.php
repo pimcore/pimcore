@@ -22,7 +22,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool\Serialize;
 
-class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -111,7 +111,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Video $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -141,7 +141,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param int $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Video|null
@@ -185,7 +185,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\Video $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -199,7 +199,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see Data::getDataForEditmode
      *
      * @param DataObject\Data\Video $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -224,7 +224,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Video|null
@@ -263,7 +263,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @param int $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Video
@@ -427,14 +427,14 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if ($data && $data->getData() instanceof Asset) {
             $dependencies['asset_' . $data->getData()->getId()] = [
                 'id' => $data->getData()->getId(),
-                'type' => 'asset'
+                'type' => 'asset',
             ];
         }
 
         if ($data && $data->getPoster() instanceof Asset) {
             $dependencies['asset_' . $data->getPoster()->getId()] = [
                 'id' => $data->getPoster()->getId(),
-                'type' => 'asset'
+                'type' => 'asset',
             ];
         }
 
@@ -603,7 +603,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -625,7 +625,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             if ($poster) {
                 $result['poster'] = [
                     'type' => Model\Element\Service::getType($poster),
-                    'id' => $poster->getId()
+                    'id' => $poster->getId(),
                 ];
             }
 
@@ -634,7 +634,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             if ($data && $value->getType() == 'asset') {
                 $result['data'] = [
                     'type' => Model\Element\Service::getType($data),
-                    'id' => $data->getId()
+                    'id' => $data->getId(),
                 ];
             } else {
                 $result['data'] = $data;
@@ -648,7 +648,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -675,5 +675,53 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
             return $video;
         }
+    }
+
+    /**
+     * @param DataObject\Data\Video|null $oldValue
+     * @param DataObject\Data\Video|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldData = [];
+        $newData = [];
+
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!$oldValue instanceof DataObject\Data\Video
+            || !$newValue instanceof DataObject\Data\Video
+            || $oldValue->getType() != $newValue->getType()) {
+            return false;
+        }
+
+        $oldData['data'] = $oldValue->getData();
+
+        if ($oldData['data'] instanceof Asset\Video) {
+            $oldData['data'] = $oldData['data']->getId();
+            $oldData['poster'] = $oldValue->getPoster();
+            $oldData['title'] = $oldValue->getTitle();
+            $oldData['description'] = $oldValue->getDescription();
+        }
+
+        $newData['data'] = $newValue->getData();
+
+        if ($newData['data'] instanceof Asset\Video) {
+            $newData['data'] = $newData['data']->getId();
+            $newData['poster'] = $newValue->getPoster();
+            $newData['title'] = $newValue->getTitle();
+            $newData['description'] = $newValue->getDescription();
+        }
+
+        foreach ($oldData as $key => $oValue) {
+            if (!isset($newData[$key]) || $oValue !== $newData[$key]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

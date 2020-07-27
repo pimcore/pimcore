@@ -100,7 +100,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
                 [
                     'fileObject' => new FileObject(print_r($paymentStatus, true)),
                     'relatedObject' => $order,
-                    'component' => self::LOGGER_NAME
+                    'component' => self::LOGGER_NAME,
                 ]
             );
             Lock::release(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());

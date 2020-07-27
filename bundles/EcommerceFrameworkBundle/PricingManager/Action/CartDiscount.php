@@ -85,7 +85,7 @@ class CartDiscount implements DiscountInterface
         return json_encode([
             'type' => 'CartDiscount',
             'amount' => $this->getAmount(),
-            'percent' => $this->getPercent()
+            'percent' => $this->getPercent(),
         ]);
     }
 

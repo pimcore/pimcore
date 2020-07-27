@@ -25,11 +25,13 @@ use Pimcore\Model\DataObject\Concrete;
  * @method Dao getDao()
  * @method void save(Model\DataObject\Concrete $object, $params = [], $saveRelationalData = true)
  */
-abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
+abstract class AbstractData extends Model\AbstractModel implements Model\DataObject\LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface, Model\Element\DirtyIndicatorInterface
 {
     use Model\Element\ElementDumpStateTrait;
 
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
+
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
      * @var int

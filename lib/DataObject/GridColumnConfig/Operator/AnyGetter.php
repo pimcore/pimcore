@@ -21,30 +21,36 @@ use Pimcore\Model\AbstractModel;
 
 class AnyGetter extends AbstractOperator
 {
+    /** @var string */
     private $attribute;
 
+    /** @var string */
     private $param1;
 
+    /** @var bool */
     private $isArrayType;
 
+    /** @var string */
     private $forwardAttribute;
 
+    /** @var string */
     private $forwardParam1;
 
+    /** @var bool */
     private $returnLastResult;
 
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->attribute = $config->attribute;
-        $this->param1 = $config->param1;
-        $this->isArrayType = $config->isArrayType;
+        $this->attribute = $config->attribute ?? '';
+        $this->param1 = $config->param1 ?? '';
+        $this->isArrayType = $config->isArrayType ?? false;
 
-        $this->forwardAttribute = $config->forwardAttribute;
-        $this->forwardParam1 = $config->forwardParam1;
+        $this->forwardAttribute = $config->forwardAttribute ?? '';
+        $this->forwardParam1 = $config->forwardParam1 ?? '';
 
-        $this->returnLastResult = $config->returnLastResult;
+        $this->returnLastResult = $config->returnLastResult ?? false;
     }
 
     public function getLabeledValue($element)
@@ -131,7 +137,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getAttribute()
     {
@@ -139,7 +145,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @param mixed $attribute
+     * @param string $attribute
      */
     public function setAttribute($attribute)
     {
@@ -147,7 +153,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getParam1()
     {
@@ -155,7 +161,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @param mixed $param1
+     * @param string $param1
      */
     public function setParam1($param1)
     {
@@ -163,7 +169,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getForwardAttribute()
     {
@@ -171,7 +177,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @param mixed $forwardAttribute
+     * @param string $forwardAttribute
      */
     public function setForwardAttribute($forwardAttribute)
     {
@@ -179,7 +185,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getForwardParam1()
     {
@@ -187,7 +193,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @param mixed $forwardParam1
+     * @param string $forwardParam1
      */
     public function setForwardParam1($forwardParam1)
     {
@@ -195,15 +201,15 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
-    public function getisArrayType()
+    public function getIsArrayType()
     {
         return $this->isArrayType;
     }
 
     /**
-     * @param mixed $isArrayType
+     * @param bool $isArrayType
      */
     public function setIsArrayType($isArrayType)
     {
@@ -211,7 +217,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function getReturnLastResult()
     {
@@ -219,7 +225,7 @@ class AnyGetter extends AbstractOperator
     }
 
     /**
-     * @param mixed $returnLastResult
+     * @param bool $returnLastResult
      */
     public function setReturnLastResult($returnLastResult)
     {

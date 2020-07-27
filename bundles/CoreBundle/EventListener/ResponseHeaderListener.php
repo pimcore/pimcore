@@ -43,7 +43,7 @@ class ResponseHeaderListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::RESPONSE => ['onKernelResponse', 32]
+            KernelEvents::RESPONSE => ['onKernelResponse', 32],
         ];
     }
 

@@ -161,7 +161,7 @@ class ConditionMatcher implements ConditionMatcherInterface
     private function collectConditionVariables(array $config, ConditionInterface $condition)
     {
         $data = [
-            'type' => $config['type']
+            'type' => $config['type'],
         ];
 
         if ($condition instanceof VariableConditionInterface) {

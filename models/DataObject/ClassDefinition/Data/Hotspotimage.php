@@ -25,6 +25,7 @@ use Pimcore\Tool\Serialize;
 
 class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 {
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -123,7 +124,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Hotspotimage $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return array
@@ -139,20 +140,20 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
             $metaData = [
                 'hotspots' => $data->getHotspots(),
                 'marker' => $data->getMarker(),
-                'crop' => $data->getCrop()
+                'crop' => $data->getCrop(),
             ];
 
             $metaData = Serialize::serialize($metaData);
 
             return [
                 $this->getName() . '__image' => $imageId,
-                $this->getName() . '__hotspots' => $metaData
+                $this->getName() . '__hotspots' => $metaData,
             ];
         }
 
         return [
             $this->getName() . '__image' => null,
-            $this->getName() . '__hotspots' => null
+            $this->getName() . '__hotspots' => null,
         ];
     }
 
@@ -160,7 +161,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return DataObject\Data\Hotspotimage|null
@@ -224,7 +225,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\Hotspotimage $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -238,7 +239,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @see Data::getDataForEditmode
      *
      * @param DataObject\Data\Hotspotimage $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -279,7 +280,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
                 'id' => $imageId,
                 'hotspots' => $hotspots,
                 'marker' => $marker,
-                'crop' => $data->getCrop()
+                'crop' => $data->getCrop(),
             ];
         }
 
@@ -290,7 +291,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Hotspotimage
@@ -325,12 +326,12 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
             $data['hotspots'] = $rewritePath($data['hotspots']);
         }
 
-        return new DataObject\Data\Hotspotimage($data['id'], $data['hotspots'], $data['marker'], $data['crop']);
+        return new DataObject\Data\Hotspotimage($data['id'], $data['hotspots'] ?? [], $data['marker'] ?? [], $data['crop'] ?? []);
     }
 
     /**
      * @param DataObject\Data\Hotspotimage $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Hotspotimage
@@ -468,7 +469,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         if ($data instanceof DataObject\Data\Hotspotimage && $data->getImage() instanceof Asset\Image) {
             $dependencies['asset_' . $data->getImage()->getId()] = [
                 'id' => $data->getImage()->getId(),
-                'type' => 'asset'
+                'type' => 'asset',
             ];
 
             $getMetaDataDependencies = function ($data, $dependencies) {
@@ -482,7 +483,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
                             if ($metaData['value'] instanceof Element\ElementInterface) {
                                 $dependencies[$metaData['type'] . '_' . $metaData['value']->getId()] = [
                                     'id' => $metaData['value']->getId(),
-                                    'type' => $metaData['type']
+                                    'type' => $metaData['type'],
                                 ];
                             }
                         }
@@ -504,7 +505,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      *
      * @deprecated
      *
-     * @param string $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -701,7 +702,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -720,7 +721,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
                 $id = $image->getId();
                 $result['image'] = [
                     'type' => $type,
-                    'id' => $id
+                    'id' => $id,
                 ];
             }
 
@@ -732,7 +733,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -753,5 +754,46 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
             return $image;
         }
+    }
+
+    /**
+     * @param DataObject\Data\Hotspotimage|null $oldValue
+     * @param DataObject\Data\Hotspotimage|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!$oldValue instanceof DataObject\Data\Hotspotimage
+            || !$newValue instanceof DataObject\Data\Hotspotimage) {
+            return false;
+        }
+
+        $fd = new Image();
+        if (!$fd->isEqual($oldValue->getImage(), $newValue->getImage())) {
+            return false;
+        }
+
+        $oldValue = [
+            'hotspots' => $oldValue->getHotspots(),
+            'marker' => $oldValue->getMarker(),
+            'crop' => $oldValue->getCrop(),
+        ];
+
+        $newValue = [
+            'hotspots' => $newValue->getHotspots(),
+            'marker' => $newValue->getMarker(),
+            'crop' => $newValue->getCrop(),
+        ];
+
+        if (!$this->isEqualArray($oldValue, $newValue)) {
+            return false;
+        }
+
+        return true;
     }
 }

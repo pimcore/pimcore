@@ -2,7 +2,7 @@
 
 namespace Pimcore\Tests\Test\Traits;
 
-use Pimcore\Tests\Rest\BrowserKitRestClient;
+use Pimcore\Tests\RestClient\BrowserKitRestClient;
 use Pimcore\Tests\RestTester;
 use Pimcore\Tests\Test\TestCase;
 use Pimcore\Tool\RestClient;

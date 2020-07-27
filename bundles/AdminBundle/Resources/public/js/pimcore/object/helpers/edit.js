@@ -31,6 +31,10 @@ pimcore.object.helpers.edit = {
 
         context.objectId = this.object.id;
 
+        if (this.object.data.currentLayoutId) {
+            context.layoutId = this.object.data.currentLayoutId;
+        }
+
         var panelListenerConfig = {};
 
         var tabpanelCorrection = function (panel) {
@@ -223,9 +227,9 @@ pimcore.object.helpers.edit = {
                 }
             }
 
-            if (l.fieldtype == "iframe") {
-                var iframe = new pimcore.object.layout.iframe(l, context);
-                newConfig = iframe.getLayout();
+            if (pimcore.object.layout[l.fieldtype] !== undefined) {
+                var layout = new pimcore.object.layout[l.fieldtype](l, context);
+                newConfig = layout.getLayout();
             } else {
                 newConfig = Object.assign(xTypeLayoutMapping[l.fieldtype] || {}, newConfig);
                 if (typeof newConfig.labelWidth != "undefined") {
@@ -404,9 +408,16 @@ pimcore.object.helpers.edit = {
                             // apply tooltips
                             if(field.tooltip) {
                                 try {
+                                    var tooltipHtml = field.tooltip;
+
+                                    // classification-store tooltips are already translated
+                                    if (context.type != "classificationstore") {
+                                        tooltipHtml = t(tooltipHtml);
+                                    }
+
                                     new Ext.ToolTip({
                                         target: el,
-                                        html: nl2br(t(field.tooltip)),
+                                        html: nl2br(tooltipHtml),
                                         trackMouse:true,
                                         showDelay: 200,
                                         dismissDelay: 0

@@ -297,10 +297,9 @@ class AbstractObject extends Model\Element\AbstractElement
                     $object = self::getModelFactory()->build($className);
                     Runtime::set($cacheKey, $object);
                     $object->getDao()->getById($id);
+                    $object->__setDataVersionTimestamp($object->getModificationDate());
 
                     Service::recursiveResetDirtyMap($object);
-
-                    $object->__setDataVersionTimestamp($object->getModificationDate());
 
                     // force loading of relation data
                     if ($object instanceof Concrete) {
@@ -530,18 +529,15 @@ class AbstractObject extends Model\Element\AbstractElement
 
         try {
             // delete children
-            if ($this->hasChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT])) {
-                // delete also unpublished children
-                $unpublishedStatus = self::doHideUnpublished();
-                self::setHideUnpublished(false);
-                foreach ($this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true) as $child) {
+            $children = $this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true);
+            if (count($children) > 0) {
+                foreach ($children as $child) {
                     $child->delete(true);
                 }
-                self::setHideUnpublished($unpublishedStatus);
             }
 
             // remove dependencies
-            $d = $this->getDependencies();
+            $d = new Model\Dependency;
             $d->cleanAllForElement($this);
 
             // remove all properties
@@ -999,7 +995,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setParentId($o_parentId)
     {
         $o_parentId = (int) $o_parentId;
-        if ($o_parentId != $this->o_parentId && $this instanceof DirtyIndicatorInterface) {
+        if ($o_parentId != $this->o_parentId) {
             $this->markFieldDirty('o_parentId');
         }
         $this->o_parentId = $o_parentId;
@@ -1089,6 +1085,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setModificationDate($o_modificationDate)
     {
+        $this->markFieldDirty('o_modificationDate');
+
         $this->o_modificationDate = (int) $o_modificationDate;
 
         return $this;
@@ -1113,6 +1111,8 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     public function setUserModification($o_userModification)
     {
+        $this->markFieldDirty('o_userModification');
+
         $this->o_userModification = (int) $o_userModification;
 
         return $this;
@@ -1475,3 +1475,5 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->o_dependencies = null;
     }
 }
+
+class_alias(AbstractObject::class, 'Pimcore\\Model\\DataObject');

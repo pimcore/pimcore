@@ -25,6 +25,13 @@ services:
         alias: router.request_context
         public: true
 
+    # dedicated router for elements
+    Pimcore\Routing\Element\Router:
+        arguments:
+            $context: '@router.request_context'
+        tags:
+            - { name: router, priority: 110 }
+
     # dedicated router for static routes
     Pimcore\Routing\Staticroute\Router:
         arguments:
@@ -38,6 +45,11 @@ services:
 
     # routing loader for bundle routing auto loading
     Pimcore\Routing\Loader\BundleRoutingLoader:
+        tags:
+            - { name: routing.loader }
+
+    # routing loader for fos js routing routes
+    Pimcore\Routing\Loader\FOSJsRoutingLoader:
         tags:
             - { name: routing.loader }
 

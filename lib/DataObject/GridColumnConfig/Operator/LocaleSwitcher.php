@@ -27,7 +27,7 @@ class LocaleSwitcher extends AbstractOperator
     private $localeService;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $locale;
 
@@ -36,7 +36,7 @@ class LocaleSwitcher extends AbstractOperator
         parent::__construct($config, $context);
 
         $this->localeService = $localeService;
-        $this->locale = $config->locale;
+        $this->locale = $config->locale ?? null;
     }
 
     public function getLabeledValue($element)

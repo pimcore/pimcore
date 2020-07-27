@@ -15,12 +15,17 @@ pimcore.registerNS("pimcore.settings.translation.admin");
 pimcore.settings.translation.admin = Class.create(pimcore.settings.translations,{
 
     translationType: 'admin',
-    dataUrl: '/admin/translation/translations?admin=1',
-    exportUrl: '/admin/translation/export?admin=1',
-    uploadImportUrl:'/admin/translation/upload-import?admin=1',
-    importUrl:'/admin/translation/import?admin=1',
-    mergeUrl:'/admin/translation/import?admin=1&merge=1',
-    cleanupUrl: "/admin/translation/cleanup?type=admin",
+
+    initialize: function ($super, filter) {
+        $super(filter);
+
+        this.dataUrl = Routing.generate('pimcore_admin_translation_translations', {admin: 1});
+        this.exportUrl = Routing.generate('pimcore_admin_translation_export', {admin: 1});
+        this.uploadImportUrl = Routing.generate('pimcore_admin_translation_uploadimportfile', {admin: 1});
+        this.importUrl = Routing.generate('pimcore_admin_translation_import', {admin: 1});
+        this.mergeUrl = Routing.generate('pimcore_admin_translation_import', {admin: 1, merge: 1});
+        this.cleanupUrl = Routing.generate('pimcore_admin_translation_cleanup', {admin: 1});
+    },
 
     activate: function (filter) {
         if(filter){
@@ -38,7 +43,7 @@ pimcore.settings.translation.admin = Class.create(pimcore.settings.translations,
 
     getAvailableLanguages: function () {
         Ext.Ajax.request({
-            url: "/admin/settings/get-available-admin-languages",
+            url: Routing.generate('pimcore_admin_settings_getavailableadminlanguages'),
             success: function (response) {
                 try {
                     var languages = Ext.decode(response.responseText);

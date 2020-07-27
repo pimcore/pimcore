@@ -43,7 +43,7 @@ class ClientIp implements ConditionInterface
     {
         // basic
         $json = [
-            'type' => 'ClientIp', 'ip' => $this->getIp()
+            'type' => 'ClientIp', 'ip' => $this->getIp(),
         ];
 
         return json_encode($json);

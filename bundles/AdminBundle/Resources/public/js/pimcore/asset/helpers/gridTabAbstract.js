@@ -15,10 +15,17 @@ pimcore.registerNS("pimcore.asset.helpers.gridTabAbstract");
 pimcore.asset.helpers.gridTabAbstract = Class.create(pimcore.element.helpers.gridTabAbstract, {
 
     objecttype: 'asset',
-    batchPrepareUrl: "/admin/asset-helper/get-batch-jobs",
-    batchProcessUrl: "/admin/asset-helper/batch",
-    exportPrepareUrl: "/admin/asset-helper/get-export-jobs",
-    exportProcessUrl: "/admin/asset-helper/do-export",
+    batchPrepareUrl: null,
+    batchProcessUrl: null,
+    exportPrepareUrl: null,
+    exportProcessUrl: null,
+
+    initialize: function() {
+        this.batchPrepareUrl = Routing.generate('pimcore_admin_asset_assethelper_getbatchjobs');
+        this.batchProcessUrl = Routing.generate('pimcore_admin_asset_assethelper_batch');
+        this.exportPrepareUrl = Routing.generate('pimcore_admin_asset_assethelper_getexportjobs');
+        this.exportProcessUrl = Routing.generate('pimcore_admin_asset_assethelper_doexport');
+    },
 
     createGrid: function (columnConfig) {
     },
@@ -42,6 +49,9 @@ pimcore.asset.helpers.gridTabAbstract = Class.create(pimcore.element.helpers.gri
                 };
                 if (field.fieldConfig.width) {
                     fc.width = field.fieldConfig.width;
+                }
+                if (field.fieldConfig.locked) {
+                    fc.locked = field.fieldConfig.locked;
                 }
 
                 if (field.isOperator) {
@@ -73,7 +83,7 @@ pimcore.asset.helpers.gridTabAbstract = Class.create(pimcore.element.helpers.gri
             }.bind(this),
             function () {
                 Ext.Ajax.request({
-                    url: "/admin/asset-helper/grid-get-column-config",
+                    url: Routing.generate('pimcore_admin_asset_assethelper_gridgetcolumnconfig'),
                     params: {
                         gridtype: "grid",
                         searchType: this.searchType
@@ -114,7 +124,7 @@ pimcore.asset.helpers.gridTabAbstract = Class.create(pimcore.element.helpers.gri
             columns: {}
         };
 
-        var cm = this.grid.getView().getHeaderCt().getGridColumns();
+        var cm = this.grid.getView().getGridColumns();
 
         for (var i = 0; i < cm.length; i++) {
             if (cm[i].dataIndex) {
@@ -124,6 +134,7 @@ pimcore.asset.helpers.gridTabAbstract = Class.create(pimcore.element.helpers.gri
                     position: i,
                     hidden: cm[i].hidden,
                     width: cm[i].width,
+                    locked: cm[i].locked,
                     fieldConfig: this.fieldObject[name],
                     //isOperator: this.fieldObject[name].isOperator
                 };

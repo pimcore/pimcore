@@ -21,6 +21,12 @@ Now, you can use the table in your object, like below:
 
 ![Edit object with structured table](../../../img/Objects_Structured_Table_use.png)
 
+## Storage of Structured tables
+
+For each row and column combination a new column in table of the structured table containing class will be stored.
+
+So it will be a clear restriction not to use this type of structuring data in case of a bigger number of data rows or columns. By using this design the maximum number of columns per table should be taken into consideration because it could be a technical restriction for it.
+
 ## Using structured table with PHP API
 
 In the code, the data of this field can be accessed as shown in the code snippets, below:

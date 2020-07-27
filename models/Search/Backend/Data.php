@@ -29,6 +29,9 @@ use Pimcore\Model\Search\Backend\Data\Dao;
  */
 class Data extends \Pimcore\Model\AbstractModel
 {
+    // if a word occures more often than this number it will get stripped to keep the search_backend_data table from getting too big
+    const MAX_WORD_OCCURENCES = 3;
+
     /**
      * @var Data\Id
      */
@@ -448,7 +451,11 @@ class Data extends \Pimcore\Model\AbstractModel
                 try {
                     $metaData = array_merge($element->getEXIFData(), $element->getIPTCData());
                     foreach ($metaData as $key => $value) {
-                        $this->data .= ' ' . $key . ' : ' . $value;
+                        if (is_array($value)) {
+                            $this->data .= ' ' . $key . ' : ' . implode(' - ', $value);
+                        } else {
+                            $this->data .= ' ' . $key . ' : ' . $value;
+                        }
                     }
                 } catch (\Exception $e) {
                     Logger::error($e);
@@ -503,10 +510,26 @@ class Data extends \Pimcore\Model\AbstractModel
         $data = str_replace("\t", '', $data);
         $data = preg_replace('#[ ]+#', ' ', $data);
 
-        // deduplication
-        $arr = explode(' ', $data);
-        $arr = array_unique($arr);
-        $data = implode(' ', $arr);
+        $minWordLength = $this->getDao()->getMinWordLengthForFulltextIndex();
+        $maxWordLength = $this->getDao()->getMaxWordLengthForFulltextIndex();
+
+        $words = explode(' ', $data);
+
+        $wordOccurrences = [];
+        foreach ($words as $key => $word) {
+            $wordLength = \mb_strlen($word);
+            if ($wordLength < $minWordLength || $wordLength > $maxWordLength) {
+                unset($words[$key]);
+                continue;
+            }
+
+            $wordOccurrences[$word] = ($wordOccurrences[$word] ?? 0) + 1;
+            if ($wordOccurrences[$word] > self::MAX_WORD_OCCURENCES) {
+                unset($words[$key]);
+            }
+        }
+
+        $data = implode(' ', $words);
 
         return $data;
     }

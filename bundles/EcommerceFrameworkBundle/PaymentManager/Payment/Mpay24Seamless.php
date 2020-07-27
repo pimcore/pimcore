@@ -70,7 +70,7 @@ class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\Ecommerc
             'testSystem',
             'debugMode',
             'payment_methods',
-            'partial'
+            'partial',
         ]);
 
         $resolver->setAllowedTypes('payment_methods', 'array');
@@ -246,12 +246,12 @@ class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\Ecommerc
                     [
                         'description' => sprintf(
                             \Pimcore::getContainer()->get('translator')->trans('mpay24.general.orderDescription'),
-                            $order->getOrdernumber(), $order->getId())
+                            $order->getOrdernumber(), $order->getId()),
                     ],
                 'successURL' => $this->successURL,
                 'errorURL' => $this->errorURL,
                 'confirmationURL' => $this->confirmationURL,
-                'language' => strtoupper($this->getProviderCompatibleLocale($request))
+                'language' => strtoupper($this->getProviderCompatibleLocale($request)),
             ];
 
             /* Version with Mpay24 page (not seamless)

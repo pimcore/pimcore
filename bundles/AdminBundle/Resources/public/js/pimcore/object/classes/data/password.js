@@ -64,7 +64,7 @@ pimcore.object.classes.data.password = Class.create(pimcore.object.classes.data.
 
         var algorithmsProxy = {
             type: 'ajax',
-            url:'/admin/settings/get-available-algorithms',
+            url: Routing.generate('pimcore_admin_settings_getavailablealgorithms'),
             reader: {
                 type: 'json',
                 totalProperty:'total',

@@ -69,7 +69,7 @@ services:
         #class: Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\AttributePriceSystem
         class: AppBundle\Ecommerce\Pricing\MyPriceSystem
         arguments:
-            - '@pimcore_ecommerce.pricing_manager'
+            - '@pimcore_ecommerce.locator.pricing_manager'
             - '@pimcore_ecommerce.environment'
             - { price_class: Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\Price }
             

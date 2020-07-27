@@ -246,6 +246,13 @@ services:
         tags:
             - { name: pimcore.data_object.grid_column_config.operator_factory, id: Trimmer }
 
+    pimcore.data_object.grid_column_config.operator.factory.alias:
+        class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\DefaultOperatorFactory
+        arguments:
+            $className: Pimcore\DataObject\GridColumnConfig\Operator\Alias
+        tags:
+            - { name: pimcore.data_object.grid_column_config.operator_factory, id: Alias }
+
     pimcore.data_object.grid_column_config.operator.factory.workflowstate:
         class: Pimcore\DataObject\GridColumnConfig\Operator\Factory\WorkflowStateFactory
         tags:

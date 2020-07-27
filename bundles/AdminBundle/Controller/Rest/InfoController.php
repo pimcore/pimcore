@@ -29,7 +29,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class InfoController extends AbstractRestController
 {
     /**
-     * @Route("/system-clock", methods={"GET"})
+     * @Route("/system-clock", name="pimcore_api_rest_info_systemclock", methods={"GET"})
      */
     public function systemClockAction()
     {
@@ -37,7 +37,7 @@ class InfoController extends AbstractRestController
     }
 
     /**
-     * @Route("/user", methods={"GET"})
+     * @Route("/user", name="pimcore_api_rest_info_user", methods={"GET"})
      */
     public function userAction()
     {
@@ -52,7 +52,7 @@ class InfoController extends AbstractRestController
     }
 
     /**
-     * @Route("/server-info", methods={"GET"})
+     * @Route("/server-info", name="pimcore_api_rest_info_serverinfo", methods={"GET"})
      *
      * Returns a list of all class definitions.
      */
@@ -88,7 +88,7 @@ class InfoController extends AbstractRestController
     }
 
     /**
-     * @Route("/translations", methods={"GET"})
+     * @Route("/translations", name="pimcore_api_rest_info_translations", methods={"GET"})
      */
     public function translationsAction(Request $request)
     {

@@ -20,13 +20,14 @@ namespace Pimcore\Model\DataObject;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Objectbrick\Dao getDao()
  */
 class Objectbrick extends Model\AbstractModel implements DirtyIndicatorInterface
 {
-    use Model\DataObject\Traits\DirtyIndicatorTrait;
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     /**
      * @var array

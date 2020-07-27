@@ -6,8 +6,8 @@ The link editable is used for dynamic link creation in documents.
 
 ## Configuration
 
-You can pass every valid attribute an `<a>`-tag can have ([w3.org - Link](http://www.w3.org/TR/html401/struct/links.html#h-12.2)), 
-such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title` and additionally the following: 
+You can pass every valid attribute an `<a>`-tag can have ([w3.org - Link](https://www.w3.org/TR/html52/textlevel-semantics.html#the-a-element)), 
+such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*`, `aria-*` and additionally the following: 
 
 | Name     | Type     | Description                                                             |
 |----------|----------|-------------------------------------------------------------------------|

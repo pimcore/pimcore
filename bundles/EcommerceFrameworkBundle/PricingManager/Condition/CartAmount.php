@@ -69,7 +69,7 @@ class CartAmount implements CartAmountInterface
     {
         return json_encode([
             'type' => 'CartAmount',
-            'limit' => $this->getLimit()
+            'limit' => $this->getLimit(),
         ]);
     }
 

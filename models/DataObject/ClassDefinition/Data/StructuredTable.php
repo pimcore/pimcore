@@ -20,8 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class StructuredTable extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class StructuredTable extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -229,7 +230,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\StructuredTable $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -255,7 +256,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\StructuredTable
@@ -283,7 +284,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\StructuredTable $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -297,7 +298,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -329,7 +330,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\StructuredTable
@@ -599,7 +600,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         $mapper = [
             'text' => 'varchar('.($length > 0 ? $length : '190').')',
             'number' => 'double',
-            'bool' => 'tinyint(1)'
+            'bool' => 'tinyint(1)',
         ];
 
         return $mapper[$type];
@@ -614,9 +615,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     {
         if ($data instanceof DataObject\Data\StructuredTable) {
             return $data->isEmpty();
-        } else {
-            return true;
         }
+
+        return true;
     }
 
     /** True if change is allowed in edit mode.
@@ -658,5 +659,20 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         $this->labelFirstCell = $masterDefinition->labelFirstCell;
         $this->cols = $masterDefinition->cols;
         $this->rows = $masterDefinition->rows;
+    }
+
+    /**
+     *
+     * @param DataObject\Data\StructuredTable|null $oldValue
+     * @param DataObject\Data\StructuredTable|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldData = $oldValue instanceof DataObject\Data\StructuredTable ? $oldValue->getData() : [];
+        $newData = $newValue instanceof DataObject\Data\StructuredTable ? $newValue->getData() : [];
+
+        return $this->isEqualArray($oldData, $newData);
     }
 }

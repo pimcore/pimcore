@@ -17,7 +17,7 @@ pimcore.document.document_language_overview = Class.create({
     initialize: function (document) {
 
         Ext.Ajax.request({
-            url: "/admin/document/language-tree-root",
+            url: Routing.generate('pimcore_admin_document_document_languagetreeroot'),
             params: {
                 id: document.id
             },
@@ -82,7 +82,7 @@ pimcore.document.document_language_overview = Class.create({
         var store = Ext.create('Ext.data.TreeStore', {
             proxy: {
                 type: 'ajax',
-                url: '/admin/document/language-tree',
+                url: Routing.generate('pimcore_admin_document_document_languagetree'),
                 extraParams: {languages:languages.join(',')}
             }
         });
@@ -224,7 +224,7 @@ pimcore.document.document_language_overview = Class.create({
 
     createTranslation: function(record, column, inheritance) {
         Ext.Ajax.request({
-            url: "/admin/document/translation-determine-parent",
+            url: Routing.generate('pimcore_admin_document_document_translationdetermineparent'),
             params: {
                 id: record.data.id,
                 language: column.dataIndex
@@ -288,7 +288,7 @@ pimcore.document.document_language_overview = Class.create({
                                 win.disable();
 
                                 Ext.Ajax.request({
-                                    url: "/admin/element/get-subtype",
+                                    url: Routing.generate('pimcore_admin_element_getsubtype'),
                                     params: {
                                         id: res.targetId,
                                         type: "document"
@@ -306,7 +306,7 @@ pimcore.document.document_language_overview = Class.create({
                                                 }
 
                                                 Ext.Ajax.request({
-                                                    url: "/admin/document/add",
+                                                    url: Routing.generate('pimcore_admin_document_document_add'),
                                                     method: 'POST',
                                                     params: params,
                                                     success: function (response) {

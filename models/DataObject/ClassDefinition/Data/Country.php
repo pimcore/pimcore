@@ -20,8 +20,6 @@ use Pimcore\Model;
 
 class Country extends Model\DataObject\ClassDefinition\Data\Select
 {
-    use Model\DataObject\Traits\SimpleComparisonTrait;
-
     /**
      * Static type of this element
      *
@@ -49,7 +47,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
             if (strlen($short) == 2) {
                 $options[] = [
                     'key' => $translation,
-                    'value' => $short
+                    'value' => $short,
                 ];
             }
         }

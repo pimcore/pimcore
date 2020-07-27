@@ -79,7 +79,7 @@ class Link extends Model\Document\Tag
         // the default behavior of the parent method is to include the "class" attribute
         $classes = [
             'pimcore_editable',
-            'pimcore_tag_' . $this->getType()
+            'pimcore_tag_' . $this->getType(),
         ];
 
         return $classes;
@@ -131,11 +131,19 @@ class Link extends Model\Document\Tag
                 'accesskey',
                 'class',
                 'dir',
+                'draggable',
+                'dropzone',
+                'contextmenu',
                 'id',
                 'lang',
                 'style',
                 'tabindex',
                 'title',
+                'media',
+                'download',
+                'ping',
+                'type',
+                'referrerpolicy',
                 'xml:lang',
                 'onblur',
                 'onclick',
@@ -161,7 +169,10 @@ class Link extends Model\Document\Tag
             // add attributes to link
             $attribs = [];
             foreach ($availableAttribs as $key => $value) {
-                if ((is_string($value) || is_numeric($value)) && in_array($key, $allowedAttributes)) {
+                if ((is_string($value) || is_numeric($value))
+                    && (strpos($key, 'data-') === 0 ||
+                        strpos($key, 'aria-') === 0 ||
+                        in_array($key, $allowedAttributes))) {
                     if (!empty($this->data[$key]) && !empty($this->options[$key])) {
                         $attribs[] = $key.'="'. $this->data[$key] .' '. $this->options[$key] .'"';
                     } elseif (!empty($value)) {

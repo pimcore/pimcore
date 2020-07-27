@@ -227,7 +227,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                                     <?php if (!$this->isImportPreview || !$this->isNew) { ?>
                                         <td><?= $v1 ?></td>
                                     <?php } ?>
-                                    <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
+                                    <td<?php if ($v1 !== $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
 
                                 </tr>
                                 <?php
@@ -259,7 +259,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                             <?php if (!$this->isImportPreview || !$this->isNew) { ?>
                                 <td><?= $v1 ?></td>
                             <?php } ?>
-                            <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
+                            <td<?php if ($v1 !== $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
                         </tr>
 
                         <?php
@@ -310,7 +310,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                             <?php if (!$this->isImportPreview || !$this->isNew) { ?>
                                 <td><?= $v1 ?></td>
                             <?php } ?>
-                            <td<?php if ($v1 != $v2 || !isset($v2)) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
+                            <td<?php if ($v1 !== $v2 || !isset($v2)) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
                         </tr>
                         <?php
                         $c++;
@@ -333,7 +333,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                             <?php if (!$this->isImportPreview || !$this->isNew) { ?>
                                 <td><?= $v1 ?></td>
                             <?php } ?>
-                            <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
+                            <td<?php if ($v1 !== $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
                         </tr>
                         <?php
                         $c++;
@@ -351,7 +351,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                 <?php if (!$this->isImportPreview || !$this->isNew) { ?>
                     <td><?= $v1 ?></td>
                 <?php } ?>
-                <td<?php if ($v1 != $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
+                <td<?php if ($v1 !== $v2) { ?> class="modified"<?php } ?>><?= $v2 ?></td>
             </tr>
 
         <?php } ?>

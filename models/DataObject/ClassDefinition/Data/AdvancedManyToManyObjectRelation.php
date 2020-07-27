@@ -93,7 +93,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         'dest_id' => $object->getId(),
                         'type' => 'object',
                         'fieldname' => $this->getName(),
-                        'index' => $counter
+                        'index' => $counter,
                     ];
                 }
                 $counter++;
@@ -116,7 +116,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     {
         $list = [
             'dirty' => false,
-            'data' => []
+            'data' => [],
         ];
 
         if (is_array($data) && count($data) > 0) {
@@ -149,7 +149,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                             ->build(DataObject\Data\ObjectMetadata::class, [
                                 'fieldname' => $this->getName(),
                                 'columns' => $this->getColumnKeys(),
-                                'object' => null
+                                'object' => null,
                             ]);
 
                         $metaData->setOwner($container, $this->getName());
@@ -217,7 +217,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @see Data::getDataForEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return array
@@ -256,7 +256,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      * @see Data::getDataFromEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -278,7 +278,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                             'fieldname' => $this->getName(),
                             'columns' => $this->getColumnKeys(),
-                            'object' => $o
+                            'object' => $o,
                         ]);
                     $metaData->setOwner($object, $this->getName());
 
@@ -306,7 +306,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
     /**
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -343,6 +343,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $metaObject) {
                 $o = $metaObject->getObject();
+
+                if (!$o) {
+                    continue;
+                }
+
                 $item = $o->getRealFullPath();
 
                 if (sizeof($metaObject->getData())) {
@@ -448,7 +453,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                     ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                         'fieldname' => $this->getName(),
                         'columns' => $this->getColumnKeys(),
-                        'object' => $el
+                        'object' => $el,
                     ]);
                 $metaObject->setOwner($object, $this->getName());
 
@@ -474,7 +479,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                 if ($o instanceof DataObject\AbstractObject) {
                     $dependencies['object_' . $o->getId()] = [
                         'id' => $o->getId(),
-                        'type' => 'object'
+                        'type' => 'object',
                     ];
                 }
             }
@@ -505,7 +510,13 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
                     foreach ($this->getColumns() as $c) {
                         $getter = 'get' . ucfirst($c['key']);
-                        $item[$c['key']] = $metaObject->$getter();
+                        $value = $metaObject->$getter();
+
+                        if ($c['type'] == 'bool' || $c['type'] == 'columnbool') {
+                            $value = (int)$value;
+                        }
+
+                        $item[$c['key']] = $value;
                     }
                     $items[] = $item;
                 }
@@ -554,7 +565,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
                             'fieldname' => $this->getName(),
                             'columns' => $this->getColumnKeys(),
-                            'object' => $dest
+                            'object' => $dest,
                         ]);
                     $metaObject->setOwner($object, $this->getName());
 
@@ -585,9 +596,9 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
      */
     public function save($object, $params = [])
     {
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
             if ($object instanceof DataObject\Localizedfield) {
-                if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface) {
+                if ($object->getObject() instanceof Element\DirtyIndicatorInterface) {
                     if (!$object->hasDirtyFields()) {
                         return;
                     }
@@ -657,7 +668,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                     $sql .= ' AND '.$db->quoteInto('ownername = ?', $context['fieldname']);
                 }
 
-                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if ($context['containerType']) {
                         $sql .= ' AND '.$db->quoteInto('ownertype = ?', $context['containerType']);
                     }
@@ -762,14 +773,14 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         } else {
             $deleteConditions = [
                 'o_id' => $object->getId(),
-                'fieldname' => $this->getName()
+                'fieldname' => $this->getName(),
             ];
             if ($context) {
                 if (!empty($context['fieldname'])) {
                     $deleteConditions['ownername'] = $context['fieldname'];
                 }
 
-                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+                if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
                     if ($context['containerType']) {
                         $deleteConditions['ownertype'] = $context['containerType'];
                     }
@@ -845,7 +856,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         $this->columns = [];
         $this->columnKeys = [];
         foreach ($columns as $c) {
-            $c['key'] = strtolower($c['key']);
             $this->columns[] = $c;
             $this->columnKeys[] = $c['key'];
         }
@@ -914,7 +924,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         /** @var DataObject\Data\ObjectMetadata $temp */
         $temp = \Pimcore::getContainer()->get('pimcore.model.factory')
             ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
-                'fieldname' => null
+                'fieldname' => null,
             ]);
 
         $temp->getDao()->createOrUpdateTable($class);
@@ -1047,7 +1057,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -1065,11 +1075,11 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                 $result[] = [
                     'element' => [
                         'type' => $type,
-                        'id' => $id
+                        'id' => $id,
                     ],
                     'fieldname' => $elementMetadata->getFieldname(),
                     'columns' => $elementMetadata->getColumns(),
-                    'data' => $elementMetadata->getData()];
+                    'data' => $elementMetadata->getData(), ];
             }
 
             return $result;
@@ -1080,7 +1090,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -1143,7 +1153,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         'title' => $item['fullpath'],
                         'raw' => $raw,
                         'gridrow' => $item,
-                        'unique' => $unique
+                        'unique' => $unique,
                     ];
                 }
                 $data['data'] = $newItems;
@@ -1153,14 +1163,14 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                 'type' => 'grid',
                 'columnConfig' => [
                     'id' => [
-                        'width' => 60
+                        'width' => 60,
                     ],
                     'fullpath' => [
-                        'flex' => 2
-                    ]
+                        'flex' => 2,
+                    ],
 
                 ],
-                'html' => $this->getVersionPreview($originalData, $object, $params)
+                'html' => $this->getVersionPreview($originalData, $object, $params),
             ];
 
             $newData = [];

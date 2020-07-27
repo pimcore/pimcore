@@ -15,10 +15,17 @@ pimcore.registerNS("pimcore.object.helpers.gridTabAbstract");
 pimcore.object.helpers.gridTabAbstract = Class.create({
 
     objecttype: 'object',
-    batchPrepareUrl: "/admin/object-helper/get-batch-jobs",
-    batchProcessUrl: "/admin/object-helper/batch",
-    exportPrepareUrl: "/admin/object-helper/get-export-jobs",
-    exportProcessUrl: "/admin/object-helper/do-export",
+    batchPrepareUrl: null,
+    batchProcessUrl: null,
+    exportPrepareUrl: null,
+    exportProcessUrl: null,
+
+    initialize: function() {
+        this.batchPrepareUrl = Routing.generate('pimcore_admin_dataobject_dataobjecthelper_getbatchjobs');
+        this.batchProcessUrl = Routing.generate('pimcore_admin_dataobject_dataobjecthelper_batch');
+        this.exportPrepareUrl = Routing.generate('pimcore_admin_dataobject_dataobjecthelper_getexportjobs');
+        this.exportProcessUrl = Routing.generate('pimcore_admin_dataobject_dataobjecthelper_doexport');
+    },
 
     openColumnConfig: function (allowPreview) {
         var gridConfig = this.getGridConfig();
@@ -39,13 +46,16 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 if (field.fieldConfig.width) {
                     fc.width = field.fieldConfig.width;
                 }
+                if (field.fieldConfig.locked) {
+                    fc.locked = field.fieldConfig.locked;
+                }
 
                 if (field.isOperator) {
                     fc.isOperator = true;
                     fc.attributes = field.fieldConfig.attributes;
 
                 }
-                
+
                 visibleColumns.push(fc);
             }
         }
@@ -71,7 +81,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             }.bind(this),
             function () {
                 Ext.Ajax.request({
-                    url: "/admin/object-helper/grid-get-column-config",
+                    url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
                     params: {
                         id: this.classId,
                         objectId: objectId,
@@ -119,7 +129,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             columns: {}
         };
 
-        var cm = this.grid.getView().getHeaderCt().getGridColumns();
+        var cm = this.grid.getView().getGridColumns();
 
         for (var i = 0; i < cm.length; i++) {
             if (cm[i].dataIndex) {
@@ -129,6 +139,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                     position: i,
                     hidden: cm[i].hidden,
                     width: cm[i].width,
+                    locked: cm[i].locked,
                     fieldConfig: this.fieldObject[name],
                     isOperator: this.fieldObject[name].isOperator
                 };
@@ -234,9 +245,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 }
             );
 
-            this.languageInfo = new Ext.Toolbar.TextItem({
-                text: t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage])
-            });
+            this.languageInfo = new Ext.Toolbar.TextItem();
 
             this.toolbarFilterInfo = new Ext.Button({
                 iconCls: "pimcore_icon_filter_condition",
@@ -292,6 +301,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 menu: exportButtons,
             });
         }
+
+        this.languageInfo.setText(t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage]));
 
         var hideSaveColumnConfig = !fromConfig || save;
 

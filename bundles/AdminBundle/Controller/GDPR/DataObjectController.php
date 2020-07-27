@@ -44,11 +44,11 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
     }
 
     /**
+     * @Route("/search-data-objects", name="pimcore_admin_gdpr_dataobject_searchdataobjects", methods={"GET"})
+     *
      * @param Request $request
      *
      * @return JsonResponse
-     *
-     * @Route("/search-data-objects", methods={"GET"})
      */
     public function searchDataObjectsAction(Request $request, DataObjects $service)
     {
@@ -68,13 +68,13 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
     }
 
     /**
+     * @Route("/export", name="pimcore_admin_gdpr_dataobject_exportdataobject", methods={"GET"})
+     *
      * @param Request $request
      *
      * @return JsonResponse
      *
      * @throws \Exception
-     *
-     * @Route("/export", methods={"GET"})
      */
     public function exportDataObjectAction(Request $request, DataObjects $service)
     {
@@ -87,7 +87,7 @@ class DataObjectController extends \Pimcore\Bundle\AdminBundle\Controller\AdminC
 
         $json = $this->encodeJson($exportResult, [], JsonResponse::DEFAULT_ENCODING_OPTIONS | JSON_PRETTY_PRINT);
         $jsonResponse = new JsonResponse($json, 200, [
-            'Content-Disposition' => 'attachment; filename="export-data-object-' . $object->getId() . '.json"'
+            'Content-Disposition' => 'attachment; filename="export-data-object-' . $object->getId() . '.json"',
         ], true);
 
         return $jsonResponse;
