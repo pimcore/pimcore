@@ -198,8 +198,14 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 {text: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true, renderer: Ext.util.Format.htmlEncode},
                 {text: t("preview"), width: 150, sortable: false, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                        if(record.data.subtype == "image") {
-                            var route = 'pimcore_admin_asset_getimagethumbnail';
+                        if(record.data.subtype == "image" || record.data.subtype == "video") {
+                            var routes = {
+                                image: "pimcore_admin_asset_getimagethumbnail",
+                                video: "pimcore_admin_asset_getvideothumbnail"
+                            };
+
+                            var route = routes[record.data.subtype];
+
                             var params = {
                                 id: record.data.id,
                                 width: 100,
