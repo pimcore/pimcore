@@ -50,7 +50,6 @@ final class AssetEvents
      */
     const PRE_UPDATE = 'pimcore.asset.preUpdate';
 
-
     /**
      * Arguments:
      *  - metadata
@@ -60,7 +59,6 @@ final class AssetEvents
      * @var string
      */
     const PRE_GET_METADATA = 'pimcore.asset.preGetMetadata';
-
 
     /**
      * Arguments:

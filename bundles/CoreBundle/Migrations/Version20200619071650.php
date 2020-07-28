@@ -15,8 +15,7 @@ class Version20200619071650 extends AbstractPimcoreMigration
      */
     public function up(Schema $schema)
     {
-        $this->addSql("ALTER TABLE `assets_metadata` CHANGE COLUMN `data` `data` LONGTEXT NULL DEFAULT NULL AFTER `type`;");
-
+        $this->addSql('ALTER TABLE `assets_metadata` CHANGE COLUMN `data` `data` LONGTEXT NULL DEFAULT NULL AFTER `type`;');
     }
 
     /**
@@ -24,6 +23,6 @@ class Version20200619071650 extends AbstractPimcoreMigration
      */
     public function down(Schema $schema)
     {
-        $this->addSql("ALTER TABLE `assets_metadata` CHANGE COLUMN `data` `data` TEXT NULL DEFAULT NULL AFTER `type`;");
+        $this->addSql('ALTER TABLE `assets_metadata` CHANGE COLUMN `data` `data` TEXT NULL DEFAULT NULL AFTER `type`;');
     }
 }

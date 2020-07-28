@@ -421,12 +421,12 @@ class Data extends \Pimcore\Model\AbstractModel
                         $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
                         /** @var \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
                         $instance = $loader->build($md['type']);
-                        $dataForSearchIndex = $instance->getDataForSearchIndex($md["data"], $md);
+                        $dataForSearchIndex = $instance->getDataForSearchIndex($md['data'], $md);
                         if ($dataForSearchIndex) {
                             $this->data .= ' ' . $dataForSearchIndex;
                         }
                     } catch (UnsupportedException $e) {
-                        Logger::error("asset metadata type " . $md['type'] . " could not be resolved");
+                        Logger::error('asset metadata type ' . $md['type'] . ' could not be resolved');
                     }
                 }
             }

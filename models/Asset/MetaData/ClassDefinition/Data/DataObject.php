@@ -64,46 +64,57 @@ class DataObject extends Data
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function transformGetterData($data, $params = []) {
+    public function transformGetterData($data, $params = [])
+    {
         if (is_numeric($data)) {
-            return \Pimcore\Model\DataObject\Service::getElementById("object", $data);
+            return \Pimcore\Model\DataObject\Service::getElementById('object', $data);
         }
+
         return $data;
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function transformSetterData($data, $params = []) {
+    public function transformSetterData($data, $params = [])
+    {
         if ($data instanceof AbstractObject) {
             return $data->getId();
         }
+
         return $data;
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function getDataFromEditMode($data, $params = []) {
-        $element = Service::getElementByPath("object", $data);
+    public function getDataFromEditMode($data, $params = [])
+    {
+        $element = Service::getElementByPath('object', $data);
         if ($element) {
             return $element->getId();
         }
-        return "";
+
+        return '';
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function getDataForResource($data, $params = []) {
+    public function getDataForResource($data, $params = [])
+    {
         if ($data instanceof ElementInterface) {
             return $data->getId();
         }
@@ -112,36 +123,41 @@ class DataObject extends Data
     }
 
     /** @inheritDoc */
-    public function getDataForEditMode($data, $params = []) {
+    public function getDataForEditMode($data, $params = [])
+    {
         if (is_numeric($data)) {
-            $data = Service::getElementById("object", $data);
+            $data = Service::getElementById('object', $data);
         }
         if ($data instanceof ElementInterface) {
             return $data->getRealFullPath();
         } else {
-            return "";
+            return '';
         }
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function getDataForListfolderGrid($data, $params = []) {
+    public function getDataForListfolderGrid($data, $params = [])
+    {
         if (is_numeric($data)) {
             $data = AbstractObject::getById($data);
-        };
+        }
 
         if ($data instanceof AbstractObject) {
             return $data->getFullPath();
         }
+
         return $data;
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return array
      */
     public function resolveDependencies($data, $params = [])
@@ -151,25 +167,30 @@ class DataObject extends Data
             $elementType = $params['type'];
 
             $key = $elementType . '_' . $elementId;
+
             return [
                 $key => [
                     'id' => $elementId,
-                    'type' => $elementType
-                ]];
+                    'type' => $elementType,
+                ], ];
         }
+
         return [];
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function getDataFromListfolderGrid($data, $params = []) {
+    public function getDataFromListfolderGrid($data, $params = [])
+    {
         $data = AbstractObject::getByPath($data);
         if ($data instanceof AbstractElement) {
             return $data->getId();
         }
+
         return null;
     }
 }

@@ -17,8 +17,8 @@
 
 namespace Pimcore\Model\Asset;
 
-use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Db;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
@@ -49,20 +49,18 @@ class Dao extends Model\Element\Dao
                 $metadataRaw = $this->db->fetchAll('SELECT * FROM assets_metadata WHERE cid = ?', [$data['id']]);
                 $metadata = [];
                 foreach ($metadataRaw as $md) {
-
                     $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
-                    $transformedData = $md["data"];
+                    $transformedData = $md['data'];
 
                     try {
                         /** @var Data $instance */
                         $instance = $loader->build($md['type']);
-                        $transformedData = $instance->getDataFromResource($md["data"], $md);
+                        $transformedData = $instance->getDataFromResource($md['data'], $md);
                     } catch (UnsupportedException $e) {
-
                     }
 
-                    $md["data"] = $transformedData;
+                    $md['data'] = $transformedData;
                     unset($md['cid']);
                     $metadata[] = $md;
                 }
@@ -120,7 +118,6 @@ class Dao extends Model\Element\Dao
         $this->db->delete('assets_metadata', ['cid' => $this->model->getId()]);
         $metadata = $this->model->getMetadata(null, null, false, true);
 
-
         $data['hasMetaData'] = 0;
         if (!empty($metadata)) {
             foreach ($metadata as $metadataItem) {
@@ -136,10 +133,9 @@ class Dao extends Model\Element\Dao
                     $instance = $loader->build($metadataItem['type']);
                     $dataForResource = $instance->getDataForResource($metadataItem['data'], $metadataItem);
                 } catch (UnsupportedException $e) {
-
                 }
 
-                $metadataItem["data"] = $dataForResource;
+                $metadataItem['data'] = $dataForResource;
 
                 $metadataItem['language'] = (string) $metadataItem['language']; // language column cannot be NULL -> see SQL schema
 

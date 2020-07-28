@@ -49,64 +49,77 @@ abstract class Data implements DataDefinitionInterface
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function transformGetterData($data, $params = []) {
+    public function transformGetterData($data, $params = [])
+    {
         return $data;
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function transformSetterData($data, $params = []) {
+    public function transformSetterData($data, $params = [])
+    {
         return $data;
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function getDataFromEditMode($data, $params = []) {
+    public function getDataFromEditMode($data, $params = [])
+    {
         return $data;
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function getDataForResource($data, $params = []) {
+    public function getDataForResource($data, $params = [])
+    {
         return $data;
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function getDataFromResource($data, $params = []) {
-        return $data;
-    }
-
-
-    /**
-     * @param mixed $data
-     * @param array $params
-     * @return mixed
-     */
-    public function getDataForEditMode($data, $params = []) {
+    public function getDataFromResource($data, $params = [])
+    {
         return $data;
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
+     * @return mixed
+     */
+    public function getDataForEditMode($data, $params = [])
+    {
+        return $data;
+    }
+
+    /**
+     * @param mixed $data
+     * @param array $params
+     *
      * @return bool
      */
-    public function isEmpty($data, $params = []) {
+    public function isEmpty($data, $params = [])
+    {
         return empty($data);
     }
 
@@ -116,33 +129,38 @@ abstract class Data implements DataDefinitionInterface
      */
     public function checkValidity($data, $params = [])
     {
-
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function getDataForListfolderGrid($data, $params = []) {
+    public function getDataForListfolderGrid($data, $params = [])
+    {
         return $data;
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function getDataFromListfolderGrid($data, $params = []) {
+    public function getDataFromListfolderGrid($data, $params = [])
+    {
         return $data;
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return array
      */
-    public function resolveDependencies($data, $params = []) {
+    public function resolveDependencies($data, $params = [])
+    {
         return [];
     }
 
@@ -158,6 +176,7 @@ abstract class Data implements DataDefinitionInterface
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
     public function getDataForSearchIndex($data, $params = [])
@@ -166,6 +185,4 @@ abstract class Data implements DataDefinitionInterface
             return $params['name'] . ':' . $data;
         }
     }
-
-
 }

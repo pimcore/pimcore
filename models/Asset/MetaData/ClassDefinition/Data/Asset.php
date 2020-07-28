@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
-use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
@@ -64,19 +63,22 @@ class Asset extends Data
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
     public function transformGetterData($data, $params = [])
     {
         if (is_numeric($data)) {
-            return \Pimcore\Model\Asset\Service::getElementById("asset", $data);
+            return \Pimcore\Model\Asset\Service::getElementById('asset', $data);
         }
+
         return $data;
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
     public function transformSetterData($data, $params = [])
@@ -84,27 +86,30 @@ class Asset extends Data
         if ($data instanceof \Pimcore\Model\Asset) {
             return $data->getId();
         }
+
         return $data;
     }
-
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
     public function getDataFromEditMode($data, $params = [])
     {
-        $element = Service::getElementByPath("asset", $data);
+        $element = Service::getElementByPath('asset', $data);
         if ($element) {
             return $element->getId();
         }
-        return "";
+
+        return '';
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
     public function getDataForResource($data, $params = [])
@@ -120,35 +125,38 @@ class Asset extends Data
     public function getDataForEditMode($data, $params = [])
     {
         if (is_numeric($data)) {
-            $data = Service::getElementById("asset", $data);
+            $data = Service::getElementById('asset', $data);
         }
         if ($data instanceof ElementInterface) {
             return $data->getRealFullPath();
         } else {
-            return "";
+            return '';
         }
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
     public function getDataForListfolderGrid($data, $params = [])
     {
         if (is_numeric($data)) {
             $data = \Pimcore\Model\Asset::getById($data);
-        };
+        }
 
         if ($data instanceof \Pimcore\Model\Asset) {
             return $data->getFullPath();
         }
+
         return $data;
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return array
      */
     public function resolveDependencies($data, $params = [])
@@ -158,25 +166,30 @@ class Asset extends Data
             $elementType = $params['type'];
 
             $key = $elementType . '_' . $elementId;
+
             return [
                 $key => [
                     'id' => $elementId,
-                    'type' => $elementType
-                ]];
+                    'type' => $elementType,
+                ], ];
         }
+
         return [];
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function getDataFromListfolderGrid($data, $params = []) {
+    public function getDataFromListfolderGrid($data, $params = [])
+    {
         $data = \Pimcore\Model\Asset::getByPath($data);
         if ($data instanceof AbstractElement) {
             return $data->getId();
         }
+
         return null;
     }
 }

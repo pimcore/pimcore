@@ -184,8 +184,6 @@ final class AdminEvents
      */
     const ASSET_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.asset.list.beforeListLoad';
 
-
-
     /**
      * Arguments:
      *  - field
