@@ -2023,6 +2023,7 @@ span.warning {
 
 #pimcore_quicksearch_preview .full-preview img {
     max-width: 100%;
+    max-height: 100%;
 }
 
 #pimcore_quicksearch_preview .data-table {
@@ -2056,6 +2057,10 @@ span.warning {
 
 #pimcore_quicksearch_preview .data-table td .limit-height {
     overflow: hidden;
+    max-height: 50px;
+}
+
+#pimcore_quicksearch_preview .data-table td .limit-height img {
     max-height: 50px;
 }
 
