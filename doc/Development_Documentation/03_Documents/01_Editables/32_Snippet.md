@@ -53,7 +53,6 @@ enable the cache directly on the editable if the snippet result should be cached
  // Define a place for a snippet to be dragged onto, advanced usage
  <?= $this->snippet("mySnippet", ["cache" => true]) ?>
 ```
-
 ```twig
 {{ pimcore_snippet("mySnippet", {cache: true}) }}
 ```
