@@ -74,13 +74,13 @@ CheckoutController.php
             ->setLocale('de')
         ;
         
-        /** @var HobexResponse $paymentInitResponse */
+        /** @var SnippetResponse $paymentInitResponse */
         $paymentInitResponse = $checkoutManager->startOrderPaymentWithPaymentProvider($requestConfig);
 
         return $this->renderTemplate('Webshop/Checkout/payment.html.twig', [
             'cart' => $cart,
             'order' => $order,
-            'renderedForm' => $paymentInitResponse->getRenderedFormWidget()
+            'renderedForm' => $paymentInitResponse->getSnippet()
         ]);
     }
     

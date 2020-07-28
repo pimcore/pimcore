@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\Config\HobexConfig;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\HobexRequest;
-use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\HobexResponse;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\SnippetResponse;
 
 use GuzzleHttp\Client;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
@@ -123,7 +123,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
      * @inheritDoc
      * parameter configuration see https://hobex.docs.oppwa.com/reference/parameters
      * @param HobexRequest $requestConfig
-     * @return HobexResponse
+     * @return SnippetResponse
      */
     public function startPayment(OrderAgentInterface $orderAgent, PriceInterface $price, AbstractRequest $requestConfig): StartPaymentResponseInterface
     {
@@ -164,12 +164,10 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
             $this->logger->debug('Received JSON response in '.self::class.'::initPayment', $jsonResponse);
 
             //result codes: see https://hobex.docs.oppwa.com/reference/resultCodes
-
             if ($jsonResponse && isset($jsonResponse['id'])) {
-                $hobexResponse = new HobexResponse($jsonResponse['id']);
-                $renderedWidget = $this->renderWidget($requestConfig, $hobexResponse->getCheckoutId());
-                $hobexResponse->setRenderedFormWidget($renderedWidget);
-                return $hobexResponse;
+                $renderedWidget = $this->renderWidget($requestConfig, $jsonResponse['id']);
+                $response = new SnippetResponse($orderAgent->getOrder(), $renderedWidget);
+                return $response;
             }
 
             throw new \Exception('Could not parse response.');
