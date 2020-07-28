@@ -73,6 +73,7 @@ class TestDataHelper extends Module
 
         $expected = $language . 'content' . $seed;
 
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
     }
 
@@ -99,6 +100,7 @@ class TestDataHelper extends Module
         $value = $value[0];
         $value = $value->getSlug();
 
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
     }
 
@@ -124,6 +126,7 @@ class TestDataHelper extends Module
         $value = $object->$getter();
         $expected = '123' + $seed;
 
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
     }
 
@@ -149,6 +152,7 @@ class TestDataHelper extends Module
         $value = $object->$getter();
         $expected = 'sometext<br>' . $seed;
 
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
     }
 
@@ -178,6 +182,7 @@ class TestDataHelper extends Module
 
         $this->assertNotNull($value);
         $this->assertInstanceOf(AbstractObject::class, $value);
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertObjectsEqual($expected, $value);
     }
 
@@ -208,6 +213,7 @@ class TestDataHelper extends Module
         $expectedArray = array_slice($objects, 0, 4);
 
         $this->assertCount(count($expectedArray), $value);
+        $this->assertIsEqual($object, $field, $expectedArray, $value);
 
         for ($i = 0; $i < count($expectedArray); $i++) {
             $this->assertNotNull($value[$i]);
@@ -238,6 +244,7 @@ class TestDataHelper extends Module
         $value = $object->$getter();
         $expected = 7 + ($seed % 3);
 
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
     }
 
@@ -276,6 +283,7 @@ class TestDataHelper extends Module
             $this->assertInstanceOf(Asset::class, $item);
         }
 
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertAssetsEqual($expected, $value);
     }
 
@@ -349,6 +357,7 @@ class TestDataHelper extends Module
         $hotspots = $this->createHotspots();
         $expected = new DataObject\Data\Hotspotimage($asset, $hotspots);
 
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertAssetsEqual($expected->getImage(), $value->getImage());
         $this->assertEquals($expected->getHotspots(), $value->getHotspots());
     }
@@ -375,6 +384,7 @@ class TestDataHelper extends Module
         $value = $object->$getter();
         $expected = 'de';
 
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
     }
 
@@ -400,6 +410,7 @@ class TestDataHelper extends Module
         $value = $object->$getter();
         $expected = 'AU';
 
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
     }
 
@@ -411,7 +422,8 @@ class TestDataHelper extends Module
     public function fillDate(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
-        $date = new \DateTime();
+
+        $date = new \Carbon\Carbon();
         $date->setDate(2000, 12, 24);
 
         $object->$setter($date);
@@ -432,6 +444,12 @@ class TestDataHelper extends Module
         $expected = new \DateTime();
         $expected->setDate(2000, 12, 24);
 
+        //set time for datetime isEqual comparison
+        if ($field == 'datetime') {
+            $expected->setTime($value->format('H'), $value->format('i'), $value->format('s'));
+        }
+
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals(
             $expected->format('Y-m-d'),
             $value->format('Y-m-d')
@@ -460,6 +478,7 @@ class TestDataHelper extends Module
         $value = $object->$getter();
         $expected = 1 + ($seed % 2);
 
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
     }
 
@@ -485,6 +504,7 @@ class TestDataHelper extends Module
         $value = $object->$getter();
         $expected = ['1', '2'];
 
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
     }
 
@@ -528,6 +548,7 @@ class TestDataHelper extends Module
         $user = User::getByName('unittestdatauser' . $seed);
         $expected = $user->getId();
 
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
     }
 
@@ -548,6 +569,32 @@ class TestDataHelper extends Module
      * @param int      $seed
      */
     public function assertCheckbox(Concrete $object, $field, $seed = 1)
+    {
+        $getter = 'get' . ucfirst($field);
+        $value = $object->$getter();
+        $expected = ($seed % 2) == true;
+
+        $this->assertIsEqual($object, $field, $expected, $value);
+        $this->assertEquals($expected, $value);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string   $field
+     * @param int      $seed
+     */
+    public function fillBooleanSelect(Concrete $object, $field, $seed = 1)
+    {
+        $setter = 'set' . ucfirst($field);
+        $object->$setter(($seed % 2) == true);
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string   $field
+     * @param int      $seed
+     */
+    public function assertBooleanSelect(Concrete $object, $field, $seed = 1)
     {
         $getter = 'get' . ucfirst($field);
         $value = $object->$getter();
@@ -578,6 +625,7 @@ class TestDataHelper extends Module
         $value = $object->$getter();
         $expected = '06:4' . $seed % 10;
 
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertEquals($expected, $value);
     }
 
@@ -1051,6 +1099,8 @@ class TestDataHelper extends Module
             $value = $object->$getter();
         }
 
+        $this->assertIsEqual($object, $field, $expectedArray, $value);
+
         $this->assertEquals(
             $this->getElementPaths($expectedArray),
             $this->getElementPaths($value)
@@ -1116,6 +1166,7 @@ class TestDataHelper extends Module
 
         $expected = $this->getObjectsWithMetadataFixture($field, $seed);
 
+        $this->assertIsEqual($object, $field, $expected, $value);
         $this->assertObjectMetadataEqual($expected, $value);
 
         // comparison object is only set on REST tests
@@ -1212,6 +1263,10 @@ class TestDataHelper extends Module
 
         $fieldLazyRelation = $value->getBrickLazyRelation();
         $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
+
+        //isEqual() should return false as there is no implementation
+        $fd = $object->getClass()->getFieldDefinition($field);
+        $this->assertFalse($fd->isEqual($expectedInputValue, $inputValue));
     }
 
     /**
@@ -1285,6 +1340,10 @@ class TestDataHelper extends Module
 
         $fieldLazyRelation = $value->getFieldLazyRelation();
         $this->assertEquals(15, count($fieldLazyRelation), 'expected 15 items');
+
+        //isEqual() should return false as there is no implementation
+        $fd = $object->getClass()->getFieldDefinition($field);
+        $this->assertFalse($fd->isEqual($value, $value));
     }
 
     public function assertElementsEqual(ElementInterface $e1, ElementInterface $e2)
@@ -1385,5 +1444,20 @@ class TestDataHelper extends Module
         $objects = $list->load();
 
         return $objects;
+    }
+
+    /**
+     * @param Concrete $object
+     * @param string $field
+     * @param mixed $expected
+     * @param mixed $value
+     *
+     */
+    private function assertIsEqual($object, $field, $expected, $value)
+    {
+        $fd = $object->getClass()->getFieldDefinition($field);
+        if ($fd instanceof DataObject\ClassDefinition\Data\EqualComparisonInterface) {
+            $this->assertTrue($fd->isEqual($expected, $value), sprintf('Expected isEqual() returns true for data type: %s', ucfirst($field)));
+        }
     }
 }

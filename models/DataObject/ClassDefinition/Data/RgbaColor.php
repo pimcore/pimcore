@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool\Serialize;
 
-class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -182,7 +182,8 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
         if ($data) {
-            list($r, $g, $b, $a) = sscanf($data, '#%02x%02x%02x%02x');
+            $data = trim($data, '# ');
+            list($r, $g, $b, $a) = sscanf($data, '%02x%02x%02x%02x');
             $color = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
 
             return $color;
@@ -455,5 +456,19 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     public function unmarshalAfterDecryption($value, $object = null, $params = [])
     {
         return Serialize::unserialize($value);
+    }
+
+    /**
+     * @param Model\DataObject\Data\RgbaColor|null $oldValue
+     * @param Model\DataObject\Data\RgbaColor|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldValue = $oldValue instanceof Model\DataObject\Data\RgbaColor ? $oldValue->getHex(true, false) : null;
+        $newValue = $newValue instanceof Model\DataObject\Data\RgbaColor ? $newValue->getHex(true, false) : null;
+
+        return $oldValue === $newValue;
     }
 }

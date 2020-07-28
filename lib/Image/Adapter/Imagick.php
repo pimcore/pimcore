@@ -143,6 +143,18 @@ class Imagick extends Adapter
             if (!$this->isPreserveColor()) {
                 $this->setColorspaceToRGB();
             }
+
+            // check for the existence of an embedded clipping path (8BIM / Adobe profile meta data)
+            $identifyRaw = $i->identifyImage(true)['rawOutput'];
+            if (strpos($identifyRaw, 'Clipping path') && strpos($identifyRaw, '<svg')) {
+                // if there's a clipping path embedded, apply the first one
+
+                // known issue: it seems that -clip doesnt work with the ImageMagick version
+                // ImageMagick 6.9.7-4 Q16 x86_64 20170114 (which is used in Debian 9)
+                $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
+                $i->clipImage();
+                $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_OPAQUE);
+            }
         } catch (\Exception $e) {
             Logger::error('Unable to load image: ' . $imagePath);
             Logger::error($e);

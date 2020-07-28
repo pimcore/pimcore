@@ -316,15 +316,15 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
             parameters.metadata = Ext.encode(this.metadata.getValues());
         }
         catch (e2) {
-            //console.log(e);
+            // console.log(e2);
         }
 
         // properties
         try {
             parameters.properties = Ext.encode(this.properties.getValues());
         }
-        catch (e2) {
-            //console.log(e);
+        catch (e3) {
+            //console.log(e3);
         }
 
         // scheduler
@@ -333,8 +333,8 @@ pimcore.asset.asset = Class.create(pimcore.element.abstract, {
                 parameters.scheduler = Ext.encode(this.scheduler.getValues());
             }
         }
-        catch (e3) {
-            //console.log(e);
+        catch (e4) {
+            //console.log(e4);
         }
 
         return parameters;

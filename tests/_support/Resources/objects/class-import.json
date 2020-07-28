@@ -8,6 +8,7 @@
     "allowInherit": false,
     "allowVariants": false,
     "showVariants": false,
+    "generateTypeDeclarations": true,
     "implementsInterfaces": null,
     "layoutDefinitions": {
         "fieldtype": "panel",
@@ -2974,7 +2975,7 @@
                                 "defaultValue": null,
                                 "queryColumnType": "tinyint(1)",
                                 "columnType": "tinyint(1)",
-                                "phpdocType": "boolean",
+                                "phpdocType": "bool",
                                 "name": "checkbox",
                                 "title": "checkbox",
                                 "tooltip": null,
@@ -2990,6 +2991,44 @@
                                 "visibleGridView": true,
                                 "visibleSearch": true,
                                 "defaultValueGenerator": ""
+                            },
+                            {
+                                "fieldtype": "booleanSelect",
+                                "yesLabel": "yes",
+                                "noLabel": "no",
+                                "emptyLabel": "empty",
+                                "options": [
+                                    {
+                                        "key": "empty",
+                                        "value": 0
+                                    },
+                                    {
+                                        "key": "yes",
+                                        "value": 1
+                                    },
+                                    {
+                                        "key": "no",
+                                        "value": -1
+                                    }
+                                ],
+                                "width": "",
+                                "queryColumnType": "tinyint(1) null",
+                                "columnType": "tinyint(1) null",
+                                "phpdocType": "boolean",
+                                "name": "booleanSelect",
+                                "title": "booleanSelect",
+                                "tooltip": "",
+                                "mandatory": false,
+                                "noteditable": false,
+                                "index": true,
+                                "locked": null,
+                                "style": null,
+                                "permissions": null,
+                                "datatype": "data",
+                                "relationType": false,
+                                "invisible": false,
+                                "visibleGridView": true,
+                                "visibleSearch": true
                             },
                             {
                                 "fieldtype": "table",
@@ -4630,7 +4669,7 @@
                                         "defaultValue": null,
                                         "queryColumnType": "tinyint(1)",
                                         "columnType": "tinyint(1)",
-                                        "phpdocType": "boolean",
+                                        "phpdocType": "bool",
                                         "name": "lcheckbox",
                                         "title": "lcheckbox",
                                         "tooltip": null,

@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class ExternalImage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class ExternalImage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -353,5 +353,19 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     public function isEmpty($data)
     {
         return !($data instanceof DataObject\Data\ExternalImage && $data->getUrl());
+    }
+
+    /**
+     * @param DataObject\Data\ExternalImage|null $oldValue
+     * @param DataObject\Data\ExternalImage|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldValue = $oldValue instanceof DataObject\Data\ExternalImage ? $oldValue->getUrl() : null;
+        $newValue = $newValue instanceof DataObject\Data\ExternalImage ? $newValue->getUrl() : null;
+
+        return $oldValue == $newValue;
     }
 }

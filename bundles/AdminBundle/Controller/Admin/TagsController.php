@@ -327,7 +327,7 @@ class TagsController extends AdminController
              )';
         }
 
-        $childsList->setCondition($condition, $object->getRealFullPath() . '/%');
+        $childsList->setCondition($condition, $childsList->escapeLike($object->getRealFullPath()) . '/%');
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $childsList,
@@ -359,7 +359,7 @@ class TagsController extends AdminController
             )';
         }
 
-        $childsList->setCondition($condition, $asset->getRealFullPath() . '/%');
+        $childsList->setCondition($condition, $childsList->escapeLike($asset->getRealFullPath()) . '/%');
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $childsList,
@@ -391,7 +391,7 @@ class TagsController extends AdminController
             )';
         }
 
-        $childsList->setCondition($condition, $document->getRealFullPath() . '/%');
+        $childsList->setCondition($condition, $childsList->escapeLike($document->getRealFullPath()) . '/%');
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $childsList,

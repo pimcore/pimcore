@@ -441,7 +441,16 @@ pimcore.element.helpers.gridColumnConfig = {
             editor.setObject(this.object);
         } else {
             var tagType = this.fieldObject[fieldInfo.dataIndex].layout.fieldtype;
-            var editor = new pimcore.asset.metadata.tags[tagType](null, this.fieldObject[fieldInfo.dataIndex].layout);
+            let layoutInfo = this.fieldObject[fieldInfo.dataIndex].layout
+            try {
+                if (typeof pimcore.asset.metadata.tags[tagType].prototype.prepareBatchEditLayout == "function") {
+                    layoutInfo = pimcore.asset.metadata.tags[tagType].prototype.prepareBatchEditLayout(layoutInfo);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+
+            var editor = new pimcore.asset.metadata.tags[tagType](null, layoutInfo);
             editor.setAsset(this.asset);
         }
 

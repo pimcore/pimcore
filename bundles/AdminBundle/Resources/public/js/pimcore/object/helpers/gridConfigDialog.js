@@ -305,7 +305,9 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                                             layout: layout
                                         }, true);
 
-                                        value = fc.renderer(value, null, record);
+                                        if (fc.renderer) {
+                                            value = fc.renderer(value, null, record);
+                                        }
                                     }
                                 } catch (e) {
                                     console.log(e);

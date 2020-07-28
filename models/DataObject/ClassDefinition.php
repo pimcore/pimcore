@@ -167,6 +167,11 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var bool
      */
+    public $generateTypeDeclarations = false;
+
+    /**
+     * @var bool
+     */
     public $showFieldLookup = false;
 
     /**
@@ -233,7 +238,7 @@ class ClassDefinition extends Model\AbstractModel
 
                 \Pimcore\Cache\Runtime::set($cacheKey, $class);
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::info($e->getMessage());
 
                 return null;
             }
@@ -1420,6 +1425,26 @@ class ClassDefinition extends Model\AbstractModel
     public function setCompositeIndices($compositeIndices)
     {
         $this->compositeIndices = $compositeIndices ?? [];
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getGenerateTypeDeclarations()
+    {
+        return (bool) $this->generateTypeDeclarations;
+    }
+
+    /**
+     * @param bool $generateTypeDeclarations
+     *
+     * @return $this
+     */
+    public function setGenerateTypeDeclarations($generateTypeDeclarations)
+    {
+        $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
 
         return $this;
     }

@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -662,5 +662,31 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         }
 
         return false;
+    }
+
+    /**
+     * @param DataObject\Data\ImageGallery|null $oldValue
+     * @param DataObject\Data\ImageGallery|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldValue = $oldValue instanceof DataObject\Data\ImageGallery ? $oldValue->getItems() : [];
+        $newValue = $newValue instanceof DataObject\Data\ImageGallery ? $newValue->getItems() : [];
+
+        if (count($oldValue) != count($newValue)) {
+            return false;
+        }
+
+        $fd = new Hotspotimage();
+
+        foreach ($oldValue as $i => $item) {
+            if (!$fd->isEqual($oldValue[$i], $newValue[$i])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

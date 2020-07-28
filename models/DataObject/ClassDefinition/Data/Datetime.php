@@ -21,7 +21,7 @@ use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -225,7 +225,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof \DateTimeInterface) {
-            return $data->format('Y-m-d H:i');
+            return $data->format('Y-m-d H:i:s');
         }
 
         return '';
@@ -482,5 +482,19 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
         }
 
         return null;
+    }
+
+    /**
+     * @param \DateTimeInterface|null $oldValue
+     * @param \DateTimeInterface|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldValue = $oldValue instanceof \DateTimeInterface ? $oldValue->format('Y-m-d H:i:s') : null;
+        $newValue = $newValue instanceof \DateTimeInterface ? $newValue->format('Y-m-d H:i:s') : null;
+
+        return $oldValue === $newValue;
     }
 }

@@ -271,5 +271,6 @@
         ],
         "locked": false,
         "icon": null
-    }
+    },
+    "generateTypeDeclarations": true
 }

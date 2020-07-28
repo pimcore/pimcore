@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 
-class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -362,5 +362,46 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
 
             return $result;
         }
+    }
+
+    /**
+     *
+     * @param DataObject\Data\Geobounds|null $oldValue
+     * @param DataObject\Data\Geobounds|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!$oldValue instanceof DataObject\Data\Geobounds
+            || !$newValue instanceof DataObject\Data\Geobounds) {
+            return false;
+        }
+
+        $oldValue = [
+            'NElongitude' => $oldValue->getNorthEast()->getLongitude(),
+            'NElatitude' => $oldValue->getNorthEast()->getLatitude(),
+            'SWlongitude' => $oldValue->getSouthWest()->getLongitude(),
+            'SWlatitude' => $oldValue->getSouthWest()->getLatitude(),
+        ];
+
+        $newValue = [
+            'NElongitude' => $newValue->getNorthEast()->getLongitude(),
+            'NElatitude' => $newValue->getNorthEast()->getLatitude(),
+            'SWlongitude' => $newValue->getSouthWest()->getLongitude(),
+            'SWlatitude' => $newValue->getSouthWest()->getLatitude(),
+        ];
+
+        foreach ($oldValue as $key => $oValue) {
+            if ($oValue !== $newValue[$key]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

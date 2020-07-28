@@ -85,7 +85,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             }
 
             fields = response.availableFields;
-            this.gridLanguage = response.language;
             this.gridPageSize = response.pageSize;
             this.sortinfo = response.sortinfo;
 
@@ -93,11 +92,11 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             this.availableConfigs = response.availableConfigs;
             this.sharedConfigs = response.sharedConfigs;
 
-            if (response.onlyDirectChildren) {
+            if (typeof response.onlyDirectChildren != "undefined") {
                 this.onlyDirectChildren = response.onlyDirectChildren;
             }
 
-            if (response.onlyUnreferenced) {
+            if (typeof response.onlyUnreferenced != "undefined") {
                 this.onlyUnreferenced = response.onlyUnreferenced;
             }
         } else {
@@ -168,10 +167,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         var gridColumns = gridHelper.getGridColumns();
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
-
-        this.languageInfo = new Ext.Toolbar.TextItem({
-            text: t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage])
-        });
 
         this.checkboxOnlyDirectChildren = new Ext.form.Checkbox({
             name: "onlyDirectChildren",
@@ -286,7 +281,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 }
             },
             tbar: [
-                this.languageInfo, "->",
+                "->",
                 this.checkboxOnlyDirectChildren, "-",
                 this.checkboxOnlyUnreferenced, "-",
                 this.downloadSelectedZipButton, "-",

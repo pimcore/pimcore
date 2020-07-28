@@ -157,16 +157,15 @@ class ElementControllerBase extends AdminController
 
                 if ($hasChilds) {
                     // get amount of childs
-                    $listClass = '\Pimcore\Model\\' . Service::getBaseClassNameForElement($element) . '\Listing';
-                    $list = new $listClass();
-                    $pathColumn = ($type == 'object') ? 'o_path' : 'path';
+                    $list = $element::getList(['unpublished' => true]);
+                    $pathColumn = ($type === 'object') ? 'o_path' : 'path';
                     $list->setCondition($pathColumn . ' LIKE ?', [$element->getRealFullPath() . '/%']);
                     $childs = $list->getTotalCount();
                     $totalChilds += $childs;
 
                     if ($childs > 0) {
                         $deleteObjectsPerRequest = 5;
-                        for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
+                        for ($i = 0, $iMax = ceil($childs / $deleteObjectsPerRequest); $i < $iMax; $i++) {
                             $deleteJobs[] = [[
                                 'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/' . $type . '/delete',
                                 'method' => 'DELETE',
@@ -181,7 +180,7 @@ class ElementControllerBase extends AdminController
                     }
                 }
 
-                // the asset itself is the last one
+                // the element itself is the last one
                 $deleteJobs[] = [[
                     'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/' . $type . '/delete',
                     'method' => 'DELETE',

@@ -83,7 +83,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
           KEY `update_worker_index` (`tenant`,`crc_current`,`crc_index`,`worker_timestamp`),
           KEY `preparation_status_index` (`tenant`,`preparation_status`),
           KEY `in_preparation_queue_index` (`tenant`,`in_preparation_queue`),
-          KEY `worker_id_index` (`worker_id`)        
+          KEY `worker_id_index` (`worker_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
     }
 
@@ -385,7 +385,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
         if ($object instanceof Concrete) {
 
             //need check, if there are sub objects because update on empty result set is too slow
-            $objects = $this->db->fetchCol('SELECT o_id FROM objects WHERE o_path LIKE ?', [$object->getFullPath() . '/%']);
+            $objects = $this->db->fetchCol('SELECT o_id FROM objects WHERE o_path LIKE ?', [$this->db->escapeLike($object->getFullPath()) . '/%']);
             if ($objects) {
                 $this->executeTransactionalQuery(function () use ($objects) {
                     $updateStatement = 'UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 1 WHERE tenant = ? AND o_id IN ('.implode(',', $objects).')';
@@ -476,7 +476,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             //statement can take several seconds on large-scale systems.
 
             $this->db->beginTransaction();
-            $query = "SELECT o_id, data, metadata FROM {$this->getStoreTableName()} 
+            $query = "SELECT o_id, data, metadata FROM {$this->getStoreTableName()}
                   WHERE (crc_current != crc_index OR ISNULL(crc_index)) AND tenant = ? AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT "
                 . intval($limit) . ' FOR UPDATE';
 

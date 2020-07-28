@@ -110,6 +110,8 @@ class NewsletterController extends DocumentControllerBase
         $this->addTranslationsData($email, $data);
         $this->minimizeProperties($email, $data);
 
+        $data['url'] = $email->getUrl();
+
         $this->preSendDataActions($data, $email);
 
         if ($email->isAllowed('view')) {
