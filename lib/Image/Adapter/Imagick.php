@@ -317,12 +317,17 @@ class Imagick extends Adapter
         $imageColorspace = $this->resource->getImageColorspace();
 
         $profiles = $this->resource->getImageProfiles('icc', true);
-        if (isset($profiles['icc'])) {
+
+        // Workaround for ImageMagick (e.g. 6.9.10-23) bug, that let's it crash immediately if the tagged colorspace is
+        // different from the colorspace of the embedded icc color profile
+        // If that is the case we just ignore the color profiles
+        if (isset($profiles['icc']) && in_array($imageColorspace, [\Imagick::COLORSPACE_CMYK, \Imagick::COLORSPACE_SRGB])) {
             if(strpos($profiles['icc'], 'CMYK') !== false && $imageColorspace !== \Imagick::COLORSPACE_CMYK) {
-                //return;
-                //$imageColorspace = $this->resource->getImageColorspace();
-                //$imageColorspace = \Imagick::COLORSPACE_CMYK;
-                //$this->resource->setImageColorspace(\Imagick::COLORSPACE_CMYK);
+                return $this;
+            }
+
+            if(strpos($profiles['icc'], 'RGB') !== false && $imageColorspace !== \Imagick::COLORSPACE_SRGB) {
+                return $this;
             }
         }
 
