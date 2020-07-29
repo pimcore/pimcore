@@ -97,7 +97,8 @@
     "html2text/html2text": "^4.2.1"
   },
   "conflict": {
-    "monolog/monolog": ">=2"
+    "monolog/monolog": ">=2",
+    "symfony/symfony": "3.4.43 || 4.4.11"
   },
   "require-dev": {
     "cache/integration-tests": "^0.16.0",
