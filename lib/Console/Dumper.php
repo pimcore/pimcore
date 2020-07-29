@@ -14,7 +14,7 @@
 
 namespace Pimcore\Console;
 
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\StreamOutput;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 
@@ -27,7 +27,7 @@ class Dumper
     const NEWLINE_AFTER = 2;
 
     /**
-     * @var ConsoleOutput
+     * @var StreamOutput
      */
     protected $output;
 
@@ -42,11 +42,11 @@ class Dumper
     protected $varCloner;
 
     /**
-     * @param ConsoleOutput $output
+     * @param StreamOutput $output
      * @param CliDumper $cliDumper
      * @param VarCloner $varCloner
      */
-    public function __construct(ConsoleOutput $output, CliDumper $cliDumper = null, VarCloner $varCloner = null)
+    public function __construct(StreamOutput $output, CliDumper $cliDumper = null, VarCloner $varCloner = null)
     {
         $this->output = $output;
         $this->setCliDumper($cliDumper);
