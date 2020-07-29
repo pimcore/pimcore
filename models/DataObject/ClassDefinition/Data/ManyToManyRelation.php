@@ -422,15 +422,15 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data) && count($data) > 0) {
-            $pathes = [];
+            $paths = [];
 
-            foreach ($data as $e) {
-                if ($e instanceof Element\ElementInterface) {
-                    $pathes[] = get_class($e) . $e->getRealFullPath();
+            foreach ($data as $element) {
+                if ($element instanceof Element\ElementInterface) {
+                    $paths[] = get_class($element) .': '. $element->getRealFullPath();
                 }
             }
 
-            return implode('<br />', $pathes);
+            return implode('<br />', $paths);
         }
 
         return null;
