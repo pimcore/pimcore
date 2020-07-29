@@ -98,7 +98,8 @@
     "webmozarts/console-parallelization": "^1.1.0"
   },
   "conflict": {
-    "monolog/monolog": ">=2"
+    "monolog/monolog": ">=2",
+    "symfony/symfony": "3.4.43 || 4.4.11"
   },
   "require-dev": {
     "cache/integration-tests": "^0.16.0",
