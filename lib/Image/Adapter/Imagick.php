@@ -316,13 +316,25 @@ class Imagick extends Adapter
     {
         $imageColorspace = $this->resource->getImageColorspace();
 
+        $profiles = $this->resource->getImageProfiles('icc', true);
+
+        // Workaround for ImageMagick (e.g. 6.9.10-23) bug, that let's it crash immediately if the tagged colorspace is
+        // different from the colorspace of the embedded icc color profile
+        // If that is the case we just ignore the color profiles
+        if (isset($profiles['icc']) && in_array($imageColorspace, [\Imagick::COLORSPACE_CMYK, \Imagick::COLORSPACE_SRGB])) {
+            if(strpos($profiles['icc'], 'CMYK') !== false && $imageColorspace !== \Imagick::COLORSPACE_CMYK) {
+                return $this;
+            }
+
+            if(strpos($profiles['icc'], 'RGB') !== false && $imageColorspace !== \Imagick::COLORSPACE_SRGB) {
+                return $this;
+            }
+        }
+
         if ($imageColorspace == \Imagick::COLORSPACE_CMYK) {
             if (self::getCMYKColorProfile() && self::getRGBColorProfile()) {
-                $profiles = $this->resource->getImageProfiles('*', false);
-                // we're only interested if ICC profile(s) exist
-                $has_icc_profile = (array_search('icc', $profiles) !== false);
                 // if it doesn't have a CMYK ICC profile, we add one
-                if ($has_icc_profile === false) {
+                if (!isset($profiles['icc'])) {
                     $this->resource->profileImage('icc', self::getCMYKColorProfile());
                 }
                 // then we add an RGB profile
@@ -337,9 +349,7 @@ class Imagick extends Adapter
             $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
         } else {
             // this is to handle embedded icc profiles in the RGB/sRGB colorspace
-            $profiles = $this->resource->getImageProfiles('*', false);
-            $has_icc_profile = (array_search('icc', $profiles) !== false);
-            if ($has_icc_profile) {
+            if (isset($profiles['icc'])) {
                 try {
                     // if getImageColorspace() says SRGB but the embedded icc profile is CMYK profileImage() will throw an exception
                     $this->resource->profileImage('icc', self::getRGBColorProfile());
