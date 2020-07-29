@@ -24,6 +24,10 @@ use Pimcore\Tool;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
+/**
+ * @deprecated since version 6.7.0 and will be removed in 7.0.0.
+ *
+ */
 class DefaultFactFinder implements ProductListInterface
 {
     /**
@@ -256,6 +260,11 @@ class DefaultFactFinder implements ProductListInterface
      */
     public function __construct(ConfigInterface $tenantConfig)
     {
+        @trigger_error(
+            'Class ' . self::class . ' is deprecated since version 6.7.0 and will be removed in 7.0.0.',
+            E_USER_DEPRECATED
+        );
+
         $this->tenantName = $tenantConfig->getTenantName();
         $this->tenantConfig = $tenantConfig;
 
@@ -749,7 +758,7 @@ class DefaultFactFinder implements ProductListInterface
 
             foreach ($field['elements'] as $item) {
                 $groups[] = [
-                    'value' => $item['name'], 'count' => $item['recordCount']
+                    'value' => $item['name'], 'count' => $item['recordCount'],
                 ];
             }
         }

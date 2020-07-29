@@ -31,7 +31,27 @@ parameters:
 			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
 
 		-
-			message: "#^Call to method getUser\\(\\) on an unknown class Stringable\\.$#"
+			message: "#^Call to an undefined method Symfony\\\\Component\\\\Templating\\\\Helper\\\\HelperInterface\\:\\:setDomain\\(\\)\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Resources/views/Admin/Login/twoFactorAuthentication.html.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Templating\\\\PhpEngine\\:\\:\\$error\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Resources/views/Admin/Login/twoFactorAuthentication.html.php
+
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Templating\\\\PhpEngine\\:\\:\\$csrfToken\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Resources/views/Admin/Login/twoFactorAuthentication.html.php
+
+		-
+			message: "#^Parameter \\#1 \\(array\\) of echo cannot be converted to string\\.$#"
+			count: 1
+			path: bundles/AdminBundle/Resources/views/Admin/Login/twoFactorAuthentication.html.php
+
+		-
+			message: "#^Cannot call method getUser\\(\\) on string\\|Stringable\\|Symfony\\\\Component\\\\Security\\\\Core\\\\User\\\\UserInterface\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Security/Guard/AdminAuthenticator.php
 
@@ -39,11 +59,6 @@ parameters:
 			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:setLocale\\(\\)\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Security/Guard/AdminAuthenticator.php
-
-		-
-			message: "#^Call to method getUsername\\(\\) on an unknown class Stringable\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Security/Guard/WebserviceAuthenticator.php
 
 		-
 			message: "#^Property Pimcore\\\\Bundle\\\\AdminBundle\\\\Security\\\\LogoutSuccessHandler\\:\\:\\$tokenStorage \\(Symfony\\\\Component\\\\Security\\\\Core\\\\Authentication\\\\Token\\\\Storage\\\\TokenStorage\\) does not accept Symfony\\\\Component\\\\Security\\\\Core\\\\Authentication\\\\Token\\\\Storage\\\\TokenStorageInterface\\.$#"
@@ -97,7 +112,7 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getThumbnail\\(\\)\\.$#"
-			count: 4
+			count: 2
 			path: bundles/CoreBundle/Command/ThumbnailsVideoCommand.php
 
 		-
@@ -297,26 +312,6 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\OrderListInterface\\:\\:joinPriceModifications\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Controller/AdminOrderController.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Controller\\\\AdminOrderController\\:\\:detailAction\\(\\) should return Symfony\\\\Component\\\\HttpFoundation\\\\Response but returns array\\<string, mixed\\>\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Controller/AdminOrderController.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Controller\\\\AdminOrderController\\:\\:itemCancelAction\\(\\) should return Symfony\\\\Component\\\\HttpFoundation\\\\Response but returns array\\<string, mixed\\>\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Controller/AdminOrderController.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Controller\\\\AdminOrderController\\:\\:itemEditAction\\(\\) should return Symfony\\\\Component\\\\HttpFoundation\\\\Response but returns array\\<string, mixed\\>\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Controller/AdminOrderController.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Controller\\\\AdminOrderController\\:\\:itemComplaintAction\\(\\) should return Symfony\\\\Component\\\\HttpFoundation\\\\Response but returns array\\<string, mixed\\>\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/Controller/AdminOrderController.php
 
@@ -836,11 +831,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/Config/DefaultMysqlSubTenantConfig.php
 
 		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Config\\\\ElasticSearch\\:\\:getObjectMockupById\\(\\) should return array\\|Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\IndexableInterface but returns Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\DefaultMockup\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/Config/ElasticSearch.php
-
-		-
 			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Config\\\\OptimizedMysql\\:\\:getObjectMockupById\\(\\) should return array\\|Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\IndexableInterface but returns Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\DefaultMockup\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/Config/OptimizedMysql.php
@@ -1336,14 +1326,29 @@ parameters:
 			path: lib/Browser.php
 
 		-
-			message: "#^Method Pimcore\\\\Cache\\\\Core\\\\CoreHandler\\:\\:getItem\\(\\) should return Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface but returns Psr\\\\Cache\\\\CacheItemInterface\\.$#"
+			message: "#^Return type \\(Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\) of method Pimcore\\\\Cache\\\\Pool\\\\AbstractCacheItemPool\\:\\:getItem\\(\\) should be compatible with return type \\(Symfony\\\\Component\\\\Cache\\\\CacheItem\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItem\\(\\)$#"
 			count: 1
-			path: lib/Cache/Core/CoreHandler.php
+			path: lib/Cache/Pool/AbstractCacheItemPool.php
+
+		-
+			message: "#^Return type \\(array\\<Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\>\\|\\(iterable\\<Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\>&Traversable\\)\\) of method Pimcore\\\\Cache\\\\Pool\\\\AbstractCacheItemPool\\:\\:getItems\\(\\) should be compatible with return type \\(iterable\\<Symfony\\\\Component\\\\Cache\\\\CacheItem\\>&Traversable\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItems\\(\\)$#"
+			count: 1
+			path: lib/Cache/Pool/AbstractCacheItemPool.php
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\:\\:getMetadata\\(\\)\\.$#"
 			count: 1
 			path: lib/Cache/Pool/AbstractCacheItemPool.php
+
+		-
+			message: "#^Return type \\(Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\) of method Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemPoolInterface\\:\\:getItem\\(\\) should be compatible with return type \\(Symfony\\\\Component\\\\Cache\\\\CacheItem\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItem\\(\\)$#"
+			count: 1
+			path: lib/Cache/Pool/PimcoreCacheItemPoolInterface.php
+
+		-
+			message: "#^Return type \\(array\\<Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\>\\|\\(iterable\\<Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\>&Traversable\\)\\) of method Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemPoolInterface\\:\\:getItems\\(\\) should be compatible with return type \\(iterable\\<Symfony\\\\Component\\\\Cache\\\\CacheItem\\>&Traversable\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItems\\(\\)$#"
+			count: 1
+			path: lib/Cache/Pool/PimcoreCacheItemPoolInterface.php
 
 		-
 			message: "#^Method Pimcore\\\\Cache\\\\Pool\\\\Redis\\:\\:doClear\\(\\) should return bool but returns Credis_Client\\|string\\.$#"
@@ -1502,6 +1507,11 @@ parameters:
 
 		-
 			message: "#^Property Pimcore\\\\Localization\\\\IntlFormatter\\:\\:\\$numberFormatter \\(NumberFormatter\\) does not accept null\\.$#"
+			count: 1
+			path: lib/Localization/IntlFormatter.php
+
+		-
+			message: "#^Array \\(array\\<IntlDateFormatter\\>\\) does not accept Symfony\\\\Component\\\\Intl\\\\DateFormatter\\\\IntlDateFormatter\\.$#"
 			count: 1
 			path: lib/Localization/IntlFormatter.php
 
@@ -1706,11 +1716,6 @@ parameters:
 			path: lib/Workflow/Place/OptionsProvider.php
 
 		-
-			message: "#^Call to an undefined method RecursiveIteratorIterator\\:\\:getSubPathName\\(\\)\\.$#"
-			count: 2
-			path: lib/helper-functions.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getLowQualityPreviewDataUri\\(\\)\\.$#"
 			count: 1
 			path: models/Asset/Image/Thumbnail.php
@@ -1724,6 +1729,11 @@ parameters:
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getDuration\\(\\)\\.$#"
 			count: 1
 			path: models/Asset/Video/ImageThumbnail.php
+
+		-
+			message: "#^Method Pimcore\\\\Model\\\\Asset\\\\WebDAV\\\\Tree\\:\\:move\\(\\) should return int but return statement is missing\\.$#"
+			count: 1
+			path: models/Asset/WebDAV/Tree.php
 
 		-
 			message: "#^Method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Classificationstore\\:\\:getVersionPreview\\(\\) should return string but returns Pimcore\\\\Model\\\\DataObject\\\\Classificationstore\\|null\\.$#"
@@ -1772,11 +1782,6 @@ parameters:
 
 		-
 			message: "#^Return type \\(Pimcore\\\\Model\\\\DataObject\\\\Data\\\\Hotspotimage\\) of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Hotspotimage\\:\\:getDataFromGridEditor\\(\\) should be compatible with return type \\(Pimcore\\\\Model\\\\Asset\\) of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Image\\:\\:getDataFromGridEditor\\(\\)$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/Hotspotimage.php
-
-		-
-			message: "#^Parameter \\#1 \\$object \\(string\\) of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Hotspotimage\\:\\:getForWebserviceExport\\(\\) should be compatible with parameter \\$object \\(Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\) of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Image\\:\\:getForWebserviceExport\\(\\)$#"
 			count: 1
 			path: models/DataObject/ClassDefinition/Data/Hotspotimage.php
 

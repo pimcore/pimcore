@@ -37,7 +37,7 @@ class Version20181128112320 extends AbstractPimcoreMigration
                     $options = $fieldDefinition->getOptions();
                     $options[] = [
                         'value' => 'paymentInit',
-                        'key' => 'Payment Init'
+                        'key' => 'Payment Init',
                     ];
                     $fieldDefinition->setOptions($options);
 

@@ -103,6 +103,11 @@ class ClassDefinition extends Model\Webservice\Data
     public $showVariants = false;
 
     /**
+     * @var bool
+     */
+    public $generateTypeDeclarations = false;
+
+    /**
      * @var string
      */
     public $implementsInterfaces;
@@ -126,10 +131,16 @@ class ClassDefinition extends Model\Webservice\Data
      * @var string
      */
     public $previewUrl;
+
     /**
      * @var string
      */
     public $group;
+
+    /**
+     * @var bool
+     */
+    public $showAppLoggerTab = false;
 
     /**
      * @var string
@@ -140,4 +151,9 @@ class ClassDefinition extends Model\Webservice\Data
      * @var array
      */
     public $compositeIndices;
+
+    /**
+     * @var bool
+     */
+    public $showFieldLookup = false;
 }

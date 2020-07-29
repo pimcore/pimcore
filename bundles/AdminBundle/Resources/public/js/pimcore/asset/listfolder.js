@@ -21,7 +21,9 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
     object: {},
     gridType: 'asset',
 
-    initialize: function (element, searchType) {
+    initialize: function ($super, element, searchType) {
+        $super();
+
         this.element = element;
         this.searchType = searchType;
         this.classId = element.id;
@@ -59,7 +61,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
     getGrid: function () {
         Ext.Ajax.request({
-            url: "/admin/asset-helper/grid-get-column-config",
+            url: Routing.generate('pimcore_admin_asset_assethelper_gridgetcolumnconfig'),
             params: {
                 id: this.element.data.id,
                 type: "asset",
@@ -83,7 +85,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             }
 
             fields = response.availableFields;
-            this.gridLanguage = response.language;
             this.gridPageSize = response.pageSize;
             this.sortinfo = response.sortinfo;
 
@@ -91,11 +92,11 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             this.availableConfigs = response.availableConfigs;
             this.sharedConfigs = response.sharedConfigs;
 
-            if (response.onlyDirectChildren) {
+            if (typeof response.onlyDirectChildren != "undefined") {
                 this.onlyDirectChildren = response.onlyDirectChildren;
             }
 
-            if (response.onlyUnreferenced) {
+            if (typeof response.onlyUnreferenced != "undefined") {
                 this.onlyUnreferenced = response.onlyUnreferenced;
             }
         } else {
@@ -120,7 +121,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
         var gridHelper = new pimcore.asset.helpers.grid(
             fields,
-            "/admin/asset/grid-proxy",
+            Routing.generate('pimcore_admin_asset_gridproxy'),
             {
                 language: this.gridLanguage,
                 // limit: itemsPerPage
@@ -166,10 +167,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         var gridColumns = gridHelper.getGridColumns();
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
-
-        this.languageInfo = new Ext.Toolbar.TextItem({
-            text: t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage])
-        });
 
         this.checkboxOnlyDirectChildren = new Ext.form.Checkbox({
             name: "onlyDirectChildren",
@@ -284,7 +281,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 }
             },
             tbar: [
-                this.languageInfo, "->",
+                "->",
                 this.checkboxOnlyDirectChildren, "-",
                 this.checkboxOnlyUnreferenced, "-",
                 this.downloadSelectedZipButton, "-",

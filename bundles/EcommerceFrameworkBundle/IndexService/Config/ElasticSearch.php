@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\Definition\Attribute;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\RelationInterpreterInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\SynonymProvider\SynonymProviderInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\ElasticSearch\AbstractElasticSearch as DefaultElasticSearchWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
@@ -73,6 +74,26 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      */
     protected $environment;
 
+    /** @var SynonymProviderInterface[] */
+    protected $synonymProviders = [];
+
+    /**
+     * @inheritDoc
+     *
+     * @param SynonymProviderInterface[] $synonymProviders
+     */
+    public function __construct(
+        string $tenantName,
+        array $attributes,
+        array $searchAttributes,
+        array $filterTypes,
+        array $options = [],
+        iterable $synonymProviders = []
+    ) {
+        $this->synonymProviders = $synonymProviders;
+        parent::__construct($tenantName, $attributes, $searchAttributes, $filterTypes, $options);
+    }
+
     protected function addAttribute(Attribute $attribute)
     {
         parent::addAttribute($attribute);
@@ -125,7 +146,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
             'client_config',
             'index_settings',
             'es_client_params',
-            'mapping'
+            'mapping',
         ];
 
         foreach ($arrayFields as $field) {
@@ -137,6 +158,7 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
         $resolver->setAllowedTypes('mapper', 'string');
 
         $resolver->setDefined('analyzer');
+        $resolver->setDefined('synonym_providers');
 
         $resolver->setDefault('store', true);
         $resolver->setAllowedTypes('store', 'bool');
@@ -348,7 +370,12 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
      */
     public function getObjectMockupById($objectId)
     {
-        return $this->getTenantWorker()->getMockupFromCache($objectId);
+        $listing = $this->getTenantWorker()->getProductList();
+        $listing->addCondition($objectId, 'o_id');
+        $listing->setLimit(1);
+        $product = $listing->current();
+
+        return $product ? $product : null;
     }
 
     /**
@@ -359,5 +386,17 @@ class ElasticSearch extends AbstractConfig implements MockupConfigInterface, Ela
     public function setEnvironment(EnvironmentInterface $environment)
     {
         $this->environment = $environment;
+    }
+
+    /**
+     * Get an associative array of configured synonym providers.
+     *  - key: the name of the synonym provider configuration, which is equivalent to the name of the configured filter
+     *  - value: the synonym provider
+     *
+     * @return SynonymProviderInterface[]
+     */
+    public function getSynonymProviders(): array
+    {
+        return $this->synonymProviders;
     }
 }

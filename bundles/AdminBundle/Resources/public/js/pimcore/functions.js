@@ -10,8 +10,8 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
-function t(key, defaultValue) {
-    if(!key) {
+function t(key, defaultValue, placeholders) {
+    if (!key) {
         return "";
     }
 
@@ -21,7 +21,7 @@ function t(key, defaultValue) {
         pimcore.globalmanager.add("translations_admin_translated_values", []);
     }
 
-    //make sure 'key' is a string
+    // make sure 'key' is a string
     key = String(key);
 
     // remove plus at the start and the end to avoid double translations
@@ -34,8 +34,32 @@ function t(key, defaultValue) {
         key = key.toLocaleLowerCase();
     }
 
+    // the maximum length of a translation key are 190 characters
+    if (key.length > 190) {
+        if (!defaultValue) {
+            return key;
+        }
+
+        return defaultValue;
+    }
+
     if (pimcore && pimcore.system_i18n && (pimcore.system_i18n[key] || pimcore.system_i18n[originalKey])) {
         var trans = pimcore.system_i18n[originalKey] ? pimcore.system_i18n[originalKey] : pimcore.system_i18n[key];
+
+        // find and replace placeholders, if provided
+        if (placeholders) {
+            let pKeys = Object.keys(placeholders);
+
+            for (let i = 0; i < pKeys.length; i++) {
+                let regExp = new RegExp('\{(' + pKeys[i] + ')\}', 'gi');
+                let replace = placeholders[pKeys[i]];
+
+                if (trans.match(regExp)) {
+                    trans = trans.replace(regExp, replace);
+                }
+            }
+        }
+
         pimcore.globalmanager.get("translations_admin_translated_values").push(trans);
         return trans;
     }

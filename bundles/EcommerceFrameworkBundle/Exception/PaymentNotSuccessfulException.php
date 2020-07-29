@@ -42,7 +42,7 @@ class PaymentNotSuccessfulException extends AbstractEcommerceException
         $this->order = $order;
         $this->status = $status;
     }
-    
+
     /**
      * @return AbstractOrder
      */

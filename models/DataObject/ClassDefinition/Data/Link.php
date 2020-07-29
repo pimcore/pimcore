@@ -24,8 +24,9 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -61,7 +62,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Link $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -99,7 +100,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Link
@@ -110,7 +111,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         if ($link instanceof DataObject\Data\Link) {
             if (isset($params['owner'])) {
-                $link->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                $link->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
             }
 
             try {
@@ -128,7 +129,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\Link $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -142,7 +143,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -159,7 +160,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     /**
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -173,7 +174,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Link|null
@@ -192,7 +193,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     /**
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -261,7 +262,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
                         $key = 'document_' . $doc->getId();
                         $dependencies[$key] = [
                             'id' => $doc->getId(),
-                            'type' => 'document'
+                            'type' => 'document',
                         ];
                     }
                 } elseif ($data->getInternalType() == 'asset') {
@@ -270,7 +271,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
                         $dependencies[$key] = [
                             'id' => $asset->getId(),
-                            'type' => 'asset'
+                            'type' => 'asset',
                         ];
                     }
                 }
@@ -537,5 +538,37 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         }
 
         return $data;
+    }
+
+    /**
+     *
+     * @param DataObject\Data\Link|null $oldValue
+     * @param DataObject\Data\Link|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if ($oldValue instanceof DataObject\Data\Link) {
+            $oldValue = $oldValue->getObjectVars();
+            //clear OwnerawareTrait fields
+            unset($oldValue['_owner']);
+            unset($oldValue['_fieldname']);
+            unset($oldValue['_language']);
+        }
+
+        if ($newValue instanceof DataObject\Data\Link) {
+            $newValue = $newValue->getObjectVars();
+            //clear OwnerawareTrait fields
+            unset($newValue['_owner']);
+            unset($newValue['_fieldname']);
+            unset($newValue['_language']);
+        }
+
+        return $this->isEqualArray($oldValue, $newValue);
     }
 }

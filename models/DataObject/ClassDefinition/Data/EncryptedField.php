@@ -29,7 +29,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
  *
  * How to generate a key: vendor/bin/generate-defuse-key
  */
-class EncryptedField extends Data implements ResourcePersistenceAwareInterface
+class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
 
@@ -191,7 +191,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Model\DataObject\Data\EncryptedField|null
@@ -220,7 +220,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -242,7 +242,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Model\DataObject\Data\EncryptedField|null
@@ -304,7 +304,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     }
 
     /**
-     * @param Model\DataObject\Data\RgbaColor $data
+     * @param Model\DataObject\Data\EncryptedField|null $data
      *
      * @return bool
      */
@@ -313,10 +313,11 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
         $fd = $this->getDelegateDatatypeDefinition();
         if ($fd) {
             $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : $data;
-            $result = $fd->isEmpty($data);
 
-            return $result;
+            return $fd->isEmpty($data);
         }
+
+        return true;
     }
 
     /**
@@ -324,7 +325,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      *
      * @deprecated
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
@@ -404,7 +405,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -431,7 +432,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -459,7 +460,7 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
      *
      * @abstract
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -630,5 +631,24 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     {
         // encrypted data shouldn't be in search index
         return '';
+    }
+
+    /**
+     * @param Model\DataObject\Data\EncryptedField|null $oldValue
+     * @param Model\DataObject\Data\EncryptedField|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $fd = $this->getDelegateDatatypeDefinition();
+        if ($fd instanceof Model\DataObject\ClassDefinition\Data) {
+            $oldValue = $oldValue instanceof Model\DataObject\Data\EncryptedField ? $oldValue->getPlain() : null;
+            $newValue = $newValue instanceof Model\DataObject\Data\EncryptedField ? $newValue->getPlain() : null;
+
+            return $fd->isEqual($oldValue, $newValue);
+        }
+
+        return false;
     }
 }

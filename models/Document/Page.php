@@ -17,6 +17,9 @@
 
 namespace Pimcore\Model\Document;
 
+use Pimcore\Event\DocumentEvents;
+use Pimcore\Event\Model\DocumentEvent;
+use Pimcore\Logger;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
@@ -73,20 +76,31 @@ class Page extends TargetingDocument
             throw new \Exception('root-node cannot be deleted');
         }
 
-        // check for redirects pointing to this document, and delete them too
-        $redirects = new Redirect\Listing();
-        $redirects->setCondition('target = ?', $this->getId());
-        $redirects->load();
+        $this->beginTransaction();
 
-        foreach ($redirects->getRedirects() as $redirect) {
-            $redirect->delete();
+        try {
+            // check for redirects pointing to this document, and delete them too
+            $redirects = new Redirect\Listing();
+            $redirects->setCondition('target = ?', $this->getId());
+            $redirects->load();
+
+            foreach ($redirects->getRedirects() as $redirect) {
+                $redirect->delete();
+            }
+
+            if ($site = Site::getByRootId($this->getId())) {
+                $site->delete();
+            }
+
+            parent::delete($isNested);
+
+            $this->commit();
+        } catch (\Exception $e) {
+            $this->rollBack();
+            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
+            Logger::error($e);
+            throw $e;
         }
-
-        if ($site = Site::getByRootId($this->getId())) {
-            $site->delete();
-        }
-
-        parent::delete($isNested);
     }
 
     /**

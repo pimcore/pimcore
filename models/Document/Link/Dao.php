@@ -59,7 +59,7 @@ class Dao extends Model\Document\Dao
         parent::create();
 
         $this->db->insert('documents_link', [
-            'id' => $this->model->getId()
+            'id' => $this->model->getId(),
         ]);
     }
 

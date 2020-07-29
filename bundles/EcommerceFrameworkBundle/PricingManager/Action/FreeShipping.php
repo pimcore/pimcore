@@ -61,7 +61,7 @@ class FreeShipping implements ActionInterface
     public function toJSON()
     {
         return json_encode([
-            'type' => 'FreeShipping'
+            'type' => 'FreeShipping',
         ]);
     }
 

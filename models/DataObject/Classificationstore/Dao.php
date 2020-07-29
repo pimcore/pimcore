@@ -86,7 +86,7 @@ class Dao extends Model\Dao\AbstractDao
                         'keyId' => $keyId,
                         'fieldname' => $fieldname,
                         'language' => $language,
-                        'type' => $keyConfig->getType()
+                        'type' => $keyConfig->getType(),
                     ];
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Password) {
@@ -119,7 +119,7 @@ class Dao extends Model\Dao\AbstractDao
                     $data = [
                         'o_id' => $objectId,
                         'groupId' => $activeGroupId,
-                        'fieldname' => $fieldname
+                        'fieldname' => $fieldname,
                     ];
                     $this->db->insertOrUpdate($groupsTable, $data);
                 }
@@ -179,7 +179,7 @@ class Dao extends Model\Dao\AbstractDao
 
             $value = [
                 'value' => $item['value'],
-                'value2' => $item['value2']
+                'value2' => $item['value2'],
             ];
 
             $keyConfig = DefinitionCache::get($keyId);

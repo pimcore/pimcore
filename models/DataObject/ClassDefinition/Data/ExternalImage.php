@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class ExternalImage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class ExternalImage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -120,7 +120,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
@@ -138,7 +138,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return Model\DataObject\Data\ExternalImage
@@ -158,7 +158,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -172,7 +172,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -188,7 +188,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
 
     /**
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return string|null
@@ -202,7 +202,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return Model\DataObject\Data\ExternalImage
@@ -214,7 +214,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
 
     /**
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param array $params
      *
      * @return Model\DataObject\Data\ExternalImage
@@ -346,16 +346,26 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param DataObject\Data\ExternalImage $data
+     * @param DataObject\Data\ExternalImage|null $data
      *
      * @return bool
      */
     public function isEmpty($data)
     {
-        if ($data instanceof DataObject\Data\ExternalImage and $data->getUrl()) {
-            return false;
-        }
+        return !($data instanceof DataObject\Data\ExternalImage && $data->getUrl());
+    }
 
-        return true;
+    /**
+     * @param DataObject\Data\ExternalImage|null $oldValue
+     * @param DataObject\Data\ExternalImage|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldValue = $oldValue instanceof DataObject\Data\ExternalImage ? $oldValue->getUrl() : null;
+        $newValue = $newValue instanceof DataObject\Data\ExternalImage ? $newValue->getUrl() : null;
+
+        return $oldValue == $newValue;
     }
 }

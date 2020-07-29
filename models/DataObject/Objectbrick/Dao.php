@@ -63,6 +63,16 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                 $brick->setObject($object);
 
                 foreach ($fieldDefinitions as $key => $fd) {
+                    $context = [];
+                    $context['object'] = $object;
+                    $context['containerType'] = 'objectbrick';
+                    $context['containerKey'] = $brick->getType();
+                    $context['brickField'] = $key;
+                    $context['fieldname'] = $brick->getFieldname();
+                    $params['context'] = $context;
+                    $params['owner'] = $this->model;
+                    $params['fieldname'] = $key;
+
                     if ($fd instanceof CustomResourcePersistingInterface) {
                         $doLoad = true;
 
@@ -74,14 +84,6 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
 
                         if ($doLoad) {
                             // datafield has it's own loader
-                            $context = [];
-                            $context['object'] = $object;
-                            $context['containerType'] = 'objectbrick';
-                            $context['containerKey'] = $brick->getType();
-                            $context['brickField'] = $key;
-                            $context['fieldname'] = $brick->getFieldname();
-                            $params['context'] = $context;
-
                             $value = $fd->load($brick, $params);
                             if ($value === 0 || !empty($value)) {
                                 $brick->setValue($key, $value);
@@ -96,12 +98,12 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                             }
                             $brick->setValue(
                                 $key,
-                                $fd->getDataFromResource($multidata)
+                                $fd->getDataFromResource($multidata, $object, $params)
                             );
                         } else {
                             $brick->setValue(
                                 $key,
-                                $fd->getDataFromResource($result[$key])
+                                $fd->getDataFromResource($result[$key], $object, $params)
                             );
                         }
                     }
@@ -125,6 +127,8 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
     /**
      * @param DataObject\Concrete $object
      * @param bool $saveMode true if called from save method
+     *
+     * @return array
      */
     public function delete(DataObject\Concrete $object, $saveMode = false)
     {
@@ -138,5 +142,7 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                 $this->db->delete($tableName, ['o_id' => $object->getId()]);
             }
         }
+
+        return [];
     }
 }

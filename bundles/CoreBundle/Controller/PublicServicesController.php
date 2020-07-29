@@ -146,7 +146,7 @@ class PublicServicesController extends Controller
                     $headers = [
                         'Cache-Control' => 'public, max-age=' . $lifetime,
                         'Expires' => date('D, d M Y H:i:s T', time() + $lifetime),
-                        'Content-Type' => $imageThumbnail->getMimeType()
+                        'Content-Type' => $imageThumbnail->getMimeType(),
                     ];
 
                     // in certain cases where an event listener starts a session (e.g. when there's a firewall
@@ -210,7 +210,7 @@ class PublicServicesController extends Controller
         }
 
         return new Response($content, Response::HTTP_OK, [
-            'Content-Type' => 'text/plain'
+            'Content-Type' => 'text/plain',
         ]);
     }
 

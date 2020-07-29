@@ -181,6 +181,6 @@ according to your custom configuration above.
 You can use the CLI tool [s3cmd](http://s3tools.org/) for this task.
 
 ```bash
-s3cmd sync --recursive /var/www/website/var/assets/ s3://pimcore-demo/assets/
+s3cmd sync --recursive /var/www/website/web/var/assets/ s3://pimcore-demo/assets/
 // ... also for all other contents you'd like to have on S3
 ```

@@ -112,4 +112,19 @@ final class DataObjectEvents
      * @var string
      */
     const POST_COPY = 'pimcore.dataobject.postCopy';
+
+    /**
+     * Arguments:
+     *  - objectData | array | contains the export data of the object
+     *  - context | array | context information - default ['source' => 'pimcore-export']
+     *  - requestedLanguage | string | requested language
+     *  - helperDefinitions | array | containing the column definition from the grid view
+     *  - localeService | \Pimcore\Localization\LocaleService
+     *  - returnMappedFieldNames | bool | if "true" the objectData is an associative array, otherwise it is an indexed array
+     *
+     * @Event("Pimcore\Event\Model\DataObjectEvent")
+     *
+     * @var string
+     */
+    const POST_CSV_ITEM_EXPORT = 'pimcore.dataobject.postCsvItemExport';
 }

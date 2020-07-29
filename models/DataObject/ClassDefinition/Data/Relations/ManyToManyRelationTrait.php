@@ -15,17 +15,19 @@ trait ManyToManyRelationTrait
      */
     public function save($container, $params = [])
     {
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $container instanceof DirtyIndicatorInterface) {
-            if ($container instanceof DataObject\Localizedfield) {
-                if ($container->getObject() instanceof DirtyIndicatorInterface) {
-                    if (!$container->hasDirtyFields()) {
-                        return;
+        if (!isset($params['forceSave']) || $params['forceSave'] !== true) {
+            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $container instanceof DirtyIndicatorInterface) {
+                if ($container instanceof DataObject\Localizedfield) {
+                    if ($container->getObject() instanceof DirtyIndicatorInterface) {
+                        if (!$container->hasDirtyFields()) {
+                            return;
+                        }
                     }
-                }
-            } else {
-                if ($this->supportsDirtyDetection()) {
-                    if (!$container->isFieldDirty($this->getName())) {
-                        return;
+                } else {
+                    if ($this->supportsDirtyDetection()) {
+                        if (!$container->isFieldDirty($this->getName())) {
+                            return;
+                        }
                     }
                 }
             }

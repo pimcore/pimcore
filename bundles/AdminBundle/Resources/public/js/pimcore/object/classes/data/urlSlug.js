@@ -69,8 +69,7 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
             autoLoad: true,
             proxy: {
                 type: 'ajax',
-                url: '/admin/settings/get-available-sites',
-                extraParams: {excludeMainSite: 1}
+                url: Routing.generate('pimcore_admin_settings_getavailablesites', {excludeMainSite: 1}),
             },
             fields: ['id', 'domain']
         });
@@ -134,7 +133,8 @@ pimcore.object.classes.data.urlSlug = Class.create(pimcore.object.classes.data.d
                     width: source.datax.width,
                     action: source.datax.action,
                     availableSites: source.datax.availableSites,
-                    domainLabelWidth: source.datax.domainLabelWidth
+                    domainLabelWidth: source.datax.domainLabelWidth,
+                    defaultValueGenerator: source.datax.defaultValueGenerator
                 });
         }
     }

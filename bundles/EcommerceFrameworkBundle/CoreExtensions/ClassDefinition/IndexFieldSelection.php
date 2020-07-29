@@ -41,7 +41,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     public $queryColumnType = [
         'tenant' => 'varchar(100)',
         'field' => 'varchar(200)',
-        'preSelect' => 'text'
+        'preSelect' => 'text',
     ];
 
     /**
@@ -52,7 +52,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     public $columnType = [
         'tenant' => 'varchar(100)',
         'field' => 'varchar(200)',
-        'preSelect' => 'text'
+        'preSelect' => 'text',
     ];
 
     /**
@@ -139,14 +139,14 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
             return [
                 $this->getName() . '__tenant' => $data->getTenant(),
                 $this->getName() . '__field' => $data->getField(),
-                $this->getName() . '__preSelect' => $data->getPreSelect()
+                $this->getName() . '__preSelect' => $data->getPreSelect(),
             ];
         }
 
         return [
             $this->getName() . '__tenant' => null,
             $this->getName() . '__field' => null,
-            $this->getName() . '__preSelect' => null
+            $this->getName() . '__preSelect' => null,
         ];
     }
 
@@ -197,7 +197,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
             return [
                 'tenant' => $data->getTenant(),
                 'field' => $data->getField(),
-                'preSelect' => $data->getPreSelect()
+                'preSelect' => $data->getPreSelect(),
             ];
         }
 
@@ -333,7 +333,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
             return [
                 'tenant' => $object->$getter()->getTenant(),
                 'field' => $object->$getter()->getField(),
-                'preSelect' => $preSelect
+                'preSelect' => $preSelect,
             ];
         } else {
             return null;

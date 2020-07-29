@@ -64,7 +64,7 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
                 // if we need previous tags, update the query to join the tags table and to return them as result
                 yield $row['id'] => [
                     'value' => $value,
-                    'tags' => []
+                    'tags' => [],
                 ];
             }
         }
@@ -81,7 +81,7 @@ class Doctrine extends AbstractCacheItemPool implements PurgeableCacheItemPoolIn
     {
         $result = $this->db->fetchColumn('SELECT 1 FROM cache WHERE id = :id AND (expire IS NULL OR expire > :time)', [
             'id' => $id,
-            'time' => time()
+            'time' => time(),
         ]);
 
         return (bool) $result;
@@ -210,7 +210,7 @@ SQL;
                     'id' => $item->getKey(),
                     'data' => $this->serializeData($item->get()),
                     'expire' => $item->getExpiry(),
-                    'mtime' => time()
+                    'mtime' => time(),
                 ]);
 
                 $result = $stmt->execute();
@@ -257,11 +257,11 @@ SQL;
                 'DELETE FROM cache_tags WHERE id = ? AND tag NOT IN (?)',
                 [
                     $id,
-                    $tags
+                    $tags,
                 ],
                 [
                     \PDO::PARAM_STR,
-                    Connection::PARAM_STR_ARRAY
+                    Connection::PARAM_STR_ARRAY,
                 ]
             );
 
@@ -318,7 +318,7 @@ SQL;
             while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
                 $deleteStmt->execute([
                     'id' => $row['id'],
-                    'tag' => $row['tag']
+                    'tag' => $row['tag'],
                 ]);
             }
 

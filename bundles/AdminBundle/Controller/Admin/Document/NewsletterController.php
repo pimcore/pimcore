@@ -41,7 +41,37 @@ class NewsletterController extends DocumentControllerBase
     use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 
     /**
-     * @Route("/get-data-by-id", methods={"GET"})
+     * @Route("/save-to-session", name="pimcore_admin_document_newsletter_savetosession", methods={"POST"})
+     *
+     * {@inheritDoc}
+     */
+    public function saveToSessionAction(Request $request)
+    {
+        return parent::saveToSessionAction($request);
+    }
+
+    /**
+     * @Route("/remove-from-session", name="pimcore_admin_document_newsletter_removefromsession", methods={"DELETE"})
+     *
+     * {@inheritDoc}
+     */
+    public function removeFromSessionAction(Request $request)
+    {
+        return parent::removeFromSessionAction($request);
+    }
+
+    /**
+     * @Route("/change-master-document", name="pimcore_admin_document_newsletter_changemasterdocument", methods={"PUT"})
+     *
+     * {@inheritDoc}
+     */
+    public function changeMasterDocumentAction(Request $request)
+    {
+        return parent::changeMasterDocumentAction($request);
+    }
+
+    /**
+     * @Route("/get-data-by-id", name="pimcore_admin_document_newsletter_getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -80,6 +110,8 @@ class NewsletterController extends DocumentControllerBase
         $this->addTranslationsData($email, $data);
         $this->minimizeProperties($email, $data);
 
+        $data['url'] = $email->getUrl();
+
         $this->preSendDataActions($data, $email);
 
         if ($email->isAllowed('view')) {
@@ -90,7 +122,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/save", methods={"PUT", "POST"})
+     * @Route("/save", name="pimcore_admin_document_newsletter_save", methods={"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -130,9 +162,9 @@ class NewsletterController extends DocumentControllerBase
                 'success' => true,
                 'data' => [
                     'versionDate' => $page->getModificationDate(),
-                    'versionCount' => $page->getVersionCount()
+                    'versionCount' => $page->getVersionCount(),
                 ],
-                'treeData' => $treeData
+                'treeData' => $treeData,
             ]);
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);
@@ -163,7 +195,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/checksql", methods={"POST"})
+     * @Route("/checksql", name="pimcore_admin_document_newsletter_checksql", methods={"POST"})
      *
      * @param Request $request
      *
@@ -192,12 +224,12 @@ class NewsletterController extends DocumentControllerBase
 
         return $this->adminJson([
             'count' => $count,
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
     /**
-     * @Route("/get-available-classes", methods={"GET"})
+     * @Route("/get-available-classes", name="pimcore_admin_document_newsletter_getavailableclasses", methods={"GET"})
      *
      * @return JsonResponse
      */
@@ -225,7 +257,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/get-available-reports", methods={"GET"})
+     * @Route("/get-available-reports", name="pimcore_admin_document_newsletter_getavailablereports", methods={"GET"})
      *
      * @param Request $request
      *
@@ -265,7 +297,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/get-send-status", methods={"GET"})
+     * @Route("/get-send-status", name="pimcore_admin_document_newsletter_getsendstatus", methods={"GET"})
      *
      * @param Request $request
      *
@@ -279,12 +311,12 @@ class NewsletterController extends DocumentControllerBase
 
         return $this->adminJson([
             'data' => $data ? $data->getData() : null,
-            'success' => true
+            'success' => true,
         ]);
     }
 
     /**
-     * @Route("/stop-send", methods={"POST"})
+     * @Route("/stop-send", name="pimcore_admin_document_newsletter_stopsend", methods={"POST"})
      *
      * @param Request $request
      *
@@ -297,12 +329,12 @@ class NewsletterController extends DocumentControllerBase
         Tool\TmpStore::delete($document->getTmpStoreId());
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 
     /**
-     * @Route("/send", methods={"POST"})
+     * @Route("/send", name="pimcore_admin_document_newsletter_send", methods={"POST"})
      *
      * @param Request $request
      *
@@ -327,7 +359,7 @@ class NewsletterController extends DocumentControllerBase
             'addressSourceAdapterName' => $request->get('addressAdapterName'),
             'adapterParams' => json_decode($request->get('adapterParams'), true),
             'inProgress' => false,
-            'progress' => 0
+            'progress' => 0,
         ], 'newsletter');
 
         Console::runPhpScriptInBackground(
@@ -340,7 +372,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/calculate", methods={"POST"})
+     * @Route("/calculate", name="pimcore_admin_document_newsletter_calculate", methods={"POST"})
      *
      * @param Request $request
      *
@@ -370,7 +402,7 @@ class NewsletterController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/send-test", methods={"POST"})
+     * @Route("/send-test", name="pimcore_admin_document_newsletter_sendtest", methods={"POST"})
      *
      * @param Request $request
      *
@@ -388,7 +420,7 @@ class NewsletterController extends DocumentControllerBase
         if (empty($testMailAddress)) {
             return $this->adminJson([
                 'success' => false,
-                'message' => 'Please provide a valid email address to send test newsletter'
+                'message' => 'Please provide a valid email address to send test newsletter',
             ]);
         }
 
@@ -400,7 +432,7 @@ class NewsletterController extends DocumentControllerBase
                 'error' => sprintf(
                     'Cannot send newsletters because Address Source Adapter with identifier %s could not be found',
                     $addressSourceAdapterName
-                )
+                ),
             ]);
         }
 

@@ -31,7 +31,7 @@ class LongRunningHelper
         'pimcore_editmode',
         'pimcore_error_document',
         'pimcore_site',
-        'Pimcore_Db'
+        'Pimcore_Db',
     ];
     protected $monologHandlers = [];
 
@@ -63,8 +63,9 @@ class LongRunningHelper
                 if (!($connection instanceof Connection)) {
                     throw new \LogicException('Expected only instances of Connection');
                 }
-
-                $connection->close();
+                if ($connection->isTransactionActive() === false) {
+                    $connection->close();
+                }
             }
         } catch (\Exception $e) {
             // connection couldn't be established, this is e.g. the case when Pimcore isn't installed yet

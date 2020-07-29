@@ -28,7 +28,7 @@ trait TargetingDocumentDaoTrait
             'SELECT count(*) FROM documents_elements WHERE documentId = ? AND name LIKE ?',
             [
                 $this->model->getId(),
-                '%' . TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX . '%' . TargetingDocumentInterface::TARGET_GROUP_ELEMENT_SUFFIX . '%'
+                '%' . TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX . '%' . TargetingDocumentInterface::TARGET_GROUP_ELEMENT_SUFFIX . '%',
             ]
         );
 
@@ -42,7 +42,7 @@ trait TargetingDocumentDaoTrait
             'SELECT name FROM documents_elements WHERE documentId = ? AND name LIKE ?',
             [
                 $this->model->getId(),
-                '%' . TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX . '%' . TargetingDocumentInterface::TARGET_GROUP_ELEMENT_SUFFIX . '%'
+                '%' . TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX . '%' . TargetingDocumentInterface::TARGET_GROUP_ELEMENT_SUFFIX . '%',
             ]
         );
 

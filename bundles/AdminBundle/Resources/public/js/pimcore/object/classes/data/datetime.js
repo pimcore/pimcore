@@ -219,7 +219,8 @@ pimcore.object.classes.data.datetime = Class.create(pimcore.object.classes.data.
                 {
                     defaultValue: source.datax.defaultValue,
                     useCurrentDate: source.datax.useCurrentDate,
-                    defaultValueGenerator: source.datax.defaultValueGenerator
+                    defaultValueGenerator: source.datax.defaultValueGenerator,
+                    columnType: source.datax.columnType
                 });
         }
     }

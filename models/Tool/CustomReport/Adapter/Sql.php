@@ -192,7 +192,7 @@ class Sql extends AbstractAdapter
                             $compMapping = [
                                 'lt' => '<',
                                 'gt' => '>',
-                                'eq' => '='
+                                'eq' => '=',
                             ];
 
                             if ($type == 'date') {
@@ -227,7 +227,7 @@ class Sql extends AbstractAdapter
 
         return [
             'data' => $data,
-            'count' => $total
+            'count' => $total,
         ];
     }
 
@@ -258,10 +258,10 @@ class Sql extends AbstractAdapter
         return [
             'data' => array_merge(
                 [
-                    ['value' => null]
+                    ['value' => null],
                 ],
                 $filteredData
-            )
+            ),
         ];
     }
 }

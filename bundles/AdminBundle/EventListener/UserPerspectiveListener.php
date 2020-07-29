@@ -50,7 +50,7 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => 'onKernelRequest'
+            KernelEvents::REQUEST => 'onKernelRequest',
         ];
     }
 
@@ -86,7 +86,7 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
                 if (!in_array($requestedPerspective, $existingPerspectives)) {
                     $this->logger->warning('Requested perspective {perspective} for {user} is not does not exist.', [
                         'user' => $user->getName(),
-                        'perspective' => $requestedPerspective
+                        'perspective' => $requestedPerspective,
                     ]);
 
                     $requestedPerspective = null;
@@ -106,12 +106,12 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
                 $this->logger->warning('User {user} is not allowed requested perspective {requestedPerspective}. Falling back to {perspective}.', [
                     'user' => $user->getName(),
                     'requestedPerspective' => $previouslyRequested,
-                    'perspective' => $requestedPerspective
+                    'perspective' => $requestedPerspective,
                 ]);
             } else {
                 $this->logger->debug('Perspective for user {user} was not requested. Falling back to {perspective}.', [
                     'user' => $user->getName(),
-                    'perspective' => $requestedPerspective
+                    'perspective' => $requestedPerspective,
                 ]);
             }
         }
@@ -119,7 +119,7 @@ class UserPerspectiveListener implements EventSubscriberInterface, LoggerAwareIn
         if ($requestedPerspective !== $user->getActivePerspective()) {
             $this->logger->info('Setting active perspective for user {user} to {perspective}.', [
                 'user' => $user->getName(),
-                'perspective' => $requestedPerspective
+                'perspective' => $requestedPerspective,
             ]);
 
             $user->setActivePerspective($requestedPerspective);

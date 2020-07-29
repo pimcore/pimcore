@@ -97,10 +97,12 @@ $entries->setCondition("city IN (:cities)", ["cities" => ["New York", "Chicago"]
 //if necessary you can of course custom build your query
 $entries->setCondition("name LIKE " . $entries->quote("%bernie%")); // make sure that you quote variables in conditions!
 
-// some data types support direct filtering
-$entries->filterByName('Jan'); // filters for name='Jan'
-$entries->filterByAge(18, '>='); // filters for age >= 18
-$entries->filterByCity([['New York', 'Chicago']], 'IN (?)'); // filters for city IN ('New York','Chicago')
+// some data types support direct filtering, which can be verified via 'isFilterable()' method on field definition:
+if ($entries->getClass()->getFieldDefinition('fieldname e.g. name or age or city')->isFilterable()) {
+    $entries->filterByName('Jan'); // filters for name='Jan'
+    $entries->filterByAge(18, '>='); // filters for age >= 18
+    $entries->filterByCity([['New York', 'Chicago']], 'IN (?)'); // filters for city IN ('New York','Chicago')
+}
 
 foreach ($entries as $entry) {
     $entry->getName();
@@ -200,10 +202,10 @@ Often it's very useful to get a listing of objects or a single object where a pr
 This is especially useful to get an object matching a foreign key, or get a list of objects with only one condition.
 
 ```php
-$result = DataObject\ClassName::getByMyfieldname($value, [int $limit, int $offset]);
+$result = DataObject\ClassName::getByMyfieldname($value, ['limit' => $limit, 'offset' => $offset]);
 
 // or for localized fields
-$result = DataObject\ClassName::getByMyfieldname($value, [string locale, int $limit, int $offset]);
+$result = DataObject\ClassName::getByMyfieldname($value, ['locale' => locale, 'limit' => $limit, 'offset' => $offset]);
 ```
 If you set no limit, a list object containing all matching objects is returned. If the limit is set to 1 
 the first matching object is returned directly (without listing). Only published objects are return.
@@ -451,8 +453,18 @@ You can access and print the internal query which is based on `\Pimcore\Db\ZendC
 $list = new Pimcore\Model\DataObject\News\Listing();
  
 // set onCreateQuery callback
-$list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder query) {
+$list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder $query) {
     // echo query
     echo $query;
 });
 ```
+
+### PHP Type Declarations
+
+> Experimental Feature
+
+If you want to add [type declarations as described here](https://github.com/pimcore/pimcore/issues/6387) on the generated PHP code for your classes,
+please enable this feature in the class definition.
+
+If you have custom data types please implement the `Pimcore\Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface` interface. 
+

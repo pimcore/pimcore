@@ -127,7 +127,7 @@ Important to know:
                             SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid 
                             WHERE 
                                 ctype = 'asset' AND 
-                                (id = " . intval($tagId) . " OR idPath LIKE " . $listing->quote($tagPath . "%") . ")
+                                (id = " . intval($tagId) . " OR idPath LIKE " . $listing->quote(Db::get()->escapeLike($tagPath) . "%") . ")
                         )";
                     }
                 } else {

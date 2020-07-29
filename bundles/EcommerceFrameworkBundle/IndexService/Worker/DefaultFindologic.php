@@ -39,7 +39,7 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
      * @var array
      */
     protected $supportedFields = [
-        'id', 'ordernumber', 'name', 'summary', 'description', 'price'
+        'id', 'ordernumber', 'name', 'summary', 'description', 'price',
     ];
 
     /**
@@ -47,9 +47,9 @@ class DefaultFindologic extends AbstractMockupCacheWorker implements WorkerInter
      */
     protected $batchData;
 
-    public function __construct(FindologicConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher)
+    public function __construct(FindologicConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
-        parent::__construct($tenantConfig, $db, $eventDispatcher);
+        parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
     }
 
     /**
@@ -282,7 +282,7 @@ VALUES (:id, :shop_key, :data, now())
 ON DUPLICATE KEY UPDATE `data` = VALUES(`data`), `last_update` = VALUES(`last_update`)
 SQL;
         $this->db->query($query, [
-            'id' => $objectId, 'shop_key' => $this->getTenantConfig()->getClientConfig('shopKey'), 'data' => str_replace('<?xml version="1.0"?>', '', $item->saveXML())
+            'id' => $objectId, 'shop_key' => $this->getTenantConfig()->getClientConfig('shopKey'), 'data' => str_replace('<?xml version="1.0"?>', '', $item->saveXML()),
         ]);
     }
 

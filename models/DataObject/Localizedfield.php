@@ -29,8 +29,14 @@ use Pimcore\Tool;
  * @method void save($params = [])
  * @method void createUpdateTable($params = [])
  */
-class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
+class Localizedfield extends Model\AbstractModel implements
+    DirtyIndicatorInterface,
+    LazyLoadedFieldsInterface,
+    Model\Element\ElementDumpStateInterface,
+                        OwnerAwareFieldInterface
 {
+    use Model\DataObject\Traits\OwnerAwareFieldTrait;
+
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
     use Model\Element\Traits\DirtyIndicatorTrait;
@@ -460,11 +466,13 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
                             $parentContainer = $parent;
 
                             if (isset($context['containerType']) && $context['containerType'] === 'objectbrick') {
-                                $brickContainerGetter = 'get' . ucfirst($context['fieldname']);
-                                $brickContainer = $parent->$brickContainerGetter();
-                                $brickGetter = 'get' . $context['containerKey'];
-                                $brickData = $brickContainer->$brickGetter();
-                                $parentContainer = $brickData;
+                                if (!empty($context['fieldname'])) {
+                                    $brickContainerGetter = 'get' . ucfirst($context['fieldname']);
+                                    $brickContainer = $parent->$brickContainerGetter();
+                                    $brickGetter = 'get' . $context['containerKey'];
+                                    $brickData = $brickContainer->$brickGetter();
+                                    $parentContainer = $brickData;
+                                }
                             }
 
                             if (method_exists($parentContainer, $method)) {
@@ -484,7 +492,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         // check for fallback value
         if ($fieldDefinition->isEmpty($data) && !$ignoreFallbackLanguage && self::doGetFallbackValues()) {
             foreach (Tool::getFallbackLanguagesFor($language) as $l) {
-                if ($this->languageExists($l)) {
+                // fallback-language may not exist yet for lazy-loaded field (relation)
+                if ($this->languageExists($l) || ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading())) {
                     if ($data = $this->getLocalizedValue($name, $l)) {
                         break;
                     }

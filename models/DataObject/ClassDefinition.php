@@ -165,6 +165,16 @@ class ClassDefinition extends Model\AbstractModel
     public $compositeIndices = [];
 
     /**
+     * @var bool
+     */
+    public $generateTypeDeclarations = false;
+
+    /**
+     * @var bool
+     */
+    public $showFieldLookup = false;
+
+    /**
      * @var array
      */
     public $propertyVisibility = [
@@ -173,15 +183,15 @@ class ClassDefinition extends Model\AbstractModel
             'path' => true,
             'published' => true,
             'modificationDate' => true,
-            'creationDate' => true
+            'creationDate' => true,
         ],
         'search' => [
             'id' => true,
             'path' => true,
             'published' => true,
             'modificationDate' => true,
-            'creationDate' => true
-        ]
+            'creationDate' => true,
+        ],
     ];
 
     /**
@@ -228,7 +238,7 @@ class ClassDefinition extends Model\AbstractModel
 
                 \Pimcore\Cache\Runtime::set($cacheKey, $class);
             } catch (\Exception $e) {
-                Logger::error($e);
+                Logger::info($e->getMessage());
 
                 return null;
             }
@@ -419,7 +429,7 @@ class ClassDefinition extends Model\AbstractModel
                             $this->getName()
                         ).' getBy'.ucfirst(
                             $def->getName()
-                        ).' ($field, $value, $locale = null, $limit = 0) '."\n";
+                        ).' ($field, $value, $locale = null, $limit = 0, $offset = 0) '."\n";
 
                     foreach ($def->getFieldDefinitions() as $localizedFieldDefinition) {
                         $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
@@ -428,14 +438,14 @@ class ClassDefinition extends Model\AbstractModel
                                 $this->getName()
                             ).' getBy'.ucfirst(
                                 $localizedFieldDefinition->getName()
-                            ).' ($value, $locale = null, $limit = 0) '."\n";
+                            ).' ($value, $locale = null, $limit = 0, $offset = 0) '."\n";
                     }
                 } elseif ($def->isFilterable()) {
                     $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
                             $this->getName()
                         ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
                             $this->getName()
-                        ).' getBy'.ucfirst($def->getName()).' ($value, $limit = 0) '."\n";
+                        ).' getBy'.ucfirst($def->getName()).' ($value, $limit = 0, $offset = 0) '."\n";
                 }
             }
         }
@@ -560,15 +570,15 @@ class ClassDefinition extends Model\AbstractModel
         }
         File::put($classListFile, $cd);
 
-        // save definition as a php file
-        $definitionFile = $this->getDefinitionFile();
-        if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
-            throw new \Exception(
-                'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
-            );
-        }
-
         if ($generateDefinitionFile) {
+            // save definition as a php file
+            $definitionFile = $this->getDefinitionFile();
+            if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
+                throw new \Exception(
+                    'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
+                );
+            }
+
             $clone = clone $this;
             $clone->setDao(null);
             unset($clone->fieldDefinitions);
@@ -1316,6 +1326,26 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
+     * @return bool
+     */
+    public function getShowFieldLookup()
+    {
+        return $this->showFieldLookup;
+    }
+
+    /**
+     * @param bool $showFieldLookup
+     *
+     * @return $this
+     */
+    public function setShowFieldLookup($showFieldLookup)
+    {
+        $this->showFieldLookup = (bool) $showFieldLookup;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getLinkGeneratorReference()
@@ -1336,13 +1366,11 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return DataObject\ClassDefinition\LinkGeneratorInterface
+     * @return DataObject\ClassDefinition\LinkGeneratorInterface|null
      */
     public function getLinkGenerator()
     {
-        $generator = DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
-
-        return $generator;
+        return DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
     }
 
     /**
@@ -1397,6 +1425,26 @@ class ClassDefinition extends Model\AbstractModel
     public function setCompositeIndices($compositeIndices)
     {
         $this->compositeIndices = $compositeIndices ?? [];
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getGenerateTypeDeclarations()
+    {
+        return (bool) $this->generateTypeDeclarations;
+    }
+
+    /**
+     * @param bool $generateTypeDeclarations
+     *
+     * @return $this
+     */
+    public function setGenerateTypeDeclarations($generateTypeDeclarations)
+    {
+        $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
 
         return $this;
     }

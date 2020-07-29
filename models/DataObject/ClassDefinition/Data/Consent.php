@@ -21,9 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
-    use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -53,7 +52,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public $columnType = [
         'consent' => 'tinyint(1)',
-        'note' => 'int(11)'
+        'note' => 'int(11)',
     ];
 
     /**
@@ -74,7 +73,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Consent $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -84,13 +83,13 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         if ($data instanceof DataObject\Data\Consent) {
             return [
                 $this->getName() . '__consent' => $data->getConsent(),
-                $this->getName() . '__note' => $data->getNoteId()
+                $this->getName() . '__note' => $data->getNoteId(),
             ];
         }
 
         return [
             $this->getName() . '__consent' => false,
-            $this->getName() . '__note' => null
+            $this->getName() . '__note' => null,
         ];
     }
 
@@ -98,7 +97,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Consent
@@ -122,7 +121,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param DataObject\Data\Consent $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return bool
@@ -140,7 +139,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see Data::getDataForEditmode
      *
      * @param DataObject\Data\Consent $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -152,7 +151,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
             return [
                 'consent' => $data->getConsent(),
                 'noteContent' => $data->getSummaryString(),
-                'noteId' => $data->getNoteId()
+                'noteId' => $data->getNoteId(),
             ];
         }
 
@@ -163,7 +162,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see Data::getDataFromEditmode
      *
      * @param string|bool $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return DataObject\Data\Consent
@@ -358,7 +357,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @deprecated
      *
      * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -462,5 +461,19 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function supportsInheritance()
     {
         return false;
+    }
+
+    /**
+     * @param DataObject\Data\Consent|null $oldValue
+     * @param DataObject\Data\Consent|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldValue = $oldValue instanceof DataObject\Data\Consent ? $oldValue->getConsent() : null;
+        $newValue = $newValue instanceof DataObject\Data\Consent ? $newValue->getConsent() : null;
+
+        return $oldValue === $newValue;
     }
 }

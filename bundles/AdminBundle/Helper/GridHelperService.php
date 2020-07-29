@@ -116,7 +116,7 @@ class GridHelperService
                             $filter['value'],
                             $operator,
                             [
-                                'name' => $mappedKey]
+                                'name' => $mappedKey, ]
                         );
 
                         $featureConditions[$mappedKey] = $featureCondition;
@@ -148,7 +148,7 @@ class GridHelperService
                         $filter['value'],
                         $operator,
                         [
-                            'name' => $slugKey]
+                            'name' => $slugKey, ]
                     );
 
                     $slugConditions[$mappedKey] = $slugCondition;
@@ -160,7 +160,7 @@ class GridHelperService
             'featureJoins' => $featureJoins,
             'slugJoins' => $slugJoins,
             'featureConditions' => $featureConditions,
-            'slugConditions' => $slugConditions
+            'slugConditions' => $slugConditions,
         ];
 
         return $result;
@@ -293,13 +293,13 @@ class GridHelperService
                         foreach ($filter['value'] as $filterValue) {
                             $brickCondition = '(' . $brickField->getFilterCondition($filterValue, $operator,
                                     ['brickPrefix' => $brickPrefix]
-                                ) . ' AND fieldname = ' . $db->quote($brickFilterField) . ')';
+                                ) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';
                             $fieldConditions[] = $brickCondition;
                         }
                         $conditionPartsFilters[] = '(' . implode(' OR ', $fieldConditions) . ')';
                     } else {
                         $brickCondition = '(' . $brickField->getFilterCondition($filter['value'], $operator,
-                                ['brickPrefix' => $brickPrefix]) . ' AND fieldname = ' . $db->quote($brickFilterField) . ')';
+                                ['brickPrefix' => $brickPrefix]) . ' AND ' . $brickPrefix . 'fieldname = ' . $db->quote($brickFilterField) . ')';
                         $conditionPartsFilters[] = $brickCondition;
                     }
                 } elseif ($field instanceof ClassDefinition\Data\UrlSlug) {
@@ -416,7 +416,7 @@ class GridHelperService
                         . ' and ' . $mappedKey . '.language = ' . $db->quote($featureJoin['language'])
                         . ')',
                         [
-                            $mappedKey => 'value'
+                            $mappedKey => 'value',
                         ]
                     );
                 }
@@ -460,7 +460,7 @@ class GridHelperService
                         . ' and ' . $mappedKey . '.fieldname = ' . $db->quote($fieldname)
                         . ')',
                         [
-                            $mappedKey => 'slug'
+                            $mappedKey => 'slug',
                         ]
                     );
                 }
@@ -491,7 +491,7 @@ class GridHelperService
             'id' => 'oo_id',
             'published' => 'o_published',
             'modificationDate' => 'o_modificationDate',
-            'creationDate' => 'o_creationDate'
+            'creationDate' => 'o_creationDate',
         ];
 
         $start = 0;
@@ -553,7 +553,7 @@ class GridHelperService
             $conditionFilters[] = 'o_parentId = ' . $folder->getId();
         } else {
             $quotedPath = $list->quote($folder->getRealFullPath());
-            $quotedWildcardPath = $list->quote(str_replace('//', '/', $folder->getRealFullPath() . '/') . '%');
+            $quotedWildcardPath = $list->quote($list->escapeLike(str_replace('//', '/', $folder->getRealFullPath() . '/')) . '%');
             $conditionFilters[] = '(o_path = ' . $quotedPath . ' OR o_path LIKE ' . $quotedWildcardPath . ')';
         }
 
@@ -691,7 +691,7 @@ class GridHelperService
         if (isset($allParams['only_direct_children']) && $allParams['only_direct_children'] == 'true') {
             $conditionFilters[] = 'parentId = ' . $folder->getId();
         } else {
-            $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() === '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
+            $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() === '/' ? "'/%'" : $list->quote($list->escapeLike($folder->getRealFullPath()) . '/%'));
         }
 
         if (isset($allParams['only_unreferenced']) && $allParams['only_unreferenced'] === 'true') {
@@ -739,7 +739,7 @@ class GridHelperService
                     $filter['value'] = (int) $filter['value'];
                 }
                 // system field
-                $value = $filter['value'];
+                $value = $filter['value'] ?? '';
                 if ($operator == 'LIKE') {
                     $value = $db->quote('%' . $value . '%');
                 } elseif ($operator == 'IN') {

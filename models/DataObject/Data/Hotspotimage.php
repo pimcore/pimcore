@@ -189,7 +189,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
                         'width' => $crop['cropWidth'],
                         'height' => $crop['cropHeight'],
                         'y' => $crop['cropTop'],
-                        'x' => $crop['cropLeft']
+                        'x' => $crop['cropLeft'],
                     ], $mediaName);
                 }
             }
@@ -198,7 +198,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
                 'width' => $crop['cropWidth'],
                 'height' => $crop['cropHeight'],
                 'y' => $crop['cropTop'],
-                'x' => $crop['cropLeft']
+                'x' => $crop['cropLeft'],
             ]);
 
             $hash = md5(\Pimcore\Tool\Serialize::serialize($thumbConfig->getItems()));

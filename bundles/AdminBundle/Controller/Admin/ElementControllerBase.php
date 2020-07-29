@@ -30,7 +30,6 @@ use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 
 class ElementControllerBase extends AdminController
 {
@@ -45,8 +44,6 @@ class ElementControllerBase extends AdminController
     }
 
     /**
-     * @Route("/tree-get-root", methods={"GET"})
-     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -73,8 +70,6 @@ class ElementControllerBase extends AdminController
     }
 
     /**
-     * @Route("/delete-info", methods={"GET"})
-     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -147,12 +142,12 @@ class ElementControllerBase extends AdminController
                 ];
 
                 $deleteJobs[] = [[
-                    'url' => '/admin/recyclebin/add',
+                    'url' => $this->generateUrl('pimcore_admin_recyclebin_add'),
                     'method' => 'POST',
                     'params' => [
                         'type' => $type,
-                        'id' => $element->getId()
-                    ]
+                        'id' => $element->getId(),
+                    ],
                 ]];
 
                 $hasChilds = $element->hasChildren();
@@ -162,37 +157,36 @@ class ElementControllerBase extends AdminController
 
                 if ($hasChilds) {
                     // get amount of childs
-                    $listClass = '\Pimcore\Model\\' . Service::getBaseClassNameForElement($element) . '\Listing';
-                    $list = new $listClass();
-                    $pathColumn = ($type == 'object') ? 'o_path' : 'path';
+                    $list = $element::getList(['unpublished' => true]);
+                    $pathColumn = ($type === 'object') ? 'o_path' : 'path';
                     $list->setCondition($pathColumn . ' LIKE ?', [$element->getRealFullPath() . '/%']);
                     $childs = $list->getTotalCount();
                     $totalChilds += $childs;
 
                     if ($childs > 0) {
                         $deleteObjectsPerRequest = 5;
-                        for ($i = 0; $i < ceil($childs / $deleteObjectsPerRequest); $i++) {
+                        for ($i = 0, $iMax = ceil($childs / $deleteObjectsPerRequest); $i < $iMax; $i++) {
                             $deleteJobs[] = [[
-                                'url' => '/admin/' . $type . '/delete',
+                                'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/' . $type . '/delete',
                                 'method' => 'DELETE',
                                 'params' => [
                                     'step' => $i,
                                     'amount' => $deleteObjectsPerRequest,
                                     'type' => 'childs',
-                                    'id' => $element->getId()
-                                ]
+                                    'id' => $element->getId(),
+                                ],
                             ]];
                         }
                     }
                 }
 
-                // the asset itself is the last one
+                // the element itself is the last one
                 $deleteJobs[] = [[
-                    'url' => '/admin/' . $type . '/delete',
+                    'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/' . $type . '/delete',
                     'method' => 'DELETE',
                     'params' => [
-                        'id' => $element->getId()
-                    ]
+                        'id' => $element->getId(),
+                    ],
                 ]];
             }
         }
@@ -214,7 +208,7 @@ class ElementControllerBase extends AdminController
             'batchDelete' => count($ids) > 1,
             'elementKey' => $elementKey,
             'errors' => $errors,
-            'itemResults' => $itemResults
+            'itemResults' => $itemResults,
         ]);
     }
 }

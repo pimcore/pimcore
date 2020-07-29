@@ -44,11 +44,11 @@ class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
+     * @Route("/search-assets", name="pimcore_admin_gdpr_asset_searchasset", methods={"GET"})
+     *
      * @param Request $request
      *
      * @return JsonResponse
-     *
-     * @Route("/search-assets", methods={"GET"})
      */
     public function searchAssetAction(Request $request, Assets $service)
     {
@@ -68,14 +68,14 @@ class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
+     * @Route("/export", name="pimcore_admin_gdpr_asset_exportassets", methods={"GET"})
+     *
      * @param Request $request
      * @param Assets $service
      *
      * @return Response
      *
      * @throws \Exception
-     *
-     * @Route("/export", methods={"GET"})
      */
     public function exportAssetsAction(Request $request, Assets $service)
     {

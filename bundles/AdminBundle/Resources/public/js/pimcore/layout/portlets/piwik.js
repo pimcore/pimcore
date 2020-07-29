@@ -207,7 +207,7 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
         this.loadMask.show();
 
         Ext.Ajax.request({
-            url: "/admin/portal/update-portlet-config",
+            url: Routing.generate('pimcore_admin_portal_updateportletconfig'),
             method: 'PUT',
             params: {
                 key: this.portal.key,
@@ -255,7 +255,7 @@ pimcore.layout.portlets.piwik = Class.create(pimcore.layout.portlets.abstract, {
         }
 
         Ext.Ajax.request({
-            url: "/admin/reports/piwik/portal-widgets/" + config.site + "/" + config.widget,
+            url: Routing.generate('pimcore_admin_reports_piwik_portalwidget', {configKey: config.site, widgetId: config.widget}),
             params: params,
             method: "GET",
             ignoreErrors: true, // do not pop up error window on failure

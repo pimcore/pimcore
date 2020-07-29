@@ -88,7 +88,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
         'confirmURL',
         'confirmMail',
         'displayText',
-        'shopId' // value=mobile for mobile checkout page
+        'shopId', // value=mobile for mobile checkout page
     ];
 
     /**
@@ -106,7 +106,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
         'bankAccountOwner',
         'anonymousPan',
         'maskedPan',
-        'expiry'
+        'expiry',
     ];
 
     public function __construct(array $options, FormFactoryInterface $formFactory)
@@ -151,7 +151,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
 
         $resolver->setRequired([
             'customer',
-            'secret'
+            'secret',
         ]);
 
         $resolver
@@ -166,7 +166,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
             ->setDefined('hash_algorithm')
             ->setAllowedValues('hash_algorithm', [
                 self::HASH_ALGO_MD5,
-                self::HASH_ALGO_HMAC_SHA512
+                self::HASH_ALGO_HMAC_SHA512,
             ]);
 
         $resolver
@@ -262,7 +262,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
 
         //form name needs to be null in order to make sure the element names are correct - and not FORMNAME[ELEMENTNAME]
         $form = $this->formFactory->createNamedBuilder(null, FormType::class, [], [
-            'attr' => $formAttributes
+            'attr' => $formAttributes,
         ]);
 
         $form->setAction('https://checkout.wirecard.com/page/init.php');
@@ -318,7 +318,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
 
         // check required fields
         $required = [
-            'orderIdent' => null
+            'orderIdent' => null,
         ];
 
         /* Initialize authorized data with null values */
@@ -375,7 +375,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
                 'qpay_amount' => (string)$price,
                 'qpay_paymentType' => $response['paymentType'],
                 'qpay_paymentState' => $response['paymentState'],
-                'qpay_response' => $response
+                'qpay_response' => $response,
             ]
         );
     }
@@ -450,7 +450,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
                 'orderDescription' => $reference,
                 'sourceOrderNumber' => $this->authorizedData['orderNumber'],
                 'amount' => $price->getAmount()->asNumeric(),
-                'currency' => $price->getCurrency()->getShortName()
+                'currency' => $price->getCurrency()->getShortName(),
             ];
 
             // add fingerprint
@@ -463,7 +463,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
                 $request['sourceOrderNumber'],
                 $request['orderDescription'],
                 $request['amount'],
-                $request['currency']
+                $request['currency'],
             ]);
         } else {
             // default clearing auth
@@ -477,7 +477,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
                 'requestFingerprint' => '',
                 'orderNumber' => $this->authorizedData['orderNumber'],
                 'amount' => $price->getAmount()->asNumeric(),
-                'currency' => $price->getCurrency()->getShortName()
+                'currency' => $price->getCurrency()->getShortName(),
             ];
 
             // add fingerprint
@@ -489,7 +489,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
                 $request['language'],
                 $request['orderNumber'],
                 $request['amount'],
-                $request['currency']
+                $request['currency'],
             ]);
         }
 
@@ -514,7 +514,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
                 [
                     'qpay_amount' => (string)$price,
                     'qpay_command' => $request['command'],
-                    'qpay_response' => $response
+                    'qpay_response' => $response,
                 ]
             );
         } elseif ($response['errors']) {
@@ -533,7 +533,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
                 [
                     'qpay_amount' => (string)$price,
                     'qpay_command' => $request['command'],
-                    'qpay_response' => $response
+                    'qpay_response' => $response,
                 ]
             );
         } else {
@@ -564,7 +564,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
             'orderNumber' => $reference,
             'amount' => $price->getAmount()->asNumeric(),
             'currency' => $price->getCurrency()->getShortName(),
-            'merchantReference' => $transactionId
+            'merchantReference' => $transactionId,
         ];
 
         // add fingerprint
@@ -577,7 +577,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
             $request['orderNumber'],
             $request['amount'],
             $request['currency'],
-            $request['merchantReference']
+            $request['merchantReference'],
         ]);
 
         // execute request
@@ -595,7 +595,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
                 [
                     'qpay_amount' => (string)$price,
                     'qpay_command' => $request['command'],
-                    'qpay_response' => $response
+                    'qpay_response' => $response,
                 ]
             );
         } elseif ($response['errorCode']) {
@@ -609,7 +609,7 @@ class QPay extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramework
                 [
                     'qpay_amount' => (string)$price,
                     'qpay_command' => $request['command'],
-                    'qpay_response' => $response
+                    'qpay_response' => $response,
                 ]
             );
         } else {

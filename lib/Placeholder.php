@@ -176,7 +176,7 @@ class Placeholder
                     'placeholderConfig' => $placeholderConfig,
                     'document' => $document,
                     'params' => $params,
-                    'contentString' => $contentString];
+                    'contentString' => $contentString, ];
             }
         }
 

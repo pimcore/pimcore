@@ -37,10 +37,12 @@ class Item extends AbstractBlockItem
         $element = $this->getElement($args[0]);
         $class = 'Pimcore\\Model\\Document\\Tag\\' . str_replace('get', '', $func);
 
+        if ($element === null) {
+            return new $class;
+        }
+
         if (!strcasecmp(get_class($element), $class)) {
             return $element;
-        } elseif ($element === null) {
-            return new $class;
         }
 
         return null;

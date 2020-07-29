@@ -124,7 +124,7 @@ class PostStateChange
             try {
                 $this->cacheClearer->setRunCallback($runCallback);
                 $this->cacheClearer->clear($environment, [
-                    'ansi' => $io->isDecorated()
+                    'ansi' => $io->isDecorated(),
                 ]);
             } catch (ProcessFailedException $e) {
                 // noop - output should be enough

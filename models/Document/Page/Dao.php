@@ -61,7 +61,7 @@ class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDao
         parent::create();
 
         $this->db->insert('documents_page', [
-            'id' => $this->model->getId()
+            'id' => $this->model->getId(),
         ]);
     }
 

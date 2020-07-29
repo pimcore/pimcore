@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Tool\Serialize;
 
-class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -58,7 +58,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -72,7 +72,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -86,7 +86,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -100,7 +100,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array|null
@@ -113,7 +113,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
                 foreach ($data as $point) {
                     $points[] = [
                         'latitude' => $point->getLatitude(),
-                        'longitude' => $point->getLongitude()
+                        'longitude' => $point->getLongitude(),
                     ];
                 }
 
@@ -151,7 +151,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
      * @see Data::getVersionPreview
      *
      * @param array|null $data
-     * @param null|DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -309,7 +309,7 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -324,20 +324,20 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
                 foreach ($value as $point) {
                     $result[] = [
                         $point->getLatitude(),
-                        $point->getLongitude()
+                        $point->getLongitude(),
                     ];
                 }
             }
 
             return [
-                'value' => json_encode($result)
+                'value' => json_encode($result),
             ];
         }
     }
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -358,5 +358,37 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
         }
 
         return null;
+    }
+
+    /**
+     *
+     * @param DataObject\Data\Geopoint[]|null $oldValue
+     * @param DataObject\Data\Geopoint[]|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!is_array($oldValue) || !is_array($newValue)
+            || count($oldValue) != count($newValue)) {
+            return false;
+        }
+
+        $fd = new Geopoint();
+
+        $oldValue = array_values($oldValue);
+        $newValue = array_values($newValue);
+
+        foreach ($oldValue as $p => $point) {
+            if (!$fd->isEqual($oldValue[$p], $newValue[$p])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

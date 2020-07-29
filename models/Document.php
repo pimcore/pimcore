@@ -957,7 +957,7 @@ class Document extends Element\AbstractElement
             $path = urlencode_ignore_slash($path);
 
             $event = new GenericEvent($this, [
-                'frontendPath' => $path
+                'frontendPath' => $path,
             ]);
             \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::DOCUMENT_PATH, $event);
             $path = $event->getArgument('frontendPath');

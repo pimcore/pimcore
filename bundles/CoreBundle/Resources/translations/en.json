@@ -26,6 +26,7 @@
   "OK": "OK",
   "search_replace_assignments_error": "Please select items where to replace and a new target item.",
   "replace_assignments_in_selected_elements": "Replace assignments in selected elements",
+  "replace_assignments_in_all_elements": "Replace assignments in all elements",
   "search_replace_assignments": "Search & Replace Assignments",
   "imageadvanced": "Image Advanced",
   "filter_active_message": "Do you want to export only the filtered values?",
@@ -247,6 +248,7 @@
   "main_site": "Main Site",
   "filename": "Filename",
   "unsupported_filetype": "Unsupported Filetype",
+  "different_number_of_columns": "Different number of columns",
   "email_log_resend_window_success_message": "The email has been sent successfully to all recipients.",
   "email_log_resend_window_error_message": "An error occurred. The email has not been resent.",
   "error_jobs": "The following jobs failed",
@@ -492,6 +494,7 @@
   "add_variant": "Add variant",
   "delete_message_dependencies": "There are dependencies, delete anyway?",
   "delete_message": "Do you really want to delete this item?",
+  "delete_class_message": "Do you really want to delete class '%s' ?",
   "delete_message_batch": "Do you really want to delete these elements?",
   "delete_error_batch": "Following items cannot be deleted, do you wanna proceed with deleting the remaining?",
   "delete_error": "The item cannot be deleted. Reason:",
@@ -949,6 +952,11 @@
   "import_configuration": "Import Configuration From JSON",
   "property_name": "Property name",
   "force_value": "Force value",
+  "composite_indices": "Composite indices",
+  "fieldlookup": "Field Lookup",
+  "show_fieldlookup": "Show Field Lookup",
   "no_value_set": "no value set",
-  "composite_indices": "Composite indices"
+  "batch_change_language": "Batch update language",
+  "generate_type_declarations" : "Generate Type Declarations",
+  "brick_limit_reached": "Limit ({bricklimit}) reached for brick: {brickname}"
 }

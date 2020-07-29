@@ -25,7 +25,7 @@ class AdminStyle
     /**
      * @var string
      */
-    protected $elementCssClass;
+    protected $elementCssClass = '';
 
     /**
      * @var string
@@ -53,7 +53,7 @@ class AdminStyle
             if ($element->getType() == 'folder') {
                 $this->elementIconClass = 'pimcore_icon_folder';
                 $this->elementQtipConfig = [
-                    'title' => 'ID: ' . $element->getId()
+                    'title' => 'ID: ' . $element->getId(),
                 ];
             } else {
                 if ($element->getClass()->getIcon()) {
@@ -64,12 +64,12 @@ class AdminStyle
 
                 $this->elementQtipConfig = [
                     'title' => 'ID: ' . $element->getId(),
-                    'text' => 'Type: ' . $element->getClass()->getName()
+                    'text' => 'Type: ' . $element->getClass()->getName(),
                 ];
             }
         } elseif ($element instanceof Model\Asset) {
             $this->elementQtipConfig = [
-                'title' => 'ID: ' . $element->getId()
+                'title' => 'ID: ' . $element->getId(),
             ];
 
             if ($element->getType() == 'folder') {
@@ -85,7 +85,7 @@ class AdminStyle
         } elseif ($element instanceof Model\Document) {
             $this->elementQtipConfig = [
                 'title' => 'ID: ' . $element->getId(),
-                'text' => 'Type: ' . $element->getType()
+                'text' => 'Type: ' . $element->getType(),
             ];
 
             $this->elementIconClass = 'pimcore_icon_' . $element->getType();
@@ -110,6 +110,10 @@ class AdminStyle
                     $this->elementIconClass = 'pimcore_icon_folder';
                 }
             }
+
+            if ($element->getProperty('navigation_exclude')) {
+                $this->appendElementCssClass('pimcore_navigation_exclude');
+            }
         }
     }
 
@@ -121,6 +125,18 @@ class AdminStyle
     public function setElementCssClass($elementCssClass)
     {
         $this->elementCssClass = $elementCssClass;
+
+        return $this;
+    }
+
+    /**
+     * @param string $elementCssClass
+     *
+     * @return $this
+     */
+    public function appendElementCssClass($elementCssClass)
+    {
+        $this->elementCssClass .= ' ' . $elementCssClass;
 
         return $this;
     }

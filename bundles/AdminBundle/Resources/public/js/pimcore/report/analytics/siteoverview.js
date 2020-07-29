@@ -159,7 +159,7 @@ pimcore.report.analytics.overview = Class.create(pimcore.report.abstract, {
         queryString.site = this.site;
 
         Ext.get(this.iframeId).dom.setAttribute("src",
-                                "/admin/reports/analytics/siteoverview?" + Ext.Object.toQueryString(queryString));
+                                Routing.getBaseUrl() + "/admin/reports/analytics/siteoverview?" + Ext.Object.toQueryString(queryString));
     }
 });
 

@@ -21,8 +21,6 @@ use Pimcore\Tool;
 
 class Language extends Model\DataObject\ClassDefinition\Data\Select
 {
-    use Model\DataObject\Traits\SimpleComparisonTrait;
-
     /**
      * Static type of this element
      *
@@ -50,7 +48,7 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
 
             $options[] = [
                 'key' => $translation,
-                'value' => $short
+                'value' => $short,
             ];
         }
 

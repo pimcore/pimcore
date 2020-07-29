@@ -115,7 +115,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     }
 
     /**
-     * @Route("/login/lostpassword")
+     * @Route("/login/lostpassword", name="pimcore_admin_login_lostpassword")
      * @TemplatePhp()
      */
     public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionListener $csrfProtectionListener, Config $config)
@@ -147,7 +147,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
                 $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
                     'token' => $token,
-                    'reset' => 'true'
+                    'reset' => 'true',
                 ], UrlGeneratorInterface::ABSOLUTE_URL);
 
                 try {
@@ -183,7 +183,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     }
 
     /**
-     * @Route("/login/deeplink")
+     * @Route("/login/deeplink", name="pimcore_admin_login_deeplink")
      * @TemplatePhp()
      */
     public function deeplinkAction(Request $request)
@@ -198,7 +198,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             if (strpos($queryString, 'token')) {
                 $url = $this->generateUrl('pimcore_admin_login', [
                     'deeplink' => $deeplink,
-                    'perspective' => $perspective
+                    'perspective' => $perspective,
                 ]);
 
                 $url .= '&' . $queryString;
@@ -207,7 +207,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             } elseif ($queryString) {
                 return new ViewModel([
                     'tab' => $deeplink,
-                    'perspective' => $perspective
+                    'perspective' => $perspective,
                 ]);
             }
         }
@@ -222,7 +222,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
         $view = new ViewModel([
             'config' => $config,
-            'pluginCssPaths' => $bundleManager->getCssPaths()
+            'pluginCssPaths' => $bundleManager->getCssPaths(),
         ]);
 
         return $view;

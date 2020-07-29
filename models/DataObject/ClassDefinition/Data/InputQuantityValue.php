@@ -43,7 +43,7 @@ class InputQuantityValue extends QuantityValue
      */
     public $queryColumnType = [
         'value' => 'varchar(255)',
-        'unit' => 'bigint(20)'
+        'unit' => 'bigint(20)',
     ];
 
     /**
@@ -53,7 +53,7 @@ class InputQuantityValue extends QuantityValue
      */
     public $columnType = [
         'value' => 'varchar(255)',
-        'unit' => 'bigint(20)'
+        'unit' => 'bigint(20)',
     ];
 
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\InputQuantityValue';

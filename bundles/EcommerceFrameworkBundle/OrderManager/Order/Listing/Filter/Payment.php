@@ -34,7 +34,7 @@ class Payment implements OrderListFilterInterface
      */
     protected $allowedValues = [
         self::PAYMENT_STATE_OK,
-        self::PAYMENT_STATE_FAIL
+        self::PAYMENT_STATE_FAIL,
     ];
 
     /**

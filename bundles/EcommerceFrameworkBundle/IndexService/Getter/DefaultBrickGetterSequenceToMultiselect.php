@@ -93,7 +93,7 @@ class DefaultBrickGetterSequenceToMultiselect implements GetterInterface
 
             $resolver->setDefaults([
                 'invert' => false,
-                'forceBool' => false
+                'forceBool' => false,
             ]);
 
             foreach (['invert', 'forceBool'] as $boolType) {

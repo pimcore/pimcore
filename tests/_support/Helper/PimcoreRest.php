@@ -125,7 +125,7 @@ class PimcoreRest extends REST
 
         // add API key to global params when using the REST module directly
         $this->globalParams = array_merge($this->globalParams, [
-            'apikey' => $apiKey
+            'apikey' => $apiKey,
         ]);
     }
 
@@ -184,7 +184,7 @@ class PimcoreRest extends REST
                 'password' => Authentication::getPasswordHash($username, $password),
                 'active' => true,
                 'apiKey' => $apikey,
-                'admin' => $admin
+                'admin' => $admin,
             ]);
         }
 

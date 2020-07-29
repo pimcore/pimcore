@@ -562,7 +562,7 @@ function closureHash(Closure $closure)
 
     $hash = md5(json_encode([
         $content,
-        $ref->getStaticVariables()
+        $ref->getStaticVariables(),
     ]));
 
     return $hash;

@@ -29,7 +29,7 @@ class EventedControllerListener implements EventSubscriberInterface
     {
         return [
             KernelEvents::CONTROLLER => 'onKernelController',
-            KernelEvents::RESPONSE => 'onKernelResponse'
+            KernelEvents::RESPONSE => 'onKernelResponse',
         ];
     }
 

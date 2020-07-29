@@ -58,7 +58,7 @@ class TagsGetter implements GetterInterface
     protected function configureOptionsResolver(string $resolverName, OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'includeParentTags' => false
+            'includeParentTags' => false,
         ]);
 
         $resolver->setAllowedTypes('includeParentTags', 'bool');

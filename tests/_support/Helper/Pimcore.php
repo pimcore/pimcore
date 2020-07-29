@@ -41,7 +41,7 @@ class Pimcore extends Module\Symfony
             'purge_class_directory' => true,
 
             // initializes objects from definitions, only if connect_db and initialize_db
-            'setup_objects' => false
+            'setup_objects' => false,
         ]);
 
         parent::__construct($moduleContainer, $config);
@@ -118,7 +118,7 @@ class Pimcore extends Module\Symfony
     {
         $directories = [
             PIMCORE_CLASS_DIRECTORY,
-            PIMCORE_ASSET_DIRECTORY
+            PIMCORE_ASSET_DIRECTORY,
         ];
 
         $filesystem = new Filesystem();
@@ -210,7 +210,7 @@ class Pimcore extends Module\Symfony
         $installer->setImportDatabaseDataDump(false);
         $installer->setupDatabase([
             'username' => 'admin',
-            'password' => microtime()
+            'password' => microtime(),
         ]);
 
         $this->debug(sprintf('[DB] Initialized the test DB %s', $dbName));

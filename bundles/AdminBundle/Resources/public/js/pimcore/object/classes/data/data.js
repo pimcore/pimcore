@@ -96,21 +96,6 @@ pimcore.object.classes.data.data = Class.create({
             disabled: !in_array("mandatory",this.availableSettingsFields) || this.isInCustomLayoutEditor()
         });
 
-        if (this.supportsUnique()) {
-            this.uniqueCheckbox = new Ext.form.field.Checkbox({
-                fieldLabel: t("unique"),
-                name: "unique",
-                itemId: "unique",
-                checked: this.datax.unique,
-                autoEl: {
-                    tag: 'div',
-                    'data-qtip': t('unique_qtip')
-                },
-                hidden: true
-            });
-        }
-
-
         var standardSettings = [
             {
                 xtype: "textfield",
@@ -175,7 +160,8 @@ pimcore.object.classes.data.data = Class.create({
                 autoEl: {
                     tag: 'div',
                     'data-qtip': t('unique_qtip')
-                }
+                },
+                disabled: this.isInCustomLayoutEditor()
             });
             standardSettings.push(this.uniqueCheckbox);
         }

@@ -196,7 +196,7 @@ class NotificationSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            'workflow.completed' => ['onWorkflowCompleted', 0]
+            'workflow.completed' => ['onWorkflowCompleted', 0],
         ];
     }
 }

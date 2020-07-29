@@ -113,6 +113,7 @@ pimcore.object.classes.data.time = Class.create(pimcore.object.classes.data.data
                     xtype: 'button',
                     text: t('reset'),
                     handler: function() {
+                        minmaxSet.getComponent('increment').reset();
                         minmaxSet.getComponent('minTime').reset();
                         minmaxSet.getComponent('maxTime').reset();
                     }
@@ -137,7 +138,8 @@ pimcore.object.classes.data.time = Class.create(pimcore.object.classes.data.data
             Ext.apply(this.datax,
                 {
                     minValue: source.datax.minValue,
-                    maxValue: source.datax.maxValue
+                    maxValue: source.datax.maxValue,
+                    increment: source.datax.increment
                 });
         }
     },
