@@ -27,7 +27,7 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
 
 
 <div id="loginform">
-    <form method="post" action="<?= $view->router()->path('pimcore_admin_login_check', ['perspective' => strip_tags($view->request()->getParameter('perspective'))]) ?>">
+    <form id="form-element" method="post" action="<?= $view->router()->path('pimcore_admin_login_check', ['perspective' => strip_tags($view->request()->getParameter('perspective'))]) ?>">
 
         <?php if ($this->error) { ?>
             <div class="text error">
@@ -89,14 +89,22 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
         window.localStorage.setItem(symfonyToolbarKey, 'none');
     }
 
-    function refreshCsrfToken() {
-        var request = new XMLHttpRequest();
-        request.open('GET', '<?= $view->router()->path('pimcore_admin_login_csrf_token') ?>', false);
+    var formElement = document.getElementById('form-element');
+    var csrfRefreshInProgress = false;
 
+    function refreshCsrfToken() {
+        csrfRefreshInProgress = true;
+        formElement.style.opacity = '0.3';
+
+        var request = new XMLHttpRequest();
+        request.open('GET', '<?= $view->router()->path('pimcore_admin_login_csrf_token') ?>');
         request.onload = function () {
             if (this.status >= 200 && this.status < 400) {
                 var res = JSON.parse(this.response);
                 document.getElementById('csrfToken').setAttribute('value', res['csrfToken']);
+
+                formElement.style.opacity = '1';
+                csrfRefreshInProgress = false;
             }
         };
         request.send();
@@ -109,6 +117,12 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
     });
 
     window.setInterval(refreshCsrfToken, <?= $view->csrfTokenRefreshInterval ?>);
+
+    formElement.addEventListener("submit", function(evt) {
+        if(csrfRefreshInProgress) {
+            evt.preventDefault();
+        }
+    }, true);
 
 </script>
 
