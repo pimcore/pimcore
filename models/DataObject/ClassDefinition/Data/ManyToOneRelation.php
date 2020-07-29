@@ -350,7 +350,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof Element\AbstractElement) {
-            return $data->getRealFullPath();
+            return Element\Service::getElementType($data).' '.$data->getRealFullPath();
         }
 
         return '';
