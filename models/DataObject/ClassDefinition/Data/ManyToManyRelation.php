@@ -426,7 +426,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
             foreach ($data as $element) {
                 if ($element instanceof Element\ElementInterface) {
-                    $paths[] = get_class($element) .': '. $element->getRealFullPath();
+                    $paths[] = Element\Service::getElementType($element) .' '. $element->getRealFullPath();
                 }
             }
 
