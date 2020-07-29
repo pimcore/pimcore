@@ -1692,7 +1692,7 @@ class Asset extends Element\AbstractElement
 
     /**
      * @param string $name
-     * @param string $type can be "asset", "checkbox", "date", "document", "input" or "textarea"
+     * @param string $type can be "asset", "checkbox", "date", "document", "input", "object" or "textarea"
      * @param mixed $data
      * @param string|null $language
      *
