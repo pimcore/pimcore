@@ -37,7 +37,7 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
 
         <input type="text" name="username" autocomplete="username" placeholder="<?= $this->translate("Username"); ?>" required autofocus>
         <input type="password" name="password" autocomplete="current-password" placeholder="<?= $this->translate("Password"); ?>" required>
-        <input type="hidden" name="csrfToken" value="<?= $this->csrfToken ?>">
+        <input type="hidden" name="csrfToken" id="csrfToken" value="<?= $this->csrfToken ?>">
 
         <button type="submit"><?= $this->translate("Login"); ?></button>
     </form>
@@ -88,6 +88,28 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
     if(!window.localStorage.getItem(symfonyToolbarKey)) {
         window.localStorage.setItem(symfonyToolbarKey, 'none');
     }
+
+    function refreshCsrfToken() {
+        var request = new XMLHttpRequest();
+        request.open('GET', '<?= $view->router()->path('pimcore_admin_login_csrf_token') ?>', false);
+
+        request.onload = function () {
+            if (this.status >= 200 && this.status < 400) {
+                var res = JSON.parse(this.response);
+                document.getElementById('csrfToken').setAttribute('value', res['csrfToken']);
+            }
+        };
+        request.send();
+    }
+
+    document.addEventListener('visibilitychange', function(ev) {
+        if(document.visibilityState === 'visible') {
+            refreshCsrfToken();
+        }
+    });
+
+    window.setInterval(refreshCsrfToken, <?= $view->csrfTokenRefreshInterval ?>);
+
 </script>
 
 <?php $view->slots()->stop() ?>
