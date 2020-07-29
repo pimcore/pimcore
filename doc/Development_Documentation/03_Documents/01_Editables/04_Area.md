@@ -61,6 +61,19 @@ Brick-specific configurations are passed using the `params` configuration (see a
     ]); ?>
 </div>
 ```
+```twig
+<div>
+    {{ pimcore_area('myArea', {
+        type: 'gallery-single-images',
+        params: {
+            'param1': 123,
+            'forceEditInView': true,
+            'editWidth': '800px',
+            'editHeight': '500px'
+        }
+    }) }}
+</div>
+```
 
 Get the params in your brick:
 
