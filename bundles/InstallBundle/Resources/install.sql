@@ -50,7 +50,7 @@ CREATE TABLE `assets_metadata` (
   `name` varchar(190) NOT NULL,
   `language` varchar(10) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
-  `data` text,
+  `data` longtext,
   PRIMARY KEY (`cid`, `name`, `language`),
 	INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -465,7 +465,7 @@ CREATE TABLE `search_backend_data` (
   `maintype` varchar(8) NOT NULL DEFAULT '',
   `type` varchar(20) DEFAULT NULL,
   `subtype` varchar(190) DEFAULT NULL,
-  `published` int(11) unsigned DEFAULT NULL,
+  `published` tinyint(1) unsigned DEFAULT NULL,
   `creationDate` int(11) unsigned DEFAULT NULL,
   `modificationDate` int(11) unsigned DEFAULT NULL,
   `userOwner` int(11) DEFAULT NULL,

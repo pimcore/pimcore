@@ -17,6 +17,7 @@ namespace Pimcore\Model\Search\Backend;
 use ForceUTF8\Encoding;
 use Pimcore\Event\Model\SearchBackendEvent;
 use Pimcore\Event\SearchBackendEvents;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -29,6 +30,9 @@ use Pimcore\Model\Search\Backend\Data\Dao;
  */
 class Data extends \Pimcore\Model\AbstractModel
 {
+    // if a word occures more often than this number it will get stripped to keep the search_backend_data table from getting too big
+    const MAX_WORD_OCCURENCES = 3;
+
     /**
      * @var Data\Id
      */
@@ -413,8 +417,16 @@ class Data extends \Pimcore\Model\AbstractModel
             $elementMetadata = $element->getMetadata();
             if (is_array($elementMetadata)) {
                 foreach ($elementMetadata as $md) {
-                    if (is_scalar($md['data'])) {
-                        $this->data .= ' ' . $md['name'] . ':' . $md['data'];
+                    try {
+                        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+                        /** @var \Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
+                        $instance = $loader->build($md['type']);
+                        $dataForSearchIndex = $instance->getDataForSearchIndex($md['data'], $md);
+                        if ($dataForSearchIndex) {
+                            $this->data .= ' ' . $dataForSearchIndex;
+                        }
+                    } catch (UnsupportedException $e) {
+                        Logger::error('asset metadata type ' . $md['type'] . ' could not be resolved');
                     }
                 }
             }
@@ -507,10 +519,26 @@ class Data extends \Pimcore\Model\AbstractModel
         $data = str_replace("\t", '', $data);
         $data = preg_replace('#[ ]+#', ' ', $data);
 
-        // deduplication
-        $arr = explode(' ', $data);
-        $arr = array_unique($arr);
-        $data = implode(' ', $arr);
+        $minWordLength = $this->getDao()->getMinWordLengthForFulltextIndex();
+        $maxWordLength = $this->getDao()->getMaxWordLengthForFulltextIndex();
+
+        $words = explode(' ', $data);
+
+        $wordOccurrences = [];
+        foreach ($words as $key => $word) {
+            $wordLength = \mb_strlen($word);
+            if ($wordLength < $minWordLength || $wordLength > $maxWordLength) {
+                unset($words[$key]);
+                continue;
+            }
+
+            $wordOccurrences[$word] = ($wordOccurrences[$word] ?? 0) + 1;
+            if ($wordOccurrences[$word] > self::MAX_WORD_OCCURENCES) {
+                unset($words[$key]);
+            }
+        }
+
+        $data = implode(' ', $words);
 
         return $data;
     }
