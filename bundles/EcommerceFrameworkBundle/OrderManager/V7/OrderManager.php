@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\OrderUpdateNotPossibleExce
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentFactoryInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\VoucherServiceInterface;
 use Pimcore\Event\Ecommerce\OrderManagerEvents;
 use Pimcore\Event\Model\Ecommerce\OrderManagerEvent;
