@@ -264,6 +264,44 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
+     * Push editmode properties into the JS config array
+     *
+     * @param array $properties
+     *
+     * @return string|void
+     */
+    protected function outputBrickProperties(array $properties)
+    {
+        // filter all non-scalar values before we pass them to the config object (JSON)
+        $clean = function ($value) use (&$clean) {
+            if (is_array($value)) {
+                foreach ($value as &$item) {
+                    $item = $clean($item);
+                }
+            } elseif (!is_scalar($value)) {
+                $value = null;
+            }
+
+            return $value;
+        };
+        $properties = $clean($properties);
+
+        $code = '
+            <script>
+                brickProperties = ' . json_encode($properties, JSON_PRETTY_PRINT) . ';
+            </script>
+        ';
+
+        if (json_last_error()) {
+            throw new \Exception('json encode failed: ' . json_last_error_msg());
+        }
+
+        $this->outputEditmode($code);
+
+        return;
+    }
+
+    /**
      * Push editmode options into the JS config array
      *
      * @param array $options

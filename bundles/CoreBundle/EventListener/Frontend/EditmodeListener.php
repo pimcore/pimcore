@@ -288,6 +288,7 @@ class EditmodeListener implements EventSubscriberInterface
         // set var for editable configurations which is filled by Document\Tag::admin()
         $headHtml .= '<script>
             var editableConfigurations = [];
+            var brickProperties = [];
             var pimcore_document_id = ' . $document->getId() . ';
         </script>';
 
@@ -328,6 +329,8 @@ class EditmodeListener implements EventSubscriberInterface
                 '/bundles/pimcoreadmin/js/pimcore/elementservice.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/edit/dnd.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/tag.js',
+                '/bundles/pimcoreadmin/js/pimcore/element/properties.js',
+                '/bundles/pimcoreadmin/js/pimcore/document/tags/area/properties.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/tags/block.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/tags/scheduledblock.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/tags/date.js',

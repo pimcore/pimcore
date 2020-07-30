@@ -160,6 +160,12 @@ class Areablock extends Model\Document\Tag implements BlockInterface
                 $disabled = true;
             }
 
+            $brickTypeLimit = $this->options['limits'][$this->currentIndex['type']] ?? 100000;
+            $brickTypeUsageCounter = $this->brickTypeUsageCounter[$this->currentIndex['type']] ?? 0;
+            if ($brickTypeUsageCounter >= $brickTypeLimit) {
+                $disabled = true;
+            }
+
             if (!$this->getTagHandler()->isBrickEnabled($this, $index['type']) && $options['dontCheckEnabled'] != true) {
                 $disabled = true;
             }
@@ -214,6 +220,14 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         $info->setParams($params);
 
         if ($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
+            //resolve and assign area brick properties
+            $typeIndex = array_search($this->currentIndex['type'], $options['allowed']);
+            if ($typeIndex >= 0 && $options['types'][$typeIndex]['supportProperties'] ?? false) {
+                $properties = $this->getTagHandler()->resolveAreaProperties($info);
+                $info->setProperties($properties);
+                $this->options['properties'][$this->current] = $properties;
+            }
+
             $this->getTagHandler()->renderAreaFrontend($info);
             $this->brickTypeUsageCounter += [$this->currentIndex['type'] => 0];
             $this->brickTypeUsageCounter[$this->currentIndex['type']]++;
@@ -354,6 +368,9 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     {
         $this->current = 0;
 
+        // output area brick properties
+        $this->outputBrickProperties($this->options['properties']);
+
         // remove the current block which was set by $this->start()
         $this->getBlockState()->popBlock();
 
@@ -399,6 +416,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         $this->outputEditmode('<div class="pimcore_block_type" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_options" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_visibility" ' . $attr . '></div>');
+        $this->outputEditmode('<div class="pimcore_block_properties" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_label" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_clear" ' . $attr . '></div>');
 
@@ -473,6 +491,8 @@ class Areablock extends Model\Document\Tag implements BlockInterface
             if (empty($options['limit'])) {
                 $options['limit'] = 1000000;
             }
+
+            $options['properties'] = [];
 
             $this->options = $options;
         }

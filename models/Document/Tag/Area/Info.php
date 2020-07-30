@@ -60,6 +60,11 @@ class Info
     public $index;
 
     /**
+     * @var array
+     */
+    public $properties = [];
+
+    /**
      * @return string
      */
     public function getId()
@@ -207,6 +212,26 @@ class Info
     public function getIndex()
     {
         return $this->index;
+    }
+
+    /**
+     * @return array
+     */
+    public function getProperties()
+    {
+        return $this->properties;
+    }
+
+    /**
+     * @param array $properties
+     *
+     * @return $this
+     */
+    public function setProperties($properties)
+    {
+        $this->properties = $properties;
+
+        return $this;
     }
 
     /**

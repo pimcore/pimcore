@@ -39,7 +39,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         this.visibilityButtons = {};
 
         var plusButton, minusButton, upButton, downButton, optionsButton, plusDiv, minusDiv, upDiv, downDiv, optionsDiv,
-            typeDiv, typeButton, labelText, editDiv, editButton, visibilityDiv, labelDiv, plusUpDiv, plusUpButton;
+            typeDiv, typeButton, labelText, editDiv, editButton, visibilityDiv, labelDiv, plusUpDiv, plusUpButton, propertiesDiv, propertiesButton;
 
         this.elements = Ext.get(id).query('.pimcore_block_entry[data-name="' + name + '"][key]');
 
@@ -84,6 +84,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             for (var i = 0; i < this.elements.length; i++) {
                 this.elements[i].key = this.elements[i].getAttribute("key");
                 this.elements[i].type = this.elements[i].getAttribute("type");
+                this.elements[i].properties = brickProperties[i];
 
                 // edit button
                 try {
@@ -226,6 +227,18 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 this.visibilityButtons[this.elements[i].key].render(visibilityDiv);
                 if(this.elements[i].dataset.hidden == "true") {
                     Ext.get(this.elements[i]).addCls('pimcore_area_hidden');
+                }
+
+                // Properties button
+                let typeIdx = this.allowedTypes.indexOf(this.elements[i].type);
+                if (typeIdx >= 0 && this.options.types[typeIdx].supportProperties === true) {
+                    propertiesDiv = Ext.get(this.elements[i]).query('.pimcore_block_properties[data-name="' + this.name + '"]')[0];
+                    propertiesButton = new Ext.Button({
+                        cls: "pimcore_block_button_properties",
+                        iconCls: "pimcore_icon_properties",
+                        handler: this.propertiesOpen.bind(this, this.elements[i])
+                    });
+                    propertiesButton.render(propertiesDiv);
                 }
 
                 labelDiv = Ext.get(Ext.get(this.elements[i]).query('.pimcore_block_label[data-name="' + this.name + '"]')[0]);
@@ -470,6 +483,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         var item = {
             identifier: areaIdentifier,
             type: element.getAttribute("type"),
+            properties: element.properties,
             values: {}
         };
 
@@ -563,11 +577,11 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                             },
                             getType: function () {
                                 return value.type;
-                            }
+                            },
                         });
                     });
 
-                    this.addBlockAfter(element, item.type);
+                    this.addBlockAfter(element, item.type, item.properties);
                 }.bind(this)
             }));
         }
@@ -649,7 +663,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
             onNodeDrop : function(target, dd, e, data){
                 if(data.fromToolbar) {
-                    this.addBlockAt(data.brick.type, target.getAttribute("index"));
+                    this.addBlockAt(data.brick.type, target.getAttribute("index"), null);
                     return true;
                 } else {
                     this.moveBlockTo(data.sourceEl, target.getAttribute("index"));
@@ -772,7 +786,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             text: menuText,
             iconCls: "pimcore_icon_area",
             listeners: {
-                "click": this[addBLockFunction].bind(scope, element, brick.type)
+                "click": this[addBLockFunction].bind(scope, element, brick.type, null)
             }
         };
 
@@ -798,18 +812,19 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         return nextKey;
     },
 
-    addBlockAfter : function (element, type) {
+    addBlockAfter : function (element, type, properties) {
         var index = this.getElementIndex(element) + 1;
-        this.addBlockAt(type, index);
+        this.addBlockAt(type, index, properties);
     },
 
-    addBlockBefore : function (element, type) {
+    addBlockBefore : function (element, type, properties) {
         var index = this.getElementIndex(element);
-        this.addBlockAt(type, index);
+        this.addBlockAt(type, index, properties);
     },
 
-    addBlockAt: function (type, index) {
+    addBlockAt: function (type, index, properties) {
         var limits = this.options["limits"] || {};
+        var properties = properties || [];
 
         if(typeof this.options["limit"] != "undefined" && this.elements.length >= this.options.limit) {
             Ext.MessageBox.alert(t("error"), t("limit_reached"));
@@ -830,7 +845,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         nextKey++;
         var args = [index, 0, {
             key: nextKey,
-            type: type
+            type: type,
+            properties: properties,
         }];
 
         this.elements.splice.apply(this.elements, args);
@@ -926,6 +942,41 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         return index;
     },
 
+    propertiesOpen: function (element) {
+        this.properties = new pimcore.document.tags.properties(element, "document-tag");
+
+        this.propertiesWindow = new Ext.Window({
+            modal: true,
+            width: 650,
+            height: 550,
+            title: t("properties"),
+            bodyStyle: "padding: 10px;",
+            closable: false,
+            autoScroll: true,
+            items: [this.properties.getGrid()],
+            buttons: [{
+                text: t("empty"),
+                handler: function() {
+                    this.properties.emptyGrid();
+                }.bind(this),
+                iconCls: "pimcore_icon_recyclebin"
+            },{
+                text: t("cancel"),
+                handler: function() {
+                    this.propertiesWindow.close();
+                }.bind(this),
+                iconCls: "pimcore_icon_cancel"
+            },{
+                text: t("save"),
+                handler: function() {
+                    element.properties = this.properties.getValues();
+                    this.propertiesWindow.close();
+                }.bind(this),
+                iconCls: "pimcore_icon_save"
+            }]
+        });
+        this.propertiesWindow.show();
+    },
 
     editmodeOpen: function (element) {
 
@@ -1241,7 +1292,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                     data.push({
                         key: this.elements[i].key,
                         type: this.elements[i].type,
-                        hidden: hidden
+                        hidden: hidden,
+                        properties: this.elements[i].properties ?? []
                     });
                 }
             }
@@ -1252,7 +1304,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     getType: function () {
         return "areablock";
-    }
+    },
 });
 
 pimcore.document.tags.areablocktoolbar = false;

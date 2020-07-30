@@ -130,6 +130,18 @@ class DelegatingTagHandler implements TagHandlerInterface
     }
 
     /**
+     * @param Info $info
+     *
+     * @return array
+     */
+    public function resolveAreaProperties(Info $info)
+    {
+        $handler = $this->getHandlerForTag($info->getTag());
+
+        return $handler->resolveAreaProperties($info);
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function renderAction($view, $controller, $action, $parent = null, array $attributes = [], array $query = [], array $options = [])

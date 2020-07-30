@@ -247,6 +247,67 @@ reasons, but a couple of methods could be useful when implementing your own bric
 | `$info->getIndex()`     | Returns the current index inside the areablock   |
 | `$info->getParam($name)`| Retrieve a param passed by `globalParams` or `params` config option  |
 | `$info->getParams()`    | Retrieve all params passed by `globalParams` or `params` config option  |
+| `$info->properties()`    | Retrieve all properties, custom defined in current brick inside the areablock & configured in brick class |
+
+## Brick properties
+Brick properties can be defined in a similar way like element [Properties](../18_Tools_and_Features/07_Properties.md). 
+
+The brick class needs to implement `PropertySupportInterace` to enable properties window on bricks, which  allows you to defined custom properties:
+
+```php
+<?php
+
+namespace AppBundle\Document\Areabrick;
+
+use Pimcore\Extension\Document\Areabrick\PropertySupportInterface;
+
+class Blockquote extends AbstractAreabrick implements PropertySupportInterface
+{
+}
+```
+![Areablock brick properties button](../../../img/bricks-properties-button.png)
+
+![Areablock brick properties window](../../../img/bricks-properties-window.png)
+
+You can also pre-configure properties for bricks by implementing `PropertyConfigurationInterface` which extends `PropertySupportInterface`:
+```php
+<?php
+
+namespace AppBundle\Document\Areabrick;
+use Pimcore\Extension\Document\Areabrick\PropertyConfigurationInterface;
+use Pimcore\Model\Document\Tag\Area\Info;
+
+class Blockquote extends AbstractAreabrick implements PropertyConfigurationInterface
+{
+    /**
+     * @param Info $info
+     * @param array $params contains the custom brick params defined in areablock option `params` or `globalParams`
+     * @return array
+     */
+    public function configureProperties(Info $info, array $params = []):array
+    {
+        return [
+            'myTextProp' => [
+                'type' => 'text', //types allowed: text, select, object, document, asset, bool(checkbox)
+                'description' => 'foo bar awsome ...', // optional
+                'default' => 'my default text' // optional
+            ],
+            'mySelectProp' => [
+                'type' => 'select',
+                'config' => [
+                    'key1' => 'value1',
+                    'key2' => 'value2',
+                ]
+            ],
+            'myObjectProp' => [
+                'type' => 'object',
+                'description' => 'foo bar awsome ...', // optional
+            ]
+        ];
+    }
+}
+```
+You can access brick properties on views using info object `$info->getProperties()`
 
 ## Configuration in Editmode
 

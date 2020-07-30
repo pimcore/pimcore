@@ -17,6 +17,8 @@ namespace Pimcore\Document\Tag;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
+use Pimcore\Extension\Document\Areabrick\PropertyConfigurationInterface;
+use Pimcore\Extension\Document\Areabrick\PropertySupportInterface;
 use Pimcore\Extension\Document\Areabrick\TemplateAreabrickInterface;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Http\ResponseStack;
@@ -160,6 +162,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
             $desc = $brick->getDescription();
             $icon = $brick->getIcon();
             $limit = $options['limits'][$brick->getId()] ?? null;
+            $supportProperties = $brick instanceof PropertySupportInterface;
 
             // autoresolve icon as <bundleName>/Resources/public/areas/<id>/icon.png
             if (null === $icon) {
@@ -190,6 +193,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
                 'type' => $brick->getId(),
                 'icon' => $icon,
                 'limit' => $limit,
+                'supportProperties' => $supportProperties
             ];
         }
 
@@ -344,6 +348,53 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         $this->brickTemplateCache[$cacheKey] = $template;
 
         return $template;
+    }
+
+    /**
+     * @param Info $info
+     *
+     * @return array
+     */
+    public function resolveAreaProperties(Info $info)
+    {
+        $brick = $this->brickManager->getBrick($info->getId());
+
+        if (!$brick instanceof PropertySupportInterface) {
+            return [];
+        }
+
+        $params = $info->getParams();
+        $tag = $info->getTag();
+
+        $properties = $tag->currentIndex['properties'] ?? [];
+
+        $configuredProperties = [];
+        if ($brick instanceof PropertyConfigurationInterface) {
+            $configuredProperties = $brick->configureProperties($info, $params);
+        }
+
+        //resolve config for configured properties
+        foreach ($properties as $pKey => $property) {
+            $properties[$pKey]['configured'] = false;
+            if (isset($configuredProperties[$pKey])) {
+                $configuredProperties[$pKey]['configured'] = true;
+
+                if ($configuredProperties[$pKey]['type'] == $property['type']) {
+                    $configuredProperties[$pKey]['data'] = $property['data'] ?? null;
+                }
+
+                $properties[$pKey] = $configuredProperties[$pKey];
+            }
+        }
+
+        //add properties from configured array not present in saved properties array
+        $addKeys = array_diff(array_keys($configuredProperties), array_keys($properties));
+        foreach ($addKeys as $addKey) {
+            $properties[$addKey] = $configuredProperties[$addKey];
+            $properties[$addKey]['configured'] = true;
+        }
+
+        return $properties;
     }
 
     /**

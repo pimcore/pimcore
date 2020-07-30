@@ -55,6 +55,14 @@ input.cke_dialog_ui_input_tel {
 }
 
 /* pimcore editables */
+.pimcore_hidden {
+    display:none !important;
+}
+
+.pimcore_property_droptarget {
+    min-height: 18px;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/target.svg) right 5px center/17px no-repeat !important;
+}
 
 .pimcore_tag_image {
     position: relative;
@@ -212,7 +220,8 @@ input.cke_dialog_ui_input_tel {
 .pimcore_area_buttons .pimcore_block_amount,
 .pimcore_area_buttons .pimcore_block_type,
 .pimcore_area_buttons .pimcore_block_options,
-.pimcore_area_buttons .pimcore_block_visibility {
+.pimcore_area_buttons .pimcore_block_visibility,
+.pimcore_area_buttons .pimcore_block_properties {
     float: none;
 }
 
@@ -224,7 +233,8 @@ input.cke_dialog_ui_input_tel {
 .pimcore_area_buttons.top .pimcore_block_amount,
 .pimcore_area_buttons.top .pimcore_block_type,
 .pimcore_area_buttons.top .pimcore_block_options,
-.pimcore_area_buttons.top .pimcore_block_visibility {
+.pimcore_area_buttons.top .pimcore_block_visibility,
+.pimcore_area_buttons.top .pimcore_block_properties {
     float: left;
 }
 

@@ -169,4 +169,18 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
 
         return $tagRenderer->getTag($document, $type, $inputName, $options);
     }
+
+    /**
+     * @param Info $info
+     *
+     * @return array
+     */
+    public function getProperties(Info $info): array
+    {
+        if ($this instanceof PropertySupportInterface) {
+            return $info->getProperties();
+        }
+
+        return [];
+    }
 }

@@ -396,6 +396,7 @@ pimcore.document.edit = Class.create({
                         values[editableName] = {};
                         values[editableName].data = editables[i].getValue();
                         values[editableName].type = editables[i].getType();
+                        values[editableName].properties = editables[i].getProperties();
                     }
                 } catch (e) {
                 }
