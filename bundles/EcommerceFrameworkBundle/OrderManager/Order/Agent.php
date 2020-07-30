@@ -144,7 +144,7 @@ class Agent implements OrderAgentInterface
         return $note;
     }
 
-    /**
+     /**
      * change order item
      *
      * @param OrderItem $item
@@ -155,6 +155,7 @@ class Agent implements OrderAgentInterface
     public function itemChangeAmount(OrderItem $item, $amount)
     {
         // init
+       
         $amount = floatval($amount);
 
         // add log note
@@ -163,15 +164,35 @@ class Agent implements OrderAgentInterface
         $oldAmount = $item->getAmount();
         $note->addData('amount.old', 'text', $oldAmount);
         $note->addData('amount.new', 'text', $amount);
-
+        $oldTotalPrice = $item->getTotalPrice();
+        $unitPrice = $oldTotalPrice/$oldAmount;
+        $newTotalPrice =$unitPrice*$amount;
         // change
         $item->setAmount($amount);
-
+        $item->setTotalPrice( $newTotalPrice);
         // save
         $item->save();
         $note->save();
-
+        $this->updateOrderTotal($item,$oldTotalPrice,$newTotalPrice);
         return $note;
+
+    }
+
+    
+    public function updateOrderTotal($item,$oldTotalPrice,$newTotalPrice)
+    {  
+       
+        $order = $item->getParent();
+        $subTotalNetPrice = $order->getSubTotalNetPrice();
+        $subTotalPrice = $order->getSubTotalPrice();
+        $totalNetPrice = $order->getTotalNetPrice();
+        $totalPrice = $order->getTotalPrice();
+        $replacedvalue  = $newTotalPrice -$oldTotalPrice;
+        $order->setSubTotalNetPrice($subTotalNetPrice +$replacedvalue);
+        $order->setSubTotalPrice($subTotalPrice+$replacedvalue);
+        $order->setTotalNetPrice($totalNetPrice+$replacedvalue);
+        $order->setTotalPrice($totalPrice+$replacedvalue);
+        $order->save();
     }
 
     /**
