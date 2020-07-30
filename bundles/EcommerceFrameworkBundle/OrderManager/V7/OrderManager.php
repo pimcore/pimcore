@@ -132,7 +132,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
             $modificationItem->setAmount($modification->getGrossAmount()->asString());
             $modificationItem->setNetAmount($modification->getNetAmount()->asString());
 
-            if ($rule = $modification->getRule()) {
+            if ($modification instanceof ModificatedPrice && $rule = $modification->getRule()) {
                 $modificationItem->setPricingRuleId($rule->getId());
             } else {
                 $modificationItem->setPricingRuleId(null);
