@@ -82,7 +82,7 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
         this.datefield = Ext.create('Ext.form.field.Date', date);
         this.timefield = Ext.create('Ext.form.field.Time', time);
 
-        this.component = Ext.create('Ext.form.FieldContainer', {
+        var componentCfg = {
             layout: 'hbox',
             fieldLabel:this.fieldConfig.title,
             combineErrors:false,
@@ -91,7 +91,13 @@ pimcore.object.tags.datetime = Class.create(pimcore.object.tags.abstract, {
             isDirty: function() {
                 return this.datefield.isDirty() || this.timefield.isDirty()
             }.bind(this)
-        });
+        };
+
+        if (this.fieldConfig.labelWidth) {
+            componentCfg.labelWidth = this.fieldConfig.labelWidth;
+        }
+
+        this.component = Ext.create('Ext.form.FieldContainer', componentCfg);
 
         return this.component;
     },
