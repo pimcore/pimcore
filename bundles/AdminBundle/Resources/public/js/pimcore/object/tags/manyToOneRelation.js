@@ -177,7 +177,6 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
         var href = {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
-            cls: "object_field object_field_type_" + this.type,
             labelWidth: this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100
         };
 
