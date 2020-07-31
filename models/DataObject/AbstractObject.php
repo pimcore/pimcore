@@ -517,11 +517,9 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param bool $isNested
-     *
      * @throws \Exception
      */
-    public function delete(bool $isNested = false)
+    public function delete()
     {
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_DELETE, new DataObjectEvent($this));
 

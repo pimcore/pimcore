@@ -70,7 +70,7 @@ class Page extends TargetingDocument
     /**
      * @inheritdoc
      */
-    public function delete(bool $isNested = false)
+    public function delete()
     {
         if ($this->getId() == 1) {
             throw new \Exception('root-node cannot be deleted');
@@ -92,7 +92,7 @@ class Page extends TargetingDocument
                 $site->delete();
             }
 
-            parent::delete($isNested);
+            parent::delete();
 
             $this->commit();
         } catch (\Exception $e) {
