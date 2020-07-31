@@ -250,7 +250,7 @@ reasons, but a couple of methods could be useful when implementing your own bric
 | `$info->properties()`    | Retrieve all properties, custom defined in current brick inside the areablock & configured in brick class |
 
 ## Brick properties
-Brick properties can be defined in a similar way like element [Properties](../18_Tools_and_Features/07_Properties.md). 
+Brick properties can be defined in a similar way like element [Properties](../../../18_Tools_and_Features/07_Properties.md). 
 
 The brick class needs to implement `PropertySupportInterace` to enable properties window on bricks, which  allows you to defined custom properties:
 
