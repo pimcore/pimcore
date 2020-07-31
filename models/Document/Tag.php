@@ -288,7 +288,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
         $code = '
             <script>
-                brickProperties = ' . json_encode($properties, JSON_PRETTY_PRINT) . ';
+                brickProperties["'. $properties['id'] .'"] = ' . json_encode($properties['data'], JSON_PRETTY_PRINT) . ';
             </script>
         ';
 

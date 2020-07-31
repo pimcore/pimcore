@@ -84,7 +84,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
             for (var i = 0; i < this.elements.length; i++) {
                 this.elements[i].key = this.elements[i].getAttribute("key");
                 this.elements[i].type = this.elements[i].getAttribute("type");
-                this.elements[i].properties = brickProperties[i];
+                this.elements[i].properties = brickProperties[this.id][i] ?? [];
 
                 // edit button
                 try {

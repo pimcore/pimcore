@@ -324,6 +324,22 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     }
 
     /**
+     * @return array
+     */
+    protected function getEditmodeProperties(): array
+    {
+        $configProperties = $this->options['properties'] ?? [];
+
+        $options = parent::getEditmodeOptions();
+        $properties = [
+            'id' => $options['id'],
+            'data' => $configProperties,
+            ];
+
+        return $properties;
+    }
+
+    /**
      * @inheritDoc
      */
     protected function getEditmodeElementAttributes(array $options): array
@@ -369,7 +385,8 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         $this->current = 0;
 
         // output area brick properties
-        $this->outputBrickProperties($this->options['properties']);
+        $properties = $this->getEditmodeProperties();
+        $this->outputBrickProperties($properties);
 
         // remove the current block which was set by $this->start()
         $this->getBlockState()->popBlock();
