@@ -130,9 +130,7 @@ class DelegatingTagHandler implements TagHandlerInterface
     }
 
     /**
-     * @param Info $info
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function resolveAreaProperties(Info $info)
     {

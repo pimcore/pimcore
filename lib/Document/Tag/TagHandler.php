@@ -364,6 +364,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
         }
 
         $params = $info->getParams();
+        /** @var Tag\Areablock $tag */
         $tag = $info->getTag();
 
         $properties = $tag->currentIndex['properties'] ?? [];

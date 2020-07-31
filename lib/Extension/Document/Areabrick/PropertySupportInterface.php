@@ -21,7 +21,7 @@ Interface PropertySupportInterface
 {
     /**
      * @param Info $info
-     * @param array params
+     *
      * @return array
      */
     public function getProperties(Info $info): array;

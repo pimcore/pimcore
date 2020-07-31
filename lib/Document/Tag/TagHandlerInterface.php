@@ -70,4 +70,11 @@ interface TagHandlerInterface
      * @return string
      */
     public function renderAction($view, $controller, $action, $parent = null, array $attributes = [], array $query = [], array $options = []);
+
+    /**
+     * @param Info $info
+     *
+     * @return array
+     */
+    public function resolveAreaProperties(Info $info);
 }
