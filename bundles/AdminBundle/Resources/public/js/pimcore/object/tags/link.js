@@ -95,14 +95,20 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
             value: text
         });
 
-        this.component = new Ext.form.FieldContainer({
+        var componentCfg = {
             fieldLabel: this.fieldConfig.title,
             layout: 'hbox',
             border: false,
             combineErrors: false,
             items: [this.displayField, this.openButton, this.editButton],
             componentCls: "object_field"
-        });
+        };
+
+        if (this.fieldConfig.labelWidth) {
+            componentCfg.labelWidth = this.fieldConfig.labelWidth;
+        }
+
+        this.component = Ext.create('Ext.form.FieldContainer', componentCfg);
 
         return this.component;
     },
