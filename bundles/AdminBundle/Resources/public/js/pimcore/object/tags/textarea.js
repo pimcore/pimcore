@@ -63,9 +63,12 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
             fieldLabel: this.fieldConfig.title,
-            componentCls: "object_field object_field_type_" + this.type,
             labelWidth: labelWidth
         };
+
+        if (!this.fieldConfig.showCharCount) {
+            conf.componentCls = "object_field object_field_type_" + this.type;
+        }
 
         conf.width += conf.labelWidth;
 
