@@ -16,20 +16,20 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\Star
 
 class HobexRequest extends AbstractRequest
 {
-    const STYLE_CARD = "card";
-    const STYLE_PLAIN = "plain";
+    const STYLE_CARD = 'card';
+    const STYLE_PLAIN = 'plain';
 
-    protected $shopperResultUrl = "";
+    protected $shopperResultUrl = '';
 
-    protected $locale = "";
+    protected $locale = '';
 
-    protected $invoiceId = "";
+    protected $invoiceId = '';
 
-    protected $memo = "";
+    protected $memo = '';
 
     protected $brands = []; //'VISA', 'MASTER'
 
-    protected $style = "card";
+    protected $style = 'card';
 
     /**
      * @return string
@@ -41,11 +41,13 @@ class HobexRequest extends AbstractRequest
 
     /**
      * @param string $shopperResultUrl
+     *
      * @return HobexRequest
      */
     public function setShopperResultUrl(string $shopperResultUrl): self
     {
         $this->shopperResultUrl = $shopperResultUrl;
+
         return $this;
     }
 
@@ -59,11 +61,13 @@ class HobexRequest extends AbstractRequest
 
     /**
      * @param string $locale
+     *
      * @return HobexRequest
      */
     public function setLocale(string $locale): self
     {
         $this->locale = $locale;
+
         return $this;
     }
 
@@ -77,11 +81,13 @@ class HobexRequest extends AbstractRequest
 
     /**
      * @param string $invoiceId
+     *
      * @return HobexRequest
      */
     public function setInvoiceId(string $invoiceId): self
     {
         $this->invoiceId = $invoiceId;
+
         return $this;
     }
 
@@ -95,11 +101,13 @@ class HobexRequest extends AbstractRequest
 
     /**
      * @param string $memo
+     *
      * @return HobexRequest
      */
     public function setMemo(string $memo): HobexRequest
     {
         $this->memo = $memo;
+
         return $this;
     }
 
@@ -113,22 +121,29 @@ class HobexRequest extends AbstractRequest
 
     /**
      * see https://hobex.docs.oppwa.com/reference/brands-reference
+     *
      * @param string[] $brands
+     *
      * @return HobexRequest
      */
     public function setBrands(array $brands): self
     {
         $this->brands = $brands;
+
         return $this;
     }
 
     /**
      * see https://hobex.docs.oppwa.com/reference/brands-reference
+     *
      * @param string $brand
+     *
      * @return HobexRequest
      */
-    public function addBrand(string $brand) : self {
+    public function addBrand(string $brand): self
+    {
         $this->brands[] = $brand;
+
         return $this;
     }
 
@@ -142,15 +157,13 @@ class HobexRequest extends AbstractRequest
 
     /**
      * @param string $style
+     *
      * @return HobexRequest
      */
     public function setStyle(string $style): self
     {
         $this->style = $style;
+
         return $this;
     }
-
-
-
-
 }

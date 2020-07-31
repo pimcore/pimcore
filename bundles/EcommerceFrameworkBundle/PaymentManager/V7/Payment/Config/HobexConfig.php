@@ -16,13 +16,13 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\Conf
 
 class HobexConfig
 {
-    protected $entityId = "";
+    protected $entityId = '';
 
-    protected $authorizationBearer = "";
+    protected $authorizationBearer = '';
 
     protected $testSystem = false;
 
-    protected $hostURL = "";
+    protected $hostURL = '';
 
     protected $paymentMethods = [];
 
@@ -36,11 +36,13 @@ class HobexConfig
 
     /**
      * @param string $entityId
+     *
      * @return HobexConfig
      */
     public function setEntityId(string $entityId): HobexConfig
     {
         $this->entityId = $entityId;
+
         return $this;
     }
 
@@ -54,11 +56,13 @@ class HobexConfig
 
     /**
      * @param string $authorizationBearer
+     *
      * @return HobexConfig
      */
     public function setAuthorizationBearer(string $authorizationBearer): self
     {
         $this->authorizationBearer = $authorizationBearer;
+
         return $this;
     }
 
@@ -72,11 +76,13 @@ class HobexConfig
 
     /**
      * @param bool $testSystem
+     *
      * @return HobexConfig
      */
     public function setTestSystem(bool $testSystem): self
     {
         $this->testSystem = $testSystem;
+
         return $this;
     }
 
@@ -90,11 +96,13 @@ class HobexConfig
 
     /**
      * @param string $hostURL
+     *
      * @return HobexConfig
      */
     public function setHostURL(string $hostURL): self
     {
         $this->hostURL = $hostURL;
+
         return $this;
     }
 
@@ -108,13 +116,13 @@ class HobexConfig
 
     /**
      * @param string[] $paymentMethods
+     *
      * @return HobexConfig
      */
     public function setPaymentMethods(array $paymentMethods): self
     {
         $this->paymentMethods = $paymentMethods;
+
         return $this;
     }
-
-
 }
