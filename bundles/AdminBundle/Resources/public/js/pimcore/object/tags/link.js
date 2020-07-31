@@ -101,7 +101,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
             border: false,
             combineErrors: false,
             items: [this.displayField, this.openButton, this.editButton],
-            componentCls: "object_field"
+            componentCls: "object_field object_field_type_" + this.type
         });
 
         return this.component;
