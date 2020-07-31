@@ -249,7 +249,6 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             $this->commit();
         } catch (\Exception $e) {
             $this->rollBack();
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));
             Logger::crit($e);
             throw $e;
         }
