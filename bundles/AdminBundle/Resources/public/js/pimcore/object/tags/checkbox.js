@@ -112,10 +112,6 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
             }
         };
 
-        if (this.fieldConfig.labelWidth) {
-            checkbox.labelWidth = this.fieldConfig.labelWidth;
-        }
-
         if (this.getObject()) {
             this.emptyButton = new Ext.Button({
                 iconCls: "pimcore_icon_delete",
@@ -150,6 +146,10 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
                 padding: 0
             }
         };
+
+        if (this.fieldConfig.labelWidth) {
+            componentCfg.labelWidth = this.fieldConfig.labelWidth;
+        }
 
         this.component = Ext.create('Ext.form.FieldContainer', componentCfg);
 
