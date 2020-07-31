@@ -259,7 +259,6 @@ class Hardlink extends Document
             $this->commit();
         } catch (\Exception $e) {
             $this->rollBack();
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
             Logger::error($e);
             throw $e;
         }
