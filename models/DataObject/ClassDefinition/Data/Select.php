@@ -518,9 +518,9 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         $name = $params['name'] ?: $this->name;
 
         if ($operator === '=') {
-            return '`'.$name.'` = '."'$value'".' ';
+            return '`'.$name.'` = '."\"$value\"".' ';
         } elseif ($operator === 'LIKE') {
-            return '`'.$name.'` LIKE '."'%$value%'".' ';
+            return '`'.$name.'` LIKE '."\"%$value%\"".' ';
         }
 
         return null;
