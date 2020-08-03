@@ -1170,10 +1170,20 @@ class UserController extends AdminController implements EventedControllerInterfa
                 }
 
                 $token = Tool\Authentication::generateToken($user->getName());
-                $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
-                    'token' => $token,
-                    'reset' => 'true'
-                ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+                try {
+                    //try to generate invitation link for custom admin point
+                    $loginUrl = $this->generateUrl('my_custom_admin_entry_point', [
+                        'token' => $token,
+                        'reset' => 'true'
+                    ], UrlGeneratorInterface::ABSOLUTE_URL);
+                } catch (\Exception $e) {
+                    //use default login check for invitation link
+                    $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
+                        'token' => $token,
+                        'reset' => 'true'
+                    ], UrlGeneratorInterface::ABSOLUTE_URL);
+                }
 
                 try {
                     $mail = Tool::getMail([$user->getEmail()], 'Pimcore login invitation for ' . Tool::getHostname());
