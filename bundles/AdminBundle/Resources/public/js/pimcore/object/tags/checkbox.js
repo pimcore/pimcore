@@ -116,24 +116,8 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
             checkbox.labelWidth = this.fieldConfig.labelWidth;
         }
 
-        if (this.getObject()) {
-            this.emptyButton = new Ext.Button({
-                iconCls: "pimcore_icon_delete",
-                cls: 'pimcore_button_transparent',
-                tooltip: t("set_to_null"),
-                hidden: this.fieldConfig.hideEmptyButton || !this.getObject().data.general.allowInheritance,
-                handler: function () {
-                    if (this.data !== null) {
-                        this.dataChanged = true;
-                    }
-                    this.checkbox.setValue(false);
 
-                    this.data = null;
-                    this.updateStyle();
-                }.bind(this),
-                style: "margin-left: 10px; filter:grayscale(100%);",
-            });
-        }
+        this.createEmptyButton();
 
         this.checkbox = new Ext.form.Checkbox(checkbox);
 
@@ -156,6 +140,26 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
         return this.component;
     },
 
+    createEmptyButton: function() {
+        if (this.getObject()) {
+            this.emptyButton = new Ext.Button({
+                iconCls: "pimcore_icon_delete",
+                cls: 'pimcore_button_transparent',
+                tooltip: t("set_to_null"),
+                hidden: this.fieldConfig.hideEmptyButton || !this.getObject().data.general.allowInheritance,
+                handler: function () {
+                    if (this.data !== null) {
+                        this.dataChanged = true;
+                    }
+                    this.checkbox.setValue(false);
+
+                    this.data = null;
+                    this.updateStyle();
+                }.bind(this),
+                style: "margin-left: 10px; filter:grayscale(100%);",
+            });
+        }
+    },
 
     addInheritanceSourceButton:function ($super, metaData) {
         this.updateStyle("#6782F6");
