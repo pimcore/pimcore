@@ -160,7 +160,7 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
                     tenantCombobox,
                     this.fieldsCombobox
                 ],
-                cls: "object_field",
+                cls: "object_field object_field_type_" + this.type,
                 isDirty: function() {
                     return tenantCombobox.isDirty() || this.fieldsCombobox.isDirty()
                 }.bind(this)

@@ -68,7 +68,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             autoHeight: true,
             border: this.fieldConfig.border,
             style: "margin-bottom: 10px",
-            componentCls: "object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             items: [this.tabpanel]
         };
 
