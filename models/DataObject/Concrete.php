@@ -232,7 +232,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * @inheritdoc
      */
-    public function delete(bool $isNested = false)
+    public function delete()
     {
         $this->beginTransaction();
 
@@ -244,7 +244,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
             $this->getDao()->deleteAllTasks();
 
-            parent::delete(true);
+            parent::delete();
 
             $this->commit();
         } catch (\Exception $e) {

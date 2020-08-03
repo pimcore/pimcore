@@ -181,7 +181,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @inheritdoc
      */
-    public function delete(bool $isNested = false)
+    public function delete()
     {
         $this->beginTransaction();
 
@@ -194,7 +194,7 @@ abstract class PageSnippet extends Model\Document
             // remove all tasks
             $this->getDao()->deleteAllTasks();
 
-            parent::delete(true);
+            parent::delete();
 
             $this->commit();
         } catch (\Exception $e) {

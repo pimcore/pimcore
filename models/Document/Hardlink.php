@@ -240,7 +240,7 @@ class Hardlink extends Document
     /**
      * @inheritdoc
      */
-    public function delete(bool $isNested = false)
+    public function delete()
     {
         $this->beginTransaction();
 
@@ -254,7 +254,7 @@ class Hardlink extends Document
                 $redirect->delete();
             }
 
-            parent::delete($isNested);
+            parent::delete();
 
             $this->commit();
         } catch (\Exception $e) {

@@ -782,11 +782,9 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @param bool $isNested
-     *
      * @throws \Exception
      */
-    public function delete(bool $isNested = false)
+    public function delete()
     {
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_DELETE, new DocumentEvent($this));
 
@@ -800,7 +798,7 @@ class Document extends Element\AbstractElement
                 self::setHideUnpublished(false);
                 foreach ($this->getChildren(true) as $child) {
                     if (!$child instanceof WrapperInterface) {
-                        $child->delete(true);
+                        $child->delete();
                     }
                 }
                 self::setHideUnpublished($unpublishedStatus);

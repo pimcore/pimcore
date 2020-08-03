@@ -517,11 +517,9 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param bool $isNested
-     *
      * @throws \Exception
      */
-    public function delete(bool $isNested = false)
+    public function delete()
     {
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_DELETE, new DataObjectEvent($this));
 
@@ -532,7 +530,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $children = $this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true);
             if (count($children) > 0) {
                 foreach ($children as $child) {
-                    $child->delete(true);
+                    $child->delete();
                 }
             }
 
