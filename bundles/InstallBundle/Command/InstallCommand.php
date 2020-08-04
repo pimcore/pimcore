@@ -177,6 +177,11 @@ class InstallCommand extends Command
                 null,
                 InputOption::VALUE_NONE,
                 'Do not abort if a <comment>system.yml</comment> file already exists'
+            )->addOption(
+                'skip-database-config',
+                null,
+                InputOption::VALUE_NONE,
+                'Do not write a database config file: <comment>database.yml</comment>'
             );
 
         foreach ($this->getOptions() as $name => $config) {
@@ -198,6 +203,10 @@ class InstallCommand extends Command
         $configFile = Config::locateConfigFile('system.yml');
         if ($configFile && is_file($configFile) && !$input->getOption('ignore-existing-config')) {
             throw new \RuntimeException(sprintf('The system.yml config file already exists in "%s". You can run this command with the --ignore-existing-config flag to ignore this error.', $configFile));
+        }
+
+        if ($input->getOption('skip-database-config')) {
+            $this->installer->setSkipDatabaseConfig(true);
         }
 
         $this->io = new PimcoreStyle($input, $output);
