@@ -44,14 +44,14 @@ class Layout
     public $title;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $height;
+    public $height = 0;
 
     /**
      * @var bool
@@ -201,33 +201,31 @@ class Layout
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        if (!empty($width) && is_numeric($width)) {
-            $this->width = (int)$width;
-        } else {
-            $this->width = $width;
+        if (is_numeric($width)) {
+            $width = (int)$width;
         }
+        $this->width = $width;
 
         return $this;
     }
 
     /**
-     * @param int $height
+     * @param string|int $height
      *
      * @return $this
      */
     public function setHeight($height)
     {
-        if (!empty($height) && is_numeric($height)) {
-            $this->height = (int)$height;
-        } else {
-            $this->height = $height;
+        if (is_numeric($height)) {
+            $height = (int)$height;
         }
+        $this->height = $height;
 
         return $this;
     }

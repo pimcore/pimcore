@@ -37,9 +37,9 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $fieldtype = 'password';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * Type for the column to query
@@ -78,7 +78,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $saltlocation = '';
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -86,13 +86,16 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }

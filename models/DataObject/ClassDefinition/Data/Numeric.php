@@ -43,7 +43,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public $fieldtype = 'numeric';
 
     /**
-     * @var int
+     * @var string|int
      */
     public $width = 0;
 
@@ -132,7 +132,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -140,13 +140,16 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      *
      * @return $this
      */
     public function setWidth($width)
     {
-        $this->width = $this->getAsIntegerCast($width);
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
+        $this->width = $width;
 
         return $this;
     }

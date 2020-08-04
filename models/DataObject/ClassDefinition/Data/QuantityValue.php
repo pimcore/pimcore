@@ -40,12 +40,12 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public $fieldtype = 'quantityValue';
 
     /**
-     * @var int
+     * @var string|int
      */
-    public $width;
+    public $width = 0;
 
     /**
-     * @var int
+     * @var string|int
      */
     public $unitWidth;
 
@@ -103,7 +103,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\QuantityValue';
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getWidth()
     {
@@ -111,15 +111,18 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
     }
 
     /**
-     * @return int
+     * @return string|int
      */
     public function getUnitWidth()
     {
@@ -127,10 +130,13 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     }
 
     /**
-     * @param int $unitWidth
+     * @param string|int $unitWidth
      */
     public function setUnitWidth($unitWidth)
     {
+        if (is_numeric($unitWidth)) {
+            $unitWidth = (int)$unitWidth;
+        }
         $this->unitWidth = $unitWidth;
     }
 

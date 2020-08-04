@@ -66,7 +66,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     /**
      * Width of field
      *
-     * @var int
+     * @var string|int
      */
     public $width = 0;
 
@@ -409,18 +409,21 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return int
+     * @return string|int
      */
-    public function getWidth(): int
+    public function getWidth()
     {
-        return (int) $this->width;
+        return $this->width;
     }
 
     /**
-     * @param int $width
+     * @param string|int $width
      */
     public function setWidth($width)
     {
+        if (is_numeric($width)) {
+            $width = (int)$width;
+        }
         $this->width = $width;
     }
 
