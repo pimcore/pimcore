@@ -102,7 +102,7 @@ abstract class PageSnippet extends Model\Document
     public function __construct()
     {
         $this->elements = & $this->editables;
-        $this->inheritedElements = $this->inheritedEditables;
+        $this->inheritedElements = & $this->inheritedEditables;
     }
 
     /**
@@ -612,6 +612,18 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
+     * @param array $elements
+     *
+     * @return $this
+     *
+     * @deprecated since v6.7 and will be removed in 7. Use setEditables() instead.
+     */
+    public function setElements($elements)
+    {
+        return $this->setEditables($elements);
+    }
+
+    /**
      * @param array $editables
      *
      * @return $this
@@ -622,18 +634,6 @@ abstract class PageSnippet extends Model\Document
         $this->editables = $editables;
 
         return $this;
-    }
-
-    /**
-     * @param array $elements
-     *
-     * @return $this
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use setEditables() instead.
-     */
-    public function setElements($elements)
-    {
-        return $this->setEditables($elements);
     }
 
     /**
