@@ -487,6 +487,15 @@ $navigation->addPage([
    'title' => 'Homepage' //tooltip text
 ]);
 ```
+```twig
+ {% set mainNavigation = mainNavigation.addPage({
+                            'order': -1,
+                            'uri': navStartNode.url,
+                            'label': 'Home',
+                            'title': "Home"
+                        })
+%}
+```
 
 If you retrieve the **home** document (which always has the ID 1) you can also retrieve its navigation properties so that they can be edited from the Pimcore admin interface like all the other documents.
 
