@@ -70,37 +70,22 @@ class Page extends TargetingDocument
     /**
      * @inheritdoc
      */
-    public function delete()
+    protected function doDelete()
     {
-        if ($this->getId() == 1) {
-            throw new \Exception('root-node cannot be deleted');
+        // check for redirects pointing to this document, and delete them too
+        $redirects = new Redirect\Listing();
+        $redirects->setCondition('target = ?', $this->getId());
+        $redirects->load();
+
+        foreach ($redirects->getRedirects() as $redirect) {
+            $redirect->delete();
         }
 
-        $this->beginTransaction();
-
-        try {
-            // check for redirects pointing to this document, and delete them too
-            $redirects = new Redirect\Listing();
-            $redirects->setCondition('target = ?', $this->getId());
-            $redirects->load();
-
-            foreach ($redirects->getRedirects() as $redirect) {
-                $redirect->delete();
-            }
-
-            if ($site = Site::getByRootId($this->getId())) {
-                $site->delete();
-            }
-
-            parent::delete();
-
-            $this->commit();
-        } catch (\Exception $e) {
-            $this->rollBack();
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
-            Logger::error($e);
-            throw $e;
+        if ($site = Site::getByRootId($this->getId())) {
+            $site->delete();
         }
+
+        parent::doDelete();
     }
 
     /**

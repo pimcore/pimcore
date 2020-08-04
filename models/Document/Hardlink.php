@@ -240,29 +240,18 @@ class Hardlink extends Document
     /**
      * @inheritdoc
      */
-    public function delete()
+    protected function doDelete()
     {
-        $this->beginTransaction();
+        // check for redirects pointing to this document, and delete them too
+        $redirects = new Redirect\Listing();
+        $redirects->setCondition('target = ?', $this->getId());
+        $redirects->load();
 
-        try {
-            // check for redirects pointing to this document, and delete them too
-            $redirects = new Redirect\Listing();
-            $redirects->setCondition('target = ?', $this->getId());
-            $redirects->load();
-
-            foreach ($redirects->getRedirects() as $redirect) {
-                $redirect->delete();
-            }
-
-            parent::delete();
-
-            $this->commit();
-        } catch (\Exception $e) {
-            $this->rollBack();
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
-            Logger::error($e);
-            throw $e;
+        foreach ($redirects->getRedirects() as $redirect) {
+            $redirect->delete();
         }
+
+        parent::doDelete();
     }
 
     /**

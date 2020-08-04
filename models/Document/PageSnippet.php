@@ -181,28 +181,17 @@ abstract class PageSnippet extends Model\Document
     /**
      * @inheritdoc
      */
-    public function delete()
+    protected function doDelete()
     {
-        $this->beginTransaction();
-
-        try {
-            $versions = $this->getVersions();
-            foreach ($versions as $version) {
-                $version->delete();
-            }
-
-            // remove all tasks
-            $this->getDao()->deleteAllTasks();
-
-            parent::delete();
-
-            $this->commit();
-        } catch (\Exception $e) {
-            $this->rollBack();
-            \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_DELETE_FAILURE, new DocumentEvent($this));
-            Logger::error($e);
-            throw $e;
+        $versions = $this->getVersions();
+        foreach ($versions as $version) {
+            $version->delete();
         }
+
+        // remove all tasks
+        $this->getDao()->deleteAllTasks();
+
+        parent::doDelete();
     }
 
     /**
