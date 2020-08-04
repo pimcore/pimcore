@@ -139,7 +139,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             foreach ($data as $name => $value) {
                 $data = $value['data'] ?? null;
                 $type = $value['type'];
-                $document->setRawElement($name, $type, $data);
+                $document->setRawEditable($name, $type, $data);
             }
         }
     }
