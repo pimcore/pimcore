@@ -55,7 +55,7 @@ class PrintpageControllerBase extends DocumentControllerBase
         $page->setLocked($page->isLocked());
 
         // unset useless data
-        $page->setElements(null);
+        $page->setEditables(null);
         $page->setChildren(null);
 
         $data = $page->getObjectVars();
@@ -111,7 +111,7 @@ class PrintpageControllerBase extends DocumentControllerBase
             //check, if to cleanup existing elements of document
             $config = Config::getWeb2PrintConfig();
             if ($config->get('generalDocumentSaveMode') == 'cleanup') {
-                $page->setElements([]);
+                $page->setEditables([]);
             }
 
             $this->setValuesToDocument($request, $page);

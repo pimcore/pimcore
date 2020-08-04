@@ -103,15 +103,44 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
      * @param Tag $data
      *
      * @return PageSnippet
+     *
+     * @deprecated since v6.7 and will be removed in 7. Use setEditable() instead.
      */
     public function setElement($name, $data)
+    {
+        return $this->setEditable($name, $data);
+    }
+
+    /**
+     * Set an element with the given key/name
+     *
+     * @param string $name
+     * @param Tag $data
+     *
+     * @return PageSnippet
+     */
+    public function setEditable($name, $data)
     {
         if ($this->getUseTargetGroup()) {
             $name = $this->getTargetGroupElementName($name);
             $data->setName($name);
         }
 
-        return parent::setElement($name, $data);
+        return parent::setEditable($name, $data);
+    }
+
+    /**
+     * Get an element with the given key/name
+     *
+     * @param string $name
+     *
+     * @return Tag|null
+     *
+     * @deprecated since v6.7 and will be removed in 7. Use getEditable() instead.
+     */
+    public function getElement($name)
+    {
+        return $this->getEditable($name);
     }
 
     /**
@@ -121,36 +150,36 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
      *
      * @return Tag|null
      */
-    public function getElement($name)
+    public function getEditable($name)
     {
         // check if a target group is requested for this page, if yes deliver a different version of the element (prefixed)
         if ($this->getUseTargetGroup()) {
             $targetGroupElementName = $this->getTargetGroupElementName($name);
 
-            if ($element = parent::getElement($targetGroupElementName)) {
-                return $element;
+            if ($editable = parent::getEditable($targetGroupElementName)) {
+                return $editable;
             } else {
                 // if there's no dedicated content for this target group, inherit from the "original" content (unprefixed)
                 // and mark it as inherited so it is clear in the ui that the content is not specific to the selected target group
                 // replace all occurrences of the target group prefix, this is needed because of block-prefixes
                 $inheritedName = str_replace($this->getTargetGroupElementPrefix(), '', $name);
-                $inheritedElement = parent::getElement($inheritedName);
+                $inheritedEditable = parent::getEditable($inheritedName);
 
-                if ($inheritedElement) {
-                    $inheritedElement = clone $inheritedElement;
-                    $inheritedElement->setDao(null);
-                    $inheritedElement->setName($targetGroupElementName);
-                    $inheritedElement->setInherited(true);
+                if ($inheritedEditable) {
+                    $inheritedEditable = clone $inheritedEditable;
+                    $inheritedEditable->setDao(null);
+                    $inheritedEditable->setName($targetGroupElementName);
+                    $inheritedEditable->setInherited(true);
 
-                    $this->setElement($targetGroupElementName, $inheritedElement);
+                    $this->setEditable($targetGroupElementName, $inheritedEditable);
 
-                    return $inheritedElement;
+                    return $inheritedEditable;
                 }
             }
         }
 
         // delegate to default
-        return parent::getElement($name);
+        return parent::getEditable($name);
     }
 
     public function __sleep()

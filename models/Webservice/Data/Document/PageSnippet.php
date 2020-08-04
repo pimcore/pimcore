@@ -51,15 +51,15 @@ class PageSnippet extends Model\Webservice\Data\Document
      */
     public function map($object, $options = null)
     {
-        $originalElements = [];
-        if (is_array($object->getElements())) {
-            $originalElements = $object->getElements();
+        $originalEditables = [];
+        if (is_array($object->getEditables())) {
+            $originalEditables = $object->getEditables();
         }
 
         parent::map($object);
 
         $this->elements = [];
-        foreach ($originalElements as $element) {
+        foreach ($originalEditables as $element) {
             $el = new Webservice\Data\Document\Element();
             $el->name = $element->getName();
             $el->type = $element->getType();
@@ -80,14 +80,14 @@ class PageSnippet extends Model\Webservice\Data\Document
         parent::reverseMap($object, $disableMappingExceptions, $idMapper);
 
         $object->setChildren(null);
-        $object->setElements([]);
+        $object->setEditables([]);
 
         if (is_array($this->elements)) {
             foreach ($this->elements as $element) {
                 $tag = Model\Document\Tag::factory($element->type, $element->name, $this->id);
                 $tag->getFromWebserviceImport($element, $object, [], $idMapper);
 
-                $object->setElement($element->name, $tag);
+                $object->setEditable($element->name, $tag);
             }
         }
     }

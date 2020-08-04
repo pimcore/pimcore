@@ -102,7 +102,7 @@ class NewsletterController extends DocumentControllerBase
         $email->setParent(null);
 
         // unset useless data
-        $email->setElements(null);
+        $email->setEditables(null);
         $email->setChildren(null);
 
         $data = $email->getObjectVars();
