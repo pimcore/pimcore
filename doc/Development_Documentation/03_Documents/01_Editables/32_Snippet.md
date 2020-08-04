@@ -49,6 +49,7 @@ by enabling the full page cache.
 Regardless if you're using the full page cache or not it's a good practice to
 enable the cache directly on the editable if the snippet result should be cached. 
 
+<div class="code-section">
 ```php  
  // Define a place for a snippet to be dragged onto, advanced usage
  <?= $this->snippet("mySnippet", ["cache" => true]) ?>
@@ -56,3 +57,4 @@ enable the cache directly on the editable if the snippet result should be cached
 ```twig
 {{ pimcore_snippet("mySnippet", {cache: true}) }}
 ```
+</div>
