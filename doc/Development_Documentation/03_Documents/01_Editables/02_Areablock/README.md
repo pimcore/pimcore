@@ -150,6 +150,8 @@ You can read about **bricks** in the [Bricks](./02_Bricks.md) section.
 You can limit certain bricks for the Areablock by using `limits` configurations.
 ##### Example
 
+<div class="code-section">
+    
 ```php
 <?= $this->areablock("myAreablock", [
         "allowed" => ["iframe","teasers","wysiwyg"],
@@ -172,6 +174,7 @@ You can limit certain bricks for the Areablock by using `limits` configurations.
     })
 }}
 ```
+</div>
 
 ## Using Manual Mode
 
