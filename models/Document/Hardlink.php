@@ -17,9 +17,6 @@
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Event\DocumentEvents;
-use Pimcore\Event\Model\DocumentEvent;
-use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;

@@ -17,9 +17,6 @@
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Event\DocumentEvents;
-use Pimcore\Event\Model\DocumentEvent;
-use Pimcore\Logger;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
