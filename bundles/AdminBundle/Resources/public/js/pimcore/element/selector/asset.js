@@ -198,12 +198,14 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                 {text: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true, renderer: Ext.util.Format.htmlEncode},
                 {text: t("preview"), width: 150, sortable: false, dataIndex: 'subtype',
                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                        if(record.data.subtype == "image" || record.data.subtype == "video") {
-                            var routes = {
-                                image: "pimcore_admin_asset_getimagethumbnail",
-                                video: "pimcore_admin_asset_getvideothumbnail"
-                            };
+                        var routes = {
+                            image: "pimcore_admin_asset_getimagethumbnail",
+                            video: "pimcore_admin_asset_getvideothumbnail",
+                            document: "pimcore_admin_asset_getdocumentthumbnail"
+                        };
 
+                        if (record.data.subtype in routes) {
+                            
                             var route = routes[record.data.subtype];
 
                             var params = {
@@ -217,7 +219,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                             var uri = Routing.generate(route, params);
 
                             return '<div name="' + t(record.data.subtype)
-                                + '"><img src="'+uri+'" /></div>';
+                                + '"><img src="' + uri + '" /></div>';
                         }
                     }
                 }
