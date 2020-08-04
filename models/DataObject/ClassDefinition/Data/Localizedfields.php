@@ -89,6 +89,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public $labelWidth;
 
     /**
+     * @var string
+     */
+    public $labelAlign = 'left';
+
+    /**
      * @var bool
      */
     public $border = false;
@@ -1420,6 +1425,22 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getLabelWidth()
     {
         return $this->labelWidth;
+    }
+
+    /**
+     * @param string $labelAlign
+     */
+    public function setLabelAlign($labelAlign): void
+    {
+        $this->labelAlign = $labelAlign;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLabelAlign()
+    {
+        return $this->labelAlign;
     }
 
     /**
