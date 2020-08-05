@@ -103,21 +103,6 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
      * @param Tag $data
      *
      * @return PageSnippet
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use setEditable() instead.
-     */
-    public function setElement($name, $data)
-    {
-        return $this->setEditable($name, $data);
-    }
-
-    /**
-     * Set an element with the given key/name
-     *
-     * @param string $name
-     * @param Tag $data
-     *
-     * @return PageSnippet
      */
     public function setEditable($name, $data)
     {
@@ -127,20 +112,6 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
         }
 
         return parent::setEditable($name, $data);
-    }
-
-    /**
-     * Get an element with the given key/name
-     *
-     * @param string $name
-     *
-     * @return Tag|null
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use getEditable() instead.
-     */
-    public function getElement($name)
-    {
-        return $this->getEditable($name);
     }
 
     /**
