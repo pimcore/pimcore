@@ -339,7 +339,7 @@ class PageController extends DocumentControllerBase
         foreach ($doc->getEditables() as $editable) {
             if ($targetGroupId && $doc instanceof TargetingDocumentInterface) {
                 // remove target group specific elements
-                if (preg_match('/^' . preg_quote($doc->getTargetGroupElementPrefix($targetGroupId), '/') . '/', $editable->getName())) {
+                if (preg_match('/^' . preg_quote($doc->getTargetGroupEditablePrefix($targetGroupId), '/') . '/', $editable->getName())) {
                     $doc->removeEditable($editable->getName());
                 }
             } else {

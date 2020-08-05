@@ -130,7 +130,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     protected function addDataToDocument(Request $request, Model\Document\PageSnippet $document)
     {
         // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
-        if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificElements())) {
+        if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificEditables())) {
             $document->getEditables();
         }
 
