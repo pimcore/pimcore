@@ -219,7 +219,7 @@ class DocumentTargetingConfigurator
         if (!$document instanceof TargetingDocumentInterface) {
             return [];
         }
-
+        /** @var Document\TargetingDocument $document */
         $cacheKey = sprintf('document_target_groups_%d', $document->getId());
 
         if ($targetGroups = $this->cache->load($cacheKey)) {
