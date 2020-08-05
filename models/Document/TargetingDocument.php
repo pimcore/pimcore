@@ -47,8 +47,6 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
 
     /**
      * @inheritdoc
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use getTargetGroupEditablePrefix() instead.
      */
     public function getTargetGroupElementPrefix(int $targetGroupId = null): string
     {
@@ -75,8 +73,6 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
 
     /**
      * @inheritdoc
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use getTargetGroupEditableName() instead.
      */
     public function getTargetGroupElementName(string $name): string
     {
@@ -120,8 +116,6 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
 
     /**
      * @inheritDoc
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use getTargetGroupSpecificEditableNames() instead.
      */
     public function getTargetGroupSpecificElementNames(): array
     {
