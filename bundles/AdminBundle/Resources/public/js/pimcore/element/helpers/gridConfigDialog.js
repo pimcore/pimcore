@@ -17,7 +17,7 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
     showFieldname: true,
     data: {},
 
-    initialize: function (columnConfig, callback, resetCallback, showSaveAndShareTab, settings, previewSettings, additionalConfig) {
+    initialize: function (columnConfig, callback, resetCallback, showSaveAndShareTab, settings, previewSettings, additionalConfig, context) {
 
         this.config = columnConfig;
         this.callback = callback;
@@ -26,6 +26,7 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
         this.isShared = settings && settings.isShared;
         this.previewSettings = previewSettings || {};
         this.additionalConfig = additionalConfig || {};
+        this.context = context || {};
 
         this.settings = settings || {};
 

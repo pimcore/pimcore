@@ -278,6 +278,11 @@ class AssetHelperController extends AdminController
         $settings['shareGlobally'] = $sharedGlobally ?? null;
         $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
+        $context = $gridConfig['context'];
+        if ($context) {
+            $context = json_decode($context, true);
+        }
+
         return [
             'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
             'availableFields' => $availableFields,
@@ -287,7 +292,7 @@ class AssetHelperController extends AdminController
             'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false,
             'availableConfigs' => $availableConfigs,
             'sharedConfigs' => $sharedConfigs,
-
+            'context' => $context
         ];
     }
 
@@ -504,6 +509,8 @@ class AssetHelperController extends AdminController
         if ($asset->isAllowed('list')) {
             try {
                 $classId = $request->get('class_id');
+                $context = $request->get('context');
+
                 $searchType = $request->get('searchType');
                 $type = $request->get('type');
 
@@ -511,6 +518,7 @@ class AssetHelperController extends AdminController
                 $gridConfigData = $this->decodeJson($request->get('gridconfig'));
                 $gridConfigData['pimcore_version'] = Version::getVersion();
                 $gridConfigData['pimcore_revision'] = Version::getRevision();
+                $gridConfigData['context'] = $context;
                 unset($gridConfigData['settings']['isShared']);
 
                 $metadata = $request->get('settings');

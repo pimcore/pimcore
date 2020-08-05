@@ -2391,7 +2391,7 @@ pimcore.helpers.removeOtherConfigs = function (objectId, classId, gridConfigId, 
     });
 };
 
-pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, searchType, button, callback, settings, type) {
+pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, searchType, button, callback, settings, type, context) {
 
     type = type || "object";
 
@@ -2417,6 +2417,7 @@ pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, s
             gridconfig: Ext.encode(configuration),
             searchType: searchType,
             settings: Ext.encode(settings),
+            context: Ext.encode(context),
             type: type
         };
 
