@@ -39,7 +39,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         this.visibilityButtons = {};
 
         var plusButton, minusButton, upButton, downButton, optionsButton, plusDiv, minusDiv, upDiv, downDiv, optionsDiv,
-            typeDiv, typeButton, labelText, editDiv, editButton, visibilityDiv, labelDiv, plusUpDiv, plusUpButton;
+            typeDiv, typeButton, labelText, editDiv, editButton, visibilityDiv, labelDiv, plusUpDiv, plusUpButton,
+            dialogBoxDiv, dialogBoxButton;
 
         this.elements = Ext.get(id).query('.pimcore_block_entry[data-name="' + name + '"][key]');
 
@@ -226,6 +227,19 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                 this.visibilityButtons[this.elements[i].key].render(visibilityDiv);
                 if(this.elements[i].dataset.hidden == "true") {
                     Ext.get(this.elements[i]).addCls('pimcore_area_hidden');
+                }
+
+
+                dialogBoxDiv = Ext.get(this.elements[i]).query('.pimcore_block_dialog[data-name="' + this.name + '"]')[0];
+                if(dialogBoxDiv) {
+                    dialogBoxButton = new Ext.Button({
+                        cls: "pimcore_block_button_dialog",
+                        iconCls: "pimcore_icon_white_edit",
+                        listeners: {
+                            "click": this.openEditableDialogBox.bind(this, this.elements[i])
+                        }
+                    });
+                    dialogBoxButton.render(dialogBoxDiv);
                 }
 
                 labelDiv = Ext.get(Ext.get(this.elements[i]).query('.pimcore_block_label[data-name="' + this.name + '"]')[0]);
@@ -926,6 +940,40 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         return index;
     },
 
+    openEditableDialogBox: function (element) {
+
+        window.editWindow.loadMask.show();
+
+        let brickParams = {};
+        if(this.options['params'] && this.options['params'][element.type]) {
+            brickParams = this.options['params'][element.type];
+        }
+
+        let params = {
+            documentId: pimcore_document_id,
+            blockState: element.dataset.blockState,
+            brickType: element.type,
+            areaBlockName: element.dataset.name,
+            areaBlockRealName: element.dataset.realName,
+            key: element.key,
+            index: element.dataset.index,
+            params: JSON.stringify(array_merge(brickParams ?? {}, this.options['globalParams'] ?? {}))
+        };
+
+        Ext.Ajax.request({
+            url: Routing.generate('pimcore_admin_document_document_geteditabledialogbox'),
+            params: params,
+            success: function (res) {
+                let response = Ext.decode(res.responseText);
+                if (response && response.success) {
+                    console.log(response);
+
+                    window.editWindow.loadMask.hide();
+                }
+            }.bind(this)
+        });
+
+    },
 
     editmodeOpen: function (element) {
 

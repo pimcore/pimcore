@@ -19,6 +19,7 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\Document\Tag\Block\BlockState;
+use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\Document\TagNameEvent;
 use Pimcore\Logger;
@@ -719,6 +720,9 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
 
         $container = \Pimcore::getContainer();
         $blockState = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
+        /**
+         * @var NamingStrategyInterface $namingStrategy
+         */
         $namingStrategy = $container->get('pimcore.document.tag.naming.strategy');
 
         // if element not nested inside a hierarchical element (e.g. block), add the
