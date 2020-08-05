@@ -59,7 +59,7 @@ class Dao extends Model\Element\Dao
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchRow('SELECT o_id FROM objects WHERE o_path = :path AND `o_key` = :key', $params);
 
-        if ($data['o_id']) {
+        if (!empty($data['o_id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception("object doesn't exist");

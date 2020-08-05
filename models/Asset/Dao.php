@@ -83,7 +83,7 @@ class Dao extends Model\Element\Dao
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchRow('SELECT id FROM assets WHERE path = :path AND `filename` = :key', $params);
 
-        if ($data['id']) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception('asset with path: ' . $path . " doesn't exist");

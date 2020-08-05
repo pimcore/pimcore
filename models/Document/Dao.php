@@ -61,7 +61,7 @@ class Dao extends Model\Element\Dao
         $params = $this->extractKeyAndPath($path);
         $data = $this->db->fetchRow('SELECT id FROM documents WHERE path = :path AND `key` = :key', $params);
 
-        if ($data['id']) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
             // try to find a page with a pretty URL (use the original $path)
