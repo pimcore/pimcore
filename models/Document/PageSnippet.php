@@ -371,7 +371,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @param string $name
      * @param string $type
-     * @param string $data
+     * @param mixed $data
      *
      * @return $this
      */
