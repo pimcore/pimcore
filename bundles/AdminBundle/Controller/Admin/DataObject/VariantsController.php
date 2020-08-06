@@ -106,7 +106,7 @@ class VariantsController extends AdminController
                             $getter = 'get' . ucfirst($field);
                             if (method_exists($object, $getter)) {
 
-                                /** @var Model\DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
+                                /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
                                 $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
                                 $csLanguage = $requestedLanguage;
                                 if (!$csFieldDefinition->isLocalized()) {
@@ -158,7 +158,7 @@ class VariantsController extends AdminController
                         }
 
                         if ($brickDescriptor) {
-                            $brickDefinition = Model\DataObject\Objectbrick\Definition::getByKey($brickType);
+                            $brickDefinition = DataObject\Objectbrick\Definition::getByKey($brickType);
                             /** @var DataObject\ClassDefinition\Data\Localizedfields $fieldDefinitionLocalizedFields */
                             $fieldDefinitionLocalizedFields = $brickDefinition->getFieldDefinition('localizedfields');
                             $fieldDefinition = $fieldDefinitionLocalizedFields->getFieldDefinition($brickKey);
@@ -250,6 +250,23 @@ class VariantsController extends AdminController
         $localized = $class->getFieldDefinition('localizedfields');
         if ($localized instanceof DataObject\ClassDefinition\Data\Localizedfields) {
             $fieldDefinition = $localized->getFieldDefinition($key);
+        }
+
+        return $fieldDefinition;
+    }
+
+    /**
+     * @param string $brickType
+     * @param string $key
+     *
+     * @return DataObject\ClassDefinition\Data|null
+     */
+    protected function getFieldDefinitionFromBrick($brickType, $key)
+    {
+        $brickDefinition = DataObject\Objectbrick\Definition::getByKey($brickType);
+        $fieldDefinition = null;
+        if ($brickDefinition) {
+            $fieldDefinition = $brickDefinition->getFieldDefinition($key);
         }
 
         return $fieldDefinition;
