@@ -375,7 +375,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      */
-    public function setRawEditable($name, $type, $data)
+    public function setRawEditable(string $name, string $type, $data)
     {
         try {
             if ($type) {
