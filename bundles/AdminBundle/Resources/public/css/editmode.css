@@ -596,3 +596,16 @@ input.cke_dialog_ui_input_tel {
 .x-btn {
     text-decoration: none !important;
 }
+
+/* TODO this can't be the right solution. drop down arrow is the same outside editmode but cannot be rendered */
+@font-face {
+    font-family: 'Font Awesome 5 Free Editmode';
+    font-style: normal;
+    /*font-weight: normal;*/
+    src: url('/bundles/pimcoreadmin/resources/font-awesome/fonts/fa-solid-900.eot');
+    src: url('/bundles/pimcoreadmin/resources/font-awesome/fonts/fa-solid-900.eot?#iefix') format('embedded-opentype'), url('/bundles/pimcoreadmin/resources/font-awesome/fonts/fa-solid-900.woff2') format('woff2'), url('/bundles/pimcoreadmin/resources/font-awesome/fonts/fa-solid-900.woff') format('woff'), url('/bundles/pimcoreadmin/resources/font-awesome/fonts/fa-solid-900.ttf') format('truetype'), url('/bundles/pimcoreadmin/resources/font-awesome/fonts/fa-solid-900.svg#fontawesome') format('svg');
+}
+
+.x-form-trigger-default {
+    font: 16px/30px 'Font Awesome 5 Free Editmode';
+}
