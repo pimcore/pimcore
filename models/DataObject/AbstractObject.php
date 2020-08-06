@@ -519,6 +519,30 @@ class AbstractObject extends Model\Element\AbstractElement
     /**
      * @throws \Exception
      */
+    protected function doDelete()
+    {
+        // delete children
+        $children = $this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true);
+        if (count($children) > 0) {
+            foreach ($children as $child) {
+                $child->delete();
+            }
+        }
+
+        // remove dependencies
+        $d = new Model\Dependency;
+        $d->cleanAllForElement($this);
+
+        // remove all properties
+        $this->getDao()->deleteAllProperties();
+
+        // remove all permissions
+        $this->getDao()->deleteAllPermissions();
+    }
+
+    /**
+     * @throws \Exception
+     */
     public function delete()
     {
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_DELETE, new DataObjectEvent($this));
@@ -526,24 +550,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $this->beginTransaction();
 
         try {
-            // delete children
-            $children = $this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true);
-            if (count($children) > 0) {
-                foreach ($children as $child) {
-                    $child->delete();
-                }
-            }
-
-            // remove dependencies
-            $d = new Model\Dependency;
-            $d->cleanAllForElement($this);
-
-            // remove all properties
-            $this->getDao()->deleteAllProperties();
-
-            // remove all permissions
-            $this->getDao()->deleteAllPermissions();
-
+            $this->doDelete();
             $this->getDao()->delete();
 
             $this->commit();
