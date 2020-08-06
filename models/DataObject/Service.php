@@ -406,6 +406,8 @@ class Service extends Model\Element\Service
                                     $tempData = $def->getForCsvExport($object, $getterParams);
                                 } else if (method_exists($def, 'getDataForGrid')) {
                                     $tempData = $def->getDataForGrid($valueObject->value, $object, $params);
+                                } else {
+                                    continue;
                                 }
 
 
