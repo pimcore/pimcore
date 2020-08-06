@@ -443,7 +443,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      */
-    public function removeEditable($name)
+    public function removeEditable(string $name)
     {
         if (isset($this->editables[$name])) {
             unset($this->editables[$name]);
