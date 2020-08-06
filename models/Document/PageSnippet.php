@@ -64,7 +64,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * Contains all content-editables of the document
      *
-     * @var array
+     * @var array|null
      *
      */
     protected $editables = null;
