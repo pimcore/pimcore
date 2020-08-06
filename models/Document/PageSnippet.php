@@ -624,12 +624,12 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @param array $editables
+     * @param array|null $editables
      *
      * @return $this
      *
      */
-    public function setEditables($editables)
+    public function setEditables(?array $editables)
     {
         $this->editables = $editables;
 
