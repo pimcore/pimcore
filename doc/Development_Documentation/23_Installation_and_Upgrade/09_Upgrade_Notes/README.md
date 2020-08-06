@@ -7,6 +7,9 @@
 - Saving unpublished data objects via API will not throw Validation exceptions anymore (just like Admin UI). Please set `omitMandatoryCheck` explicitly to `false` to force mandatory checks.
 - `\Pimcore\DataObject\GridColumnConfig\Operator\ObjectBrickGetter` operator is deprecated and will be removed in 7.0.0
 - Calling `Pimcore\Model\DataObject\ClassDefinition\Data::isEqual()` is deprecated since version 6.7.0 and will be removed in version 7 . Implement `\Pimcore\Model\DataObject\ClassDefinition\Data\EqualComparisonInterface` instead.
+- The legacy editable naming scheme has been deprecated and will be removed in Pimcore 7. Please [migrate to the new naming scheme](../../03_Documents/13_Editable_Naming_Strategies.md). 
+- All classes in namespace `Pimcore\Document\Tag\NamingStrategy` are marked as deprecated and will be removed in v7. 
+- `TagHandlerInterface` and `DelegatingTagHandler` are marked as deprecated and will be removed in v7.
 
 ## 6.6.4
 - If you are using the specific settings 'max. items' option for ObjectBricks & Fieldcollections on your class definition, then API will validate the max limit on save() calls from now on.
