@@ -155,13 +155,17 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
             keys.push(item.key);
         }
 
+        let csvMode = this.previewSettings && this.previewSettings.csvMode;
+
+        // here
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_dataobject_dataobject_gridproxy', {classId: this.previewSettings.classId, folderId: this.previewSettings.objectId}),
             method: 'POST',
             params: {
                 "fields[]": keys,
                 language: language,
-                limit: 1
+                limit: 1,
+                csvMode: csvMode
             },
             success: function (response) {
                 var responseData = Ext.decode(response.responseText);
@@ -273,6 +277,9 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                     text: t('preview'),
                     flex: 90,
                     renderer: function (value, metaData, record) {
+                        if (this.previewSettings && this.previewSettings.csvMode) {
+                            return value;
+                        }
 
                         if (record && record.parentNode.id == 0) {
 

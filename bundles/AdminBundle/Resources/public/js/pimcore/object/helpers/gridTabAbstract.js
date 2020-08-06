@@ -111,7 +111,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             {
                 allowPreview: true,
                 classId: this.classId,
-                objectId: objectId
+                objectId: objectId,
+                csvMode: 0
             },
             null
         )
