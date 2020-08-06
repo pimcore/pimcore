@@ -419,7 +419,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      */
-    public function setEditable($name, $data)
+    public function setEditable(string $name,Tag $data)
     {
         $this->editables[$name] = $data;
 
