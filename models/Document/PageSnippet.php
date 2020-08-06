@@ -473,7 +473,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return Tag|null
      */
-    public function getEditable($name)
+    public function getEditable(string $name)
     {
         $editables = $this->getEditables();
         if (isset($this->editables[$name])) {
