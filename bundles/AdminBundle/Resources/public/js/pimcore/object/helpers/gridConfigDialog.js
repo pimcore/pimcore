@@ -145,6 +145,10 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
     },
 
     requestPreview: function () {
+        if (!this.previewSettings.objectId) {
+            return;
+        }
+
         var language = this.languageField.getValue();
         var fields = this.data.columns;
         var count = fields.length;
@@ -157,7 +161,6 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
 
         let csvMode = this.previewSettings && this.previewSettings.csvMode;
 
-        // here
         Ext.Ajax.request({
             url: Routing.generate('pimcore_admin_dataobject_dataobject_gridproxy', {classId: this.previewSettings.classId, folderId: this.previewSettings.objectId}),
             method: 'POST',
@@ -165,27 +168,28 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                 "fields[]": keys,
                 language: language,
                 limit: 1,
-                csvMode: csvMode
+                csvMode: csvMode,
+                specificId: this.previewSettings.specificId
             },
             success: function (response) {
-                var responseData = Ext.decode(response.responseText);
+                let responseData = Ext.decode(response.responseText);
                 if (responseData && responseData.data && responseData.data.length == 1) {
-                    var rootNode = this.selectionPanel.getRootNode()
-                    var childNodes = rootNode.childNodes;
-                    var previewItem = responseData.data[0];
-                    var store = this.selectionPanel.getStore()
-                    var i;
-                    var count = childNodes.length;
+                    let rootNode = this.selectionPanel.getRootNode()
+                    let childNodes = rootNode.childNodes;
+                    let previewItem = responseData.data[0];
+                    let store = this.selectionPanel.getStore()
+                    let i;
+                    let count = childNodes.length;
 
                     for (i = 0; i < count; i++) {
-                        var node = childNodes[i];
-                        var nodeId = node.id;
-                        var column = this.data.columns[i];
+                        let node = childNodes[i];
+                        let nodeId = node.id;
+                        let column = this.data.columns[i];
 
-                        var columnKey = column.key;
-                        var value = previewItem[columnKey];
+                        let columnKey = column.key;
+                        let value = previewItem[columnKey];
 
-                        var record = store.getById(nodeId);
+                        let record = store.getById(nodeId);
                         record.set("preview", value, {
                             commit: true
                         });

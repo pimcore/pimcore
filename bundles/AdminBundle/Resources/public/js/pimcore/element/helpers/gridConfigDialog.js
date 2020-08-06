@@ -400,6 +400,17 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
         });
         items.push(this.itemsPerPage);
 
+        if (this.previewSettings.showPreviewSelector) {
+            items.push({
+                xtype: "button",
+                text: t("preview_item"),
+                iconCls: "pimcore_icon_search",
+                handler: this.openSearchEditor.bind(this),
+                style: {
+                    marginLeft: '20px'
+                },
+            });
+        }
 
         var compositeConfig = {
             xtype: "fieldset",
@@ -420,6 +431,22 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
         }
 
         return this.languagePanel;
+    },
+
+    openSearchEditor: function () {
+        pimcore.helpers.itemselector(false, this.applyPreviewItem.bind(this), {
+                type: this.previewSettings.previewSelectorTypes,
+                subtype: this.previewSettings.previewSelectorSubTypes,
+                specific: this.previewSettings.previewSelectorSpecific
+            },
+            {
+            });
+
+    },
+
+    applyPreviewItem: function (data) {
+        this.previewSettings.specificId = data.id;
+        this.requestPreview();
     },
 
     parentIsOperator: function (record) {

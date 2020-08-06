@@ -67,6 +67,12 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             objectId = this.element.id;
         }
 
+
+        var classStore = pimcore.globalmanager.get("object_types_store");
+        var klassIndex = classStore.findExact("id", this.classId);
+        var klass = classStore.getAt(klassIndex);
+        var className = klass.get("text");
+
         var columnConfig = {
             language: gridConfig.language,
             pageSize: gridConfig.pageSize,
@@ -112,7 +118,14 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                 allowPreview: true,
                 classId: this.classId,
                 objectId: objectId,
-                csvMode: 0
+                csvMode: 0,
+                showPreviewSelector: true,
+                previewSelectorTypes: ['object'],
+                previewSelectorSubTypes: {
+                    'object' : ['object', 'variant']},
+                previewSelectorSpecific: {
+                    classes: [className]
+                }
             },
             null
         )
