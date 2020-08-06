@@ -22,6 +22,10 @@
     - `TargetingDocumentInterface::getTargetGroupSpecificElementNames`. Use `TargetingDocumentInterface::getTargetGroupSpecificEditableNames` instead.
     - `TargetingDocumentInterface::getTargetGroupSpecificElementNames`. Use `TargetingDocumentInterface::getTargetGroupSpecificEditableNames` instead.
     
+- The legacy editable naming scheme has been deprecated and will be removed in Pimcore 7. Please [migrate to the new naming scheme](../../03_Documents/13_Editable_Naming_Strategies.md). 
+- All classes in namespace `Pimcore\Document\Tag\NamingStrategy` are marked as deprecated and will be removed in v7. 
+- `TagHandlerInterface` and `DelegatingTagHandler` are marked as deprecated and will be removed in v7.
+
 ## 6.6.4
 - If you are using the specific settings 'max. items' option for ObjectBricks & Fieldcollections on your class definition, then API will validate the max limit on save() calls from now on.
 

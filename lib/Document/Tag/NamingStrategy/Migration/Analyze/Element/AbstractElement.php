@@ -24,6 +24,7 @@ use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\LogicExcepti
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 
 /**
+ * @deprecated
  * Represents all document editables (blocks + other editables)
  */
 abstract class AbstractElement
