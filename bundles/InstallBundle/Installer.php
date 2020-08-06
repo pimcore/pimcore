@@ -95,6 +95,11 @@ class Installer
     private $skipDatabaseConfig = false;
 
     /**
+     * @var ConfigWriter
+     */
+    private $configWriter;
+
+    /**
      * @param bool $skipDatabaseConfig
      */
     public function setSkipDatabaseConfig(bool $skipDatabaseConfig): void
@@ -554,9 +559,9 @@ class Installer
         }
     }
 
-    private function createConfigFiles(array $config)
+    public function createConfigFiles(array $config)
     {
-        $writer = new ConfigWriter();
+        $writer = $this->configWriter ?? new ConfigWriter();
 
         if (!$this->skipDatabaseConfig) {
             $writer->writeDbConfig($config);
@@ -820,5 +825,15 @@ class Installer
         foreach ($userPermissions as $up) {
             $db->insert('users_permission_definitions', $up);
         }
+    }
+
+    /**
+     * @param ConfigWriter $configWriter
+     *
+     * @return void
+     */
+    public function setConfigWriter(ConfigWriter $configWriter)
+    {
+        $this->configWriter = $configWriter;
     }
 }
