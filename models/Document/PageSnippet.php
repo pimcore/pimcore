@@ -584,7 +584,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return bool
      */
-    public function hasEditable($name)
+    public function hasEditable(string $name)
     {
         return $this->getEditable($name) !== null;
     }
