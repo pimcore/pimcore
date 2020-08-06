@@ -5329,20 +5329,7 @@
     }
   ],
   "css": [
-    {
-      "remote": false,
-      "exclude": [
-        "fashion"
-      ],
-      "path": "/bundles/pimcoreadmin/PimcoreApp-all_1.css"
-    },
-    {
-      "remote": false,
-      "exclude": [
-        "fashion"
-      ],
-      "path": "/bundles/pimcoreadmin/PimcoreApp-all_2.css"
-    }
+
   ],
   "cache": {
     "enable": false,

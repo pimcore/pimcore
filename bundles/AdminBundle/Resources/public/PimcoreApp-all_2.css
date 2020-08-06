@@ -511,7 +511,7 @@
 .x-keyboard-mode .x-tab-focus.x-tab-default {
     border-color: transparent;
     background-color: transparent;
-    outline: 1px solid #5fa2dd;
+    outline: 1px solid #3c3f41;
     outline-offset: -3px;
 }
 
@@ -530,7 +530,7 @@
     right: 2px;
     bottom: 2px;
     left: 2px;
-    border: 1px solid #5fa2dd;
+    border: 1px solid #3c3f41;
     pointer-events: none;
 }
 
@@ -1214,7 +1214,7 @@
 }
 
 .x-tab-bar-default {
-    background-color: #5fa2dd;
+    background-color: #3c3f41;
 }
 
 .x-tab-bar-default-top > .x-tab-bar-body-default {
@@ -1429,7 +1429,7 @@
 }
 
 .x-box-scroller-tab-bar-default {
-    background-color: #5fa2dd;
+    background-color: #3c3f41;
 }
 
 .x-box-scroller-tab-bar-default .x-ie8 .x-box-scroller-plain {
@@ -1569,7 +1569,7 @@
 .x-tree-arrows .x-tree-expander {
     font-size: 16px;
     font-family: 'Font Awesome 5 Free';
-    color: #5fa2dd;
+    color: #3c3f41;
 }
 
 .x-tree-arrows .x-tree-expander:before {
@@ -1588,7 +1588,7 @@
 .x-tree-arrows .x-grid-tree-node-expanded .x-tree-expander {
     font-size: 16px;
     font-family: 'Font Awesome 5 Free';
-    color: #5fa2dd;
+    color: #3c3f41;
 }
 
 .x-tree-arrows .x-grid-tree-node-expanded .x-tree-expander:before {
@@ -1599,7 +1599,7 @@
 .x-tree-elbow-end-plus {
     font-size: 14px;
     font-family: 'Font Awesome 5 Free';
-    color: #5fa2dd;
+    color: #3c3f41;
 }
 
 .x-tree-elbow-plus:before,
@@ -1611,7 +1611,7 @@
 .x-grid-tree-node-expanded .x-tree-elbow-end-plus {
     font-size: 14px;
     font-family: 'Font Awesome 5 Free';
-    color: #5fa2dd;
+    color: #3c3f41;
 }
 
 .x-grid-tree-node-expanded .x-tree-elbow-plus:before,
@@ -1623,7 +1623,7 @@
     width: 16px;
     height: 32px;
     line-height: 32px;
-    color: #5fa2dd;
+    color: #3c3f41;
     font-size: 16px;
 }
 
@@ -1649,7 +1649,7 @@
 .x-tree-icon-leaf {
     font-size: 16px;
     font-family: 'Font Awesome 5 Free';
-    color: #5fa2dd;
+    color: #3c3f41;
 }
 
 .x-tree-icon-leaf:before {
@@ -1659,7 +1659,7 @@
 .x-tree-icon-parent {
     font-size: 16px;
     font-family: 'Font Awesome 5 Free';
-    color: #5fa2dd;
+    color: #3c3f41;
 }
 
 .x-tree-icon-parent:before {
@@ -1669,7 +1669,7 @@
 .x-tree-icon-parent-expanded {
     font-size: 16px;
     font-family: 'Font Awesome 5 Free';
-    color: #5fa2dd;
+    color: #3c3f41;
 }
 
 .x-tree-icon-parent-expanded:before {
@@ -1694,7 +1694,7 @@
     width: 18px;
     height: 18px;
     font: 18px/1 ExtJS;
-    color: #5fa2dd;
+    color: #3c3f41;
 }
 
 .x-tree-checkbox:before {
@@ -1790,11 +1790,11 @@
 
 .x-toast-light .x-window-header {
     
-    background-color: #7fb5e4;
+    background-color: #3c3f41;
 }
 
 .x-toast-light .x-tool-img {
-    background-color: #7fb5e4;
+    background-color: #3c3f41;
 }
 
 .x-toast-light {
@@ -2055,9 +2055,9 @@
 .x-keyboard-mode .x-btn-focus.x-btn-plain-toolbar-small {
     background-image: none;
     background-color: transparent;
-    -webkit-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    -moz-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
+    -webkit-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    -moz-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
 }
 
 .x-btn-plain-toolbar-small .x-btn-arrow-el {
@@ -2075,7 +2075,7 @@
 }
 
 .x-keyboard-mode .x-btn-plain-toolbar-small.x-arrow-focus .x-btn-arrow-el {
-    border: 1px solid #5fa2dd;
+    border: 1px solid #3c3f41;
 }
 
 .x-btn-over.x-btn-plain-toolbar-small {
@@ -2085,9 +2085,9 @@
 }
 
 .x-keyboard-mode .x-btn-focus.x-btn-over.x-btn-plain-toolbar-small {
-    -webkit-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    -moz-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
+    -webkit-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    -moz-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
 }
 
 .x-btn.x-btn-menu-active.x-btn-plain-toolbar-small,
@@ -2099,9 +2099,9 @@
 
 .x-keyboard-mode .x-btn-focus.x-btn-menu-active.x-btn-plain-toolbar-small,
 .x-keyboard-mode .x-btn-focus.x-btn-pressed.x-btn-plain-toolbar-small {
-    -webkit-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    -moz-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
+    -webkit-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    -moz-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
 }
 
 .x-btn.x-btn-disabled.x-btn-plain-toolbar-small {
@@ -2325,18 +2325,18 @@
 
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-plain-toolbar-small:after {
     border-width: 1px;
-    border-color: #5fa2dd;
+    border-color: #3c3f41;
 }
 
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-over.x-btn-plain-toolbar-small:after {
     border-width: 1px;
-    border-color: #5fa2dd;
+    border-color: #3c3f41;
 }
 
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-menu-active.x-btn-plain-toolbar-small:after,
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-pressed.x-btn-plain-toolbar-small:after {
     border-width: 1px;
-    border-color: #5fa2dd;
+    border-color: #3c3f41;
 }
 
 .x-button-plain-toolbar-small-cell > .x-grid-cell-inner {
@@ -2596,9 +2596,9 @@
 .x-keyboard-mode .x-btn-focus.x-btn-plain-toolbar-medium {
     background-image: none;
     background-color: transparent;
-    -webkit-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    -moz-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
+    -webkit-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    -moz-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
 }
 
 .x-btn-plain-toolbar-medium .x-btn-arrow-el {
@@ -2616,7 +2616,7 @@
 }
 
 .x-keyboard-mode .x-btn-plain-toolbar-medium.x-arrow-focus .x-btn-arrow-el {
-    border: 1px solid #5fa2dd;
+    border: 1px solid #3c3f41;
 }
 
 .x-btn-over.x-btn-plain-toolbar-medium {
@@ -2626,9 +2626,9 @@
 }
 
 .x-keyboard-mode .x-btn-focus.x-btn-over.x-btn-plain-toolbar-medium {
-    -webkit-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    -moz-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
+    -webkit-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    -moz-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
 }
 
 .x-btn.x-btn-menu-active.x-btn-plain-toolbar-medium,
@@ -2640,9 +2640,9 @@
 
 .x-keyboard-mode .x-btn-focus.x-btn-menu-active.x-btn-plain-toolbar-medium,
 .x-keyboard-mode .x-btn-focus.x-btn-pressed.x-btn-plain-toolbar-medium {
-    -webkit-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    -moz-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
+    -webkit-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    -moz-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
 }
 
 .x-btn.x-btn-disabled.x-btn-plain-toolbar-medium {
@@ -2866,18 +2866,18 @@
 
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-plain-toolbar-medium:after {
     border-width: 1px;
-    border-color: #5fa2dd;
+    border-color: #3c3f41;
 }
 
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-over.x-btn-plain-toolbar-medium:after {
     border-width: 1px;
-    border-color: #5fa2dd;
+    border-color: #3c3f41;
 }
 
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-menu-active.x-btn-plain-toolbar-medium:after,
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-pressed.x-btn-plain-toolbar-medium:after {
     border-width: 1px;
-    border-color: #5fa2dd;
+    border-color: #3c3f41;
 }
 
 .x-button-plain-toolbar-medium-cell > .x-grid-cell-inner {
@@ -3137,9 +3137,9 @@
 .x-keyboard-mode .x-btn-focus.x-btn-plain-toolbar-large {
     background-image: none;
     background-color: transparent;
-    -webkit-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    -moz-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
+    -webkit-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    -moz-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
 }
 
 .x-btn-plain-toolbar-large .x-btn-arrow-el {
@@ -3157,7 +3157,7 @@
 }
 
 .x-keyboard-mode .x-btn-plain-toolbar-large.x-arrow-focus .x-btn-arrow-el {
-    border: 1px solid #5fa2dd;
+    border: 1px solid #3c3f41;
 }
 
 .x-btn-over.x-btn-plain-toolbar-large {
@@ -3167,9 +3167,9 @@
 }
 
 .x-keyboard-mode .x-btn-focus.x-btn-over.x-btn-plain-toolbar-large {
-    -webkit-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    -moz-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
+    -webkit-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    -moz-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
 }
 
 .x-btn.x-btn-menu-active.x-btn-plain-toolbar-large,
@@ -3181,9 +3181,9 @@
 
 .x-keyboard-mode .x-btn-focus.x-btn-menu-active.x-btn-plain-toolbar-large,
 .x-keyboard-mode .x-btn-focus.x-btn-pressed.x-btn-plain-toolbar-large {
-    -webkit-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    -moz-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
+    -webkit-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    -moz-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
 }
 
 .x-btn.x-btn-disabled.x-btn-plain-toolbar-large {
@@ -3407,18 +3407,18 @@
 
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-plain-toolbar-large:after {
     border-width: 1px;
-    border-color: #5fa2dd;
+    border-color: #3c3f41;
 }
 
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-over.x-btn-plain-toolbar-large:after {
     border-width: 1px;
-    border-color: #5fa2dd;
+    border-color: #3c3f41;
 }
 
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-menu-active.x-btn-plain-toolbar-large:after,
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-pressed.x-btn-plain-toolbar-large:after {
     border-width: 1px;
-    border-color: #5fa2dd;
+    border-color: #3c3f41;
 }
 
 .x-button-plain-toolbar-large-cell > .x-grid-cell-inner {
@@ -3528,7 +3528,7 @@
 }
 
 .x-keyboard-mode .x-panel-header-title-light.x-title-focus {
-    outline: 1px solid #5fa2dd;
+    outline: 1px solid #3c3f41;
     outline-offset: 2px;
 }
 
@@ -3547,7 +3547,7 @@
     right: -3px;
     bottom: -3px;
     left: -3px;
-    border: 1px solid #5fa2dd;
+    border: 1px solid #3c3f41;
     pointer-events: none;
 }
 
@@ -3688,7 +3688,7 @@
 }
 
 .x-keyboard-mode .x-panel-header-light .x-tool-focus {
-    outline: 1px solid #5fa2dd;
+    outline: 1px solid #3c3f41;
     outline-offset: 2px;
 }
 
@@ -3707,7 +3707,7 @@
     right: -3px;
     bottom: -3px;
     left: -3px;
-    border: 1px solid #5fa2dd;
+    border: 1px solid #3c3f41;
     pointer-events: none;
 }
 
@@ -3912,7 +3912,7 @@
 }
 
 .x-keyboard-mode .x-panel-header-title-light-framed.x-title-focus {
-    outline: 1px solid #5fa2dd;
+    outline: 1px solid #3c3f41;
     outline-offset: 2px;
 }
 
@@ -3931,7 +3931,7 @@
     right: -3px;
     bottom: -3px;
     left: -3px;
-    border: 1px solid #5fa2dd;
+    border: 1px solid #3c3f41;
     pointer-events: none;
 }
 
@@ -5137,7 +5137,7 @@
 }
 
 .x-keyboard-mode .x-panel-header-light-framed .x-tool-focus {
-    outline: 1px solid #5fa2dd;
+    outline: 1px solid #3c3f41;
     outline-offset: 2px;
 }
 
@@ -5156,7 +5156,7 @@
     right: -3px;
     bottom: -3px;
     left: -3px;
-    border: 1px solid #5fa2dd;
+    border: 1px solid #3c3f41;
     pointer-events: none;
 }
 
@@ -5300,7 +5300,7 @@
 }
 
 .x-column-header-trigger {
-    background-color: #eaeff4;
+    background-color: #e4e4e4;
     border-left: 1px solid #d0d0d0;
 }
 
@@ -11387,7 +11387,7 @@
     border-top: 0;
     padding: 0px;
     margin: 15px;
-    color: #5fa2dd;
+    color: #3c3f41;
     font-size: 24px;
     background-color: white;
 }
@@ -11401,7 +11401,7 @@
 
 .footerview {
     color: #404040;
-    background-color: #5fa2dd;
+    background-color: #3c3f41;
     border-top: 1px solid #358ad4;
     box-shadow: 2px -2px 8px 0 rgba(0, 0, 0, 0.4);
 }
@@ -11654,9 +11654,9 @@
 .x-keyboard-mode .x-btn-focus.x-btn-footerbutton-toolbar-small {
     background-image: none;
     background-color: transparent;
-    -webkit-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    -moz-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
+    -webkit-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    -moz-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
 }
 
 .x-btn-footerbutton-toolbar-small .x-btn-arrow-el {
@@ -11674,7 +11674,7 @@
 }
 
 .x-keyboard-mode .x-btn-footerbutton-toolbar-small.x-arrow-focus .x-btn-arrow-el {
-    border: 1px solid #5fa2dd;
+    border: 1px solid #3c3f41;
 }
 
 .x-btn-over.x-btn-footerbutton-toolbar-small {
@@ -11683,9 +11683,9 @@
 }
 
 .x-keyboard-mode .x-btn-focus.x-btn-over.x-btn-footerbutton-toolbar-small {
-    -webkit-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    -moz-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
+    -webkit-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    -moz-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
 }
 
 .x-btn.x-btn-menu-active.x-btn-footerbutton-toolbar-small,
@@ -11696,9 +11696,9 @@
 
 .x-keyboard-mode .x-btn-focus.x-btn-menu-active.x-btn-footerbutton-toolbar-small,
 .x-keyboard-mode .x-btn-focus.x-btn-pressed.x-btn-footerbutton-toolbar-small {
-    -webkit-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    -moz-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
+    -webkit-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    -moz-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
 }
 
 .x-btn.x-btn-disabled.x-btn-footerbutton-toolbar-small {
@@ -11922,18 +11922,18 @@
 
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-footerbutton-toolbar-small:after {
     border-width: 1px;
-    border-color: #5fa2dd;
+    border-color: #3c3f41;
 }
 
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-over.x-btn-footerbutton-toolbar-small:after {
     border-width: 1px;
-    border-color: #5fa2dd;
+    border-color: #3c3f41;
 }
 
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-menu-active.x-btn-footerbutton-toolbar-small:after,
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-pressed.x-btn-footerbutton-toolbar-small:after {
     border-width: 1px;
-    border-color: #5fa2dd;
+    border-color: #3c3f41;
 }
 
 .x-button-footerbutton-toolbar-small-cell > .x-grid-cell-inner {
@@ -11949,7 +11949,7 @@
     font-size: 28px;
     border-bottom: 1px solid #358ad4;
     color: white;
-    background-color: #5fa2dd;
+    background-color: #3c3f41;
     box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.4);
 }
 
@@ -11996,7 +11996,7 @@
 }
 
 .x-treelist-nav .x-treelist-toolstrip {
-    background-color: #5fa2dd;
+    background-color: #3c3f41;
 }
 
 .x-treelist-nav .x-treelist-item-selected.x-treelist-item-tool {
@@ -12101,7 +12101,7 @@
 }
 
 .x-treelist-nav .x-treelist-item-floated > .x-treelist-row {
-    background-color: #5fa2dd;
+    background-color: #3c3f41;
 }
 
 .x-treelist-nav .x-treelist-item-floated > .x-treelist-container {
@@ -12126,7 +12126,7 @@
 }
 
 .x-treelist-nav .x-treelist-item-floated > .x-treelist-row-over {
-    background-color: #5fa2dd;
+    background-color: #3c3f41;
 }
 
 .x-treelist-nav .x-treelist-item-floated > .x-treelist-row-over > * > .x-treelist-item-text {
@@ -12138,7 +12138,7 @@
 }
 
 .x-treelist-nav .x-treelist-item-expanded .x-treelist-item {
-    background-color: #5fa2dd;
+    background-color: #3c3f41;
 }
 
 .x-treelist-nav .x-treelist-highlight-path .x-treelist-item-over > * > * > .x-treelist-item-icon {
@@ -12438,9 +12438,9 @@
 .x-keyboard-mode .x-btn-focus.x-btn-toolbutton-toolbar-small {
     background-image: none;
     background-color: transparent;
-    -webkit-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    -moz-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
+    -webkit-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    -moz-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
 }
 
 .x-btn-toolbutton-toolbar-small .x-btn-arrow-el {
@@ -12458,7 +12458,7 @@
 }
 
 .x-keyboard-mode .x-btn-toolbutton-toolbar-small.x-arrow-focus .x-btn-arrow-el {
-    border: 1px solid #5fa2dd;
+    border: 1px solid #3c3f41;
 }
 
 .x-btn-over.x-btn-toolbutton-toolbar-small {
@@ -12467,9 +12467,9 @@
 }
 
 .x-keyboard-mode .x-btn-focus.x-btn-over.x-btn-toolbutton-toolbar-small {
-    -webkit-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    -moz-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
+    -webkit-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    -moz-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
 }
 
 .x-btn.x-btn-menu-active.x-btn-toolbutton-toolbar-small,
@@ -12480,9 +12480,9 @@
 
 .x-keyboard-mode .x-btn-focus.x-btn-menu-active.x-btn-toolbutton-toolbar-small,
 .x-keyboard-mode .x-btn-focus.x-btn-pressed.x-btn-toolbutton-toolbar-small {
-    -webkit-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    -moz-box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
-    box-shadow: #5fa2dd 0 1px 0px 0 inset, #5fa2dd 0 -1px 0px 0 inset, #5fa2dd -1px 0 0px 0 inset, #5fa2dd 1px 0 0px 0 inset;
+    -webkit-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    -moz-box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
+    box-shadow: #3c3f41 0 1px 0px 0 inset, #3c3f41 0 -1px 0px 0 inset, #3c3f41 -1px 0 0px 0 inset, #3c3f41 1px 0 0px 0 inset;
 }
 
 .x-btn.x-btn-disabled.x-btn-toolbutton-toolbar-small {
@@ -12706,18 +12706,18 @@
 
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-toolbutton-toolbar-small:after {
     border-width: 1px;
-    border-color: #5fa2dd;
+    border-color: #3c3f41;
 }
 
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-over.x-btn-toolbutton-toolbar-small:after {
     border-width: 1px;
-    border-color: #5fa2dd;
+    border-color: #3c3f41;
 }
 
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-menu-active.x-btn-toolbutton-toolbar-small:after,
 .x-keyboard-mode .x-nbr .x-segmented-button-item.x-btn-focus.x-btn-pressed.x-btn-toolbutton-toolbar-small:after {
     border-width: 1px;
-    border-color: #5fa2dd;
+    border-color: #3c3f41;
 }
 
 .x-button-toolbutton-toolbar-small-cell > .x-grid-cell-inner {
