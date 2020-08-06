@@ -194,7 +194,7 @@ class Service extends Model\Element\Service
      */
     public function copyAsChild($target, $source, $enableInheritance = false, $resetIndex = false, $language = false)
     {
-        if (method_exists($source, 'getEditables')) {
+        if ($source instanceof Document\PageSnippet) {
             $source->getEditables();
         }
 
