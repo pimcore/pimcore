@@ -142,7 +142,7 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        if (method_exists($source, 'getEditables')) {
+        if ($source instanceof Document\PageSnippet) {
             $source->getEditables();
         }
 
