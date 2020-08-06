@@ -22,6 +22,7 @@ use Doctrine\DBAL\DriverManager;
 use PDO;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
+use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriterFactory;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
@@ -95,9 +96,9 @@ class Installer
     private $skipDatabaseConfig = false;
 
     /**
-     * @var ConfigWriter
+     * @var ConfigWriterFactory
      */
-    private $configWriter;
+    private $configWriterFactory;
 
     /**
      * @param bool $skipDatabaseConfig
@@ -126,10 +127,12 @@ class Installer
 
     public function __construct(
         LoggerInterface $logger,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        ConfigWriterFactory $configWriterFactory = null
     ) {
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
+        $this->configWriterFactory = $configWriterFactory ?? new ConfigWriterFactory();
     }
 
     public function setDbCredentials(array $dbCredentials = [])
@@ -561,7 +564,7 @@ class Installer
 
     public function createConfigFiles(array $config)
     {
-        $writer = $this->configWriter ?? new ConfigWriter();
+        $writer = $this->configWriterFactory->create();
 
         if (!$this->skipDatabaseConfig) {
             $writer->writeDbConfig($config);
@@ -825,15 +828,5 @@ class Installer
         foreach ($userPermissions as $up) {
             $db->insert('users_permission_definitions', $up);
         }
-    }
-
-    /**
-     * @param ConfigWriter $configWriter
-     *
-     * @return void
-     */
-    public function setConfigWriter(ConfigWriter $configWriter)
-    {
-        $this->configWriter = $configWriter;
     }
 }
