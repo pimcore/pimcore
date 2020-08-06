@@ -404,7 +404,7 @@ class Service extends Model\Element\Service
                                 if ($csvMode) {
                                     $getterParams = ['language' => $requestedLanguage];
                                     $tempData = $def->getForCsvExport($object, $getterParams);
-                                } else {
+                                } else if (method_exists($def, 'getDataForGrid')) {
                                     $tempData = $def->getDataForGrid($valueObject->value, $object, $params);
                                 }
 
