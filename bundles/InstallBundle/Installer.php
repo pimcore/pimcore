@@ -22,7 +22,6 @@ use Doctrine\DBAL\DriverManager;
 use PDO;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
-use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriterFactory;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
@@ -96,9 +95,9 @@ class Installer
     private $skipDatabaseConfig = false;
 
     /**
-     * @var ConfigWriterFactory
+     * @var ConfigWriter
      */
-    private $configWriterFactory;
+    private $configWriter;
 
     /**
      * @param bool $skipDatabaseConfig
@@ -128,11 +127,11 @@ class Installer
     public function __construct(
         LoggerInterface $logger,
         EventDispatcherInterface $eventDispatcher,
-        ConfigWriterFactory $configWriterFactory = null
+        ConfigWriter $configWriter = null
     ) {
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
-        $this->configWriterFactory = $configWriterFactory ?? new ConfigWriterFactory();
+        $this->configWriter = $configWriter ?? new ConfigWriter();
     }
 
     public function setDbCredentials(array $dbCredentials = [])
@@ -564,15 +563,13 @@ class Installer
 
     public function createConfigFiles(array $config)
     {
-        $writer = $this->configWriterFactory->create();
-
         if (!$this->skipDatabaseConfig) {
-            $writer->writeDbConfig($config);
+            $this->configWriter->writeDbConfig($config);
         }
 
-        $writer->writeSystemConfig();
-        $writer->writeDebugModeConfig();
-        $writer->generateParametersFile();
+        $this->configWriter->writeSystemConfig();
+        $this->configWriter->writeDebugModeConfig();
+        $this->configWriter->generateParametersFile();
     }
 
     private function clearKernelCacheDir(KernelInterface $kernel)

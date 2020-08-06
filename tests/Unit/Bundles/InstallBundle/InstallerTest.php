@@ -5,7 +5,6 @@ namespace Pimcore\Tests\Unit\Bundles\InstallBundle;
 use PHPUnit\Framework\TestCase;
 use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
-use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriterFactory;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
@@ -32,10 +31,11 @@ class InstallerTest extends TestCase
 
         $this->configWriter = $this->prophesize(ConfigWriter::class);
 
-        $configWriterFactory = $this->prophesize(ConfigWriterFactory::class);
-        $configWriterFactory->create()->willReturn($this->configWriter->reveal());
-
-        $this->installer = new Installer($logger->reveal(), $eventDispatcher->reveal(), $configWriterFactory->reveal());
+        $this->installer = new Installer(
+            $logger->reveal(),
+            $eventDispatcher->reveal(),
+            $this->configWriter->reveal()
+        );
     }
 
     /**
