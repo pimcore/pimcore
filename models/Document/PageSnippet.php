@@ -602,7 +602,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @return Tag[]
      */
-    public function getEditables()
+    public function getEditables(): array
     {
         if ($this->editables === null) {
             $this->setEditables($this->getDao()->getEditables());
