@@ -94,7 +94,7 @@ Assuming your area uses a brick `gallery-single-images` which contains a `galler
 $document = \Pimcore\Model\Document\Page::getByPath('/en/basic-examples/galleries');
 
 /** @var \Pimcore\Model|Document\Tag\Area $area */
-$area = $document->getElement('myArea');
+$area = $document->getEditable('myArea');
 
 /** @var \Pimcore\Model|Document\Tag\Block $block */
 $block = $area->getElement('gallery');

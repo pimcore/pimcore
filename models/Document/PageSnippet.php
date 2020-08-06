@@ -56,8 +56,18 @@ abstract class PageSnippet extends Model\Document
      * Contains all content-elements of the document
      *
      * @var array
+     *
+     * @deprecated since v6.7 and will be removed in 7. Use getter/setter methods or $this->editables
      */
     protected $elements = null;
+
+    /**
+     * Contains all content-editables of the document
+     *
+     * @var array|null
+     *
+     */
+    protected $editables = null;
 
     /**
      * Contains all versions of the document
@@ -78,8 +88,22 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @var array
+     *
+     * @deprecated since v6.7 and will be removed in 7. Use getter/setter methods or $this->inheritedEditables
      */
     protected $inheritedElements = [];
+
+    /**
+     * @var array
+     */
+    protected $inheritedEditables = [];
+
+
+    public function __construct()
+    {
+        $this->elements = & $this->editables;
+        $this->inheritedElements = & $this->inheritedEditables;
+    }
 
     /**
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
@@ -90,15 +114,15 @@ abstract class PageSnippet extends Model\Document
     {
 
         // update elements
-        $this->getElements();
-        $this->getDao()->deleteAllElements();
+        $this->getEditables();
+        $this->getDao()->deleteAllEditables();
 
-        if (is_array($this->getElements()) and count($this->getElements()) > 0) {
-            foreach ($this->getElements() as $name => $element) {
-                if (!$element->getInherited()) {
-                    $element->setDao(null);
-                    $element->setDocumentId($this->getId());
-                    $element->save();
+        if (is_array($this->getEditables()) and count($this->getEditables()) > 0) {
+            foreach ($this->getEditables() as $name => $editable) {
+                if (!$editable->getInherited()) {
+                    $editable->setDao(null);
+                    $editable->setDocumentId($this->getId());
+                    $editable->save();
                 }
             }
         }
@@ -107,7 +131,7 @@ abstract class PageSnippet extends Model\Document
 
         // load data which must be requested
         $this->getProperties();
-        $this->getElements();
+        $this->getEditables();
 
         $this->checkMissingRequiredEditable();
         if ($this->getMissingRequiredEditable() && $this->getPublished()) {
@@ -207,8 +231,8 @@ abstract class PageSnippet extends Model\Document
 
         $tags = parent::getCacheTags($tags);
 
-        foreach ($this->getElements() as $element) {
-            $tags = $element->getCacheTags($this, $tags);
+        foreach ($this->getEditables() as $editable) {
+            $tags = $editable->getCacheTags($this, $tags);
         }
 
         return $tags;
@@ -223,8 +247,8 @@ abstract class PageSnippet extends Model\Document
     {
         $dependencies = parent::resolveDependencies();
 
-        foreach ($this->getElements() as $element) {
-            $dependencies = array_merge($dependencies, $element->resolveDependencies());
+        foreach ($this->getEditables() as $editable) {
+            $dependencies = array_merge($dependencies, $editable->resolveDependencies());
         }
 
         if ($this->getContentMasterDocument() instanceof Document) {
@@ -334,20 +358,36 @@ abstract class PageSnippet extends Model\Document
      * @param string $data
      *
      * @return $this
+     *
+     * @deprecated since v6.7 and will be removed in 7. Use setRawEditable() instead.
      */
     public function setRawElement($name, $type, $data)
+    {
+        return $this->setRawEditable($name, $type,$data);
+    }
+
+    /**
+     * Set raw data of an editable (eg. for editmode)
+     *
+     * @param string $name
+     * @param string $type
+     * @param mixed $data
+     *
+     * @return $this
+     */
+    public function setRawEditable(string $name, string $type, $data)
     {
         try {
             if ($type) {
                 /** @var TagLoaderInterface $loader */
                 $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
-                $element = $loader->build($type);
+                $editable = $loader->build($type);
 
-                $this->elements = $this->elements ?? [];
-                $this->elements[$name] = $element;
-                $this->elements[$name]->setDataFromEditmode($data);
-                $this->elements[$name]->setName($name);
-                $this->elements[$name]->setDocument($this);
+                $this->editables = $this->editables ?? [];
+                $this->editables[$name] = $editable;
+                $this->editables[$name]->setDataFromEditmode($data);
+                $this->editables[$name]->setName($name);
+                $this->editables[$name]->setDocument($this);
             }
         } catch (\Exception $e) {
             Logger::warning("can't set element " . $name . ' with the type ' . $type . ' to the document: ' . $this->getRealFullPath());
@@ -363,10 +403,25 @@ abstract class PageSnippet extends Model\Document
      * @param Tag $data
      *
      * @return $this
+     *
+     * @deprecated since v6.7 and will be removed in 7. Use setEditable() instead.
      */
     public function setElement($name, $data)
     {
-        $this->elements[$name] = $data;
+        return $this->setEditable($name, $data);
+    }
+
+    /**
+     * Set an element with the given key/name
+     *
+     * @param string $name
+     * @param Tag $data
+     *
+     * @return $this
+     */
+    public function setEditable(string $name,Tag $data)
+    {
+        $this->editables[$name] = $data;
 
         return $this;
     }
@@ -375,11 +430,23 @@ abstract class PageSnippet extends Model\Document
      * @param string $name
      *
      * @return $this
+     *
+     * @deprecated since v6.7 and will be removed in 7. Use removeEditable() instead.
      */
     public function removeElement($name)
     {
-        if (isset($this->elements[$name])) {
-            unset($this->elements[$name]);
+        return $this->removeEditable($name);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return $this
+     */
+    public function removeEditable(string $name)
+    {
+        if (isset($this->editables[$name])) {
+            unset($this->editables[$name]);
         }
 
         return $this;
@@ -391,28 +458,42 @@ abstract class PageSnippet extends Model\Document
      * @param string $name
      *
      * @return Tag|null
+     *
+     * @deprecated since v6.7 and will be removed in 7. Use getEditable() instead.
      */
     public function getElement($name)
     {
-        $elements = $this->getElements();
-        if (isset($this->elements[$name])) {
-            return $elements[$name];
+        return $this->getEditable($name);
+    }
+
+    /**
+     * Get an editable with the given key/name
+     *
+     * @param string $name
+     *
+     * @return Tag|null
+     */
+    public function getEditable(string $name)
+    {
+        $editables = $this->getEditables();
+        if (isset($this->editables[$name])) {
+            return $editables[$name];
         }
 
-        if (array_key_exists($name, $this->inheritedElements)) {
-            return $this->inheritedElements[$name];
+        if (array_key_exists($name, $this->inheritedEditables)) {
+            return $this->inheritedEditables[$name];
         }
 
         // check for content master document (inherit data)
         if ($contentMasterDocument = $this->getContentMasterDocument()) {
             if ($contentMasterDocument instanceof self) {
-                $inheritedElement = $contentMasterDocument->getElement($name);
-                if ($inheritedElement) {
-                    $inheritedElement = clone $inheritedElement;
-                    $inheritedElement->setInherited(true);
-                    $this->inheritedElements[$name] = $inheritedElement;
+                $inheritedEditable = $contentMasterDocument->getEditable($name);
+                if ($inheritedEditable) {
+                    $inheritedEditable = clone $inheritedEditable;
+                    $inheritedEditable->setInherited(true);
+                    $this->inheritedEditables[$name] = $inheritedEditable;
 
-                    return $inheritedElement;
+                    return $inheritedEditable;
                 }
             }
         }
@@ -490,32 +571,67 @@ abstract class PageSnippet extends Model\Document
      * @param string $name
      *
      * @return bool
+     *
+     * @deprecated since v6.7 and will be removed in 7. Use hasEditable() instead.
      */
     public function hasElement($name)
     {
-        return $this->getElement($name) !== null;
+        return $this->hasEditable($name);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasEditable(string $name)
+    {
+        return $this->getEditable($name) !== null;
+    }
+
+    /**
+     * @return Tag[]
+     *
+     * @deprecated since v6.7 and will be removed in 7. Use getEditables() instead.
+     */
+    public function getElements()
+    {
+        return $this->getEditables();
     }
 
     /**
      * @return Tag[]
      */
-    public function getElements()
+    public function getEditables(): array
     {
-        if ($this->elements === null) {
-            $this->setElements($this->getDao()->getElements());
+        if ($this->editables === null) {
+            $this->setEditables($this->getDao()->getEditables());
         }
 
-        return $this->elements;
+        return $this->editables;
     }
 
     /**
      * @param array $elements
      *
      * @return $this
+     *
+     * @deprecated since v6.7 and will be removed in 7. Use setEditables() instead.
      */
     public function setElements($elements)
     {
-        $this->elements = $elements;
+        return $this->setEditables($elements);
+    }
+
+    /**
+     * @param array|null $editables
+     *
+     * @return $this
+     *
+     */
+    public function setEditables(?array $editables)
+    {
+        $this->editables = $editables;
 
         return $this;
     }
@@ -650,7 +766,7 @@ abstract class PageSnippet extends Model\Document
                     // rendering could fail if the controller/action doesn't exist, in this case we can skip the required check
                     $tagNames = $tagUsageResolver->getUsedTagnames($documentCopy);
                     foreach ($tagNames as $tagName) {
-                        $tag = $documentCopy->getElement($tagName);
+                        $tag = $documentCopy->getEditable($tagName);
                         if ($tag instanceof Tag && in_array($tag->getType(), $allowedTypes)) {
                             $documentOptions = $tag->getOptions();
                             if ($tag->isEmpty() && isset($documentOptions['required']) && $documentOptions['required'] == true) {

@@ -130,8 +130,8 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     protected function addDataToDocument(Request $request, Model\Document\PageSnippet $document)
     {
         // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
-        if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificElements())) {
-            $document->getElements();
+        if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificEditables())) {
+            $document->getEditables();
         }
 
         if ($request->get('data')) {
@@ -139,7 +139,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             foreach ($data as $name => $value) {
                 $data = $value['data'] ?? null;
                 $type = $value['type'];
-                $document->setRawElement($name, $type, $data);
+                $document->setRawEditable($name, $type, $data);
             }
         }
     }
@@ -286,7 +286,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     {
         $doc = Model\Document::getById($request->get('id'));
         if ($doc instanceof Model\Document\PageSnippet) {
-            $doc->setElements([]);
+            $doc->setEditables([]);
             $doc->setContentMasterDocumentId($request->get('contentMasterDocumentPath'));
             $doc->saveVersion();
         }
