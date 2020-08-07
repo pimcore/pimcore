@@ -50,7 +50,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
             autoHeight: true,
             border: true,
             style: "margin-bottom: 10px",
-            componentCls: "object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             collapsible: this.fieldConfig.collapsible,
             collapsed: this.fieldConfig.collapsed
         };

@@ -116,6 +116,31 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
             checkbox.labelWidth = this.fieldConfig.labelWidth;
         }
 
+
+        this.createEmptyButton();
+
+        this.checkbox = new Ext.form.Checkbox(checkbox);
+
+        var componentCfg = {
+            fieldLabel:this.fieldConfig.title,
+            layout: 'hbox',
+            items: [
+                this.checkbox,
+                this.emptyButton
+            ],
+            componentCls: "object_field object_field_type_" + this.type,
+            border: false,
+            style: {
+                padding: 0
+            }
+        };
+
+        this.component = Ext.create('Ext.form.FieldContainer', componentCfg);
+
+        return this.component;
+    },
+
+    createEmptyButton: function() {
         if (this.getObject()) {
             this.emptyButton = new Ext.Button({
                 iconCls: "pimcore_icon_delete",
@@ -134,28 +159,7 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
                 style: "margin-left: 10px; filter:grayscale(100%);",
             });
         }
-
-        this.checkbox = new Ext.form.Checkbox(checkbox);
-
-        var componentCfg = {
-            fieldLabel:this.fieldConfig.title,
-            layout: 'hbox',
-            items: [
-                this.checkbox,
-                this.emptyButton
-            ],
-            componentCls: "object_field",
-            border: false,
-            style: {
-                padding: 0
-            }
-        };
-
-        this.component = Ext.create('Ext.form.FieldContainer', componentCfg);
-
-        return this.component;
     },
-
 
     addInheritanceSourceButton:function ($super, metaData) {
         this.updateStyle("#6782F6");

@@ -17,6 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Tag\NamingStrategy\Exception;
 
+/**
+ * @deprecated
+ */
 class TagNameException extends \RuntimeException
 {
 }

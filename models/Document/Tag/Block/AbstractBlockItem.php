@@ -53,13 +53,13 @@ abstract class AbstractBlockItem
         $namingStrategy = \Pimcore::getContainer()->get('pimcore.document.tag.naming.strategy');
 
         $id = $namingStrategy->buildChildElementTagName($name, $this->getItemType(), $this->parentBlockNames, $this->index);
-        $element = $this->document->getElement($id);
+        $editable = $this->document->getEditable($id);
 
-        if ($element) {
-            $element->setParentBlockNames($this->parentBlockNames);
+        if ($editable) {
+            $editable->setParentBlockNames($this->parentBlockNames);
         }
 
-        return $element;
+        return $editable;
     }
 
     /**

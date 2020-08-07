@@ -151,19 +151,19 @@ class TestHelper
             $d = [];
 
             if ($document instanceof Document\PageSnippet) {
-                $elements = $document->getElements();
+                $editables = $document->getEditables();
 
-                ksort($elements);
+                ksort($editables);
 
                 /** @var Document\Tag $value */
-                foreach ($elements as $key => $value) {
+                foreach ($editables as $key => $value) {
                     if ($value instanceof Document\Tag\Video) {
                         // with video can't use frontend(), it includes random id
-                        $d['element_' . $key] = $value->getName() . ':' . $value->type . '_' . $value->id;
+                        $d['editable_' . $key] = $value->getName() . ':' . $value->type . '_' . $value->id;
                     } elseif (!$value instanceof Document\Tag\Block) {
-                        $d['element_' . $key] = $value->getName() . ':' . $value->frontend();
+                        $d['editable_' . $key] = $value->getName() . ':' . $value->frontend();
                     } else {
-                        $d['element_' . $key] = $value->getName();
+                        $d['editable_' . $key] = $value->getName();
                     }
                 }
 
@@ -486,6 +486,7 @@ class TestHelper
         $testDataHelper->fillMultiSelect($object, 'multiselect', $seed);
         $testDataHelper->fillUser($object, 'user', $seed);
         $testDataHelper->fillCheckbox($object, 'checkbox', $seed);
+        $testDataHelper->fillBooleanSelect($object, 'booleanSelect', $seed);
         $testDataHelper->fillWysiwyg($object, 'wysiwyg', $seed);
         $testDataHelper->fillPassword($object, 'password', $seed);
         $testDataHelper->fillMultiSelect($object, 'countries', $seed);

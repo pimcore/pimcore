@@ -29,7 +29,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
  *
  * How to generate a key: vendor/bin/generate-defuse-key
  */
-class EncryptedField extends Data implements ResourcePersistenceAwareInterface
+class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
 
@@ -631,5 +631,24 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface
     {
         // encrypted data shouldn't be in search index
         return '';
+    }
+
+    /**
+     * @param Model\DataObject\Data\EncryptedField|null $oldValue
+     * @param Model\DataObject\Data\EncryptedField|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $fd = $this->getDelegateDatatypeDefinition();
+        if ($fd instanceof Model\DataObject\ClassDefinition\Data) {
+            $oldValue = $oldValue instanceof Model\DataObject\Data\EncryptedField ? $oldValue->getPlain() : null;
+            $newValue = $newValue instanceof Model\DataObject\Data\EncryptedField ? $newValue->getPlain() : null;
+
+            return $fd->isEqual($oldValue, $newValue);
+        }
+
+        return false;
     }
 }

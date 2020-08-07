@@ -654,6 +654,7 @@ class Configuration implements ConfigurationInterface
                             ->info('Sets naming strategy used to build editable names')
                             ->values(['legacy', 'nested'])
                             ->defaultValue('nested')
+                            ->setDeprecated('The "%node%" option is deprecated. Migrate to the new editable naming scheme!')
                         ->end()
                     ->end()
                 ->end()

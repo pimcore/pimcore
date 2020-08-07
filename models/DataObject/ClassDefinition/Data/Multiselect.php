@@ -20,8 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Multiselect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Multiselect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -597,5 +598,16 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @param array|null $value1
+     * @param array|null $value2
+     *
+     * @return bool
+     */
+    public function isEqual($value1, $value2): bool
+    {
+        return $this->isEqualArray($value1, $value2);
     }
 }

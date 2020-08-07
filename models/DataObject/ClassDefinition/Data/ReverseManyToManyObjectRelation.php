@@ -142,7 +142,7 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
     {
         //only relations of owner type are allowed
         $ownerClass = DataObject\ClassDefinition::getByName($this->getOwnerClassName());
-        if ($ownerClass->getId() > 0 and $ownerClass->getId() == $object->getClassId()) {
+        if ($ownerClass instanceof DataObject\ClassDefinition && $object instanceof DataObject\Concrete && $ownerClass->getId() == $object->getClassId()) {
             $fd = $ownerClass->getFieldDefinition($this->getOwnerFieldName());
             if ($fd instanceof DataObject\ClassDefinition\Data\ManyToManyObjectRelation) {
                 return $fd->allowObjectRelation($object);

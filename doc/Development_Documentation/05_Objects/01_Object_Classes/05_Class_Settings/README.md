@@ -14,3 +14,4 @@ backend or via code by a developer.
 * [Locking Fields](./35_Locking_Fields.md)
 * [Path Formatter](./50_Path_Formatter.md)
 * [Link Generator](./30_Link_Generator.md)
+* Type Declaration

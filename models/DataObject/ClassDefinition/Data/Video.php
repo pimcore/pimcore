@@ -22,7 +22,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool\Serialize;
 
-class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Video extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -675,5 +675,53 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
             return $video;
         }
+    }
+
+    /**
+     * @param DataObject\Data\Video|null $oldValue
+     * @param DataObject\Data\Video|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldData = [];
+        $newData = [];
+
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!$oldValue instanceof DataObject\Data\Video
+            || !$newValue instanceof DataObject\Data\Video
+            || $oldValue->getType() != $newValue->getType()) {
+            return false;
+        }
+
+        $oldData['data'] = $oldValue->getData();
+
+        if ($oldData['data'] instanceof Asset\Video) {
+            $oldData['data'] = $oldData['data']->getId();
+            $oldData['poster'] = $oldValue->getPoster();
+            $oldData['title'] = $oldValue->getTitle();
+            $oldData['description'] = $oldValue->getDescription();
+        }
+
+        $newData['data'] = $newValue->getData();
+
+        if ($newData['data'] instanceof Asset\Video) {
+            $newData['data'] = $newData['data']->getId();
+            $newData['poster'] = $newValue->getPoster();
+            $newData['title'] = $newValue->getTitle();
+            $newData['description'] = $newValue->getDescription();
+        }
+
+        foreach ($oldData as $key => $oValue) {
+            if (!isset($newData[$key]) || $oValue !== $newData[$key]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

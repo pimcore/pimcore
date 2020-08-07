@@ -393,6 +393,7 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('image'));
             $panel->addChild($this->createDataChild('hotspotimage'));
             $panel->addChild($this->createDataChild('checkbox'));
+            $panel->addChild($this->createDataChild('booleanSelect'));
             $panel->addChild($this->createDataChild('table'));
             $panel->addChild($this->createDataChild('structuredTable', 'structuredtable')
                 ->setCols([
@@ -525,6 +526,7 @@ class Model extends AbstractDefinitionHelper
         $def->setName($name);
         $def->setLayoutDefinitions($layout);
         $def->setAllowInherit($inheritanceAllowed);
+        $def->setGenerateTypeDeclarations(true);
         $json = ClassDefinition\Service::generateClassDefinitionJson($def);
         $cm->saveJson($filename, $json);
 
@@ -864,6 +866,7 @@ class Model extends AbstractDefinitionHelper
         $def = new Definition();
         $def->setKey($name);
         $def->setLayoutDefinitions($layout);
+        $def->setGenerateTypeDeclarations(true);
         $json = ClassDefinition\Service::generateFieldCollectionJson($def);
         $cm->saveJson($filename, $json);
 
@@ -885,6 +888,7 @@ class Model extends AbstractDefinitionHelper
         $def->setKey($name);
         $def->setLayoutDefinitions($layout);
         $def->setClassDefinitions($classDefinitions);
+        $def->setGenerateTypeDeclarations(true);
         $json = ClassDefinition\Service::generateObjectBrickJson($def);
         $cm->saveJson($filename, $json);
 

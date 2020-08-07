@@ -35,7 +35,7 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
         }
 
         this.tagAssignment = new pimcore.element.tag.assignment(this, "asset");
-        this.metadata = new pimcore.asset.metadata.grid(this);
+        this.metadata = new pimcore.asset.metadata.editor(this);
         this.workflows = new pimcore.element.workflows(this, "asset");
         this.embeddedMetaData = new pimcore.asset.embedded_meta_data(this);
 
@@ -202,17 +202,19 @@ pimcore.asset.video = Class.create(pimcore.asset.asset, {
                             try {
                                 this.previewImagePanel.getComponent("inner").getComponent("assetPath").setValue("");
 
+                                var time = window[this.previewFrameId].document.getElementById("video").currentTime;
+                                var date = new Date();
+                                var cmp = Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id);
+
                                 var url = Routing.generate('pimcore_admin_asset_getvideothumbnail', {
                                     id: this.id,
                                     width: 265,
                                     aspectratio: true,
+                                    time: time,
                                     settime: true,
                                     '_dc': date.getTime()
                                 });
 
-                                var time = window[this.previewFrameId].document.getElementById("video").currentTime;
-                                var date = new Date();
-                                var cmp = Ext.getCmp("pimcore_asset_video_imagepreview_" + this.id);
                                 cmp.update('<img class="pimcore_video_preview_image" align="center" src="'+url+'" />');
 
                             } catch (e) {

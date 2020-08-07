@@ -19,6 +19,9 @@ namespace Pimcore\Document\Tag\NamingStrategy;
 
 use Pimcore\Document\Tag\Block\BlockState;
 
+/**
+ * @deprecated
+ */
 interface NamingStrategyInterface
 {
     /**

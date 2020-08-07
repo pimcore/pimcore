@@ -126,7 +126,7 @@ class Service extends Model\AbstractModel
      *
      * @internal
      *
-     * @param DataObject|Document $element
+     * @param AbstractObject|Document $element
      *
      * @return string
      *
@@ -257,7 +257,7 @@ class Service extends Model\AbstractModel
     public static function getDependedElement($config)
     {
         if ($config['type'] == 'object') {
-            return DataObject::getById($config['id']);
+            return AbstractObject::getById($config['id']);
         } elseif ($config['type'] == 'asset') {
             return Asset::getById($config['id']);
         } elseif ($config['type'] == 'document') {
@@ -265,6 +265,17 @@ class Service extends Model\AbstractModel
         }
 
         return null;
+    }
+
+    /**
+     * @static
+     *
+     * @return bool
+     */
+    public static function doHideUnpublished($element)
+    {
+        return ($element instanceof AbstractObject && AbstractObject::doHideUnpublished())
+            || ($element instanceof Document && Document::doHideUnpublished());
     }
 
     /**
@@ -298,7 +309,7 @@ class Service extends Model\AbstractModel
      */
     public static function filterUnpublishedAdvancedElements($data)
     {
-        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
+        if (DataObject\AbstractObject::doHideUnpublished() && is_array($data)) {
             $publishedList = [];
             $mapping = [];
             foreach ($data as $advancedElement) {
@@ -389,7 +400,7 @@ class Service extends Model\AbstractModel
         if ($type == 'asset') {
             $element = Asset::getByPath($path);
         } elseif ($type == 'object') {
-            $element = DataObject::getByPath($path);
+            $element = AbstractObject::getByPath($path);
         } elseif ($type == 'document') {
             $element = Document::getByPath($path);
         }
@@ -487,7 +498,7 @@ class Service extends Model\AbstractModel
      * @param  int $id
      * @param  bool $force
      *
-     * @return Asset|DataObject|Document|null
+     * @return Asset|AbstractObject|Document|null
      */
     public static function getElementById($type, $id, $force = false)
     {
@@ -495,7 +506,7 @@ class Service extends Model\AbstractModel
         if ($type === 'asset') {
             $element = Asset::getById($id, $force);
         } elseif ($type === 'object') {
-            $element = DataObject::getById($id, $force);
+            $element = AbstractObject::getById($id, $force);
         } elseif ($type === 'document') {
             $element = Document::getById($id, $force);
         }
@@ -1211,6 +1222,21 @@ class Service extends Model\AbstractModel
                 return $myValue instanceof ElementInterface;
             }
         });
+
+        if ($element instanceof Concrete) {
+            $deepCopy->addFilter(
+                new PimcoreClassDefinitionReplaceFilter(
+                    function (Concrete $object, Data $fieldDefinition, $property, $currentValue) {
+                        if ($fieldDefinition instanceof Data\CustomDataCopyInterface) {
+                            return $fieldDefinition->createDataCopy($object, $currentValue);
+                        }
+
+                        return $currentValue;
+                    }
+                ),
+                new PimcoreClassDefinitionMatcher(Data\CustomDataCopyInterface::class)
+            );
+        }
 
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('dao'));
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('resource'));

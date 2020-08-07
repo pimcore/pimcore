@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface
+class ManyToManyRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -422,15 +422,15 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if (is_array($data) && count($data) > 0) {
-            $pathes = [];
+            $paths = [];
 
-            foreach ($data as $e) {
-                if ($e instanceof Element\ElementInterface) {
-                    $pathes[] = get_class($e) . $e->getRealFullPath();
+            foreach ($data as $element) {
+                if ($element instanceof Element\ElementInterface) {
+                    $paths[] = Element\Service::getElementType($element) .' '. $element->getRealFullPath();
                 }
             }
 
-            return implode('<br />', $pathes);
+            return implode('<br />', $paths);
         }
 
         return null;

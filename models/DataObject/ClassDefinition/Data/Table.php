@@ -21,8 +21,9 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool\Serialize;
 
-class Table extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Table extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -651,5 +652,16 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $this->rows = $masterDefinition->rows;
         $this->rowsFixed = $masterDefinition->rowsFixed;
         $this->data = $masterDefinition->data;
+    }
+
+    /**
+     * @param array|null $oldValue
+     * @param array|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        return $this->isEqualArray($oldValue, $newValue);
     }
 }

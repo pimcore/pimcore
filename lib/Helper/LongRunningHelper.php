@@ -63,8 +63,9 @@ class LongRunningHelper
                 if (!($connection instanceof Connection)) {
                     throw new \LogicException('Expected only instances of Connection');
                 }
-
-                $connection->close();
+                if ($connection->isTransactionActive() === false) {
+                    $connection->close();
+                }
             }
         } catch (\Exception $e) {
             // connection couldn't be established, this is e.g. the case when Pimcore isn't installed yet

@@ -24,8 +24,9 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Link extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -537,5 +538,37 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         }
 
         return $data;
+    }
+
+    /**
+     *
+     * @param DataObject\Data\Link|null $oldValue
+     * @param DataObject\Data\Link|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if ($oldValue instanceof DataObject\Data\Link) {
+            $oldValue = $oldValue->getObjectVars();
+            //clear OwnerawareTrait fields
+            unset($oldValue['_owner']);
+            unset($oldValue['_fieldname']);
+            unset($oldValue['_language']);
+        }
+
+        if ($newValue instanceof DataObject\Data\Link) {
+            $newValue = $newValue->getObjectVars();
+            //clear OwnerawareTrait fields
+            unset($newValue['_owner']);
+            unset($newValue['_fieldname']);
+            unset($newValue['_language']);
+        }
+
+        return $this->isEqualArray($oldValue, $newValue);
     }
 }

@@ -94,7 +94,7 @@ pimcore.object.tags.wysiwyg = Class.create(pimcore.object.tags.abstract, {
             bodyStyle: 'background: #fff',
             style: "margin-bottom: 10px",
             manageHeight: false,
-            cls: "object_field"
+            cls: "object_field object_field_type_" + this.type
         };
 
         if(this.fieldConfig.width) {

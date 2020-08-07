@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
 use Pimcore\Tool;
 
-class Classificationstore extends Data implements CustomResourcePersistingInterface
+class Classificationstore extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface
 {
     use Element\ChildsCompatibilityTrait;
 

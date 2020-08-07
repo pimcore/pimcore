@@ -17,7 +17,7 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
     showFieldname: true,
     data: {},
 
-    initialize: function (columnConfig, callback, resetCallback, showSaveAndShareTab, settings, previewSettings) {
+    initialize: function (columnConfig, callback, resetCallback, showSaveAndShareTab, settings, previewSettings, additionalConfig) {
 
         this.config = columnConfig;
         this.callback = callback;
@@ -25,6 +25,7 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
         this.showSaveAndShareTab = showSaveAndShareTab;
         this.isShared = settings && settings.isShared;
         this.previewSettings = previewSettings || {};
+        this.additionalConfig = additionalConfig || {};
 
         this.settings = settings || {};
 
@@ -33,14 +34,7 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
             };
         }
 
-        this.configPanel = new Ext.Panel({
-            layout: "border",
-            iconCls: "pimcore_icon_table",
-            title: t("grid_configuration"),
-            items: [this.getLanguageSelection(), this.getSelectionPanel(), this.getLeftPanel()]
-
-        });
-
+        this.getConfigPanel();
 
         var tabs = [this.configPanel];
 
@@ -127,6 +121,16 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
 
         this.window.show();
         this.updatePreview();
+    },
+
+    getConfigPanel: function() {
+        this.configPanel = new Ext.Panel({
+            layout: "border",
+            iconCls: "pimcore_icon_table",
+            title: t("grid_configuration"),
+            items: [this.getLanguageSelection(), this.getSelectionPanel(), this.getLeftPanel()]
+        });
+        return this.configPanel;
     },
 
     getLeftPanel: function () {
@@ -312,9 +316,16 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
         }
     },
 
-    getLanguageSelection: function () {
-        var storedata = [["default", t("default")]];
-        for (var i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
+    getLanguageSelection: function (config) {
+        config = config || {};
+
+        var storedata = [];
+
+
+        if (!config.omitDefault) {
+            storedata.push(["default", t("default")]);
+        }
+        for (let i = 0; i < pimcore.settings.websiteLanguages.length; i++) {
             storedata.push([pimcore.settings.websiteLanguages[i],
                 pimcore.available_languages[pimcore.settings.websiteLanguages[i]]]);
         }
@@ -327,12 +338,13 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
             [999999, t("all")]
         ];
 
-        this.languageField = new Ext.form.ComboBox({
+        let languageConfig = {
             name: "language",
-            width: 330,
+            width: 250,
             mode: 'local',
             autoSelect: true,
             editable: false,
+            emptyText: config.emptyText,
             value: this.config.language,
             store: new Ext.data.ArrayStore({
                 id: 0,
@@ -342,15 +354,20 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
                 ],
                 data: storedata
             }),
-            listeners: {
-                change: function() {
-                    this.updatePreview();
-                }.bind(this)
-            },
             triggerAction: 'all',
             valueField: 'id',
             displayField: 'label'
-        });
+        };
+
+        if (!config.disablePreviewUpdate) {
+            languageConfig.listeners = {
+                change: function() {
+                    this.updatePreview();
+                }.bind(this)
+            };
+        }
+
+        this.languageField = new Ext.form.ComboBox(languageConfig);
 
         this.itemsPerPage = new Ext.form.ComboBox({
             name: "itemsperpage",
@@ -373,6 +390,16 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
             displayField: 'label'
         });
 
+        let items = [this.languageField];
+        if (config.additionalItem) {
+            items.push(config.additionalItem);
+        }
+        items.push({
+            xtype: 'tbfill'
+        });
+        items.push(this.itemsPerPage);
+
+
         var compositeConfig = {
             xtype: "fieldset",
             layout: 'hbox',
@@ -380,9 +407,7 @@ pimcore.element.helpers.gridConfigDialog = Class.create({
             style: "border-top: none !important;",
             hideLabel: false,
             fieldLabel: t("language"),
-            items: [this.languageField, {
-                xtype: 'tbfill'
-            }, this.itemsPerPage]
+            items: items
         };
 
         if (!this.languagePanel) {
