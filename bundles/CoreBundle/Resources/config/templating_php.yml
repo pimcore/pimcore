@@ -26,10 +26,16 @@ services:
         tags:
             - { name: pimcore.templating.helper_broker, priority: 20 }
 
+    Pimcore\Templating\HelperBroker\DocumentEditable:
+        public: false
+        tags:
+            - { name: pimcore.templating.helper_broker, priority: 10 }
+
     Pimcore\Templating\HelperBroker\DocumentTag:
         public: false
         tags:
             - { name: pimcore.templating.helper_broker, priority: 10 }
+        deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Templating\HelperBroker\DocumentEditable" instead'
 
     Pimcore\Templating\HelperBroker\DocumentMethod:
         public: false

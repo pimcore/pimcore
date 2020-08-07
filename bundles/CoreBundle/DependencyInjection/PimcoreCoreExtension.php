@@ -24,6 +24,7 @@ use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Migrations\Configuration\ConfigurationFactory;
 use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
+use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
@@ -202,6 +203,10 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
             'pimcore.implementation_loader.document.tag' => [
                 'config' => $config['documents']['tags'],
                 'prefixLoader' => DocumentTagPrefixLoader::class,
+            ],
+            'pimcore.implementation_loader.document.editable' => [
+                'config' => $config['documents']['editables'],
+                'prefixLoader' => DocumentEditablePrefixLoader::class,
             ],
             'pimcore.implementation_loader.object.data' => [
                 'config' => $config['objects']['class_definitions']['data'],

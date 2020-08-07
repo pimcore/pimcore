@@ -84,6 +84,10 @@ services:
 
     Pimcore\Document\Tag\TagUsageResolver:
         public: true
+        deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Document\Editable\EditableUsageResolver" instead'
+
+    Pimcore\Document\Editable\EditableUsageResolver:
+        public: true
 
     Pimcore\Document\DocumentStack:
         public: true
