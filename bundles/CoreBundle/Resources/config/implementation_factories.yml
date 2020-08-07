@@ -13,6 +13,12 @@ services:
     pimcore.implementation_loader.document.tag:
         class: Pimcore\Model\Document\Tag\Loader\TagLoader
         public: true
+        deprecated: 'The "%service_id%" service is deprecated. Use "pimcore.implementation_loader.document.editable" instead'
+
+    # document editable loader
+    pimcore.implementation_loader.document.editable:
+        class: Pimcore\Model\Document\Editable\Loader\EditableLoader
+        public: true
 
     # object data loader
     pimcore.implementation_loader.object.data:

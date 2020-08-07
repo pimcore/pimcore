@@ -17,9 +17,14 @@ services:
     pimcore.document.tag.naming.strategy.nested:
         class: Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy
 
+    pimcore.document.editable.block_state_stack:
+        class: Pimcore\Document\Editable\Block\BlockStateStack
+        public: true
+
     pimcore.document.tag.block_state_stack:
         alias: Pimcore\Document\Tag\Block\BlockStateStack
         public: true
+        deprecated: 'The "%alias_id%" service is deprecated. Use "pimcore.document.editable.block_state_stack" instead'
 
     Pimcore\Document\Tag\Block\BlockStateStack: ~
 
