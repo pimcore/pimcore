@@ -63,9 +63,7 @@ pimcore.object.classes.layout.fieldcontainer = Class.create(pimcore.object.class
             fields: ['abbr', 'name'],
             data : [
                 {"abbr": "left", "name": t("left")},
-                {"abbr": "top", "name": t("top")},
-                {"abbr": "bottom", "name": t("bottom")},
-                {"abbr": "right", "name": t("right")}
+                {"abbr": "top", "name": t("top")}
             ]
         });
 

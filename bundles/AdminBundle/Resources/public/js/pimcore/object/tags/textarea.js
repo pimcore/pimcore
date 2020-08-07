@@ -74,7 +74,7 @@ pimcore.object.tags.textarea = Class.create(pimcore.object.tags.abstract, {
             conf.labelAlign = this.fieldConfig.labelAlign;
         }
 
-        if (!this.fieldConfig.labelAlign || ['left', 'right'].includes(this.fieldConfig.labelAlign)) {
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
             conf.width += conf.labelWidth;
         }
 

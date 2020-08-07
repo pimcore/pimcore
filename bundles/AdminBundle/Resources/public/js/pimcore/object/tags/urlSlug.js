@@ -181,7 +181,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
             textConfig.labelAlign = this.fieldConfig.labelAlign;
         }
 
-        if (!this.fieldConfig.labelAlign || ['left', 'right'].includes(this.fieldConfig.labelAlign)) {
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
             textConfig.width += textConfig.labelWidth;
         }
 
