@@ -14,6 +14,8 @@
 
 namespace Pimcore\Model\Document\Tag;
 
+use \Pimcore\Model\Document\Editable\Relations;
+
 @trigger_error(
     'Tag `Multihref` is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
     'Use `Multihref` instead.',
@@ -24,7 +26,7 @@ class_exists(Relations::class);
 
 if (false) {
     /**
-     * @deprecated use \Pimcore\Model\Document\Tag\Relations instead
+     * @deprecated use \Pimcore\Model\Document\Editable\Relations instead
      */
     class Multihref extends Relations
     {
