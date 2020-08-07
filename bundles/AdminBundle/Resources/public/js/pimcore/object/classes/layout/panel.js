@@ -47,7 +47,9 @@ pimcore.object.classes.layout.panel = Class.create(pimcore.object.classes.layout
             fields: ['abbr', 'name'],
             data : [
                 {"abbr": "left", "name": t("left")},
-                {"abbr": "top", "name": t("top")}
+                {"abbr": "top", "name": t("top")},
+                {"abbr": "bottom", "name": t("bottom")},
+                {"abbr": "right", "name": t("right")}
             ]
         });
 

@@ -713,6 +713,7 @@
   "left": "left",
   "right": "right",
   "top": "top",
+  "bottom": "bottom",
   "provide_split_view": "Provide Split View",
   "allow_multiple_assignments": "Allow Multiple Assignments",
   "enable_admin_async_load": "Enable Async Load in Admin",

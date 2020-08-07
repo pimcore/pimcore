@@ -148,7 +148,9 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
             fields: ['abbr', 'name'],
             data : [
                 {"abbr": "left", "name": t("left")},
-                {"abbr": "top", "name": t("top")}
+                {"abbr": "top", "name": t("top")},
+                {"abbr": "bottom", "name": t("bottom")},
+                {"abbr": "right", "name": t("right")}
             ]
         });
 

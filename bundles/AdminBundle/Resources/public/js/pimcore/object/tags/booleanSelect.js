@@ -188,7 +188,7 @@ pimcore.object.tags.booleanSelect = Class.create(pimcore.object.tags.abstract, {
             options.width = this.fieldConfig.width;
         }
 
-        if (!this.fieldConfig.labelAlign || this.fieldConfig.labelAlign === 'left') {
+        if (!this.fieldConfig.labelAlign || ['left', 'right'].includes(this.fieldConfig.labelAlign)) {
             options.width += options.labelWidth;
         }
 

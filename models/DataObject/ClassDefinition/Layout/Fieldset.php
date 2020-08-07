@@ -35,6 +35,13 @@ class Fieldset extends Model\DataObject\ClassDefinition\Layout
     public $labelWidth = 100;
 
     /**
+     * Align of input field labels
+     *
+     * @var string
+     */
+    public $labelAlign = 'left';
+
+    /**
      * @param int $labelWidth
      *
      * @return $this
@@ -54,5 +61,27 @@ class Fieldset extends Model\DataObject\ClassDefinition\Layout
     public function getLabelWidth()
     {
         return $this->labelWidth;
+    }
+
+    /**
+     * @param string $labelAlign
+     *
+     * @return $this
+     */
+    public function setLabelAlign($labelAlign): self
+    {
+        if (!empty($labelAlign)) {
+            $this->labelAlign = $labelAlign;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLabelAlign()
+    {
+        return $this->labelAlign;
     }
 }
