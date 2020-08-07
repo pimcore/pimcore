@@ -98,7 +98,6 @@ abstract class PageSnippet extends Model\Document
      */
     protected $inheritedEditables = [];
 
-
     public function __construct()
     {
         $this->elements = & $this->editables;
@@ -363,7 +362,7 @@ abstract class PageSnippet extends Model\Document
      */
     public function setRawElement($name, $type, $data)
     {
-        return $this->setRawEditable($name, $type,$data);
+        return $this->setRawEditable($name, $type, $data);
     }
 
     /**
@@ -419,7 +418,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      */
-    public function setEditable(string $name,Tag $data)
+    public function setEditable(string $name, Tag $data)
     {
         $this->editables[$name] = $data;
 
