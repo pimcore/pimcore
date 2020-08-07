@@ -1343,7 +1343,7 @@ class MiscController extends AdminController
         $lifetime = 86400;
 
         $response = new Response($scriptContents);
-        $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 'application/javascript');
+        $response->headers->set('Symfony-Session-NoAutoCacheControl', 'application/javascript');
         $response->headers->set('Cache-Control', 'max-age=' . $lifetime);
         $response->headers->set('Pragma', '');
         $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $lifetime) . ' GMT');
@@ -1432,7 +1432,7 @@ class MiscController extends AdminController
 
 
         $response = new Response($scriptContents);
-        $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 'application/javascript');
+        $response->headers->set('Symfony-Session-NoAutoCacheControl', 'application/javascript');
         $response->headers->set('Cache-Control', 'max-age=' . $lifetime);
         $response->headers->set('Pragma', '');
         $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $lifetime) . ' GMT');
@@ -1551,7 +1551,7 @@ class MiscController extends AdminController
         $lifetime = 86400;
 
         $response = new Response($scriptContents);
-        $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 'application/javascript');
+        $response->headers->set('Symfony-Session-NoAutoCacheControl', 'application/javascript');
         $response->headers->set('Cache-Control', 'max-age=' . $lifetime);
         $response->headers->set('Pragma', '');
         $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $lifetime) . ' GMT');
