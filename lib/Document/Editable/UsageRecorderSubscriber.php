@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Document\Editable;
 
 use Pimcore\Event\DocumentEvents;
-use Pimcore\Event\Model\Document\TagNameEvent;
+use Pimcore\Event\Model\Document\EditableNameEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class UsageRecorderSubscriber implements EventSubscriberInterface
@@ -46,32 +46,21 @@ class UsageRecorderSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            DocumentEvents::TAG_NAME => 'onBuildTagName',
             DocumentEvents::EDITABLE_NAME => 'onBuildEditableName',
         ];
     }
 
     /**
-     * @param TagNameEvent $event
+     * @param EditableNameEvent $event
      *
      */
-    public function onBuildEditableName(TagNameEvent $event)
+    public function onBuildEditableName(EditableNameEvent $event)
     {
         if (null === $document = $event->getDocument()) {
             throw new \RuntimeException('Need a document to migrate editable naming strategy.');
         }
 
-        $this->recordedEditableNames[] = $event->getTagName();
-    }
-
-    /**
-     * @param TagNameEvent $event
-     *
-     * @deprecated since 6.7 and will be removed in 7. use onBuildEditableName() instead.
-     */
-    public function onBuildTagName(TagNameEvent $event)
-    {
-        $this->onBuildEditableName($event);
+        $this->recordedEditableNames[] = $event->getEditableName();
     }
 
     /**

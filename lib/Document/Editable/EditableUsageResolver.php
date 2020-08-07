@@ -26,7 +26,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class EditableUsageResolver
 {
     /**
-     * @var UsageRecorderSubscriber
+     * @var UsageRecorderSubscriber|null
      */
     protected $subscriber;
     protected $dispatcher;
