@@ -148,6 +148,7 @@ class Service extends Model\Element\Service
                 if ($fieldDefinition->getUnique()) {
                     $new->set($fieldDefinition->getName(), null);
                     $new->setPublished(false);
+                    $new->setOmitMandatoryCheck(true);
                 }
             }
         }
@@ -212,6 +213,7 @@ class Service extends Model\Element\Service
                 if ($fieldDefinition->getUnique()) {
                     $new->set($fieldDefinition->getName(), null);
                     $new->setPublished(false);
+                    $new->setOmitMandatoryCheck(true);
                 }
             }
         }
