@@ -15,19 +15,20 @@ declare(strict_types = 1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Document\Tag\Loader;
+namespace Pimcore\Model\Document\Editable\Loader;
 
-use Pimcore\Model\Document\Editable\Loader\EditableLoader;
+use Pimcore\Loader\ImplementationLoader\ImplementationLoader;
+use Pimcore\Model\Document\Editable;
 
-@trigger_error(sprintf('Class "%s" is deprecated since v6.7 and will be removed in 7. Use "%s" instead.', TagLoader::class, EditableLoader::class), E_USER_DEPRECATED);
-
-class_exists(EditableLoader::class);
-
-if (false) {
+class EditableLoader extends ImplementationLoader implements EditableLoaderInterface
+{
     /**
-     * @deprecated use \Pimcore\Model\Document\Editable\Loader\EditableLoader instead.
+     * @inheritDoc
      */
-    class TagLoader extends EditableLoader
+    public function build(string $name, array $params = []): Editable
     {
+        return parent::build($name, $params);
     }
 }
+
+class_alias(EditableLoader::class, 'Pimcore\Model\Document\Tag\Loader\TagLoader');
