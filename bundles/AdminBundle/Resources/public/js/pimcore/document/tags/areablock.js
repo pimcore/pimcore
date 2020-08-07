@@ -236,7 +236,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
                         cls: "pimcore_block_button_dialog",
                         iconCls: "pimcore_icon_white_edit",
                         listeners: {
-                            "click": this.openEditableDialogBox.bind(this, this.elements[i])
+                            "click": this.openEditableDialogBox.bind(this, this.elements[i], dialogBoxDiv)
                         }
                     });
                     dialogBoxButton.render(dialogBoxDiv);
@@ -940,39 +940,17 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         return index;
     },
 
-    openEditableDialogBox: function (element) {
+    openEditableDialogBox: function (element, dialogBoxDiv) {
 
-        window.editWindow.loadMask.show();
+        //window.editWindow.loadMask.show();
 
-        let brickParams = {};
-        if(this.options['params'] && this.options['params'][element.type]) {
-            brickParams = this.options['params'][element.type];
-        }
+        let win = new Ext.Window({
+            width: intval(dialogBoxDiv.dataset.dialogWidth),
+            height: intval(dialogBoxDiv.dataset.dialogHeight),
+            items: []
+        })
 
-        let params = {
-            documentId: pimcore_document_id,
-            blockState: element.dataset.blockState,
-            brickType: element.type,
-            areaBlockName: element.dataset.name,
-            areaBlockRealName: element.dataset.realName,
-            key: element.key,
-            index: element.dataset.index,
-            params: JSON.stringify(array_merge(brickParams ?? {}, this.options['globalParams'] ?? {}))
-        };
-
-        Ext.Ajax.request({
-            url: Routing.generate('pimcore_admin_document_document_geteditabledialogbox'),
-            params: params,
-            success: function (res) {
-                let response = Ext.decode(res.responseText);
-                if (response && response.success) {
-                    console.log(response);
-
-                    window.editWindow.loadMask.hide();
-                }
-            }.bind(this)
-        });
-
+        win.show();
     },
 
     editmodeOpen: function (element) {

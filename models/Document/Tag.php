@@ -104,6 +104,11 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $inherited = false;
 
     /**
+     * @var bool
+     */
+    protected $inDialogBox = false;
+
+    /**
      * @param string $type
      * @param string $name
      * @param int $documentId
@@ -145,7 +150,17 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         $attributes = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
+        if($this->isInDialogBox()) {
+            // wrap with a <template> tag
+            $code .= '<template id="template__' . $attributes['id'] . '">';
+        }
+
         $code .= ('<div ' . $attributeString . '></div>');
+
+        if($this->isInDialogBox()) {
+            // wrap with a <template> tag
+            $code .= '</template>';
+        }
 
         return $code;
     }
@@ -167,6 +182,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             'data' => $this->getEditmodeData(),
             'type' => $this->getType(),
             'inherited' => $this->getInherited(),
+            'inDialogBox' => $this->isInDialogBox(),
         ];
 
         return $options;
@@ -784,5 +800,24 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }
 
         return $data;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInDialogBox(): bool
+    {
+        return $this->inDialogBox;
+    }
+
+    /**
+     * @param bool $inDialogBox
+     * @return $this
+     */
+    public function setInDialogBox(bool $inDialogBox): self
+    {
+        $this->inDialogBox = $inDialogBox;
+
+        return $this;
     }
 }

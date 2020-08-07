@@ -18,6 +18,7 @@ services:
     Pimcore\Templating\Renderer\IncludeRenderer: ~
 
     Pimcore\Templating\Renderer\TagRenderer:
+        public: true
         arguments:
             $tagLoader: '@pimcore.implementation_loader.document.tag'
         calls:

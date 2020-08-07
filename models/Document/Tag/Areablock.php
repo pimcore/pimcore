@@ -19,9 +19,12 @@ namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Document\Tag\Block\BlockName;
 use Pimcore\Document\Tag\TagHandlerInterface;
+use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
+use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
+use Pimcore\Templating\Renderer\TagRenderer;
 use Pimcore\Tool;
 use Pimcore\Tool\HtmlUtils;
 
@@ -58,11 +61,6 @@ class Areablock extends Model\Document\Tag implements BlockInterface
      * @var array
      */
     private $brickTypeUsageCounter = [];
-
-    /**
-     * @var null|array
-     */
-    private $availableAreas = null;
 
     /**
      * @see Document\Tag\TagInterface::getType
@@ -170,13 +168,14 @@ class Areablock extends Model\Document\Tag implements BlockInterface
             }
 
             $this->blockStarted = false;
+            $info = $this->buildInfoObject();
 
             if (!$manual && !$disabled) {
                 $this->blockConstruct();
-                $this->blockStart();
+                $this->blockStart($info);
 
                 $this->blockStarted = true;
-                $this->content();
+                $this->content($info);
             } elseif (!$manual) {
                 $this->current++;
             }
@@ -191,7 +190,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         }
     }
 
-    public function content()
+    protected function buildInfoObject(): Area\Info
     {
         // create info object and assign it to the view
         $info = new Area\Info();
@@ -217,6 +216,15 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         }
 
         $info->setParams($params);
+
+        return $info;
+    }
+
+    public function content($info = null)
+    {
+        if(!$info) {
+            $info = $this->buildInfoObject();
+        }
 
         if ($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
             $this->getTagHandler()->renderAreaFrontend($info);
@@ -368,7 +376,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     /**
      * Is called evertime a new iteration starts (new entry of the block while looping)
      */
-    public function blockStart()
+    public function blockStart($info = null)
     {
         $attributes = [
             'data-name' => $this->getName(),
@@ -383,14 +391,15 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         $outerAttributes = [
             'key' => $this->indices[$this->current]['key'],
             'type' => $this->indices[$this->current]['type'],
-            'data-index' => $this->current,
             'data-hidden' => $hidden,
         ];
 
-        $hasDialogBoxConfiguration = $this->getAvailableAreas()[$this->indices[$this->current]['type']]['hasDialogBoxConfiguration'];
-        if($hasDialogBoxConfiguration) {
-            $blockState = $this->getBlockState();
-            $outerAttributes['data-block-state'] = htmlspecialchars(\json_encode($blockState));
+        $areabrickManager = \Pimcore::getContainer()->get(AreabrickManagerInterface::class);
+
+        $dialogConfig = null;
+        $brick = $areabrickManager->getBrick($this->indices[$this->current]['type']);
+        if($this->getEditmode() && $brick instanceof EditableDialogBoxInterface) {
+            $dialogConfig = $brick->getEditableDialogBoxConfiguration($this, $info);
         }
 
         $attr = HtmlUtils::assembleAttributeString($attributes);
@@ -412,8 +421,15 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         $this->outputEditmode('<div class="pimcore_block_options" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_visibility" ' . $attr . '></div>');
 
-        if($hasDialogBoxConfiguration) {
-            $this->outputEditmode('<div class="pimcore_block_dialog" ' . $attr . '></div>');
+        if($dialogConfig) {
+            $dialogAttributes = [
+                'data-dialog-width' => $dialogConfig->getWidth(),
+                'data-dialog-height' => $dialogConfig->getHeight(),
+            ];
+
+            $dialogAttributes = HtmlUtils::assembleAttributeString($dialogAttributes);
+
+            $this->outputEditmode('<div class="pimcore_block_dialog" ' . $attr . ' ' . $dialogAttributes . '></div>');
         }
 
         $this->outputEditmode('<div class="pimcore_block_label" ' . $attr . '></div>');
@@ -421,6 +437,30 @@ class Areablock extends Model\Document\Tag implements BlockInterface
 
         $this->outputEditmode('</div>'); // .pimcore_area_buttons_inner
         $this->outputEditmode('</div>'); // .pimcore_area_buttons
+
+        if($dialogConfig) {
+            $tagRenderer = \Pimcore::getContainer()->get(TagRenderer::class);
+            $this->renderDialogBoxEditables($dialogConfig->getItems(), $tagRenderer);
+        }
+    }
+
+    /**
+     * @param array $config
+     * @param TagRenderer $tagRenderer
+     */
+    private function renderDialogBoxEditables(array $config, TagRenderer $tagRenderer) {
+        foreach($config as $item) {
+            if(isset($item['items']) && is_array($item['items'])) {
+                // layout component
+                foreach($item['items'] as $child) {
+                    $this->renderDialogBoxEditables($child, $tagRenderer);
+                }
+            } elseif (isset($item['name']) && isset($item['type'])) {
+                $editable = $tagRenderer->getTag($this->getDocument(), $item['type'], $item['name']);
+                $editable->setInDialogBox(true);
+                $this->outputEditmode($editable->admin());
+            }
+        }
     }
 
     /**
@@ -433,38 +473,22 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     }
 
     /**
-     * @param array|null $options
-     * @return array
-     */
-    protected function getAvailableAreas(?array $options = null):array
-    {
-        if(!$this->availableAreas) {
-            if(!$options) {
-                $options = $this->options;
-            }
-            $this->availableAreas = $this->getTagHandler()->getAvailableAreablockAreas($this, $options);
-        }
-
-        return $this->availableAreas;
-    }
-
-    /**
      * @param array $options
      *
      * @return $this
      */
     public function setOptions($options)
     {
-        if (!isset($options['allowed']) || !is_array($options['allowed'])) {
-            $options['allowed'] = [];
-        }
-
         // we need to set this here otherwise custom areaDir's won't work
         $this->options = $options;
 
         if ($this->getView()) {
             $translator = \Pimcore::getContainer()->get('translator');
-            $availableAreas = $this->getAvailableAreas($options);
+            if (!isset($options['allowed']) || !is_array($options['allowed'])) {
+                $options['allowed'] = [];
+            }
+
+            $availableAreas = $this->getTagHandler()->getAvailableAreablockAreas($this, $options);
             $availableAreas = $this->sortAvailableAreas($availableAreas, $options);
 
             $options['types'] = $availableAreas;

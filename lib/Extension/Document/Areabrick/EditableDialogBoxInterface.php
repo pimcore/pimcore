@@ -20,11 +20,9 @@ use Pimcore\Model\Document\Tag\Area\Info;
 Interface EditableDialogBoxInterface
 {
     /**
-     * @param Info $info
-     * @param array $context contains the context information about the brick (index, key, name, parent-name, ...)
-     * @param array $options contains the original configuration of the areablock this brick is in
-     *
-     * @return array
+     * @param Document\Tag $area
+     * @param Info|null $info
+     * @return EditableDialogBoxConfiguration
      */
-    public function getEditableDialogBoxConfiguration(Document $info, array $context, array $options): EditableDialogBoxConfiguration;
+    public function getEditableDialogBoxConfiguration(Document\Tag $area, ?Info $info): EditableDialogBoxConfiguration;
 }

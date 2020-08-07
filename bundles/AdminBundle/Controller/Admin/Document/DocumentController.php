@@ -19,13 +19,8 @@ use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Config;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
-use Pimcore\Document\Tag\Block\BlockName;
-use Pimcore\Document\Tag\Block\BlockState;
-use Pimcore\Document\Tag\Block\BlockStateStack;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
-use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Image\HtmlToImage;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
@@ -33,7 +28,6 @@ use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Model\Version;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
-use Pimcore\Templating\Renderer\TagRenderer;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend;
 use Pimcore\Tool\Session;
@@ -1633,82 +1627,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
             'language' => $language,
             'translationLinks' => $translationLinks,
         ]);
-    }
-
-    /**
-     * @Route("/get-editable-dialog-box", name="pimcore_admin_document_document_geteditabledialogbox", methods={"GET"})
-     *
-     * @param Request $request
-     * @param BlockStateStack $blockStateStack
-     * @param TagRenderer $tagRenderer
-     * @param AreabrickManagerInterface $areabrickManager
-     *
-     * @return JsonResponse
-     */
-    public function getEditableDialogBoxAction(Request $request, BlockStateStack $blockStateStack, TagRenderer $tagRenderer, AreabrickManagerInterface $areabrickManager)
-    {
-        $document = Document::getById($request->get('documentId'));
-        $brickType = $request->get('brickType');
-        $blockStateStatus = \json_decode($request->get('blockState'), true);
-
-        $blockState = new BlockState();
-        foreach($blockStateStatus['blocks'] as $block) {
-            $blockState->pushBlock(new BlockName($block['name'], $block['realName']));
-        }
-
-        foreach($blockStateStatus['indexes'] as $index) {
-            $blockState->pushIndex($index);
-        }
-
-        $blockStateStack->push($blockState);
-
-        $editables = [];
-        $brick = $areabrickManager->getBrick($brickType);
-
-        if($brick instanceof EditableDialogBoxInterface && $document instanceof Document\PageSnippet) {
-            $context = [
-                'areaBlockName' => $request->get('areaBlockName'),
-                'areaBlockRealName' => $request->get('areaBlockRealName'),
-                'key' => $request->get('key'),
-                'index' => $request->get('index'),
-            ];
-
-            $params = \json_decode($request->get('params'), true);
-
-            $dialogBoxConfig = $brick->getEditableDialogBoxConfiguration($document, $context, $params);
-
-            $this->initEditables($tagRenderer, $document, $dialogBoxConfig->getItems(), $editables);
-
-            return $this->adminJson([
-                'success' => true,
-                'width' => $dialogBoxConfig->getWidth(),
-                'height' => $dialogBoxConfig->getHeight(),
-                'layout' => $dialogBoxConfig,
-                'editables' => $editables,
-            ]);
-        }
-
-    }
-
-    /**
-     * @param TagRenderer $tagRenderer
-     * @param Document\PageSnippet $document
-     * @param array $config
-     * @param array $editables
-     */
-    private function initEditables(TagRenderer $tagRenderer, Document\PageSnippet $document, array $config, array &$editables)
-    {
-        foreach($config as $item) {
-            if(isset($item['items']) && is_array($item['items'])) {
-                // layout component
-                foreach($item['items'] as $child) {
-                    $this->initEditables($tagRenderer, $document, $child, $editables);
-                }
-            } elseif (isset($item['name']) && isset($item['type'])) {
-                $editable = $tagRenderer->getTag($document, $item['type'], $item['name']);
-                $editables[$item['name']] = $editable;
-            }
-        }
     }
 
     /**
