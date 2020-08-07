@@ -17,6 +17,11 @@ namespace Pimcore\Extension\Document\Areabrick;
 class EditableDialogBoxConfiguration
 {
     /**
+     * @var null|string
+     */
+    protected $id = null;
+
+    /**
      * @var null|int
      */
     protected $width = 550;
@@ -30,6 +35,24 @@ class EditableDialogBoxConfiguration
      * @var array
      */
     protected $items = [];
+
+    /**
+     * @return string|null
+     */
+    public function getId(): ?string
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param string|null $id
+     * @return $this
+     */
+    public function setId(?string $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
 
     /**
      * @return int|null

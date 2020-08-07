@@ -374,7 +374,8 @@ class Areablock extends Model\Document\Tag implements BlockInterface
     }
 
     /**
-     * Is called evertime a new iteration starts (new entry of the block while looping)
+     * Is called everytime a new iteration starts (new entry of the block while looping)
+     * @param null $info
      */
     public function blockStart($info = null)
     {
@@ -400,6 +401,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
         $brick = $areabrickManager->getBrick($this->indices[$this->current]['type']);
         if($this->getEditmode() && $brick instanceof EditableDialogBoxInterface) {
             $dialogConfig = $brick->getEditableDialogBoxConfiguration($this, $info);
+            $dialogConfig->setId('dialogBox-' . $this->getName() . "-" . $this->indices[$this->current]['key']);
         }
 
         $attr = HtmlUtils::assembleAttributeString($attributes);
@@ -425,6 +427,7 @@ class Areablock extends Model\Document\Tag implements BlockInterface
             $dialogAttributes = [
                 'data-dialog-width' => $dialogConfig->getWidth(),
                 'data-dialog-height' => $dialogConfig->getHeight(),
+                'data-dialog-id' => $dialogConfig->getId(),
             ];
 
             $dialogAttributes = HtmlUtils::assembleAttributeString($dialogAttributes);
@@ -440,24 +443,26 @@ class Areablock extends Model\Document\Tag implements BlockInterface
 
         if($dialogConfig) {
             $tagRenderer = \Pimcore::getContainer()->get(TagRenderer::class);
-            $this->renderDialogBoxEditables($dialogConfig->getItems(), $tagRenderer);
+            $this->outputEditmode('<template id="dialogBoxConfig-' . $dialogConfig->getId() . '">' . \json_encode($dialogConfig->getItems()) . '</template>');
+            $this->renderDialogBoxEditables($dialogConfig->getItems(), $tagRenderer, $dialogConfig->getId());
         }
     }
 
     /**
      * @param array $config
      * @param TagRenderer $tagRenderer
+     * @param string $dialogId
      */
-    private function renderDialogBoxEditables(array $config, TagRenderer $tagRenderer) {
+    private function renderDialogBoxEditables(array $config, TagRenderer $tagRenderer, string $dialogId) {
         foreach($config as $item) {
             if(isset($item['items']) && is_array($item['items'])) {
                 // layout component
                 foreach($item['items'] as $child) {
-                    $this->renderDialogBoxEditables($child, $tagRenderer);
+                    $this->renderDialogBoxEditables($child, $tagRenderer, $dialogId);
                 }
             } elseif (isset($item['name']) && isset($item['type'])) {
                 $editable = $tagRenderer->getTag($this->getDocument(), $item['type'], $item['name']);
-                $editable->setInDialogBox(true);
+                $editable->setInDialogBox($dialogId);
                 $this->outputEditmode($editable->admin());
             }
         }

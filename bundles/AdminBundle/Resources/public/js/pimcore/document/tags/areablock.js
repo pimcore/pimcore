@@ -16,6 +16,7 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
     namingStrategies: {},
     namingStrategy: null,
+    dialogBoxes: {},
 
     initialize: function(id, name, options, data, inherited) {
 
@@ -944,13 +945,20 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         //window.editWindow.loadMask.show();
 
-        let win = new Ext.Window({
-            width: intval(dialogBoxDiv.dataset.dialogWidth),
-            height: intval(dialogBoxDiv.dataset.dialogHeight),
-            items: []
-        })
+        let id = dialogBoxDiv.dataset.dialogId;
+        let config = JSON.parse(document.getElementById('dialogBoxConfig-dialogBox-content-3').textContent );
+        console.log(config);
 
-        win.show();
+        if(!this.dialogBoxes[id]) {
+            this.dialogBoxes[id] = new Ext.Window({
+                closeAction: 'hide',
+                width: intval(dialogBoxDiv.dataset.dialogWidth),
+                height: intval(dialogBoxDiv.dataset.dialogHeight),
+                items: []
+            })
+        }
+
+        this.dialogBoxes[id].show();
     },
 
     editmodeOpen: function (element) {

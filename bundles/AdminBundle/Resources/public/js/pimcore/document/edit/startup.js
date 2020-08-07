@@ -135,7 +135,7 @@ Ext.onReady(function () {
 
         var tag = new pimcore.document.tags[type](id, name, options, data, inherited);
         tag.setRealName(config.realName);
-        if(config.inDialogBox === false) {
+        if(!config.inDialogBox) {
             if (typeof tag['render'] == 'function') {
                 tag.render();
             }

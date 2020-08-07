@@ -106,7 +106,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     /**
      * @var bool
      */
-    protected $inDialogBox = false;
+    protected $inDialogBox = null;
 
     /**
      * @param string $type
@@ -182,7 +182,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             'data' => $this->getEditmodeData(),
             'type' => $this->getType(),
             'inherited' => $this->getInherited(),
-            'inDialogBox' => $this->isInDialogBox(),
+            'inDialogBox' => $this->getInDialogBox(),
         ];
 
         return $options;
@@ -807,14 +807,22 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      */
     public function isInDialogBox(): bool
     {
+        return (bool) $this->inDialogBox;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getInDialogBox(): ?string
+    {
         return $this->inDialogBox;
     }
 
     /**
-     * @param bool $inDialogBox
+     * @param string|null $inDialogBox
      * @return $this
      */
-    public function setInDialogBox(bool $inDialogBox): self
+    public function setInDialogBox(?string $inDialogBox): self
     {
         $this->inDialogBox = $inDialogBox;
 
