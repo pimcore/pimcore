@@ -954,8 +954,8 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         if(!this.dialogBoxes[id]) {
             this.dialogBoxes[id] = new Ext.Window({
                 closeAction: 'hide',
-                width: intval(dialogBoxDiv.dataset.dialogWidth),
-                height: intval(dialogBoxDiv.dataset.dialogHeight),
+                width: Math.min(intval(dialogBoxDiv.dataset.dialogWidth), Ext.getBody().getViewSize().width),
+                height: Math.min(intval(dialogBoxDiv.dataset.dialogHeight), Ext.getBody().getViewSize().height),
                 items: []
             })
         }
