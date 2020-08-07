@@ -784,6 +784,39 @@ class Document extends Element\AbstractElement
     /**
      * @throws \Exception
      */
+    protected function doDelete()
+    {
+        // remove children
+        if ($this->hasChildren()) {
+            // delete also unpublished children
+            $unpublishedStatus = self::doHideUnpublished();
+            self::setHideUnpublished(false);
+            foreach ($this->getChildren(true) as $child) {
+                if (!$child instanceof WrapperInterface) {
+                    $child->delete();
+                }
+            }
+            self::setHideUnpublished($unpublishedStatus);
+        }
+
+        // remove all properties
+        $this->getDao()->deleteAllProperties();
+
+        // remove permissions
+        $this->getDao()->deleteAllPermissions();
+
+        // remove dependencies
+        $d = $this->getDependencies();
+        $d->cleanAllForElement($this);
+
+        // remove translations
+        $service = new Document\Service;
+        $service->removeTranslation($this);
+    }
+
+    /**
+     * @throws \Exception
+     */
     public function delete()
     {
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_DELETE, new DocumentEvent($this));
@@ -791,33 +824,11 @@ class Document extends Element\AbstractElement
         $this->beginTransaction();
 
         try {
-            // remove children
-            if ($this->hasChildren()) {
-                // delete also unpublished children
-                $unpublishedStatus = self::doHideUnpublished();
-                self::setHideUnpublished(false);
-                foreach ($this->getChildren(true) as $child) {
-                    if (!$child instanceof WrapperInterface) {
-                        $child->delete();
-                    }
-                }
-                self::setHideUnpublished($unpublishedStatus);
+            if ($this->getId() == 1) {
+                throw new \Exception('root-node cannot be deleted');
             }
 
-            // remove all properties
-            $this->getDao()->deleteAllProperties();
-
-            // remove permissions
-            $this->getDao()->deleteAllPermissions();
-
-            // remove dependencies
-            $d = $this->getDependencies();
-            $d->cleanAllForElement($this);
-
-            // remove translations
-            $service = new Document\Service;
-            $service->removeTranslation($this);
-
+            $this->doDelete();
             $this->getDao()->delete();
 
             $this->commit();

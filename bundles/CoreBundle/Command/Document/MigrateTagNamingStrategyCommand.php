@@ -35,6 +35,9 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
+/**
+ * @deprecated
+ */
 class MigrateTagNamingStrategyCommand extends AbstractCommand
 {
     use DryRun;

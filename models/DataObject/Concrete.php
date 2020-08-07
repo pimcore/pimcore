@@ -232,27 +232,16 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * @inheritdoc
      */
-    public function delete()
+    protected function doDelete()
     {
-        $this->beginTransaction();
-
-        try {
-            // delete all versions
-            foreach ($this->getVersions() as $v) {
-                $v->delete();
-            }
-
-            $this->getDao()->deleteAllTasks();
-
-            parent::delete();
-
-            $this->commit();
-        } catch (\Exception $e) {
-            $this->rollBack();
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));
-            Logger::crit($e);
-            throw $e;
+        // delete all versions
+        foreach ($this->getVersions() as $v) {
+            $v->delete();
         }
+
+        $this->getDao()->deleteAllTasks();
+
+        parent::doDelete();
     }
 
     /**

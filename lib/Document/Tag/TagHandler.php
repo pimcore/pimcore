@@ -117,6 +117,7 @@ class TagHandler implements TagHandlerInterface, LoggerAwareInterface
     }
 
     /**
+     * @deprecated
      * {@inheritdoc}
      */
     public function supports($view)
