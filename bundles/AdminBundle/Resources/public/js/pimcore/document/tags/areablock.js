@@ -946,8 +946,10 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
         //window.editWindow.loadMask.show();
 
         let id = dialogBoxDiv.dataset.dialogId;
-        let config = JSON.parse(document.getElementById('dialogBoxConfig-dialogBox-content-3').textContent );
-        console.log(config);
+        let jsonConfig = document.getElementById('dialogBoxConfig-' + id).innerHTML;
+        let config = JSON.parse(jsonConfig);
+
+        // @TODO Build layout and initialize editables
 
         if(!this.dialogBoxes[id]) {
             this.dialogBoxes[id] = new Ext.Window({
