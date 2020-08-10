@@ -73,6 +73,16 @@ class Breadcrumbs extends AbstractRenderer
     // Accessors:
 
     /**
+     * Returns breadcrumb separator
+     *
+     * @return string  breadcrumb separator
+     */
+    public function getSeparator()
+    {
+        return $this->_separator;
+    }
+
+    /**
      * @param string $separator
      *
      * @return $this
@@ -84,16 +94,6 @@ class Breadcrumbs extends AbstractRenderer
         }
 
         return $this;
-    }
-
-    /**
-     * Returns breadcrumb separator
-     *
-     * @return string  breadcrumb separator
-     */
-    public function getSeparator()
-    {
-        return $this->_separator;
     }
 
     /**
@@ -128,22 +128,12 @@ class Breadcrumbs extends AbstractRenderer
 
     /**
      * @param array|string $template
+     *
+     * @return $this
      */
     public function setTemplate($template)
     {
         $this->_template = $template;
-    }
-
-    /**
-     * Alias of setTemplate()
-     *
-     * @param  string $partial
-     *
-     * @return $this
-     */
-    public function setPartial($partial)
-    {
-        $this->_template = $partial;
 
         return $this;
     }
@@ -155,7 +145,19 @@ class Breadcrumbs extends AbstractRenderer
      */
     public function getPartial()
     {
-        return $this->_template;
+        return $this->getTemplate();
+    }
+
+    /**
+     * Alias of setTemplate()
+     *
+     * @param  string $partial
+     *
+     * @return $this
+     */
+    public function setPartial($partial)
+    {
+        return $this->setTemplate($partial);
     }
 
     // Render methods:
