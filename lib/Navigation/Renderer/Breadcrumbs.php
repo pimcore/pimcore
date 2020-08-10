@@ -163,6 +163,42 @@ class Breadcrumbs extends AbstractRenderer
     // Render methods:
 
     /**
+     * Get all pages between the currently active page and the container's root page.
+     *
+     * @param Container $container
+     *
+     * @return array
+     */
+    public function getPages(Container $container)
+    {
+        $pages = [];
+        if (! $active = $this->findActive($container)) {
+            return [];
+        }
+
+        /** @var \Pimcore\Navigation\Page $active */
+        $active = $active['page'];
+        $pages[] = $active;
+
+        while ($parent = $active->getParent()) {
+            if ($parent instanceof Page) {
+                $pages[] = $parent;
+            } else {
+                break;
+            }
+
+            if ($parent === $container) {
+                // break if at the root of the given container
+                break;
+            }
+
+            $active = $parent;
+        }
+
+        return array_reverse($pages);
+    }
+
+    /**
      * Renders breadcrumbs by chaining 'a' elements with the separator
      * registered in the helper
      *
@@ -226,31 +262,9 @@ class Breadcrumbs extends AbstractRenderer
             throw new \Exception('Unable to render menu: No partial view script provided');
         }
 
-        // put breadcrumb pages in model
-        $model = ['pages' => []];
-        if ($active = $this->findActive($container)) {
-            /** @var Page $active */
-            $active = $active['page'];
-            $model['pages'][] = $active;
+        $pages = $this->getPages($container);
 
-            while ($parent = $active->getParent()) {
-                if ($parent instanceof Page) {
-                    $model['pages'][] = $parent;
-                } else {
-                    break;
-                }
-
-                if ($parent === $container) {
-                    // break if at the root of the given container
-                    break;
-                }
-
-                $active = $parent;
-            }
-            $model['pages'] = array_reverse($model['pages']);
-        }
-
-        return $this->templatingEngine->render($partial, $model);
+        return $this->templatingEngine->render($partial, compact('pages'));
     }
 
     /**
