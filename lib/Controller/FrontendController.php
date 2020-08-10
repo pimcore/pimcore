@@ -148,16 +148,35 @@ abstract class FrontendController extends Controller implements EventedControlle
      * @param Document\PageSnippet|null $document
      *
      * @return null|Document\Tag
+     *
+     * @deprecated since v6.7 and will be removed in 7. Use getDocumentEditable() instead.
      */
     public function getDocumentTag($type, $inputName, array $options = [], Document\PageSnippet $document = null)
+    {
+        return $this->getDocumentEditable($type, $inputName, $options, $document);
+    }
+
+    /**
+     * Loads a document editable
+     *
+     * e.g. `$this->getDocumentEditable('input', 'foobar')`
+     *
+     * @param string $type
+     * @param string $inputName
+     * @param array $options
+     * @param Document\PageSnippet|null $document
+     *
+     * @return null|Document\Tag
+     */
+    public function getDocumentEditable($type, $inputName, array $options = [], Document\PageSnippet $document = null)
     {
         if (null === $document) {
             $document = $this->document;
         }
 
-        $tagRenderer = $this->container->get('pimcore.templating.tag_renderer');
+        $editableRenderer = $this->container->get('\Pimcore\Templating\Renderer\EditableRenderer');
 
-        return $tagRenderer->getTag($document, $type, $inputName, $options);
+        return $editableRenderer->getEditable($document, $type, $inputName, $options);
     }
 
     /**

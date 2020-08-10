@@ -754,22 +754,22 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             }
         }
 
-        $tagName = $namingStrategy->buildTagName($name, $type, $blockState, $targetGroupEditableName);
+        $editableName = $namingStrategy->buildTagName($name, $type, $blockState, $targetGroupEditableName);
 
-        $event = new EditableNameEvent($type, $name, $blockState, $tagName, $document);
+        $event = new EditableNameEvent($type, $name, $blockState, $editableName, $document);
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::EDITABLE_NAME, $event);
 
-        $tagName = $event->getEditableName();
+        $editableName = $event->getEditableName();
 
-        if (strlen($tagName) > 750) {
+        if (strlen($editableName) > 750) {
             throw new \Exception(sprintf(
                 'Composite name for editable "%s" is longer than 750 characters. Use shorter names for your editables or reduce amount of nesting levels. Name is: %s',
                 $name,
-                $tagName
+                $editableName
             ));
         }
 
-        return $tagName;
+        return $editableName;
     }
 
     /**

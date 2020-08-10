@@ -250,7 +250,7 @@ class Info
         if ($this->view && isset($this->view->document)) {
             $document = $this->view->document;
         } else {
-            $document = $this->tag->getDocument();
+            $document = $this->editable->getDocument();
         }
 
         return $document;

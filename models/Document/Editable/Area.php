@@ -85,7 +85,7 @@ class Area extends Model\Document\Editable
 
         // push current block name
         $blockState = $this->getBlockState();
-        $blockState->pushBlock(BlockName::createFromTag($this));
+        $blockState->pushBlock(BlockName::createFromEditable($this));
 
         // create info object and assign it to the view
         $info = null;
