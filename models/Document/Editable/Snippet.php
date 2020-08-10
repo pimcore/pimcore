@@ -107,10 +107,10 @@ class Snippet extends Model\Document\Editable
         // TODO inject services via DI when tags are built through container
         $container = \Pimcore::getContainer();
 
-        $tagHandler = $container->get('pimcore.document.tag.handler');
+        $editableHandler = $container->get('pimcore.document.editable.handler');
         $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
 
-        if (!$tagHandler->supports($this->view)) {
+        if (!$editableHandler->supports($this->view)) {
             return '';
         }
 
@@ -158,7 +158,7 @@ class Snippet extends Model\Document\Editable
             }
         }
 
-        $content = $tagHandler->renderAction(
+        $content = $editableHandler->renderAction(
             $this->view,
             $this->snippet->getController(),
             $this->snippet->getAction(),

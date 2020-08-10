@@ -76,10 +76,10 @@ class Area extends Model\Document\Editable
         $options = $this->getOptions();
 
         // TODO inject area handler via DI when tags are built through container
-        $tagHandler = \Pimcore::getContainer()->get('pimcore.document.tag.handler');
+        $editableHandler = \Pimcore::getContainer()->get('pimcore.document.editable.handler');
 
         // don't show disabled bricks
-        if (!$tagHandler->isBrickEnabled($this, $options['type'] && $options['dontCheckEnabled'] != true)) {
+        if (!$editableHandler->isBrickEnabled($this, $options['type'] && $options['dontCheckEnabled'] != true)) {
             return;
         }
 
@@ -110,7 +110,7 @@ class Area extends Model\Document\Editable
 
         $info->setParams($params);
 
-        $tagHandler->renderAreaFrontend($info);
+        $editableHandler->renderAreaFrontend($info);
 
         // remove current block and index from stack
         $blockState->popIndex();

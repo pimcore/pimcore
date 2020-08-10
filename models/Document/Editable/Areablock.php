@@ -17,11 +17,10 @@
 
 namespace Pimcore\Model\Document\Editable;
 
-use Pimcore\Document\Tag\Block\BlockName;
-use Pimcore\Document\Tag\TagHandlerInterface;
+use Pimcore\Document\Editable\Block\BlockName;
+use Pimcore\Document\Editable\EditableHandlerInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
-use Pimcore\Model\Document;
 use Pimcore\Tool;
 use Pimcore\Tool\HtmlUtils;
 
@@ -160,7 +159,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
                 $disabled = true;
             }
 
-            if (!$this->getTagHandler()->isBrickEnabled($this, $index['type']) && $options['dontCheckEnabled'] != true) {
+            if (!$this->getEditableHandler()->isBrickEnabled($this, $index['type']) && $options['dontCheckEnabled'] != true) {
                 $disabled = true;
             }
 
@@ -214,7 +213,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $info->setParams($params);
 
         if ($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
-            $this->getTagHandler()->renderAreaFrontend($info);
+            $this->getEditableHandler()->renderAreaFrontend($info);
             $this->brickTypeUsageCounter += [$this->currentIndex['type'] => 0];
             $this->brickTypeUsageCounter[$this->currentIndex['type']]++;
         }
@@ -223,12 +222,12 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @return TagHandlerInterface
+     * @return EditableHandlerInterface
      */
-    private function getTagHandler()
+    private function getEditableHandler()
     {
         // TODO inject area handler via DI when tags are built through container
-        return \Pimcore::getContainer()->get('pimcore.document.tag.handler');
+        return \Pimcore::getContainer()->get('pimcore.document.editable.handler');
     }
 
     /**
@@ -337,7 +336,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $this->outputEditmodeOptions($options);
 
         // set name suffix for the whole block element, this will be added to all child elements of the block
-        $this->getBlockState()->pushBlock(BlockName::createFromTag($this));
+        $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
 
         $attributes = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
@@ -431,7 +430,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
                 $options['allowed'] = [];
             }
 
-            $availableAreas = $this->getTagHandler()->getAvailableAreablockAreas($this, $options);
+            $availableAreas = $this->getEditableHandler()->getAvailableAreablockAreas($this, $options);
             $availableAreas = $this->sortAvailableAreas($availableAreas, $options);
 
             $options['types'] = $availableAreas;

@@ -110,9 +110,9 @@ class Renderlet extends Model\Document\Editable
     {
         // TODO inject services via DI when tags are built through container
         $container = \Pimcore::getContainer();
-        $tagHandler = $container->get('pimcore.document.tag.handler');
+        $editableHandler = $container->get('pimcore.document.editable.handler');
 
-        if (!$tagHandler->supports($this->view)) {
+        if (!$editableHandler->supports($this->view)) {
             return '';
         }
 
@@ -160,7 +160,7 @@ class Renderlet extends Model\Document\Editable
                 $moduleOrBundle = $this->options['module'];
             }
 
-            return $tagHandler->renderAction(
+            return $editableHandler->renderAction(
                 $this->view,
                 $this->options['controller'],
                 $this->options['action'],
