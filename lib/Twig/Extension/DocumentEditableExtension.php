@@ -97,7 +97,7 @@ class DocumentEditableExtension extends AbstractExtension
      * @param string $inputName
      * @param array $options
      *
-     * @return \Pimcore\Model\Document\Tag|string
+     * @return \Pimcore\Model\Document\Editable|string
      */
     public function renderEditable($context, $name, $inputName, array $options = [])
     {

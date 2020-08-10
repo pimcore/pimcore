@@ -208,7 +208,7 @@ class Link extends Model\Document\Editable
                         'Detected insane relation, removing reference to non existent document with id ['.$this->getDocumentId(
                         ).']'
                     );
-                    $new = Document\Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
+                    $new = Document\Editable::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }
             } elseif ($this->data['internalType'] == 'asset') {
@@ -219,7 +219,7 @@ class Link extends Model\Document\Editable
                         'Detected insane relation, removing reference to non existent asset with id ['.$this->getDocumentId(
                         ).']'
                     );
-                    $new = Document\Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
+                    $new = Document\Editable::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }
             } elseif ($this->data['internalType'] == 'object') {
@@ -230,7 +230,7 @@ class Link extends Model\Document\Editable
                         'Detected insane relation, removing reference to non existent object with id ['.$this->getDocumentId(
                         ).']'
                     );
-                    $new = Document\Tag::factory($this->getType(), $this->getName(), $this->getDocumentId());
+                    $new = Document\Editable::factory($this->getType(), $this->getName(), $this->getDocumentId());
                     $this->data = $new->getData();
                 }
             }

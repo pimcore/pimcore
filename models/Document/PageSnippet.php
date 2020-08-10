@@ -767,7 +767,7 @@ abstract class PageSnippet extends Model\Document
                     $editableNames = $editableUsageResolver->getUsedEditablenames($documentCopy);
                     foreach ($editableNames as $editableName) {
                         $editable = $documentCopy->getEditable($editableName);
-                        if ($editable instanceof Tag && in_array($editable->getType(), $allowedTypes)) {
+                        if ($editable instanceof Editable && in_array($editable->getType(), $allowedTypes)) {
                             $documentOptions = $editable->getOptions();
                             if ($editable->isEmpty() && isset($documentOptions['required']) && $documentOptions['required'] == true) {
                                 $this->setMissingRequiredEditable(true);

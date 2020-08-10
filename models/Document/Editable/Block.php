@@ -17,7 +17,7 @@
 
 namespace Pimcore\Model\Document\Editable;
 
-use Pimcore\Document\Tag\Block\BlockName;
+use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Model;
 use Pimcore\Tool\HtmlUtils;
 
@@ -192,7 +192,7 @@ class Block extends Model\Document\Editable implements BlockInterface
         $this->outputEditmodeOptions($options);
 
         // set name suffix for the whole block element, this will be added to all child elements of the block
-        $this->getBlockState()->pushBlock(BlockName::createFromTag($this));
+        $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
 
         $attributes = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);

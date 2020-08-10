@@ -423,7 +423,7 @@ class Image extends Model\Document\Editable
     /**
      * @param Asset\Image $image
      *
-     * @return Model\Document\Tag\Image
+     * @return Model\Document\Editable\Image
      */
     public function setImage($image)
     {
@@ -439,7 +439,7 @@ class Image extends Model\Document\Editable
     /**
      * @param int $id
      *
-     * @return Model\Document\Tag\Image
+     * @return Model\Document\Editable\Image
      */
     public function setId($id)
     {
