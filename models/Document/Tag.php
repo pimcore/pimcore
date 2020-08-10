@@ -150,18 +150,25 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         $attributes = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
-        if($this->isInDialogBox()) {
-            // wrap with a <template> tag
-            $code .= '<template id="template__' . $attributes['id'] . '">';
-        }
-
-        $code .= ('<div ' . $attributeString . '></div>');
+        $htmlContainerCode = ('<div ' . $attributeString . '></div>');
 
         if($this->isInDialogBox()) {
-            // wrap with a <template> tag
-            $code .= '</template>';
+            $htmlContainerCode = $this->wrapEditmodeContainerCodeForDialogBox($attributes['id'], $htmlContainerCode);
         }
 
+        $code .= $htmlContainerCode;
+
+        return $code;
+    }
+
+    /**
+     * @param string $id
+     * @param string $code
+     * @return string
+     */
+    protected function wrapEditmodeContainerCodeForDialogBox(string $id, string $code): string
+    {
+        $code = '<template id="template__' . $id . '">' . $code . '</template>';
         return $code;
     }
 

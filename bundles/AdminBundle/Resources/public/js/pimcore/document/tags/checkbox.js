@@ -18,48 +18,56 @@ pimcore.document.tags.checkbox = Class.create(pimcore.document.tag, {
     initialize: function(id, name, options, data, inherited) {
         this.id = id;
         this.name = name;
-        this.setupWrapper();
-        options = this.parseOptions(options);
+        this.options = this.parseOptions(options);
 
         if (!data) {
             data = false;
         }
 
-        this.htmlId = id + "_editable";
+        this.data = data;
+    },
 
-        var elContainer = Ext.get(id);
+    render: function () {
+        this.setupWrapper();
+        this.htmlId = this.id + "_editable";
+
+        var elContainer = Ext.get(this.id);
 
         var inputCheckbox = document.createElement("input");
         inputCheckbox.setAttribute('name', this.htmlId);
         inputCheckbox.setAttribute('type', 'checkbox');
         inputCheckbox.setAttribute('value', 'true');
         inputCheckbox.setAttribute('id', this.htmlId);
-        if(data) {
+        if(this.data) {
             inputCheckbox.setAttribute('checked', 'checked');
         }
 
         elContainer.appendChild(inputCheckbox);
 
-        if(options["label"]) {
+        if(this.options["label"]) {
             var labelCheckbox = document.createElement("label");
             labelCheckbox.setAttribute('for', this.htmlId);
-            labelCheckbox.innerText = options["label"];
+            labelCheckbox.innerText = this.options["label"];
             elContainer.appendChild(labelCheckbox);
         }
 
         this.elComponent = Ext.get(this.htmlId);
 
         // onchange event
-        if (options.onchange) {
-            this.elComponent.on('change', eval(options.onchange));
+        if (this.options.onchange) {
+            this.elComponent.on('change', eval(this.options.onchange));
         }
-        if (options.reload) {
+        if (this.options.reload) {
             this.elComponent.on('change', this.reloadDocument);
         }
     },
 
     getValue: function () {
-        return this.elComponent.dom.checked;
+        if(this.elComponent) {
+            return this.elComponent.dom.checked;
+        }
+
+        return this.data;
     },
 
     getType: function () {

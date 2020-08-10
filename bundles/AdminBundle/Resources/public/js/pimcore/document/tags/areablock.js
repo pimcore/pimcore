@@ -947,20 +947,99 @@ pimcore.document.tags.areablock = Class.create(pimcore.document.tag, {
 
         let id = dialogBoxDiv.dataset.dialogId;
         let jsonConfig = document.getElementById('dialogBoxConfig-' + id).innerHTML;
-        let config = JSON.parse(jsonConfig);
+        var config = JSON.parse(jsonConfig);
 
-        // @TODO Build layout and initialize editables
+        var editablesInBox = this.getEditablesInDialogBox(id);
+        let items = this.buildEditableDialogLayout(config["items"], editablesInBox, 1);
 
         if(!this.dialogBoxes[id]) {
             this.dialogBoxes[id] = new Ext.Window({
                 closeAction: 'hide',
-                width: Math.min(intval(dialogBoxDiv.dataset.dialogWidth), Ext.getBody().getViewSize().width),
-                height: Math.min(intval(dialogBoxDiv.dataset.dialogHeight), Ext.getBody().getViewSize().height),
-                items: []
+                width: Math.min(config["width"], Ext.getBody().getViewSize().width),
+                height: Math.min(config["height"], Ext.getBody().getViewSize().height),
+                items: items,
+                bodyStyle: 'padding: 10px',
+                scrollable: 'y',
+                listeners: {
+                    afterrender: function (el, eOpts) {
+                        // render editables in window
+                        Object.keys(editablesInBox).forEach(function (editableName) {
+                            editablesInBox[editableName].render();
+                        });
+                    }
+                },
+                buttons: ['->', {
+                    text: t("close"),
+                    listeners: {
+                        "click": function () {
+                            this.dialogBoxes[id].close();
+                            if(config["reloadOnClose"]) {
+                                this.reloadDocument();
+                            }
+                        }.bind(this)
+                    },
+                    iconCls: "pimcore_icon_save"
+                }]
             })
         }
 
         this.dialogBoxes[id].show();
+    },
+
+    getEditablesInDialogBox: function (id) {
+        let editablesInDialogBox = {};
+        window.editables.forEach(function (editable) {
+            if(editable.getInDialogBox() === id) {
+                editablesInDialogBox[editable.getRealName()] = editable;
+            }
+        });
+
+        return editablesInDialogBox;
+    },
+
+    buildEditableDialogLayout: function (config, editablesInBox, level) {
+        var nextLevel = level+1;
+        if(Array.isArray(config)) {
+            var items = [];
+            config.forEach(function (itemConfig) {
+                let item = this.buildEditableDialogLayout(itemConfig, editablesInBox, nextLevel);
+                if(item) {
+                    items.push(item);
+                }
+            }.bind(this));
+
+            if(level === 1) {
+                return {
+                    xtype: 'container',
+                    items: items
+                };
+            }
+
+            return items;
+        } else if(editablesInBox[config['name']]) {
+            let templateId = 'template__' + editablesInBox[config['name']].getId();
+            var templateEl = document.getElementById(templateId);
+            if(templateEl) {
+                return {
+                    xtype: 'fieldset',
+                    title: config['label'] ?? config['name'],
+                    html: templateEl.innerHTML
+                };
+            }
+        } else if(config['items']) {
+            let container = {
+                xtype: config['type'],
+                bodyStyle: 'padding: 10px',
+                deferredRender: false,
+                items: this.buildEditableDialogLayout(config['items'], editablesInBox, nextLevel)
+            };
+
+            if(config['title']) {
+                container['title'] = config['title'];
+            }
+
+            return container;
+        }
     },
 
     editmodeOpen: function (element) {

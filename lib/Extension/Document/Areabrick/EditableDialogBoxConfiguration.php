@@ -14,7 +14,7 @@
 
 namespace Pimcore\Extension\Document\Areabrick;
 
-class EditableDialogBoxConfiguration
+class EditableDialogBoxConfiguration implements \JsonSerializable
 {
     /**
      * @var null|string
@@ -35,6 +35,11 @@ class EditableDialogBoxConfiguration
      * @var array
      */
     protected $items = [];
+
+    /**
+     * @var bool
+     */
+    protected $reloadOnClose = false;
 
     /**
      * @return string|null
@@ -115,5 +120,28 @@ class EditableDialogBoxConfiguration
     public function addItem(array $item): self {
         $this->items[] = $item;
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getReloadOnClose(): bool
+    {
+        return $this->reloadOnClose;
+    }
+
+    /**
+     * @param bool $reloadOnClose
+     * @return $this
+     */
+    public function setReloadOnClose(bool $reloadOnClose): self
+    {
+        $this->reloadOnClose = $reloadOnClose;
+        return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 }

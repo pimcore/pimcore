@@ -18,6 +18,7 @@ pimcore.document.tag = Class.create({
     name: null,
     realName: null,
     inherited: false,
+    inDialogBox: null,
     required: false,
     requiredError: false,
 
@@ -47,6 +48,14 @@ pimcore.document.tag = Class.create({
 
     getRealName: function() {
         return this.realName;
+    },
+
+    setInDialogBox: function(inDialogBox) {
+        this.inDialogBox = inDialogBox;
+    },
+
+    getInDialogBox: function() {
+        return this.inDialogBox;
     },
 
     reloadDocument: function () {

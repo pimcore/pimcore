@@ -107,6 +107,7 @@ class TagRenderer implements LoggerAwareInterface
                     $tag->setView($view);
                     $tag->setEditmode($editmode);
                     $tag->setOptions($options);
+                    $tag->setDocument($document);
                 } else {
                     $tag = Tag::factory($type, $name, $document->getId(), $options, null, $view, $editmode);
                     $document->setEditable($name, $tag);

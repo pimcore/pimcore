@@ -128,6 +128,10 @@ Ext.onReady(function () {
             inherited = config["inherited"];
         }
 
+        if (config.inDialogBox && typeof pimcore.document.tags[type].prototype['render'] !== 'function') {
+            throw 'Editable of type `' + type + '` with name `' + name + '` does not support the use in the dialog box.';
+        }
+
         if(in_array(name,editableNames)) {
             pimcore.helpers.showNotification("ERROR", "Duplicate editable name: " + name, "error");
         }
@@ -135,8 +139,10 @@ Ext.onReady(function () {
 
         var tag = new pimcore.document.tags[type](id, name, options, data, inherited);
         tag.setRealName(config.realName);
+        tag.setInDialogBox(config.inDialogBox);
+
         if(!config.inDialogBox) {
-            if (typeof tag['render'] == 'function') {
+            if (typeof tag['render'] === 'function') {
                 tag.render();
             }
             tag.setInherited(inherited);
