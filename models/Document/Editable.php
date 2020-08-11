@@ -691,7 +691,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     protected function getBlockState(): BlockState
     {
-        return \Pimcore::getContainer()->get('pimcore.document.editable.block_state_stack')->getCurrentState();
+        return \Pimcore::getContainer()->get('pimcore.document.tag.block_state_stack')->getCurrentState();
     }
 
     /**
@@ -739,7 +739,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         // set suffixes if the editable is inside a block
 
         $container = \Pimcore::getContainer();
-        $blockState = $container->get('pimcore.document.editable.block_state_stack')->getCurrentState();
+        $blockState = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
         $namingStrategy = $container->get('pimcore.document.tag.naming.strategy');
 
         // if element not nested inside a hierarchical element (e.g. block), add the
@@ -794,7 +794,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     public static function buildEditableRealName(string $name, Document $document): string
     {
         $container = \Pimcore::getContainer();
-        $blockState = $container->get('pimcore.document.editable.block_state_stack')->getCurrentState();
+        $blockState = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
 
         // if element not nested inside a hierarchical element (e.g. block), add the
         // targeting prefix if configured on the document. hasBlocks() determines if
