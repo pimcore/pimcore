@@ -205,7 +205,8 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
                 'prefixLoader' => DocumentTagPrefixLoader::class,
             ],
             'pimcore.implementation_loader.document.editable' => [
-                'config' => $config['documents']['editables'],
+                //@TODO just use $config['documents']['editables'] in Pimcore 7
+                'config' => array_replace_recursive($config['documents']['tags'], $config['documents']['editables']),
                 'prefixLoader' => DocumentEditablePrefixLoader::class,
             ],
             'pimcore.implementation_loader.object.data' => [
