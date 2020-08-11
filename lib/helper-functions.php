@@ -42,37 +42,22 @@ function gzcompressfile($source, $level = null, $target = null)
         $dest = $source.'.gz';
     }
 
-    $mode = 'wb'.$level;
     $error = false;
-
-    $fp_out = @gzopen($dest, $mode);
-    $resourceSupportsGz = true;
-    $deflateContext = null;
-    if(!is_resource($fp_out)) {
-        $fp_out = fopen($dest, 'wb');
-        $deflateContext = deflate_init(ZLIB_ENCODING_GZIP, ['level' => $level]);
-        $resourceSupportsGz = false;
-    }
 
     $fp_in = fopen($source, 'rb');
 
+    $fp_out = fopen($dest, 'wb');
+    $deflateContext = deflate_init(ZLIB_ENCODING_GZIP, ['level' => $level]);
+
     if ($fp_out && $fp_in) {
         while (!feof($fp_in)) {
-            if($resourceSupportsGz) {
-                gzwrite($fp_out, fread($fp_in, 1024 * 512));
-            } else {
-                fwrite($fp_out, deflate_add($deflateContext, fread($fp_in, 1024 * 512), ZLIB_NO_FLUSH));
-            }
+            fwrite($fp_out, deflate_add($deflateContext, fread($fp_in, 1024 * 512), ZLIB_NO_FLUSH));
         }
 
         fclose($fp_in);
 
-        if($resourceSupportsGz) {
-            gzclose($fp_out);
-        } else {
-            fwrite($fp_out, deflate_add($deflateContext, '', ZLIB_FINISH));
-            fclose($fp_out);
-        }
+        fwrite($fp_out, deflate_add($deflateContext, '', ZLIB_FINISH));
+        fclose($fp_out);
     } else {
         $error = true;
     }
