@@ -47,6 +47,7 @@ function gzcompressfile($source, $level = null, $target = null)
 
     $fp_out = @gzopen($dest, $mode);
     $resourceSupportsGz = true;
+    $deflateContext = null;
     if(!is_resource($fp_out)) {
         $fp_out = fopen($dest, 'wb');
         $deflateContext = deflate_init(ZLIB_ENCODING_GZIP, ['level' => $level]);
