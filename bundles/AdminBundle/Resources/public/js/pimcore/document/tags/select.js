@@ -9,47 +9,10 @@
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *
+ * @deprecated since v6.7 and will be removed in 7. Use {@link pimcore.document.editables.select} instead.
  */
 
 pimcore.registerNS("pimcore.document.tags.select");
-pimcore.document.tags.select = Class.create(pimcore.document.tag, {
-
-    initialize: function(id, name, options, data, inherited) {
-        this.id = id;
-        this.name = name;
-
-        this.setupWrapper();
-        options = this.parseOptions(options);
-
-        options.listeners = {};
-
-        // onchange event
-        if (options.onchange) {
-            options.listeners.select = eval(options.onchange);
-        }
-
-        if (options["reload"]) {
-            options.listeners.select = this.reloadDocument;
-        }
-
-        if(options["defaultValue"] && data === null) {
-            data = options["defaultValue"];
-        }
-
-        options.name = id + "_editable";
-        options.triggerAction = 'all';
-        options.editable = false;
-        options.value = data;
-
-        this.element = new Ext.form.ComboBox(options);
-        this.element.render(id);
-    },
-
-    getValue: function () {
-        return this.element.getValue();
-    },
-
-    getType: function () {
-        return "select";
-    }
+pimcore.document.tags.select = Class.create(pimcore.document.editables.select, {
 });

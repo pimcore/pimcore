@@ -9,45 +9,10 @@
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *
+ * @deprecated since v6.7 and will be removed in 7. Use {@link pimcore.document.editables.date} instead.
  */
 
 pimcore.registerNS("pimcore.document.tags.date");
-pimcore.document.tags.date = Class.create(pimcore.document.tag, {
-
-    initialize: function(id, name, options, data, inherited) {
-
-        this.id = id;
-        this.name = name;
-        this.setupWrapper();
-        options = this.parseOptions(options);
-
-        if (options.format) {
-            // replace any % prefixed parts from strftime format
-            options.format = options.format.replace(/%([a-zA-Z])/g, '$1');
-        }
-
-        if (data) {
-            var tmpDate = new Date(intval(data) * 1000);
-            options.value = tmpDate;
-        }
-
-        options.name = id + "_editable";
-
-
-
-        this.element = new Ext.form.DateField(options);
-        if (options["reload"]) {
-            this.element.on("change", this.reloadDocument);
-        }
-
-        this.element.render(id);
-    },
-
-    getValue: function () {
-        return this.element.getValue();
-    },
-
-    getType: function () {
-        return "date";
-    }
+pimcore.document.tags.date = Class.create(pimcore.document.editables.date, {
 });

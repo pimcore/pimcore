@@ -133,11 +133,11 @@ Ext.onReady(function () {
         }
         editableNames.push(name);
 
-        var tag = new pimcore.document.tags[type](id, name, options, data, inherited);
-        tag.setRealName(config.realName);
-        tag.setInherited(inherited);
+        var editable = new pimcore.document.editables[type](id, name, options, data, inherited);
+        editable.setRealName(config.realName);
+        editable.setInherited(inherited);
 
-        return tag;
+        return editable;
     }
 
     if (typeof Ext == "object" && typeof pimcore == "object") {

@@ -9,58 +9,10 @@
  *
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *
+ * @deprecated since v6.7 and will be removed in 7. Use {@link pimcore.document.editables.numeric} instead.
  */
 
 pimcore.registerNS("pimcore.document.tags.numeric");
-pimcore.document.tags.numeric = Class.create(pimcore.document.tag, {
-
-    initialize: function(id, name, options, data, inherited) {
-
-        this.id = id;
-        this.name = name;
-        this.setupWrapper();
-        options = this.parseOptions(options);
-
-        if ('number' !== typeof data && !data) {
-            data = "";
-        }
-
-        options.value = data;
-        options.name = id + "_editable";
-        options.decimalPrecision = 20;
-
-        this.element = new Ext.form.field.Number(options);
-        this.element.render(id);
-
-
-        if(options["required"]) {
-            this.required = options["required"];
-        }
-
-        this.checkValue();
-
-        this.element.on("blur", this.checkValue.bind(this, true));
-    },
-
-    getValue: function () {
-        return this.element.getValue();
-    },
-
-    getType: function () {
-        return "numeric";
-    },
-
-    checkValue: function (mark) {
-        var value = this.getValue();
-
-        if(Number(value) < 1) {
-            this.element.addCls("empty");
-        } else {
-            this.element.removeCls("empty");
-        }
-
-        if (this.required) {
-            this.validateRequiredValue(value, this.element, this, mark);
-        }
-    }
+pimcore.document.tags.numeric = Class.create(pimcore.document.editables.numeric, {
 });
