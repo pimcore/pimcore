@@ -316,7 +316,7 @@ pimcore.workflow.transitionPanel = Class.create({
                 this.getWorkflowFormPanel().getComponent('workflowMessage').setHtml(
                     [
                         '<div class="action_error">' + t(data.message) + '</div>',
-                        '<div class="action_reason">' + data.reason.map(function(reason){ return t(reason); }).join().replace(';', '<br>') + '</div>'
+                        '<div class="action_reason">' + data.reason.map(function(reason){ return t(reason); }).join('<br>') + '</div>'
                     ].join(''));
 
             this.getWorkflowFormPanel().scrollTo(0, 0);
