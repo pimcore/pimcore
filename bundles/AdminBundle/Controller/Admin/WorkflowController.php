@@ -139,10 +139,16 @@ class WorkflowController extends AdminController implements EventedControllerInt
                 ];
             }
         } else {
+            $blockTransitionList = $workflow->buildTransitionBlockerList($this->element, $request->get('transition'));
+
+            $reasons = array_map(function($blockTransitionItem){
+                return $blockTransitionItem->getMessage();
+            }, $blockTransitionList->getIterator()->getArrayCopy());
+
             $data = [
                 'success' => false,
-                'message' => 'error validating the action on this element, element cannot peform this action',
-                'reason' => 'transition is currently not allowed',
+                'message' => 'transition failed',
+                'reason' => $reasons
             ];
         }
 
