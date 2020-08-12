@@ -23,6 +23,7 @@ use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Event\Admin\Login\LostPasswordEvent;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Http\ResponseHelper;
 use Pimcore\Logger;
 use Pimcore\Model\User;
 use Pimcore\Templating\Model\ViewModel;
@@ -41,6 +42,16 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class LoginController extends AdminController implements BruteforceProtectedControllerInterface, EventedControllerInterface
 {
+    /**
+     * @var ResponseHelper
+     */
+    protected $reponseHelper;
+
+    public function __construct(ResponseHelper $responseHelper)
+    {
+        $this->reponseHelper = $responseHelper;
+    }
+
     public function onKernelController(FilterControllerEvent $event)
     {
         // use browser language for login page if possible
@@ -59,7 +70,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
     public function onKernelResponse(FilterResponseEvent $event)
     {
-        $event->getResponse()->headers->set('X-Frame-Options', 'deny', true);
+        $response = $event->getResponse();
+        $response->headers->set('X-Frame-Options', 'deny', true);
+        $this->reponseHelper->disableCache($response, true);
     }
 
     /**
@@ -83,6 +96,13 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
         $view = $this->buildLoginPageViewModel($config);
 
+        $session_gc_maxlifetime = ini_get('session.gc_maxlifetime');
+        if (empty($session_gc_maxlifetime)) {
+            $session_gc_maxlifetime = 120;
+        }
+
+        $view->csrfTokenRefreshInterval = ((int)$session_gc_maxlifetime - 60) * 1000;
+
         if ($request->get('auth_failed')) {
             $view->error = 'error_auth_failed';
         }
@@ -91,6 +111,18 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         }
 
         return $view;
+    }
+
+    /**
+     * @Route("/login/csrf-token", name="pimcore_admin_login_csrf_token")
+     */
+    public function csrfTokenAction(Request $request, CsrfProtectionListener $csrfProtectionListener)
+    {
+        $csrfProtectionListener->regenerateCsrfToken();
+
+        return $this->json([
+           'csrfToken' => $csrfProtectionListener->getCsrfToken()
+        ]);
     }
 
     /**

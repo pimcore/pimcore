@@ -265,7 +265,13 @@ class PublicServicesController extends Controller
      */
     public function customAdminEntryPointAction(Request $request)
     {
-        $url = $this->generateUrl('pimcore_admin_login');
+        $params = $request->query->all();
+        if (isset($params['token'])) {
+            $url = $this->generateUrl('pimcore_admin_login_check', $params);
+        } else {
+            $url = $this->generateUrl('pimcore_admin_login', $params);
+        }
+
         $redirect = new RedirectResponse($url);
 
         $customAdminPathIdentifier = $this->getParameter('pimcore_admin.custom_admin_path_identifier');
