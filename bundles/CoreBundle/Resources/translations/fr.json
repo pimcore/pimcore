@@ -951,5 +951,11 @@
     "default_value_generator": "Générateur service / classe valeur par défaut",
     "no_value_set": "aucune valeur définie",
     "delete_class_message": "Voulez-vous vraiment supprimer la classe '%s' ?",
-    "replace_assignments_in_all_elements": "Remplacer les affectations dans tous les éléments"
+    "replace_assignments_in_all_elements": "Remplacer les affectations dans tous les éléments",
+    "fieldlookup": "Recherche de champ",
+    "show_fieldlookup": "Montrer la recherche de champ",
+    "different_number_of_columns": "Nombre de colonnes différent",
+    "brick_limit_reached": "Limite ({bricklimit}) atteinte pour la brique : {brickname}",
+    "generate_type_declarations": "Générer les déclarations de type",
+    "batch_change_language": "Mise à jour langue par lots"
 }
