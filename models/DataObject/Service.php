@@ -1618,22 +1618,4 @@ class Service extends Model\Element\Service
     {
         self::removeElementFromSession('object', $objectId);
     }
-
-    /**
-     * @param array $objects
-     * @param string $sortBy
-     * @param string $childrenSortOrder
-     * @return array
-     */
-    public static function sortChildrenNaturally(array $objects, string $sortBy, string $childrenSortOrder): array
-    {
-        usort(
-            $objects,
-            function ($a, $b) use ($sortBy) {
-                return strnatcasecmp($a->get('o_'. $sortBy), $b->get('o_'. $sortBy));
-            }
-        );
-
-        return $childrenSortOrder === 'ASC' ? $objects : array_reverse($objects);
-    }
 }
