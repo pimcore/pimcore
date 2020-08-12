@@ -330,7 +330,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @return UrlSlug|null
      */
-    public static function resolveSlug($path, $siteId = 0)
+    public static function resolveSlug($path, int $siteId = 0)
     {
         $cacheKey = $path . '~~' . $siteId;
         if (isset(self::$cache[$cacheKey])) {
@@ -340,12 +340,11 @@ class UrlSlug implements OwnerAwareFieldInterface
         $slug = null;
         $db = Db::get();
         try {
-            $query = 'SELECT * FROM object_url_slugs WHERE slug = ' . $db->quote($path)
-                . ' AND siteId = ' . $db->quote($siteId);
-
-            if ($siteId > 0) {
-                $query .= ' OR siteId = 0 ORDER BY siteId DESC LIMIT 1';
-            }
+            $query = sprintf(
+                'SELECT * FROM object_url_slugs WHERE slug = %s AND (siteId = %d OR siteId = 0) ORDER BY siteId DESC LIMIT 1',
+                $db->quote($path),
+                $siteId
+            );
 
             $rawItem = $db->fetchRow($query);
 
