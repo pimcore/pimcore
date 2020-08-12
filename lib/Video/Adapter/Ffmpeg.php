@@ -33,7 +33,7 @@ class Ffmpeg extends Adapter
     protected $processId;
 
     /**
-     * @var string
+     * @var array
      */
     protected $arguments = [];
 
@@ -207,7 +207,7 @@ class Ffmpeg extends Adapter
     }
 
     /**
-     * @return int
+     * @return float
      *
      * @throws \Exception
      */
@@ -233,8 +233,8 @@ class Ffmpeg extends Adapter
     {
         $output = $this->getVideoInfo();
 
-        preg_match('/( [0-9]+x[0-9]+ )/', $output, $matches);
-        $durationRaw = trim($matches[1]);
+        preg_match('/ ([0-9]+x[0-9]+)[, ]/', $output, $matches);
+        $durationRaw = $matches[1];
         list($width, $height) = explode('x', $durationRaw);
 
         return ['width' => $width, 'height' => $height];
@@ -358,7 +358,7 @@ class Ffmpeg extends Adapter
     {
         // ensure $width is even (mp4 requires this)
         $width = ceil($width / 2) * 2;
-        $this->addArgument('scaleByWidth', '-vf "scale='.$width.':trunc(ow/a/vsub)*vsub"');
+        $this->addArgument('scaleByWidth', '-vf "scale='.$width.':trunc(ow/a/2)*2"');
     }
 
     /**
@@ -368,6 +368,6 @@ class Ffmpeg extends Adapter
     {
         // ensure $height is even (mp4 requires this)
         $height = ceil($height / 2) * 2;
-        $this->addArgument('scaleByHeight', '-vf "scale=trunc(oh/(ih/iw)/hsub)*hsub:'.$height.'"');
+        $this->addArgument('scaleByHeight', '-vf "scale=trunc(oh/(ih/iw)/2)*2:'.$height.'"');
     }
 }

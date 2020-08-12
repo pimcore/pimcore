@@ -54,6 +54,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
      */
     public function cleanUpCodes($filter = [])
     {
+        return true;
     }
 
     public function cleanupReservations($duration = 0, $seriesId = null)
@@ -185,7 +186,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
             'usageCount' => $usageCount,
             'freeCount' => $overallCount - $usageCount - $reservedTokenCount,
             'reservedCount' => $reservedTokenCount,
-            'usage' => $usage
+            'usage' => $usage,
         ];
     }
 

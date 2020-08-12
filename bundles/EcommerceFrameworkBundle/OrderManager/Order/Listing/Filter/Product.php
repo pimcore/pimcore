@@ -39,20 +39,21 @@ class Product implements OrderListFilterInterface
      */
     public function apply(OrderListInterface $orderList)
     {
+        $db = \Pimcore\Db::get();
         $ids = [
-            $this->product->getId()
+            $db->quote($this->product->getId()),
         ];
 
         $variants = $this->product->getChildren([
-            \Pimcore\Model\DataObject\Concrete::OBJECT_TYPE_VARIANT
+            \Pimcore\Model\DataObject\Concrete::OBJECT_TYPE_VARIANT,
         ]);
 
         /** @var \Pimcore\Model\DataObject\Concrete $variant */
         foreach ($variants as $variant) {
-            $ids[] = $variant->getId();
+            $ids[] = $db->quote($variant->getId());
         }
 
-        $orderList->addCondition('orderItem.product__id IN (?)', $ids);
+        $orderList->addCondition('orderItem.product__id IN (' . implode(',', $ids) . ')');
 
         return $this;
     }

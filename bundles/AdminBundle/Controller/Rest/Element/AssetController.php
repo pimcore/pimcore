@@ -29,7 +29,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class AssetController extends AbstractElementController
 {
     /**
-     * @Route("/asset/id/{id}", requirements={"id": "\d+"}, methods={"GET"})
+     * @Route("/asset/id/{id}", name="pimcore_api_rest_element_asset_get", requirements={"id": "\d+"}, methods={"GET"})
      *
      * @api {get} /asset Get asset
      * @apiParamExample {json} Request-Example:
@@ -64,15 +64,14 @@ class AssetController extends AbstractElementController
         } else {
             $light = $request->get('light');
             $options = [
-                'LIGHT' => $light ? 1 : 0
+                'LIGHT' => $light ? 1 : 0,
             ];
 
             $object = $this->service->getAssetFileById($id, $options);
             $algo = 'sha1';
 
             $thumbnailConfig = $request->get('thumbnail');
-            if ($thumbnailConfig && $asset->getType() === 'image') {
-                /** @var Asset\Image $asset */
+            if ($thumbnailConfig && $asset instanceof Asset\Image) {
                 $checksum = $asset->getThumbnail($thumbnailConfig)->getChecksum($algo);
 
                 $object->thumbnail = (string) $asset->getThumbnail($thumbnailConfig);
@@ -82,7 +81,7 @@ class AssetController extends AbstractElementController
 
             $object->checksum = [
                 'algo' => $algo,
-                'value' => $checksum
+                'value' => $checksum,
             ];
 
             if ($light) {
@@ -94,7 +93,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Route("/asset", methods={"POST", "PUT"})
+     * @Route("/asset", name="pimcore_api_rest_element_asset_create", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -119,7 +118,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Route("/asset/id/{id}", requirements={"id": "\d+"}, methods={"POST", "PUT"})
+     * @Route("/asset/id/{id}", name="pimcore_api_rest_element_asset_update", requirements={"id": "\d+"}, methods={"POST", "PUT"})
      *
      * @param Request  $request
      * @param int|null $id
@@ -140,7 +139,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Route("/asset/id/{id}", requirements={"id": "\d+"}, methods={"DELETE"})
+     * @Route("/asset/id/{id}", name="pimcore_api_rest_element_asset_delete", requirements={"id": "\d+"}, methods={"DELETE"})
      *
      * @api {delete} /asset Delete asset
      * @apiName deleteAsset
@@ -184,7 +183,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Route("/asset-list", methods={"GET"})
+     * @Route("/asset-list", name="pimcore_api_rest_element_asset_list", methods={"GET"})
      *
      * Returns a list of assets id/type pairs matching the given criteria.
      *  Example:
@@ -225,7 +224,7 @@ class AssetController extends AbstractElementController
     }
 
     /**
-     * @Route("/asset-count", methods={"GET"})
+     * @Route("/asset-count", name="pimcore_api_rest_element_asset_count", methods={"GET"})
      *
      * Returns the total number of assets matching the given condition
      *  GET http://[YOUR-DOMAIN]/webservice/rest/asset-count?apikey=[API-KEY]&q={"type":%20"folder"}
@@ -263,12 +262,12 @@ class AssetController extends AbstractElementController
         $count = Asset::getTotalCount($params);
 
         return $this->createSuccessResponse([
-            'totalCount' => $count
+            'totalCount' => $count,
         ]);
     }
 
     /**
-     * @Route("/asset-inquire", methods={"GET", "POST"})
+     * @Route("/asset-inquire", name="pimcore_api_rest_element_asset_inquire", methods={"GET", "POST"})
      *
      * Checks for existence of the given asset IDs
      *
@@ -307,7 +306,7 @@ class AssetController extends AbstractElementController
 
         throw $this->createNotFoundResponseException([
             'msg' => sprintf('Asset %d does not exist', (int)$id),
-            'code' => static::ELEMENT_DOES_NOT_EXIST
+            'code' => static::ELEMENT_DOES_NOT_EXIST,
         ]);
     }
 
@@ -340,7 +339,7 @@ class AssetController extends AbstractElementController
 
         if (null !== $id) {
             return $this->createSuccessResponse([
-                'id' => $id
+                'id' => $id,
             ], true);
         } else {
             return $this->createErrorResponse();

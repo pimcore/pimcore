@@ -139,8 +139,8 @@ class Piwik extends Tracker implements
                 'setEcommerceView',
                 false,
                 false,
-                $category
-            ]
+                $category,
+            ],
         ]);
 
         $this->trackCode($result);
@@ -176,7 +176,7 @@ class Piwik extends Tracker implements
         $calls = $this->buildItemCalls($items);
         $calls[] = [
             'trackEcommerceCartUpdate',
-            $cart->getPriceCalculator()->getGrandTotal()->getAmount()->asNumeric()
+            $cart->getPriceCalculator()->getGrandTotal()->getAmount()->asNumeric(),
         ];
 
         $result = $this->renderCalls($calls);
@@ -220,7 +220,7 @@ class Piwik extends Tracker implements
                 $eventAction,
                 $eventLabel,
                 $eventValue,
-            ]
+            ],
         ]);
 
         $this->trackCode($result);
@@ -240,7 +240,7 @@ class Piwik extends Tracker implements
     private function renderCalls(array $calls): string
     {
         return $this->renderTemplate('calls', [
-            'calls' => $calls
+            'calls' => $calls,
         ]);
     }
 
@@ -259,7 +259,7 @@ class Piwik extends Tracker implements
                 $item->getName(),
                 $item->getCategories(),
                 $item->getPrice(),
-                $item->getQuantity()
+                $item->getQuantity(),
             ];
         }
 

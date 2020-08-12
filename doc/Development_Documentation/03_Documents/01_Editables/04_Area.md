@@ -61,6 +61,19 @@ Brick-specific configurations are passed using the `params` configuration (see a
     ]); ?>
 </div>
 ```
+```twig
+<div>
+    {{ pimcore_area('myArea', {
+        type: 'gallery-single-images',
+        params: {
+            'param1': 123,
+            'forceEditInView': true,
+            'editWidth': '800px',
+            'editHeight': '500px'
+        }
+    }) }}
+</div>
+```
 
 Get the params in your brick:
 
@@ -81,7 +94,7 @@ Assuming your area uses a brick `gallery-single-images` which contains a `galler
 $document = \Pimcore\Model\Document\Page::getByPath('/en/basic-examples/galleries');
 
 /** @var \Pimcore\Model|Document\Tag\Area $area */
-$area = $document->getElement('myArea');
+$area = $document->getEditable('myArea');
 
 /** @var \Pimcore\Model|Document\Tag\Block $block */
 $block = $area->getElement('gallery');

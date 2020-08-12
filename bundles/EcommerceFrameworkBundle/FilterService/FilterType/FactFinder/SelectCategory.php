@@ -16,11 +16,35 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\FactF
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterCategory;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @deprecated since version 6.7.0 and will be removed in 7.0.0.
+ *
+ */
 class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\SelectCategory
 {
     /**
-     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param TranslatorInterface $translator
+     * @param EngineInterface $templatingEngine
+     * @param string $template for rendering the filter frontend
+     * @param array $options for additional options
+     */
+    public function __construct(TranslatorInterface $translator, EngineInterface $templatingEngine, RequestStack $requestStack, string $template, array $options = [])
+    {
+        @trigger_error(
+            'Class ' . self::class . ' is deprecated since version 6.7.0 and will be removed in 7.0.0.',
+            E_USER_DEPRECATED
+        );
+
+        parent::__construct($translator, $templatingEngine, $requestStack, $template, $options);
+    }
+
+    /**
+     * @param FilterCategory $filterDefinition
      * @param ProductListInterface                 $productList
      * @param array                                             $currentFilter
      * @param array                                             $params
@@ -65,6 +89,15 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
         return $currentFilter;
     }
 
+    /**
+     * @param FilterCategory $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         $rawValues = $productList->getGroupByValues('CategoryPath', true);
@@ -99,7 +132,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
             'values' => array_values($values),
             'fieldname' => $filterDefinition->getField(),
             'metaData' => $filterDefinition->getMetaData(),
-            'resultCount' => $productList->count()
+            'resultCount' => $productList->count(),
         ]);
     }
 }

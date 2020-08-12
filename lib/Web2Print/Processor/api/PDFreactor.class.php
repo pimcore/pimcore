@@ -23,7 +23,7 @@ class PDFreactor
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'POST',
                 'content' => json_encode($config),
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
 
@@ -53,7 +53,7 @@ class PDFreactor
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'POST',
                 'content' => json_encode($config),
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -81,7 +81,7 @@ class PDFreactor
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'POST',
                 'content' => json_encode($config),
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -121,7 +121,7 @@ class PDFreactor
             'http' => [
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -150,7 +150,7 @@ class PDFreactor
             'http' => [
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -179,7 +179,7 @@ class PDFreactor
             'http' => [
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -208,7 +208,7 @@ class PDFreactor
             'http' => [
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'DELETE',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -232,7 +232,7 @@ class PDFreactor
             'http' => [
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);
@@ -258,7 +258,7 @@ class PDFreactor
             'http' => [
                 'header' => "Content-type: application/json\r\n",
                 'method' => 'GET',
-                'ignore_errors' => true
+                'ignore_errors' => true,
             ],
         ];
         $context = stream_context_create($options);

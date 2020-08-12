@@ -265,6 +265,10 @@
     color: #0091f8 !important;
 }
 
+.pimcore_treenode_hide_plus_button .x-tree-expander {
+    visibility: hidden;
+}
+
 .pimcore_overflow_scrolling {
     -webkit-overflow-scrolling:touch;
     overflow: auto;
@@ -1329,14 +1333,6 @@ span.warning {
 
 
 /* ExtJS 6.0 specific styles */
-
-#pimcore_panel_tabs-body {
-    background-image: url(/admin/settings/display-custom-logo);
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: 500px auto;
-}
-
 #pimcore_panel_tabs > .x-tab-bar {
     background: #0C0F12;
     background-image: url(/bundles/pimcoreadmin/img/logo-gray.svg);
@@ -1463,12 +1459,12 @@ span.warning {
 }
 
 .pimcore_main_toolbar .x-btn.x-btn-disabled {
-    background-color: #393C3F;
+    background-color: #484B4E;
     opacity: 1;
 }
 
 .pimcore_main_toolbar .x-btn.x-btn-disabled .x-btn-inner {
-    color: #000;
+    color: #8e8e8e;
 }
 
 .pimcore_main_toolbar .x-btn.x-btn-disabled .x-btn-wrap {
@@ -2027,6 +2023,7 @@ span.warning {
 
 #pimcore_quicksearch_preview .full-preview img {
     max-width: 100%;
+    max-height: 100%;
 }
 
 #pimcore_quicksearch_preview .data-table {
@@ -2060,6 +2057,10 @@ span.warning {
 
 #pimcore_quicksearch_preview .data-table td .limit-height {
     overflow: hidden;
+    max-height: 50px;
+}
+
+#pimcore_quicksearch_preview .data-table td .limit-height img {
     max-height: 50px;
 }
 

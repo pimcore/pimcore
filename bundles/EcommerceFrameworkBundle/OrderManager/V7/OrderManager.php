@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\OrderUpdateNotPossibleExce
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentFactoryInterface;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\ModificatedPrice;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\VoucherServiceInterface;
 use Pimcore\Event\Ecommerce\OrderManagerEvents;
 use Pimcore\Event\Model\Ecommerce\OrderManagerEvent;
@@ -103,7 +104,7 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
 
         $event = new OrderManagerEvent($cart, $order, $this, [
             'cartIsLockedDueToPayments' => $cartIsLockedDueToPayments,
-            'orderNeedsUpdate' => $orderNeedsUpdate
+            'orderNeedsUpdate' => $orderNeedsUpdate,
         ]);
         $this->eventDispatcher->dispatch(OrderManagerEvents::PRE_UPDATE_ORDER, $event);
 
@@ -131,6 +132,13 @@ class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager
             $modificationItem->setName($modification->getDescription() ? $modification->getDescription() : $name);
             $modificationItem->setAmount($modification->getGrossAmount()->asString());
             $modificationItem->setNetAmount($modification->getNetAmount()->asString());
+
+            if ($modification instanceof ModificatedPrice && $rule = $modification->getRule()) {
+                $modificationItem->setPricingRuleId($rule->getId());
+            } else {
+                $modificationItem->setPricingRuleId(null);
+            }
+
             $modificationItems->add($modificationItem);
         }
 

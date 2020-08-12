@@ -59,5 +59,7 @@ class EmailLogsCleanupCommand extends AbstractCommand
         }
 
         $this->output->writeln('Email logs cleanup done!');
+
+        return 0;
     }
 }

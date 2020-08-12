@@ -21,7 +21,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 
-class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -115,7 +115,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param Asset $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int|null
@@ -133,10 +133,10 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param int $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return Asset
+     * @return Asset|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -151,7 +151,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param Asset $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return int|null
@@ -168,11 +168,11 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataForEditmode
      *
-     * @param Asset $data
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
+     * @param Asset\Image|null $data
+     * @param null|Model\DataObject\Concrete $object
+     * @param array $params
      *
-     * @return array
+     * @return array|null
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
@@ -185,7 +185,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @param Asset $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return array
@@ -198,11 +198,11 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getDataFromEditmode
      *
-     * @param int $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param array $data
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return Asset
+     * @return Asset\Image|null
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
@@ -215,7 +215,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /**
      * @param int $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return Asset
@@ -228,8 +228,8 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     /**
      * @see Data::getVersionPreview
      *
-     * @param Asset\Image $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param Asset\Image|null $data
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -248,7 +248,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @abstract
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -258,9 +258,9 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Element\ElementInterface) {
             return $data->getRealFullPath();
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
@@ -283,7 +283,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $object
+     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -315,7 +315,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * @param $data
+     * @param Asset|null $data
      *
      * @return array
      */
@@ -326,7 +326,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if ($data instanceof Asset) {
             $dependencies['asset_' . $data->getId()] = [
                 'id' => $data->getId(),
-                'type' => 'asset'
+                'type' => 'asset',
             ];
         }
 
@@ -338,24 +338,26 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @deprecated
      *
-     * @param string $object
-     * @param mixed $params
+     * @param Model\DataObject\Concrete $object
+     * @param array $params
      *
-     * @return mixed
+     * @return int|null
      */
     public function getForWebserviceExport($object, $params = [])
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Asset) {
-            return  $data->getId();
+            return $data->getId();
         }
+
+        return null;
     }
 
     /**
      * @deprecated
      *
      * @param mixed $value
-     * @param null $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -385,10 +387,12 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
                 $idMapper->recordMappingFailure('object', $object->getId(), 'asset', $value);
             }
         }
+
+        return null;
     }
 
     /**
-     * @param $uploadPath
+     * @param string $uploadPath
      *
      * @return $this
      */
@@ -419,10 +423,10 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
-     * @param null $object
+     * @param Asset\Image|null $data
+     * @param Model\DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|string
@@ -484,7 +488,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     /** Encode value for packing it into a single column.
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -494,14 +498,14 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         if ($value instanceof \Pimcore\Model\Asset\Image) {
             return [
                 'type' => 'asset',
-                'id' => $value->getId()
+                'id' => $value->getId(),
             ];
         }
     }
 
     /** See marshal
      * @param mixed $value
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return mixed
@@ -517,5 +521,19 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @param Asset|null $oldValue
+     * @param Asset|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldValue = $oldValue instanceof Asset ? $oldValue->getId() : null;
+        $newValue = $newValue instanceof Asset ? $newValue->getId() : null;
+
+        return $oldValue === $newValue;
     }
 }

@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Tool\Qrcode\Config\Listing\Dao getDao()
+ * @method \Pimcore\Model\Tool\Qrcode\Config[] load()
  */
 class Listing extends Model\Listing\JsonListing
 {

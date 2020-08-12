@@ -19,7 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Model\DataObject\Traits\DefaultValueTrait;
 
@@ -42,9 +42,9 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public $fieldtype = 'numeric';
 
     /**
-     * @var float
+     * @var int
      */
-    public $width;
+    public $width = 0;
 
     /**
      * @var float
@@ -102,7 +102,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * but as decimalPrecision already existed to denote the amount of digits after the point (as it is called on the ExtJS
      * number field), decimalSize was chosen instead.
      *
-     * @var int
+     * @var int|null
      */
     public $decimalSize;
 
@@ -110,7 +110,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * This is the y part in DECIMAL(x, y) and denotes amount of digits after a comma. In MySQL this is called scale. See
      * commend on decimalSize.
      *
-     * @var int
+     * @var int|null
      */
     public $decimalPrecision;
 
@@ -169,7 +169,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public function setDefaultValue($defaultValue)
     {
-        if (strlen(strval($defaultValue)) > 0) {
+        if ((string)$defaultValue !== '') {
             $this->defaultValue = $defaultValue;
         }
 
@@ -241,7 +241,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getDecimalSize()
     {
@@ -249,23 +249,31 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param int $decimalSize
+     * @param int|null $decimalSize
      */
     public function setDecimalSize($decimalSize)
     {
+        if (!is_numeric($decimalSize)) {
+            $decimalSize = null;
+        }
+
         $this->decimalSize = $decimalSize;
     }
 
     /**
-     * @param int $decimalPrecision
+     * @param int|null $decimalPrecision
      */
     public function setDecimalPrecision($decimalPrecision)
     {
+        if (!is_numeric($decimalPrecision)) {
+            $decimalPrecision = null;
+        }
+
         $this->decimalPrecision = $decimalPrecision;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getDecimalPrecision()
     {
@@ -369,10 +377,10 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param float|int|string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return float|int|string
+     * @return float|int|string|null
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
@@ -389,7 +397,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param float|int|string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float|int|string
@@ -407,7 +415,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param float|int|string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float|int|string
@@ -423,7 +431,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see Data::getDataForEditmode
      *
      * @param float|int|string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float|int|string
@@ -437,7 +445,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see Data::getDataFromEditmode
      *
      * @param float|int|string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float|int|string
@@ -451,7 +459,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @see Data::getVersionPreview
      *
      * @param float|int|string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|Model\DataObject\Concrete $object
      * @param mixed $params
      *
      * @return float|int|string
@@ -509,7 +517,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      *
      * @abstract
      *
-     * @param Model\DataObject\AbstractObject $object
+     * @param Model\DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -549,7 +557,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param $data
+     * @param string|null $data
      *
      * @return bool
      */
@@ -559,7 +567,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param $value
+     * @param string $value
      *
      * @return float|int|string
      */
@@ -579,11 +587,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param $object
-     * @param $data
+     * @param Model\DataObject\Concrete|Model\DataObject\Localizedfield|Model\DataObject\Objectbrick\Data\AbstractData|Model\DataObject\Fieldcollection\Data\AbstractData $object
+     * @param float|int|string $data
      * @param array $params
      *
-     * @return array|null
+     * @return float|int|string|null
      */
     public function preSetData($object, $data, $params = [])
     {
@@ -600,7 +608,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     }
 
     /**
-     * @param DataObject\Concrete $object
+     * @param Model\DataObject\Concrete $object
      * @param array $context
      *
      * @return null|int
@@ -608,5 +616,16 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     protected function doGetDefaultValue($object, $context = [])
     {
         return $this->getDefaultValue() ?? null;
+    }
+
+    /**
+     * @param float|int|string $oldValue
+     * @param float|int|string $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        return $this->toNumeric($oldValue) == $this->toNumeric($newValue);
     }
 }

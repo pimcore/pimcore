@@ -64,7 +64,7 @@ abstract class AbstractRestController extends AdminController
             parent::checkPermission($permission);
         } catch (AccessDeniedHttpException $ex) {
             throw new ResponseException($this->createErrorResponse([
-                'msg' => sprintf('Not allowed: permission %s is needed', $permission)
+                'msg' => sprintf('Not allowed: permission %s is needed', $permission),
             ]));
         }
     }
@@ -79,7 +79,7 @@ abstract class AbstractRestController extends AdminController
     {
         if ($wrapInDataProperty) {
             $data = [
-                'data' => $data
+                'data' => $data,
             ];
         }
 
@@ -184,7 +184,7 @@ abstract class AbstractRestController extends AdminController
             $data = $this->decodeJson($request->getContent());
         } catch (\Exception $e) {
             $this->getLogger()->error('Failed to decode JSON data for request {request}', [
-                'request' => $request->getPathInfo()
+                'request' => $request->getPathInfo(),
             ]);
 
             $data = null;
@@ -198,7 +198,7 @@ abstract class AbstractRestController extends AdminController
             }
 
             throw new ResponseException($this->createErrorResponse([
-                'msg' => $message
+                'msg' => $message,
             ]));
         }
 
@@ -300,13 +300,15 @@ abstract class AbstractRestController extends AdminController
     /**
      * @param Request $request
      *
-     * @return string
+     * @throws \Exception
+     *
+     * @return string|null
      */
     protected function buildCondition(Request $request)
     {
         $q = trim($request->get('q'));
         if (!$q) {
-            return;
+            return null;
         }
         $q = json_decode($q, false);
         if (!$q) {
@@ -314,9 +316,6 @@ abstract class AbstractRestController extends AdminController
         }
 
         $condition = Helper::buildSqlCondition($q);
-
-//        var_dump($condition);
-//        die();
 
         return $condition;
     }

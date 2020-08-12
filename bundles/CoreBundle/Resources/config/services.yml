@@ -53,6 +53,8 @@ services:
     #
     # CONFIG
     #
+    Pimcore\Config:
+        public: true
 
     Pimcore\Config\ReportConfigWriter: ~
 

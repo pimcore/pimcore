@@ -34,65 +34,64 @@ class ConfigWriter
             ],
             'documents' => [
                 'versions' => [
-                    'steps' => '10'
+                    'steps' => '10',
                 ],
                 'error_pages' => [
-                    'default' => '/'
+                    'default' => '/',
                 ],
-                'create_redirect_when_moved' => false,
                 'allow_trailing_slash' => 'no',
-                'generate_preview' => false
+                'generate_preview' => false,
             ],
             'objects' => [
                 'versions' => [
-                    'steps' => '10'
-                ]
+                    'steps' => '10',
+                ],
             ],
             'assets' => [
                 'versions' => [
-                    'steps' => '10'
-                ]
+                    'steps' => '10',
+                ],
             ],
             'services' => [],
             'full_page_cache' => [
-                'exclude_cookie' => ''
+                'exclude_cookie' => '',
             ],
             'httpclient' => [
-                'adapter' => 'Socket'
+                'adapter' => 'Socket',
             ],
             'email' => [
                 'sender' => [
                     'name' => '',
-                    'email' => ''
+                    'email' => '',
                 ],
                 'return' => [
                     'name' => '',
-                    'email' => ''
+                    'email' => '',
                 ],
                 'method' => 'sendmail',
                 'debug' => [
-                    'email_addresses' => ''
-                ]
+                    'email_addresses' => '',
+                ],
             ],
             'newsletter' => [
                 'sender' => [
                     'name' => '',
-                    'email' => ''
+                    'email' => '',
                 ],
                 'return' => [
                     'name' => '',
-                    'email' => ''
+                    'email' => '',
                 ],
                 'method' => 'sendmail',
-                'use_specific' => false
-            ]
+                'use_specific' => false,
+            ],
         ],
         'pimcore_admin' => [
             'branding' => [
                 'color_login_screen' => '',
                 'color_admin_interface' => '',
                 'login_screen_custom_image' => '',
-            ]
+            ],
         ],
         'swiftmailer' => [
             'mailers' => [
@@ -104,7 +103,7 @@ class ConfigWriter
                     'password' => '',
                     'port' => '',
                     'encryption' => null,
-                    'auth_mode' => null
+                    'auth_mode' => null,
                 ],
                 'newsletter_mailer' => [
                     'transport' => 'sendmail',
@@ -114,10 +113,10 @@ class ConfigWriter
                     'password' => '',
                     'port' => '',
                     'encryption' => null,
-                    'auth_mode' => null
-                ]
-            ]
-        ]
+                    'auth_mode' => null,
+                ],
+            ],
+        ],
     ];
 
     public function __construct(array $defaultConfig = null)
@@ -135,7 +134,7 @@ class ConfigWriter
         // used eg. by the demo installer
         $configTemplatePaths = [
             PIMCORE_CONFIGURATION_DIRECTORY . '/system.yml',
-            PIMCORE_CONFIGURATION_DIRECTORY . '/system.template.yml'
+            PIMCORE_CONFIGURATION_DIRECTORY . '/system.template.yml',
         ];
 
         foreach ($configTemplatePaths as $configTemplatePath) {
@@ -151,7 +150,7 @@ class ConfigWriter
                 }
 
                 $configTemplate = new \Pimcore\Config\Config($configTemplateArray);
-                if ($configTemplate->pimcore->general) { // check if the template contains a valid configuration
+                if ($configTemplate->get('pimcore')->general) { // check if the template contains a valid configuration
                     $settings = $configTemplate->toArray();
 
                     break;

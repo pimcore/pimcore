@@ -44,7 +44,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             fields: ['id', 'abbreviation']
         });
 
-        pimcore.helpers.quantityValue.initUnitStore(this.setData.bind(this), this.fieldConfig.validUnits);
+        pimcore.helpers.quantityValue.initUnitStore(this.setData.bind(this), this.fieldConfig.validUnits, this.data);
     },
 
     setData: function(data) {
@@ -84,7 +84,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             }
 
             Ext.Ajax.request({
-                url: "/admin/quantity-value/convert-all",
+                url: Routing.generate('pimcore_admin_dataobject_quantityvalue_convertall'),
                 params: {
                     value: this.inputField.value,
                     unit: this.unitField.value,
@@ -105,6 +105,10 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                 }
             });
         }.bind(this);
+
+        if (typeof this.store === "undefined") {
+            this.finishSetup();
+        }
 
         this.store.on('datachanged', function() {
             updateCompatibleUnitsToolTipContent();
@@ -162,7 +166,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
                 change: function( combo, newValue, oldValue) {
                     if(this.fieldConfig.autoConvert && (oldValue !== '' || oldValue !== null) && (newValue !== '' && newValue !== null)) {
                         Ext.Ajax.request({
-                            url: "/admin/quantity-value/convert",
+                            url: Routing.generate('pimcore_admin_dataobject_quantityvalue_convert'),
                             params: {
                                 value: this.inputField.value,
                                 fromUnit: oldValue,
@@ -199,9 +203,9 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
             labelWidth: labelWidth,
             combineErrors: false,
             items: [this.inputField, this.unitField, compatibleUnitsButton],
-            componentCls: "object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             isDirty: function() {
-                return this.inputField.isDirty() || this.unitField.isDirty()
+                return this.defaultValue || this.inputField.isDirty() || this.unitField.isDirty()
             }.bind(this)
         });
 
@@ -230,7 +234,7 @@ pimcore.object.tags.quantityValue = Class.create(pimcore.object.tags.abstract, {
 
         return {
             getEditor:this.getWindowCellEditor.bind(this, field),
-            text:ts(field.label),
+            text: t(field.label),
             sortable:true,
             dataIndex:field.key,
             renderer:renderer

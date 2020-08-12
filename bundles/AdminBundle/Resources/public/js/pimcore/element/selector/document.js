@@ -21,7 +21,7 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
             pageSize: 50,
             proxy : {
                 type: 'ajax',
-                url: '/admin/search/search/find',
+                url: Routing.generate('pimcore_admin_searchadmin_search_find'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
@@ -157,7 +157,6 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
                 listeners: {
                     rowcontextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
                         var menu = new Ext.menu.Menu();
-                        var data = grid.getStore().getAt(rowIndex);
 
                         menu.add(new Ext.menu.Item({
                             text: t('remove'),
@@ -256,5 +255,6 @@ pimcore.element.selector.document = Class.create(pimcore.element.selector.abstra
         }
 
         this.pagingtoolbar.moveFirst();
+        this.updateTabTitle(formValues.query);
     }
 });

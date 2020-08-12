@@ -20,8 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Multiselect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Multiselect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -156,7 +157,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @param $maxItems
+     * @param int|string|null $maxItems
      *
      * @return $this
      */
@@ -176,7 +177,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @param $renderType
+     * @param string|null $renderType
      *
      * @return $this
      */
@@ -199,7 +200,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -217,10 +218,10 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return string|null
+     * @return array|null
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
@@ -235,7 +236,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -253,7 +254,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @see Data::getDataForEditmode
      *
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -269,7 +270,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
 
     /**
      * @param array $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -283,7 +284,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -296,8 +297,8 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * @see Data::getVersionPreview
      *
-     * @param string $data
-     * @param null|DataObject\AbstractObject $object
+     * @param array|null $data
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string|null
@@ -335,7 +336,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      *
      * @abstract
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      * @param array $params
      *
      * @return string
@@ -345,9 +346,9 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
         $data = $this->getDataFromObjectParam($object, $params);
         if (is_array($data)) {
             return implode(',', $data);
-        } else {
-            return null;
         }
+
+        return '';
     }
 
     /**
@@ -363,7 +364,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -381,9 +382,9 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     /**
      * returns sql query statement to filter according to this data types value(s)
      *
-     * @param  $value
-     * @param  $operator
-     * @param  $params
+     * @param  string $value
+     * @param  string $operator
+     * @param  array $params
      *
      * @return string
      */
@@ -405,7 +406,7 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
+     * @return string|null
      */
     public function getFilterConditionExt($value, $operator, $params = [])
     {
@@ -415,6 +416,8 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
 
             return '`'.$name.'` LIKE '.$value.' ';
         }
+
+        return null;
     }
 
     /** True if change is allowed in edit mode.
@@ -429,10 +432,10 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /** Generates a pretty version preview (similar to getVersionPreview) can be either html or
-     * a image URL. See the ObjectMerger plugin documentation for details
+     * a image URL. See the https://github.com/pimcore/object-merger bundle documentation for details
      *
-     * @param $data
-     * @param null $object
+     * @param array|null $data
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|string
@@ -524,12 +527,12 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * Override point for Enriching the layout definition before the layout is returned to the admin interface.
+     * Override point for enriching the layout definition before the layout is returned to the admin interface.
      *
-     * @param $object DataObject\Concrete
+     * @param DataObject\Concrete $object
      * @param array $context additional contextual data
      *
-     * @return self
+     * @return $this
      */
     public function enrichLayoutDefinition($object, $context = [])
     {
@@ -576,10 +579,10 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     }
 
     /**
-     * @param $existingData
-     * @param $removeData
+     * @param array|null $existingData
+     * @param array $removeData
      *
-     * @return mixed
+     * @return array
      */
     public function removeData($existingData, $removeData)
     {
@@ -595,5 +598,16 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @param array|null $value1
+     * @param array|null $value2
+     *
+     * @return bool
+     */
+    public function isEqual($value1, $value2): bool
+    {
+        return $this->isEqualArray($value1, $value2);
     }
 }

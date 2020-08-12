@@ -65,7 +65,7 @@ class GoogleTagManagerListener
      */
     private $headBlocks = [
         self::BLOCK_HEAD_BEFORE_SCRIPT_TAG,
-        self::BLOCK_HEAD_AFTER_SCRIPT_TAG
+        self::BLOCK_HEAD_AFTER_SCRIPT_TAG,
     ];
 
     /**
@@ -73,7 +73,7 @@ class GoogleTagManagerListener
      */
     private $bodyBlocks = [
         self::BLOCK_BODY_BEFORE_NOSCRIPT_TAG,
-        self::BLOCK_BODY_AFTER_NOSCRIPT_TAG
+        self::BLOCK_BODY_AFTER_NOSCRIPT_TAG,
     ];
 
     public function __construct(
@@ -114,11 +114,11 @@ class GoogleTagManagerListener
         $siteKey = $siteId->getConfigKey();
 
         $reportConfig = Config::getReportConfig();
-        if (!isset($reportConfig->tagmanager->sites->$siteKey->containerId)) {
+        if (!isset($reportConfig->get('tagmanager')->sites->$siteKey->containerId)) {
             return;
         }
 
-        $containerId = $reportConfig->tagmanager->sites->$siteKey->containerId;
+        $containerId = $reportConfig->get('tagmanager')->sites->$siteKey->containerId;
         if (!$containerId) {
             return;
         }
@@ -133,7 +133,7 @@ class GoogleTagManagerListener
             '@PimcoreCore/Google/TagManager/codeHead.html.twig',
             $this->headBlocks,
             [
-                'containerId' => $containerId
+                'containerId' => $containerId,
             ]
         );
 
@@ -142,7 +142,7 @@ class GoogleTagManagerListener
             '@PimcoreCore/Google/TagManager/codeBody.html.twig',
             $this->bodyBlocks,
             [
-                'containerId' => $containerId
+                'containerId' => $containerId,
             ]
         );
 

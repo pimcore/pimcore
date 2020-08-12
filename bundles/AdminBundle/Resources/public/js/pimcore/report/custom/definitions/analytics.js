@@ -34,7 +34,6 @@ pimcore.report.custom.definition.analytics = Class.create({
 
         this.sourceDefinitionData = sourceDefinitionData;
 
-        var profileLoaded = false;
         var dimensionLoaded = false;
         var metricLoaded = false;
         var segmentLoaded = false;
@@ -43,7 +42,7 @@ pimcore.report.custom.definition.analytics = Class.create({
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
-                url: "/admin/reports/analytics/get-dimensions",
+                url: Routing.generate('pimcore_admin_reports_analytics_getdimensions'),
                 reader: {
                     type: 'json',
                     rootProperty: "data",
@@ -88,7 +87,7 @@ pimcore.report.custom.definition.analytics = Class.create({
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
-                url: "/admin/reports/analytics/get-metrics",
+                url: Routing.generate('pimcore_admin_reports_analytics_getmetrics'),
                 reader: {
                     type: 'json',
                     rootProperty: "data",
@@ -135,7 +134,7 @@ pimcore.report.custom.definition.analytics = Class.create({
             autoLoad: true,
             proxy: {
                 type: 'ajax',
-                url: "/admin/reports/analytics/get-segments",
+                url: Routing.generate('pimcore_admin_reports_analytics_getsegments'),
                 reader: {
                     rootProperty: "data",
                     idProperty: "id"
@@ -207,7 +206,7 @@ pimcore.report.custom.definition.analytics = Class.create({
                         autoLoad: true,
                         proxy: {
                             type: 'ajax',
-                            url: "/admin/reports/analytics/get-profiles",
+                            url: Routing.generate('pimcore_admin_reports_analytics_getprofiles'),
                             reader: {
                                 type: 'json',
                                 rootProperty: "data",

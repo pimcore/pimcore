@@ -31,8 +31,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
     },
 
     open: function (modal) {
-        var imageUrl = '/admin/asset/get-image-thumbnail?id=' + this.imageId + '&width=' + this.width + '&height='
-            + this.height + '&contain=true';
+        var imageUrl = Routing.generate('pimcore_admin_asset_getimagethumbnail', {id: this.imageId, width: this.width, height: this.height, contain: true});
 
         if (this.config.crop) {
             imageUrl = imageUrl + '&' + Ext.urlEncode(this.config.crop);
@@ -630,7 +629,6 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
         var allowedTypes = [];
         var allowedSpecific = {};
         var allowedSubtypes = {};
-        var i;
 
         allowedTypes.push(type);
         if (type == "object") {
@@ -693,7 +691,7 @@ pimcore.element.tag.imagehotspotmarkereditor = Class.create({
                 }
                 menu.push(
                     {
-                        text: ts(templateMenuName),
+                        text: t(templateMenuName),
                         iconCls: "pimcore_icon_hotspotmarker_template",
                         handler: function (templateConfig) {
                             var elId = callbackFunction(templateConfig);

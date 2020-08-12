@@ -1,3 +1,6 @@
+includes:
+    - phpstan-baseline.neon
+
 parameters:
 
     #bootstrap: dev/pimcore/pimcore/.travis/phpstan-bootstrap.php # optional when running in project scope
@@ -9,7 +12,7 @@ parameters:
 
     excludes_analyse:
         - '**/DependencyInjection/Configuration.php'
-        - '**/migrations/Version*.php'
+        - '**/Migrations/Version*.php'
         - '**/External/AdminerController.php'
         - '**/Generator/DoctrineCrudGenerator.php'
         - '**/EcommerceFrameworkBundle/Resources/views/Voucher/parts/paginator.html.php'
@@ -18,12 +21,14 @@ parameters:
         - '**/simple_html_dom.php'
         - '**/PDFreactor.class.php'
         - '**/Document/MigrateTagNamingStrategyCommand.php'
+        - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
+        - '**/bundles/AdminBundle/Security/Guard/WebserviceAuthenticator.php'
 
     ignoreErrors:
         - '/(snappy|lz4)_(un)?compress/'
         - '/Instantiated class COM not found/'
         - '/(Order|Checkout)Manager.*__construct\(\) does not call parent constructor/'
-        - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children()/'
+        - '/Call to an undefined method Symfony\\Component\\Config\\Definition\\Builder\\NodeDefinition::children\(\)/'
         - '/DataObject\\(OnlineShopVoucherToken|OnlineShopVoucherSeries|OnlineShopOrder|OnlineShopOrderItem|OnlineShopTaxClass|Customer|FilterDefinition)/'
         - '/Fieldcollection\\Data\\(VoucherTokenTypeSingle|VoucherTokenTypePattern|OrderPriceModifications|PricingRule|TaxEntry|FilterCategory|PaymentInfo)/'
         - '/Matcher::__construct\(\).*TypeMatcher/'
@@ -34,8 +39,10 @@ parameters:
             message: '#Using \$this outside a class\.#'
             path: '**/*.html.php'
         -
-            message: '#Undefined variable: \$(this|view|app)#'
-            path: '**/*.html.php'
+            message: '#Variable \$(this|view|app) might not be defined.#'
+            paths:
+                - '**/*.html.php'
+                - '**/EcommerceFrameworkBundle/Resources/views/**/*.js.php'
         -
             message: '#Using \$this outside a class\.#'
             path: '**/*.js.php'
@@ -57,3 +64,9 @@ parameters:
         - '~^Method Doctrine\\DBAL(\\.*)?Connection::query\(\) invoked with \d+ parameters?, 0 required\.\z~'
         - '~^Method Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface::dispatch\(\) invoked with 2 parameters, 1 required\.\z~'
         - '~^Unsafe usage of new static\(\)~'
+        - '~^Method Psr\\Cache\\CacheItemPoolInterface::clear\(\) invoked with 1 parameter, 0 required\.\z~'
+        - '~^Method Symfony\\Component\\Cache\\Adapter\\AdapterInterface::clear\(\) invoked with 1 parameter, 0 required\.\z~'
+
+    # see https://phpstan.org/config-reference#universal-object-crates
+    universalObjectCratesClasses:
+        -  Pimcore\Templating\Model\ViewModel

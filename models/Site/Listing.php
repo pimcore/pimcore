@@ -49,7 +49,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\Site[]|null $sites
      *
-     * @return $this
+     * @return static
      */
     public function setSites($sites)
     {

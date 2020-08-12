@@ -30,21 +30,21 @@ class Video extends Model\Document\Tag
     /**
      * contains depending on the type of the video the unique identifier eg. "http://www.youtube.com", "789", ...
      *
-     * @var int|string
+     * @var int|string|null
      */
     public $id;
 
     /**
      * one of asset, youtube, vimeo, dailymotion
      *
-     * @var string
+     * @var string|null
      */
     public $type = 'asset';
 
     /**
      * asset ID of poster image
      *
-     * @var int
+     * @var int|null
      */
     public $poster;
 
@@ -138,7 +138,7 @@ class Video extends Model\Document\Tag
             'title' => $this->title,
             'description' => $this->description,
             'path' => $path,
-            'poster' => $poster ? $poster->getFullPath() : ''
+            'poster' => $poster ? $poster->getFullPath() : '',
         ];
     }
 
@@ -152,7 +152,7 @@ class Video extends Model\Document\Tag
             'type' => $this->type,
             'title' => $this->title,
             'description' => $this->description,
-            'poster' => $this->poster
+            'poster' => $this->poster,
         ];
     }
 
@@ -199,7 +199,7 @@ class Video extends Model\Document\Tag
                 $key = 'asset_' . $asset->getId();
                 $dependencies[$key] = [
                     'id' => $asset->getId(),
-                    'type' => 'asset'
+                    'type' => 'asset',
                 ];
             }
         }
@@ -208,7 +208,7 @@ class Video extends Model\Document\Tag
             $key = 'asset_' . $poster->getId();
             $dependencies[$key] = [
                 'id' => $poster->getId(),
-                'type' => 'asset'
+                'type' => 'asset',
             ];
         }
 
@@ -360,7 +360,9 @@ class Video extends Model\Document\Tag
         // compatibility mode when FFMPEG is not present or no thumbnail config is given
         if (!\Pimcore\Video::isAvailable() || !$thumbnailOption) {
             if ($asset instanceof Asset && preg_match("/\.(f4v|flv|mp4)/", $asset->getFullPath())) {
-                return $this->getHtml5Code(['mp4' => (string) $asset]);
+                $image = $this->getPosterThumbnailImage($asset);
+
+                return $this->getHtml5Code(['mp4' => (string) $asset], $image);
             }
 
             return $this->getErrorCode('Asset is not a video, or missing thumbnail configuration');
@@ -369,55 +371,75 @@ class Video extends Model\Document\Tag
         if ($asset instanceof Asset\Video && $thumbnailOption) {
             $thumbnail = $asset->getThumbnail($thumbnailOption);
             if ($thumbnail) {
-                if (!array_key_exists('imagethumbnail', $options) || empty($options['imagethumbnail'])) {
-                    // try to get the dimensions out ouf the video thumbnail
-                    $imageThumbnailConf = $asset->getThumbnailConfig($thumbnailOption)->getEstimatedDimensions();
-                    $imageThumbnailConf['format'] = 'JPEG';
-                } else {
-                    $imageThumbnailConf = $options['imagethumbnail'];
-                }
-
-                if (empty($imageThumbnailConf)) {
-                    $imageThumbnailConf['width'] = 800;
-                    $imageThumbnailConf['format'] = 'JPEG';
-                }
-
-                if ($this->poster && ($poster = Asset::getById($this->poster))) {
-                    /** @var Asset\Image $image */
-                    $image = $poster->getThumbnail($imageThumbnailConf);
-                } else {
-                    if ($asset->getCustomSetting('image_thumbnail_asset') && ($customPreviewAsset = Asset::getById($asset->getCustomSetting('image_thumbnail_asset')))) {
-                        $image = $customPreviewAsset->getThumbnail($imageThumbnailConf);
-                    } else {
-                        $image = $asset->getImageThumbnail($imageThumbnailConf);
-                    }
-                }
+                $image = $this->getPosterThumbnailImage($asset);
 
                 if ($inAdmin && isset($options['editmodeImagePreview']) && $options['editmodeImagePreview']) {
-                    $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">';
+                    $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video '.$options['class'].'">';
                     $code .= '<img width="' . $this->getWidth() . '" src="' . $image . '" />';
                     $code .= '</div>';
 
                     return $code;
                 }
 
-                if ($thumbnail['status'] == 'finished') {
+                if ($thumbnail['status'] === 'finished') {
                     return $this->getHtml5Code($thumbnail['formats'], $image);
-                } elseif ($thumbnail['status'] == 'inprogress') {
+                }
+
+                if ($thumbnail['status'] === 'inprogress') {
                     // disable the output-cache if enabled
                     $cacheService = \Pimcore::getContainer()->get('pimcore.event_listener.frontend.full_page_cache');
                     $cacheService->disable('Video rendering in progress');
 
                     return $this->getProgressCode($image);
-                } else {
-                    return $this->getErrorCode('The video conversion failed, please see the log files in /var/logs for more details.');
                 }
-            } else {
-                return $this->getErrorCode("The given thumbnail doesn't exist: '" . $thumbnailOption . "'");
+
+                return $this->getErrorCode('The video conversion failed, please see the log files in /var/logs for more details.');
+            }
+
+            return $this->getErrorCode("The given thumbnail doesn't exist: '" . $thumbnailOption . "'");
+        }
+
+        return $this->getEmptyCode();
+    }
+
+    /**
+     * @param Asset\Video $asset
+     *
+     * @return Asset\Image\Thumbnail|null
+     */
+    private function getPosterThumbnailImage(Asset\Video $asset)
+    {
+        $options = $this->getOptions();
+        if (!array_key_exists('imagethumbnail', $options) || empty($options['imagethumbnail'])) {
+            $thumbnailConfig = $asset->getThumbnailConfig($options['thumbnail'] ?? null);
+
+            if ($thumbnailConfig instanceof Asset\Video\Thumbnail\Config) {
+                // try to get the dimensions out ouf the video thumbnail
+                $imageThumbnailConf = $thumbnailConfig->getEstimatedDimensions();
+                $imageThumbnailConf['format'] = 'JPEG';
             }
         } else {
-            return $this->getEmptyCode();
+            $imageThumbnailConf = $options['imagethumbnail'];
         }
+
+        if (empty($imageThumbnailConf)) {
+            $imageThumbnailConf['width'] = 800;
+            $imageThumbnailConf['format'] = 'JPEG';
+        }
+
+        $image = null;
+        if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
+            $image = $poster->getThumbnail($imageThumbnailConf);
+        } else {
+            if ($asset->getCustomSetting('image_thumbnail_asset')
+                && ($customPreviewAsset = Asset\Image::getById($asset->getCustomSetting('image_thumbnail_asset')))) {
+                $image = $customPreviewAsset->getThumbnail($imageThumbnailConf);
+            } else {
+                $image = $asset->getImageThumbnail($imageThumbnailConf);
+            }
+        }
+
+        return $image;
     }
 
     /**
@@ -494,6 +516,10 @@ class Video extends Model\Document\Tag
     {
         if ($this->type == 'youtube') {
             if ($youtubeId = $this->parseYoutubeId()) {
+                if (strpos($youtubeId, 'PL') === 0) {
+                    $youtubeId .= sprintf('videoseries?list=%s', $youtubeId);
+                }
+
                 return 'https://www.youtube-nocookie.com/embed/'.$youtubeId;
             }
         }
@@ -528,6 +554,13 @@ class Video extends Model\Document\Tag
             $height = $options['height'];
         }
 
+        $wmode = '?wmode=transparent';
+        $seriesPrefix = '';
+        if (strpos($youtubeId, 'PL') === 0) {
+            $wmode = '';
+            $seriesPrefix = 'videoseries?list=';
+        }
+
         $valid_youtube_prams = [ 'autohide',
             'autoplay',
             'cc_load_policy',
@@ -537,6 +570,8 @@ class Video extends Model\Document\Tag
             'enablejsapi',
             'end',
             'fs',
+            'playsinline',
+            'hl',
             'iv_load_policy',
             'list',
             'listType',
@@ -549,7 +584,7 @@ class Video extends Model\Document\Tag
             'rel',
             'showinfo',
             'start',
-            'theme'
+            'theme',
             ];
         $additional_params = '';
 
@@ -580,8 +615,8 @@ class Video extends Model\Document\Tag
             }
         }
 
-        $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
-            <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $youtubeId . '?wmode=transparent' . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+        $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video '.$options['class'].'">
+            <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $seriesPrefix . $youtubeId . $wmode . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
         return $code;
@@ -623,7 +658,7 @@ class Video extends Model\Document\Tag
                 'autoplay',
                 'background',
                 'loop',
-                'muted'
+                'muted',
                 ];
 
             $additional_params = '';
@@ -655,7 +690,7 @@ class Video extends Model\Document\Tag
                 }
             }
 
-            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video '.$options['class'].'">
                 <iframe src="https://player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0'. $additional_params .'" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
             </div>';
 
@@ -701,7 +736,7 @@ class Video extends Model\Document\Tag
             $valid_dailymotion_prams = [
                 'autoplay',
                 'loop',
-                'mute'];
+                'mute', ];
 
             $additional_params = '';
 
@@ -732,7 +767,7 @@ class Video extends Model\Document\Tag
                 }
             }
 
-            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video '.$options['class'].'">
                 <iframe src="https://www.dailymotion.com/embed/video/' . $dailymotionId . '?' . $additional_params .'" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
             </div>';
 
@@ -815,7 +850,7 @@ class Video extends Model\Document\Tag
                 'height' => $this->getHeight(),
                 'poster' => $thumbnail,
                 'controls' => 'controls',
-                'class' => 'pimcore_video'
+                'class' => 'pimcore_video',
             ];
 
             if (array_key_exists('attributes', $this->getOptions())) {
@@ -954,23 +989,23 @@ class Video extends Model\Document\Tag
     }
 
     /**
-     * @return Asset|null
+     * @return Asset\Video|null
      */
     public function getVideoAsset()
     {
         if ($this->getVideoType() == 'asset') {
-            return Asset::getById($this->id);
+            return Asset\Video::getById($this->id);
         }
 
         return null;
     }
 
     /**
-     * @return Asset
+     * @return Asset\Image
      */
     public function getPosterAsset()
     {
-        return Asset::getById($this->poster);
+        return Asset\Image::getById($this->poster);
     }
 
     /**
@@ -980,7 +1015,7 @@ class Video extends Model\Document\Tag
      */
     public function getImageThumbnail($config)
     {
-        if ($this->poster && ($poster = Asset::getById($this->poster))) {
+        if ($this->poster && ($poster = Asset\Image::getById($this->poster))) {
             return $poster->getThumbnail($config);
         }
 

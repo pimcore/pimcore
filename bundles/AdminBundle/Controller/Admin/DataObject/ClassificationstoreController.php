@@ -33,7 +33,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     /**
      * Delete collection with the group-relations
      *
-     * @Route("/delete-collection", methods={"DELETE"})
+     * @Route("/delete-collection", name="pimcore_admin_dataobject_classificationstore_deletecollection", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -57,7 +57,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/delete-collection-relation", methods={"DELETE"})
+     * @Route("/delete-collection-relation", name="pimcore_admin_dataobject_classificationstore_deletecollectionrelation", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -78,7 +78,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/delete-relation", methods={"DELETE"})
+     * @Route("/delete-relation", name="pimcore_admin_dataobject_classificationstore_deleterelation", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -99,7 +99,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/delete-group", methods={"DELETE"})
+     * @Route("/delete-group", name="pimcore_admin_dataobject_classificationstore_deletegroup", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -116,7 +116,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/create-group", methods={"POST"})
+     * @Route("/create-group", name="pimcore_admin_dataobject_classificationstore_creategroup", methods={"POST"})
      *
      * @param Request $request
      *
@@ -141,7 +141,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/create-store", methods={"POST"})
+     * @Route("/create-store", name="pimcore_admin_dataobject_classificationstore_createstore", methods={"POST"})
      *
      * @param Request $request
      *
@@ -167,7 +167,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/create-collection", methods={"POST"})
+     * @Route("/create-collection", name="pimcore_admin_dataobject_classificationstore_createcollection", methods={"POST"})
      *
      * @param Request $request
      *
@@ -191,7 +191,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/collections", methods={"GET"})
+     * @Route("/collections", name="pimcore_admin_dataobject_classificationstore_collectionsactionget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -306,7 +306,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'storeId' => $config->getStoreId(),
                 'id' => $config->getId(),
                 'name' => $name,
-                'description' => $config->getDescription()
+                'description' => $config->getDescription(),
             ];
             if ($config->getCreationDate()) {
                 $item['creationDate'] = $config->getCreationDate();
@@ -326,7 +326,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/collections", methods={"POST", "PUT"})
+     * @Route("/collections", name="pimcore_admin_dataobject_classificationstore_collections", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -352,10 +352,12 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $config]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
-     * @Route("/groups", methods={"GET"})
+     * @Route("/groups", name="pimcore_admin_dataobject_classificationstore_groupsactionget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -428,6 +430,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
         if ($request->get('oid')) {
             $object = DataObject\Concrete::getById($request->get('oid'));
             $class = $object->getClass();
+            /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
             $fd = $class->getFieldDefinition($request->get('fieldname'));
             $allowedGroupIds = $fd->getAllowedGroupIds();
 
@@ -454,7 +457,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'storeId' => $config->getStoreId(),
                 'id' => $config->getId(),
                 'name' => $name,
-                'description' => $config->getDescription()
+                'description' => $config->getDescription(),
             ];
             if ($config->getCreationDate()) {
                 $item['creationDate'] = $config->getCreationDate();
@@ -474,7 +477,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/groups", methods={"POST", "PUT"})
+     * @Route("/groups", name="pimcore_admin_dataobject_classificationstore_groupsaction", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -500,10 +503,12 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $config]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
-     * @Route("/collection-relations", methods={"GET"})
+     * @Route("/collection-relations", name="pimcore_admin_dataobject_classificationstore_collectionrelationsget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -588,7 +593,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'groupName' => $config->getName(),
                 'groupDescription' => $config->getDescription(),
                 'id' => $config->getColId() . '-' . $config->getGroupId(),
-                'sorter' => (int) $config->getSorter()
+                'sorter' => (int) $config->getSorter(),
             ];
             $data[] = $item;
         }
@@ -600,7 +605,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/collection-relations", methods={"POST", "PUT"})
+     * @Route("/collection-relations", name="pimcore_admin_dataobject_classificationstore_collectionrelations", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -633,10 +638,12 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $data]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
-     * @Route("/list-stores", methods={"GET"})
+     * @Route("/list-stores", name="pimcore_admin_dataobject_classificationstore_liststores", methods={"GET"})
      *
      * @param Request $request
      *
@@ -651,7 +658,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/search-relations", methods={"GET"})
+     * @Route("/search-relations", name="pimcore_admin_dataobject_classificationstore_searchrelations", methods={"GET"})
      *
      * @param Request $request
      *
@@ -666,7 +673,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
         $mapping = [
             'groupName' => DataObject\Classificationstore\GroupConfig\Dao::TABLE_NAME_GROUPS .'.name',
             'keyName' => DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS .'.name',
-            'keyDescription' => DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS. '.description'];
+            'keyDescription' => DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS. '.description', ];
 
         $start = 0;
         $limit = 15;
@@ -749,7 +756,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'keyName' => $config->getName(),
                 'keyDescription' => $config->getDescription(),
                 'id' => $config->getGroupId() . '-' . $config->getKeyId(),
-                'sorter' => $config->getSorter()
+                'sorter' => $config->getSorter(),
             ];
 
             $groupConfig = Classificationstore\GroupConfig::getById($config->getGroupId());
@@ -767,7 +774,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/relations", methods={"GET"})
+     * @Route("/relations", name="pimcore_admin_dataobject_classificationstore_relationsactionget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -869,7 +876,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'id' => $config->getGroupId() . '-' . $config->getKeyId(),
                 'sorter' => (int) $config->getSorter(),
                 'layout' => $definition,
-                'mandatory' => $config->isMandatory()
+                'mandatory' => $config->isMandatory(),
             ];
 
             $data[] = $item;
@@ -882,7 +889,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/relations", methods={"POST", "PUT"})
+     * @Route("/relations", name="pimcore_admin_dataobject_classificationstore_relations", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -910,10 +917,12 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $data]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
-     * @Route("/add-collections", methods={"POST"})
+     * @Route("/add-collections", name="pimcore_admin_dataobject_classificationstore_addcollections", methods={"POST"})
      *
      * @param Request $request
      *
@@ -925,7 +934,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
         $ids = $this->decodeJson($request->get('collectionIds'));
         $oid = $request->get('oid');
-        $object = DataObject\AbstractObject::getById($oid);
+        $object = DataObject\Concrete::getById($oid);
         $fieldname = $request->get('fieldname');
         $data = [];
 
@@ -948,6 +957,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
             if ($request->get('oid')) {
                 $object = DataObject\Concrete::getById($request->get('oid'));
                 $class = $object->getClass();
+                /** @var DataObject\ClassDefinition\Data\Classificationstore $fd */
                 $fd = $class->getFieldDefinition($request->get('fieldname'));
                 $allowedGroupIds = $fd->getAllowedGroupIds();
             }
@@ -980,7 +990,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                         'id' => $groupData->getId(),
                         'description' => $groupData->getDescription(),
                         'keys' => [],
-                        'collectionId' => $mappedData[$groupId]['colId']
+                        'collectionId' => $mappedData[$groupId]['colId'],
                     ];
                 }
 
@@ -1011,7 +1021,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                         'name' => $keyData->getName(),
                         'id' => $keyData->getKeyId(),
                         'description' => $keyData->getDescription(),
-                        'definition' => $definition
+                        'definition' => $definition,
                     ];
                     $data[$groupId]['keys'] = $keyList;
                 }
@@ -1022,7 +1032,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/add-groups", methods={"POST"})
+     * @Route("/add-groups", name="pimcore_admin_dataobject_classificationstore_addgroups", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1034,7 +1044,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
         $ids = $this->decodeJson($request->get('groupIds'));
         $oid = $request->get('oid');
-        $object = DataObject\AbstractObject::getById($oid);
+        $object = DataObject\Concrete::getById($oid);
         $fieldname = $request->get('fieldname');
 
         $keyCondition = 'groupId in (' . implode(',', array_fill(0, count($ids), '?')) . ')';
@@ -1060,7 +1070,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'name' => $groupData->getName(),
                 'id' => $groupData->getId(),
                 'description' => $groupData->getDescription(),
-                'keys' => []
+                'keys' => [],
             ];
         }
 
@@ -1091,7 +1101,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'name' => $keyData->getName(),
                 'id' => $keyData->getKeyId(),
                 'description' => $keyData->getDescription(),
-                'definition' => $definition
+                'definition' => $definition,
             ];
             $data[$groupId]['keys'] = $keyList;
         }
@@ -1100,7 +1110,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/properties", methods={"GET"})
+     * @Route("/properties", name="pimcore_admin_dataobject_classificationstore_propertiesget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1251,7 +1261,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/properties", methods={"POST", "PUT"})
+     * @Route("/properties", name="pimcore_admin_dataobject_classificationstore_properties", methods={"POST", "PUT"})
      *
      * @param Request $request
      *
@@ -1280,6 +1290,8 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
             return $this->adminJson(['success' => true, 'data' => $item]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
@@ -1298,7 +1310,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
             'name' => $name,
             'description' => $config->getDescription(),
             'type' => $config->getType() ? $config->getType() : 'input',
-            'definition' => $config->getDefinition()
+            'definition' => $config->getDefinition(),
         ];
 
         if ($config->getDefinition()) {
@@ -1320,7 +1332,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/add-property", methods={"POST"})
+     * @Route("/add-property", name="pimcore_admin_dataobject_classificationstore_addproperty", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1337,7 +1349,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'fieldtype' => 'input',
                 'name' => $name,
                 'title' => $name,
-                'datatype' => 'data'
+                'datatype' => 'data',
             ];
             $config = new Classificationstore\KeyConfig();
             $config->setName($name);
@@ -1353,7 +1365,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/delete-property", methods={"DELETE"})
+     * @Route("/delete-property", name="pimcore_admin_dataobject_classificationstore_deleteproperty", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -1372,7 +1384,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/edit-store", methods={"PUT"})
+     * @Route("/edit-store", name="pimcore_admin_dataobject_classificationstore_editstore", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -1411,7 +1423,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/storetree", methods={"GET"})
+     * @Route("/storetree", name="pimcore_admin_dataobject_classificationstore_storetree", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1431,7 +1443,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
                 'leaf' => true,
                 'expanded' => true,
                 'description' => $item->getDescription(),
-                'iconCls' => 'pimcore_icon_classificationstore'
+                'iconCls' => 'pimcore_icon_classificationstore',
             ];
 
             $resultItem['qtitle'] = 'ID: ' . $item->getId();
@@ -1446,7 +1458,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     }
 
     /**
-     * @Route("/get-page", methods={"GET"})
+     * @Route("/get-page", name="pimcore_admin_dataobject_classificationstore_getpage", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1519,7 +1531,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
             return;
         }
 
-        $unrestrictedActions = ['collectionsActionGet', 'groupsActionGet', 'addGroupsAction', 'addCollectionsAction'];
+        $unrestrictedActions = ['collectionsActionGet', 'groupsActionGet', 'relationsActionGet', 'addGroupsAction', 'addCollectionsAction', 'searchRelationsAction'];
         $this->checkActionPermission($event, 'classes', $unrestrictedActions);
     }
 

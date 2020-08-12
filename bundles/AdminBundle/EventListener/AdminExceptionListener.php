@@ -38,7 +38,7 @@ class AdminExceptionListener implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            KernelEvents::EXCEPTION => 'onKernelException'
+            KernelEvents::EXCEPTION => 'onKernelException',
         ];
     }
 
@@ -79,7 +79,7 @@ class AdminExceptionListener implements EventSubscriberInterface
 
             if ($ex instanceof ValidationException) {
                 $data['type'] = 'ValidationException';
-                $code = 403;
+                $code = 422;
 
                 $this->recursiveAddValidationExceptionSubItems($ex->getSubItems(), $message, $data['traceString']);
             }
@@ -97,7 +97,7 @@ class AdminExceptionListener implements EventSubscriberInterface
 
             $data = [
                 'success' => false,
-                'msg' => $message
+                'msg' => $message,
             ];
 
             if (\Pimcore::inDebugMode()) {

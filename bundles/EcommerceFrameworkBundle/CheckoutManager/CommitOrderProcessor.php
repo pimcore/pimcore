@@ -210,7 +210,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
             $logger->critical($message,
                 [
                     'fileObject' => new FileObject(print_r($paymentStatus, true)),
-                    'relatedObject' => $order
+                    'relatedObject' => $order,
                 ]
             );
             Lock::release(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
@@ -317,7 +317,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
         $list->addFieldCollection('PaymentInfo', 'paymentinfo');
         $list->setCondition('`PaymentInfo~paymentinfo`.paymentState = ? AND `PaymentInfo~paymentinfo`.paymentStart < ?', [AbstractOrder::ORDER_STATE_PAYMENT_PENDING, $timestamp]);
 
-        /** @var AbstractOrder[] $list */
+        /** @var AbstractOrder $order */
         foreach ($list as $order) {
             $payments = $order->getPaymentInfo();
 

@@ -19,7 +19,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
-use Pimcore\DataObject\Import\ColumnConfig\ConfigElementInterface;
+use Pimcore\DataObject\Import\Resolver\ImportErrorException;
+use Pimcore\DataObject\Import\Resolver\ImportWarningException;
 use Pimcore\DataObject\Import\Service as ImportService;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectImportEvents;
@@ -54,7 +55,7 @@ class DataObjectHelperController extends AdminController
     const SYSTEM_COLUMNS = ['id', 'fullpath', 'key', 'published', 'creationDate', 'modificationDate', 'filename', 'classname'];
 
     /**
-     * @Route("/load-object-data", methods={"GET"})
+     * @Route("/load-object-data", name="pimcore_admin_dataobject_dataobjecthelper_loadobjectdata", methods={"GET"})
      *
      * @param Request $request
      *
@@ -80,7 +81,7 @@ class DataObjectHelperController extends AdminController
      * @param string $classId
      * @param string $searchType
      *
-     * @return GridConfig\Listing
+     * @return GridConfig[]
      */
     public function getMyOwnGridColumnConfigs($userId, $classId, $searchType)
     {
@@ -98,9 +99,8 @@ class DataObjectHelperController extends AdminController
         $configListing->setOrderKey('name');
         $configListing->setOrder('ASC');
         $configListing->setCondition($configCondition);
-        $configListing = $configListing->load();
 
-        return $configListing;
+        return $configListing->load();
     }
 
     /**
@@ -139,7 +139,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/import-export-config", methods={"POST"})
+     * @Route("/import-export-config", name="pimcore_admin_dataobject_dataobjecthelper_importexportconfig", methods={"POST"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -168,7 +168,7 @@ class DataObjectHelperController extends AdminController
                 $fieldConfig = [
                     'key' => $column['key'],
                     'label' => $column['label'],
-                    'type' => $column['type']
+                    'type' => $column['type'],
                 ];
 
                 $column['fieldConfig'] = $fieldConfig;
@@ -231,7 +231,7 @@ class DataObjectHelperController extends AdminController
             foreach ($list as $config) {
                 $result[] = [
                     'id' => $config->getId(),
-                    'name' => $config->getName()
+                    'name' => $config->getName(),
                 ];
             }
         }
@@ -240,7 +240,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-export-configs", methods={"GET"})
+     * @Route("/get-export-configs", name="pimcore_admin_dataobject_dataobjecthelper_getexportconfigs", methods={"GET"})
      *
      * @param Request $request
      *
@@ -258,15 +258,15 @@ class DataObjectHelperController extends AdminController
 
         $result[] = [
             'id' => -1,
-            'name' => '--default--'
+            'name' => '--default--',
         ];
 
         if ($list) {
-            /** @var Config $config */
+            /** @var GridConfig $config */
             foreach ($list as $config) {
                 $result[] = [
                     'id' => $config->getId(),
-                    'name' => $config->getName()
+                    'name' => $config->getName(),
                 ];
             }
         }
@@ -275,7 +275,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/delete-import-config", methods={"DELETE"})
+     * @Route("/delete-import-config", name="pimcore_admin_dataobject_dataobjecthelper_deleteimportconfig", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -303,13 +303,14 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-delete-column-config", methods={"DELETE"})
+     * @Route("/grid-delete-column-config", name="pimcore_admin_dataobject_dataobjecthelper_griddeletecolumnconfig", methods={"DELETE"})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return JsonResponse
      */
-    public function gridDeleteColumnConfigAction(Request $request)
+    public function gridDeleteColumnConfigAction(Request $request, Config $config)
     {
         $gridConfigId = $request->get('gridConfigId');
         $gridConfig = null;
@@ -327,38 +328,39 @@ class DataObjectHelperController extends AdminController
             $success = true;
         }
 
-        $newGridConfig = $this->doGetGridColumnConfig($request, true);
+        $newGridConfig = $this->doGetGridColumnConfig($request, $config, true);
         $newGridConfig['deleteSuccess'] = $success;
 
         return $this->adminJson($newGridConfig);
     }
 
     /**
-     * @Route("/grid-get-column-config", methods={"GET"})
+     * @Route("/grid-get-column-config", name="pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig", methods={"GET"})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return JsonResponse
      */
-    public function gridGetColumnConfigAction(Request $request)
+    public function gridGetColumnConfigAction(Request $request, Config $config)
     {
-        $result = $this->doGetGridColumnConfig($request);
+        $result = $this->doGetGridColumnConfig($request, $config);
 
         return $this->adminJson($result);
     }
 
     /**
      * @param Request $request
+     * @param Config $config
      * @param bool $isDelete
      *
      * @return array
      */
-    public function doGetGridColumnConfig(Request $request, $isDelete = false)
+    public function doGetGridColumnConfig(Request $request, Config $config, $isDelete = false)
     {
         $class = null;
         $fields = null;
 
-        /** @var DataObject\ClassDefinition $class */
         if ($request->get('id')) {
             $class = DataObject\ClassDefinition::getById($request->get('id'));
         } elseif ($request->get('name')) {
@@ -498,7 +500,8 @@ class DataObjectHelperController extends AdminController
                             'key' => $key,
                             'type' => 'system',
                             'label' => $key,
-                            'position' => $sc['position']];
+                            'locked' => $sc['locked'],
+                            'position' => $sc['position'], ];
                         if (isset($sc['width'])) {
                             $colConfig['width'] = $sc['width'];
                         }
@@ -523,6 +526,9 @@ class DataObjectHelperController extends AdminController
                                         if ($fieldConfig) {
                                             $fieldConfig['key'] = $key;
                                             $fieldConfig['label'] = '#' . $keyFieldDef->getTitle();
+                                            if (isset($sc['locked'])) {
+                                                $fieldConfig['locked'] = $sc['locked'];
+                                            }
                                             $availableFields[] = $fieldConfig;
                                         }
                                     }
@@ -545,13 +551,15 @@ class DataObjectHelperController extends AdminController
 
                             $brickClass = DataObject\Objectbrick\Definition::getByKey($brick);
 
-                            if ($brickDescriptor) {
-                                $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
-                                /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
-                                $localizedFields = $brickClass->getFieldDefinition($innerContainer);
-                                $fd = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
-                            } else {
-                                $fd = $brickClass->getFieldDefinition($fieldname);
+                            if ($brickClass instanceof DataObject\Objectbrick\Definition) {
+                                if ($brickDescriptor) {
+                                    $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
+                                    /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
+                                    $localizedFields = $brickClass->getFieldDefinition($innerContainer);
+                                    $fd = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
+                                } else {
+                                    $fd = $brickClass->getFieldDefinition($fieldname);
+                                }
                             }
 
                             if (!empty($fd)) {
@@ -559,6 +567,9 @@ class DataObjectHelperController extends AdminController
                                 if (!empty($fieldConfig)) {
                                     if (isset($sc['width'])) {
                                         $fieldConfig['width'] = $sc['width'];
+                                    }
+                                    if (isset($sc['locked'])) {
+                                        $fieldConfig['locked'] = $sc['locked'];
                                     }
                                     $availableFields[] = $fieldConfig;
                                 }
@@ -588,6 +599,7 @@ class DataObjectHelperController extends AdminController
                                             $fieldConfig['width'] = $sc['width'];
                                         }
 
+                                        $fieldConfig['locked'] = $sc['locked'];
                                         $availableFields[] = $fieldConfig;
                                     }
                                 }
@@ -605,8 +617,7 @@ class DataObjectHelperController extends AdminController
             return ($a['position'] < $b['position']) ? -1 : 1;
         });
 
-        $config = \Pimcore\Config::getSystemConfig();
-        $frontendLanguages = Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), $config->general->validLanguages);
+        $frontendLanguages = Tool\Admin::reorderWebsiteLanguages(\Pimcore\Tool\Admin::getCurrentUser(), $config['general']['valid_languages']);
         if ($frontendLanguages) {
             $language = explode(',', $frontendLanguages)[0];
         } else {
@@ -636,15 +647,16 @@ class DataObjectHelperController extends AdminController
         $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
         return [
-            'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
+            'sortinfo' => $gridConfig['sortinfo'] ?? false,
             'language' => $language,
             'availableFields' => $availableFields,
             'settings' => $settings,
-            'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,
-            'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false,
+            'onlyDirectChildren' => $gridConfig['onlyDirectChildren'] ?? false,
+            'pageSize' => $gridConfig['pageSize'] ?? false,
             'availableConfigs' => $availableConfigs,
-            'sharedConfigs' => $sharedConfigs
-
+            'sharedConfigs' => $sharedConfigs,
+            'sqlFilter' => $gridConfig['sqlFilter'] ?? "",
+            'searchFilter' => $gridConfig['searchFilter'] ?? "",
         ];
     }
 
@@ -678,7 +690,7 @@ class DataObjectHelperController extends AdminController
                         'key' => $sc,
                         'type' => 'system',
                         'label' => $sc,
-                        'position' => $count];
+                        'position' => $count, ];
                     $count++;
                 }
             }
@@ -751,7 +763,7 @@ class DataObjectHelperController extends AdminController
 
                     $context = [
                         'containerKey' => $brickType,
-                        'fieldname' => $field->getName()
+                        'fieldname' => $field->getName(),
                     ];
 
                     $this->appendBrickFields($bf, $localizedFieldDefinitions, $availableFields, $gridType, $count, $brickType, $class, $objectId, $context);
@@ -793,6 +805,7 @@ class DataObjectHelperController extends AdminController
                 $calculatedColumnConfig['isOperator'] = true;
                 $calculatedColumnConfig['attributes'] = $config['fieldConfig']['attributes'];
                 $calculatedColumnConfig['width'] = $config['width'];
+                $calculatedColumnConfig['locked'] = $config['locked'];
 
                 $existingColumns = $session->get('helpercolumns', []);
 
@@ -823,7 +836,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/prepare-helper-column-configs", methods={"POST"})
+     * @Route("/prepare-helper-column-configs", name="pimcore_admin_dataobject_dataobjecthelper_preparehelpercolumnconfigs", methods={"POST"})
      *
      * @param Request $request
      *
@@ -833,6 +846,7 @@ class DataObjectHelperController extends AdminController
     {
         $helperColumns = [];
         $newData = [];
+        /** @var \stdClass[] $data */
         $data = json_decode($request->get('columns'));
         foreach ($data as $item) {
             if (!empty($item->isOperator)) {
@@ -856,7 +870,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-config-apply-to-all", methods={"POST"})
+     * @Route("/grid-config-apply-to-all", name="pimcore_admin_dataobject_dataobjecthelper_gridconfigapplytoall", methods={"POST"})
      *
      * @param Request $request
      *
@@ -886,7 +900,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-mark-favourite-column-config", methods={"POST"})
+     * @Route("/grid-mark-favourite-column-config", name="pimcore_admin_dataobject_dataobjecthelper_gridmarkfavouritecolumnconfig", methods={"POST"})
      *
      * @param Request $request
      *
@@ -955,7 +969,7 @@ class DataObjectHelperController extends AdminController
     {
         $result = [
             'sharedUserIds' => [],
-            'sharedRoleIds' => []
+            'sharedRoleIds' => [],
         ];
 
         $db = Db::get();
@@ -979,7 +993,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/import-save-config", methods={"POST"})
+     * @Route("/import-save-config", name="pimcore_admin_dataobject_dataobjecthelper_importsaveconfig", methods={"POST"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -1032,7 +1046,7 @@ class DataObjectHelperController extends AdminController
 
             return $this->adminJson(['success' => true,
                     'importConfigId' => $importConfig->getId(),
-                    'availableConfigs' => $this->getImportConfigs($importService, $this->getAdminUser(), $classId)
+                    'availableConfigs' => $this->getImportConfigs($importService, $this->getAdminUser(), $classId),
                 ]
             );
         } catch (\Exception $e) {
@@ -1041,7 +1055,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/grid-save-column-config", methods={"POST"})
+     * @Route("/grid-save-column-config", name="pimcore_admin_dataobject_dataobjecthelper_gridsavecolumnconfig", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1229,7 +1243,7 @@ class DataObjectHelperController extends AdminController
             }
         }
 
-        if ($field->getFieldType() == 'slider') {
+        if ($field instanceof DataObject\ClassDefinition\Data\Slider) {
             $config['minValue'] = $field->getMinValue();
             $config['maxValue'] = $field->getMaxValue();
             $config['increment'] = $field->getIncrement();
@@ -1269,7 +1283,7 @@ class DataObjectHelperController extends AdminController
                 'label' => $title,
                 'config' => $config,
                 'layout' => $field,
-                'position' => $position
+                'position' => $position,
             ];
 
             if ($field instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -1283,7 +1297,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/prepare-import-preview", methods={"POST"})
+     * @Route("/prepare-import-preview", name="pimcore_admin_dataobject_dataobjecthelper_prepareimportpreview", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1304,14 +1318,14 @@ class DataObjectHelperController extends AdminController
         }
 
         $response = $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
 
         return $response;
     }
 
     /**
-     * @Route("/import-preview", methods={"GET"})
+     * @Route("/import-preview", name="pimcore_admin_dataobject_dataobjecthelper_importpreview", methods={"GET"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -1434,7 +1448,6 @@ class DataObjectHelperController extends AdminController
 
             $attributes = $selectedGridColumn->attributes;
 
-            /** @var ConfigElementInterface $config */
             $config = $importService->buildInputDataConfig([$attributes]);
             if (!$config) {
                 continue;
@@ -1458,7 +1471,7 @@ class DataObjectHelperController extends AdminController
      */
 
     /**
-     * @Route("/import-upload", methods={"POST"})
+     * @Route("/import-upload", name="pimcore_admin_dataobject_dataobjecthelper_importupload", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1478,7 +1491,7 @@ class DataObjectHelperController extends AdminController
         File::put($importFileOriginal, $data);
 
         $response = $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
 
         // set content-type to text/html, otherwise (when application/json is sent) chrome will complain in
@@ -1489,7 +1502,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/import-get-file-info", methods={"GET"})
+     * @Route("/import-get-file-info", name="pimcore_admin_dataobject_dataobjecthelper_importgetfileinfo", methods={"GET"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -1513,28 +1526,10 @@ class DataObjectHelperController extends AdminController
             $dialect = Tool\Admin::determineCsvDialect($file . '_original');
         }
 
-        $count = 0;
-        $data = [];
-        if (($handle = fopen($originalFile, 'r')) !== false) {
-            while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
-                $tmpData = [];
+        $data = $this->getDataPreview($originalFile, $dialect);
 
-                foreach ($rowData as $key => $value) {
-                    $tmpData['field_' . $key] = $value;
-                }
-
-                $tmpData['rowId'] = $count + 1;
-                $data[] = $tmpData;
-                $cols = count($rowData);
-
-                $count++;
-
-                if ($count > 18) {
-                    break;
-                }
-            }
-            fclose($handle);
-        }
+        //Count CSV Columns
+        $cols = isset($data[0]) ? count($data[0]) - 1 : 0;
 
         // get class data
         $class = DataObject\ClassDefinition::getById($request->get('classId'));
@@ -1557,7 +1552,7 @@ class DataObjectHelperController extends AdminController
         }
 
         $csv = new \SplFileObject($originalFile);
-        $csv->setFlags(\SplFileObject::READ_CSV);
+        $csv->setFlags(\SplFileObject::READ_CSV | \SplFileObject::SKIP_EMPTY | \SplFileObject::READ_AHEAD | \SplFileObject::DROP_NEW_LINE);
         $csv->setCsvControl($dialect->delimiter, $dialect->quotechar, $dialect->escapechar);
         $rows = 0;
         $nbFields = 0;
@@ -1565,8 +1560,15 @@ class DataObjectHelperController extends AdminController
             if (0 === $rows) {
                 $nbFields = count($fields);
                 $rows++;
-            } elseif ($nbFields == count($fields)) {
+            } elseif ($nbFields === count($fields)) {
                 $rows++;
+            } else {
+                $translator = $this->get('translator');
+
+                return $this->adminJson([
+                    'success' => false,
+                    'message' => $translator->trans('different_number_of_columns', [], 'admin'),
+                ]);
             }
         }
 
@@ -1607,14 +1609,44 @@ class DataObjectHelperController extends AdminController
                 'rows' => $rows,
                 'cols' => $cols ?? null,
                 'classId' => $classId,
-                'isShared' => $importConfig && $importConfig->getOwnerId() != $this->getAdminUser()->getId()
+                'isShared' => $importConfig && $importConfig->getOwnerId() != $this->getAdminUser()->getId(),
             ],
-            'availableConfigs' => $availableConfigs
+            'availableConfigs' => $availableConfigs,
         ]);
     }
 
+    private function getDataPreview($originalFile, $dialect)
+    {
+        $count = 0;
+        $data = [];
+        if (($handle = fopen($originalFile, 'r')) !== false) {
+            while (($rowData = fgetcsv($handle, 0, $dialect->delimiter, $dialect->quotechar, $dialect->escapechar)) !== false) {
+                $tmpData = [];
+
+                foreach ($rowData as $key => $value) {
+                    $tmpData['field_' . $key] = $value;
+                }
+
+                $tmpData['rowId'] = $count + 1;
+                $data[] = $tmpData;
+
+                $count++;
+
+                /**
+                 * Reached the number or rows for the preview
+                 */
+                if ($count > 18) {
+                    break;
+                }
+            }
+            fclose($handle);
+        }
+
+        return $data;
+    }
+
     /**
-     * @Route("/import-process", methods={"POST"})
+     * @Route("/import-process", name="pimcore_admin_dataobject_dataobjecthelper_importprocess", methods={"POST"})
      *
      * @param Request $request
      * @param ImportService $importService
@@ -1703,7 +1735,7 @@ class DataObjectHelperController extends AdminController
 
                 $eventDispatcher->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
 
-                $object->setUserModification($this->getUser());
+                $object->setUserModification($this->getAdminUser()->getId());
                 $object->save();
 
                 $eventDispatcher->dispatch(DataObjectImportEvents::POST_SAVE, $eventData);
@@ -1716,8 +1748,12 @@ class DataObjectHelperController extends AdminController
             } else {
                 throw new \Exception('empty row');
             }
+        } catch (ImportWarningException $e) {
+            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage(), 'messageType' => 'warning']);
+        } catch (ImportErrorException $e) {
+            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage(), 'messageType' => 'error']);
         } catch (\Exception $e) {
-            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage()]);
+            return $this->adminJson(['success' => false, 'rowId' => $rowId, 'message' => $e->getMessage(), 'messageType' => 'error']);
         }
     }
 
@@ -1751,7 +1787,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-export-jobs", methods={"GET"})
+     * @Route("/get-export-jobs", name="pimcore_admin_dataobject_dataobjecthelper_getexportjobs", methods={"GET"})
      *
      * @param Request $request
      * @param GridHelperService $gridHelperService
@@ -1776,7 +1812,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/do-export", methods={"POST"})
+     * @Route("/do-export", name="pimcore_admin_dataobject_dataobjecthelper_doexport", methods={"POST"})
      *
      * @param Request $request
      * @param LocaleServiceInterface $localeService
@@ -1791,7 +1827,7 @@ class DataObjectHelperController extends AdminController
         $ids = $request->get('ids');
         $settings = $request->get('settings');
         $settings = json_decode($settings, true);
-        $delimiter = $settings['delimiter'] ?: ';';
+        $delimiter = $settings['delimiter'] ?? ';';
 
         $enableInheritance = $settings['enableInheritance'] ?? null;
         DataObject\Concrete::setGetInheritedValues($enableInheritance);
@@ -1821,18 +1857,33 @@ class DataObjectHelperController extends AdminController
 
         $addTitles = $request->get('initial');
 
-        $csv = $this->getCsvData($request, $localeService, $list, $fields, $addTitles);
+        $requestedLanguage = $this->extractLanguage($request);
+
+        $context = [
+            'source' => 'pimcore-export',
+        ];
+        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $addTitles, $context);
 
         $fp = fopen($this->getCsvFile($fileHandle), 'a');
 
         $firstLine = true;
-        foreach ($csv as $line) {
+        $lineCount = count($csv);
+
+        if (!$addTitles) {
+            fwrite($fp, "\r\n");
+        }
+
+        for ($i = 0; $i < $lineCount; $i++) {
+            $line = $csv[$i];
             if ($addTitles && $firstLine) {
                 $firstLine = false;
-                $line = implode($delimiter, $line) . "\r\n";
+                $line = implode($delimiter, $line);
                 fwrite($fp, $line);
             } else {
-                fputs($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)) . "\r\n");
+                fputs($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)));
+            }
+            if ($i < $lineCount - 1) {
+                fwrite($fp, "\r\n");
             }
         }
 
@@ -1849,7 +1900,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/download-csv-file", methods={"GET"})
+     * @Route("/download-csv-file", name="pimcore_admin_dataobject_dataobjecthelper_downloadcsvfile", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1867,10 +1918,12 @@ class DataObjectHelperController extends AdminController
 
             return $response;
         }
+
+        throw $this->createNotFoundException('CSV file not found');
     }
 
     /**
-     * @Route("/download-xlsx-file", methods={"GET"})
+     * @Route("/download-xlsx-file", name="pimcore_admin_dataobject_dataobjecthelper_downloadxlsxfile", methods={"GET"})
      *
      * @param Request $request
      *
@@ -1898,256 +1951,15 @@ class DataObjectHelperController extends AdminController
 
             return $response;
         }
-    }
 
-    /**
-     * @param string $field
-     * @param array $helperDefinitions
-     *
-     * @return string
-     */
-    protected function mapFieldname($field, $helperDefinitions)
-    {
-        if (strpos($field, '#') === 0) {
-            if (isset($helperDefinitions[$field])) {
-                if ($helperDefinitions[$field]->attributes) {
-                    return $helperDefinitions[$field]->attributes->label ? $helperDefinitions[$field]->attributes->label : $field;
-                }
-
-                return $field;
-            }
-        } elseif (substr($field, 0, 1) == '~') {
-            $fieldParts = explode('~', $field);
-            $type = $fieldParts[1];
-
-            if ($type == 'classificationstore') {
-                $fieldname = $fieldParts[2];
-                $groupKeyId = explode('-', $fieldParts[3]);
-                $groupId = $groupKeyId[0];
-                $keyId = $groupKeyId[1];
-
-                $groupConfig = DataObject\Classificationstore\GroupConfig::getById($groupId);
-                $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
-
-                $field = $fieldname . '~' . $groupConfig->getName() . '~' . $keyConfig->getName();
-            }
-        }
-
-        return $field;
-    }
-
-    /**
-     * @param Request $request
-     * @param LocaleServiceInterface $localeService
-     * @param DataObject\Listing $list
-     * @param string[] $fields
-     * @param bool $addTitles
-     *
-     * @return array
-     */
-    protected function getCsvData(Request $request, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true)
-    {
-        $requestedLanguage = $this->extractLanguage($request);
-        $mappedFieldnames = [];
-
-        $objects = [];
-        Logger::debug('objects in list:' . count($list->getObjects()));
-
-        $helperDefinitions = DataObject\Service::getHelperDefinitions();
-
-        foreach ($list->getObjects() as $object) {
-            if ($fields) {
-                $objectData = [];
-                foreach ($fields as $field) {
-                    if (DataObject\Service::isHelperGridColumnConfig($field) && $validLanguages = DataObject\Service::expandGridColumnForExport($helperDefinitions, $field)) {
-                        $currentLocale = $localeService->getLocale();
-                        $mappedFieldnameBase = $this->mapFieldname($field, $helperDefinitions);
-
-                        foreach ($validLanguages as $validLanguage) {
-                            $localeService->setLocale($validLanguage);
-                            $fieldData = $this->getCsvFieldData($request, $field, $object, $validLanguage, $helperDefinitions);
-                            $localizedFieldKey = $field . '-' . $validLanguage;
-                            if (!isset($mappedFieldnames[$localizedFieldKey])) {
-                                $mappedFieldnames[$localizedFieldKey] = $mappedFieldnameBase . '-' . $validLanguage;
-                            }
-                            $objectData[$localizedFieldKey] = $fieldData;
-                        }
-
-                        $localeService->setLocale($currentLocale);
-                    } else {
-                        $fieldData = $this->getCsvFieldData($request, $field, $object, $requestedLanguage, $helperDefinitions);
-                        if (!isset($mappedFieldnames[$field])) {
-                            $mappedFieldnames[$field] = $this->mapFieldname($field, $helperDefinitions);
-                        }
-                        $objectData[$field] = $fieldData;
-                    }
-                }
-                $objects[] = $objectData;
-            }
-        }
-        //create csv
-        $csv = [];
-        if (!empty($objects)) {
-            if ($addTitles) {
-                $columns = array_keys($objects[0]);
-                foreach ($columns as $columnIdx => $columnKey) {
-                    $columnName = $mappedFieldnames[$columnKey];
-                    $columns[$columnIdx] = '"' . $columnName . '"';
-                }
-                $csv[] = $columns;
-            }
-            foreach ($objects as $o) {
-                $csv[] = $o;
-            }
-        }
-
-        return $csv;
-    }
-
-    /**
-     * @param Request $request
-     * @param string $field
-     * @param DataObject\AbstractObject $object
-     * @param string $requestedLanguage
-     * @param array $helperDefinitions
-     *
-     * @return mixed
-     */
-    protected function getCsvFieldData(Request $request, $field, $object, $requestedLanguage, $helperDefinitions)
-    {
-        //check if field is systemfield
-        $systemFieldMap = [
-            'id' => 'getId',
-            'fullpath' => 'getRealFullPath',
-            'published' => 'getPublished',
-            'creationDate' => 'getCreationDate',
-            'modificationDate' => 'getModificationDate',
-            'filename' => 'getKey',
-            'key' => 'getKey',
-            'classname' => 'getClassname'
-        ];
-        if (in_array($field, array_keys($systemFieldMap))) {
-            $getter = $systemFieldMap[$field];
-
-            return $object->$getter();
-        } else {
-            //check if field is standard object field
-            $fieldDefinition = $object->getClass()->getFieldDefinition($field);
-            if ($fieldDefinition) {
-                return $fieldDefinition->getForCsvExport($object);
-            } else {
-                $fieldParts = explode('~', $field);
-
-                // check for objects bricks and localized fields
-                if (DataObject\Service::isHelperGridColumnConfig($field)) {
-                    if ($helperDefinitions[$field]) {
-                        return DataObject\Service::calculateCellValue($object, $helperDefinitions, $field, ['language' => $requestedLanguage]);
-                    }
-                } elseif (substr($field, 0, 1) == '~') {
-                    $type = $fieldParts[1];
-
-                    if ($type == 'classificationstore') {
-                        $fieldname = $fieldParts[2];
-                        $groupKeyId = explode('-', $fieldParts[3]);
-                        $groupId = $groupKeyId[0];
-                        $keyId = $groupKeyId[1];
-                        $getter = 'get' . ucfirst($fieldname);
-                        if (method_exists($object, $getter)) {
-                            $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyId);
-                            $type = $keyConfig->getType();
-                            $definition = json_decode($keyConfig->getDefinition());
-                            $fieldDefinition = \Pimcore\Model\DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
-
-                            /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
-                            $csFieldDefinition = $object->getClass()->getFieldDefinition($fieldname);
-                            $csLanguage = $requestedLanguage;
-                            if (!$csFieldDefinition->isLocalized()) {
-                                $csLanguage = 'default';
-                            }
-
-                            return $fieldDefinition->getForCsvExport(
-                                $object,
-                                ['context' => [
-                                    'containerType' => 'classificationstore',
-                                    'fieldname' => $fieldname,
-                                    'groupId' => $groupId,
-                                    'keyId' => $keyId,
-                                    'language' => $csLanguage
-                                ]]
-                            );
-                        }
-                    }
-                    //key value store - ignore for now
-                } elseif (count($fieldParts) > 1) {
-                    // brick
-                    $brickType = $fieldParts[0];
-                    $brickDescriptor = null;
-                    $innerContainer = null;
-
-                    if (strpos($brickType, '?') !== false) {
-                        $brickDescriptor = substr($brickType, 1);
-                        $brickDescriptor = json_decode($brickDescriptor, true);
-                        $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
-                        $brickType = $brickDescriptor['containerKey'];
-                    }
-                    $brickKey = $fieldParts[1];
-
-                    $key = DataObject\Service::getFieldForBrickType($object->getClass(), $brickType);
-
-                    $brickClass = DataObject\Objectbrick\Definition::getByKey($brickType);
-
-                    if ($brickDescriptor) {
-                        /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
-                        $localizedFields = $brickClass->getFieldDefinition($innerContainer);
-                        $fieldDefinition = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
-                    } else {
-                        $fieldDefinition = $brickClass->getFieldDefinition($brickKey);
-                    }
-
-                    if ($fieldDefinition) {
-                        $brickContainer = $object->{'get' . ucfirst($key)}();
-                        if ($brickContainer && !empty($brickKey)) {
-                            $brick = $brickContainer->{'get' . ucfirst($brickType)}();
-                            if ($brick) {
-                                $params = [
-                                    'context' => [
-                                        'containerType' => 'objectbrick',
-                                        'containerKey' => $brickType,
-                                        'fieldname' => $brickKey
-                                    ]
-
-                                ];
-
-                                $value = $brick;
-
-                                if ($brickDescriptor) {
-                                    $innerContainer = $brickDescriptor['innerContainer'] ? $brickDescriptor['innerContainer'] : 'localizedfields';
-                                    $value = $brick->{'get' . ucfirst($innerContainer)}();
-                                }
-
-                                return $fieldDefinition->getForCsvExport($value, $params);
-                            }
-                        }
-                    }
-                } elseif ($locFields = $object->getClass()->getFieldDefinition('localizedfields')) {
-
-                    // if the definition is not set try to get the definition from localized fields
-                    $fieldDefinition = $locFields->getFieldDefinition($field);
-                    if ($fieldDefinition) {
-                        $needLocalizedPermissions = true;
-
-                        return $fieldDefinition->getForCsvExport($object->getLocalizedFields(), ['language' => $request->get('language')]);
-                    }
-                }
-            }
-        }
+        throw $this->createNotFoundException('XLSX file not found');
     }
 
     /**
      * Flattens object data to an array with key=>value where
      * value is simply a string representation of the value (for objects, hrefs and assets the full path is used)
      *
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      *
      * @return array
      */
@@ -2171,7 +1983,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-batch-jobs", methods={"GET"})
+     * @Route("/get-batch-jobs", name="pimcore_admin_dataobject_dataobjecthelper_getbatchjobs", methods={"GET"})
      *
      * @param Request $request
      *
@@ -2192,7 +2004,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/batch", methods={"PUT"})
+     * @Route("/batch", name="pimcore_admin_dataobject_dataobjecthelper_batch", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -2205,7 +2017,7 @@ class DataObjectHelperController extends AdminController
         try {
             if ($request->get('data')) {
                 $params = $this->decodeJson($request->get('data'), true);
-                $object = DataObject::getById($params['job']);
+                $object = DataObject\Concrete::getById($params['job']);
 
                 if ($object) {
                     $name = $params['name'];
@@ -2214,8 +2026,8 @@ class DataObjectHelperController extends AdminController
                         throw new \Exception("Permission denied. You don't have the rights to save this object.");
                     }
 
-                    $append = $params['append'];
-                    $remove = $params['remove'];
+                    $append = $params['append'] ?? false;
+                    $remove = $params['remove'] ?? false;
 
                     $className = $object->getClassName();
                     $class = DataObject\ClassDefinition::getByName($className);
@@ -2323,9 +2135,8 @@ class DataObjectHelperController extends AdminController
                         } else {
                             // check if it is a localized field
                             if ($params['language']) {
-                                /** @var DataObject\Localizedfield $localizedField */
                                 $localizedField = $class->getFieldDefinition('localizedfields');
-                                if ($localizedField) {
+                                if ($localizedField instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                                     $field = $localizedField->getFieldDefinition($name);
                                     if ($field) {
                                         $getter = 'get' . $name;
@@ -2381,7 +2192,7 @@ class DataObjectHelperController extends AdminController
     }
 
     /**
-     * @Route("/get-available-visible-vields", methods={"GET"})
+     * @Route("/get-available-visible-vields", name="pimcore_admin_dataobject_dataobjecthelper_getavailablevisiblefields", methods={"GET"})
      *
      * @param Request $request
      *
@@ -2427,9 +2238,8 @@ class DataObjectHelperController extends AdminController
                 $fds = $class->getFieldDefinitions();
 
                 $additionalFieldNames = array_keys($fds);
-                /** @var DataObject\ClassDefinition\Data\Localizedfields|null $localizedFields */
                 $localizedFields = $class->getFieldDefinition('localizedfields');
-                if ($localizedFields) {
+                if ($localizedFields instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                     $lfNames = array_keys($localizedFields->getFieldDefinitions());
                     $additionalFieldNames = array_merge($additionalFieldNames, $lfNames);
                 }
@@ -2477,5 +2287,97 @@ class DataObjectHelperController extends AdminController
                 $commonFields[$fd->getName()] = $fd;
             }
         }
+    }
+
+    /**
+     * @Route("/export-csv-import-config-as-json", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function exportCsvImportConfigAsJsonAction(Request $request)
+    {
+        $classId = $request->get('classId');
+        $configData = json_decode($request->get('config'), true);
+
+        try {
+            $configName = $configData['shareSettings']['configName'];
+
+            if (empty($configName)) {
+                $configName = date('YmdHis').'_'.$classId.'_configuration';
+            }
+
+            $jsonResponse = new JsonResponse(json_encode($configData), 200, [
+                'Content-Disposition' => 'attachment; filename="'.$configName.'.json"',
+            ], true);
+
+            return $jsonResponse;
+        } catch (\Exception $e) {
+            throw new \Exception('Error retrieving import configuration - '.$e->getMessage());
+        }
+    }
+
+    /**
+     * @Route("/import-csv-import-config-from-json", methods={"POST"})
+     *
+     * @param Request $request
+     * @param ImportService $importService
+     *
+     * @return JsonResponse
+     */
+    public function importCSVImportConfigFromJsonAction(Request $request, ImportService $importService)
+    {
+        $importConfigId = $request->get('importConfigId');
+
+        $tmpName = $_FILES['Filedata']['tmp_name'];
+        $json = file_get_contents($tmpName);
+
+        $configData = json_decode($json, true);
+
+        $dataFields = $configData['dataFields'];
+        $targetFields = $configData['targetFields'];
+        $selectedGridColumns = $configData['selectedGridColumns'];
+        $resolverSettings = $configData['resolverSettings'];
+        $shareSettings = $configData['shareSettings'];
+        $dialect = json_decode(json_encode($configData['csvSettings']), false);
+
+        $success = true;
+        $classId = $request->get('classId');
+
+        $file = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/import_' . $request->get('importId');
+
+        $originalFile = $file . '_original';
+        // determine type
+        if (empty($dialect)) {
+            $dialect = Tool\Admin::determineCsvDialect($originalFile);
+        }
+
+        /**
+         * Reload data form original CSV to properly refresh
+         * the data preview on the import interface
+         */
+        $data = $this->getDataPreview($originalFile, $dialect);
+
+        $availableConfigs = $this->getImportConfigs($importService, Tool\Admin::getCurrentUser(), $classId);
+
+        return $this->adminJson([
+            'success' => $success,
+            'config' => [
+                'importConfigId' => $importConfigId,
+                'dataPreview' => $data,
+                'dataFields' => $dataFields,
+                'targetFields' => $targetFields,
+                'selectedGridColumns' => $selectedGridColumns,
+                'resolverSettings' => $resolverSettings ?? null,
+                'shareSettings' => $shareSettings ?? null,
+                'csvSettings' => $dialect,
+                'rows' => $configData['rows'],
+                'cols' => $configData['cols'] ?? null,
+                'classId' => $classId,
+                'isShared' => $configData['isShared'],
+            ],
+            'availableConfigs' => $availableConfigs,
+        ]);
     }
 }

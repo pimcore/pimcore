@@ -65,10 +65,16 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     protected $localeParams = [];
 
-    public function __construct(RequestContext $context, ConfigNormalizer $configNormalizer)
+    /**
+     * @var Config
+     */
+    protected $config;
+
+    public function __construct(RequestContext $context, ConfigNormalizer $configNormalizer, Config $config)
     {
         $this->context = $context;
         $this->configNormalizer = $configNormalizer;
+        $this->config = $config;
     }
 
     /**
@@ -147,7 +153,6 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         // check for a site in the options, if valid remove it from the options
         $hostname = null;
         if (isset($parameters['site'])) {
-            $config = Config::getSystemConfig();
             $site = $parameters['site'];
 
             if (!empty($site)) {
@@ -166,8 +171,8 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
                     ]);
                 }
             } else {
-                if ($needsHostname && !empty($config->general->domain)) {
-                    $hostname = $config->general->domain;
+                if ($needsHostname && !empty($this->config['general']['domain'])) {
+                    $hostname = $this->config['general']['domain'];
                 }
             }
         }
@@ -182,23 +187,33 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             unset($parameters['encode']);
             // assemble the route / url in Staticroute::assemble()
             $url = $route->assemble($parameters, $reset, $encode);
+            $port = '';
+            $scheme = $this->context->getScheme();
+
+            if ('http' === $scheme && 80 !== $this->context->getHttpPort()) {
+                $port = ':'.$this->context->getHttpPort();
+            } elseif ('https' === $scheme && 443 !== $this->context->getHttpsPort()) {
+                $port = ':'.$this->context->getHttpsPort();
+            }
+
+            $schemeAuthority = self::NETWORK_PATH === $referenceType || '' === $scheme ? '//' : "$scheme://";
+            $schemeAuthority .= $hostname.$port;
 
             if ($needsHostname) {
-                if (self::ABSOLUTE_URL === $referenceType) {
-                    $url = $this->context->getScheme() . '://' . $hostname . $url;
-                } else {
-                    $url = '//' . $hostname . $url;
-                }
+                $url = $schemeAuthority.$this->context->getBaseUrl().$url;
             } else {
                 if (self::RELATIVE_PATH === $referenceType) {
                     $url = UrlGenerator::getRelativePath($this->context->getPathInfo(), $url);
+                } else {
+                    $url = $this->context->getBaseUrl().$url;
                 }
             }
 
             return $url;
         }
 
-        throw new RouteNotFoundException(sprintf('Could not generate URL for route %s as the static route wasn\'t found', $name));
+        throw new RouteNotFoundException(sprintf('Could not generate URL for route %s as the static route wasn\'t found',
+            $name));
     }
 
     /**
@@ -206,7 +221,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     public function matchRequest(Request $request)
     {
-        return $this->doMatch($request->getPathInfo());
+        return $this->doMatch($request->getPathInfo(), $request);
     }
 
     /**
@@ -219,10 +234,11 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
     /**
      * @param string $pathinfo
+     * @param Request|null $request
      *
      * @return array
      */
-    protected function doMatch($pathinfo)
+    protected function doMatch($pathinfo, Request $request = null)
     {
         $pathinfo = urldecode($pathinfo);
 
@@ -230,6 +246,14 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         $params = array_merge(Tool::getRoutingDefaults(), $params);
 
         foreach ($this->getStaticRoutes() as $route) {
+            if (null !== $request && null !== $route->getMethods() && 0 !== count($route->getMethods())) {
+                $method = $request->getMethod();
+
+                if (!in_array($method, $route->getMethods(), true)) {
+                    continue;
+                }
+            }
+
             if ($routeParams = $route->match($pathinfo, $params)) {
                 Staticroute::setCurrentRoute($route);
 
@@ -259,7 +283,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
         $keys = [
             'module',
             'controller',
-            'action'
+            'action',
         ];
 
         $controllerParams = [];

@@ -16,10 +16,13 @@ pimcore.object.helpers.classTree = Class.create({
 
     showFieldName: false,
 
-    initialize: function (showFieldName) {
+    initialize: function (showFieldName, config, object) {
         if (showFieldName) {
             this.showFieldName = showFieldName;
         }
+        // allow additional configuration options
+        this.config = config || {};
+        this.object = object;
     },
 
     updateFilter: function (tree, filterField) {
@@ -143,19 +146,20 @@ pimcore.object.helpers.classTree = Class.create({
                             brickField: data[keys[i]].brickField
                         };
 
-                        text = ts(data[keys[i]].nodeLabel) + " " + t("columns");
+                        text = t(data[keys[i]].nodeLabel) + " " + t("columns");
 
                     }
                     var baseNode = {
                         type: "layout",
                         allowDrag: false,
                         iconCls: "pimcore_icon_" + data[keys[i]].nodeType,
-                        text: text
+                        text: text,
+                        originalText: text
                     };
 
                     baseNode = tree.getRootNode().appendChild(baseNode);
                     for (var j = 0; j < data[keys[i]].childs.length; j++) {
-                        baseNode.appendChild(this.recursiveAddNode(data[keys[i]].childs[j], baseNode, brickDescriptor));
+                        baseNode.appendChild(this.recursiveAddNode(data[keys[i]].childs[j], baseNode, brickDescriptor, this.config));
                     }
                     if (data[keys[i]].nodeType == "object") {
                         baseNode.expand();
@@ -167,7 +171,7 @@ pimcore.object.helpers.classTree = Class.create({
         }
     },
 
-    recursiveAddNode: function (con, scope, brickDescriptor) {
+    recursiveAddNode: function (con, scope, brickDescriptor, config) {
 
         var fn = null;
         var newNode = null;
@@ -176,14 +180,14 @@ pimcore.object.helpers.classTree = Class.create({
             fn = this.addLayoutChild.bind(scope, con.fieldtype, con);
         }
         else if (con.datatype == "data") {
-            fn = this.addDataChild.bind(scope, con.fieldtype, con, this.showFieldName, brickDescriptor);
+            fn = this.addDataChild.bind(scope, con.fieldtype, con, this.showFieldName, brickDescriptor, config);
         }
 
         newNode = fn();
 
         if (con.childs) {
             for (var i = 0; i < con.childs.length; i++) {
-                this.recursiveAddNode(con.childs[i], newNode, brickDescriptor);
+                this.recursiveAddNode(con.childs[i], newNode, brickDescriptor, config);
             }
         }
 
@@ -208,7 +212,8 @@ pimcore.object.helpers.classTree = Class.create({
             expandable: initData.childs.length,
             allowDrag: false,
             iconCls: "pimcore_icon_" + type,
-            text: t(nodeLabel)
+            text: t(nodeLabel),
+            originalText: nodeLabel
         };
 
         newNode = this.appendChild(newNode);
@@ -218,9 +223,8 @@ pimcore.object.helpers.classTree = Class.create({
         return newNode;
     },
 
-    addDataChild: function (type, initData, showFieldname, brickDescriptor) {
-
-        if (type != "objectbricks" && !initData.invisible) {
+    addDataChild: function (type, initData, showFieldname, brickDescriptor, config) {
+        if (type != "objectbricks" && (!initData.invisible || config.showInvisible)) {
             var isLeaf = true;
             var draggable = true;
 
@@ -230,6 +234,8 @@ pimcore.object.helpers.classTree = Class.create({
                 isLeaf = false;
                 draggable = false;
 
+                // create a copy because we have to pop this state
+                brickDescriptor = Ext.clone(brickDescriptor);
                 Ext.apply(brickDescriptor, {
                     insideLocalizedFields: true
                 });
@@ -251,7 +257,7 @@ pimcore.object.helpers.classTree = Class.create({
                 }
             }
 
-            var text = ts(initData.title);
+            var text = t(initData.title);
             if (showFieldname) {
                 if (brickDescriptor && brickDescriptor.insideBrick && brickDescriptor.insideLocalizedFields) {
                     text = text + "(" + brickDescriptor.brickType + "." + initData.name + ")";
@@ -270,7 +276,8 @@ pimcore.object.helpers.classTree = Class.create({
                 dataType: type,
                 iconCls: "pimcore_icon_" + type,
                 expanded: true,
-                brickDescriptor: brickDescriptor
+                brickDescriptor: brickDescriptor,
+                originalText: text
             };
 
             newNode = this.appendChild(newNode);

@@ -18,20 +18,44 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Event\Admin\ElementAdminStyleEvent;
+use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
+use Pimcore\Model\Element;
 use Pimcore\Model\Property;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\Routing\Annotation\Route;
 
 abstract class DocumentControllerBase extends AdminController implements EventedControllerInterface
 {
     use AdminStyleTrait;
     use ApplySchedulerDataTrait;
+
+    protected function preSendDataActions(&$data, Model\Document $document)
+    {
+        $data['versionDate'] = $document->getModificationDate();
+        $data['userPermissions'] = $document->getUserPermissions();
+        $data['idPath'] = Element\Service::getIdPath($document);
+
+        $data['php'] = [
+            'classes' => array_merge([get_class($document)], array_values(class_parents($document))),
+            'interfaces' => array_values(class_implements($document)),
+        ];
+
+        $this->addAdminStyle($document, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
+
+        $event = new GenericEvent($this, [
+            'data' => $data,
+            'document' => $document,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        $data = $event->getArgument('data');
+    }
 
     /**
      * @param Request $request
@@ -101,13 +125,13 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
     /**
      * @param Request $request
-     * @param Model\Document|Model\Document\PageSnippet $document
+     * @param Model\Document\PageSnippet $document
      */
-    protected function addDataToDocument(Request $request, Model\Document $document)
+    protected function addDataToDocument(Request $request, Model\Document\PageSnippet $document)
     {
         // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
-        if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificElements())) {
-            $document->getElements();
+        if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificEditables())) {
+            $document->getEditables();
         }
 
         if ($request->get('data')) {
@@ -115,29 +139,27 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             foreach ($data as $name => $value) {
                 $data = $value['data'] ?? null;
                 $type = $value['type'];
-                $document->setRawElement($name, $type, $data);
+                $document->setRawEditable($name, $type, $data);
             }
         }
     }
 
     /**
      * @param Model\Document $document
+     * @param array $data
      */
-    protected function addTranslationsData(Model\Document $document)
+    protected function addTranslationsData(Model\Document $document, array &$data)
     {
         $service = new Model\Document\Service;
         $translations = $service->getTranslations($document);
         $unlinkTranslations = $service->getTranslations($document, 'unlink');
         $language = $document->getProperty('language');
-        unset($translations[$language]);
-        unset($unlinkTranslations[$language]);
-        $document->translations = $translations;
-        $document->unlinkTranslations = $unlinkTranslations;
+        unset($translations[$language], $unlinkTranslations[$language]);
+        $data['translations'] = $translations;
+        $data['unlinkTranslations'] = $unlinkTranslations;
     }
 
     /**
-     * @Route("/save-to-session", methods={"POST"})
-     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -189,8 +211,8 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             // see also PageController::clearEditableDataAction() | this is necessary to reset all fields and to get rid of
             // outdated and unused data elements in this document (eg. entries of area-blocks)
 
-            if ($sessionDocument = Model\Document\Service::getElementFromSession('document', $doc->getId())
-                            && $documentForSave = Model\Document\Service::getElementFromSession('document', $doc->getId(), '_useForSave')) {
+            if (($sessionDocument = Model\Document\Service::getElementFromSession('document', $doc->getId())) &&
+                ($documentForSave = Model\Document\Service::getElementFromSession('document', $doc->getId(), '_useForSave'))) {
                 Model\Document\Service::removeElementFromSession('document', $doc->getId(), '_useForSave');
             }
         }
@@ -199,8 +221,6 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     }
 
     /**
-     * @Route("/remove-from-session", methods={"DELETE"})
-     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -214,11 +234,11 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
     /**
      * @param Model\Document $document
+     * @param array $data
      */
-    protected function minimizeProperties($document)
+    protected function minimizeProperties($document, array &$data)
     {
-        $properties = Model\Element\Service::minimizePropertiesForEditmode($document->getProperties());
-        $document->setProperties($properties);
+        $data['properties'] = Model\Element\Service::minimizePropertiesForEditmode($document->getProperties());
     }
 
     /**
@@ -238,17 +258,16 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     }
 
     /**
-     * @param Model\Document $document
+     * @param Model\Document\PageSnippet $document
      *
-     * @return Model\Document
+     * @return Model\Document\PageSnippet
      */
-    protected function getLatestVersion(Model\Document $document)
+    protected function getLatestVersion(Model\Document\PageSnippet $document)
     {
         $latestVersion = $document->getLatestVersion();
         if ($latestVersion) {
             $latestDoc = $latestVersion->loadData();
-            if ($latestDoc instanceof Model\Document) {
-                $latestDoc->setModificationDate($document->getModificationDate()); // set de modification-date from published version to compare it in js-frontend
+            if ($latestDoc instanceof Model\Document\PageSnippet) {
                 return $latestDoc;
             }
         }
@@ -259,8 +278,6 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     /**
      * This is used for pages and snippets to change the master document (which is not saved with the normal save button)
      *
-     * @Route("/change-master-document", methods={"PUT"})
-     *
      * @param Request $request
      *
      * @return JsonResponse
@@ -269,7 +286,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     {
         $doc = Model\Document::getById($request->get('id'));
         if ($doc instanceof Model\Document\PageSnippet) {
-            $doc->setElements([]);
+            $doc->setEditables([]);
             $doc->setContentMasterDocumentId($request->get('contentMasterDocumentPath'));
             $doc->saveVersion();
         }

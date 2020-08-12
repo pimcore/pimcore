@@ -33,7 +33,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
     },
 
     getGridColumnConfig: function(field) {
-        return {text: ts(field.label), width: 150, sortable: false, dataIndex: field.key,
+        return {text: t(field.label), width: 150, sortable: false, dataIndex: field.key,
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
 
@@ -49,8 +49,8 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         var panelConf = {
             autoHeight: true,
             border: true,
-            // style: "margin-bottom: 10px",
-            componentCls: "object_field",
+            style: "margin-bottom: 10px",
+            componentCls: "object_field object_field_type_" + this.type,
             collapsible: this.fieldConfig.collapsible,
             collapsed: this.fieldConfig.collapsed
         };
@@ -93,12 +93,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
     },
 
     getControls: function (blockElement) {
-
-        var collectionMenu = [];
-
         var items = [];
-
-
 
         if(blockElement) {
             items.push({

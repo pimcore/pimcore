@@ -21,6 +21,8 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Tool\CustomReport\Config\Dao getDao()
+ * @method void delete()
+ * @method void save()
  */
 class Config extends Model\AbstractModel implements \JsonSerializable
 {
@@ -35,7 +37,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     public $sql = '';
 
     /**
-     * @var string[]
+     * @var array
      */
     public $dataSourceConfig = [];
 
@@ -160,7 +162,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
         foreach ($items as $item) {
             $reports[] = [
                 'id' => $item->getName(),
-                'text' => $item->getName()
+                'text' => $item->getName(),
             ];
         }
 
@@ -319,7 +321,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
     }
 
     /**
-     * @param string[] $dataSourceConfig
+     * @param array $dataSourceConfig
      */
     public function setDataSourceConfig($dataSourceConfig)
     {

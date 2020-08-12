@@ -15,8 +15,6 @@
 pimcore.registerNS("pimcore.object.quantityValue.unitsettings");
 pimcore.object.quantityValue.unitsettings = Class.create({
 
-    dataUrl: '/admin/quantity-value/unit-proxy?',
-
     initialize: function () {
         this.getTabPanel();
     },
@@ -64,36 +62,11 @@ pimcore.object.quantityValue.unitsettings = Class.create({
 
     getRowEditor: function () {
 
-        var languages = this.languages;
-
-        var readerFields = [
-            {name: 'id', allowBlank: false},
-            {name: 'abbreviation', allowBlank: false},
-            {name: 'longname'},
-            {name: 'group'},
-            {name: 'baseunit'},
-            {name: 'factor'},
-            {name: 'conversionOffset'},
-            {name: 'reference'},
-            {name: 'converter'}
-        ];
-
-
-        var configuredFilters = [
-            {type: "string", dataIndex: "abbreviation"},
-            {type: "string", dataIndex: "longname"},
-            {type: "string", dataIndex: "group"},
-            {type: "string", dataIndex: "baseunit"},
-            {type: "numeric", dataIndex: "factor"},
-            {type: "string", dataIndex: "reference"},
-            {type: "string", dataIndex: "converter"}
-        ];
-
         var baseUnitStore = Ext.create('Ext.data.JsonStore', {
             proxy: {
                 type: 'ajax',
                 async: false,
-                url: this.dataUrl,
+                url: Routing.generate('pimcore_admin_dataobject_quantityvalue_unitproxyget'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
@@ -126,7 +99,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
         };
 
         var typesColumns = [
-            {flex: 1, dataIndex: 'id', text: t("id"), hidden: true, editor: new Ext.form.TextField({}), filter: 'string'},
+            {flex: 1, dataIndex: 'id', text: t("id"), hidden: true, filter: 'string'},
             {flex: 1, dataIndex: 'abbreviation', text: t("abbreviation"), editor: new Ext.form.TextField({}), filter: 'string'},
             {flex: 2, dataIndex: 'longname', text: t("longname"), editor: new Ext.form.TextField({}), filter: 'string'},
             {flex: 1, dataIndex: 'group', text: t("group"), editor: new Ext.form.TextField({}), filter: 'string', hidden: true},
@@ -166,7 +139,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
         this.store = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
-                url: this.dataUrl,
+                url: Routing.generate('pimcore_admin_dataobject_quantityvalue_unitproxyget'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data',
@@ -180,10 +153,10 @@ pimcore.object.quantityValue.unitsettings = Class.create({
                     encode: 'true'
                 },
                 api: {
-                    create  : this.dataUrl + "xaction=create",
-                    read    : this.dataUrl + "xaction=read",
-                    update  : this.dataUrl + "xaction=update",
-                    destroy : this.dataUrl + "xaction=destroy"
+                    create  : Routing.generate('pimcore_admin_dataobject_quantityvalue_unitproxyget', {xaction: 'create'}),
+                    read    : Routing.generate('pimcore_admin_dataobject_quantityvalue_unitproxyget', {xaction: 'read'}),
+                    update  : Routing.generate('pimcore_admin_dataobject_quantityvalue_unitproxyget', {xaction: 'update'}),
+                    destroy : Routing.generate('pimcore_admin_dataobject_quantityvalue_unitproxyget', {xaction: 'destroy'})
                 },
                 pageSize: itemsPerPage
             },

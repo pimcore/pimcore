@@ -45,15 +45,15 @@ class WkHtmlToPdf extends Processor
 
         if (!empty($wkhtmltopdfBin)) {
             $this->wkhtmltopdfBin = $wkhtmltopdfBin;
-        } elseif ($web2printConfig->wkhtmltopdfBin) {
-            $this->wkhtmltopdfBin = $web2printConfig->wkhtmltopdfBin;
+        } elseif ($web2printConfig->get('wkhtmltopdfBin')) {
+            $this->wkhtmltopdfBin = $web2printConfig->get('wkhtmltopdfBin');
         } elseif ($determined = Console::getExecutable('wkhtmltopdf')) {
             $this->wkhtmltopdfBin = $determined;
         }
 
         if (empty($options)) {
-            if ($web2printConfig->wkhtml2pdfOptions) {
-                $options = $web2printConfig->wkhtml2pdfOptions->toArray();
+            if ($web2printConfig->get('wkhtml2pdfOptions')) {
+                $options = $web2printConfig->get('wkhtml2pdfOptions')->toArray();
             }
         }
 
@@ -87,8 +87,8 @@ class WkHtmlToPdf extends Processor
         $html = $document->renderDocument($params);
 
         $params['hostUrl'] = $config->protocol . '://' . $config->hostName;
-        if ($web2printConfig->wkhtml2pdfHostname) {
-            $params['hostUrl'] = $config->protocol . '://' . $web2printConfig->wkhtml2pdfHostname;
+        if ($web2printConfig->get('wkhtml2pdfHostname')) {
+            $params['hostUrl'] = $config->protocol . '://' . $web2printConfig->get('wkhtml2pdfHostname');
         }
 
         $html = $this->processHtml($html, $params);
@@ -109,7 +109,7 @@ class WkHtmlToPdf extends Processor
     public function getProcessingOptions()
     {
         $event = new PrintConfigEvent($this, [
-            'options' => []
+            'options' => [],
         ]);
 
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS, $event);
@@ -213,7 +213,7 @@ class WkHtmlToPdf extends Processor
             'options' => $this->options,
             'srcUrl' => $srcUrl,
             'dstFile' => $dstFile,
-            'config' => $this->config
+            'config' => $this->config,
         ]);
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG, $event);
 

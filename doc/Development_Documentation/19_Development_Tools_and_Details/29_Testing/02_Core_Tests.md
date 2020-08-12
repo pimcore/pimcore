@@ -77,7 +77,6 @@ PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVI
 | PIMCORE_PHP_ERROR_REPORTING               | 32767            | Should be set to E_ALL because Travis uses the same setting.                                                                   |
 | PIMCORE_TEST                              | 1                | **important** this will switch several directories (like /var/classes)                                                         |
 | PIMCORE_TEST_SKIP_DB                      | 1                | Skips DB setup. This does not skip the db-related tests but it<br>reduces the setup time for tests that don't need a database. |
-| PIMCORE_CACHE_RAW_RELATION_DATA           | 1                | Will execute relation tests with caching enabled (off by default)                                                              |
 | PIMCORE_TEST_CACHE_REDIS_DATABASE         | 1                | **required for REDIS tests**                                                                                                   |
 | PIMCORE_TEST_CACHE_REDIS_PORT             | defaults to 6379 | Redis port                                                                                                                     |
 | PIMCORE_TEST_CACHE_REDIS_PERSISTENT       |                  |                                                                                                                                |
@@ -138,7 +137,7 @@ See [Codeception Commands](https://codeception.com/docs/reference/Commands) for 
 ## Travis
 
 Pimcore uses [Travis CI](https://travis-ci.com/) for continuous integration.
-Open https://travis-ci.org/pimcore/pimcore for the current build status. 
+Open https://travis-ci.com/pimcore/pimcore for the current build status. 
 
 ### Test Matrix
 
@@ -191,4 +190,37 @@ TMPDIR=/tmp/[dedicateddir] ./vendor/bin/phpstan analyse -c phpstan.local.neon ve
 where `/tmp/[dedicateddir]` must be a writable temporary directory.
 
 > Note regarding PRs: Please try to meet all 
-level 2 requirements (run it with `-l 2` instead) for all files you touch or add.
+level 3 requirements (run it with `-l 3` instead) for all files you touch or add.
+
+Travis also performs level 2 tests but allows them to fail in case that not all rules are satisfied.
+
+![PHPStan Job](../../img/phpstan1.png)
+
+Open the build log and check for problems.
+
+![PHPStan Log](../../img/phpstan2.png) 
+
+## PHPStan Baseline Feature
+
+PHPStan can create a baseline file, which contain all current errors. See this [blog](https://medium.com/@ondrejmirtes/phpstans-baseline-feature-lets-you-hold-new-code-to-a-higher-standard-e77d815a5dff) entry.
+ 
+To generate a new baseline file you have to execute following command:
+```sh
+vendor/bin/phpstan analyse -c .travis/phpstan.s4.travis.neon bundles/ lib/ models/ -l 3 --memory-limit=-1 --generate-baseline
+```
+
+With this baseline file include, Travis can detect new errors without having to fix all errors first.
+
+## PHPStan Level Overview
+
+| Level | Checks                                                                                                                                                                         |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0     | basic checks, unknown classes, unknown functions, unknown methods called on $this, wrong number of arguments passed to those methods and functions, always undefined variables |
+| 1     | possibly undefined variables, unknown magic methods and properties on classes with __call and __get                                                                            |
+| 2     | unknown methods checked on all expressions (not just $this), validating PHPDocs                                                                                                |
+| 3     | return types, types assigned to properties                                                                                                                                     |
+| 4     | basic dead code checking - always false instanceof and other type checks, dead else branches, unreachable code after return; etc.                                              |
+| 5     | checking types of arguments passed to methods and functions                                                                                                                    |
+| 6     | check for missing typehints                                                                                                                                                    |
+| 7     | report partially wrong union types                                                                                                                                             |
+| 8     | report calling methods and accessing properties on nullable types                                                                                                              |

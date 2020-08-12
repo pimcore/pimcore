@@ -31,11 +31,11 @@ class Processor
     protected static $argumentMapping = [
         'resize' => ['width', 'height'],
         'scaleByWidth' => ['width'],
-        'scaleByHeight' => ['height']
+        'scaleByHeight' => ['height'],
     ];
 
     /**
-     * @var array
+     * @var \Pimcore\Video\Adapter[]
      */
     public $queue = [];
 
@@ -64,7 +64,7 @@ class Processor
      * @param Config $config
      * @param array $onlyFormats
      *
-     * @return Processor
+     * @return Processor|null
      *
      * @throws \Exception
      */
@@ -86,7 +86,7 @@ class Processor
         if (is_array($customSetting) && array_key_exists($config->getName(), $customSetting)) {
             if ($customSetting[$config->getName()]['status'] == 'inprogress') {
                 if (TmpStore::get($instance->getJobStoreId($customSetting[$config->getName()]['processId']))) {
-                    return;
+                    return null;
                 }
             } elseif ($customSetting[$config->getName()]['status'] == 'finished') {
                 // check if the files are there
@@ -96,14 +96,13 @@ class Processor
                         $formatsToConvert[] = $f;
                     } else {
                         $existingFormats[$f] = $customSetting[$config->getName()]['formats'][$f];
-                        $existingFormats[$f] = $customSetting[$config->getName()]['formats'][$f];
                     }
                 }
 
                 if (!empty($formatsToConvert)) {
                     $formats = $formatsToConvert;
                 } else {
-                    return;
+                    return null;
                 }
             } elseif ($customSetting[$config->getName()]['status'] == 'error') {
                 throw new \Exception('Unable to convert video, see logs for details.');
@@ -118,7 +117,6 @@ class Processor
 
             if (!is_dir(dirname($fsPath))) {
                 File::mkdir(dirname($fsPath));
-                @chmod($thumbDir, File::getDefaultMode());
             }
 
             if (is_file($fsPath)) {
@@ -168,7 +166,7 @@ class Processor
         $customSetting[$config->getName()] = [
             'status' => 'inprogress',
             'formats' => $existingFormats,
-            'processId' => $instance->getProcessId()
+            'processId' => $instance->getProcessId(),
         ];
         $asset->setCustomSetting('thumbnails', $customSetting);
         $asset->save();
@@ -187,6 +185,9 @@ class Processor
         $instance->setProcessId($processId);
 
         $instanceItem = TmpStore::get($instance->getJobStoreId($processId));
+        /**
+         * @var self $instance
+         */
         $instance = $instanceItem->getData();
 
         $formats = [];
@@ -236,7 +237,7 @@ class Processor
 
             $customSetting[$instance->getConfig()->getName()] = [
                 'status' => $conversionStatus,
-                'formats' => $formats
+                'formats' => $formats,
             ];
             $asset->setCustomSetting('thumbnails', $customSetting);
             $asset->save();

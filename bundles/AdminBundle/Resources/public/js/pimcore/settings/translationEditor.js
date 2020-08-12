@@ -167,8 +167,6 @@ Ext.define('pimcore.settings.translationEditor', {
 
     completeEdit: function (remainVisible) {
         var me = this,
-            field = me.field,
-            fieldInfo = me.config.fieldInfo,
             startValue = me.startValue,
             value;
 
@@ -336,7 +334,7 @@ Ext.define('pimcore.settings.translationEditor', {
                 // converted by the pimcore thumbnailing service so that they can be displayed in the editor
                 var defaultWidth = 600;
                 var additionalAttributes = "";
-                uri = "/admin/asset/get-image-thumbnail?id=" + id + "&width=" + defaultWidth + "&aspectratio=true";
+                uri = Routing.generate('pimcore_admin_asset_getimagethumbnail') + "?id=" + id + "&width=" + defaultWidth + "&aspectratio=true";
 
                 if(typeof node.data.imageWidth != "undefined") {
                     if(node.data.imageWidth < defaultWidth

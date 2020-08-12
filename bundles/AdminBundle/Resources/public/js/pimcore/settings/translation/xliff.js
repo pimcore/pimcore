@@ -56,14 +56,26 @@ pimcore.settings.translation.xliff = Class.create({
 
     getExportPanel: function () {
 
+        let fields = [
+            "rowId",
+            "id",
+            "path",
+            "type",
+            "children",
+            "relations"
+        ];
+
+        let modelName = 'pimcore.model.xliff.store';
+        if (!Ext.ClassManager.isCreated(modelName)) {
+            Ext.define(modelName, {
+                extend: 'Ext.data.Model',
+                idProperty: "rowId",
+                fields: fields
+            });
+        }
+
         this.exportStore = new Ext.data.ArrayStore({
-            fields: [
-                "id",
-                "path",
-                "type",
-                "children",
-                "relations"
-            ]
+            model: modelName
         });
 
         this.component = Ext.create('Ext.grid.Panel', {
@@ -78,8 +90,8 @@ pimcore.settings.translation.xliff = Class.create({
                 },
                 items: [
                     {text: 'ID', dataIndex: 'id', width: 50},
-                    {text: t("path"), dataIndex: 'path', flex: 200},
                     {text: t("type"), dataIndex: 'type', width: 100},
+                    {text: t("path"), dataIndex: 'path', flex: 200},
                     Ext.create('Ext.grid.column.Check', {
                         text: t("children"),
                         dataIndex: "children",
@@ -130,7 +142,9 @@ pimcore.settings.translation.xliff = Class.create({
                             pimcore.helpers.itemselector(true, function (items) {
                                 if (items.length > 0) {
                                     for (var i = 0; i < items.length; i++) {
+                                        let rowId = items[i].type + '-' + items[i].id;
                                         this.exportStore.add({
+                                            rowId: rowId,
                                             id: items[i].id,
                                             path: items[i].fullpath,
                                             type: items[i].type,
@@ -178,7 +192,9 @@ pimcore.settings.translation.xliff = Class.create({
 
                         var type = data.elementType;
                         if (type == "document" || type == "object") {
+                            let rowId = type + '-' + data.id;
                             this.exportStore.add({
+                                rowId: rowId,
                                 id: data.id,
                                 path: data.path,
                                 type: data.elementType,
@@ -272,7 +288,7 @@ pimcore.settings.translation.xliff = Class.create({
         }
 
         Ext.Ajax.request({
-            url: "/admin/translation/content-export-jobs",
+            url: Routing.generate('pimcore_admin_translation_contentexportjobs'),
             method: 'POST',
             params: {
                 source: this.exportSourceLanguageSelector.getValue(),
@@ -290,12 +306,12 @@ pimcore.settings.translation.xliff = Class.create({
                 this.exportProgressWin = new Ext.Window({
                     title: t("export"),
                     layout:'fit',
-                    width:500,
+                    width:200,
                     bodyStyle: "padding: 10px;",
                     closable:false,
                     plain: true,
-                    modal: true,
-                    items: [this.exportProgressbar]
+                    items: [this.exportProgressbar],
+                    listeners: pimcore.helpers.getProgressWindowListeners()
                 });
 
                 this.exportProgressWin.show();
@@ -310,7 +326,7 @@ pimcore.settings.translation.xliff = Class.create({
                         this.exportProgressbar = null;
                         this.exportProgressWin = null;
 
-                        pimcore.helpers.download('/admin/translation/xliff-export-download?id='+ id);
+                        pimcore.helpers.download(Routing.generate('pimcore_admin_translation_xliffexportdownload', {id: id}));
                     }.bind(this, res.id),
                     update: function (currentStep, steps, percent) {
                         if(this.exportProgressbar) {
@@ -339,7 +355,7 @@ pimcore.settings.translation.xliff = Class.create({
                 text: t("select_a_file") + " (.xlf / .xliff)",
                 iconCls: "pimcore_icon_file pimcore_icon_overlay_add",
                 handler: function () {
-                    pimcore.helpers.uploadDialog('/admin/translation/xliff-import-upload', "file", function(res) {
+                    pimcore.helpers.uploadDialog(Routing.generate('pimcore_admin_translation_xliffimportupload'), "file", function(res) {
 
                         var res = Ext.decode(res["response"]["responseText"]);
 
@@ -350,12 +366,12 @@ pimcore.settings.translation.xliff = Class.create({
                         this.importProgressWin = new Ext.Window({
                             title: t("import"),
                             layout:'fit',
-                            width:500,
+                            width:200,
                             bodyStyle: "padding: 10px;",
                             closable:false,
                             plain: true,
-                            modal: true,
-                            items: [this.importProgressbar]
+                            items: [this.importProgressbar],
+                            listeners: pimcore.helpers.getProgressWindowListeners()
                         });
 
                         this.importProgressWin.show();

@@ -80,7 +80,7 @@ class PreprocessErrorEvent extends Event
     }
 
     /**
-     * @param int $objectId
+     * @param int $subObjectId
      */
     public function setSubObjectId(int $subObjectId): void
     {

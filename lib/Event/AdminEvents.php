@@ -185,6 +185,20 @@ final class AdminEvents
     const ASSET_LIST_BEFORE_LIST_LOAD = 'pimcore.admin.asset.list.beforeListLoad';
 
     /**
+     * Arguments:
+     *  - field
+     *  - language
+     *  - keyPrefix
+     *  - processed
+     *  - result
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_GET_FIELD_GRID_CONFIG = 'pimcore.admin.asset.getFieldGridConfig';
+
+    /**
      * Allows you to modify the the result after the list was loaded. This event apply to both the folder content preview list and the grid list.
      *
      * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
@@ -197,6 +211,34 @@ final class AdminEvents
      * @var string
      */
     const ASSET_LIST_AFTER_LIST_LOAD = 'pimcore.admin.asset.list.afterListLoad';
+
+    /**
+     * Allows you to modify the data from the listfolder grid before it gets processed
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - data | raw data as an array
+     *  - processed | true to stop processing
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_LIST_BEFORE_UPDATE = 'pimcore.admin.asset.list.beforeUpdate';
+
+    /**
+     * Allows you to modify the batch update data from the listfolder grid before it gets processed
+     *
+     * Subject: A controller extending \Pimcore\Bundle\AdminBundle\Controller\AdminController
+     * Arguments:
+     *  - params |
+     *  - processed | true to stop processing
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_LIST_BEFORE_BATCH_UPDATE = 'pimcore.admin.asset.list.beforeBatchUpdate';
 
     /**
      * Fired before the request params are parsed. This event apply to the seo panel tree.
@@ -351,6 +393,17 @@ final class AdminEvents
     const CLASS_OBJECTBRICK_LIST_PRE_SEND_DATA = 'pimcore.admin.class.objectbrickList.preSendData';
 
     /**
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\ClassController
+     * Arguments:
+     *  - brickDefinition | the brick definition
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const CLASS_OBJECTBRICK_UPDATE_DEFINITION = 'pimcore.admin.class.objectbrick.updateDefinition';
+
+    /**
      * Allows you to modify the search backend list before it is loaded.
      *
      * Subject: \Pimcore\Bundle\AdminBundle\Controller\Searchadmin\SearchController
@@ -404,4 +457,31 @@ final class AdminEvents
      * @var string
      */
     const RESOLVE_ELEMENT_ADMIN_STYLE = 'pimcore.admin.resolve.elementAdminStyle';
+
+    /**
+     * Allows you to modify whether a permission on an element is granted or not
+     *
+     * Subject: \Pimcore\Model\Element\AbstractElement
+     * Arguments:
+     *  - isAllowed | bool | the original "isAllowed" value as determined by pimcore. This can be modfied
+     *  - permissionType | string | the permission that is checked
+     *  - user | \Pimcore\Model\User | user the permission is checked for
+     *
+     * @Event("Pimcore\Event\Model\ElementEvent")
+     *
+     * @var string
+     */
+    const ELEMENT_PERMISSION_IS_ALLOWED = 'pimcore.admin.permissions.elementIsAllowed';
+
+    /**
+     * Subject: \Pimcore\Bundle\AdminBundle\Controller\Admin\AssetController
+     * Arguments:
+     *  - id | int | asset id
+     *  - metadata | array | contains the data received from the editor UI
+     *
+     * @Event("Pimcore\Event\Model\GenericEvent")
+     *
+     * @var string
+     */
+    const ASSET_METADATA_PRE_SET = 'pimcore.admin.asset.metadata.preSave';
 }

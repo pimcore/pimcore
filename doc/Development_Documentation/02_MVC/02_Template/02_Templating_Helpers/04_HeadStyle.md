@@ -26,6 +26,11 @@ To add the conditional tags, pass the conditional value as part of the $attribut
 $this->headStyle()->appendStyle($styles, array('conditional' => 'lt IE 11'));
 ``` 
 
+```twig
+{# adding scripts #}
+{% do pimcore_head_style().appendStyle(styles, {'conditional': 'lt IE 11'}) %}
+```
+
 HeadStyle also allows capturing style declarations; this can be useful if you want to create the declarations 
 programmatically, and then place them elsewhere. The usage for this will be showed in an example below.
 
@@ -47,6 +52,11 @@ You may specify a new style tag at any time:
 $this->headStyle()->appendStyle($styles);
 ```
 
+```twig
+{# adding styles #}
+{% do pimcore_head_style().appendStyle(styles) %}
+```
+
 Order is very important with CSS; you may need to ensure that declarations are loaded in a specific order due to the 
 order of the cascade; use the various append, prepend, and offsetSet directives to aid in this task:
 
@@ -63,9 +73,26 @@ $this->headStyle()->appendStyle($finalStyles);
 $this->headStyle()->prependStyle($firstStyles);
 ```
 
+```twig
+{# place at a particular offset: #}
+{% do pimcore_head_style().offsetSetStyle(100, customStyles) %}
+
+{# place at end: #}
+{% do pimcore_head_style().appendStyle(finalStyles) %}
+
+{# place at beginning #}
+{% do pimcore_head_style().prependStyle(firstStyles) %}
+```
+
 When you're finally ready to output all style declarations in your layout script, simply echo the helper:
 
-`<?= $this->headStyle() ?>`
+```php
+<?= $this->headStyle() ?>
+```
+
+```twig
+{{ pimcore_head_style() }}
+```
 
 ### Capturing Style Declarations
 
@@ -81,11 +108,19 @@ body {
 <?php $this->headStyle()->captureEnd() ?>
 ```
 
+```twig
+{% do pimcore_head_style().captureStart() %}
+    body {
+        background-color: red
+    }
+{% do pimcore_head_style().captureEnd() %}
+```
+
 The following assumptions are made:
 
 The style declarations will be appended to the stack. If you wish for them to replace the stack or be added to the top, 
 you will need to pass `SET` or `PREPEND`, respectively, as the first argument to `captureStart()`.
 
-If you wish to specify any additional attributes for the <style> tag, pass them in an array as the second argument to 
+If you wish to specify any additional attributes for the `<style>` tag, pass them in an array as the second argument to 
 `captureStart()`.
 

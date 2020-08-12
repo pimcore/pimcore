@@ -125,12 +125,46 @@ would produce the following output
  
 ### Use in Views
 
+#### path() / url()
+
+<div class="code-section">
+
 ```php
 <ul class="foo">
     <?php foreach($this->carList as $car) { ?>
-        <a href="<?= $this->pimcoreUrl(['object' => $car]); ?>"><?= $car->getName() ?></a>
+        <li><a href="<?= $this->path($car); ?>"><?= $car->getName() ?></a></li>
     <?php } ?>
 </ul>
- ``` 
- 
- 
+```
+
+```twig
+<ul class="foo">
+    {% for car in carList %}
+        <li><a href="{{ path(car) }}">{{ car.getName() }}</a></li>
+    {% endfor %}
+</ul>
+```
+
+</div>
+
+#### pimcoreUrl
+
+<div class="code-section">
+
+```php
+<ul class="foo">
+    <?php foreach($this->carList as $car) { ?>
+        <li><a href="<?= $this->pimcoreUrl(['object' => $car]); ?>"><?= $car->getName() ?></a></li>
+    <?php } ?>
+</ul>
+```
+
+```twig
+<ul class="foo">
+    {% for car in carList %}
+        <li><a href="{{ pimcore_url({object: car}) }}">{{ car.getName() }}</a></li>
+    {% endfor %}
+</ul>
+```
+
+</div>

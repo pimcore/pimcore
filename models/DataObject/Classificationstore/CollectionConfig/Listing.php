@@ -23,6 +23,7 @@ use Pimcore\Model;
  * @method \Pimcore\Model\DataObject\Classificationstore\CollectionConfig\Listing\Dao getDao()
  * @method Model\DataObject\Classificationstore\CollectionConfig[] load()
  * @method Model\DataObject\Classificationstore\CollectionConfig current()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
@@ -49,7 +50,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\DataObject\Classificationstore\CollectionConfig[]|null $theList
      *
-     * @return $this
+     * @return static
      */
     public function setList($theList)
     {

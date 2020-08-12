@@ -181,7 +181,7 @@ abstract class AbstractStructureImportCommand extends AbstractCommand
      *
      * @param string $filename
      *
-     * @return string
+     * @return string|null
      */
     abstract protected function getDefinitionName($filename);
 

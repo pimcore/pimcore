@@ -56,16 +56,12 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
         }.bind(this, field.key);
 
         return {
-            text: ts(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
+            text: t(field.label), sortable: true, dataIndex: field.key, renderer: renderer,
             getEditor: this.getWindowCellEditor.bind(this, field)
         };
     },
 
     getLayoutEdit: function () {
-
-        var input = {
-            name: this.fieldConfig.name
-        };
 
         this.editButton = new Ext.Button({
             iconCls: "pimcore_icon_link pimcore_icon_overlay_edit",
@@ -105,7 +101,7 @@ pimcore.object.tags.link = Class.create(pimcore.object.tags.abstract, {
             border: false,
             combineErrors: false,
             items: [this.displayField, this.openButton, this.editButton],
-            componentCls: "object_field"
+            componentCls: "object_field object_field_type_" + this.type
         });
 
         return this.component;

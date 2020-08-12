@@ -17,8 +17,9 @@
 
 namespace Pimcore\Model\Metadata;
 
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
+use Pimcore\Logger;
 use Pimcore\Model;
-use Pimcore\Model\Element;
 
 /**
  * @method \Pimcore\Model\Metadata\Predefined\Dao getDao()
@@ -58,7 +59,7 @@ class Predefined extends Model\AbstractModel
     public $targetSubtype;
 
     /**
-     * @var string
+     * @var mixed
      */
     public $data;
 
@@ -108,7 +109,7 @@ class Predefined extends Model\AbstractModel
      * @param string $name
      * @param string $language
      *
-     * @return self
+     * @return self|null
      */
     public static function getByName($name, $language = '')
     {
@@ -324,45 +325,25 @@ class Predefined extends Model\AbstractModel
 
     public function minimize()
     {
-        switch ($this->type) {
-            case 'document':
-            case 'asset':
-            case 'object':
-                {
-                    $element = Element\Service::getElementByPath($this->type, $this->data);
-                    if ($element) {
-                        $this->data = $element->getId();
-                    } else {
-                        $this->data = '';
-                    }
-                }
-                break;
-            case 'date':
-            {
-                if ($this->data && !is_numeric($this->data)) {
-                    $this->data = strtotime($this->data);
-                }
-            }
-            default:
-                //nothing to do
+        try {
+            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            /** @var Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
+            $instance = $loader->build($this->type);
+            $this->data = $instance->marshal($this->data);
+        } catch (UnsupportedException $e) {
+            Logger::error('could not resolve asset metadata implementation for ' . $this->type);
         }
     }
 
     public function expand()
     {
-        switch ($this->type) {
-            case 'document':
-            case 'asset':
-            case 'object':
-                $element = null;
-                if (is_numeric($this->data)) {
-                    $element = Element\Service::getElementById($this->type, $this->data);
-                }
-                if ($element) {
-                    $this->data = $element->getRealFullPath();
-                } else {
-                    $this->data = '';
-                }
+        try {
+            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+            /** @var Model\Asset\MetaData\ClassDefinition\Data\Data $instance */
+            $instance = $loader->build($this->type);
+            $this->data = $instance->unmarshal($this->data);
+        } catch (UnsupportedException $e) {
+            Logger::error('could not resolve asset metadata implementation for ' . $this->type);
         }
     }
 }

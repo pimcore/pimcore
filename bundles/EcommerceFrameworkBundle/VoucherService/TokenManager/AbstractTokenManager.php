@@ -56,7 +56,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface
     /**
      * @param array $filter
      *
-     * @return mixed
+     * @return bool
      */
     abstract public function cleanUpCodes($filter = []);
 
@@ -89,7 +89,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface
         if (!$token) {
             throw new VoucherServiceException("No token found for code '" . $code . "'", VoucherServiceException::ERROR_CODE_NO_TOKEN_FOR_THIS_CODE_EXISTS);
         }
-        /** @var OnlineShopVoucherSeries $voucherSeries */
+        /** @var OnlineShopVoucherSeries $series */
         $series = OnlineShopVoucherSeries::getById($token->getVoucherSeriesId());
         if (!$series) {
             throw new VoucherServiceException("No voucher series found for token '" . $token->getToken() . "' (ID " . $token->getId() . ')', VoucherServiceException::ERROR_CODE_NO_TOKEN_FOR_THIS_CODE_EXISTS);
@@ -140,6 +140,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface
             }
 
             $cartToken = Token::getByCode($cartCodes[0]);
+            /** @var OnlineShopVoucherSeries $cartTokenSettings */
             $cartTokenSettings = OnlineShopVoucherSeries::getById($cartToken->getVoucherSeriesId())->getTokenSettings()->getItems()[0];
             if ($cartTokenSettings->getOnlyTokenPerCart()) {
                 throw new VoucherServiceException('OnlyTokenPerCart: There is a token of type onlyToken in your this cart already.', VoucherServiceException::ERROR_CODE_ONLY_TOKEN_PER_CART_ALREADY_ADDED);
@@ -182,7 +183,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface
                     $tokenInfo['token'],
                     (int) $tokenInfo['usages'],
                     (int) $tokenInfo['length'],
-                    $tokenInfo['timestamp']
+                    $tokenInfo['timestamp'],
                 ]);
             }
         }
@@ -215,7 +216,6 @@ abstract class AbstractTokenManager implements TokenManagerInterface
         }
 
         if (null !== $data && is_array($data)) {
-            /** @var Token $token */
             foreach ($data as $tokenInfo) {
                 $result[] = $tokenInfo['token'];
             }

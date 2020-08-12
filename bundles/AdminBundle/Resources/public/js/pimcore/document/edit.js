@@ -47,7 +47,7 @@ pimcore.document.edit = Class.create({
 
             var cleanupFunction = function () {
                 Ext.Ajax.request({
-                    url: "/admin/page/clear-editable-data",
+                    url: Routing.generate('pimcore_admin_document_page_cleareditabledata'),
                     method: "PUT",
                     params: {
                         targetGroup: this["targetGroup"] ? this.targetGroup.getValue() : "",
@@ -192,7 +192,7 @@ pimcore.document.edit = Class.create({
         this.targetGroupStore = Ext.create('Ext.data.JsonStore', {
             proxy: {
                 type: 'ajax',
-                url: "/admin/targeting/target-group/list?add-default=true"
+                url: Routing.generate('pimcore_admin_targeting_targetgrouplist', {'add-default': true})
             },
             fields: ["id", "text"],
             listeners: {
@@ -405,6 +405,34 @@ pimcore.document.edit = Class.create({
         }
 
         return values;
+    },
+
+    getEmptyRequiredEditables: function () {
+        var emptyRequiredEditables = [];
+
+        if (!this.frame || !this.frame.editablesReady) {
+            throw "edit not available";
+        }
+
+        try {
+            var requiredEditables = this.frame.requiredEditables;
+            var editableName = "";
+
+            for (var i = 0; i < requiredEditables.length; i++) {
+                try {
+                    if(requiredEditables[i].requiredError) {
+                        editableName = requiredEditables[i].getName();
+                        requiredEditables[i].checkValue(true);
+                        emptyRequiredEditables.push(editableName);
+                    }
+                } catch (e) {
+                }
+            }
+        }
+        catch (e2) {
+        }
+
+        return emptyRequiredEditables;
     }
 
 });

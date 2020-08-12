@@ -20,6 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Condition\VoucherToken;
+use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\PricingManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token as VoucherServiceToken;
 use Pimcore\Localization\LocaleServiceInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -61,12 +62,12 @@ class DefaultService implements VoucherServiceInterface
     {
         $resolver->setRequired([
             'reservation_minutes_threshold',
-            'statistics_days_threshold'
+            'statistics_days_threshold',
         ]);
 
         $resolver->setDefaults([
             'reservation_minutes_threshold' => 5,
-            'statistics_days_threshold' => 30
+            'statistics_days_threshold' => 30,
         ]);
 
         $resolver->setAllowedTypes('reservation_minutes_threshold', 'int');
@@ -193,7 +194,9 @@ class DefaultService implements VoucherServiceInterface
         }
 
         // get all valid rules configured in system
-        $validRules = Factory::getInstance()->getPricingManager()->getValidRules();
+        /** @var PricingManager $pricingManager */
+        $pricingManager = Factory::getInstance()->getPricingManager();
+        $validRules = $pricingManager->getValidRules();
         $validRulesAssoc = [];
         foreach ($validRules as $rule) {
             $validRulesAssoc[$rule->getId()] = $rule;

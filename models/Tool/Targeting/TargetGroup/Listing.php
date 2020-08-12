@@ -42,7 +42,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param TargetGroup[] $targetGroups
      *
-     * @return $this
+     * @return static
      */
     public function setTargetGroups(array $targetGroups)
     {

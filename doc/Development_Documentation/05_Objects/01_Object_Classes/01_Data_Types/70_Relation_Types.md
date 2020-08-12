@@ -38,7 +38,7 @@ $objects=$list->load();
  
 $relationId = 345;
 $list = new \Pimcore\Model\DataObject\Example\Listing();
-$list->setCondition("myManyToManyRelations like '%,".$relationId.",%'");
+$list->setCondition("myManyToManyRelations like '%,object|".$relationId.",%'");
 $objects=$list->load();
 ```
 
@@ -205,6 +205,9 @@ $object->setMetadata($references);
 
 
 ## Lazy Loading
+
+> Note that from 6.5.0 on relations are always lazy loaded. The configuration option has been removed.
+
 Whenever an object is loaded from database or cache, all these related objects are loaded with it. Especially with 
 Many-To-Many relations it is easy to produce a huge amount of relations, which makes the object or an object list slow 
 in loading. 

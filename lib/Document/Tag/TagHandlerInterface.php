@@ -18,6 +18,9 @@ use Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Tag\Area\Info;
 use Pimcore\Templating\Model\ViewModelInterface;
 
+/**
+ * @deprecated
+ */
 interface TagHandlerInterface
 {
     /**

@@ -720,6 +720,8 @@ abstract class Page extends Container
         if (isset($this->_customHtmlAttribs[$name])) {
             unset($this->_customHtmlAttribs[$name]);
         }
+
+        return $this;
     }
 
     /**
@@ -1223,7 +1225,7 @@ abstract class Page extends Container
                 'active' => $this->isActive(),
                 'visible' => $this->isVisible(),
                 'type' => get_class($this),
-                'pages' => parent::toArray()
+                'pages' => parent::toArray(),
             ]
         );
     }

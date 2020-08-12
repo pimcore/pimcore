@@ -49,7 +49,7 @@ class Version extends \Doctrine\DBAL\Migrations\Version
     /**
      * The version in timestamp format (YYYYMMDDHHMMSS)
      *
-     * @var int
+     * @var string
      */
     private $version;
 
@@ -165,7 +165,7 @@ class Version extends \Doctrine\DBAL\Migrations\Version
 
         $data = [
             $setColumn => $this->configuration->getMigrationSet(),
-            $versionColumn => $this->getVersion()
+            $versionColumn => $this->getVersion(),
         ];
 
         $dataTypes = [

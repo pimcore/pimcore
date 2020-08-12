@@ -15,6 +15,7 @@
 namespace Pimcore;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use FOS\JsRoutingBundle\FOSJsRoutingBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
 use Pimcore\Bundle\GeneratorBundle\PimcoreGeneratorBundle;
@@ -120,7 +121,7 @@ abstract class Kernel extends SymfonyKernel
     {
         $filenames = [
             'extensions.php',
-            sprintf('extensions_%s.php', $this->getEnvironment())
+            sprintf('extensions_%s.php', $this->getEnvironment()),
         ];
 
         $directories = [
@@ -267,20 +268,21 @@ abstract class Kernel extends SymfonyKernel
             new SensioFrameworkExtraBundle(),
             new CmfRoutingBundle(),
             new PrestaSitemapBundle(),
-            new SchebTwoFactorBundle()
+            new SchebTwoFactorBundle(),
+            new FOSJsRoutingBundle(),
         ], 100);
 
         // pimcore bundles
         $collection->addBundles([
             new PimcoreCoreBundle(),
-            new PimcoreAdminBundle()
+            new PimcoreAdminBundle(),
         ], 60);
 
         // load development bundles only in matching environments
         if (in_array($this->getEnvironment(), $this->getEnvironmentsForDevBundles(), true)) {
             $collection->addBundles([
                 new DebugBundle(),
-                new WebProfilerBundle()
+                new WebProfilerBundle(),
             ], 80);
 
             // PimcoreGeneratorBundle depends on SensioGeneratorBundle

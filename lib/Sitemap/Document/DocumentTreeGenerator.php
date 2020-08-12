@@ -143,6 +143,9 @@ class DocumentTreeGenerator extends AbstractElementGenerator
     {
         if ($document instanceof Document\Hardlink) {
             $document = Document\Hardlink\Service::wrap($document);
+            if (empty($document)) {
+                return;
+            }
         }
 
         if ($this->canBeAdded($document, $context)) {
@@ -154,7 +157,7 @@ class DocumentTreeGenerator extends AbstractElementGenerator
             }
         }
 
-        if ($this->handlesChildren($document, $context)) {
+        if ($document->hasChildren() && $this->handlesChildren($document, $context)) {
             foreach ($document->getChildren() as $child) {
                 yield from $this->visit($child, $context);
             }

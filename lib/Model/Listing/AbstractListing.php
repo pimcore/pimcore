@@ -27,14 +27,14 @@ use Pimcore\Model\AbstractModel;
 abstract class AbstractListing extends AbstractModel implements \Iterator
 {
     /**
-     * @var string|array
+     * @var array
      */
-    protected $order;
+    protected $order = [];
 
     /**
      * @var array
      */
-    protected $orderKey;
+    protected $orderKey = [];
 
     /**
      * @var int
@@ -71,7 +71,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
      */
     protected $validOrders = [
         'ASC',
-        'DESC'
+        'DESC',
     ];
 
     /**
@@ -136,7 +136,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @return array|string
+     * @return array
      */
     public function getOrder()
     {
@@ -186,17 +186,18 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
 
         $this->order = [];
 
-        if (is_string($order) && !empty($order)) {
-            $order = strtoupper($order);
-            if (in_array($order, $this->validOrders)) {
-                $this->order[] = $order;
-            }
-        } elseif (is_array($order) && !empty($order)) {
-            $this->order = [];
-            foreach ($order as $o) {
-                $o = strtoupper($o);
-                if (in_array($o, $this->validOrders)) {
-                    $this->order[] = $o;
+        if (!empty($order)) {
+            if (is_string($order)) {
+                $order = strtoupper($order);
+                if (in_array($order, $this->validOrders)) {
+                    $this->order[] = $order;
+                }
+            } elseif (is_array($order)) {
+                foreach ($order as $o) {
+                    $o = strtoupper($o);
+                    if (in_array($o, $this->validOrders)) {
+                        $this->order[] = $o;
+                    }
                 }
             }
         }
@@ -427,14 +428,24 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
+     * @param string $value
+     *
+     * @return string
+     */
+    public function escapeLike(string $value): string
+    {
+        $db = Db::get();
+
+        return $db->escapeLike($value);
+    }
+
+    /**
      * @param array $conditionVariables
      *
      * @return $this
      */
     public function setConditionVariables($conditionVariables)
     {
-        $this->setData(null);
-
         $this->conditionVariables = $conditionVariables;
 
         return $this;
@@ -469,6 +480,14 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     public function getConditionVariablesFromSetCondition()
     {
         return $this->conditionVariablesFromSetCondition;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLoaded()
+    {
+        return $this->data !== null;
     }
 
     /**

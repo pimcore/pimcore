@@ -43,11 +43,11 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
     }
 
     /**
+     * @Route("/export", name="pimcore_admin_gdpr_sentmail_exportdataobject", methods={"GET"})
+     *
      * @param Request $request
      *
      * @return JsonResponse
-     *
-     * @Route("/export", methods={"GET"})
      */
     public function exportDataObjectAction(Request $request)
     {
@@ -61,7 +61,7 @@ class SentMailController extends \Pimcore\Bundle\AdminBundle\Controller\AdminCon
 
         $json = $this->encodeJson($sentMailArray, [], JsonResponse::DEFAULT_ENCODING_OPTIONS | JSON_PRETTY_PRINT);
         $jsonResponse = new JsonResponse($json, 200, [
-            'Content-Disposition' => 'attachment; filename="export-mail-' . $sentMail->getId() . '.json"'
+            'Content-Disposition' => 'attachment; filename="export-mail-' . $sentMail->getId() . '.json"',
         ], true);
 
         return $jsonResponse;

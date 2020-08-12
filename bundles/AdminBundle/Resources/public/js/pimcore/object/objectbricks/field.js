@@ -23,8 +23,8 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         "objectbricks",
         "objectsMetadata"
     ],
-    uploadUrl: '/admin/class/import-objectbrick',
-    exportUrl: "/admin/class/export-objectbrick",
+    uploadRoute: 'pimcore_admin_dataobject_class_importobjectbrick',
+    exportRoute: "pimcore_admin_dataobject_class_exportobjectbrick",
     context: "objectbrick",
     baseStore: {},
     classStores: {},
@@ -41,7 +41,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
         this.groupField = new Ext.form.field.Text(
             {
-                width: 400,
+                width: 600,
                 name: "group",
                 fieldLabel: t("group"),
                 value: this.data.group
@@ -53,19 +53,34 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             defaults: {
                 labelWidth: 200
             },
-            items: [{
-                xtype: "textfield",
-                width: 400,
-                name: "parentClass",
-                fieldLabel: t("parent_php_class"),
-                value: this.data.parentClass
-            }, {
-                xtype: "textfield",
-                width: 400,
-                name: "title",
-                fieldLabel: t("title"),
-                value: this.data.title
-            },
+            items: [
+                {
+                    xtype: "textfield",
+                    width: 600,
+                    name: "parentClass",
+                    fieldLabel: t("parent_php_class"),
+                    value: this.data.parentClass
+                },
+                {
+                    xtype: "textfield",
+                    width: 600,
+                    name: "implementsInterfaces",
+                    fieldLabel: t("implements_interfaces"),
+                    value: this.data.implementsInterfaces
+                },
+                {
+                    xtype: "textfield",
+                    width: 600,
+                    name: "title",
+                    fieldLabel: t("title"),
+                    value: this.data.title
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("generate_type_declarations"),
+                    name: "generateTypeDeclarations",
+                    checked: this.data.generateTypeDeclarations
+                },
                 this.groupField,
                 this.getClassDefinitionPanel()
             ]
@@ -125,7 +140,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
             if (rec) {
                 classMenu.push({
-                    text: ts(rec.data.translatedText),
+                    text: t(rec.data.translatedText),
                     handler: this.addClassDefinition.bind(this, null, rec.data.text),
                     iconCls: "pimcore_icon_class"
                 });
@@ -137,7 +152,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         if (classMenu.length === 1) {
             items.push({
                 cls: "pimcore_block_button_plus",
-                text: ts(classMenu[0].text),
+                text: t(classMenu[0].text),
                 iconCls: "pimcore_icon_plus",
                 handler: classMenu[0].handler
             });
@@ -171,7 +186,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
     },
 
     removeFromOthers: function (name, store) {
-        delete(this.baseStore[name]);
+        delete (this.baseStore[name]);
     },
 
     getClassDefinitionElements: function (currentData) {
@@ -182,7 +197,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
         var fieldComboStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
-                url: '/admin/object-helper/grid-get-column-config',
+                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
                 extraParams: {
                     types: 'objectbricks',
                     gridtype: "all",
@@ -314,7 +329,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
 
         if (this.getDataSuccess) {
             Ext.Ajax.request({
-                url: "/admin/class/objectbrick-update",
+                url: Routing.generate('pimcore_admin_dataobject_class_objectbrickupdate'),
                 method: "PUT",
                 params: {
                     configuration: m,
@@ -336,7 +351,11 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             }
             pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
         } else {
-            pimcore.helpers.showNotification(t("saving_failed"), rdata.message, "error");
+            if (rdata && rdata.message) {
+                pimcore.helpers.showNotification(t("error"), rdata.message, "error");
+            } else {
+                throw "save was not successful, see log files in /var/logs";
+            }
         }
 
     },
@@ -344,7 +363,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
     upload: function () {
         pimcore.helpers.uploadDialog(this.getUploadUrl(), "Filedata", function () {
             Ext.Ajax.request({
-                url: "/admin/class/objectbrick-get",
+                url: Routing.generate('pimcore_admin_dataobject_class_objectbrickget'),
                 params: {
                     id: this.getId()
                 },

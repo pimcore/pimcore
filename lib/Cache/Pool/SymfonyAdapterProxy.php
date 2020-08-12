@@ -72,7 +72,7 @@ class SymfonyAdapterProxy extends AbstractCacheItemPool
 
                 yield $item->getKey() => [
                     'value' => $data,
-                    'tags' => []
+                    'tags' => [],
                 ];
             }
         }
@@ -149,7 +149,7 @@ class SymfonyAdapterProxy extends AbstractCacheItemPool
         if (!empty($this->deferred) || !empty($symfonyItems)) {
             $this->logger->error('Not all deferred cache items were processed', [
                 'deferred' => array_keys($this->deferred),
-                'symfony' => array_keys($symfonyItems)
+                'symfony' => array_keys($symfonyItems),
             ]);
 
             return false;
@@ -165,15 +165,20 @@ class SymfonyAdapterProxy extends AbstractCacheItemPool
     protected function transformItem(PimcoreCacheItemInterface $cacheItem, CacheItem $symfonyItem)
     {
         if (null === $this->transformItemClosure) {
-            $closure = function (CacheItem $symfonyItem, $data, array $tags, $expiry) {
-                $symfonyItem->value = $data;
-                $symfonyItem->expiry = $expiry;
-                $symfonyItem->tags = [];
+            $this->transformItemClosure = \Closure::bind(
+                function (CacheItem $symfonyItem, $data, array $tags, $expiry) {
+                    $symfonyItem->value = $data;
+                    $symfonyItem->expiry = $expiry;
 
-                $symfonyItem->tag($tags);
-            };
+                    if (property_exists($symfonyItem, 'tags')) {
+                        $symfonyItem->tags = [];
+                    }
 
-            $this->transformItemClosure = \Closure::bind($closure, null, CacheItem::class);
+                    $symfonyItem->tag($tags);
+                },
+                null,
+                CacheItem::class
+            );
         }
 
         $tags = $cacheItem->getTags();

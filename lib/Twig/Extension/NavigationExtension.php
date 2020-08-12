@@ -44,7 +44,7 @@ class NavigationExtension extends AbstractExtension
         return [
             new TwigFunction('pimcore_build_nav', [$this, 'buildNavigation']),
             new TwigFunction('pimcore_render_nav', [$this, 'render'], [
-                'is_safe' => ['html']
+                'is_safe' => ['html'],
             ]),
             new TwigFunction('pimcore_nav_renderer', [$this, 'getRenderer']),
         ];
@@ -57,26 +57,34 @@ class NavigationExtension extends AbstractExtension
      * with a callback, build the navigation externally, pass it to the
      * view and just call render through the extension.
      *
-     * @param Document $activeDocument
+     * @param mixed $params config array or active document (legacy mode)
      * @param Document|null $navigationRootDocument
      * @param string|null $htmlMenuPrefix
      * @param bool|string $cache
      *
      * @return Container
+     *
+     * @throws \Exception
      */
     public function buildNavigation(
-        Document $activeDocument,
+        $params = null,
         Document $navigationRootDocument = null,
         string $htmlMenuPrefix = null,
         $cache = true
     ): Container {
-        return $this->navigationHelper->buildNavigation(
-            $activeDocument,
-            $navigationRootDocument,
-            $htmlMenuPrefix,
-            null,
-            $cache
-        );
+        if (is_array($params)) {
+            // using param configuration
+            return $this->navigationHelper->build($params);
+        } else {
+            // using deprecated argument configuration ($params = navigation root document)
+            return $this->navigationHelper->buildNavigation(
+                $params,
+                $navigationRootDocument,
+                $htmlMenuPrefix,
+                null,
+                $cache
+            );
+        }
     }
 
     /**

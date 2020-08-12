@@ -20,7 +20,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Select extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Select extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -38,7 +38,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * Available options to select
      *
-     * @var array
+     * @var array|null
      */
     public $options;
 
@@ -48,7 +48,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     public $width;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $defaultValue;
 
@@ -120,7 +120,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     /**
      * Correct old column definitions (e.g varchar(255)) to the new format
      *
-     * @param $type
+     * @param string $type
      */
     protected function correctColumnDefinition($type)
     {
@@ -182,7 +182,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param $width
+     * @param string|int|null $width
      *
      * @return $this
      */
@@ -197,7 +197,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -213,7 +213,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @see ResourcePersistenceAwareInterface::getDataFromResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -227,21 +227,21 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @see QueryResourcePersistenceAwareInterface::getDataForQueryResource
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
      */
     public function getDataForQueryResource($data, $object = null, $params = [])
     {
-        return $data;
+        return $this->getDataForResource($data, $object, $params);
     }
 
     /**
      * @see Data::getDataForEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -255,7 +255,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @see Data::getDataFromEditmode
      *
      * @param string $data
-     * @param null|Model\DataObject\AbstractObject $object
+     * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
      * @return string
@@ -292,7 +292,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
 
     /** See parent class.
      * @param mixed $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return array|null
@@ -340,7 +340,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param $data
+     * @param string|null $data
      *
      * @return bool
      */
@@ -362,7 +362,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getDefaultValue()
     {
@@ -370,7 +370,7 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param string $defaultValue
+     * @param string|null $defaultValue
      */
     public function setDefaultValue($defaultValue)
     {
@@ -467,11 +467,11 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     }
 
     /**
-     * @param $data
-     * @param null $object
+     * @param string|null $data
+     * @param DataObject\Concrete|null $object
      * @param array $params
      *
-     * @return array
+     * @return array|string
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
@@ -498,9 +498,9 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
             }
 
             return $result;
-        } else {
-            return $data;
         }
+
+        return $data;
     }
 
     /**
@@ -510,15 +510,17 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @param string $operator
      * @param array $params optional params used to change the behavior
      *
-     * @return string
+     * @return string|null
      */
     public function getFilterConditionExt($value, $operator, $params = [])
     {
-        if ($operator === '=') {
-            $value = is_array($value) ? current($value) : $value;
-            $name = $params['name'] ?: $this->name;
+        $value = is_array($value) ? current($value) : $value;
+        $name = $params['name'] ?: $this->name;
 
-            return '`'.$name.'` LIKE '."'$value'".' ';
+        if ($operator === '=') {
+            return '`'.$name.'` = '."'$value'".' ';
+        } elseif ($operator === 'LIKE') {
+            return '`'.$name.'` LIKE '."'%$value%'".' ';
         }
 
         return null;
@@ -554,8 +556,8 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
             }
 
             return $optionsProvider->getDefaultValue($context, $this);
-        } else {
-            return $this->getDefaultValue() ?? null;
         }
+
+        return $this->getDefaultValue();
     }
 }

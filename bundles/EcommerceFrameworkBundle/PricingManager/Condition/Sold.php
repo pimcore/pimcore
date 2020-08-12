@@ -73,7 +73,7 @@ class Sold extends AbstractOrder implements ConditionInterface
     {
         // basic
         $json = [
-            'type' => 'Sold', 'count' => $this->getCount(), 'countCart' => $this->isCountCart()
+            'type' => 'Sold', 'count' => $this->getCount(), 'countCart' => $this->isCountCart(),
         ];
 
         return json_encode($json);
@@ -136,6 +136,7 @@ class Sold extends AbstractOrder implements ConditionInterface
     protected function getCart()
     {
         // use this in your own implementation
+        return null;
     }
 
     /**

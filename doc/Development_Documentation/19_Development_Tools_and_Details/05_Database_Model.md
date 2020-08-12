@@ -50,6 +50,7 @@ These tables are created during Pimcore install and are always the same.
 | notes | [Notes](../18_Tools_and_Features/05_Notes_and_Events.md) for elements | 
 | notes_data | Additional data for notes | 
 | objects | List of all objects with metadata like id, class name, path, parent, ...|
+| object_url_slugs | [URL Slug](../05_Objects/01_Object_Classes/01_Data_Types/65_Others.md) data|
 | properties | Data from the `properties` tab |
 | qr_codes | Edit QR Code configurations | 
 | quantityvalue_units | Available quantities for quantity value object data type |
@@ -73,7 +74,6 @@ These tables are created during Pimcore install and are always the same.
 | users_workspaces_object | Stores user access permissions for object folders |
 | uuids | stores Unique Identifiers - if enabled |
 | versions | List of object/asset/document versions. Actual data is serialized and written to disk |
-| website_settings | Stores `Website Settings` |
 
 # Object Tables 
 These tables are created and modified dynamically during the configuration of the object data model. 
@@ -93,6 +93,9 @@ added to the database. The tables have a numerical suffix, denoting the number
 | object_relations_(id) Table | Contains data of fields with relations to objects, assets, etc. |
 | object_store_(id) Table | This is the main data storage table of an object class. It contains all "flat" data without any relations or external dependencies. |
 | objects Table | Contains an entry for each and every object in the system. The id field is an auto_increment and the source of the primary key for an object. Metadata about an object is stored in this table, too. |
+
+> When restore of query tables is necessary (for what ever reason) calling `DataObject\Concrete::disableDirtyDetection();` and 
+> saving all data objects of class will do the trick. When not disabling dirty detection, there might be data missing in query table. 
 
 
 #### Simple Data Field Types

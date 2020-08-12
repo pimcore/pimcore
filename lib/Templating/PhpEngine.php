@@ -200,7 +200,7 @@ class PhpEngine extends BasePhpEngine
     /**
      * Get the current view model
      *
-     * @return ViewModelInterface
+     * @return ViewModelInterface|null
      */
     public function getViewModel()
     {
@@ -208,6 +208,8 @@ class PhpEngine extends BasePhpEngine
         if ($count > 0) {
             return $this->viewModels[$count - 1];
         }
+
+        return null;
     }
 
     /**

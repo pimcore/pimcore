@@ -50,14 +50,14 @@ class IndexFieldSelectionCombo extends Select
                 foreach ($indexColumns as $c) {
                     $options[] = [
                         'key' => $c,
-                        'value' => $c
+                        'value' => $c,
                     ];
                 }
 
                 if ($this->getSpecificPriceField()) {
                     $options[] = [
                         'key' => ProductListInterface::ORDERKEY_PRICE,
-                        'value' => ProductListInterface::ORDERKEY_PRICE
+                        'value' => ProductListInterface::ORDERKEY_PRICE,
                     ];
                 }
             } catch (\Exception $e) {

@@ -32,6 +32,8 @@ use Pimcore\Tool\HtmlUtils;
 
 /**
  * @method \Pimcore\Model\Document\Tag\Dao getDao()
+ * @method void save()
+ * @method void delete()
  */
 abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\TagInterface
 {
@@ -72,7 +74,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     /**
      * Element belongs to the document
      *
-     * @var Document\PageSnippet
+     * @var Document\PageSnippet|null
      */
     protected $document;
 
@@ -84,7 +86,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $controller;
 
     /**
-     * @var ViewModelInterface
+     * @var ViewModelInterface|null
      */
     protected $view;
 
@@ -109,7 +111,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param ViewModel|null $view
      * @param bool|null $editmode
      *
-     * @return mixed
+     * @return Tag
      */
     public static function factory($type, $name, $documentId, $config = null, $controller = null, $view = null, $editmode = null)
     {
@@ -132,7 +134,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     }
 
     /**
-     * @return string
+     * @return string|void
      */
     public function admin()
     {
@@ -163,7 +165,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             'options' => $this->getOptions(),
             'data' => $this->getEditmodeData(),
             'type' => $this->getType(),
-            'inherited' => $this->getInherited()
+            'inherited' => $this->getInherited(),
         ];
 
         return $options;
@@ -219,7 +221,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             'data-real-name' => $this->getRealName(),
             'data-type' => $this->getType(),
             'data-block-names' => implode(', ', $blockNames),
-            'data-block-indexes' => implode(', ', $blockState->getIndexes())
+            'data-block-indexes' => implode(', ', $blockState->getIndexes()),
         ];
 
         return $attributes;
@@ -234,7 +236,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     {
         $classes = [
             'pimcore_editable',
-            'pimcore_tag_' . $this->getType()
+            'pimcore_tag_' . $this->getType(),
         ];
 
         $editableOptions = $this->getOptions();
@@ -244,8 +246,6 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             } else {
                 $classes[] = (string)$editableOptions['class'];
             }
-
-            $classes[] = (string)$editableOptions['class'];
         }
 
         return $classes;
@@ -269,7 +269,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param array $options
      * @param bool $return
      *
-     * @return string
+     * @return string|void
      */
     protected function outputEditmodeOptions(array $options, $return = false)
     {
@@ -302,6 +302,8 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         }
 
         $this->outputEditmode($code);
+
+        return;
     }
 
     /**
@@ -496,6 +498,13 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         return $finalVars;
     }
 
+    public function __clone()
+    {
+        parent::__clone();
+        $this->view = null;
+        $this->document = null;
+    }
+
     /**
      * direct output to the frontend
      *
@@ -530,7 +539,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
             }
 
             Logger::error('toString() returned an exception: {exception}', [
-                'exception' => $e
+                'exception' => $e,
             ]);
 
             return '';
@@ -604,12 +613,9 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param Model\Document\PageSnippet $document
      * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return Webservice\Data\Document\Element
      */
     public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
     {
-        return $wsElement;
     }
 
     /**
@@ -621,7 +627,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
      * @param array $params
      * @abstract
      *
-     * @return \stdClass
+     * @return mixed
      */
     public function getForWebserviceExport($document = null, $params = [])
     {
@@ -718,16 +724,16 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         // if element not nested inside a hierarchical element (e.g. block), add the
         // targeting prefix if configured on the document. hasBlocks() determines if
         // there are any parent blocks for the current element
-        $targetGroupElementName = null;
+        $targetGroupEditableName = null;
         if ($document && $document instanceof TargetingDocumentInterface) {
-            $targetGroupElementName = $document->getTargetGroupElementName($name);
+            $targetGroupEditableName = $document->getTargetGroupEditableName($name);
 
             if (!$blockState->hasBlocks()) {
-                $name = $targetGroupElementName;
+                $name = $targetGroupEditableName;
             }
         }
 
-        $tagName = $namingStrategy->buildTagName($name, $type, $blockState, $targetGroupElementName);
+        $tagName = $namingStrategy->buildTagName($name, $type, $blockState, $targetGroupEditableName);
 
         $event = new TagNameEvent($type, $name, $blockState, $tagName, $document);
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::TAG_NAME, $event);
@@ -754,7 +760,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
         // targeting prefix if configured on the document. hasBlocks() determines if
         // there are any parent blocks for the current element
         if ($document instanceof TargetingDocumentInterface && !$blockState->hasBlocks()) {
-            $name = $document->getTargetGroupElementName($name);
+            $name = $document->getTargetGroupEditableName($name);
         }
 
         return $name;

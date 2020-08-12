@@ -41,7 +41,7 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
     /**
      * @inheritdoc
      */
-    public function extractElement(string $importId, int $stepId): AttributeSet
+    public function extractElement(string $importId, int $stepId): ?AttributeSet
     {
         $xliff = $this->loadFile($importId);
 
@@ -63,7 +63,7 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
         $translationItem = $this->translationItemResolver->resolve($type, $id);
 
         if (empty($translationItem)) {
-            throw new \Exception('Could not resolve element ' . $file['original']);
+            return null;
         }
 
         $attributeSet = new AttributeSet($translationItem);
@@ -74,6 +74,11 @@ class Xliff12DataExtractor implements ImportDataExtractorInterface
 
         foreach ($file->body->{'trans-unit'} as $transUnit) {
             list($type, $name) = explode(Xliff12Exporter::DELIMITER, $transUnit['id']);
+
+            if (!isset($transUnit->target)) {
+                continue;
+            }
+
             $content = $transUnit->target->asXml();
             $content = $this->xliffEscaper->unescapeXliff($content);
 

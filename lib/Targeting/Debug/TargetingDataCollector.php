@@ -52,7 +52,7 @@ class TargetingDataCollector
      */
     private $filteredVisitorInfoDataObjecKeys = [
         TargetingStorage::PROVIDER_KEY,
-        VisitedPagesCounter::PROVIDER_KEY
+        VisitedPagesCounter::PROVIDER_KEY,
     ];
 
     public function __construct(
@@ -108,7 +108,7 @@ class TargetingDataCollector
 
             $storage[$scope] = array_merge([
                 'created' => $created ? $created->format('c') : null,
-                'updated' => $updated ? $updated->format('c') : null
+                'updated' => $updated ? $updated->format('c') : null,
             ], $this->targetingStorage->all($visitorInfo, $scope));
         }
 
@@ -178,9 +178,11 @@ class TargetingDataCollector
         if ($targetGroup) {
             return [
                 'id' => $targetGroup->getId(),
-                'name' => $targetGroup->getName()
+                'name' => $targetGroup->getName(),
             ];
         }
+
+        return null;
     }
 
     public function collectDocumentTargetGroupMapping(): array

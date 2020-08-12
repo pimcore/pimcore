@@ -40,7 +40,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
     loadFieldDefinitions: function () {
 
         Ext.Ajax.request({
-            url: "/admin/class/objectbrick-tree",
+            url: Routing.generate('pimcore_admin_dataobject_class_objectbricktree'),
             params: {
                 class_id: this.object.data.general.o_classId,
                 object_id: this.object.id,
@@ -68,7 +68,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
             autoHeight: true,
             border: this.fieldConfig.border,
             style: "margin-bottom: 10px",
-            componentCls: "object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             items: [this.tabpanel]
         };
 
@@ -110,7 +110,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 }
 
                 var menuItem = {
-                    text: elementData.title ? ts(elementData.title) : ts(elementData.text),
+                    text: elementData.title ? t(elementData.title) : t(elementData.text),
                     iconCls: elementData.iconCls
                 };
                 if (elementData.group) {
@@ -168,7 +168,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
 
             items.push({
                 xtype: "tbtext",
-                text: ts(this.fieldConfig.title)
+                text: t(this.fieldConfig.title)
             });
 
             var toolbar = new Ext.Toolbar({
@@ -270,7 +270,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 closable: !this.fieldConfig.noteditable,
                 autoHeight: true,
                 border: false,
-                title: title ? ts(title) : ts(type),
+                title: title ? t(title) : t(type),
                 // items: items
                 items: [],
                 listeners: {

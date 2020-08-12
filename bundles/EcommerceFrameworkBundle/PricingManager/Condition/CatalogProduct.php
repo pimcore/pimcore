@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\ConditionInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\EnvironmentInterface;
+use Pimcore\Model\DataObject\Concrete;
 
 class CatalogProduct extends AbstractObjectListCondition implements CatalogProductInterface
 {
@@ -61,6 +62,7 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
             foreach ($this->getProducts() as $product) {
                 /* @var AbstractProduct $product */
 
+                /** @var Concrete $currentProductCheck */
                 $currentProductCheck = $currentProduct;
                 while ($currentProductCheck instanceof CheckoutableInterface) {
                     if ($currentProductCheck->getId() === $product->getId()) {
@@ -82,7 +84,7 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
         // basic
         $json = [
             'type' => 'CatalogProduct',
-            'products' => []
+            'products' => [],
         ];
 
         // add categories
@@ -90,7 +92,7 @@ class CatalogProduct extends AbstractObjectListCondition implements CatalogProdu
             /* @var AbstractProduct $product */
             $json['products'][] = [
                 $product->getId(),
-                $product->getFullPath()
+                $product->getFullPath(),
             ];
         }
 

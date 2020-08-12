@@ -18,7 +18,9 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
     gridType: 'object',
 
     fieldObject: {},
-    initialize: function (object) {
+    initialize: function ($super, object) {
+        $super();
+
         this.element = object;
         this.searchType = "folder";
         this.noBatchColumns = [];
@@ -53,7 +55,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
     getTableDescription: function () {
         Ext.Ajax.request({
-            url: "/admin/object-helper/grid-get-column-config",
+            url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
             params: {
                 id: this.classId,
                 objectId:
@@ -88,14 +90,26 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             this.fieldObject[fields[i].key] = fields[i];
         }
 
+        var baseParams;
+
+        var existingFilters;
+        if (this.store) {
+            existingFilters = this.store.getFilters();
+            baseParams = this.store.getProxy().getExtraParams();
+        } else {
+            baseParams = {};
+        }
+
+        Ext.apply(baseParams, {
+            language: this.gridLanguage,
+            objectId: this.element.id
+        });
+
         var gridHelper = new pimcore.object.helpers.grid(
             this.selectedClass,
             fields,
-            "/admin/variants/get-variants",
-            {
-                language: this.gridLanguage,
-                objectId: this.element.id
-            },
+            Routing.generate('pimcore_admin_dataobject_variants_getvariants'),
+            baseParams,
             false
         );
 
@@ -108,6 +122,10 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
         this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns, this.batchRemoveColumns);
         this.store.setPageSize(itemsPerPage);
+
+        if (existingFilters && fromConfig) {
+            this.store.setFilters(existingFilters.items);
+        }
 
         var gridColumns = gridHelper.getGridColumns();
 
@@ -150,34 +168,6 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
 
-        this.languageInfo = new Ext.Toolbar.TextItem({
-            text: t("grid_current_language") + ": " + pimcore.available_languages[this.gridLanguage]
-        });
-
-        this.toolbarFilterInfo =  new Ext.Button({
-            iconCls: "pimcore_icon_filter_condition",
-            hidden: true,
-            text: '<b>' + t("filter_active") + '</b>',
-            tooltip: t("filter_condition"),
-            handler: function (button) {
-                Ext.MessageBox.alert(t("filter_condition"), button.pimcore_filter_condition);
-            }.bind(this)
-        });
-
-        this.clearFilterButton =  new Ext.Button({
-            iconCls: "pimcore_icon_clear_filters",
-            hidden: true,
-            text: t("clear_filters"),
-            tooltip: t("clear_filters"),
-            handler: function (button) {
-                this.grid.filters.clearFilters();
-                this.toolbarFilterInfo.hide();
-                this.clearFilterButton.hide();
-            }.bind(this)
-        });
-
-
-        this.createSqlEditor();
 
         this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
@@ -185,28 +175,15 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
 
         var plugins = [this.cellEditing, 'gridfilters'];
 
-        var hideSaveColumnConfig = !fromConfig;
-
-        this.saveColumnConfigButton = new Ext.Button({
-            tooltip: t('save_grid_options'),
-            iconCls: "pimcore_icon_publish",
-            hidden: hideSaveColumnConfig,
-            handler: function () {
-                var asCopy = !(this.settings.gridConfigId > 0);
-                this.saveConfig(asCopy)
-            }.bind(this)
+        let tbar = this.getToolbar(fromConfig, save);
+        tbar.insert(0,{
+            text: t('add_variant'),
+            handler: this.onAdd.bind(this),
+            iconCls: "pimcore_icon_add"
         });
 
-        this.columnConfigButton = new Ext.SplitButton({
-            text: t('grid_options'),
-            iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
-            handler: function () {
-                this.openColumnConfig();
-            }.bind(this),
-            menu: []
-        });
+        tbar.insert(1, '-');
 
-        this.buildColumnConfigMenu();
 
         this.grid = Ext.create('Ext.grid.Panel', {
             frame: false,
@@ -226,26 +203,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             },
             selModel: gridHelper.getSelectionColumn(),
             bbar: this.pagingtoolbar,
-            tbar: [
-                {
-                    text: t('add'),
-                    handler: this.onAdd.bind(this),
-                    iconCls: "pimcore_icon_add"
-                },
-                '-', this.languageInfo, '-', this.toolbarFilterInfo, this.clearFilterButton, '->'
-                ,"-",this.sqlEditor
-                ,this.sqlButton,"-",{
-                    text: t("export_csv"),
-                    iconCls: "pimcore_icon_export",
-                    handler: function(){
-                        pimcore.helpers.csvExportWarning(function(settings) {
-                            this.exportPrepare(settings);
-                        }.bind(this));
-                    }.bind(this)
-                }, "-",
-                this.columnConfigButton,
-                this.saveColumnConfigButton
-            ],
+            tbar: tbar,
             listeners: {
                 rowdblclick: function (grid, record, tr, rowIndex, e, eOpts) {
 
@@ -314,7 +272,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
     editKey: function (id, button, value) {
         if (button == "ok") {
             Ext.Ajax.request({
-                url: "/admin/variants/update-key",
+                url: Routing.generate('pimcore_admin_dataobject_variants_updatekey'),
                 method: 'PUT',
                 params: {id: id, key: value},
                 success: function (response) {
@@ -337,7 +295,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
     doAdd: function (button, value) {
         if (button == "ok") {
             Ext.Ajax.request({
-                url: "/admin/object/add",
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_add'),
                 method: 'POST',
                 params: {
                     className: this.element.data.general.o_className,
@@ -371,7 +329,7 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             }
 
             Ext.Ajax.request({
-                url: "/admin/object/delete",
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_delete'),
                 method: 'DELETE',
                 params: {
                     id: id

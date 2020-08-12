@@ -27,8 +27,10 @@ class TranslateValue extends AbstractOperator
      */
     private $translator;
 
+    /** @var string */
     private $prefix;
 
+    /** @var string|null */
     private $locale;
 
     public function __construct(TranslatorInterface $translator, \stdClass $config, $context = null)
@@ -36,7 +38,7 @@ class TranslateValue extends AbstractOperator
         parent::__construct($config, $context);
 
         $this->translator = $translator;
-        $this->prefix = $config->prefix;
+        $this->prefix = $config->prefix ?? '';
         if (null != $context && isset($context['language'])) {
             $this->locale = $context['language'];
         }
@@ -45,7 +47,7 @@ class TranslateValue extends AbstractOperator
     public function getLabeledValue($element)
     {
         $childs = $this->getChilds();
-        if ($childs[0]) {
+        if (isset($childs[0])) {
             $value = $childs[0]->getLabeledValue($element);
             if (strval($value->value) != '') {
                 $currentLocale = $this->translator->getLocale();
@@ -65,7 +67,7 @@ class TranslateValue extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getPrefix()
     {
@@ -73,7 +75,7 @@ class TranslateValue extends AbstractOperator
     }
 
     /**
-     * @param mixed $prefix
+     * @param string $prefix
      */
     public function setPrefix($prefix)
     {

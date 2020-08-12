@@ -84,7 +84,7 @@ abstract class AbstractRenderer implements RendererInterface
     protected $_skipPrefixForId = false;
 
     /**
-     * Wheter invisible items should be rendered by this helper
+     * Whether invisible items should be rendered by this helper
      *
      * @var bool
      */
@@ -323,7 +323,7 @@ abstract class AbstractRenderer implements RendererInterface
                 'title' => $title,
                 'class' => $page->getClass(),
                 'href' => $page->getHref(),
-                'target' => $page->getTarget()
+                'target' => $page->getTarget(),
             ],
             $page->getCustomHtmlAttribs()
         );

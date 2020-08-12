@@ -17,8 +17,10 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
     allowedInType: 'fieldcollection',
     disallowedDataTypes: ["reverseManyToManyObjectRelation", "user", "fieldcollections", "localizedfields", "objectbricks",
         "objectsMetadata"],
-    uploadUrl: '/admin/class/import-fieldcollection',
-    exportUrl: "/admin/class/export-fieldcollection",
+
+    uploadRoute: 'pimcore_admin_dataobject_class_importfieldcollection',
+    exportRoute: 'pimcore_admin_dataobject_class_exportfieldcollection',
+
     context: "fieldcollection",
 
     getId: function () {
@@ -29,7 +31,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
 
         this.usagesStore = new Ext.data.ArrayStore({
             proxy: {
-                url: '/admin/class/get-fieldcollection-usages',
+                url: Routing.generate('pimcore_admin_dataobject_class_getfieldcollectionusages'),
                 type: 'ajax',
                 reader: {
                     type: 'json'
@@ -72,19 +74,34 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
             defaults: {
                 labelWidth: 200
             },
-            items: [{
-                xtype: "textfield",
-                width: 400,
-                name: "parentClass",
-                fieldLabel: t("parent_php_class"),
-                value: this.data.parentClass
-            }, {
-                xtype: "textfield",
-                width: 400,
-                name: "title",
-                fieldLabel: t("title"),
-                value: this.data.title
-            },
+            items: [
+                {
+                    xtype: "textfield",
+                    width: 600,
+                    name: "parentClass",
+                    fieldLabel: t("parent_php_class"),
+                    value: this.data.parentClass
+                },
+                {
+                    xtype: "textfield",
+                    width: 600,
+                    name: "implementsInterfaces",
+                    fieldLabel: t("implements_interfaces"),
+                    value: this.data.implementsInterfaces
+                },
+                {
+                    xtype: "textfield",
+                    width: 600,
+                    name: "title",
+                    fieldLabel: t("title"),
+                    value: this.data.title
+                },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("generate_type_declarations"),
+                    name: "generateTypeDeclarations",
+                    checked: this.data.generateTypeDeclarations
+                },
                 this.groupField,
                 {
                     xtype: 'displayfield',
@@ -106,7 +123,8 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
         var newGroup = this.groupField.getValue();
         if (newGroup != this.data.group) {
             this.data.group = newGroup;
-            reload = true;}
+            reload = true;
+        }
 
 
         this.saveCurrentNode();
@@ -116,7 +134,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
 
         if (this.getDataSuccess) {
             Ext.Ajax.request({
-                url: "/admin/class/fieldcollection-update",
+                url: Routing.generate('pimcore_admin_dataobject_class_fieldcollectionupdate'),
                 method: 'PUT',
                 params: {
                     configuration: m,
@@ -139,7 +157,11 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
                 }
                 pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
             } else {
-                throw "save was not successful, see log files in /var/logs";
+                if (res.message) {
+                    pimcore.helpers.showNotification(t("error"), res.message, "error");
+                } else {
+                    throw "save was not successful, see log files in /var/logs";
+                }
             }
         } catch (e) {
             this.saveOnError();
@@ -154,7 +176,7 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
 
         pimcore.helpers.uploadDialog(this.getUploadUrl(), "Filedata", function () {
             Ext.Ajax.request({
-                url: "/admin/class/fieldcollection-get",
+                url: Routing.generate('pimcore_admin_dataobject_class_fieldcollectionget'),
                 params: {
                     id: this.getId()
                 },

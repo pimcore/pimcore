@@ -117,6 +117,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     public function action(Info $info)
     {
         // noop - implement as needed
+        return null;
     }
 
     /**
@@ -125,6 +126,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     public function postRenderAction(Info $info)
     {
         // noop - implement as needed
+        return null;
     }
 
     /**
@@ -132,7 +134,17 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
      */
     public function getHtmlTagOpen(Info $info)
     {
-        return '<div class="pimcore_area_' . $info->getId() . ' pimcore_area_content">';
+        return '<div class="pimcore_area_' . $info->getId() . ' pimcore_area_content '. $this->getOpenTagCssClass($info) .'">';
+    }
+
+    /**
+     * @param Info $info
+     *
+     * @return string|null
+     */
+    protected function getOpenTagCssClass(Info $info)
+    {
+        return null;
     }
 
     /**

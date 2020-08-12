@@ -87,10 +87,11 @@ class Admin
      * @static
      *
      * @param string $scriptContent
+     * @param bool $asUrl
      *
      * @return mixed
      */
-    public static function getMinimizedScriptPath($scriptContent)
+    public static function getMinimizedScriptPath($scriptContent, bool $asUrl = true)
     {
         $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/minified_javascript_core_'.md5($scriptContent).'.js';
 
@@ -100,10 +101,19 @@ class Admin
 
         $params = [
             'scripts' => basename($scriptPath),
-            '_dc' => \Pimcore\Version::getRevision()
+            '_dc' => \Pimcore\Version::getRevision(),
         ];
 
-        return '/admin/misc/script-proxy?' . array_toquerystring($params);
+        if ($asUrl) {
+            @trigger_error(
+                'Calling Pimcore\Tool::getMinimizedScriptPath with $asUrl true is deprecated and will be removed with Pimcore 7.0',
+                E_USER_DEPRECATED
+            );
+
+            return '/admin/misc/script-proxy?'.array_toquerystring($params);
+        }
+
+        return $params;
     }
 
     /**
@@ -170,10 +180,10 @@ class Admin
         }
 
         File::putPhpFile(self::getMaintenanceModeFile(), to_php_data_file_format([
-            'sessionId' => $sessionId
+            'sessionId' => $sessionId,
         ]));
 
-        @chmod(self::getMaintenanceModeFile(), 0777); // so it can be removed also via FTP, ...
+        @chmod(self::getMaintenanceModeFile(), 0666); // so it can be removed also via FTP, ...
 
         \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_ACTIVATE);
     }
@@ -228,10 +238,10 @@ class Admin
     public static function scheduleMaintenanceModeOnLogin()
     {
         File::putPhpFile(self::getMaintenanceModeScheduleLoginFile(), to_php_data_file_format([
-            'schedule' => true
+            'schedule' => true,
         ]));
 
-        @chmod(self::getMaintenanceModeScheduleLoginFile(), 0777); // so it can be removed also via FTP, ...
+        @chmod(self::getMaintenanceModeScheduleLoginFile(), 0666); // so it can be removed also via FTP, ...
 
         \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_SCHEDULE_LOGIN);
     }
@@ -268,7 +278,7 @@ class Admin
      * @param string|array $languages
      * @param bool $returnLanguageArray
      *
-     * @return string
+     * @return string|array
      */
     public static function reorderWebsiteLanguages($user, $languages, $returnLanguageArray = false)
     {

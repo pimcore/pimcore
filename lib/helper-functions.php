@@ -42,19 +42,22 @@ function gzcompressfile($source, $level = null, $target = null)
         $dest = $source.'.gz';
     }
 
-    $mode = 'wb'.$level;
     $error = false;
 
-    $fp_out = gzopen($dest, $mode);
     $fp_in = fopen($source, 'rb');
+
+    $fp_out = fopen($dest, 'wb');
+    $deflateContext = deflate_init(ZLIB_ENCODING_GZIP, ['level' => $level]);
 
     if ($fp_out && $fp_in) {
         while (!feof($fp_in)) {
-            gzwrite($fp_out, fread($fp_in, 1024 * 512));
+            fwrite($fp_out, deflate_add($deflateContext, fread($fp_in, 1024 * 512), ZLIB_NO_FLUSH));
         }
 
         fclose($fp_in);
-        gzclose($fp_out);
+
+        fwrite($fp_out, deflate_add($deflateContext, '', ZLIB_FINISH));
+        fclose($fp_out);
     } else {
         $error = true;
     }
@@ -158,6 +161,17 @@ function array_htmlspecialchars($array)
 function in_arrayi(string $needle, array $haystack)
 {
     return in_array(strtolower($needle), array_map('strtolower', $haystack));
+}
+
+/**
+ * @param string $needle
+ * @param array $haystack
+ *
+ * @return false|int|string the key for needle if it is found in the array, false otherwise.
+ */
+function array_searchi(string $needle, array $haystack)
+{
+    return array_search(strtolower($needle), array_map('strtolower', $haystack));
 }
 
 /**
@@ -551,7 +565,7 @@ function closureHash(Closure $closure)
 
     $hash = md5(json_encode([
         $content,
-        $ref->getStaticVariables()
+        $ref->getStaticVariables(),
     ]));
 
     return $hash;

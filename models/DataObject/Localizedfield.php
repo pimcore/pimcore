@@ -19,19 +19,27 @@ namespace Pimcore\Model\DataObject;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 use Pimcore\Tool;
 
 /**
  * @method Localizedfield\Dao getDao()*
- * @method Localizedfield\Dao delete()
- * @method Localizedfield\Dao load()
- * @method Localizedfield\Dao save()
+ * @method void delete($deleteQuery = true, $isUpdate = true)
+ * @method void load($object, $params = [])
+ * @method void save($params = [])
+ * @method void createUpdateTable($params = [])
  */
-class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterface, LazyLoadedFieldsInterface, Model\Element\ElementDumpStateInterface
+class Localizedfield extends Model\AbstractModel implements
+    DirtyIndicatorInterface,
+    LazyLoadedFieldsInterface,
+    Model\Element\ElementDumpStateInterface,
+                        OwnerAwareFieldInterface
 {
+    use Model\DataObject\Traits\OwnerAwareFieldTrait;
+
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
 
-    use Model\DataObject\Traits\DirtyIndicatorTrait;
+    use Model\Element\Traits\DirtyIndicatorTrait;
 
     use Model\Element\ElementDumpStateTrait;
 
@@ -369,10 +377,15 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         return $container->getFieldDefinitions($params);
     }
 
+    /**
+     * @param ClassDefinition\Data $fieldDefinition
+     * @param string $name
+     * @param string $language
+     */
     private function loadLazyField(Model\DataObject\ClassDefinition\Data $fieldDefinition, $name, $language)
     {
         $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
-        if (!$this->isLazyKeyLoaded($lazyKey)) {
+        if (!$this->isLazyKeyLoaded($lazyKey) && $fieldDefinition instanceof Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterface) {
             $params['language'] = $language;
             $params['object'] = $this->getObject();
             $params['context'] = $this->getContext();
@@ -415,7 +428,7 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
             return $data;
         }
 
-        if ($fieldDefinition instanceof LazyLoadingSupportInterface && !Concrete::isLazyLoadingDisabled() && $fieldDefinition->getLazyLoading()) {
+        if ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading()) {
             $this->loadLazyField($fieldDefinition, $name, $language);
         }
 
@@ -446,17 +459,20 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
                     }
 
                     if ($parent && ($parent->getType() == 'object' || $parent->getType() == 'variant')) {
+                        /** @var Concrete $parent */
                         if ($parent->getClassId() == $object->getClassId()) {
                             $method = 'getLocalizedfields';
 
                             $parentContainer = $parent;
 
                             if (isset($context['containerType']) && $context['containerType'] === 'objectbrick') {
-                                $brickContainerGetter = 'get' . ucfirst($context['fieldname']);
-                                $brickContainer = $parent->$brickContainerGetter();
-                                $brickGetter = 'get' . $context['containerKey'];
-                                $brickData = $brickContainer->$brickGetter();
-                                $parentContainer = $brickData;
+                                if (!empty($context['fieldname'])) {
+                                    $brickContainerGetter = 'get' . ucfirst($context['fieldname']);
+                                    $brickContainer = $parent->$brickContainerGetter();
+                                    $brickGetter = 'get' . $context['containerKey'];
+                                    $brickData = $brickContainer->$brickGetter();
+                                    $parentContainer = $brickData;
+                                }
                             }
 
                             if (method_exists($parentContainer, $method)) {
@@ -476,7 +492,8 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         // check for fallback value
         if ($fieldDefinition->isEmpty($data) && !$ignoreFallbackLanguage && self::doGetFallbackValues()) {
             foreach (Tool::getFallbackLanguagesFor($language) as $l) {
-                if ($this->languageExists($l)) {
+                // fallback-language may not exist yet for lazy-loaded field (relation)
+                if ($this->languageExists($l) || ($fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading())) {
                     if ($data = $this->getLocalizedValue($name, $l)) {
                         break;
                     }
@@ -744,5 +761,13 @@ class Localizedfield extends Model\AbstractModel implements DirtyIndicatorInterf
         }
 
         return $lazyLoadedFieldNames;
+    }
+
+    /**
+     * @return int
+     */
+    public function getObjectId(): int
+    {
+        return $this->objectId;
     }
 }

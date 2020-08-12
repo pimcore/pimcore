@@ -22,7 +22,8 @@ use Pimcore\Logger;
 
 /**
  * @method \Pimcore\Model\Site\Dao getDao()
- * @method delete()
+ * @method void delete()
+ * @method void save()
  */
 class Site extends AbstractModel
 {

@@ -84,10 +84,10 @@ class TagRenderer implements LoggerAwareInterface
             if ($document instanceof PageSnippet) {
                 $view = new ViewModel([
                     'editmode' => $editmode,
-                    'document' => $document
+                    'document' => $document,
                 ]);
 
-                $tag = $document->getElement($name);
+                $tag = $document->getEditable($name);
 
                 // @TODO: BC layer, to be removed in v7.0
                 $aliases = [
@@ -109,7 +109,7 @@ class TagRenderer implements LoggerAwareInterface
                     $tag->setOptions($options);
                 } else {
                     $tag = Tag::factory($type, $name, $document->getId(), $options, null, $view, $editmode);
-                    $document->setElement($name, $tag);
+                    $document->setEditable($name, $tag);
                 }
 
                 // set the real name of this editable, without the prefixes and suffixes from blocks and areablocks
@@ -119,6 +119,8 @@ class TagRenderer implements LoggerAwareInterface
             return $tag;
         } catch (\Exception $e) {
             $this->logger->warning($e);
+
+            return null;
         }
     }
 

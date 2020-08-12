@@ -48,6 +48,8 @@ class Area extends Model\Document\Tag
 
     /**
      * @see Model\Document\Tag\TagInterface::admin
+     *
+     * @return void
      */
     public function admin()
     {
@@ -66,6 +68,8 @@ class Area extends Model\Document\Tag
 
     /**
      * @see Model\Document\Tag\TagInterface::frontend
+     *
+     * @return void
      */
     public function frontend()
     {
@@ -163,12 +167,12 @@ class Area extends Model\Document\Tag
         $parentBlockNames[] = $this->getName();
 
         $id = $namingStrategy->buildChildElementTagName($name, 'area', $parentBlockNames, 1);
-        $element = $document->getElement($id);
+        $editable = $document->getEditable($id);
 
-        if ($element) {
-            $element->setParentBlockNames($parentBlockNames);
+        if ($editable) {
+            $editable->setParentBlockNames($parentBlockNames);
         }
 
-        return $element;
+        return $editable;
     }
 }

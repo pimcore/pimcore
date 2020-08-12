@@ -25,11 +25,11 @@ use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
  * @method array getValidTableColumns(string $table, bool $cache)
  * @method void resetValidTableColumnsCache(string $table)
  */
-abstract class AbstractModel
+abstract class AbstractModel implements ModelInterface
 {
     use ObjectVarTrait;
     /**
-     * @var \Pimcore\Model\Dao\AbstractDao
+     * @var \Pimcore\Model\Dao\AbstractDao|null
      */
     protected $dao;
 
@@ -146,7 +146,7 @@ abstract class AbstractModel
             for ($i = 0; $i < $length; $i++) {
                 $classNames = [
                     implode($delimiter, $classParts) . $delimiter . 'Dao',
-                    implode($delimiter, $classParts) . $delimiter . 'Resource'
+                    implode($delimiter, $classParts) . $delimiter . 'Resource',
                 ];
 
                 foreach ($classNames as $tmpClassName) {

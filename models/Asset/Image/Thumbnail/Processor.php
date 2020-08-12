@@ -50,7 +50,7 @@ class Processor
         'sharpen' => ['radius', 'sigma', 'amount', 'threshold'],
         'gaussianBlur' => ['radius', 'sigma'],
         'brightnessSaturation' => ['brightness', 'saturation', 'hue'],
-        'mirror' => ['mode']
+        'mirror' => ['mode'],
     ];
 
     /**
@@ -69,7 +69,7 @@ class Processor
     {
         $typeMappings = [
             'jpg' => 'jpeg',
-            'tif' => 'tiff'
+            'tif' => 'tiff',
         ];
 
         if (isset($typeMappings[$format])) {
@@ -102,6 +102,10 @@ class Processor
         $format = strtolower($config->getFormat());
         $contentOptimizedFormat = false;
 
+        if (self::containsTransformationType($config, '1x1_pixel')) {
+            return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+        }
+
         if (!$fileSystemPath && $asset instanceof Asset) {
             $fileSystemPath = $asset->getFileSystemPath();
         }
@@ -124,17 +128,8 @@ class Processor
                 // return a webformat in admin -> tiff cannot be displayed in browser
                 $format = 'png';
                 $deferred = false; // deferred is default, but it's not possible when using isFrontendRequestByAdmin()
-            } elseif ($format == 'tiff') {
-                $transformations = $config->getItems();
-                if (is_array($transformations) && count($transformations) > 0) {
-                    foreach ($transformations as $transformation) {
-                        if (!empty($transformation)) {
-                            if ($transformation['method'] == 'tifforiginal') {
-                                return self::returnPath($fileSystemPath, $returnAbsolutePath);
-                            }
-                        }
-                    }
-                }
+            } elseif ($format == 'tiff' && self::containsTransformationType($config, 'tifforiginal')) {
+                return self::returnPath($fileSystemPath, $returnAbsolutePath);
             } elseif ($format == 'svg') {
                 return $asset->getFullPath();
             }
@@ -153,7 +148,7 @@ class Processor
         }
 
         $thumbDir = $asset->getImageThumbnailSavePath() . '/image-thumb__' . $asset->getId() . '__' . $config->getName();
-        $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '/', '', $asset->getFilename());
+        $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '$/i', '', $asset->getFilename());
 
         // add custom suffix if available
         if ($config->getFilenameSuffix()) {
@@ -167,7 +162,10 @@ class Processor
         $fileExtension = $format;
         if ($format == 'original') {
             $fileExtension = \Pimcore\File::getFileExtension($fileSystemPath);
+        } elseif ($format === 'pjpeg' || $format === 'jpeg') {
+            $fileExtension = 'jpg';
         }
+
         $filename .= '.' . $fileExtension;
 
         $fsPath = $thumbDir . '/' . $filename;
@@ -236,8 +234,8 @@ class Processor
                             array_unshift($transformations, [
                                 'method' => 'rotate',
                                 'arguments' => [
-                                    'angle' => $angleMappings[$orientation]
-                                ]
+                                    'angle' => $angleMappings[$orientation],
+                                ],
                             ]);
                         }
 
@@ -246,15 +244,15 @@ class Processor
                             2 => 'vertical',
                             4 => 'horizontal',
                             5 => 'vertical',
-                            7 => 'horizontal'
+                            7 => 'horizontal',
                         ];
 
                         if (array_key_exists($orientation, $mirrorMappings)) {
                             array_unshift($transformations, [
                                 'method' => 'mirror',
                                 'arguments' => [
-                                    'mode' => $mirrorMappings[$orientation]
-                                ]
+                                    'mode' => $mirrorMappings[$orientation],
+                                ],
                             ]);
                         }
                     }
@@ -332,7 +330,7 @@ class Processor
                                     if ($transformation['method'] == 'cover' && $key == 'positioning' && $asset->getCustomSetting('focalPointX')) {
                                         $value = [
                                             'x' => $asset->getCustomSetting('focalPointX'),
-                                            'y' => $asset->getCustomSetting('focalPointY')
+                                            'y' => $asset->getCustomSetting('focalPointY'),
                                         ];
                                     }
 
@@ -383,6 +381,28 @@ class Processor
         }
 
         return self::returnPath($fsPath, $returnAbsolutePath);
+    }
+
+    /**
+     * @param Config $config
+     * @param string $transformationType
+     *
+     * @return bool
+     */
+    protected static function containsTransformationType(Config $config, string $transformationType): bool
+    {
+        $transformations = $config->getItems();
+        if (is_array($transformations) && count($transformations) > 0) {
+            foreach ($transformations as $transformation) {
+                if (!empty($transformation)) {
+                    if ($transformation['method'] == $transformationType) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

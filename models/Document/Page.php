@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Model\Document\Traits\RedirectHelperTrait;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
@@ -27,8 +26,6 @@ use Pimcore\Model\Tool\Targeting\TargetGroup;
  */
 class Page extends TargetingDocument
 {
-    use RedirectHelperTrait;
-
     /**
      * Contains the title of the page (meta-title)
      *
@@ -56,7 +53,7 @@ class Page extends TargetingDocument
     protected $type = 'page';
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $prettyUrl;
 
@@ -70,12 +67,8 @@ class Page extends TargetingDocument
     /**
      * @inheritdoc
      */
-    public function delete(bool $isNested = false)
+    protected function doDelete()
     {
-        if ($this->getId() == 1) {
-            throw new \Exception('root-node cannot be deleted');
-        }
-
         // check for redirects pointing to this document, and delete them too
         $redirects = new Redirect\Listing();
         $redirects->setCondition('target = ?', $this->getId());
@@ -89,22 +82,7 @@ class Page extends TargetingDocument
             $site->delete();
         }
 
-        parent::delete($isNested);
-    }
-
-    /**
-     * @param array $params additional parameters (e.g. "versionNote" for the version note)
-     *
-     * @throws \Exception
-     */
-    protected function update($params = [])
-    {
-        $oldPath = $this->getDao()->getCurrentFullPath();
-        $oldDocument = self::getById($this->getId(), true);
-
-        parent::update($params);
-
-        $this->createRedirectForFormerPath($oldPath, $oldDocument);
+        parent::doDelete();
     }
 
     /**
@@ -168,11 +146,7 @@ class Page extends TargetingDocument
     }
 
     /**
-     * Returns the full path of the document including the key (path+key)
-     *
-     * @param bool $force
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getFullPath(bool $force = false)
     {
@@ -206,7 +180,7 @@ class Page extends TargetingDocument
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPrettyUrl()
     {

@@ -16,8 +16,6 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
 
     title: t("gdpr_dataSource_dataObjects"),
     iconCls: "pimcore_icon_object",
-    searchUrl: "/admin/gdpr/data-object/search-data-objects",
-    downloadUrl: "/admin/gdpr/data-object/export?id=",
 
     searchParams: [],
 
@@ -51,7 +49,7 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
             pageSize: pimcore.helpers.grid.getDefaultPageSize(),
             proxy : {
                 type: 'ajax',
-                url: this.searchUrl,
+                url: Routing.generate('pimcore_admin_gdpr_dataobject_searchdataobjects'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
@@ -59,7 +57,7 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
                 extraParams: this.searchParams
             },
             fields: ["id","fullpath","type","subtype","filename",{name:"classname",convert: function(v, rec){
-                return ts(rec.data.classname);
+                return t(rec.data.classname);
             }},"published"]
         });
 
@@ -89,7 +87,7 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
                                 pimcore.helpers.showPermissionError("view");
                                 return;
                             }
-                            pimcore.helpers.download(this.downloadUrl + data.data.id);
+                            pimcore.helpers.download(Routing.generate('pimcore_admin_gdpr_dataobject_exportdataobject', {id: data.data.id}));
                         }.bind(this),
                         getClass: function (v, meta, rec) {
                             if (!rec.get("permissions").view) {
@@ -145,8 +143,6 @@ pimcore.settings.gdpr.dataproviders.dataObjects = Class.create({
                                 "id": data.data.id,
                                 "success": function () {
                                     this.store.reload();
-                                    var tree = pimcore.globalmanager.get("layout_object_tree");
-                                    var treePanel = tree.tree;
                                     pimcore.elementservice.refreshRootNodeAllTrees("object");
                                 }.bind(this)
                             };

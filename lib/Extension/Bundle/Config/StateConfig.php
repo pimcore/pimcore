@@ -35,7 +35,7 @@ final class StateConfig
     private static $optionDefaults = [
         'enabled' => false,
         'priority' => 10,
-        'environments' => []
+        'environments' => [],
     ];
 
     /**

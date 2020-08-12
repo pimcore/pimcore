@@ -14,10 +14,10 @@
 pimcore.registerNS("pimcore.object.tree");
 pimcore.object.tree = Class.create({
 
-    treeDataUrl: "/admin/object/tree-get-childs-by-id",
+    treeDataUrl: null,
 
     initialize: function (config, perspectiveCfg) {
-
+        this.treeDataUrl = Routing.generate('pimcore_admin_dataobject_dataobject_treegetchildsbyid');
         this.perspectiveCfg = perspectiveCfg;
         if (!perspectiveCfg) {
             this.perspectiveCfg = {
@@ -49,7 +49,7 @@ pimcore.object.tree = Class.create({
 
         // get root node config
         Ext.Ajax.request({
-            url: "/admin/object/tree-get-root",
+            url: Routing.generate('pimcore_admin_dataobject_dataobject_treegetroot'),
             params: {
                 id: this.config.rootId,
                 view: this.config.customViewId,
@@ -143,7 +143,7 @@ pimcore.object.tree = Class.create({
         });
 
         store.on("nodebeforeexpand", function (node) {
-            pimcore.helpers.addTreeNodeLoadingIndicator("object", node.data.id);
+            pimcore.helpers.addTreeNodeLoadingIndicator("object", node.data.id, false);
         });
 
         store.on("nodeexpand", function (node, index, item, eOpts) {
@@ -303,6 +303,11 @@ pimcore.object.tree = Class.create({
 
     onTreeNodeContextmenu: function (tree, record, item, index, e, eOpts ) {
         e.stopEvent();
+
+        if(pimcore.helpers.hasTreeNodeLoadingIndicator("object", record.data.id)) {
+            return;
+        }
+
         tree.select();
 
         var menu = new Ext.menu.Menu();
@@ -725,7 +730,7 @@ pimcore.object.tree = Class.create({
 
         if (button == "ok") {
             var options =  {
-                url: "/admin/object/add-folder",
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_addfolder'),
                 elementType : "object",
                 sourceTree: tree,
                 parentId: record.data.id,
@@ -744,7 +749,7 @@ pimcore.object.tree = Class.create({
             }
 
             var options = {
-                url: "/admin/object/add",
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_add'),
                 elementType: "object",
                 sourceTree: tree,
                 parentId: record.data.id,
@@ -767,7 +772,7 @@ pimcore.object.tree = Class.create({
             }
 
             var options = {
-                url: "/admin/object/add",
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_add'),
                 elementType: "object",
                 sourceTree: tree,
                 className: record.data.className,
@@ -839,7 +844,7 @@ pimcore.object.tree = Class.create({
         pimcore.helpers.addTreeNodeLoadingIndicator("object", record.data.id);
 
         Ext.Ajax.request({
-            url: "/admin/object/copy-info",
+            url: Routing.generate('pimcore_admin_dataobject_dataobject_copyinfo'),
             params: {
                 targetId: record.data.id,
                 sourceId: pimcore.cachedObjectId,
@@ -863,12 +868,12 @@ pimcore.object.tree = Class.create({
                 record.pasteWindow = new Ext.Window({
                     title: t("paste"),
                     layout: 'fit',
-                    width: 500,
+                    width: 200,
                     bodyStyle: "padding: 10px;",
                     closable: false,
                     plain: true,
-                    modal: true,
-                    items: [record.pasteProgressBar]
+                    items: [record.pasteProgressBar],
+                    listeners: pimcore.helpers.getProgressWindowListeners()
                 });
 
                 record.pasteWindow.show();
@@ -946,7 +951,7 @@ pimcore.object.tree = Class.create({
         var dialogTitle = t("object_add_dialog_custom_title" + "." + className);
 
         if (dialogTitle == "object_add_dialog_custom_title" + "." + className) {
-            dialogTitle =  sprintf(t('add_object_mbx_title'), ts(className));
+            dialogTitle =  sprintf(t('add_object_mbx_title'), t(className));
         }
 
         Ext.MessageBox.prompt(dialogTitle, dialogText,
@@ -984,13 +989,12 @@ pimcore.object.tree = Class.create({
         parameters.id = record.data.id;
 
         Ext.Ajax.request({
-            url: '/admin/object/save?task=' + task,
+            url: Routing.generate('pimcore_admin_dataobject_dataobject_save', {task: task}),
             method: "PUT",
             params: parameters,
             success: function (tree, record, task, response) {
                 try {
                     var rdata = Ext.decode(response.responseText);
-                    var id = record.data.id;
 
                     if (rdata && rdata.success) {
                         var options = {
@@ -1029,7 +1033,7 @@ pimcore.object.tree = Class.create({
         };
 
         Ext.Ajax.request({
-            url: '/admin/object/change-children-sort-by',
+            url: Routing.generate('pimcore_admin_dataobject_dataobject_changechildrensortby'),
             method: "PUT",
             params: parameters,
             success: function (tree, record, sortBy, response) {

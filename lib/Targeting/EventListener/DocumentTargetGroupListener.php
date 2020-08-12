@@ -64,7 +64,7 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            TargetingEvents::PRE_RESOLVE => 'onVisitorInfoResolve'
+            TargetingEvents::PRE_RESOLVE => 'onVisitorInfoResolve',
         ];
     }
 
@@ -73,7 +73,9 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
         $request = $event->getRequest();
         $document = $this->documentResolver->getDocument($request);
 
-        $this->assignDocumentTargetGroups($document, $event->getVisitorInfo());
+        if ($document) {
+            $this->assignDocumentTargetGroups($document, $event->getVisitorInfo());
+        }
     }
 
     private function assignDocumentTargetGroups(Document $document, VisitorInfo $visitorInfo)
@@ -92,7 +94,7 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
         foreach ($targetGroups as $targetGroup) {
             $this->actionHandler->apply($visitorInfo, [
                 'type' => 'assign_target_group',
-                'targetGroup' => $targetGroup
+                'targetGroup' => $targetGroup,
             ]);
 
             $this->eventDispatcher->dispatch(

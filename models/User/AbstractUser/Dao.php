@@ -67,7 +67,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $this->db->insert('users', [
             'name' => $this->model->getName(),
-            'type' => $this->model->getType()
+            'type' => $this->model->getType(),
         ]);
 
         $this->model->setId($this->db->lastInsertId());

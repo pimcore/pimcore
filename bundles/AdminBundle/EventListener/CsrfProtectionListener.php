@@ -56,7 +56,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => ['handleRequest', 11]
+            KernelEvents::REQUEST => ['handleRequest', 11],
         ];
     }
 
@@ -108,7 +108,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
 
         if (!$csrfToken || $csrfToken !== $requestCsrfToken) {
             $this->logger->error('Detected CSRF attack on {request}', [
-                'request' => $request->getPathInfo()
+                'request' => $request->getPathInfo(),
             ]);
 
             throw new AccessDeniedHttpException('Detected CSRF Attack! Do not do evil things with pimcore ... ;-)');

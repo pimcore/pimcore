@@ -105,15 +105,20 @@ class ClassDefinition extends Model\Webservice\Data
     /**
      * @var bool
      */
-    public $cacheRawRelationData = false;
+    public $generateTypeDeclarations = false;
 
     /**
-     * @var array
+     * @var string
      */
-    public $fieldDefinitions;
+    public $implementsInterfaces;
 
     /**
-     * @var Model\DataObject\ClassDefinition\Layout
+     * @var Model\DataObject\ClassDefinition\Data[]
+     */
+    public $fieldDefinitions = [];
+
+    /**
+     * @var Model\DataObject\ClassDefinition\Layout|null
      */
     public $layoutDefinitions;
 
@@ -126,13 +131,29 @@ class ClassDefinition extends Model\Webservice\Data
      * @var string
      */
     public $previewUrl;
+
     /**
      * @var string
      */
     public $group;
 
     /**
+     * @var bool
+     */
+    public $showAppLoggerTab = false;
+
+    /**
      * @var string
      */
     public $linkGeneratorReference;
+
+    /**
+     * @var array
+     */
+    public $compositeIndices;
+
+    /**
+     * @var bool
+     */
+    public $showFieldLookup = false;
 }

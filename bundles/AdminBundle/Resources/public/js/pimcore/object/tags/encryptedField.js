@@ -30,7 +30,7 @@ pimcore.object.tags.encryptedField = Class.create(pimcore.object.tags.abstract, 
         if (typeof pimcore.object.tags[field.layout.delegateDatatype] !== "undefined") {
             return pimcore.object.tags[field.layout.delegateDatatype].prototype.getGridColumnConfig(this.getDelegateGridConfig(field));
         } else {
-            return {text: ts(field.label), width: 150, sortable: false};
+            return {text: t(field.label), width: 150, sortable: false};
         }
     },
 

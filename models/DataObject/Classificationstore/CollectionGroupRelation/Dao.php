@@ -63,7 +63,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $this->db->delete(self::TABLE_NAME_RELATIONS, [
             'colId' => $this->model->getColId(),
-            'groupId' => $this->model->getGroupId()
+            'groupId' => $this->model->getGroupId(),
         ]);
     }
 

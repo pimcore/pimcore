@@ -43,7 +43,7 @@ class InputQuantityValue extends QuantityValue
      */
     public $queryColumnType = [
         'value' => 'varchar(255)',
-        'unit' => 'bigint(20)'
+        'unit' => 'bigint(20)',
     ];
 
     /**
@@ -53,14 +53,14 @@ class InputQuantityValue extends QuantityValue
      */
     public $columnType = [
         'value' => 'varchar(255)',
-        'unit' => 'bigint(20)'
+        'unit' => 'bigint(20)',
     ];
 
     public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\InputQuantityValue';
 
     /**
      * @param array $data
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return InputQuantityValueDataObject|null
@@ -81,8 +81,8 @@ class InputQuantityValue extends QuantityValue
     }
 
     /**
-     * @param float $data
-     * @param null $object
+     * @param array $data
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return InputQuantityValueDataObject|null
@@ -152,7 +152,7 @@ class InputQuantityValue extends QuantityValue
      * @deprecated
      *
      * @param mixed $value
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      * @param Model\Webservice\IdMapperInterface|null $idMapper
      *
@@ -188,16 +188,16 @@ class InputQuantityValue extends QuantityValue
 
     /**
      * @param mixed $value
-     * @param null $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $params
      *
      * @return array|mixed|null|InputQuantityValueDataObject
      */
     public function unmarshal($value, $object = null, $params = [])
     {
-        if ($params['blockmode'] && is_array($value)) {
+        if (($params['blockmode'] ?? false) && is_array($value)) {
             return $this->getNewDataObject($value['value'], $value['value2']);
-        } elseif ($params['simple']) {
+        } elseif ($params['simple'] ?? false) {
             return $value;
         } elseif (is_array($value)) {
             return [

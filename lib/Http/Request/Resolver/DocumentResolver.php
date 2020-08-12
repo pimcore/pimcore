@@ -18,9 +18,21 @@ use Pimcore\Model\Document;
 use Pimcore\Templating\Vars\TemplateVarsProviderInterface;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class DocumentResolver extends AbstractRequestResolver implements TemplateVarsProviderInterface
 {
+    /**
+     * @var ViewModelResolver
+     */
+    protected $viewModelResolver;
+
+    public function __construct(RequestStack $requestStack, ViewModelResolver $viewModelResolver)
+    {
+        $this->viewModelResolver = $viewModelResolver;
+        parent::__construct($requestStack);
+    }
+
     /**
      * @param Request $request
      *
@@ -32,7 +44,12 @@ class DocumentResolver extends AbstractRequestResolver implements TemplateVarsPr
             $request = $this->getCurrentRequest();
         }
 
-        return $request->get(DynamicRouter::CONTENT_KEY, null);
+        $content = $request->get(DynamicRouter::CONTENT_KEY, null);
+        if ($content instanceof Document) {
+            return $content;
+        }
+
+        return null;
     }
 
     /**
@@ -44,6 +61,12 @@ class DocumentResolver extends AbstractRequestResolver implements TemplateVarsPr
         $request->attributes->set(DynamicRouter::CONTENT_KEY, $document);
         if ($document->getProperty('language')) {
             $request->setLocale($document->getProperty('language'));
+        }
+
+        // update the view model on the current request if exists
+        $viewModel = $this->viewModelResolver->getViewModel($request, false);
+        if ($viewModel) {
+            $viewModel->getParameters()->set('document', $document);
         }
     }
 

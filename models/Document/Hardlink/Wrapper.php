@@ -34,20 +34,32 @@ trait Wrapper
      */
     protected $sourceDocument;
 
-    // OVERWRITTEN METHODS
+    /**
+     * OVERWRITTEN METHODS
+     *
+     * @throws \Exception
+     */
     public function save()
     {
-        $this->raiseHardlinkError();
+        throw $this->getHardlinkError();
     }
 
+    /**
+     * @param array $params
+     *
+     * @throws \Exception
+     */
     protected function update($params = [])
     {
-        $this->raiseHardlinkError();
+        throw $this->getHardlinkError();
     }
 
-    public function delete(bool $isNested = false)
+    /**
+     * @throws \Exception
+     */
+    public function delete()
     {
-        $this->raiseHardlinkError();
+        throw $this->getHardlinkError();
     }
 
     /**
@@ -121,18 +133,18 @@ trait Wrapper
     }
 
     /**
-     * @param bool $unpublished
+     * @param bool $includingUnpublished
      *
      * @return Document[]
      */
-    public function getChildren($unpublished = false)
+    public function getChildren($includingUnpublished = false)
     {
-        if ($this->children === null) {
+        $cacheKey = $this->getListingCacheKey(func_get_args());
+        if (!isset($this->children[$cacheKey])) {
             $hardLink = $this->getHardLinkSource();
             $children = [];
-
             if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
-                foreach (parent::getChildren() as $c) {
+                foreach (parent::getChildren($includingUnpublished) as $c) {
                     $c = Service::wrap($c);
                     if ($c instanceof Document\Hardlink\Wrapper\WrapperInterface) {
                         $c->setHardLinkSource($hardLink);
@@ -143,10 +155,10 @@ trait Wrapper
                 }
             }
 
-            $this->setChildren($children);
+            $this->setChildren($children, $includingUnpublished);
         }
 
-        return $this->children;
+        return $this->children[$cacheKey];
     }
 
     /**
@@ -159,18 +171,18 @@ trait Wrapper
         $hardLink = $this->getHardLinkSource();
 
         if ($hardLink->getChildrenFromSource() && $hardLink->getSourceDocument() && !\Pimcore::inAdmin()) {
-            return parent::hasChildren();
+            return parent::hasChildren($unpublished);
         }
 
         return false;
     }
 
     /**
-     * @throws \Exception
+     * @return \Exception
      */
-    protected function raiseHardlinkError()
+    protected function getHardlinkError(): \Exception
     {
-        throw new \Exception('Method no supported by hardlinked documents');
+        return new \Exception('Method not supported by hard linked documents');
     }
 
     /**

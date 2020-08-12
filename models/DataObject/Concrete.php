@@ -17,14 +17,15 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectEvents;
 use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
+use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
+use Pimcore\Model\Element\DirtyIndicatorInterface;
 
 /**
  * @method \Pimcore\Model\DataObject\Concrete\Dao getDao()
@@ -33,6 +34,9 @@ use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 {
     use Model\DataObject\Traits\LazyLoadedRelationTrait;
+
+    /** @var array|null */
+    protected $__rawRelationData = null;
 
     /**
      * @var array
@@ -45,7 +49,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     protected $o_published;
 
     /**
-     * @var ClassDefinition
+     * @var ClassDefinition|null
      */
     protected $o_class;
 
@@ -60,21 +64,21 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     protected $o_className;
 
     /**
-     * @var array
+     * @var array|null
      */
     protected $o_versions = null;
 
     /**
      * Contains all scheduled tasks
      *
-     * @var array
+     * @var array|null
      */
     protected $scheduledTasks = null;
 
     /**
-     * @var bool
+     * @var bool|null
      */
-    protected $omitMandatoryCheck = false;
+    protected $omitMandatoryCheck;
 
     /**
      * @var bool
@@ -113,41 +117,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         foreach ($fieldDefintions as $fd) {
             try {
                 $getter = 'get' . ucfirst($fd->getName());
-                $setter = 'set' . ucfirst($fd->getName());
 
                 if (method_exists($this, $getter)) {
-
-                    //To make sure, inherited values are not set again
-                    $inheritedValues = AbstractObject::doGetInheritedValues();
-                    AbstractObject::setGetInheritedValues(false);
-
-                    $value = $this->$getter();
-
-                    if (is_array($value) && ($fd instanceof ClassDefinition\Data\ManyToManyRelation || $fd instanceof ClassDefinition\Data\ManyToManyObjectRelation)) {
-                        //don't save relations twice, if multiple assignments not allowed
-                        if (!method_exists($fd, 'getAllowMultipleAssignments') || !$fd->getAllowMultipleAssignments()) {
-                            $relationItems = [];
-                            foreach ($value as $item) {
-                                $elementHash = null;
-                                if ($item instanceof Model\DataObject\Data\ObjectMetadata || $item instanceof Model\DataObject\Data\ElementMetadata) {
-                                    if ($item->getElement() instanceof Model\Element\ElementInterface) {
-                                        $elementHash = Model\Element\Service::getElementHash($item->getElement());
-                                    }
-                                } elseif ($item instanceof Model\Element\ElementInterface) {
-                                    $elementHash = Model\Element\Service::getElementHash($item);
-                                }
-
-                                if ($elementHash && !isset($relationItems[$elementHash])) {
-                                    $relationItems[$elementHash] = $item;
-                                }
-                            }
-
-                            $value = array_values($relationItems);
-                        }
-                        $this->$setter($value);
-                    }
-                    AbstractObject::setGetInheritedValues($inheritedValues);
-
                     $value = $this->$getter();
                     $omitMandatoryCheck = $this->getOmitMandatoryCheck();
 
@@ -192,7 +163,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                 if ($e instanceof Model\Element\ValidationException) {
                     $subItems = $e->getSubItems();
-                    if (is_array($subItems)) {
+                    if (is_array($subItems) && count($subItems)) {
                         $msg .= ' (';
                         $subItemParts = [];
                         /** @var \Exception $subItem */
@@ -261,27 +232,16 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * @inheritdoc
      */
-    public function delete(bool $isNested = false)
+    protected function doDelete()
     {
-        $this->beginTransaction();
-
-        try {
-            // delete all versions
-            foreach ($this->getVersions() as $v) {
-                $v->delete();
-            }
-
-            $this->getDao()->deleteAllTasks();
-
-            parent::delete(true);
-
-            $this->commit();
-        } catch (\Exception $e) {
-            $this->rollBack();
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));
-            Logger::crit($e);
-            throw $e;
+        // delete all versions
+        foreach ($this->getVersions() as $v) {
+            $v->delete();
         }
+
+        $this->getDao()->deleteAllTasks();
+
+        parent::doDelete();
     }
 
     /**
@@ -304,7 +264,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this, [
-                    'saveVersionOnly' => true
+                    'saveVersionOnly' => true,
                 ]));
             }
 
@@ -315,8 +275,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
             // only create a new version if there is at least 1 allowed
             // or if saveVersion() was called directly (it's a newer version of the object)
-            if (Config::getSystemConfig()->objects->versions->steps
-                || Config::getSystemConfig()->objects->versions->days
+            $objectsConfig = \Pimcore\Config::getSystemConfiguration('objects');
+            if (!empty($objectsConfig['versions']['steps'])
+                || !empty($objectsConfig['versions']['days'])
                 || $setModificationDate) {
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
             }
@@ -324,7 +285,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this, [
-                    'saveVersionOnly' => true
+                    'saveVersionOnly' => true,
                 ]));
             }
 
@@ -332,7 +293,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         } catch (\Exception $e) {
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE_FAILURE, new DataObjectEvent($this, [
                 'saveVersionOnly' => true,
-                'exception' => $e
+                'exception' => $e,
             ]));
 
             throw $e;
@@ -537,11 +498,15 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public function getOmitMandatoryCheck()
     {
+        if ($this->omitMandatoryCheck === null) {
+            return !$this->isPublished();
+        }
+
         return $this->omitMandatoryCheck;
     }
 
     /**
-     * @return array
+     * @return Model\Schedule\Task[]
      */
     public function getScheduledTasks()
     {
@@ -594,15 +559,25 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      */
     public function getNextParentForInheritance()
     {
-        if ($this->getParent() instanceof AbstractObject) {
-            $parent = $this->getParent();
-            while ($parent && $parent->getType() === self::OBJECT_TYPE_FOLDER) {
+        return $this->getClosestParentOfClass($this->getClassId());
+    }
+
+    /**
+     * @param string $classId
+     *
+     * @return Concrete|null
+     */
+    public function getClosestParentOfClass(string $classId)
+    {
+        $parent = $this->getParent();
+        if ($parent instanceof AbstractObject) {
+            while ($parent && (!$parent instanceof Concrete || $parent->getClassId() !== $classId)) {
                 $parent = $parent->getParent();
             }
 
             if ($parent && in_array($parent->getType(), [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_VARIANT], true)) {
                 /** @var Concrete $parent */
-                if ($parent->getClassId() === $this->getClassId()) {
+                if ($parent->getClassId() === $classId) {
                     return $parent;
                 }
             }
@@ -643,6 +618,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
         // get real fieldname (case sensitive)
         $fieldnames = [];
+        $defaultCondition = '';
         foreach ($classDefinition->getFieldDefinitions() as $fd) {
             $fieldnames[] = $fd->getName();
         }
@@ -688,7 +664,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                 $defaultCondition = $localizedPropertyName . ' = ' . Db::get()->quote($value) . ' ';
                 $listConfig = [
-                    'condition' => $defaultCondition
+                    'condition' => $defaultCondition,
                 ];
 
                 if ($locale) {
@@ -698,9 +674,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 $arguments = array_pad($arguments, 3, 0);
                 [$value, $limit, $offset] = $arguments;
 
-                $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
+                if (!$field instanceof AbstractRelations) {
+                    $defaultCondition = $realPropertyName . ' = ' . Db::get()->quote($value) . ' ';
+                }
                 $listConfig = [
-                    'condition' => $defaultCondition
+                    'condition' => $defaultCondition,
                 ];
             }
 
@@ -713,10 +691,15 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 }
             } else {
                 $listConfig = array_merge($listConfig, $limit);
-                $listConfig['condition'] = $defaultCondition . $limit['condition'];
+                $limitCondition = $limit['condition'] ?? '';
+                $listConfig['condition'] = $defaultCondition . $limitCondition;
             }
 
             $list = static::getList($listConfig);
+
+            if ($field instanceof AbstractRelations && $field->isFilterable()) {
+                $list = $field->addListingFilter($list, $value);
+            }
 
             if (isset($listConfig['limit']) && $listConfig['limit'] == 1) {
                 $elements = $list->getObjects();
@@ -838,39 +821,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     public function __clone()
     {
         parent::__clone();
-    }
-
-    /**
-     * @var bool
-     */
-    protected static $disableLazyLoading = false;
-
-    /**
-     * @internal
-     * Disables lazy loading
-     */
-    public static function disableLazyLoading()
-    {
-        self::$disableLazyLoading = true;
-    }
-
-    /**
-     * @internal
-     * Enables the lazy loading
-     */
-    public static function enableLazyloading()
-    {
-        self::$disableLazyLoading = false;
-    }
-
-    /**
-     * @internal
-     *
-     * @return bool
-     */
-    public static function isLazyLoadingDisabled()
-    {
-        return self::$disableLazyLoading;
+        $this->o_class = null;
+        $this->o_versions = null;
+        $this->scheduledTasks = null;
     }
 
     /**
@@ -898,60 +851,95 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     }
 
     /**
+     * @internal
+     *
+     * @param array $descriptor
+     * @param string $table
+     *
+     * @return array
+     */
+    protected function doRetrieveData(array $descriptor, string $table)
+    {
+        $db = Db::get();
+        $conditionParts = Service::buildConditionPartsFromDescriptor($descriptor);
+
+        $query = 'SELECT * FROM ' . $table . ' WHERE ' . implode(' AND ', $conditionParts);
+        $result = $db->fetchAll($query);
+
+        return $result;
+    }
+
+    /**
+     * @internal
+     *
+     * @param array $descriptor
+     *
+     * @return array
+     */
+    public function retrieveSlugData($descriptor)
+    {
+        $descriptor['objectId'] = $this->getId();
+
+        return $this->doRetrieveData($descriptor, 'object_url_slugs');
+    }
+
+    /**
+     * @internal
+     *
      * @param array $descriptor
      *
      * @return array
      */
     public function retrieveRelationData($descriptor)
     {
-        if ($this instanceof CacheRawRelationDataInterface) {
-            $unfilteredData = $this->__getRawRelationData();
+        $descriptor['src_id'] = $this->getId();
 
-            $likes = [];
-            foreach ($descriptor as $column => $expectedValue) {
-                if (is_string($expectedValue)) {
-                    $trimmed = rtrim($expectedValue, '%');
-                    if (strlen($trimmed) < strlen($expectedValue)) {
-                        $likes[$column] = $trimmed;
-                    }
+        $unfilteredData = $this->__getRawRelationData();
+
+        $likes = [];
+        foreach ($descriptor as $column => $expectedValue) {
+            if (is_string($expectedValue)) {
+                $trimmed = rtrim($expectedValue, '%');
+                if (strlen($trimmed) < strlen($expectedValue)) {
+                    $likes[$column] = $trimmed;
                 }
             }
+        }
 
-            $filterFn = static function ($row) use ($descriptor, $likes) {
-                foreach ($descriptor as $column => $expectedValue) {
-                    $actualValue = $row[$column];
-                    if (isset($likes[$column])) {
-                        $expectedValue = $likes[$column];
-                        if (strpos($actualValue, $expectedValue) !== 0) {
-                            return false;
-                        }
-                    } elseif ($actualValue != $expectedValue) {
+        $filterFn = static function ($row) use ($descriptor, $likes) {
+            foreach ($descriptor as $column => $expectedValue) {
+                $actualValue = $row[$column];
+                if (isset($likes[$column])) {
+                    $expectedValue = $likes[$column];
+                    if (strpos($actualValue, $expectedValue) !== 0) {
                         return false;
                     }
-                }
-
-                return true;
-            };
-
-            $filteredData = array_filter($unfilteredData, $filterFn);
-
-            return $filteredData;
-        } else {
-            $db = Db::get();
-            $conditionParts = ['src_id = ' . $this->getId()];
-            foreach ($descriptor as $key => $value) {
-                $lastChar = is_string($value) ? $value[strlen($value) - 1] : null;
-                if ($lastChar === '%') {
-                    $conditionParts[] = $key . ' LIKE ' . $db->quote($value);
-                } else {
-                    $conditionParts[] = $key . ' = ' . $db->quote($value);
+                } elseif ($actualValue != $expectedValue) {
+                    return false;
                 }
             }
 
-            $query = 'SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE ' . implode(' AND ', $conditionParts);
-            $result = $db->fetchAll($query);
+            return true;
+        };
 
-            return $result;
+        $filteredData = array_filter($unfilteredData, $filterFn);
+
+        return $filteredData;
+    }
+
+    /**
+     * @internal
+     *
+     * @return array
+     */
+    public function __getRawRelationData(): array
+    {
+        if ($this->__rawRelationData === null) {
+            $db = Db::get();
+            $relations = $db->fetchAll('SELECT * FROM object_relations_' . $this->getClassId() . ' WHERE src_id = ?', [$this->getId()]);
+            $this->__rawRelationData = $relations ?? [];
         }
+
+        return $this->__rawRelationData;
     }
 }

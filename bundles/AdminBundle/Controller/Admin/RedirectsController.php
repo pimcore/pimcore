@@ -22,7 +22,9 @@ use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
+use Pimcore\Model\Site;
 use Pimcore\Routing\Redirect\Csv;
+use Pimcore\Routing\RedirectHandler;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,13 +38,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class RedirectsController extends AdminController
 {
     /**
-     * @Route("/list", methods={"POST"})
+     * @Route("/list", name="pimcore_admin_redirects_redirects", methods={"POST"})
      *
      * @param Request $request
+     * @param RedirectHandler $redirectHandler
      *
      * @return JsonResponse
      */
-    public function redirectsAction(Request $request)
+    public function redirectsAction(Request $request, RedirectHandler $redirectHandler)
     {
         if ($request->get('data')) {
             $this->checkPermission('redirects');
@@ -98,7 +101,7 @@ class RedirectsController extends AdminController
                     }
                 }
 
-                if (!$data['regex'] && $data['source']) {
+                if (isset($data['regex']) && !$data['regex'] && isset($data['source']) && $data['source']) {
                     $data['source'] = str_replace('+', ' ', $data['source']);
                 }
 
@@ -131,6 +134,16 @@ class RedirectsController extends AdminController
             if ($filterValue = $request->get('filter')) {
                 if (is_numeric($filterValue)) {
                     $list->setCondition('id = ?', [$filterValue]);
+                } elseif (preg_match('@^https?://@', $filterValue)) {
+                    $dummyRequest = Request::create($filterValue);
+                    $site = Site::getByDomain($dummyRequest->getHost());
+                    $dummyResponse = $redirectHandler->checkForRedirect($dummyRequest, false, $site);
+                    if ($dummyResponse && $redirectId = $dummyResponse->headers->get(RedirectHandler::RESPONSE_HEADER_NAME_ID)) {
+                        $list->setCondition('id = ?', [$redirectId]);
+                    } else {
+                        // do not return any results
+                        $list->setCondition('1 = 2');
+                    }
                 } else {
                     $list->setCondition('`source` LIKE ' . $list->quote('%' . $filterValue . '%') . ' OR `target` LIKE ' . $list->quote('%' . $filterValue . '%'));
                 }
@@ -153,10 +166,12 @@ class RedirectsController extends AdminController
 
             return $this->adminJson(['data' => $redirects, 'success' => true, 'total' => $list->getTotalCount()]);
         }
+
+        return $this->adminJson(['success' => false]);
     }
 
     /**
-     * @Route("/csv-export", methods={"GET"})
+     * @Route("/csv-export", name="pimcore_admin_redirects_csvexport", methods={"GET"})
      *
      * @param Request $request
      * @param Csv $csv
@@ -188,7 +203,7 @@ class RedirectsController extends AdminController
     }
 
     /**
-     * @Route("/csv-import", methods={"POST"})
+     * @Route("/csv-import", name="pimcore_admin_redirects_csvimport", methods={"POST"})
      *
      * @param Request $request
      * @param Csv $csv
@@ -210,12 +225,12 @@ class RedirectsController extends AdminController
 
         return $this->adminJson([
             'success' => true,
-            'data' => $result
+            'data' => $result,
         ]);
     }
 
     /**
-     * @Route("/cleanup", methods={"DELETE"})
+     * @Route("/cleanup", name="pimcore_admin_redirects_cleanup", methods={"DELETE"})
      *
      * @param Request $request
      *

@@ -24,15 +24,24 @@ pimcore.element.replace_assignments = Class.create({
 
             this.store = new Ext.data.Store({
                 autoDestroy: true,
+                remoteSort: true,
+                pageSize: pimcore.helpers.grid.getDefaultPageSize(),
                 proxy: {
                     type: 'ajax',
-                    url: "/admin/element/find-usages",
+                    url: Routing.generate('pimcore_admin_element_findusages'),
                     reader: {
                         type: 'json',
-                        rootProperty: 'data'
+                        rootProperty: 'data',
+                        totalProperty: 'total'
                     }
                 },
                 listeners: {
+                    beforeload: function (store, operation, eOpts) {
+                        let params = this.panel.getComponent("form").getForm().getFieldValues();
+                        for (let key of Object.keys(params)) {
+                            store.proxy.setExtraParam(key, params[key]);
+                        }
+                    }.bind(this),
                     load: function (store, records, success, operation) {
                         var responseText = operation.getResponse().responseText;
                         var response = Ext.decode(responseText);
@@ -246,11 +255,19 @@ pimcore.element.replace_assignments = Class.create({
                             autoExpandColumn: "path",
                             stripeRows: true,
                             autoScroll: true,
-                            buttons: [{
-                                text: t("replace_assignments_in_selected_elements"),
-                                iconCls: "pimcore_icon_apply",
-                                handler: this.update.bind(this)
-                            }]
+                            buttons: [
+                                {
+                                    text: t("replace_assignments_in_selected_elements"),
+                                    iconCls: "pimcore_icon_apply",
+                                    handler: this.updateSelected.bind(this)
+                                },
+                                {
+                                    text: t("replace_assignments_in_all_elements"),
+                                    iconCls: "pimcore_icon_apply",
+                                    handler: this.updateAll.bind(this)
+                                }
+                            ],
+                            bbar: pimcore.helpers.grid.buildDefaultPagingToolbar(this.store)
                         }
                     ]
                 }
@@ -274,19 +291,19 @@ pimcore.element.replace_assignments = Class.create({
         });
     },
 
-    update: function () {
+    updateSelected: function () {
 
         var params = this.panel.getComponent("form").getForm().getFieldValues();
         params["sourceType"] = params["type"];
         params["sourceId"] = params["id"];
 
-
         // get selected elements
         var jobs = [];
         var selectedRows = this.panel.getComponent("result").getSelection();
+
         for (var i = 0; i < selectedRows.length; i++) {
             jobs.push({
-                url: "/admin/element/replace-assignments",
+                url: Routing.generate('pimcore_admin_element_replaceassignments'),
                 method: 'POST',
                 params: array_merge(params, {
                     id: selectedRows[i].get("id"),
@@ -295,20 +312,60 @@ pimcore.element.replace_assignments = Class.create({
             });
         }
 
-        if (jobs.length && params["targetId"]) {
+        this.processUpdateJobs(jobs, params["targetId"]);
+    },
+
+    updateAll: function () {
+
+        var params = this.panel.getComponent("form").getForm().getFieldValues();
+        params["sourceType"] = params["type"];
+        params["sourceId"] = params["id"];
+
+        Ext.Ajax.request({
+            url: Routing.generate('pimcore_admin_element_getreplaceassignmentsbatchjobs'),
+            params: params,
+            success: function (params, response) {
+                var rdata = Ext.decode(response.responseText);
+
+                if (rdata.success && rdata.jobs) {
+                    var jobs = [];
+
+                    for (var i = 0; i < rdata.jobs.length; i++) {
+                        jobs.push({
+                            url: "/admin/element/replace-assignments",
+                            method: 'POST',
+                            params: array_merge(params, {
+                                id: rdata.jobs[i]["id"],
+                                type: rdata.jobs[i]["type"]
+                            })
+                        });
+                    }
+
+                    this.processUpdateJobs(jobs, params["targetId"]);
+                } else {
+                    Ext.MessageBox.alert(t("error"), t("search_replace_assignments_error"));
+                }
+
+            }.bind(this, params)
+        });
+    },
+
+    processUpdateJobs: function (jobs, targetId) {
+
+        if (jobs.length && targetId) {
             this.progressBar = new Ext.ProgressBar({
                 text: t('initializing')
             });
 
             this.progressBarWin = new Ext.Window({
-                title: t("please_wait"),
+                title: t("replace"),
                 layout: 'fit',
-                width: 500,
+                width: 200,
                 bodyStyle: "padding: 10px;",
                 closable: false,
                 plain: true,
-                modal: true,
-                items: [this.progressBar]
+                items: [this.progressBar],
+                listeners: pimcore.helpers.getProgressWindowListeners()
             });
 
             this.progressBarWin.show();

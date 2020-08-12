@@ -50,7 +50,7 @@ pimcore.report.qrcode.panel = Class.create({
 
         return this.panel;
     },
-    
+
     getTree: function () {
         if (!this.tree) {
             var store = Ext.create('Ext.data.TreeStore', {
@@ -58,7 +58,7 @@ pimcore.report.qrcode.panel = Class.create({
                 autoSync: true,
                 proxy: {
                     type: 'ajax',
-                    url: "/admin/reports/qrcode/tree",
+                    url: Routing.generate('pimcore_admin_reports_qrcode_tree'),
                     reader: {
                         type: 'json'
                     }
@@ -147,7 +147,7 @@ pimcore.report.qrcode.panel = Class.create({
         }
 
         Ext.Ajax.request({
-            url: "/admin/reports/qrcode/get",
+            url: Routing.generate('pimcore_admin_reports_qrcode_get'),
             params: {
                 name: id
             },
@@ -197,7 +197,7 @@ pimcore.report.qrcode.panel = Class.create({
             }
 
             Ext.Ajax.request({
-                url: "/admin/reports/qrcode/add",
+                url: Routing.generate('pimcore_admin_reports_qrcode_add'),
                 method: 'POST',
                 params: {
                     name: value
@@ -225,7 +225,7 @@ pimcore.report.qrcode.panel = Class.create({
 
     deleteField: function (tree, record) {
         Ext.Ajax.request({
-            url: "/admin/reports/qrcode/delete",
+            url: Routing.generate('pimcore_admin_reports_qrcode_delete'),
             method: 'DELETE',
             params: {
                 name: record.data.id

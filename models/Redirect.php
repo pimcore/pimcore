@@ -20,6 +20,7 @@ namespace Pimcore\Model;
 use Pimcore\Event\Model\RedirectEvent;
 use Pimcore\Event\RedirectEvents;
 use Pimcore\Logger;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Pimcore\Model\Redirect\Dao getDao()
@@ -29,11 +30,13 @@ class Redirect extends AbstractModel
     const TYPE_ENTIRE_URI = 'entire_uri';
     const TYPE_PATH_QUERY = 'path_query';
     const TYPE_PATH = 'path';
+    const TYPE_AUTO_CREATE = 'auto_create';
 
     const TYPES = [
         self::TYPE_ENTIRE_URI,
         self::TYPE_PATH_QUERY,
-        self::TYPE_PATH
+        self::TYPE_PATH,
+        self::TYPE_AUTO_CREATE,
     ];
 
     /**
@@ -52,14 +55,14 @@ class Redirect extends AbstractModel
     public $source;
 
     /**
-     * @var int
+     * @var int|null
      */
     public $sourceSite;
 
     /**
      * @var bool
      */
-    public $passThroughParameters;
+    public $passThroughParameters = false;
 
     /**
      * @var string
@@ -67,22 +70,22 @@ class Redirect extends AbstractModel
     public $target;
 
     /**
-     * @var int
+     * @var int|null
      */
     public $targetSite;
 
     /**
-     * @var string
+     * @var int
      */
     public $statusCode = 301;
 
     /**
-     * @var string
+     * @var int
      */
     public $priority = 1;
 
     /**
-     * @var bool
+     * @var bool|null
      */
     public $regex;
 
@@ -128,19 +131,38 @@ class Redirect extends AbstractModel
         '301' => 'Moved Permanently',
         '302' => 'Found',
         '303' => 'See Other',
-        '307' => 'Temporary Redirect'
+        '307' => 'Temporary Redirect',
     ];
 
     /**
      * @param int $id
      *
-     * @return Redirect
+     * @return self|null
      */
     public static function getById($id)
     {
         try {
             $redirect = new self();
             $redirect->getDao()->getById($id);
+
+            return $redirect;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param Site|null $site
+     * @param bool $override
+     *
+     * @return self|null
+     */
+    public static function getByExactMatch(Request $request, ?Site $site = null, bool $override = false): ?self
+    {
+        try {
+            $redirect = new self();
+            $redirect->getDao()->getByExactMatch($request, $site, $override);
 
             return $redirect;
         } catch (\Exception $e) {
@@ -374,11 +396,7 @@ class Redirect extends AbstractModel
      */
     public function setActive($active)
     {
-        if ($active) {
-            $this->active = (bool) $active;
-        } else {
-            $this->active = null;
-        }
+        $this->active = (bool) $active;
 
         return $this;
     }
@@ -438,11 +456,7 @@ class Redirect extends AbstractModel
      */
     public function setPassThroughParameters($passThroughParameters)
     {
-        if ($passThroughParameters) {
-            $this->passThroughParameters = (bool) $passThroughParameters;
-        } else {
-            $this->passThroughParameters = null;
-        }
+        $this->passThroughParameters = (bool) $passThroughParameters;
 
         return $this;
     }

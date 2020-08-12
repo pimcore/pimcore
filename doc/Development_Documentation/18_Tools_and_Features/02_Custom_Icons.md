@@ -5,7 +5,7 @@ be changed.
 
 > Support for the event-based approach for Documents, Assets and Data Objects is available since release 6.4.1
 > If you you are looking for the (deprecated) pre 6.4.1 way (supporting Data Objects only) read these
-> [instructions](https://pimcore.com/docs/5.x/Development_Documentation/Objects/Object_Classes/Class_Settings/Custom_Icons.html).
+> [instructions](https://pimcore.com/docs/6.x/Development_Documentation/Objects/Object_Classes/Class_Settings/Custom_Icons.html).
 
 #### Properties that can be changed
 * Element CSS class
@@ -21,15 +21,34 @@ This can be achieved by attaching a listener to the [`AdminEvents::RESOLVE_ELEME
 
 Example:
 
+In `app/config/services.yaml` add
+
+```yaml
+  AppBundle\EventListener\AdminStyleListener:
+    tags:
+      - { name: kernel.event_listener, event: pimcore.admin.resolve.elementAdminStyle, method: onResolveElementAdminStyle }
+
+```
+
+Create AdminStyleListener in EventListeners
+
 ```php
-\Pimcore::getEventDispatcher()->addListener(\Pimcore\Event\AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE,
-    function(\Pimcore\Event\Admin\ElementAdminStyleEvent $event) {
+<?php
+
+namespace AppBundle\EventListener;
+
+class AdminStyleListener
+{
+    public function onResolveElementAdminStyle(\Pimcore\Event\Admin\ElementAdminStyleEvent $event)
+    {
         $element = $event->getElement();
         // decide which default styles you want to override
         if ($element instanceof \AppBundle\Model\Product\Car) {
             $event->setAdminStyle(new \AppBundle\Model\Product\AdminStyle\Car($element));
         }
-});
+    }
+}
+
 ```
 
  

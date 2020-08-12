@@ -51,7 +51,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
 class DataObjectController extends AbstractElementController
 {
     /**
-     * @Route("/object/id/{id}", requirements={"id": "\d+"}, methods={"GET"})
+     * @Route("/object/id/{id}", name="pimcore_api_rest_element_dataobject_get", requirements={"id": "\d+"}, methods={"GET"})
      *
      * @api {get} /object Get object data
      * @apiName Get object by id
@@ -125,10 +125,11 @@ class DataObjectController extends AbstractElementController
             $stopwatch->start('ws', $profileName);
         }
 
-        /** @var WebserviceObjectOut|WebserviceFolderOut $out */
         if ($object instanceof DataObject\Folder) {
+            /** @var WebserviceObjectOut|WebserviceFolderOut $out */
             $out = $this->service->getObjectFolderById($id);
         } else {
+            /** @var WebserviceObjectOut $out */
             $out = $this->service->getObjectConcreteById($id);
         }
 
@@ -146,7 +147,7 @@ class DataObjectController extends AbstractElementController
     }
 
     /**
-     * @Route("/object", methods={"POST", "PUT"})
+     * @Route("/object", name="pimcore_api_rest_element_dataobject_create", methods={"POST", "PUT"})
      *
      * @api {post} /object Create a new object
      * @apiName Create a new object
@@ -240,7 +241,7 @@ class DataObjectController extends AbstractElementController
     }
 
     /**
-     * @Route("/object/id/{id}", requirements={"id": "\d+"}, methods={"POST", "PUT"})
+     * @Route("/object/id/{id}", name="pimcore_api_rest_element_dataobject_update", requirements={"id": "\d+"}, methods={"POST", "PUT"})
      *
      * @api {put} /object/id/{id} Update an object
      * @apiName Create a new object
@@ -331,7 +332,7 @@ class DataObjectController extends AbstractElementController
     }
 
     /**
-     * @Route("/object/id/{id}", requirements={"id": "\d+"}, methods={"DELETE"})
+     * @Route("/object/id/{id}", name="pimcore_api_rest_element_dataobject_delete", requirements={"id": "\d+"}, methods={"DELETE"})
      *
      * @api {delete} /object/id/{id} Delete object
      * @apiName Delete object
@@ -378,7 +379,7 @@ class DataObjectController extends AbstractElementController
     }
 
     /**
-     * @Route("/object-list", methods={"GET"})
+     * @Route("/object-list", name="pimcore_api_rest_element_dataobject_list", methods={"GET"})
      *
      * Returns a list of object id/type pairs matching the given criteria.
      *  Example:
@@ -422,7 +423,7 @@ class DataObjectController extends AbstractElementController
     }
 
     /**
-     * @Route("/object-meta/id/{id}", requirements={"id": "\d+"}, methods={"GET"})
+     * @Route("/object-meta/id/{id}", name="pimcore_api_rest_element_dataobject_objectmeta", requirements={"id": "\d+"}, methods={"GET"})
      *
      * end point for object metadata
      *  Example:
@@ -448,7 +449,7 @@ class DataObjectController extends AbstractElementController
     }
 
     /**
-     * @Route("/object-count", methods={"GET"})
+     * @Route("/object-count", name="pimcore_api_rest_element_dataobject_count", methods={"GET"})
      *
      * Returns the total number of objects matching the given condition
      *  Example:
@@ -482,8 +483,8 @@ class DataObjectController extends AbstractElementController
             'objectTypes' => [
                 DataObject\AbstractObject::OBJECT_TYPE_FOLDER,
                 DataObject\AbstractObject::OBJECT_TYPE_OBJECT,
-                DataObject\AbstractObject::OBJECT_TYPE_VARIANT
-            ]
+                DataObject\AbstractObject::OBJECT_TYPE_VARIANT,
+            ],
         ];
 
         if (!empty($condition)) {
@@ -505,12 +506,12 @@ class DataObjectController extends AbstractElementController
         $count = $listClassName::getTotalCount($params);
 
         return $this->createSuccessResponse([
-            'totalCount' => $count
+            'totalCount' => $count,
         ]);
     }
 
     /**
-     * @Route("/object-inquire", methods={"GET", "POST"})
+     * @Route("/object-inquire", name="pimcore_api_rest_element_dataobject_inquire", methods={"GET", "POST"})
      *
      * Checks for existence of the given object IDs
      *
@@ -549,7 +550,7 @@ class DataObjectController extends AbstractElementController
 
         throw $this->createNotFoundResponseException([
             'msg' => sprintf('Object %d does not exist', (int)$id),
-            'code' => static::ELEMENT_DOES_NOT_EXIST
+            'code' => static::ELEMENT_DOES_NOT_EXIST,
         ]);
     }
 
@@ -571,6 +572,7 @@ class DataObjectController extends AbstractElementController
             $method = 'createObjectConcrete';
         }
 
+        /** @var \Pimcore\Model\Webservice\Data\DataObject $wsData */
         $wsData = $this->fillWebserviceData($class, $data);
 
         $object = new DataObject();
@@ -582,7 +584,7 @@ class DataObjectController extends AbstractElementController
 
         if (null !== $id) {
             return $this->createSuccessResponse([
-                'id' => $id
+                'id' => $id,
             ], false);
         } else {
             return $this->createErrorResponse();

@@ -60,7 +60,7 @@ class ConfigurationFactory implements EventSubscriberInterface
     {
         // reset configurations when test kernel boots
         return [
-            TestEvents::KERNEL_BOOTED => 'reset'
+            TestEvents::KERNEL_BOOTED => 'reset',
         ];
     }
 

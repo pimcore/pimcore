@@ -14,12 +14,10 @@
 pimcore.registerNS("pimcore.document.document");
 pimcore.document.document = Class.create(pimcore.element.abstract, {
 
-    urlprefix: "/admin/",
-
     getData: function () {
         var options = this.options || {};
         Ext.Ajax.request({
-            url: this.urlprefix + this.getType() + "/get-data-by-id",
+            url: Routing.getBaseUrl() + "/admin/" + this.getType() + "/get-data-by-id",
             params: {id: this.id},
             ignoreErrors: options.ignoreNotFoundError,
             success: this.getDataComplete.bind(this),
@@ -89,6 +87,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         var saveData = this.getSaveData(only);
 
         if (saveData) {
+            if(this.data.missingRequiredEditable !== null) {
+                saveData.missingRequiredEditable = this.data.missingRequiredEditable;
+            }
+
             // check for version notification
             if (this.newerVersionNotification) {
                 if (task == "publish" || task == "unpublish") {
@@ -99,10 +101,24 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
             }
 
-            pimcore.plugin.broker.fireEvent("preSaveDocument", this, this.getType(), task, only);
+            try {
+                pimcore.plugin.broker.fireEvent("preSaveDocument", this, this.getType(), task, only);
+            } catch (e) {
+                if (e instanceof pimcore.error.ValidationException) {
+                        this.tab.unmask();
+                        pimcore.helpers.showPrettyError('document', t("error"), t("saving_failed"), e.message);
+                        return false;
+                    }
+
+                    if (e instanceof pimcore.error.ActionCancelledException) {
+                        this.tab.unmask();
+                        pimcore.helpers.showNotification(t("Info"), 'Document not saved: ' + e.message, 'info');
+                        return false;
+                    }
+            }
 
             Ext.Ajax.request({
-                url: this.urlprefix + this.getType() + '/save?task=' + task,
+                url: Routing.getBaseUrl() + "/admin/" + this.getType() + '/save?task=' + task,
                 method: "PUT",
                 params: saveData,
                 success: function (response) {
@@ -139,7 +155,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 }.bind(this),
                 failure: function () {
                     this.tab.unmask();
-                }
+                }.bind(this),
             });
         } else {
             this.tab.unmask();
@@ -163,7 +179,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         this.save(null, only, function () {
             var tabPanel = Ext.getCmp("pimcore_panel_tabs");
             tabPanel.remove(this.tab);
-        });
+        }.bind(this));
     },
 
     publishClose: function () {
@@ -245,7 +261,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         var checkLanguage = function (el) {
 
             Ext.Ajax.request({
-                url: "/admin/document/translation-check-language",
+                url: Routing.generate('pimcore_admin_document_document_translationchecklanguage'),
                 params: {
                     path: el.getValue()
                 },
@@ -337,7 +353,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     }
 
                     Ext.Ajax.request({
-                        url: "/admin/document/translation-add",
+                        url: Routing.generate('pimcore_admin_document_document_translationadd'),
                         method: 'POST',
                         params: {
                             sourceId: this.id,
@@ -390,7 +406,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     select: function (el) {
                         pageForm.getComponent("parent").disable();
                         Ext.Ajax.request({
-                            url: "/admin/document/translation-determine-parent",
+                            url: Routing.generate('pimcore_admin_document_document_translationdetermineparent'),
                             params: {
                                 language: el.getValue(),
                                 id: this.id
@@ -489,7 +505,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     win.disable();
 
                     Ext.Ajax.request({
-                        url: "/admin/element/get-subtype",
+                        url: Routing.generate('pimcore_admin_element_getsubtype'),
                         params: {
                             id: pageForm.getComponent("parent").getValue(),
                             type: "document"
@@ -506,7 +522,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                                     }
 
                                     Ext.Ajax.request({
-                                        url: "/admin/document/add",
+                                        url: Routing.generate('pimcore_admin_document_document_add'),
                                         method: 'POST',
                                         params: params,
                                         success: function (response) {
@@ -568,7 +584,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     text: pimcore.available_languages[language] + " [" + language + "]",
                     handler: function () {
                         Ext.Ajax.request({
-                            url: "/admin/document/translation-remove",
+                            url: Routing.generate('pimcore_admin_document_document_translationremove'),
                             method: 'DELETE',
                             params: {
                                 sourceId: me.id,
@@ -626,7 +642,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
     resetPath: function () {
         Ext.Ajax.request({
-            url: "/admin/document/get-data-by-id",
+            url: Routing.generate('pimcore_admin_document_document_getdatabyid'),
             params: {id: this.id},
             success: function (response) {
                 var rdata = Ext.decode(response.responseText);

@@ -75,7 +75,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                 autoLoad: true,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/reports/custom-report/portlet-report-list',
+                    url: Routing.generate('pimcore_admin_reports_customreport_portletreportlist'),
                     reader: {
                         type: 'json',
                         rootProperty: 'data'
@@ -122,7 +122,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
     updateSettings: function() {
         this.config = Ext.getCmp("pimcore_portlet_selected_custom_report").getValue();
         Ext.Ajax.request({
-            url: "/admin/portal/update-portlet-config",
+            url: Routing.generate('pimcore_admin_portal_updateportletconfig'),
             method: 'PUT',
             params: {
                 key: this.portal.key,
@@ -138,7 +138,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
     updateChart: function() {
         if(this.config) {
             Ext.Ajax.request({
-                url: "/admin/reports/custom-report/get",
+                url: Routing.generate('pimcore_admin_reports_customreport_get'),
                 params: {
                     name: this.config
                 },
@@ -184,7 +184,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
 
         for(var f=0; f<data.columnConfiguration.length; f++) {
             colConfig = data.columnConfiguration[f];
-            this.columnLabels[colConfig["name"]] = colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]);
+            this.columnLabels[colConfig["name"]] = colConfig["label"] ? t(colConfig["label"]) : t(colConfig["name"]);
         }
 
 
@@ -199,7 +199,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                 autoDestroy: true,
                 proxy: {
                     type: 'ajax',
-                    url: "/admin/reports/custom-report/chart?",
+                    url: Routing.generate('pimcore_admin_reports_customreport_chart'),
                     extraParams: {
                         name: this.config
                     },
@@ -268,7 +268,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
             var chartFields = [];
             if (data.pieLabelColumn) {
                 chartFields.push(data.pieLabelColumn);
-            };
+            }
             if (data.pieColumn) {
                 chartFields.push({
                     name: data.pieColumn,
@@ -277,7 +277,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
             }
 
             var chartStore = pimcore.helpers.grid.buildDefaultStore(
-                '/admin/reports/custom-report/chart?',
+                Routing.generate('pimcore_admin_reports_customreport_chart'),
                 chartFields,
                 400000000
             );
@@ -302,10 +302,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                     tooltip: {
                         trackMouse: true,
                         renderer: function (tooltip, record, item) {
-                            var count = chartStore.getCount();
                             var value = record.get(data.pieColumn);
-
-
                             var sum = chartStore.sum(data.pieColumn);
                             var percentage = sum > 0 ? " (" + Math.round((value * 100 / sum)) + ' %)' : "";
                             tooltip.setHtml(record.get(data.pieLabelColumn) + ': ' + value + percentage);
@@ -353,7 +350,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
 
 
             Ext.Ajax.request({
-                url: "/admin/reports/custom-report/get",
+                url: Routing.generate('pimcore_admin_reports_customreport_get'),
                 params: {
                     name: this.config
                 },
@@ -401,10 +398,10 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                 continue;
             }
 
-            this.columnLabels[colConfig["name"]] = colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]);
+            this.columnLabels[colConfig["name"]] = colConfig["label"] ? t(colConfig["label"]) : t(colConfig["name"]);
 
             gridColConfig = {
-                header: colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"]),
+                header: colConfig["label"] ? t(colConfig["label"]) : t(colConfig["name"]),
                 hidden: !colConfig["display"],
                 sortable: colConfig["order"],
                 dataIndex: colConfig["name"]
@@ -447,7 +444,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
                     width: 40,
                     items: [
                         {
-                            tooltip: t("open") + " " + (colConfig["label"] ? ts(colConfig["label"]) : ts(colConfig["name"])),
+                            tooltip: t("open") + " " + (colConfig["label"] ? t(colConfig["label"]) : t(colConfig["name"])),
                             icon: "/bundles/pimcoreadmin/img/flat-color-icons/open_file.svg",
                             handler: function (colConfig, grid, rowIndex) {
                                 var data = grid.getStore().getAt(rowIndex).getData();
@@ -477,7 +474,7 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
 
     createGrid: function() {
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
-        var url = '/admin/reports/custom-report/data?';
+        var url = Routing.generate('pimcore_admin_reports_customreport_data');
 
         this.store = pimcore.helpers.grid.buildDefaultStore(
             url, this.storeFields, itemsPerPage

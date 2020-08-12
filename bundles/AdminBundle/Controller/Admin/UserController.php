@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Config;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
@@ -34,7 +35,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class UserController extends AdminController implements EventedControllerInterface
 {
     /**
-     * @Route("/user/tree-get-childs-by-id", methods={"GET"})
+     * @Route("/user/tree-get-childs-by-id", name="pimcore_admin_user_treegetchildsbyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -73,8 +74,8 @@ class UserController extends AdminController implements EventedControllerInterfa
             'elementType' => 'user',
             'type' => $user->getType(),
             'qtipCfg' => [
-                'title' => 'ID: ' . $user->getId()
-            ]
+                'title' => 'ID: ' . $user->getId(),
+            ],
         ];
 
         // set type specific settings
@@ -103,7 +104,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/add", methods={"POST"})
+     * @Route("/user/add", name="pimcore_admin_user_add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -119,7 +120,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                 'parentId' => intval($request->get('parentId')),
                 'name' => trim($request->get('name')),
                 'password' => '',
-                'active' => $request->get('active')
+                'active' => $request->get('active'),
             ]);
 
             if ($request->get('rid')) {
@@ -161,6 +162,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                             $user->$setter($clonedWorkspaces);
                         }
 
+                        $user->setPerspectives($rObject->getPerspectives());
                         $user->setPermissions($rObject->getPermissions());
 
                         if ($type == 'user') {
@@ -175,6 +177,9 @@ class UserController extends AdminController implements EventedControllerInterfa
                             $user->setCloseWarning($rObject->getCloseWarning());
                         }
 
+                        $user->setWebsiteTranslationLanguagesView($rObject->getWebsiteTranslationLanguagesView());
+                        $user->setWebsiteTranslationLanguagesEdit($rObject->getWebsiteTranslationLanguagesEdit());
+
                         $user->save();
                     }
                 }
@@ -182,7 +187,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
             return $this->adminJson([
                 'success' => true,
-                'id' => $user->getId()
+                'id' => $user->getId(),
             ]);
         } catch (\Exception $e) {
             return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
@@ -225,7 +230,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/delete", methods={"DELETE"})
+     * @Route("/user/delete", name="pimcore_admin_user_delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -283,7 +288,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/update", methods={"PUT"})
+     * @Route("/user/update", name="pimcore_admin_user_update", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -293,6 +298,7 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function updateAction(Request $request)
     {
+        /** @var User|User\Role $user */
         $user = User\AbstractUser::getById(intval($request->get('id')));
 
         if ($user instanceof User && $user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
@@ -319,7 +325,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                 }
             }
 
-            if (isset($values['2fa_required'])) {
+            if ($user instanceof User && isset($values['2fa_required'])) {
                 $user->setTwoFactorAuthentication('required', (bool) $values['2fa_required']);
             }
 
@@ -391,15 +397,16 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/get", methods={"GET"})
+     * @Route("/user/get", name="pimcore_admin_user_get", methods={"GET"})
      *
      * @param Request $request
+     * @param Config $config
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function getAction(Request $request)
+    public function getAction(Request $request, Config $config)
     {
         if (intval($request->get('id')) < 1) {
             return $this->adminJson(['success' => false]);
@@ -435,7 +442,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                 $userObjectData[] = [
                     'path' => $o->getRealFullPath(),
                     'id' => $o->getId(),
-                    'subtype' => $o->getClass()->getName()
+                    'subtype' => $o->getClass()->getName(),
                 ];
             } else {
                 $hasHidden = true;
@@ -465,14 +472,13 @@ class UserController extends AdminController implements EventedControllerInterfa
         $userData['twoFactorAuthentication']['isActive'] = ($user->getTwoFactorAuthentication('enabled') || $user->getTwoFactorAuthentication('secret'));
         unset($userData['password']);
         unset($userData['twoFactorAuthentication']['secret']);
+        $userData['hasImage'] = $user->hasImage();
 
         $availablePerspectives = \Pimcore\Config::getAvailablePerspectives(null);
 
-        $conf = \Pimcore\Config::getSystemConfig();
-
         return $this->adminJson([
             'success' => true,
-            'wsenabled' => $conf->webservice->enabled,
+            'wsenabled' => $config['webservice']['enabled'],
             'user' => $userData,
             'roles' => $roles,
             'permissions' => $user->generatePermissionList(),
@@ -481,13 +487,13 @@ class UserController extends AdminController implements EventedControllerInterfa
             'validLanguages' => Tool::getValidLanguages(),
             'objectDependencies' => [
                 'hasHidden' => $hasHidden,
-                'dependencies' => $userObjectData
-            ]
+                'dependencies' => $userObjectData,
+            ],
         ]);
     }
 
     /**
-     * @Route("/user/get-minimal", methods={"GET"})
+     * @Route("/user/get-minimal", name="pimcore_admin_user_getminimal", methods={"GET"})
      *
      * @param Request $request
      *
@@ -495,6 +501,7 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function getMinimalAction(Request $request)
     {
+        /** @var User $user */
         $user = User::getById(intval($request->get('id')));
         $user->setPassword(null);
 
@@ -509,7 +516,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/upload-current-user-image", methods={"POST"})
+     * @Route("/user/upload-current-user-image", name="pimcore_admin_user_uploadcurrentuserimage", methods={"POST"})
      *
      * @param Request $request
      *
@@ -532,7 +539,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/update-current-user", methods={"PUT"})
+     * @Route("/user/update-current-user", name="pimcore_admin_user_updatecurrentuser", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -611,7 +618,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/get-current-user", methods={"GET"})
+     * @Route("/user/get-current-user", name="pimcore_admin_user_getcurrentuser", methods={"GET"})
      *
      * @param Request $request
      *
@@ -638,6 +645,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $userData['twoFactorAuthentication'] = $user->getTwoFactorAuthentication();
         unset($userData['twoFactorAuthentication']['secret']);
         $userData['twoFactorAuthentication']['isActive'] = $user->getTwoFactorAuthentication('enabled') && $user->getTwoFactorAuthentication('secret');
+        $userData['hasImage'] = $user->hasImage();
 
         $userData['isPasswordReset'] = Tool\Session::useSession(function (AttributeBagInterface $adminSession) {
             return $adminSession->get('password_reset');
@@ -652,7 +660,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     /* ROLES */
 
     /**
-     * @Route("/user/role-tree-get-childs-by-id", methods={"GET"})
+     * @Route("/user/role-tree-get-childs-by-id", name="pimcore_admin_user_roletreegetchildsbyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -686,8 +694,8 @@ class UserController extends AdminController implements EventedControllerInterfa
             'text' => $role->getName(),
             'elementType' => 'role',
             'qtipCfg' => [
-                'title' => 'ID: ' . $role->getId()
-            ]
+                'title' => 'ID: ' . $role->getId(),
+            ],
         ];
 
         // set type specific settings
@@ -712,7 +720,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/role-get", methods={"GET"})
+     * @Route("/user/role-get", name="pimcore_admin_user_roleget", methods={"GET"})
      *
      * @param Request $request
      *
@@ -720,6 +728,7 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function roleGetAction(Request $request)
     {
+        /** @var User\UserRole $role */
         $role = User\Role::getById(intval($request->get('id')));
 
         // workspaces
@@ -749,12 +758,12 @@ class UserController extends AdminController implements EventedControllerInterfa
             'docTypes' => $role->getDocTypes(),
             'availablePermissions' => $availableUserPermissions,
             'availablePerspectives' => $availablePerspectives,
-            'validLanguages' => Tool::getValidLanguages()
+            'validLanguages' => Tool::getValidLanguages(),
         ]);
     }
 
     /**
-     * @Route("/user/upload-image", methods={"POST"})
+     * @Route("/user/upload-image", name="pimcore_admin_user_uploadimage", methods={"POST"})
      *
      * @param Request $request
      *
@@ -764,16 +773,8 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function uploadImageAction(Request $request)
     {
-        if ($request->get('id')) {
-            if ($this->getAdminUser()->getId() != $request->get('id')) {
-                $this->checkPermission('users');
-            }
-            $id = $request->get('id');
-        } else {
-            $id = $this->getAdminUser()->getId();
-        }
-
-        $userObj = User::getById($id);
+        /** @var User $userObj */
+        $userObj = User::getById($this->getUserId($request));
 
         if ($userObj->isAdmin() && !$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Only admin users are allowed to modify admin users');
@@ -791,7 +792,30 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/renew-2fa-qr-secret", methods={"GET"})
+     * @Route("/user/delete-image", name="pimcore_admin_user_deleteimage", methods={"DELETE"})
+     *
+     * @param Request $request
+     *
+     * @throws \Exception
+     *
+     * @return JsonResponse
+     */
+    public function deleteImageAction(Request $request)
+    {
+        /** @var User $userObj */
+        $userObj = User::getById($this->getUserId($request));
+
+        if ($userObj->isAdmin() && !$this->getAdminUser()->isAdmin()) {
+            throw new \Exception('Only admin users are allowed to modify admin users');
+        }
+
+        $userObj->setImage(null);
+
+        return $this->adminJson(['success' => true]);
+    }
+
+    /**
+     * @Route("/user/renew-2fa-qr-secret", name="pimcore_admin_user_renew2fasecret", methods={"GET"})
      *
      * @param Request $request
      *
@@ -831,7 +855,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/disable-2fa", methods={"DELETE"})
+     * @Route("/user/disable-2fa", name="pimcore_admin_user_disable2fasecret", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -850,12 +874,12 @@ class UserController extends AdminController implements EventedControllerInterfa
         }
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
     /**
-     * @Route("/user/reset-2fa-secret", methods={"PUT"})
+     * @Route("/user/reset-2fa-secret", name="pimcore_admin_user_reset2fasecret", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -873,12 +897,12 @@ class UserController extends AdminController implements EventedControllerInterfa
         $user->save();
 
         return $this->adminJson([
-            'success' => $success
+            'success' => $success,
         ]);
     }
 
     /**
-     * @Route("/user/get-image", methods={"GET"})
+     * @Route("/user/get-image", name="pimcore_admin_user_getimage", methods={"GET"})
      *
      * @param Request $request
      *
@@ -886,17 +910,8 @@ class UserController extends AdminController implements EventedControllerInterfa
      */
     public function getImageAction(Request $request)
     {
-        if ($request->get('id')) {
-            if ($this->getAdminUser()->getId() != $request->get('id')) {
-                $this->checkPermission('users');
-            }
-            $id = $request->get('id');
-        } else {
-            $id = $this->getAdminUser()->getId();
-        }
-
         /** @var User $userObj */
-        $userObj = User::getById($id);
+        $userObj = User::getById($this->getUserId($request));
         $thumb = $userObj->getImage();
 
         $response = new BinaryFileResponse($thumb);
@@ -906,7 +921,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/get-token-login-link", methods={"GET"})
+     * @Route("/user/get-token-login-link", name="pimcore_admin_user_gettokenloginlink", methods={"GET"})
      *
      * @param Request $request
      *
@@ -947,12 +962,12 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         return $this->adminJson([
             'success' => true,
-            'link' => $link
+            'link' => $link,
         ]);
     }
 
     /**
-     * @Route("/user/search", methods={"GET"})
+     * @Route("/user/search", name="pimcore_admin_user_search", methods={"GET"})
      *
      * @param Request $request
      *
@@ -985,7 +1000,7 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         return $this->adminJson([
             'success' => true,
-            'users' => $users
+            'users' => $users,
         ]);
     }
 
@@ -1003,7 +1018,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $unrestrictedActions = [
             'getCurrentUserAction', 'updateCurrentUserAction', 'getAvailablePermissionsAction', 'getMinimalAction',
             'getImageAction', 'uploadCurrentUserImageAction', 'disable2FaSecretAction', 'renew2FaSecretAction',
-            'getUsersForSharingAction', 'getRolesForSharingAction'
+            'getUsersForSharingAction', 'getRolesForSharingAction',
         ];
 
         $this->checkActionPermission($event, 'users', $unrestrictedActions);
@@ -1022,7 +1037,7 @@ class UserController extends AdminController implements EventedControllerInterfa
      *
      * @return JsonResponse
      *
-     * @Route("/user/get-users-for-sharing", methods={"GET"})
+     * @Route("/user/get-users-for-sharing", name="pimcore_admin_user_getusersforsharing", methods={"GET"})
      */
     public function getUsersForSharingAction(Request $request)
     {
@@ -1036,7 +1051,7 @@ class UserController extends AdminController implements EventedControllerInterfa
      *
      * @return JsonResponse
      *
-     * @Route("/user/get-roles-for-sharing", methods={"GET"}))
+     * @Route("/user/get-roles-for-sharing", name="pimcore_admin_user_getrolesforsharing", methods={"GET"}))
      */
     public function getRolesForSharingAction(Request $request)
     {
@@ -1046,11 +1061,11 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
+     * @Route("/user/get-users", name="pimcore_admin_user_getusers", methods={"GET"})
+     *
      * @param Request $request
      *
      * @return JsonResponse
-     *
-     * @Route("/user/get-users", methods={"GET"})
      */
     public function getUsersAction(Request $request)
     {
@@ -1074,7 +1089,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             if (!$request->get('permission') || $user->isAllowed($request->get('permission'))) {
                 $users[] = [
                     'id' => $user->getId(),
-                    'label' => $user->getUsername()
+                    'label' => $user->getUsername(),
                 ];
             }
         }
@@ -1083,11 +1098,11 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
+     * @Route("/user/get-roles", name="pimcore_admin_user_getroles", methods={"GET"})
+     *
      * @param Request $request
      *
      * @return JsonResponse
-     *
-     * @Route("/user/get-roles", methods={"GET"})
      */
     public function getRolesAction(Request $request)
     {
@@ -1103,7 +1118,7 @@ class UserController extends AdminController implements EventedControllerInterfa
             if (!$request->get('permission') || in_array($request->get('permission'), $role->getPermissions())) {
                 $roles[] = [
                     'id' => $role->getId(),
-                    'label' => $role->getName()
+                    'label' => $role->getName(),
                 ];
             }
         }
@@ -1112,11 +1127,11 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
+     * @Route("/user/get-default-key-bindings", name="pimcore_admin_user_getdefaultkeybindings", methods={"GET"})
+     *
      * @param Request $request
      *
      * @return JsonResponse
-     *
-     * @Route("/user/get-default-key-bindings", methods={"GET"})
      */
     public function getDefaultKeyBindingsAction(Request $request)
     {
@@ -1126,7 +1141,7 @@ class UserController extends AdminController implements EventedControllerInterfa
     }
 
     /**
-     * @Route("/user/invitationlink", methods={"POST"})
+     * @Route("/user/invitationlink", name="pimcore_admin_user_invitationlink", methods={"POST"})
      *
      * @param Request $request
      *
@@ -1140,6 +1155,7 @@ class UserController extends AdminController implements EventedControllerInterfa
         $message = '';
 
         if ($username = $request->get('username')) {
+            /** @var User $user */
             $user = User::getByName($username);
             if ($user instanceof User) {
                 if (!$user->isActive()) {
@@ -1163,7 +1179,7 @@ class UserController extends AdminController implements EventedControllerInterfa
                 $token = Tool\Authentication::generateToken($user->getName());
                 $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
                     'token' => $token,
-                    'reset' => 'true'
+                    'reset' => 'true',
                 ], UrlGeneratorInterface::ABSOLUTE_URL);
 
                 try {
@@ -1182,7 +1198,25 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         return $this->adminJson([
             'success' => $success,
-            'message' => $message
+            'message' => $message,
         ]);
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return int
+     */
+    protected function getUserId(Request $request)
+    {
+        if ($request->get('id')) {
+            if ($this->getAdminUser()->getId() != $request->get('id')) {
+                $this->checkPermission('users');
+            }
+
+            return (int) $request->get('id');
+        }
+
+        return $this->getAdminUser()->getId();
     }
 }

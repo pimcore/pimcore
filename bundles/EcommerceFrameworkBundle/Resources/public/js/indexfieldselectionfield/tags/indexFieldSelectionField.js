@@ -50,7 +50,7 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
                             if(store.find('key', values[i]) < 0) {
                                 var defaultData = {
                                     'key': values[i],
-                                    'name': ts(values[i])
+                                    'name': t(values[i])
                                 };
                                 store.add(defaultData);
                             }
@@ -160,7 +160,7 @@ pimcore.object.tags.indexFieldSelectionField = Class.create(pimcore.object.tags.
                     tenantCombobox,
                     this.fieldsCombobox
                 ],
-                cls: "object_field",
+                cls: "object_field object_field_type_" + this.type,
                 isDirty: function() {
                     return tenantCombobox.isDirty() || this.fieldsCombobox.isDirty()
                 }.bind(this)

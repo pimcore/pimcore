@@ -49,7 +49,7 @@ class Helper
             $op = 'AND';
         }
         $mappingTable = ['$gt' => '>', '$gte' => '>=', '$lt' => '<', '$lte' => '<=', '$like' => 'LIKE', '$notlike' => 'NOT LIKE', '$notnull' => 'IS NOT NULL',
-                '$not' => 'NOT'];
+                '$not' => 'NOT', ];
         $ops = array_keys($mappingTable);
 
         $db = Db::get();
@@ -64,9 +64,11 @@ class Helper
                 $childOp = strtolower($key) == '$and' ? 'AND' : 'OR';
 
                 if (is_array($value)) {
+                    $childParts = [];
                     foreach ($value as $arrItem) {
-                        $parts[] = self::buildSqlCondition($arrItem, $childOp);
+                        $childParts[] = self::buildSqlCondition($arrItem, $childOp);
                     }
+                    $parts[] = implode(' ' . $childOp . ' ', $childParts);
                 } else {
                     $parts[] = self::buildSqlCondition($value, $childOp);
                 }

@@ -78,6 +78,11 @@ class Staticroute extends AbstractModel
     public $siteId;
 
     /**
+     * @var array
+     */
+    public $methods;
+
+    /**
      * @var int
      */
     public $priority = 1;
@@ -137,7 +142,7 @@ class Staticroute extends AbstractModel
     /**
      * @param int $id
      *
-     * @return Staticroute
+     * @return self|null
      */
     public static function getById($id)
     {
@@ -166,7 +171,7 @@ class Staticroute extends AbstractModel
      * @param string $name
      * @param int|null $siteId
      *
-     * @return Staticroute|null
+     * @return self|null
      */
     public static function getByName($name, $siteId = null)
     {
@@ -198,7 +203,7 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @return Staticroute
+     * @return self
      */
     public static function create()
     {
@@ -594,7 +599,7 @@ class Staticroute extends AbstractModel
             'frontendPath' => $url,
             'params' => $urlParams,
             'reset' => $reset,
-            'encode' => $encode
+            'encode' => $encode,
         ]);
         \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::STATICROUTE_PATH, $event);
         $url = $event->getArgument('frontendPath');
@@ -694,6 +699,35 @@ class Staticroute extends AbstractModel
         }
 
         return [];
+    }
+
+    /**
+     * @return array
+     */
+    public function getMethods()
+    {
+        if ($this->methods && !is_array($this->methods)) {
+            $this->methods = explode(',', $this->methods);
+        }
+
+        return $this->methods;
+    }
+
+    /**
+     * @param array $methods
+     *
+     * @return $this
+     */
+    public function setMethods($methods)
+    {
+        if (!is_array($methods)) {
+            $methods = strlen($methods) ? explode(',', $methods) : [];
+            $methods = array_map('trim', $methods);
+        }
+
+        $this->methods = $methods;
+
+        return $this;
     }
 
     /**

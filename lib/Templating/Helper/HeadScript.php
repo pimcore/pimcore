@@ -96,13 +96,13 @@ class HeadScript extends CacheBusterAware
      * @var array
      */
     protected $_optionalAttributes = [
-        'charset', 'defer', 'language', 'src', 'type'
+        'charset', 'defer', 'language', 'src', 'type',
     ];
 
     /**
      * Required attributes for script tag
      *
-     * @var string
+     * @var array
      */
     protected $_requiredAttributes = ['type'];
 
@@ -360,7 +360,7 @@ class HeadScript extends CacheBusterAware
             throw new Exception('Invalid argument passed to append(); please use one of the helper methods, appendScript() or appendFile()');
         }
 
-        return $this->getContainer()->append($value);
+        $this->getContainer()->append($value);
     }
 
     /**
@@ -376,7 +376,7 @@ class HeadScript extends CacheBusterAware
             throw new Exception('Invalid argument passed to prepend(); please use one of the helper methods, prependScript() or prependFile()');
         }
 
-        return $this->getContainer()->prepend($value);
+        $this->getContainer()->prepend($value);
     }
 
     /**
@@ -392,7 +392,7 @@ class HeadScript extends CacheBusterAware
             throw new Exception('Invalid argument passed to set(); please use one of the helper methods, setScript() or setFile()');
         }
 
-        return $this->getContainer()->set($value);
+        $this->getContainer()->set($value);
     }
 
     /**
@@ -409,7 +409,7 @@ class HeadScript extends CacheBusterAware
             throw new Exception('Invalid argument passed to offsetSet(); please use one of the helper methods, offsetSetScript() or offsetSetFile()');
         }
 
-        return $this->getContainer()->offsetSet($index, $value);
+        $this->getContainer()->offsetSet($index, $value);
     }
 
     /**
@@ -557,7 +557,7 @@ class HeadScript extends CacheBusterAware
             }
 
             \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::VIEW_HELPER_HEAD_SCRIPT, new GenericEvent($this, [
-                'item' => $item
+                'item' => $item,
             ]));
 
             if (isset($item->attributes) && is_array($item->attributes)) {

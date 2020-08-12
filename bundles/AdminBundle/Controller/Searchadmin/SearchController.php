@@ -16,6 +16,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Searchadmin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Config;
+use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -34,7 +36,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class SearchController extends AdminController
 {
     /**
-     * @Route("/find", methods={"GET", "POST"})
+     * @Route("/find", name="pimcore_admin_searchadmin_search_find", methods={"GET", "POST"})
      *
      * @param Request $request
      *
@@ -57,7 +59,7 @@ class SearchController extends AdminController
         }
 
         $filterPrepareEvent = new GenericEvent($this, [
-            'requestParams' => $allParams
+            'requestParams' => $allParams,
         ]);
         $eventDispatcher->dispatch(AdminEvents::SEARCH_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
 
@@ -208,7 +210,7 @@ class SearchController extends AdminController
                         $tag = Element\Tag::getById($tagId);
                         if ($tag) {
                             $tagPath = $tag->getFullIdPath();
-                            $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE ctype = ' . $db->quote($type) . ' AND (id = ' . intval($tagId) . ' OR idPath LIKE ' . $db->quote($tagPath . '%') . '))';
+                            $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE ctype = ' . $db->quote($type) . ' AND (id = ' . intval($tagId) . ' OR idPath LIKE ' . $db->quote($db->escapeLike($tagPath) . '%') . '))';
                         }
                     } else {
                         $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment WHERE ctype = ' . $db->quote($type) . ' AND tagid = ' . intval($tagId) . ')';
@@ -232,14 +234,14 @@ class SearchController extends AdminController
         if ($sortingSettings['orderKey']) {
             // we need a special mapping for classname as this is stored in subtype column
             $sortMapping = [
-                'classname' => 'subtype'
+                'classname' => 'subtype',
             ];
 
             $sort = $sortingSettings['orderKey'];
             if (array_key_exists($sortingSettings['orderKey'], $sortMapping)) {
                 $sort = $sortMapping[$sortingSettings['orderKey']];
             }
-            $searcherList->setOrderKey($sortingSettings['orderKey']);
+            $searcherList->setOrderKey($sort);
         }
         if ($sortingSettings['order']) {
             $searcherList->setOrder($sortingSettings['order']);
@@ -247,18 +249,20 @@ class SearchController extends AdminController
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $searcherList,
-            'context' => $allParams
+            'context' => $allParams,
         ]);
         $eventDispatcher->dispatch(AdminEvents::SEARCH_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        /** @var Data\Listing $searcherList */
         $searcherList = $beforeListLoadEvent->getArgument('list');
 
         if (in_array('asset', $types)) {
             // Global asset list event (same than the SEARCH_LIST_BEFORE_LIST_LOAD event, but this last one is global for search, list, tree)
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $searcherList,
-                'context' => $allParams
+                'context' => $allParams,
             ]);
             $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            /** @var Data\Listing $searcherList */
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
 
@@ -266,9 +270,10 @@ class SearchController extends AdminController
             // Global document list event (same than the SEARCH_LIST_BEFORE_LIST_LOAD event, but this last one is global for search, list, tree)
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $searcherList,
-                'context' => $allParams
+                'context' => $allParams,
             ]);
             $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            /** @var Data\Listing $searcherList */
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
 
@@ -276,9 +281,10 @@ class SearchController extends AdminController
             // Global object list event (same than the SEARCH_LIST_BEFORE_LIST_LOAD event, but this last one is global for search, list, tree)
             $beforeListLoadEvent = new GenericEvent($this, [
                 'list' => $searcherList,
-                'context' => $allParams
+                'context' => $allParams,
             ]);
             $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            /** @var Data\Listing $searcherList */
             $searcherList = $beforeListLoadEvent->getArgument('list');
         }
 
@@ -317,7 +323,7 @@ class SearchController extends AdminController
 
         $afterListLoadEvent = new GenericEvent($this, [
             'list' => $result,
-            'context' => $allParams
+            'context' => $allParams,
         ]);
         $eventDispatcher->dispatch(AdminEvents::SEARCH_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
         $result = $afterListLoadEvent->getArgument('list');
@@ -412,13 +418,15 @@ class SearchController extends AdminController
     }
 
     /**
-     * @Route("/quicksearch", methods={"GET"})
+     * @Route("/quicksearch", name="pimcore_admin_searchadmin_search_quicksearch", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param Config $config
      *
      * @return JsonResponse
      */
-    public function quicksearchAction(Request $request, EventDispatcherInterface $eventDispatcher)
+    public function quicksearchAction(Request $request, EventDispatcherInterface $eventDispatcher, Config $config)
     {
         $query = $this->filterQueryParam($request->get('query'));
         if (!preg_match('/[\+\-\*"]/', $query)) {
@@ -449,7 +457,7 @@ class SearchController extends AdminController
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $searcherList,
-            'query' => $query
+            'query' => $query,
         ]);
         $eventDispatcher->dispatch(AdminEvents::QUICKSEARCH_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
         $searcherList = $beforeListLoadEvent->getArgument('list');
@@ -467,7 +475,7 @@ class SearchController extends AdminController
                     'className' => ($element instanceof DataObject\Concrete) ? $element->getClassName() : '',
                     'fullpath' => htmlspecialchars($element->getFullPath()),
                     'fullpathList' => htmlspecialchars($this->shortenPath($element->getFullPath())),
-                    'iconCls' => 'pimcore_icon_asset_default'
+                    'iconCls' => 'pimcore_icon_asset_default',
                 ];
 
                 if ($element instanceof Asset) {
@@ -478,7 +486,8 @@ class SearchController extends AdminController
 
                 $data['preview'] = $this->renderView('PimcoreAdminBundle:SearchAdmin/Search/Quicksearch:' . $hit->getId()->getType() . '.html.php', [
                     'element' => $element,
-                    'iconCls' => $data['iconCls']
+                    'iconCls' => $data['iconCls'],
+                    'config' => $config,
                 ]);
 
                 $elements[] = $data;
@@ -487,7 +496,7 @@ class SearchController extends AdminController
 
         $afterListLoadEvent = new GenericEvent($this, [
             'list' => $elements,
-            'context' => $query
+            'context' => $query,
         ]);
         $eventDispatcher->dispatch(AdminEvents::QUICKSEARCH_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
         $elements = $afterListLoadEvent->getArgument('list');

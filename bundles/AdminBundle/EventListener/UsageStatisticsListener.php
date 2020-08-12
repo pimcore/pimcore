@@ -34,11 +34,17 @@ class UsageStatisticsListener implements EventSubscriberInterface
     protected $userResolver;
 
     /**
+     * @var Config
+     */
+    protected $config;
+
+    /**
      * @param TokenStorageUserResolver $userResolver
      */
-    public function __construct(TokenStorageUserResolver $userResolver)
+    public function __construct(TokenStorageUserResolver $userResolver, Config $config)
     {
         $this->userResolver = $userResolver;
+        $this->config = $config;
     }
 
     /**
@@ -47,7 +53,7 @@ class UsageStatisticsListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => 'onKernelRequest'
+            KernelEvents::REQUEST => 'onKernelRequest',
         ];
     }
 
@@ -71,7 +77,7 @@ class UsageStatisticsListener implements EventSubscriberInterface
      */
     protected function logUsageStatistics(Request $request)
     {
-        if (Config::getSystemConfig()->general->disableusagestatistics) {
+        if (!empty($this->config['general']['disable_usage_statistics'])) {
             return;
         }
 
@@ -83,7 +89,7 @@ class UsageStatisticsListener implements EventSubscriberInterface
             $request->attributes->get('_controller'),
             $request->attributes->get('_route'),
             @json_encode($request->attributes->get('_route_params')),
-            @json_encode($params)
+            @json_encode($params),
         ];
 
         Simple::log('usagelog', implode('|', $parts));

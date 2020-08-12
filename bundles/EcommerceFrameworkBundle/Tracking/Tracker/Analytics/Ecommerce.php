@@ -28,7 +28,7 @@ class Ecommerce extends AbstractAnalyticsTracker implements CheckoutCompleteInte
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'template_prefix' => 'PimcoreEcommerceFrameworkBundle:Tracking/analytics/classic'
+            'template_prefix' => 'PimcoreEcommerceFrameworkBundle:Tracking/analytics/classic',
         ]);
     }
 
@@ -61,7 +61,7 @@ class Ecommerce extends AbstractAnalyticsTracker implements CheckoutCompleteInte
     protected function buildCheckoutCompleteCalls(Transaction $transaction, array $items)
     {
         $calls = [
-            $this->transformTransaction($transaction)
+            $this->transformTransaction($transaction),
         ];
 
         foreach ($items as $item) {

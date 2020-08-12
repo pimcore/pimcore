@@ -16,9 +16,14 @@ namespace Pimcore\Workflow;
 
 use Pimcore\Event\Workflow\GlobalActionEvent;
 use Pimcore\Event\WorkflowEvents;
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ValidationException;
+use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
 use Pimcore\Workflow\EventSubscriber\NotesSubscriber;
+use Pimcore\Workflow\MarkingStore\StateTableMarkingStore;
 use Pimcore\Workflow\Place\PlaceConfig;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Workflow\Exception\InvalidArgumentException;
@@ -226,7 +231,7 @@ class Manager
 
     /**
      * @param Workflow $workflow
-     * @param object $subject
+     * @param Asset|Concrete|PageSnippet $subject
      * @param string $transition
      * @param array $additionalData
      * @param bool $saveSubject
@@ -244,8 +249,12 @@ class Manager
 
         $this->notesSubscriber->setAdditionalData([]);
 
+        $transition = $this->getTransitionByName($workflow->getName(), $transition);
+        $changePublishedState = $transition instanceof Transition ? $transition->getChangePublishedState() : null;
+
         if ($saveSubject && $subject instanceof AbstractElement) {
-            if (method_exists($subject, 'getPublished') && !$subject->getPublished()) {
+            if (method_exists($subject, 'getPublished')
+                && (!$subject->getPublished() || $changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION)) {
                 $subject->saveVersion();
             } else {
                 $subject->save();
@@ -277,7 +286,7 @@ class Manager
         $this->notesSubscriber->setAdditionalData($additionalData);
 
         $event = new GlobalActionEvent($workflow, $subject, $globalActionObj, [
-            'additionalData' => $additionalData
+            'additionalData' => $additionalData,
         ]);
 
         $this->eventDispatcher->dispatch(WorkflowEvents::PRE_GLOBAL_ACTION, $event);
@@ -324,5 +333,74 @@ class Manager
         }
 
         return null;
+    }
+
+    /**
+     * Forces an initial place being set (and stored) if the current place is empty.
+     * We cannot apply a regular transition b/c it would be considered invalid by the state machine.
+     *
+     * As of Symfony 4.4.8 built-in implementations of @see \Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface
+     * use strict `null` comparison when retrieving the current marking and throw an exception otherwise.
+     *
+     * @param Asset|Concrete|PageSnippet $subject
+     *
+     * @return bool true if initial state was applied
+     *
+     * @throws \Exception
+     */
+    public function ensureInitialPlace(string $workflowName, $subject): bool
+    {
+        if (!$workflow = $this->getWorkflowIfExists($subject, $workflowName)) {
+            return false;
+        }
+
+        if (!$markingStore = $workflow->getMarkingStore()) {
+            return false;
+        }
+
+        // check that the subject has a non-empty place
+        $initialPlaces = $this->getInitialPlacesForWorkflow($workflow);
+        $markingObject = $markingStore->getMarking($subject);
+        foreach ($markingObject->getPlaces() as $placeName => $nbToken) {
+            if ('' !== $placeName) {
+                continue;
+            }
+
+            // fill empty place with initial place, if any
+            $markingObject->unmark($placeName);
+            foreach ($initialPlaces as $initialPlace) {
+                $markingObject->mark($initialPlace);
+            }
+
+            $markingStore->setMarking($subject, $markingObject);
+
+            // StateTableMarkingStore handles persistence of it's own
+            if ($markingStore instanceof StateTableMarkingStore === false) {
+                $wasOmitMandatoryCheck = $subject->getOmitMandatoryCheck();
+                $subject->setOmitMandatoryCheck(true);
+                $subject->save();
+                $subject->setOmitMandatoryCheck($wasOmitMandatoryCheck);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getInitialPlacesForWorkflow(Workflow $workflow): array
+    {
+        $initialPlaces = [];
+        $definition = $workflow->getDefinition();
+
+        if (method_exists($definition, 'getInitialPlaces')) {
+            // Symfony >= 4.3
+            $initialPlaces = $definition->getInitialPlaces();
+        } elseif (method_exists($definition, 'getInitialPlace')) {
+            // Symfony < 4.3
+            $initialPlaces = [$definition->getInitialPlace()];
+        }
+
+        return $initialPlaces;
     }
 }

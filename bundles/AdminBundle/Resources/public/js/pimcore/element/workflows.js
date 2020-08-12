@@ -23,9 +23,8 @@ pimcore.element.workflows = Class.create({
 
         if (this.layout == null) {
 
-            var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize();
             this.store = pimcore.helpers.grid.buildDefaultStore(
-                '/admin/workflow/get-workflow-details?ctype=' + this.type  + '&cid=' + this.element.id,
+                Routing.generate('pimcore_admin_workflow_getworkflowdetailsstore', {ctype: this.type, cid: this.element.id}),
                 ['workflowName','placeInfo','graph'],
                 0, //no paging needed
                 {autoLoad: false}

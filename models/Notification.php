@@ -20,6 +20,8 @@ declare(strict_types=1);
 namespace Pimcore\Model;
 
 use Pimcore\Cache;
+use Pimcore\Event\Model\NotificationEvent;
+use Pimcore\Event\NotificationEvents;
 
 /**
  * @method Notification\Dao getDao()
@@ -67,7 +69,7 @@ class Notification extends AbstractModel
     protected $message;
 
     /**
-     * @var Element\AbstractElement
+     * @var Element\ElementInterface|null
      */
     protected $linkedElement;
 
@@ -266,9 +268,9 @@ class Notification extends AbstractModel
     }
 
     /**
-     * @return null|Element\AbstractElement
+     * @return null|Element\ElementInterface
      */
-    public function getLinkedElement(): ?Element\AbstractElement
+    public function getLinkedElement(): ?Element\ElementInterface
     {
         return $this->linkedElement;
     }
@@ -319,7 +321,9 @@ class Notification extends AbstractModel
      */
     public function save(): void
     {
+        \Pimcore::getEventDispatcher()->dispatch(NotificationEvents::PRE_SAVE, new NotificationEvent($this));
         $this->getDao()->save();
+        \Pimcore::getEventDispatcher()->dispatch(NotificationEvents::POST_SAVE, new NotificationEvent($this));
     }
 
     /**
@@ -327,6 +331,8 @@ class Notification extends AbstractModel
      */
     public function delete(): void
     {
+        \Pimcore::getEventDispatcher()->dispatch(NotificationEvents::PRE_DELETE, new NotificationEvent($this));
         $this->getDao()->delete();
+        \Pimcore::getEventDispatcher()->dispatch(NotificationEvents::POST_DELETE, new NotificationEvent($this));
     }
 }

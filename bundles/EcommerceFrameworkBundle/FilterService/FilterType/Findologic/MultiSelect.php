@@ -17,9 +17,19 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\Findo
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Pimcore\Model\DataObject\Fieldcollection\Data\FilterMultiSelect;
 
 class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelect
 {
+    /**
+     * @param FilterMultiSelect $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
     public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
     {
         $field = $this->getField($filterDefinition);
@@ -27,7 +37,7 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
         $values = [];
         foreach ($productList->getGroupByValues($this->getField($filterDefinition), true) as $value) {
             $values[] = ['value' => $value['label'],
-                'count' => $value['count']];
+                'count' => $value['count'], ];
         }
 
         // add current filter. workaround for findologic behavior
@@ -43,7 +53,7 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
 
                 if ($add) {
                     array_unshift($values, [
-                        'value' => $value, 'label' => $value, 'count' => null, 'parameter' => null
+                        'value' => $value, 'label' => $value, 'count' => null, 'parameter' => null,
                     ]);
                 }
             }
@@ -55,12 +65,12 @@ class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
             'currentValue' => $currentFilter[$field],
             'values' => $values,
             'fieldname' => $field,
-            'resultCount' => $productList->count()
+            'resultCount' => $productList->count(),
         ]);
     }
 
     /**
-     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param FilterMultiSelect $filterDefinition
      * @param ProductListInterface                 $productList
      * @param array                                             $currentFilter
      * @param array                                             $params

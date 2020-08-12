@@ -198,7 +198,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
 
         $data = [
             'value' => null,
-            'tags' => []
+            'tags' => [],
         ];
 
         try {
@@ -468,7 +468,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      *
      * @return mixed
      *
-     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function get(string $key, callable $callback, float $beta = null, array &$metadata = null)
     {
@@ -494,7 +494,7 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
      *
      * @return mixed
      *
-     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function doGet(PimcoreCacheItemPoolInterface $pool, string $key, callable $callback, ?float $beta, array &$metadata = null)
     {

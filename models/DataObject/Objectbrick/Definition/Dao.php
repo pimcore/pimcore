@@ -92,6 +92,8 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
 
             if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
                 // if a datafield requires more than one column in the datastore table => only for non-relation types
+
+                /** @var DataObject\ClassDefinition\Data&DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface $value */
                 if (!$value->isRelationType()) {
                     if (is_array($value->getColumnType())) {
                         foreach ($value->getColumnType() as $fkey => $fvalue) {
@@ -128,8 +130,8 @@ class Dao extends Model\DataObject\Fieldcollection\Definition\Dao
                     [
                         'context' => [
                             'containerType' => 'objectbrick',
-                            'containerKey' => $this->model->getKey()
-                        ]
+                            'containerKey' => $this->model->getKey(),
+                        ],
                     ]
                 );
             }

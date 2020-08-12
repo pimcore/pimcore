@@ -20,8 +20,6 @@ use Pimcore\Model;
 
 class Country extends Model\DataObject\ClassDefinition\Data\Select
 {
-    use Model\DataObject\Traits\SimpleComparisonTrait;
-
     /**
      * Static type of this element
      *
@@ -30,7 +28,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     public $fieldtype = 'country';
 
     /** Restrict selection to comma-separated list of countries.
-     * @var null
+     * @var string|null
      */
     public $restrictTo = null;
 
@@ -49,7 +47,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
             if (strlen($short) == 2) {
                 $options[] = [
                     'key' => $translation,
-                    'value' => $short
+                    'value' => $short,
                 ];
             }
         }
@@ -69,7 +67,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * @param string $restrictTo
+     * @param string|null $restrictTo
      */
     public function setRestrictTo($restrictTo)
     {
@@ -84,7 +82,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getRestrictTo()
     {

@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Cache;
 use Pimcore\Cache\FullPage\SessionStatus;
+use Pimcore\Config;
 use Pimcore\Event\Cache\FullPage\CacheResponseEvent;
 use Pimcore\Event\Cache\FullPage\PrepareResponseEvent;
 use Pimcore\Event\FullPageCacheEvents;
@@ -81,14 +82,21 @@ class FullPageCacheListener
      */
     protected $defaultCacheKey;
 
+    /**
+     * @var Config
+     */
+    protected $config;
+
     public function __construct(
         VisitorInfoStorageInterface $visitorInfoStorage,
         SessionStatus $sessionStatus,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        Config $config
     ) {
         $this->visitorInfoStorage = $visitorInfoStorage;
         $this->sessionStatus = $sessionStatus;
         $this->eventDispatcher = $eventDispatcher;
+        $this->config = $config;
     }
 
     /**
@@ -157,8 +165,6 @@ class FullPageCacheListener
 
     /**
      * @param GetResponseEvent $event
-     *
-     * @return mixed
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
@@ -173,7 +179,7 @@ class FullPageCacheListener
         }
 
         if (!\Pimcore\Tool::useFrontendOutputFilters()) {
-            return false;
+            return;
         }
 
         $requestUri = $request->getRequestUri();
@@ -181,77 +187,96 @@ class FullPageCacheListener
 
         // only enable GET method
         if (!$request->isMethodCacheable()) {
-            return $this->disable();
+            $this->disable();
+
+            return;
         }
 
         // disable the output-cache if browser wants the most recent version
         // unfortunately only Chrome + Firefox if not using SSL
         if (!$request->isSecure()) {
-            if (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] == 'no-cache') {
-                return $this->disable('HTTP Header Cache-Control: no-cache was sent');
+            if (isset($_SERVER['HTTP_CACHE_CONTROL']) && $_SERVER['HTTP_CACHE_CONTROL'] === 'no-cache') {
+                $this->disable('HTTP Header Cache-Control: no-cache was sent');
+
+                return;
             }
 
-            if (isset($_SERVER['HTTP_PRAGMA']) && $_SERVER['HTTP_PRAGMA'] == 'no-cache') {
-                return $this->disable('HTTP Header Pragma: no-cache was sent');
+            if (isset($_SERVER['HTTP_PRAGMA']) && $_SERVER['HTTP_PRAGMA'] === 'no-cache') {
+                $this->disable('HTTP Header Pragma: no-cache was sent');
+
+                return;
             }
         }
 
         try {
-            $conf = \Pimcore\Config::getSystemConfig();
-            if ($conf->full_page_cache) {
-                $conf = $conf->full_page_cache;
+            if ($conf = $this->config['full_page_cache']) {
+                if (empty($conf['enabled'])) {
+                    $this->disable();
 
-                if (!$conf->enabled) {
-                    return $this->disable();
+                    return;
                 }
 
                 if (\Pimcore::inDebugMode()) {
-                    return $this->disable('Debug flag DISABLE_FULL_PAGE_CACHE is enabled');
+                    $this->disable('Debug flag DISABLE_FULL_PAGE_CACHE is enabled');
+
+                    return;
                 }
 
-                if ($conf->lifetime) {
-                    $this->setLifetime((int) $conf->lifetime);
+                if (!empty($conf['lifetime'])) {
+                    $this->setLifetime((int) $conf['lifetime']);
                 }
 
-                if ($conf->excludePatterns) {
-                    $confExcludePatterns = explode(',', $conf->excludePatterns);
+                if (!empty($conf['exclude_patterns'])) {
+                    $confExcludePatterns = explode(',', $conf['exclude_patterns']);
                     if (!empty($confExcludePatterns)) {
                         $excludePatterns = $confExcludePatterns;
                     }
                 }
 
-                if ($conf->excludeCookie) {
-                    $cookies = explode(',', strval($conf->excludeCookie));
+                if (!empty($conf['exclude_cookie'])) {
+                    $cookies = explode(',', strval($conf['exclude_cookie']));
 
                     foreach ($cookies as $cookie) {
                         if (!empty($cookie) && isset($_COOKIE[trim($cookie)])) {
-                            return $this->disable('exclude cookie in system-settings matches');
+                            $this->disable('exclude cookie in system-settings matches');
+
+                            return;
                         }
                     }
                 }
 
                 // output-cache is always disabled when logged in at the admin ui
                 if (null !== $pimcoreUser = Tool\Authentication::authenticateSession($request)) {
-                    return $this->disable('backend user is logged in');
+                    $this->disable('backend user is logged in');
+
+                    return;
                 }
             } else {
-                return $this->disable();
+                $this->disable();
+
+                return;
             }
         } catch (\Exception $e) {
             Logger::error($e);
 
-            return $this->disable('ERROR: Exception (see log files in /var/logs)');
+            $this->disable('ERROR: Exception (see log files in /var/logs)');
+
+            return;
         }
 
         foreach ($excludePatterns as $pattern) {
             if (@preg_match($pattern, $requestUri)) {
-                return $this->disable('exclude path pattern in system-settings matches');
+                $this->disable('exclude path pattern in system-settings matches');
+
+                return;
             }
         }
 
         // check if targeting matched anything and disable cache
         if ($this->disabledByTargeting()) {
-            return $this->disable('Targeting matched rules/target groups');
+            $this->disable('Targeting matched rules/target groups');
+
+            return;
         }
 
         $deviceDetector = Tool\DeviceDetector::getInstance();
@@ -316,8 +341,6 @@ class FullPageCacheListener
 
     /**
      * @param FilterResponseEvent $event
-     *
-     * @return bool|void
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {

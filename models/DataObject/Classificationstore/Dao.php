@@ -49,6 +49,9 @@ class Dao extends Model\Dao\AbstractDao
         return 'object_classificationstore_groups_' . $this->model->getClass()->getId();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function save()
     {
         if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && !$this->model->hasDirtyFields()) {
@@ -83,7 +86,7 @@ class Dao extends Model\Dao\AbstractDao
                         'keyId' => $keyId,
                         'fieldname' => $fieldname,
                         'language' => $language,
-                        'type' => $keyConfig->getType()
+                        'type' => $keyConfig->getType(),
                     ];
 
                     if ($fd instanceof DataObject\ClassDefinition\Data\Password) {
@@ -93,7 +96,7 @@ class Dao extends Model\Dao\AbstractDao
                         $value = $fd->getDataForResource($value, $object, ['skipEncryption' => true]);
                         $delegate = $fd->getDelegate();
                         $value = new DataObject\Data\EncryptedField($delegate, $value);
-                    } else {
+                    } elseif ($fd instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
                         $value = $fd->getDataForResource($value, $this->model->getObject());
                     }
                     $value = $fd->marshal($value, $object);
@@ -116,7 +119,7 @@ class Dao extends Model\Dao\AbstractDao
                     $data = [
                         'o_id' => $objectId,
                         'groupId' => $activeGroupId,
-                        'fieldname' => $fieldname
+                        'fieldname' => $fieldname,
                     ];
                     $this->db->insertOrUpdate($groupsTable, $data);
                 }
@@ -136,6 +139,9 @@ class Dao extends Model\Dao\AbstractDao
         $this->db->delete($groupsTable, ['o_id' => $objectId]);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function load()
     {
         /** @var DataObject\Classificationstore $classificationStore */
@@ -173,7 +179,7 @@ class Dao extends Model\Dao\AbstractDao
 
             $value = [
                 'value' => $item['value'],
-                'value2' => $item['value2']
+                'value2' => $item['value2'],
             ];
 
             $keyConfig = DefinitionCache::get($keyId);
@@ -185,7 +191,9 @@ class Dao extends Model\Dao\AbstractDao
             $fd = Service::getFieldDefinitionFromKeyConfig($keyConfig);
             $value = $fd->unmarshal($value, $object);
 
-            $value = $fd->getDataFromResource($value, $object, ['skipDecryption' => true]);
+            if ($fd instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
+                $value = $fd->getDataFromResource($value, $object, ['skipDecryption' => true]);
+            }
 
             $language = $item['language'];
             $classificationStore->setLocalizedKeyValue($groupId, $keyId, $value, $language);
@@ -205,9 +213,7 @@ class Dao extends Model\Dao\AbstractDao
             `o_id` BIGINT(20) NOT NULL,
             `groupId` BIGINT(20) NOT NULL,
             `fieldname` VARCHAR(70) NOT NULL,
-            PRIMARY KEY (`groupId`, `o_id`, `fieldname`),
-            INDEX `o_id` (`o_id`),
-            INDEX `fieldname` (`fieldname`)
+            PRIMARY KEY (`o_id`, `fieldname`, `groupId`)
         ) DEFAULT CHARSET=utf8mb4;');
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $dataTable . '` (
@@ -220,10 +226,8 @@ class Dao extends Model\Dao\AbstractDao
             `fieldname` VARCHAR(70) NOT NULL,
             `language` VARCHAR(10) NOT NULL,
             `type` VARCHAR(50) NULL,
-            PRIMARY KEY (`groupId`, `keyId`, `o_id`, `fieldname`, `language`),
-            INDEX `o_id` (`o_id`),
+            PRIMARY KEY (`o_id`, `fieldname`, `groupId`, `keyId`, `language`),
             INDEX `keyId` (`keyId`),
-            INDEX `fieldname` (`fieldname`),
             INDEX `language` (`language`)
         ) DEFAULT CHARSET=utf8mb4;');
 

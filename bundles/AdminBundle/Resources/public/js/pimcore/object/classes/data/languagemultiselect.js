@@ -101,7 +101,10 @@ pimcore.object.classes.data.languagemultiselect = Class.create(pimcore.object.cl
             }
             Ext.apply(this.datax,
                 {
-                    onlySystemLanguages: source.datax.onlySystemLanguages
+                    onlySystemLanguages: source.datax.onlySystemLanguages,
+                    width: source.datax.width,
+                    height: source.datax.height,
+                    renderType : source.datax.renderType
                 });
         }
     }

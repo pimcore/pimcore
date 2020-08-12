@@ -62,7 +62,12 @@ Ext.define('pimcore.element.helpers.gridCellEditor', {
             fieldInfo.layout.title = t(fieldInfo.layout.title);
         }
 
-        var tag = new pimcore[fieldType].tags[tagType](value, fieldInfo.layout);
+
+        if (fieldType == "assetmetadata") {
+            var tag = new pimcore.asset.metadata.tags[tagType](value, fieldInfo.layout);
+        } else {
+            var tag = new pimcore[fieldType].tags[tagType](value, fieldInfo.layout);
+        }
 
         if(fieldType == 'object') {
             var object = Ext.clone(this.context.record);
@@ -72,6 +77,10 @@ Ext.define('pimcore.element.helpers.gridCellEditor', {
         tag.updateContext({
             cellEditing: true
         });
+
+        if (typeof tag["finishSetup"] !== "undefined") {
+            tag.finishSetup();
+        }
 
         var formPanel = Ext.create('Ext.form.Panel', {
             xtype: "form",
@@ -133,7 +142,6 @@ Ext.define('pimcore.element.helpers.gridCellEditor', {
 
     completeEdit: function(remainVisible) {
         var me = this,
-            field = me.field,
             fieldInfo = me.config.fieldInfo,
             startValue = me.startValue,
             value;

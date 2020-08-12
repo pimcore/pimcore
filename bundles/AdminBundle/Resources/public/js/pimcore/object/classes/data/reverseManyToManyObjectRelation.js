@@ -106,7 +106,7 @@ pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimco
         this.fieldComboStore = new Ext.data.Store({
             proxy: {
                 type: 'ajax',
-                url: '/admin/object-helper/grid-get-column-config',
+                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
                 reader: {
                     type: 'json',
                     rootProperty: "availableFields"
@@ -164,7 +164,12 @@ pimcore.object.classes.data.reverseManyToManyObjectRelation = Class.create(pimco
             }
             Ext.apply(this.datax,
                 {
-                    remoteOwner: source.datax.remoteOwner
+                    remoteOwner: source.datax.remoteOwner,
+                    width: source.datax.width,
+                    height: source.datax.height,
+                    pathFormatterClass: source.datax.pathFormatterClass,
+                    ownerClassName: source.datax.ownerClassName,
+                    ownerFieldName: source.datax.ownerFieldName
                 });
         }
     }

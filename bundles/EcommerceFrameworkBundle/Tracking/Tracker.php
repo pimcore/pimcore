@@ -86,7 +86,7 @@ abstract class Tracker implements TrackerInterface
     {
         $resolver->setRequired(['template_prefix', 'template_extension']);
         $resolver->setDefaults([
-            'template_extension' => 'php'
+            'template_extension' => 'php',
         ]);
 
         $resolver->setAllowedTypes('template_prefix', 'string');

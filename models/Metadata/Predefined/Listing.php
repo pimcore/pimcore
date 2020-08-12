@@ -20,6 +20,7 @@ namespace Pimcore\Model\Metadata\Predefined;
 /**
  * @method \Pimcore\Model\Metadata\Predefined\Listing\Dao getDao()
  * @method \Pimcore\Model\Metadata\Predefined[] load()
+ * @method int getTotalCount()
  */
 class Listing extends \Pimcore\Model\Listing\JsonListing
 {

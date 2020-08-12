@@ -32,7 +32,7 @@ class Tool
         $modelsDir = PIMCORE_PATH.'/models/';
         $files = rscandir($modelsDir);
         $includePatterns = [
-            "/Webservice\/Data/"
+            "/Webservice\/Data/",
         ];
         $classMap = [];
 
@@ -70,7 +70,7 @@ class Tool
     /**
      * @param mixed $data
      *
-     * @return array
+     * @return mixed
      */
     public static function keyValueReverseMapping($data)
     {

@@ -37,7 +37,7 @@ class Code extends AbstractResolver
         $resolverImplementation = new $config->resolverSettings->phpClass();
 
         if (!$resolverImplementation) {
-            throw new \Exception('could not resolve service: ' . $config->resolverSettings->service);
+            throw new ImportErrorException('could not resolve service: ' . $config->resolverSettings->service);
         }
 
         $currentLocale = $this->localeService->getLocale();
@@ -54,7 +54,7 @@ class Code extends AbstractResolver
         $this->localeService->setLocale($currentLocale);
 
         if (!$object) {
-            throw new \Exception('Could not resolve object');
+            throw new ImportErrorException('Could not resolve object');
         }
 
         return $object;

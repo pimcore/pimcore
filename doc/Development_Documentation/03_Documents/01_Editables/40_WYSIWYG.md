@@ -11,9 +11,10 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 | `customConfig`  | string  | Path to JavaScript file with configuration for CKEditor                            |
 | `enterMode`     | integer | Set it to `CKEDITOR.CKEDITOR.ENTER_BR` if you don't want to add a `<p>`-tag on pressing enter key  |
 | `height`        | integer | Minimum height of the field in pixels                                              |
-| `toolbarGroups` | string  | A toolbar config array (see below)                                                 |
+| `toolbarGroups` | mixed   | A toolbar config array or false for customConfig/CKEditor default (see below)                                                 |
 | `width`         | integer | Width of the field in pixels                                                       |
 | `class`         | string  | A CSS class that is added to the surrounding container of this element in editmode |
+| `required`      | boolean | set to true to make field value required for publish                               |
 
 ## Methods
 
@@ -28,7 +29,7 @@ Similar to Textarea and Input you can use the WYSIWYG editable in the templates 
 ### Basic usage
 
 `wysiwyg` helper doesn't require any additional configuration options.
-The following code specifies tje height for the rendered WYSIWYG editable (has no effect in frontend).
+The following code specifies the height for the rendered WYSIWYG editable (has no effect in frontend).
 
 <div class="code-section">
 
@@ -60,8 +61,9 @@ If you have a look at the editmode, you will see that our WYSIWYG is rendered wi
 The complete list of configuration options you can find in the [CKEditor toolbar documentation](http://docs.ckeditor.com/#!/guide/dev_toolbar).
 
 The WYSIWYG editable allows us to specify the toolbar. 
-If you have to limit styling options (for example only basic styles like `<b>` tag and lists would be allowed), just use `toolbarGroups` option.
-
+If you have to limit styling options (for example only basic styles like `<b>` tag and lists would be allowed), just use `toolbarGroups` option.  
+There is also the option to disable the pimcore generated default toolbar by setting the option `toolbarGroups` explicitly to `false`. In this case,
+either the configuration from the customConfig-file or if absent the ckeditor default will be loaded.
 <div class="code-section">
 
 ```php
@@ -106,6 +108,15 @@ There is also an additional way to specify the configuration by adding `customCo
         "height" => 200,
         "customConfig" => "/custom/ckeditor_config.js"
     ]); ?>
+</section>
+```
+```twig
+<section id="marked-content">
+    {{  pimcore_wysiwyg('specialContent', {
+            height: 200,
+            customConfig: '/custom/ckeditor_config.js'
+        })
+    }}
 </section>
 ```
 
@@ -199,6 +210,15 @@ With the following code you can get the text even in editmode:
         <?= $this->wysiwyg("specialContent")->getData(); ?>
     </div>
 <?php endif; ?>
+```
+
+```twig
+{{ pimcore_wysiwyg('specialContent') }}
+
+<h4>Preview</h4>
+<div style="border: 1px solid #000;" class="preview">
+    {{ pimcore_wysiwyg('specialContent').getData() }}
+</div>
 ```
 
 ![WYSIWYG with preview - editmode](../../img/editables_wysiwyg_with_preview_editmode.png)

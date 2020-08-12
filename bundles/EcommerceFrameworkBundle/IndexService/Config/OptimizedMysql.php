@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
+use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\AbstractMockupCacheWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\OptimizedMysql as OptimizedMysqlWorker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\WorkerInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\DefaultMockup;
@@ -49,7 +50,9 @@ class OptimizedMysql extends DefaultMysql implements MockupConfigInterface
      */
     public function getObjectMockupById($objectId)
     {
-        $mockup = $this->getTenantWorker()->getMockupFromCache($objectId);
+        /** @var AbstractMockupCacheWorker $worker */
+        $worker = $this->getTenantWorker();
+        $mockup = $worker->getMockupFromCache($objectId);
 
         if (empty($mockup)) {
             Logger::warn("Could not load element with ID $objectId as mockup, loading complete object");

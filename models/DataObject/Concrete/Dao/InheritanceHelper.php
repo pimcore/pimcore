@@ -28,8 +28,6 @@ class InheritanceHelper
 
     const RELATION_TABLE = 'object_relations_';
 
-    const OBJECTS_TABLE = 'objects';
-
     const ID_FIELD = 'oo_id';
 
     const DEFAULT_QUERY_ID_COLUMN = 'ooo_id';
@@ -232,7 +230,7 @@ class InheritanceHelper
             $result = $this->db->fetchRow('SELECT ' . $this->idField . ' AS id' . $fields . ' FROM ' . $this->storetable . ' WHERE ' . $this->idField . ' = ?', $oo_id);
             $o = [
                 'id' => $result['id'],
-                'values' => $result
+                'values' => $result ?? null,
             ];
 
             $o['children'] = $this->buildTree($result['id'], $fields, null, $params);
@@ -244,6 +242,8 @@ class InheritanceHelper
                     }
 
                     $this->updateQueryTable($oo_id, $this->fieldIds[$fieldname], $fieldname);
+                    // not needed anymore
+                    unset($this->fieldIds[$fieldname]);
                 }
             }
 
@@ -260,6 +260,8 @@ class InheritanceHelper
                     } else {
                         $this->updateQueryTable($oo_id, $this->fieldIds[$fieldname], $fieldname);
                     }
+                    // not needed anymore
+                    unset($this->fieldIds[$fieldname]);
                 }
             }
         }
@@ -279,7 +281,7 @@ class InheritanceHelper
                 $query = 'SELECT b.o_id AS id '
                     . ' FROM objects b LEFT JOIN ' . $this->querytable . ' a ON b.o_id = a.' . $this->idField
                     . ' WHERE b.o_classId = ' . $this->db->quote($classId)
-                    . ' AND o_path LIKE '. $this->db->quote($object->getRealFullPath().'/%')
+                    . ' AND o_path LIKE '. $this->db->quote($this->db->escapeLike($object->getRealFullPath()).'/%')
                     . ' AND ISNULL(a.' . $this->queryIdField . ')';
                 $missingIds = $this->db->fetchCol($query);
 
@@ -314,8 +316,7 @@ class InheritanceHelper
 
         $o = [
             'id' => $objectId,
-            'values' => [],
-            'children' => $this->buildTree($objectId, $fields, null, $params)
+            'children' => $this->buildTree($objectId, $fields, null, $params),
         ];
 
         if (!empty($this->fields)) {
@@ -403,7 +404,7 @@ class InheritanceHelper
             }
         }
 
-        return $filteredResult;
+        return array_values($filteredResult);
     }
 
     /**
@@ -421,11 +422,11 @@ class InheritanceHelper
         if (!$parentIdGroups) {
             $object = DataObject::getById($currentParentId);
             if (isset($params['language'])) {
-                $query = "SELECT a.language as language, b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($object->getRealFullPath() . '/%')
+                $query = "SELECT a.language as language, b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($this->db->escapeLike($object->getRealFullPath()) . '/%')
                     . ' HAVING `language` = "' . $params['language'] . '" OR ISNULL(`language`)'
                     . ' ORDER BY LENGTH(o_path) ASC';
             } else {
-                $query = "SELECT b.o_id AS id $fields, b.o_type AS type, b.o_classId AS classId, b.o_parentId AS parentId, o_path, o_key FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($object->getRealFullPath().'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
+                $query = "SELECT b.o_id AS id $fields, b.o_classId AS classId, b.o_parentId AS parentId FROM objects b LEFT JOIN " . $this->storetable . ' a ON b.o_id = a.' . $this->idField . ' WHERE o_path LIKE ' . $this->db->quote($this->db->escapeLike($object->getRealFullPath()).'/%') . ' GROUP BY b.o_id ORDER BY LENGTH(o_path) ASC';
             }
             $queryCacheKey = 'tree_'.md5($query);
 
@@ -442,13 +443,16 @@ class InheritanceHelper
 
                 // group the results together based on the parent id's
                 $parentIdGroups = [];
-                foreach ($result as $r) {
-                    $r['fullpath'] = $r['o_path'].$r['o_key'];
-                    if (!isset($parentIdGroups[$r['parentId']])) {
-                        $parentIdGroups[$r['parentId']] = [];
+                $rowCount = count($result);
+                for ($rowIdx = 0; $rowIdx < $rowCount; ++$rowIdx) {
+                    // assign the reference
+                    $rowData = &$result[$rowIdx];
+
+                    if (!isset($parentIdGroups[$rowData['parentId']])) {
+                        $parentIdGroups[$rowData['parentId']] = [];
                     }
 
-                    $parentIdGroups[$r['parentId']][] = $r;
+                    $parentIdGroups[$rowData['parentId']][] = &$rowData;
                 }
                 if (self::$useRuntimeCache) {
                     self::$runtimeCache[$queryCacheKey] = $parentIdGroups;
@@ -457,16 +461,21 @@ class InheritanceHelper
         }
 
         if (isset($parentIdGroups[$currentParentId])) {
-            foreach ($parentIdGroups[$currentParentId] as $r) {
-                if ($r['classId'] == $this->classId) {
+            $childData = $parentIdGroups[$currentParentId];
+            $childCount = count($childData);
+            for ($childIdx = 0; $childIdx < $childCount; ++$childIdx) {
+                $rowData = &$childData[$childIdx];
+
+                if ($rowData['classId'] == $this->classId) {
                     $this->childFound = true;
                 }
 
-                $id = $r['id'];
+                $id = $rowData['id'];
+
                 $o = [
                     'id' => $id,
-                    'values' => $r,
-                    'children' => $this->buildTree($id, $fields, $parentIdGroups, $params)
+                    'children' => $this->buildTree($id, $fields, $parentIdGroups, $params),
+                    'values' => $rowData,
                 ];
 
                 $objects[] = $o;
@@ -515,7 +524,7 @@ class InheritanceHelper
         $relationCondition = $this->getRelationCondition($params);
 
         if (isset($params['language'])) {
-            $objectRelationsResult = $this->db->fetchAll('SELECT fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') "
+            $objectRelationsResult = $this->db->fetchAll('SELECT src_id as id, fieldname, position, count(*) as COUNT FROM ' . $this->relationtable . ' WHERE ' . $relationCondition . " src_id = ? AND fieldname IN('" . implode("','", array_keys($this->relations)) . "') "
                 . ' GROUP BY position, fieldname'
                 . ' HAVING `position` = "' . $params['language'] . '" OR ISNULL(`position`)', [$node['id']]);
             $objectRelationsResult = $this->filterResultByLanguage($objectRelationsResult, $params['language'], 'position');
@@ -545,7 +554,7 @@ class InheritanceHelper
      */
     protected function getIdsToCheckForDeletionForValuefields($currentNode, $fieldname, $params = [])
     {
-        $value = $currentNode['values'][$fieldname];
+        $value = $currentNode['values'][$fieldname] ?? null;
 
         if (!$this->fieldDefinitions[$fieldname]->isEmpty($value)) {
             return;
@@ -566,7 +575,7 @@ class InheritanceHelper
      */
     protected function getIdsToUpdateForValuefields($currentNode, $fieldname)
     {
-        $value = $currentNode['values'][$fieldname];
+        $value = $currentNode['values'][$fieldname] ?? null;
         if ($this->fieldDefinitions[$fieldname]->isEmpty($value)) {
             $this->fieldIds[$fieldname][] = $currentNode['id'];
             if (!empty($currentNode['children'])) {

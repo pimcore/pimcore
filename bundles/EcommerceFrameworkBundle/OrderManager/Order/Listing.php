@@ -73,7 +73,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
             $select->from(
                 [ 'order' => 'object_query_' . OnlineShopOrder::classId() ],
                 [
-                    new Db\ZendCompatibility\Expression('SQL_CALC_FOUND_ROWS 1'), 'OrderId' => 'order.oo_id'
+                    new Db\ZendCompatibility\Expression('SQL_CALC_FOUND_ROWS 1'), 'OrderId' => 'order.oo_id',
                 ]
             );
 
@@ -154,6 +154,25 @@ class Listing extends AbstractOrderList implements OrderListInterface
 
     /**
      * @return $this
+     *
+     */
+    public function joinPriceModifications()
+    {
+        $joins = $this->getQuery()->getPart(Db\ZendCompatibility\QueryBuilder::FROM);
+
+        if (!array_key_exists('OrderPriceModifications', $joins)) {
+            $this->getQuery()->joinLeft(
+                ['OrderPriceModifications' => 'object_collection_OrderPriceModifications_' . OnlineShopOrder::classId()],
+                'OrderPriceModifications.o_id = order.oo_id AND OrderPriceModifications.fieldname = "priceModifications"',
+                ''
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
      */
     public function joinPaymentInfo()
     {
@@ -167,7 +186,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
                 ->from(
                     ['_paymentInfo' => 'object_collection_PaymentInfo_' . OnlineShopOrder::classId()],
                     [
-                        'paymentReference' => 'GROUP_CONCAT(",", _paymentInfo.paymentReference, "," SEPARATOR ",")', 'o_id' => '_order.o_id'
+                        'paymentReference' => 'GROUP_CONCAT(",", _paymentInfo.paymentReference, "," SEPARATOR ",")', 'o_id' => '_order.o_id',
                     ]
                 )
                 ->join(
@@ -207,7 +226,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
     }
 
     /**
-     * @param int $classId
+     * @param string $classId
      *
      * @return $this
      */
@@ -217,7 +236,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
 
         if (!array_key_exists('product', $joins)) {
             $this->getQuery()->join(
-                ['product' => 'object_query_' . (int)$classId],
+                ['product' => 'object_query_' . $classId],
                 'product.oo_id = orderItem.product__id',
                 ''
             );
@@ -328,6 +347,8 @@ SUBQUERY
     public function addSelectField($field)
     {
         $this->getQuery()->columns($field);
+
+        return $this;
     }
 
     /**
@@ -339,6 +360,8 @@ SUBQUERY
     {
         $this->filter[] = $filter;
         $filter->apply($this);
+
+        return $this;
     }
 
     /**

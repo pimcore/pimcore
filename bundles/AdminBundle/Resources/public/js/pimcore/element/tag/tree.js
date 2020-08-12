@@ -56,6 +56,12 @@ pimcore.element.tag.tree = Class.create({
         this.checkChangeCallback = callback;
     },
 
+    setFilterFieldWidth: function (size) {
+        if (this.filterField) {
+            this.filterField.width = size;
+        }
+    },
+
     getLayout: function () {
         if (!this.tree) {
 
@@ -63,7 +69,7 @@ pimcore.element.tag.tree = Class.create({
                 autoLoad: false,
                 proxy: {
                     type: 'ajax',
-                    url: '/admin/tags/tree-get-children-by-id',
+                    url: Routing.generate('pimcore_admin_tags_treegetchildrenbyid'),
                     extraParams: {
                         showSelection: this.showSelection,
                         assignmentCId: this.assignmentCId,
@@ -92,7 +98,6 @@ pimcore.element.tag.tree = Class.create({
 
             this.filterField = new Ext.form.field.Text(
                 {
-                    width: 340,
                     hideLabel: true,
                     enableKeyEvents: true,
                     listeners: {
@@ -105,13 +110,11 @@ pimcore.element.tag.tree = Class.create({
                 }
             );
 
-            var tbarItems = [this.filterField,
-                {
-                    xtype: "button",
-                    iconCls: "pimcore_icon_search",
-                    text: t("filter"),
-                    handler: this.tagFilter.bind(this)
-                }];
+            this.filterButton = new Ext.Button({
+                iconCls: "pimcore_icon_search",
+                text: t("filter"),
+                handler: this.updateTagFilter.bind(this)
+            });
 
             this.tree = Ext.create('Ext.tree.Panel', {
                 store: store,
@@ -119,7 +122,7 @@ pimcore.element.tag.tree = Class.create({
                 region: "center",
                 autoScroll: true,
                 animate: false,
-                tbar: tbarItems,
+                tbar: [this.filterField, this.filterButton],
                 viewConfig: {
                     plugins: treePlugins,
                     listeners: {
@@ -127,7 +130,7 @@ pimcore.element.tag.tree = Class.create({
                             overModel.set('expandable', true);
 
                             Ext.Ajax.request({
-                                url: "/admin/tags/update",
+                                url: Routing.generate('pimcore_admin_tags_update'),
                                 method: 'PUT',
                                 params: {
                                     id: data.records[0].id,
@@ -251,7 +254,7 @@ pimcore.element.tag.tree = Class.create({
                     Ext.Msg.confirm(t('delete'), t('delete_message'), function (btn) {
                         if (btn == 'yes') {
                             Ext.Ajax.request({
-                                url: "/admin/tags/delete",
+                                url: Routing.generate('pimcore_admin_tags_delete'),
                                 method: 'DELETE',
                                 params: {
                                     id: record.data.id
@@ -276,7 +279,7 @@ pimcore.element.tag.tree = Class.create({
                         value = strip_tags(trim(value));
                         if (button == "ok" && value.length > 0) {
                             Ext.Ajax.request({
-                                url: "/admin/tags/update",
+                                url: Routing.generate('pimcore_admin_tags_update'),
                                 method: 'PUT',
                                 params: {
                                     id: record.id,
@@ -313,7 +316,7 @@ pimcore.element.tag.tree = Class.create({
         value = strip_tags(trim(value));
         if (button == "ok" && value.length > 0) {
             Ext.Ajax.request({
-                url: "/admin/tags/add",
+                url: Routing.generate('pimcore_admin_tags_add'),
                 method: 'POST',
                 params: {
                     parentId: record.data.id,

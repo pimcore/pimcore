@@ -17,12 +17,16 @@
 
 namespace Pimcore\DataObject\Import\Resolver;
 
+use const FILTER_VALIDATE_BOOLEAN;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition\Helper\ImportClassResolver;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
+use Pimcore\Model\DataObject\ImportDataServiceInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
 use Pimcore\Model\FactoryInterface;
 
 class Filename extends AbstractResolver
@@ -39,32 +43,47 @@ class Filename extends AbstractResolver
 
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
-        $overwrite = (bool)$config->resolverSettings->overwrite;
+        $overwrite = filter_var($config->resolverSettings->overwrite ?? false, FILTER_VALIDATE_BOOLEAN);
+        $skipIfExists = filter_var($config->resolverSettings->skipIfExists ?? false, FILTER_VALIDATE_BOOLEAN);
         $prefix = (string)$config->resolverSettings->prefix;
+        $service = ImportClassResolver::resolveClassOrService($config->resolverSettings->phpClassOrService);
 
         $parent = AbstractObject::getById($parentId);
         if (!$parent) {
-            throw new \Exception('parent not found');
+            throw new ImportErrorException('parent not found');
         }
 
         if (!$parent->isAllowed('create')) {
-            throw new \Exception('not allowed to import into folder ' . $parent->getFullPath());
+            throw new ImportErrorException('not allowed to import into folder ' . $parent->getFullPath());
         }
 
-        if ($overwrite) {
-            $objectKey = $rowData[$this->getIdColumn($config)];
-        } else {
-            $objectKey = $prefix;
-        }
+        $object = null;
 
         $classId = $config->classId;
         $classDefinition = ClassDefinition::getById($classId);
         $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($classDefinition->getName());
 
+        $objectKey = $rowData[$this->getIdColumn($config)];
+        $objectKey = Service::getValidKey($objectKey, 'object');
         $intendedPath = $parent->getRealFullPath() . '/' . $objectKey;
-        $object = null;
 
-        if ($overwrite) {
+        if (!$overwrite) {
+            if (AbstractObject::getByPath($intendedPath)) {
+                $objectKey = $prefix;
+            } else {
+                $object = $this->modelFactory->build($className);
+                $object->setParent($parent);
+                $object->setKey($objectKey);
+            }
+        }
+
+        if (!$object) {
+            if ($object = DataObject::getByPath($intendedPath) && $skipIfExists) {
+                throw new ImportWarningException('skipped filename exists: ' . $parent->getFullPath() . '/' . $objectKey);
+            }
+        }
+
+        if ($overwrite && !$service) {
             $object = DataObject::getByPath($intendedPath);
             if (!$object instanceof Concrete) {
                 //create new object
@@ -86,12 +105,30 @@ class Filename extends AbstractResolver
                 $object->setParent($parent);
                 $object->setKey($objectKey);
             }
+        } elseif ($overwrite && $service) {
+            $object = DataObject::getByPath($intendedPath);
+
+            $object = $service->populate($config, $object, $rowData, [
+                'override' => $overwrite,
+            ]);
         } else {
-            $object = $this->getAlternativeObject($prefix, $intendedPath, $parent, $className);
+            if ($service instanceof ImportDataServiceInterface) {
+                $object = $service->populate($config, null, $rowData, [
+                    'parentId' => $parentId,
+                    'prefix' => $prefix,
+                    'intendedPath' => $intendedPath,
+                    'parent' => $parent,
+                    'classname' => $className,
+                ]);
+            } else {
+                if (!$object) {
+                    $object = $this->getAlternativeObject($prefix, $intendedPath, $parent, $className);
+                }
+            }
         }
 
         if (!$object) {
-            throw new \Exception('failed to resolve object key ' . $objectKey);
+            throw new ImportErrorException('failed to resolve object key ' . $objectKey);
         }
 
         $this->setObjectType($config, $object, $rowData);

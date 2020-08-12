@@ -1,9 +1,6 @@
 <?php
 
-// just to have a link to the real constants :)
-require_once '../config/constants.php';
-
-// constants generated in pimcore/config/constants.php
+// constants generated in lib/Bootstrap.php
 define('PIMCORE_COMPOSER_PATH', '');
 define('PIMCORE_COMPOSER_FILE_PATH', '');
 define('PIMCORE_PATH', '');
@@ -30,3 +27,5 @@ define('PIMCORE_SYMFONY_CACHE_DIRECTORY', '');
 define('PIMCORE_PHP_ERROR_LOG', '');
 define('PIMCORE_PHP_ERROR_REPORTING', '');
 define('PIMCORE_KERNEL_CLASS', '');
+define('PIMCORE_KERNEL_DEBUG', '');
+define('PIMCORE_APP_BUNDLE_CLASS_FILE', '');

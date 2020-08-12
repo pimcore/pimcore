@@ -21,8 +21,10 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Tool\Email\Blacklist\Listing\Dao getDao()
+ * @method void delete()*
  * @method Model\Tool\Email\Blacklist[] load()
  * @method Model\Tool\Email\Blacklist current()
+ * @method int getTotalCount()
  */
 class Listing extends Model\Listing\AbstractListing
 {
@@ -41,7 +43,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\Tool\Email\Blacklist[]|null $items
      *
-     * @return $this
+     * @return static
      */
     public function setItems($items)
     {

@@ -122,7 +122,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         var selectedClassStore = [];
         for (i=0; i<possibleClassRestrictions.length; i++) {
             if(in_array(possibleClassRestrictions[i], this.parent.restrictions.specific.classes )) {
-                filterClassStore.push([possibleClassRestrictions[i], ts(possibleClassRestrictions[i])]);
+                filterClassStore.push([possibleClassRestrictions[i], t(possibleClassRestrictions[i])]);
                 selectedClassStore.push(possibleClassRestrictions[i]);
             }
         }
@@ -214,7 +214,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             this.selectionStore = new Ext.data.JsonStore({
                 data: [],
                 fields: ["id", "type", "filename", "fullpath", "subtype", {name:"classname",renderer: function(v){
-                    return ts(v);
+                    return t(v);
                 }}]
             });
 
@@ -244,7 +244,6 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
                 listeners: {
                     rowcontextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
                         var menu = new Ext.menu.Menu();
-                        var data = grid.getStore().getAt(rowIndex);
 
                         menu.add(new Ext.menu.Item({
                             text: t('remove'),
@@ -308,7 +307,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
 
             // get class definition
             Ext.Ajax.request({
-                url: "/admin/object-helper/grid-get-column-config",
+                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
                 params: {
                     id: this.classId,
                     objectId: this.object.id,
@@ -336,7 +335,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         }
 
         this.itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
-        var gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, "/admin/search/search/find", null, true);
+        var gridHelper = new pimcore.object.helpers.grid(selectedClass, fields, Routing.generate('pimcore_admin_searchadmin_search_find'), null, true);
         gridHelper.limit = this.itemsPerPage;
         this.store = gridHelper.getStore();
         this.store.setPageSize(this.itemsPerPage);
@@ -365,14 +364,14 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             pageSize: this.itemsPerPage,
             proxy : {
                 type: 'ajax',
-                url: "/admin/search/search/find",
+                url: Routing.generate('pimcore_admin_searchadmin_search_find'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
                 }
             },
             fields: ["id","fullpath","type","subtype","filename",{name:"classname",convert: function(v, rec){
-                return ts(rec.data.classname);
+                return t(rec.data.classname);
             }},"published"]
         });
 
@@ -387,7 +386,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             {text: t("published"), width: 40, sortable: true, dataIndex: 'published', hidden: true},
             {text: t("path"), flex: 200, sortable: true, dataIndex: 'fullpath', renderer: Ext.util.Format.htmlEncode},
             {text: t("filename"), width: 200, sortable: false, dataIndex: 'filename', hidden: true, renderer: Ext.util.Format.htmlEncode},
-            {text: t("class"), width: 200, sortable: false, dataIndex: 'classname'}
+            {text: t("class"), width: 200, sortable: true, dataIndex: 'classname'}
         ];
 
 
@@ -513,7 +512,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
             }.bind(this),
             function() {
                 Ext.Ajax.request({
-                    url: "/admin/object-helper/grid-get-column-config",
+                    url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
                     params: {
                         id: this.classId,
                         objectId: this.object.id,
@@ -591,6 +590,8 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         if (this.parent.config && this.parent.config.context) {
             proxy.setExtraParam("context", Ext.encode(this.parent.config.context));
         }
+
+        this.updateTabTitle(formValues.query);
     },
 
     search: function () {
@@ -613,7 +614,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         } else {
             // get class definition
             Ext.Ajax.request({
-                url: "/admin/object-helper/grid-get-column-config",
+                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_gridgetcolumnconfig'),
                 params: {
                     id: this.classId,
                     objectId: this.object.id,
@@ -640,7 +641,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
     deleteGridConfigConfirmed: function (btn) {
         if (btn == 'ok') {
             Ext.Ajax.request({
-                url: "/admin/object-helper/grid-delete-column-config",
+                url: Routing.generate('pimcore_admin_dataobject_dataobjecthelper_griddeletecolumnconfig'),
                 params: {
                     id: this.classId,
                     objectId:

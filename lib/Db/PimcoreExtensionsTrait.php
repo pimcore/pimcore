@@ -147,7 +147,7 @@ trait PimcoreExtensionsTrait
 
             Db::getLogger()->debug('QueryBuilder instance was normalized to string.', [
                 'query' => $query,
-                'params' => $params
+                'params' => $params,
             ]);
         }
 
@@ -610,5 +610,39 @@ trait PimcoreExtensionsTrait
     public function setAutoQuoteIdentifiers($autoQuoteIdentifiers)
     {
         $this->autoQuoteIdentifiers = $autoQuoteIdentifiers;
+    }
+
+    /**
+     * @param string $table
+     * @param string $idColumn
+     * @param string $where
+     */
+    public function selectAndDeleteWhere($table, $idColumn = 'id', $where = '')
+    {
+        $sql = 'SELECT ' . $this->quoteIdentifier($idColumn) . '  FROM ' . $table;
+
+        if ($where) {
+            $sql .= ' WHERE ' . $where;
+        }
+
+        $idsForDeletion = $this->fetchCol($sql);
+
+        if (!empty($idsForDeletion)) {
+            $chunks = array_chunk($idsForDeletion, 1000);
+            foreach ($chunks as $chunk) {
+                $idString = implode(',', array_map([$this, 'quote'], $chunk));
+                $this->deleteWhere($table, $idColumn . ' IN (' . $idString . ')');
+            }
+        }
+    }
+
+    /**
+     * @param string $like
+     *
+     * @return string
+     */
+    public function escapeLike(string $like): string
+    {
+        return str_replace(['_', '%'], ['\\_', '\\%'], $like);
     }
 }

@@ -318,7 +318,7 @@ CSS;
                 } elseif (strpos($path, 'http') === 0) {
                     $fileContent = \Pimcore\Tool::getHttpData($path);
                     $fileInfo = [
-                        'fileUrlNormalized' => $path
+                        'fileUrlNormalized' => $path,
                     ];
                 }
 

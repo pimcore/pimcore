@@ -73,6 +73,8 @@ class PriceInfo implements PriceInfoInterface
     public function addRule(RuleInterface $rule)
     {
         $this->rules[] = $rule;
+
+        return $this;
     }
 
     /**

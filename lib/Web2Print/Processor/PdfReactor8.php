@@ -36,7 +36,7 @@ class PdfReactor8 extends Processor
         $web2PrintConfig = Config::getWeb2PrintConfig();
         $reactorConfig = [
             'document' => '',
-            'baseURL' => (string)$web2PrintConfig->pdfreactorBaseUrl,
+            'baseURL' => (string)$web2PrintConfig->get('pdfreactorBaseUrl'),
             'author' => $config->author ?? '',
             'title' => $config->title ?? '',
             'addLinks' => isset($config->links) && $config->links === true,
@@ -46,15 +46,15 @@ class PdfReactor8 extends Processor
             'encryption' => $config->encryption ?? \Encryption::NONE,
             'addTags' => isset($config->tags) && $config->tags === true,
             'logLevel' => $config->loglevel ?? \LogLevel::FATAL,
-            'enableDebugMode' => $web2PrintConfig->pdfreactorEnableDebugMode || $config->enableDebugMode === true,
+            'enableDebugMode' => $web2PrintConfig->get('pdfreactorEnableDebugMode') || $config->enableDebugMode === true,
             'addOverprint' => isset($config->addOverprint) && $config->addOverprint === true,
-            'httpsMode' => $web2PrintConfig->pdfreactorEnableLenientHttpsMode ? \HttpsMode::LENIENT : \HttpsMode::STRICT
+            'httpsMode' => $web2PrintConfig->get('pdfreactorEnableLenientHttpsMode') ? \HttpsMode::LENIENT : \HttpsMode::STRICT,
         ];
         if (!empty($config->viewerPreference)) {
             $reactorConfig['viewerPreferences'] = [$config->viewerPreference];
         }
-        if (trim($web2PrintConfig->pdfreactorLicence)) {
-            $reactorConfig['licenseKey'] = trim($web2PrintConfig->pdfreactorLicence);
+        if (trim($web2PrintConfig->get('pdfreactorLicence'))) {
+            $reactorConfig['licenseKey'] = trim($web2PrintConfig->get('pdfreactorLicence'));
         }
 
         return $reactorConfig;
@@ -69,13 +69,13 @@ class PdfReactor8 extends Processor
 
         include_once(__DIR__ . '/api/v' . $web2PrintConfig->get('pdfreactorVersion', '8.0') . '/PDFreactor.class.php');
 
-        $port = ((string)$web2PrintConfig->pdfreactorServerPort) ? (string)$web2PrintConfig->pdfreactorServerPort : '9423';
-        $protocol = ((string)$web2PrintConfig->pdfreactorProtocol) ? (string)$web2PrintConfig->pdfreactorProtocol : 'http';
+        $port = ((string)$web2PrintConfig->get('pdfreactorServerPort')) ? (string)$web2PrintConfig->get('pdfreactorServerPort') : '9423';
+        $protocol = ((string)$web2PrintConfig->get('pdfreactorProtocol')) ? (string)$web2PrintConfig->get('pdfreactorProtocol') : 'http';
 
-        $pdfreactor = new \PDFreactor($protocol . '://' . $web2PrintConfig->pdfreactorServer . ':' . $port . '/service/rest');
+        $pdfreactor = new \PDFreactor($protocol . '://' . $web2PrintConfig->get('pdfreactorServer') . ':' . $port . '/service/rest');
 
-        if (trim($web2PrintConfig->pdfreactorApiKey)) {
-            $pdfreactor->apiKey = trim($web2PrintConfig->pdfreactorApiKey);
+        if (trim($web2PrintConfig->get('pdfreactorApiKey'))) {
+            $pdfreactor->apiKey = trim($web2PrintConfig->get('pdfreactorApiKey'));
         }
 
         return $pdfreactor;
@@ -141,7 +141,6 @@ class PdfReactor8 extends Processor
         $pdfreactor = $this->getClient();
 
         $reactorConfig = $this->getConfig($config);
-        $web2PrintConfig = Config::getWeb2PrintConfig();
         $reactorConfig['document'] = $html;
 
         $event = new PrintConfigEvent($this, ['config' => $config, 'reactorConfig' => $reactorConfig, 'document' => $document]);
@@ -186,41 +185,41 @@ class PdfReactor8 extends Processor
             'name' => 'javaScriptMode',
             'type' => 'select',
             'values' => [\JavaScriptMode::ENABLED, \JavaScriptMode::DISABLED, \JavaScriptMode::ENABLED_NO_LAYOUT],
-            'default' => \JavaScriptMode::ENABLED
+            'default' => \JavaScriptMode::ENABLED,
         ];
 
         $options[] = [
             'name' => 'viewerPreference',
             'type' => 'select',
             'values' => [\ViewerPreferences::PAGE_LAYOUT_SINGLE_PAGE, \ViewerPreferences::PAGE_LAYOUT_TWO_COLUMN_LEFT, \ViewerPreferences::PAGE_LAYOUT_TWO_COLUMN_RIGHT],
-            'default' => \ViewerPreferences::PAGE_LAYOUT_SINGLE_PAGE
+            'default' => \ViewerPreferences::PAGE_LAYOUT_SINGLE_PAGE,
         ];
 
         $options[] = [
             'name' => 'colorspace',
             'type' => 'select',
             'values' => [\ColorSpace::CMYK, \ColorSpace::RGB],
-            'default' => \ColorSpace::CMYK
+            'default' => \ColorSpace::CMYK,
         ];
 
         $options[] = [
             'name' => 'encryption',
             'type' => 'select',
             'values' => [\Encryption::NONE, \Encryption::TYPE_40, \Encryption::TYPE_128],
-            'default' => \Encryption::NONE
+            'default' => \Encryption::NONE,
         ];
 
         $options[] = [
             'name' => 'loglevel',
             'type' => 'select',
             'values' => [\LogLevel::FATAL, \LogLevel::WARN, \LogLevel::INFO, \LogLevel::DEBUG, \LogLevel::PERFORMANCE],
-            'default' => \LogLevel::FATAL
+            'default' => \LogLevel::FATAL,
         ];
 
         $options[] = ['name' => 'enableDebugMode', 'type' => 'bool', 'default' => false];
 
         $event = new PrintConfigEvent($this, [
-            'options' => $options
+            'options' => $options,
         ]);
 
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS, $event);

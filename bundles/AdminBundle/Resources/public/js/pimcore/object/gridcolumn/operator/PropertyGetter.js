@@ -15,12 +15,12 @@
  */
 
 
-pimcore.registerNS("pimcore.object.gridcolumn.operator.anypropertygetter");
+pimcore.registerNS("pimcore.object.gridcolumn.operator.propertygetter");
 
-pimcore.object.gridcolumn.operator.anypropertygetter = Class.create(pimcore.object.gridcolumn.Abstract, {
+pimcore.object.gridcolumn.operator.propertygetter = Class.create(pimcore.object.gridcolumn.Abstract, {
         operatorGroup: "extractor",
         type: "operator",
-        class: "AnyPropertyGetter",
+        class: "PropertyGetter",
         iconCls: "pimcore_icon_properties",
         defaultText: "Property Getter",
         group: "getter",

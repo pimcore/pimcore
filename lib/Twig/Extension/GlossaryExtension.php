@@ -47,7 +47,7 @@ class GlossaryExtension extends AbstractExtension
     public function getTokenParsers(): array
     {
         return [
-            new GlossaryTokenParser()
+            new GlossaryTokenParser(),
         ];
     }
 }

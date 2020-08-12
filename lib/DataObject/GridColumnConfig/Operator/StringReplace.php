@@ -19,19 +19,22 @@ namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
 class StringReplace extends AbstractOperator
 {
+    /** @var string */
     private $search;
 
+    /** @var string */
     private $replace;
 
+    /** @var bool */
     private $insensitive;
 
     public function __construct(\stdClass $config, $context = null)
     {
         parent::__construct($config, $context);
 
-        $this->search = $config->search;
-        $this->replace = $config->replace;
-        $this->insensitive = $config->insensitive;
+        $this->search = $config->search ?? '';
+        $this->replace = $config->replace ?? '';
+        $this->insensitive = $config->insensitive ?? false;
     }
 
     public function getLabeledValue($element)
@@ -98,7 +101,7 @@ class StringReplace extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getSearch()
     {
@@ -106,7 +109,7 @@ class StringReplace extends AbstractOperator
     }
 
     /**
-     * @param mixed $search
+     * @param string $search
      */
     public function setSearch($search)
     {
@@ -114,7 +117,7 @@ class StringReplace extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getReplace()
     {
@@ -122,7 +125,7 @@ class StringReplace extends AbstractOperator
     }
 
     /**
-     * @param mixed $replace
+     * @param string $replace
      */
     public function setReplace($replace)
     {
@@ -130,7 +133,7 @@ class StringReplace extends AbstractOperator
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function getInsensitive()
     {
@@ -138,7 +141,7 @@ class StringReplace extends AbstractOperator
     }
 
     /**
-     * @param mixed $insensitive
+     * @param bool $insensitive
      */
     public function setInsensitive($insensitive)
     {

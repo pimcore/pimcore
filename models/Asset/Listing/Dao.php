@@ -61,7 +61,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @return \Pimcore\Db\ZendCompatibility\QueryBuilder
      */
-    public function getQuery($columns)
+    public function getQuery($columns = '*')
     {
         $select = $this->db->select();
         $select->from(
@@ -99,10 +99,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getCount()
     {
-        $select = $this->getQuery([new Expression('COUNT(*)')]);
-        $amount = (int) $this->db->fetchOne($select, $this->model->getConditionVariables(), $this->model->getConditionVariableTypes());
+        if ($this->model->isLoaded()) {
+            return count($this->model->getAssets());
+        } else {
+            $idList = $this->loadIdList();
 
-        return $amount;
+            return count($idList);
+        }
     }
 
     /**

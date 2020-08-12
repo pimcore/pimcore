@@ -35,7 +35,7 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
     getGridColumnConfig: function (field) {
 
         return {
-            text: ts(field.label), width: 100, sortable: false, dataIndex: field.key,
+            text: t(field.label), width: 100, sortable: false, dataIndex: field.key,
             getEditor: this.getWindowCellEditor.bind(this, field),
             renderer: function (key, value, metaData, record) {
                 this.applyPermissionStyle(key, value, metaData, record);
@@ -52,23 +52,20 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
 
                         var item = value[i];
 
-                        var baseUrl = '<img style="padding-left: 3px" src="/admin/asset/get-image-thumbnail?id=' + item.id;
+                        var route = 'pimcore_admin_asset_getimagethumbnail';
                         var params = {
                             width: 88,
                             height: 88,
-                            frame: true
+                            frame: true,
+                            id: item.id
                         };
-
-                        var url = Ext.String.urlAppend(baseUrl, Ext.Object.toQueryString(params));
-
                         if (item.crop) {
-                            var cropParams = Ext.Object.toQueryString(item.crop);
-                            url = Ext.String.urlAppend(url, cropParams);
+                            params = Ext.merge(params, item.crop);
                         }
+                        var url = Routing.generate(route, params);
+                        var tag = '<img style="padding-left: 3px" src="'+url+'">';
 
-                        url = url + '" />';
-
-                        content += url;
+                        content += tag;
                     }
 
                 }
@@ -159,8 +156,6 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
         var placeholderComponent = this.createPlaceholder(fieldConfig);
         items.push(placeholderComponent);
 
-        var defaultFieldConfig = this.getDefaultFieldConfig();
-
         var toolbarCfg = {
             region: "north",
             border: false,
@@ -215,12 +210,12 @@ pimcore.object.tags.imageGallery = Class.create(pimcore.object.tags.abstract, {
             // title: this.fieldConfig.title,
             items: items,
             proxyConfig: {
-                width: defaultFieldConfig.width,
-                height: defaultFieldConfig.height,
+                width: fieldConfig.width,
+                height: fieldConfig.height,
                 respectPlaceholder: true,
                 callback: this
             },
-            componentCls: "object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             style: {
                 margin: '0 0 10px 0',
             },

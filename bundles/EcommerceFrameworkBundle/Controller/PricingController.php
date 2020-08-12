@@ -73,8 +73,8 @@ class PricingController extends AdminController implements EventedControllerInte
                 'qtipCfg' => [
                     'xtype' => 'quicktip',
                     'title' => $rule->getLabel(),
-                    'text' => $title
-                ]
+                    'text' => $title,
+                ],
             ];
         }
 
@@ -115,7 +115,7 @@ class PricingController extends AdminController implements EventedControllerInte
                 'behavior' => $rule->getBehavior(),
                 'active' => $rule->getActive(),
                 'condition' => $condition ? json_decode($condition->toJSON()) : '',
-                'actions' => []
+                'actions' => [],
             ];
 
             foreach ($rule->getActions() as $action) {
@@ -142,7 +142,7 @@ class PricingController extends AdminController implements EventedControllerInte
         // send json respone
         $return = [
             'success' => false,
-            'message' => ''
+            'message' => '',
         ];
 
         // save rule
@@ -175,7 +175,7 @@ class PricingController extends AdminController implements EventedControllerInte
         // send json respone
         $return = [
             'success' => false,
-            'message' => ''
+            'message' => '',
         ];
 
         // delete rule
@@ -205,7 +205,7 @@ class PricingController extends AdminController implements EventedControllerInte
         // send json respone
         $return = [
             'success' => false,
-            'message' => ''
+            'message' => '',
         ];
 
         // save rule config
@@ -297,7 +297,7 @@ class PricingController extends AdminController implements EventedControllerInte
         // send json respone
         $return = [
             'success' => false,
-            'message' => ''
+            'message' => '',
         ];
 
         // save order
@@ -325,7 +325,7 @@ class PricingController extends AdminController implements EventedControllerInte
 
         return $this->adminJson([
             'condition' => array_keys($pricingManager->getConditionMapping()),
-            'action' => array_keys($pricingManager->getActionMapping())
+            'action' => array_keys($pricingManager->getActionMapping()),
         ]);
     }
 

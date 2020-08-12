@@ -19,7 +19,8 @@ namespace Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Glossary\Dao getDao()
- * @method \Pimcore\Model\Glossary\Dao save()
+ * @method void delete()
+ * @method void save()
  */
 class Glossary extends AbstractModel
 {
@@ -81,7 +82,7 @@ class Glossary extends AbstractModel
     /**
      * @param int $id
      *
-     * @return Glossary
+     * @return self|null
      */
     public static function getById($id)
     {

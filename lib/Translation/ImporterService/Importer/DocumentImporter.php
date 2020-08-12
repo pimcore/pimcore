@@ -27,8 +27,8 @@ class DocumentImporter extends AbstractElementImporter
     {
         parent::importAttribute($element, $targetLanguage, $attribute);
 
-        if ($attribute->getType() === Attribute::TYPE_TAG && method_exists($element, 'getElement')) {
-            $tag = $element->getElement($attribute->getName());
+        if ($attribute->getType() === Attribute::TYPE_TAG && $element instanceof Document\PageSnippet) {
+            $tag = $element->getEditable($attribute->getName());
             if ($tag) {
                 if (in_array($tag->getType(), ['image', 'link'])) {
                     $tag->setText($attribute->getContent());
@@ -37,7 +37,7 @@ class DocumentImporter extends AbstractElementImporter
                 }
 
                 $tag->setInherited(false);
-                $element->setElement($tag->getName(), $tag);
+                $element->setEditable($tag->getName(), $tag);
             }
         }
 

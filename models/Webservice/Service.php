@@ -57,8 +57,7 @@ class Service
         try {
             $folder = Document::getById($id);
             if ($folder instanceof Document\Folder) {
-                $className = Webservice\Data\Mapper::findWebserviceClass($folder, 'out');
-                $apiFolder = Webservice\Data\Mapper::map($folder, $className, 'out');
+                $apiFolder = Webservice\Data\Mapper::map($folder, '\\Pimcore\\Model\\Webservice\\Data\\Document\\Folder\\Out', 'out');
 
                 return $apiFolder;
             }
@@ -82,8 +81,7 @@ class Service
         try {
             $link = Document::getById($id);
             if ($link instanceof Document\Link) {
-                $className = Webservice\Data\Mapper::findWebserviceClass($link, 'out');
-                $apiLink = Webservice\Data\Mapper::map($link, $className, 'out');
+                $apiLink = Webservice\Data\Mapper::map($link, '\\Pimcore\\Model\\Webservice\\Data\\Document\\Link\\Out', 'out');
 
                 return $apiLink;
             }
@@ -107,8 +105,7 @@ class Service
         try {
             $link = Document::getById($id);
             if ($link instanceof Document\Hardlink) {
-                $className = Webservice\Data\Mapper::findWebserviceClass($link, 'out');
-                $apiLink = Webservice\Data\Mapper::map($link, $className, 'out');
+                $apiLink = Webservice\Data\Mapper::map($link, '\\Pimcore\\Model\\Webservice\\Data\\Document\\Hardlink\\Out', 'out');
 
                 return $apiLink;
             }
@@ -132,8 +129,7 @@ class Service
         try {
             $link = Document::getById($id);
             if ($link instanceof Document\Email) {
-                $className = Webservice\Data\Mapper::findWebserviceClass($link, 'out');
-                $apiLink = Webservice\Data\Mapper::map($link, $className, 'out');
+                $apiLink = Webservice\Data\Mapper::map($link, '\\Pimcore\\Model\\Webservice\\Data\\Document\\Email\\Out', 'out');
 
                 return $apiLink;
             }
@@ -159,8 +155,7 @@ class Service
             if ($page instanceof Document\Page) {
                 // load all data (eg. href, snippet, ... which are lazy loaded)
                 Document\Service::loadAllDocumentFields($page);
-                $className = Webservice\Data\Mapper::findWebserviceClass($page, 'out');
-                $apiPage = Webservice\Data\Mapper::map($page, $className, 'out');
+                $apiPage = Webservice\Data\Mapper::map($page, '\\Pimcore\\Model\\Webservice\\Data\\Document\\Page\\Out', 'out');
 
                 return $apiPage;
             }
@@ -186,8 +181,7 @@ class Service
             if ($snippet instanceof Document\Snippet) {
                 // load all data (eg. href, snippet, ... which are lazy loaded)
                 Document\Service::loadAllDocumentFields($snippet);
-                $className = Webservice\Data\Mapper::findWebserviceClass($snippet, 'out');
-                $apiSnippet = Webservice\Data\Mapper::map($snippet, $className, 'out');
+                $apiSnippet = Webservice\Data\Mapper::map($snippet, '\\Pimcore\\Model\\Webservice\\Data\\Document\\Snippet\\Out', 'out');
 
                 return $apiSnippet;
             }
@@ -244,7 +238,7 @@ class Service
                 'orderKey' => $orderKey,
                 'offset' => $offset,
                 'limit' => $limit,
-                'groupBy' => $groupBy
+                'groupBy' => $groupBy,
             ]);
             $list->setUnpublished(1);
 
@@ -1072,7 +1066,7 @@ class Service
     {
         try {
             $object = DataObject\AbstractObject::getById($id);
-            if ($object instanceof DataObject\AbstractObject) {
+            if ($object instanceof DataObject\Concrete) {
                 $object->setPublished(false);
                 $object->save();
 
@@ -1112,7 +1106,7 @@ class Service
 
     /**
      * @param Webservice\Data\Document $wsDocument
-     * @param AbstractElement $element
+     * @param Document|Asset|DataObject\AbstractObject $element
      *
      * @return mixed
      *
@@ -1205,12 +1199,13 @@ class Service
         }
 
         $this->setModificationParams($object, false);
-        if ($object instanceof DataObject\Concrete and $object->getClassName() == $wsDocument->className) {
+        /** @var Webservice\Data\DataObject\Concrete|Data\DataObject\Folder $wsDocument */
+        if ($object instanceof DataObject\Concrete && $object->getClassName() == $wsDocument->className) {
             $wsDocument->reverseMap($object);
             $object->save();
 
             return true;
-        } elseif ($object instanceof DataObject\Folder and $object->getType() == strtolower($wsDocument->type)) {
+        } elseif ($object instanceof DataObject\Folder && $object->getType() == strtolower($wsDocument->type)) {
             $wsDocument->reverseMap($object);
             $object->save();
 

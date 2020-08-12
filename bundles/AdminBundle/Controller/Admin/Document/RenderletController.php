@@ -37,7 +37,7 @@ class RenderletController extends AdminController
     /**
      * Handles editmode preview for renderlets
      *
-     * @Route("/document_tag/renderlet")
+     * @Route("/document_tag/renderlet", name="pimcore_admin_document_renderlet_renderlet")
      *
      * @param Request $request
      * @param ActionRenderer $actionRenderer
@@ -73,7 +73,7 @@ class RenderletController extends AdminController
 
         // set document if set in request
         if ($document = $request->get('pimcore_parentDocument')) {
-            $document = Document::getById($document);
+            $document = Document\PageSnippet::getById($document);
             if ($document) {
                 $attributes = $actionRenderer->addDocumentAttributes($document, $attributes);
                 unset($attributes[DynamicRouter::CONTENT_TEMPLATE]);

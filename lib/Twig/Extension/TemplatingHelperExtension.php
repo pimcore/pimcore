@@ -56,15 +56,15 @@ class TemplatingHelperExtension extends AbstractExtension
             'device' => 'pimcore_device',
             'pimcoreUrl' => [
                 'name' => 'pimcore_url',
-                'is_safe' => null
-            ]
+                'is_safe' => null,
+            ],
         ];
 
         $functions = [];
         foreach ($helperNames as $helperName => $helperOptions) {
             $functionName = null;
             $options = [
-                'is_safe' => ['html']
+                'is_safe' => ['html'],
             ];
 
             if (is_string($helperOptions)) {

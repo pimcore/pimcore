@@ -67,7 +67,7 @@ class Dao extends Model\Dao\AbstractDao
             $where = 'src_id = ' . $object->getId() . " AND ownertype = 'objectbrick' AND ownername = '" . $this->model->getFieldname() . "' AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')";
             // if the model supports dirty detection then only delete the dirty fields
             // as a consequence, only do inserts only on dirty fields
-            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof  DataObject\DirtyIndicatorInterface) {
+            if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof  Model\Element\DirtyIndicatorInterface) {
                 foreach ($fieldDefinitions as $key => $fd) {
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations) {
                         if ($fd->supportsDirtyDetection()) {
@@ -97,8 +97,17 @@ class Dao extends Model\Dao\AbstractDao
         foreach ($fieldDefinitions as $key => $fd) {
             $getter = 'get' . ucfirst($fd->getName());
 
+            if ($this->model->getObject()->getClass()->getAllowInherit() && isset($params['isUpdate']) && $params['isUpdate'] === false) {
+                // if this is a fresh object, then we don't need the check
+                $isBrickUpdate = false; // used to indicate whether we want to consider the default value
+            } else {
+                // or brick has been added
+                $existsResult = $this->db->fetchOne('SELECT o_id FROM ' . $storetable . ' WHERE o_id = ? LIMIT 1', $object->getId());
+                $isBrickUpdate = $existsResult ? true : false;  // used to indicate whether we want to consider the default value
+            }
+
             if ($fd instanceof CustomResourcePersistingInterface) {
-                if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof DataObject\DirtyIndicatorInterface) {
+                if ((!isset($params['newParent']) || !$params['newParent']) && isset($params['isUpdate']) && $params['isUpdate'] && !DataObject\AbstractObject::isDirtyDetectionDisabled() && $this->model instanceof Model\Element\DirtyIndicatorInterface) {
                     // ownerNameList contains the dirty stuff
                     if ($fd instanceof DataObject\ClassDefinition\Data\Relations\AbstractRelations && !in_array($db->quote($key), $dirtyRelations)) {
                         continue;
@@ -111,23 +120,12 @@ class Dao extends Model\Dao\AbstractDao
                         'context' => [
                             'containerType' => 'objectbrick',
                             'containerKey' => $this->model->getType(),
-                            'fieldname' => $this->model->getFieldname()
-                        ]
+                            'fieldname' => $this->model->getFieldname(),
+                        ],
+                        'isUpdate' => $isBrickUpdate,
+                        'owner' => $this->model,
+                        'fieldname' => $key,
                     ]));
-            }
-
-            $isBrickUpdate = true;          // used to indicate whether we want to consider the default value
-
-            // only relevant if inheritance is enabled
-            if ($this->model->getObject()->getClass()->getAllowInherit()) {
-                if (isset($params['isUpdate']) && $params['isUpdate'] === false) {
-                    // either this is a fresh object, then we don't need the check
-                    $isBrickUpdate = false;
-                } else {
-                    // or brick has been added
-                    $existsResult = $this->db->fetchOne('SELECT o_id FROM ' . $storetable . ' WHERE o_id = ? LIMIT 1', $object->getId());
-                    $isBrickUpdate = $existsResult ? true : false;
-                }
             }
 
             if ($fd instanceof ResourcePersistenceAwareInterface) {
@@ -138,19 +136,20 @@ class Dao extends Model\Dao\AbstractDao
                         'context' => [
                             'containerType' => 'objectbrick',
                             'containerKey' => $this->model->getType(),
-                            'fieldname' => $this->model->getFieldname()
-                        ]
+                            'fieldname' => $this->model->getFieldname(),
+                        ],
                     ]);
                     $data = array_merge($data, $insertDataArray);
                 } else {
                     $insertData = $fd->getDataForResource($this->model->$getter(), $object, [
                         'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
+                        'fieldname' => $key,
                         'isUpdate' => $isBrickUpdate,
                         'context' => [
                             'containerType' => 'objectbrick',
                             'containerKey' => $this->model->getType(),
-                            'fieldname' => $this->model->getFieldname()
-                        ]
+                            'fieldname' => $this->model->getFieldname(),
+                        ],
                     ]);
                     $data[$key] = $insertData;
                 }
@@ -275,7 +274,7 @@ class Dao extends Model\Dao\AbstractDao
         if ($inheritanceEnabled) {
             $this->inheritanceHelper->doUpdate($object->getId(), true,
                 ['inheritanceRelationContext' => [
-                    'ownertype' => 'objectbrick'
+                    'ownertype' => 'objectbrick',
                 ]]);
         }
         $this->inheritanceHelper->resetFieldsToCheck();
@@ -304,7 +303,7 @@ class Dao extends Model\Dao\AbstractDao
             'src_id' => $object->getId(),
             'ownertype' => 'objectbrick',
             'ownername' => $this->model->getFieldname(),
-            'position' => $this->model->getType()
+            'position' => $this->model->getType(),
         ]);
 
         $this->inheritanceHelper = new DataObject\Concrete\Dao\InheritanceHelper($object->getClassId(), 'o_id', $storeTable, $queryTable);
@@ -325,7 +324,7 @@ class Dao extends Model\Dao\AbstractDao
                     $fakeModel->setContext([
                         'containerType' => 'objectbrick',
                         'containerKey' => $this->model->getType(),
-                        'fieldname' => $this->model->getFieldname()
+                        'fieldname' => $this->model->getFieldname(),
                     ]);
                     $localizedFieldDao->setModel($fakeModel);
                     $localizedFieldDao->delete();
@@ -390,7 +389,7 @@ class Dao extends Model\Dao\AbstractDao
             AND r.ownertype = 'objectbrick'
             AND r." . $src . ' = ?
             AND o.o_id = r.' . $dest . "
-            AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')            
+            AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
             AND r.type='object'
 
             UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type,  a.type as subtype,  concat(a.path,a.filename) as path, r.index, "null" as published
@@ -399,7 +398,7 @@ class Dao extends Model\Dao\AbstractDao
             AND r.ownertype = 'objectbrick'
             AND r." . $src . ' = ?
             AND a.id = r.' . $dest . "
-            AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')            
+            AND (position = '" . $this->model->getType() . "' OR position IS NULL OR position = '')
             AND r.type='asset'
 
             UNION SELECT r." . $dest . ' as dest_id, r.' . $dest . ' as id, r.type, d.type as subtype, concat(d.path,d.key) as path, r.index, d.published as published

@@ -31,10 +31,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Pimcore\Model\Document\Service\Dao getDao()
- * @method array getTranslations(Document $document)
+ * @method array getTranslations(Document $document, string $task = 'open')
  * @method addTranslation(Document $document, Document $translation, $language = null)
  * @method removeTranslation(Document $document)
  * @method int getTranslationSourceId(Document $document)
+ * @method removeTranslationLink(Document $document, Document $targetDocument)
  */
 class Service extends Model\Element\Service
 {
@@ -141,8 +142,8 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        if (method_exists($source, 'getElements')) {
-            $source->getElements();
+        if ($source instanceof Document\PageSnippet) {
+            $source->getEditables();
         }
 
         $source->getProperties();
@@ -175,7 +176,7 @@ class Service extends Model\Element\Service
 
         // triggers actions after the complete document cloning
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
-            'base_element' => $source // the element used to make a copy
+            'base_element' => $source, // the element used to make a copy
         ]));
 
         return $new;
@@ -193,8 +194,8 @@ class Service extends Model\Element\Service
      */
     public function copyAsChild($target, $source, $enableInheritance = false, $resetIndex = false, $language = false)
     {
-        if (method_exists($source, 'getElements')) {
-            $source->getElements();
+        if ($source instanceof Document\PageSnippet) {
+            $source->getEditables();
         }
 
         $source->getProperties();
@@ -223,7 +224,7 @@ class Service extends Model\Element\Service
         }
 
         if ($enableInheritance && ($new instanceof Document\PageSnippet)) {
-            $new->setElements([]);
+            $new->setEditables([]);
             $new->setContentMasterDocumentId($source->getId());
         }
 
@@ -242,7 +243,7 @@ class Service extends Model\Element\Service
 
         // triggers actions after the complete document cloning
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
-            'base_element' => $source // the element used to make a copy
+            'base_element' => $source, // the element used to make a copy
         ]));
 
         return $new;
@@ -266,7 +267,7 @@ class Service extends Model\Element\Service
 
         if ($source instanceof Document\PageSnippet) {
             /** @var PageSnippet $target */
-            $target->setElements($source->getElements());
+            $target->setEditables($source->getEditables());
 
             $target->setTemplate($source->getTemplate());
             $target->setAction($source->getAction());
@@ -325,7 +326,7 @@ class Service extends Model\Element\Service
         $doc->getProperties();
 
         if ($doc instanceof Document\PageSnippet) {
-            foreach ($doc->getElements() as $name => $data) {
+            foreach ($doc->getEditables() as $name => $data) {
                 if (method_exists($data, 'load')) {
                     $data->load();
                 }
@@ -394,36 +395,36 @@ class Service extends Model\Element\Service
         // rewriting elements only for snippets and pages
         if ($document instanceof Document\PageSnippet) {
             if (array_key_exists('enableInheritance', $params) && $params['enableInheritance']) {
-                $elements = $document->getElements();
-                $changedElements = [];
+                $editables = $document->getEditables();
+                $changedEditables = [];
                 $contentMaster = $document->getContentMasterDocument();
                 if ($contentMaster instanceof Document\PageSnippet) {
-                    $contentMasterElements = $contentMaster->getElements();
-                    foreach ($contentMasterElements as $contentMasterElement) {
-                        if (method_exists($contentMasterElement, 'rewriteIds')) {
-                            $element = clone $contentMasterElement;
-                            $element->rewriteIds($rewriteConfig);
+                    $contentMasterEditables = $contentMaster->getEditables();
+                    foreach ($contentMasterEditables as $contentMasterEditable) {
+                        if (method_exists($contentMasterEditable, 'rewriteIds')) {
+                            $editable = clone $contentMasterEditable;
+                            $editable->rewriteIds($rewriteConfig);
 
-                            if (Serialize::serialize($element) != Serialize::serialize($contentMasterElement)) {
-                                $changedElements[] = $element;
+                            if (Serialize::serialize($editable) != Serialize::serialize($contentMasterEditable)) {
+                                $changedEditables[] = $editable;
                             }
                         }
                     }
                 }
 
-                if (count($changedElements) > 0) {
-                    $elements = $changedElements;
+                if (count($changedEditables) > 0) {
+                    $editables = $changedEditables;
                 }
             } else {
-                $elements = $document->getElements();
-                foreach ($elements as &$element) {
-                    if (method_exists($element, 'rewriteIds')) {
-                        $element->rewriteIds($rewriteConfig);
+                $editables = $document->getEditables();
+                foreach ($editables as &$editable) {
+                    if (method_exists($editable, 'rewriteIds')) {
+                        $editable->rewriteIds($rewriteConfig);
                     }
                 }
             }
 
-            $document->setElements($elements);
+            $document->setEditables($editables);
         } elseif ($document instanceof Document\Hardlink) {
             if (array_key_exists('document', $rewriteConfig) && $document->getSourceId() && array_key_exists((int) $document->getSourceId(), $rewriteConfig['document'])) {
                 $document->setSourceId($rewriteConfig['document'][(int) $document->getSourceId()]);
@@ -603,22 +604,13 @@ class Service extends Model\Element\Service
     {
         $success = false;
 
+        /** @var Page $doc */
         $doc = Document::getById($id);
         if (!$hostUrl) {
             $hostUrl = Tool::getHostUrl(false, $request);
         }
 
         $url = $hostUrl . $doc->getRealFullPath();
-
-        $config = \Pimcore\Config::getSystemConfig();
-        if ($config->general->http_auth) {
-            $username = $config->general->http_auth->username;
-            $password = $config->general->http_auth->password;
-            if ($username && $password) {
-                $url = str_replace('://', '://' . $username .':'. $password . '@', $url);
-            }
-        }
-
         $tmpFile = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/screenshot_tmp_' . $doc->getId() . '.png';
         $file = $doc->getPreviewImageFilesystemPath();
 

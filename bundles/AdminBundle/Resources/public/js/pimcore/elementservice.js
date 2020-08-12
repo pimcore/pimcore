@@ -15,7 +15,7 @@ pimcore.registerNS("pimcore.elementservice.x");
 
 pimcore.elementservice.deleteElement = function (options) {
     var elementType = options.elementType;
-    var url = "/admin/"  + elementType + "/delete-info?";
+    var url = Routing.getBaseUrl() + "/admin/"  + elementType + "/delete-info?";
     // check for dependencies
     Ext.Ajax.request({
         url: url,
@@ -86,8 +86,6 @@ pimcore.elementservice.deleteElementCheckDependencyComplete = function (window, 
             message += "<br /><br /><b>" + t("too_many_children_for_recyclebin") + "</b>";
         }
 
-        var deleteMethod = "delete" + ucfirst(options.elementType) + "FromServer";
-
         Ext.MessageBox.show({
             title:t('delete'),
             msg: message,
@@ -122,6 +120,11 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
         var elementType = options.elementType;
         var id = options.id;
 
+        let ids = Ext.isString(id) ? id.split(',') : [id];
+        ids.forEach(function (elementId) {
+            pimcore.helpers.addTreeNodeLoadingIndicator(elementType, elementId);
+        });
+
         var affectedNodes = pimcore.elementservice.getAffectedNodes(elementType, id);
         for (var index = 0; index < affectedNodes.length; index++) {
             var node = affectedNodes[index];
@@ -144,17 +147,17 @@ pimcore.elementservice.deleteElementFromServer = function (r, options, button) {
             this.deleteWindow = new Ext.Window({
                 title: t("delete"),
                 layout:'fit',
-                width:500,
+                width:200,
                 bodyStyle: "padding: 10px;",
                 closable:false,
                 plain: true,
-                modal: true,
-                items: [this.deleteProgressBar]
+                items: [this.deleteProgressBar],
+                listeners: pimcore.helpers.getProgressWindowListeners()
             });
 
             this.deleteWindow.show();
         }
-        
+
         var pj = new pimcore.tool.paralleljobs({
             success: function (id, successHandler) {
                 var refreshParentNodes = [];
@@ -237,7 +240,7 @@ pimcore.elementservice.updateAsset = function (id, data, callback) {
     data.id = id;
 
     Ext.Ajax.request({
-        url: "/admin/asset/update",
+        url: Routing.generate('pimcore_admin_asset_update'),
         method: "PUT",
         params: data,
         success: callback
@@ -254,7 +257,7 @@ pimcore.elementservice.updateDocument = function (id, data, callback) {
     data.id = id;
 
     Ext.Ajax.request({
-        url: "/admin/document/update",
+        url: Routing.generate('pimcore_admin_document_document_update'),
         method: "PUT",
         params: data,
         success: callback
@@ -269,7 +272,7 @@ pimcore.elementservice.updateObject = function (id, values, callback) {
     }
 
     Ext.Ajax.request({
-        url: "/admin/object/update",
+        url: Routing.generate('pimcore_admin_dataobject_dataobject_update'),
         method: "PUT",
         params: {
             id: id,
@@ -350,7 +353,10 @@ pimcore.elementservice.editDocumentKeyComplete =  function (options, button, val
         }
         pimcore.elementservice.applyNewKey(affectedNodes, elementType, id, value);
 
-        pimcore.elementservice.updateDocument(id, {key: value}, function (response) {
+        pimcore.elementservice.updateDocument(id, {
+            key: value,
+            create_redirects: options['create_redirects']
+        }, function (response) {
             var record, index;
             var rdata = Ext.decode(response.responseText);
             if (!rdata || !rdata.success) {
@@ -552,8 +558,70 @@ pimcore.elementservice.editElementKey = function(options) {
         throw new Error("type " + options.elementType + " not supported!");
     }
 
-    Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'), completeCallback, window, false, options.default);
+    if(
+        options['elementType'] === 'document' &&
+        (options['elementSubType'] === 'page' || options['elementSubType'] === 'hardlink') &&
+        pimcore.globalmanager.get("user").isAllowed('redirects')
+    ) {
+        // for document pages & hardlinks we need an additional checkbox for auto-redirects
+        var messageBox = null;
+        completeCallback = pimcore.elementservice.editDocumentKeyComplete.bind(this);
+        var submitFunction = function () {
+            options['create_redirects'] = messageBox.getComponent('create_redirects').getValue()
+            completeCallback(options, 'ok', messageBox.getComponent('key').getValue());
+            messageBox.close();
+        };
 
+        messageBox = new Ext.Window({
+            modal: true,
+            width: 500,
+            title: t('rename'),
+            items: [{
+                xtype: 'container',
+                html: t('please_enter_the_new_name')
+            }, {
+                xtype: "textfield",
+                width: "100%",
+                name: 'key',
+                itemId: 'key',
+                value: options.default,
+                listeners: {
+                    afterrender: function () {
+                        window.setTimeout(function () {
+                            this.focus(true);
+                        }.bind(this), 100);
+                    }
+                }
+            },{
+                xtype: "checkbox",
+                boxLabel: t('create_redirects'),
+                name: 'create_redirects',
+                itemId: 'create_redirects',
+                checked: true
+            }],
+            bodyStyle: 'padding: 10px 10px 0px 10px',
+            buttonAlign: 'center',
+            buttons: [{
+                text: t('OK'),
+                handler: submitFunction
+            },{
+                text: t('cancel'),
+                handler: function() {
+                    messageBox.close();
+                }
+            }]
+        });
+
+        messageBox.show();
+
+        var map = new Ext.util.KeyMap({
+            target: messageBox.getEl(),
+            key:  Ext.event.Event.ENTER,
+            fn: submitFunction
+        });
+    } else {
+        Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'), completeCallback, window, false, options.default);
+    }
 };
 
 
@@ -586,7 +654,7 @@ pimcore.elementservice.isKeyExistingInLevel = function(parentNode, key, node) {
     var parentChilds = parentNode.childNodes;
     for (var i = 0; i < parentChilds.length; i++) {
         if (parentChilds[i].data.text == key && node != parentChilds[i]) {
-            Ext.MessageBox.alert(t('rename'),
+            Ext.MessageBox.alert(t('error'),
                 t('name_already_in_use'));
             return true;
         }
@@ -754,7 +822,7 @@ pimcore.elementservice.lockElement = function(options) {
 pimcore.elementservice.unlockElement = function(options) {
     try {
         Ext.Ajax.request({
-            url: "/admin/element/unlock-propagate",
+            url: Routing.generate('pimcore_admin_element_unlockpropagate'),
             method: 'PUT',
             params: {
                 id: options.id,
@@ -959,7 +1027,7 @@ pimcore.elementservice.getWorkflowActionsButton = function(workflows, elementTyp
 
 
 pimcore.elementservice.replaceAsset = function (id, callback) {
-    pimcore.helpers.uploadDialog('/admin/asset/replace-asset?id=' + id, "Filedata", function() {
+    pimcore.helpers.uploadDialog(Routing.generate('pimcore_admin_asset_replaceasset', {id: id}), "Filedata", function() {
         if(typeof callback == "function") {
             callback();
         }
@@ -988,7 +1056,7 @@ pimcore.elementservice.downloadAssetFolderAsZip = function (id, selectedIds) {
     }
 
     Ext.Ajax.request({
-        url: "/admin/asset/download-as-zip-jobs",
+        url: Routing.generate('pimcore_admin_asset_downloadaszipjobs'),
         params: {
             id: id,
             selectedIds: idsParam
@@ -1003,12 +1071,12 @@ pimcore.elementservice.downloadAssetFolderAsZip = function (id, selectedIds) {
             that.downloadProgressWin = new Ext.Window({
                 title: t("download_as_zip"),
                 layout:'fit',
-                width:500,
+                width:200,
                 bodyStyle: "padding: 10px;",
                 closable:false,
                 plain: true,
-                modal: true,
-                items: [that.downloadProgressBar]
+                items: [that.downloadProgressBar],
+                listeners: pimcore.helpers.getProgressWindowListeners()
             });
 
             that.downloadProgressWin.show();
@@ -1023,7 +1091,7 @@ pimcore.elementservice.downloadAssetFolderAsZip = function (id, selectedIds) {
                     that.downloadProgressBar = null;
                     that.downloadProgressWin = null;
 
-                    pimcore.helpers.download('/admin/asset/download-as-zip?jobId='+ res.jobId + "&id=" + id);
+                    pimcore.helpers.download(Routing.generate('pimcore_admin_asset_downloadaszip', {jobId: res.jobId, id: id}));
                 },
                 update: function (currentStep, steps, percent) {
                     if(that.downloadProgressBar) {

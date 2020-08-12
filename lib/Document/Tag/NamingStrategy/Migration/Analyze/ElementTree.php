@@ -26,6 +26,9 @@ use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\BuildEditabl
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\LogicException;
 use Pimcore\Model\Document;
 
+/**
+ * @deprecated
+ */
 final class ElementTree
 {
     /**
@@ -77,7 +80,7 @@ final class ElementTree
      */
     private $blockTypes = [
         'block' => Block::class,
-        'areablock' => Areablock::class
+        'areablock' => Areablock::class,
     ];
 
     /**

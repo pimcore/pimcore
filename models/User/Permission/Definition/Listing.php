@@ -41,7 +41,7 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * @param Model\User\Permission\Definition[] $definitions
      *
-     * @return $this
+     * @return static
      */
     public function setDefinitions($definitions)
     {

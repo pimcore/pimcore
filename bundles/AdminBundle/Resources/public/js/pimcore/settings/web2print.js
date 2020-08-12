@@ -21,7 +21,7 @@ pimcore.settings.web2print = Class.create({
 
     getData: function () {
         Ext.Ajax.request({
-            url: "/admin/settings/get-web2print",
+            url: Routing.generate('pimcore_admin_settings_getweb2print'),
             success: function (response) {
 
                 this.data = Ext.decode(response.responseText);
@@ -320,11 +320,21 @@ pimcore.settings.web2print = Class.create({
         tabPanel.setActiveItem("pimcore_settings_web2print");
     },
 
-    save: function () {
+    getValues: function () {
         var values = this.layout.getForm().getFieldValues();
+        Object.keys(values).forEach(function (key) {
+            if (key.includes('displayfield')) {
+                delete values[key];
+            }
+        });
+        return values;
+    },
+
+    save: function () {
+        var values = this.getValues();
 
         Ext.Ajax.request({
-            url: "/admin/settings/set-web2print",
+            url: Routing.generate('pimcore_admin_settings_setweb2print'),
             method: "PUT",
             params: {
                 data: Ext.encode(values)
@@ -352,7 +362,7 @@ pimcore.settings.web2print = Class.create({
     },
 
     test: function () {
-        window.open("/admin/settings/test-web2print", "_blank");
+        window.open(Routing.generate('pimcore_admin_settings_testweb2print'), "_blank");
     }
 
 

@@ -56,6 +56,24 @@ $this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8')
                  ->appendHttpEquiv('Content-Language', 'en-US');
 ```
 
+```twig
+{# setting meta description #}
+{% do pimcore_head_meta().appendName('description', 'My SEO description for my awesome page') %}
+
+{# setting open graph tags #}
+{% do pimcore_head_meta().setProperty('og:title', 'my article title') %}
+{% do pimcore_head_meta().setProperty('og:type', 'article') %}
+
+{# setting content type and character set #}
+{% do pimcore_head_meta().appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8').appendHttpEquiv('Content-Language', 'en-US') %}
+```
+
 When you're ready to place your meta tags in the layout, simply echo the helper:
 
-`<?= $this->headMeta() ?>`
+```php
+<?= $this->headMeta() ?>
+```
+
+```twig
+{{ pimcore_head_meta() }}
+```

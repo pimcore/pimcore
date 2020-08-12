@@ -59,7 +59,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         var options = this.options || {};
 
         Ext.Ajax.request({
-            url: "/admin/object/get",
+            url: Routing.generate('pimcore_admin_dataobject_dataobject_get'),
             params: params,
             ignoreErrors: options.ignoreNotFoundError,
             success: this.getDataComplete.bind(this),
@@ -196,7 +196,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
         this.tab.on("beforedestroy", function () {
             Ext.Ajax.request({
-                url: "/admin/element/unlock-element",
+                url: Routing.generate('pimcore_admin_element_unlockelement'),
                 method: 'PUT',
                 params: {
                     id: this.id,
@@ -464,7 +464,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
 
                 var menu = [];
                 for (var i = 0; i < this.data.validLayouts.length; i++) {
-                    var menuLabel = ts(this.data.validLayouts[i].name);
+                    var menuLabel = t(this.data.validLayouts[i].name);
                     if (this.data.currentLayoutId == this.data.validLayouts[i].id) {
                         menuLabel = "<b>" + menuLabel + "</b>";
                     }
@@ -503,6 +503,23 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                 menu: this.getMetaInfoMenuItems()
             });
 
+            if (this.data.general.showFieldLookup) {
+                buttons.push({
+                    xtype: "button",
+                    tooltip: t("fieldlookup"),
+                    iconCls: "pimcore_material_fieldlookup pimcore_material_icon",
+                    scale: "medium",
+                    handler: function() {
+                        var object = this.edit.object;
+                        var config = {
+                            classid: object.data.general.o_classId
+                        }
+                        var dialog = new pimcore.object.fieldlookup.filterdialog(config, null, object);
+                        dialog.show();
+                    }.bind(this)
+                });
+            }
+
 
             if (this.data.hasPreview) {
                 buttons.push("-");
@@ -512,7 +529,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                     scale: "medium",
                     handler: function () {
                         var date = new Date();
-                        var path = "/admin/object/preview?id=" + this.data.general.o_id + "&time=" + date.getTime();
+                        var path = Routing.generate('pimcore_admin_dataobject_dataobject_preview', {id: this.data.general.o_id, time: date.getTime()});
                         this.saveToSession(function () {
                             window.open(path);
                         });
@@ -539,7 +556,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             buttons.push("-");
             buttons.push({
                 xtype: 'tbtext',
-                text: ts(this.data.general.o_className),
+                text: t(this.data.general.o_className),
                 scale: "medium"
             });
 
@@ -756,7 +773,7 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
             }
 
             Ext.Ajax.request({
-                url: '/admin/object/save?task=' + task,
+                url: Routing.generate('pimcore_admin_dataobject_dataobject_save', {task: task}),
                 method: "PUT",
                 params: saveData,
                 success: function (response) {

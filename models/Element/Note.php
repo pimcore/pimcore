@@ -76,7 +76,7 @@ class Note extends Model\AbstractModel
      *
      * @param int $id
      *
-     * @return Note
+     * @return self|null
      */
     public static function getById($id)
     {
@@ -99,7 +99,7 @@ class Note extends Model\AbstractModel
     {
         $this->data[$name] = [
             'type' => $type,
-            'data' => $data
+            'data' => $data,
         ];
     }
 

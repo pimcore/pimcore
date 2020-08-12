@@ -65,7 +65,7 @@ class ControllerDataProvider
      */
     private $templateNamePatterns = [
         '*.php',
-        '*.twig'
+        '*.twig',
     ];
 
     /**
@@ -111,6 +111,8 @@ class ControllerDataProvider
         if (isset($bundles[$name])) {
             return $bundles[$name];
         }
+
+        return null;
     }
 
     /**

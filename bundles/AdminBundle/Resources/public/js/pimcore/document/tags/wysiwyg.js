@@ -66,6 +66,10 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         this.startCKeditor();
 
+        if(options["required"]) {
+            this.required = options["required"];
+        }
+
         this.checkValue();
     },
 
@@ -78,7 +82,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
             // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible
             // is also Basic
-            if (!this.options["toolbarGroups"]) {
+            if(!this.options["toolbarGroups"] && this.options['toolbarGroups'] !== false){
                 eConfig.toolbarGroups = [
                     { name: 'basicstyles', groups: [ 'undo', "find", 'basicstyles', 'list'] },
                     '/',
@@ -91,7 +95,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                     { name: 'tools', groups: ['colors', "tools", 'cleanup', 'mode', "others"] }
                 ];
             }
-
+            
             delete specificConfig.width;
 
             eConfig.language = pimcore.settings["language"];
@@ -108,7 +112,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
             this.ckeditor = CKEDITOR.inline(this.textarea, eConfig);
 
-            this.ckeditor.on('change', this.checkValue.bind(this));
+            this.ckeditor.on('change', this.checkValue.bind(this, true));
 
                 // disable URL field in image dialog
             this.ckeditor.on("dialogShow", function (e) {
@@ -208,7 +212,15 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
                 var additionalAttributes = "";
 
                 if(typeof data.imageWidth != "undefined") {
-                    uri = "/admin/asset/get-image-thumbnail?id=" + id + "&width=" + defaultWidth + "&aspectratio=true";
+                    var route = 'pimcore_admin_asset_getimagethumbnail';
+                    var params = {
+                        id: id,
+                        width: defaultWidth,
+                        aspectratio: true
+                    };
+
+                    uri = Routing.generate(route, params);
+
                     if(data.imageWidth < defaultWidth
                             && in_arrayi(pimcore.helpers.getFileExtension(data.text),
                                         browserPossibleExtensions)) {
@@ -253,7 +265,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
     },
 
-    checkValue: function () {
+    checkValue: function (mark) {
 
         var value = this.getValue();
 
@@ -261,6 +273,11 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             Ext.get(this.textarea).addCls("empty");
         } else {
             Ext.get(this.textarea).removeCls("empty");
+        }
+
+
+        if (this.required) {
+            this.validateRequiredValue(value, Ext.get(this.textarea), this, mark);
         }
     },
 

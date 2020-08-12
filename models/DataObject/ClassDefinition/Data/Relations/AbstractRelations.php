@@ -26,21 +26,19 @@ use Pimcore\Model\Element;
 abstract class AbstractRelations extends Data implements
     CustomResourcePersistingInterface,
     DataObject\ClassDefinition\PathFormatterAwareInterface,
-    Data\LazyLoadingSupportInterface
+    Data\LazyLoadingSupportInterface,
+    Data\EqualComparisonInterface
 {
-    const RELATION_ID_SEPARATOR = '$$';
+    use DataObject\Traits\ContextPersistenceTrait;
 
-    /**
-     * @var bool
-     */
-    public $lazyLoading;
+    const RELATION_ID_SEPARATOR = '$$';
 
     /**
      * Set of allowed classes
      *
      * @var array
      */
-    public $classes;
+    public $classes = [];
 
     /** Optional path formatter class
      * @var null|string
@@ -48,11 +46,13 @@ abstract class AbstractRelations extends Data implements
     public $pathFormatterClass;
 
     /**
-     * @return array
+     * @return array[
+     *  'classes' => string,
+     * ]
      */
     public function getClasses()
     {
-        return $this->classes;
+        return $this->classes ?: [];
     }
 
     /**
@@ -72,71 +72,11 @@ abstract class AbstractRelations extends Data implements
      */
     public function getLazyLoading()
     {
-        return $this->lazyLoading;
+        return true;
     }
 
     /**
-     * @param bool $lazyLoading
-     *
-     * @return $this
-     */
-    public function setLazyLoading($lazyLoading)
-    {
-        $this->lazyLoading = $lazyLoading;
-
-        return $this;
-    }
-
-    /** Enrich relation with type-specific data.
-     * @param $object
-     * @param $params
-     * @param $classId
-     * @param array $relation
-     */
-    protected function enrichRelation($object, $params, &$classId, &$relation = [])
-    {
-        if (!$relation) {
-            $relation = [];
-        }
-
-        if ($object instanceof DataObject\Concrete) {
-            $relation['src_id'] = $object->getId();
-            $relation['ownertype'] = 'object';
-
-            $classId = $object->getClassId();
-        } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
-            $relation['src_id'] = $object->getObject()->getId(); // use the id from the object, not from the field collection
-            $relation['ownertype'] = 'fieldcollection';
-            $relation['ownername'] = $object->getFieldname();
-            $relation['position'] = $object->getIndex();
-
-            $classId = $object->getObject()->getClassId();
-        } elseif ($object instanceof DataObject\Localizedfield) {
-            $relation['src_id'] = $object->getObject()->getId();
-            $relation['ownertype'] = 'localizedfield';
-            $relation['ownername'] = 'localizedfield';
-            $context = $object->getContext();
-            if (isset($context['containerType']) && ($context['containerType'] === 'fieldcollection' || $context['containerType'] === 'objectbrick')) {
-                $fieldname = $context['fieldname'];
-                $index = $context['index'] ?? null;
-                $relation['ownername'] = '/' . $context['containerType'] . '~' . $fieldname . '/' . $index . '/localizedfield~' . $relation['ownername'];
-            }
-
-            $relation['position'] = $params['language'];
-
-            $classId = $object->getObject()->getClassId();
-        } elseif ($object instanceof DataObject\Objectbrick\Data\AbstractData) {
-            $relation['src_id'] = $object->getObject()->getId();
-            $relation['ownertype'] = 'objectbrick';
-            $relation['ownername'] = $object->getFieldname();
-            $relation['position'] = $object->getType();
-
-            $classId = $object->getObject()->getClassId();
-        }
-    }
-
-    /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
      * @throws \Exception
@@ -152,10 +92,10 @@ abstract class AbstractRelations extends Data implements
         }
         $context = $params['context'];
 
-        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof DataObject\DirtyIndicatorInterface) {
+        if (!DataObject\AbstractObject::isDirtyDetectionDisabled() && $object instanceof Element\DirtyIndicatorInterface) {
             if (!isset($context['containerType']) || $context['containerType'] !== 'fieldcollection') {
                 if ($object instanceof DataObject\Localizedfield) {
-                    if ($object->getObject() instanceof DataObject\DirtyIndicatorInterface && !$object->hasDirtyFields()) {
+                    if ($object->getObject() instanceof Element\DirtyIndicatorInterface && !$object->hasDirtyFields()) {
                         return;
                     }
                 } elseif ($this->supportsDirtyDetection() && !$object->isFieldDirty($this->getName())) {
@@ -171,7 +111,7 @@ abstract class AbstractRelations extends Data implements
 
         if (is_array($relations) && !empty($relations)) {
             foreach ($relations as $relation) {
-                $this->enrichRelation($object, $params, $classId, $relation);
+                $this->enrichDataRow($object, $params, $classId, $relation);
 
                 /*relation needs to be an array with src_id, dest_id, type, fieldname*/
                 try {
@@ -191,10 +131,10 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      *
-     * @return null
+     * @return array|null
      */
     public function load($object, $params = [])
     {
@@ -202,11 +142,7 @@ abstract class AbstractRelations extends Data implements
         $relations = [];
 
         if ($object instanceof DataObject\Concrete) {
-            if (!$this->getLazyLoading() || (array_key_exists('force', $params) && $params['force'])) {
-                $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
-            } else {
-                return null;
-            }
+            $relations = $object->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'object']);
         } elseif ($object instanceof DataObject\Fieldcollection\Data\AbstractData) {
             $relations = $object->getObject()->retrieveRelationData(['fieldname' => $this->getName(), 'ownertype' => 'fieldcollection', 'ownername' => $object->getFieldname(), 'position' => $object->getIndex()]);
         } elseif ($object instanceof DataObject\Localizedfield) {
@@ -238,7 +174,7 @@ abstract class AbstractRelations extends Data implements
         });
 
         $data = $this->loadData($relations, $object, $params);
-        if ($object instanceof DataObject\DirtyIndicatorInterface && $data['dirty']) {
+        if ($object instanceof Element\DirtyIndicatorInterface && $data['dirty']) {
             $object->markFieldDirty($this->getName(), true);
         }
 
@@ -264,7 +200,7 @@ abstract class AbstractRelations extends Data implements
     abstract public function prepareDataForPersistence($data, $object = null, $params = []);
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
      * @param array $params
      */
     public function delete($object, $params = [])
@@ -320,7 +256,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
@@ -393,7 +329,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param $item
+     * @param Element\ElementInterface $item
      *
      * @return string
      */
@@ -406,12 +342,12 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param $array1
-     * @param $array2
+     * @param mixed $array1
+     * @param mixed $array2
      *
      * @return bool
      */
-    public function isEqual($array1, $array2)
+    public function isEqual($array1, $array2): bool
     {
         $array1 = array_filter(is_array($array1) ? $array1 : []);
         $array2 = array_filter(is_array($array2) ? $array2 : []);
@@ -453,7 +389,7 @@ abstract class AbstractRelations extends Data implements
      */
     public function loadLazyFieldcollectionField(DataObject\Fieldcollection\Data\AbstractData $item)
     {
-        if ($this->getLazyLoading() && $item->getObject()) {
+        if ($item->getObject()) {
             /** @var DataObject\Fieldcollection $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
@@ -472,7 +408,7 @@ abstract class AbstractRelations extends Data implements
      */
     public function loadLazyBrickField(DataObject\Objectbrick\Data\AbstractData $item)
     {
-        if ($this->getLazyLoading() && $item->getObject()) {
+        if ($item->getObject()) {
             /** @var DataObject\Objectbrick $container */
             $container = $item->getObject()->getObjectVar($item->getFieldname());
             if ($container) {
@@ -481,5 +417,97 @@ abstract class AbstractRelations extends Data implements
                 $item->markLazyKeyAsLoaded($this->getName());
             }
         }
+    }
+
+    /**
+     * @internal trigger deprecation error when a relation is passed multiple times, remove in Pimcore 7
+     *
+     * @param array|null $data
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $container
+     * @param array $params
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    public function filterMultipleAssignments($data, $container, $params)
+    {
+        if (
+            (!is_array($data) || count($data) < 2)
+            || !$container instanceof Element\DirtyIndicatorInterface
+            || ($container instanceof DataObject\Concrete && !$container->isFieldDirty($this->getName()))
+            || (($container instanceof DataObject\Fieldcollection\Data\AbstractData
+                || $container instanceof DataObject\Localizedfield
+                || $container instanceof DataObject\Objectbrick\Data\AbstractData)
+                && !$container->isFieldDirty('_self'))
+        ) {
+            return $data;
+        }
+
+        if (!method_exists($this, 'getAllowMultipleAssignments') || !$this->getAllowMultipleAssignments()) {
+            $relationItems = [];
+            $objectId = null;
+            $fieldName = $this->getName();
+
+            if ($container instanceof DataObject\Concrete) {
+                $objectId = $container->getId();
+            } elseif (
+                    $container instanceof DataObject\Fieldcollection\Data\AbstractData ||
+                    $container instanceof DataObject\Localizedfield ||
+                    $container instanceof DataObject\Objectbrick\Data\AbstractData
+                ) {
+                $objectFromContainer = $container->getObject();
+                if ($objectFromContainer) {
+                    $objectId = $objectFromContainer->getId();
+                }
+            }
+
+            foreach ($data as $item) {
+                $elementHash = null;
+                if ($item instanceof DataObject\Data\ObjectMetadata || $item instanceof DataObject\Data\ElementMetadata) {
+                    if ($item->getElement() instanceof Element\ElementInterface) {
+                        $elementHash = Element\Service::getElementHash($item->getElement());
+                    }
+                } elseif ($item instanceof Element\ElementInterface) {
+                    $elementHash = Element\Service::getElementHash($item);
+                }
+
+                if ($elementHash === null) {
+                    $relationItems[] = $item; //do not filter if element hash fails
+                } elseif (!isset($relationItems[$elementHash])) {
+                    $relationItems[$elementHash] = $item;
+                } else {
+                    @trigger_error(
+                            'Passing relations multiple times is deprecated since version 6.5.2 and will throw exception in 7.0.0, tried to assign ' . $elementHash
+                            . ' multiple times in field' . $fieldName . ' of object id: ' . $objectId,
+                            E_USER_DEPRECATED
+                        );
+                }
+            }
+
+            if (count($relationItems) !== count($data)) {
+                $this->setDataToObject(array_values($relationItems), $container, $params);
+
+                return array_values($relationItems);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return 'array';
     }
 }

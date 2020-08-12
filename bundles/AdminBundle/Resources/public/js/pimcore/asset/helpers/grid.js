@@ -69,15 +69,12 @@ pimcore.asset.helpers.grid = Class.create({
                 var key = fieldConfig.key;
                 var readerFieldConfig = {name: key};
                 // dynamic select returns data + options on cell level
-                if (type == "select") {
-                    readerFieldConfig["convert"] = function (key, v, rec) {
-                        if (v && typeof v.options !== "undefined") {
-                            // split it up and store the options in a separate field
-                            rec.set(key + "%options", v.options, {convert: false, dirty: false});
-                            return v.value;
-                        }
-                        return v;
-                    }.bind(this, key);
+
+                if (pimcore.asset.metadata.tags[type]
+                    && typeof pimcore.asset.metadata.tags[type].prototype.addGridOptionsFromColumnConfig == "function") {
+
+                    readerFieldConfig["convert"] = pimcore.asset.metadata.tags[type].prototype.addGridOptionsFromColumnConfig.bind(this, key);
+
                     var readerFieldConfigOptions = {name: key + "%options", persist: false};
                     readerFields.push(readerFieldConfigOptions);
                 }
@@ -199,9 +196,14 @@ pimcore.asset.helpers.grid = Class.create({
                         dataIndex: field.key,
                         editable: false,
                         width: this.getColumnWidth(field, 150),
+                        locked: this.getColumnLock(field),
                         renderer: function (value) {
                             if (value) {
-                                return '<img src="' + value + '" />';
+                                return '<div class="thumb-wrap">',
+                                '<div class="thumb"><table cellspacing="0" cellpadding="0" border="0"><tr><td class="thumb-item" align="center" '
+                                + 'valign="middle" style="background: url(' + value + ') center center no-repeat; ' +
+                                'background-size: contain; width: 200px; height: 100px; cursor: default !important;">'
+                                + '</td></tr></table></div></div>';
                             }
                         }.bind(this)
                     });
@@ -213,6 +215,7 @@ pimcore.asset.helpers.grid = Class.create({
                         dataIndex: field.key,
                         editable: false,
                         filter: 'date',
+                        locked: this.getColumnLock(field),
                         renderer: function (d) {
                             var date = new Date(d * 1000);
                             return Ext.Date.format(date, "Y-m-d H:i:s");
@@ -221,21 +224,21 @@ pimcore.asset.helpers.grid = Class.create({
                 } else if (key == "filename") {
                     gridColumns.push({
                         text: t(field.label), sortable: true, dataIndex: field.key, editable: false,
-                        width: this.getColumnWidth(field, 250), filter: 'string', renderer: Ext.util.Format.htmlEncode
+                        width: this.getColumnWidth(field, 250), locked: this.getColumnLock(field), filter: 'string', renderer: Ext.util.Format.htmlEncode
                     });
                 } else if (key == "fullpath") {
                     gridColumns.push({
                         text: t(field.label), sortable: true, dataIndex: field.key, editable: false,
-                        width: this.getColumnWidth(field, 400), filter: 'string', renderer: Ext.util.Format.htmlEncode
+                        width: this.getColumnWidth(field, 400), locked: this.getColumnLock(field), filter: 'string', renderer: Ext.util.Format.htmlEncode
                     });
                 } else if (key == "size") {
                     gridColumns.push({
                         text: t(field.label), sortable: false, dataIndex: field.key, editable: false,
-                        width: this.getColumnWidth(field, 130)
+                        width: this.getColumnWidth(field, 130), locked: this.getColumnLock(field)
                     });
                 } else {
                     gridColumns.push({
-                        text: t(field.label), width: this.getColumnWidth(field, 130), sortable: true,
+                        text: t(field.label), width: this.getColumnWidth(field, 130), locked: this.getColumnLock(field), sortable: true,
                         dataIndex: field.key
                     });
                 }
@@ -245,8 +248,9 @@ pimcore.asset.helpers.grid = Class.create({
                     fieldType = 'manyToOneRelation';
                 }
 
-                var tag = pimcore.asset.tags[fieldType];
+                var tag = pimcore.asset.metadata.tags[fieldType];
                 var fc = tag.prototype.getGridColumnConfig(field);
+                fc.locked = this.getColumnLock(field);
                 gridColumns.push(fc);
             }
         }
@@ -261,6 +265,14 @@ pimcore.asset.helpers.grid = Class.create({
             return field.layout.width;
         } else {
             return defaultValue;
+        }
+    },
+
+    getColumnLock: function(field) {
+        if (field.locked) {
+            return field.locked;
+        } else {
+            return false;
         }
     },
 

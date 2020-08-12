@@ -61,7 +61,7 @@ $languages = \Pimcore\Tool::getValidLanguages();
 You can disable the Fallbacklanguages
 
 ```php
-    \Pimcore\Model\Object\Localizedfield::setGetFallbackValues(false);
+    \Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues(false);
 ```
 
 ### Accessing the data

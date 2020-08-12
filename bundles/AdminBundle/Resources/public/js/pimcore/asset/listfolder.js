@@ -21,7 +21,9 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
     object: {},
     gridType: 'asset',
 
-    initialize: function (element, searchType) {
+    initialize: function ($super, element, searchType) {
+        $super();
+
         this.element = element;
         this.searchType = searchType;
         this.classId = element.id;
@@ -37,8 +39,13 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 title: t("list"),
                 iconCls: "pimcore_material_icon_list pimcore_material_icon",
                 border: false,
-                layout: "fit"
+                layout: "border"
             });
+
+            var user = pimcore.globalmanager.get("user");
+            if(user.isAllowed("tags_search")) {
+                this.layout.add(this.getTagsPanel());
+            }
 
 
             this.layout.on("afterrender", this.getGrid.bind(this, false));
@@ -54,7 +61,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
     getGrid: function () {
         Ext.Ajax.request({
-            url: "/admin/asset-helper/grid-get-column-config",
+            url: Routing.generate('pimcore_admin_asset_assethelper_gridgetcolumnconfig'),
             params: {
                 id: this.element.data.id,
                 type: "asset",
@@ -78,7 +85,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             }
 
             fields = response.availableFields;
-            this.gridLanguage = response.language;
             this.gridPageSize = response.pageSize;
             this.sortinfo = response.sortinfo;
 
@@ -86,11 +92,11 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             this.availableConfigs = response.availableConfigs;
             this.sharedConfigs = response.sharedConfigs;
 
-            if (response.onlyDirectChildren) {
+            if (typeof response.onlyDirectChildren != "undefined") {
                 this.onlyDirectChildren = response.onlyDirectChildren;
             }
 
-            if (response.onlyUnreferenced) {
+            if (typeof response.onlyUnreferenced != "undefined") {
                 this.onlyUnreferenced = response.onlyUnreferenced;
             }
         } else {
@@ -115,7 +121,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
         var gridHelper = new pimcore.asset.helpers.grid(
             fields,
-            "/admin/asset/grid-proxy",
+            Routing.generate('pimcore_admin_asset_gridproxy'),
             {
                 language: this.gridLanguage,
                 // limit: itemsPerPage
@@ -137,7 +143,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             this.store.sort(this.sortinfo.field, this.sortinfo.direction);
         }
 
-        this.store.getProxy().extraParams = {
+        let extraParams = {
             folderId: this.element.data.id,
             "fields[]": fieldParam,
             language: this.gridLanguage,
@@ -145,6 +151,13 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             only_unreferenced: this.onlyUnreferenced
         };
 
+        //tags filter
+        if (this.tagsPanel) {
+            extraParams["tagIds[]"] = this.tagsTree.getCheckedTagIds();
+            extraParams["considerChildTags"] = this.considerChildTags;
+        }
+
+        this.store.getProxy().extraParams = extraParams;
         this.store.setPageSize(itemsPerPage);
 
         if (existingFilters) {
@@ -154,10 +167,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         var gridColumns = gridHelper.getGridColumns();
 
         this.pagingtoolbar = pimcore.helpers.grid.buildDefaultPagingToolbar(this.store, {pageSize: itemsPerPage});
-
-        this.languageInfo = new Ext.Toolbar.TextItem({
-            text: t("grid_current_language") + ": " + (this.gridLanguage == "default" ? t("default") : pimcore.available_languages[this.gridLanguage])
-        });
 
         this.checkboxOnlyDirectChildren = new Ext.form.Checkbox({
             name: "onlyDirectChildren",
@@ -243,12 +252,12 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
 
         this.grid = Ext.create('Ext.grid.Panel', {
             frame: false,
-            autoScroll: true,
             store: this.store,
             columnLines: true,
             stripeRows: true,
             bodyCls: "pimcore_editable_grid",
             columns : gridColumns,
+            enableLocking: true,
             bufferedRenderer: false,
             plugins: [this.cellEditing, 'pimcore.gridfilters'],
             trackMouseOver: true,
@@ -272,7 +281,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 }
             },
             tbar: [
-                this.languageInfo, "->",
+                "->",
                 this.checkboxOnlyDirectChildren, "-",
                 this.checkboxOnlyUnreferenced, "-",
                 this.downloadSelectedZipButton, "-",
@@ -288,15 +297,32 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         this.grid.on("columnresize", function () {
             this.saveColumnConfigButton.show();
         }.bind(this));
+        this.grid.on("lockcolumn", function () {
+            this.saveColumnConfigButton.show()
+        }.bind(this));
+        this.grid.on("unlockcolumn", function () {
+            this.saveColumnConfigButton.show()
+        }.bind(this));
 
         this.grid.on("rowcontextmenu", this.onRowContextmenu);
 
         this.grid.on("afterrender", function (grid) {
-            this.updateGridHeaderContextMenu(grid);
+            var grids = grid.items.items;
+            for (var i = 0; i < grids.length; i++) {
+                this.updateGridHeaderContextMenu(grids[i]);
+            }
         }.bind(this));
 
-        this.layout.removeAll();
-        this.layout.add(this.grid);
+        this.layout.remove("gridPanel_" + this.element.data.id);
+
+        this.gridPanel = new Ext.Panel({
+            id: "gridPanel_" + this.element.data.id,
+            region: "center",
+            layout: "fit",
+            items: [this.grid],
+        });
+
+        this.layout.add(this.gridPanel);
         this.layout.updateLayout();
 
         if (save) {

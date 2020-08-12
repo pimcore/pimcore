@@ -110,7 +110,7 @@ class Text
                         if ((isset($widthAttr[1]) && $widthAttr[1]) || (isset($heightAttr[1]) && $heightAttr[1])) {
                             $config = [
                                 'width' => intval((isset($widthAttr[1]) ? $widthAttr[1] : null)),
-                                'height' => intval((isset($heightAttr[1]) ? $heightAttr[1] : null))
+                                'height' => intval((isset($heightAttr[1]) ? $heightAttr[1] : null)),
                             ];
                         }
 
@@ -296,7 +296,7 @@ class Text
                     $elements[] = [
                         'id' => $id,
                         'type' => $type,
-                        'element' => $element
+                        'element' => $element,
                     ];
                 }
             }
@@ -326,7 +326,7 @@ class Text
                 $key = $element['type'] . '_' . $element['id'];
                 $dependencies[$key] = [
                     'id' => $element['id'],
-                    'type' => $element['type']
+                    'type' => $element['type'],
                 ];
             }
         }
@@ -445,7 +445,7 @@ class Text
                 'CP51932',
                 'JIS',
                 'ISO-2022-JP',
-                'ISO-2022-JP-MS'
+                'ISO-2022-JP-MS',
             ]);
         }
 

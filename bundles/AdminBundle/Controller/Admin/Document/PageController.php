@@ -16,12 +16,10 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
-use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Element;
-use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,7 +33,37 @@ class PageController extends DocumentControllerBase
     use ElementEditLockHelperTrait;
 
     /**
-     * @Route("/get-data-by-id", methods={"GET"})
+     * @Route("/save-to-session", name="pimcore_admin_document_page_savetosession", methods={"POST"})
+     *
+     * {@inheritDoc}
+     */
+    public function saveToSessionAction(Request $request)
+    {
+        return parent::saveToSessionAction($request);
+    }
+
+    /**
+     * @Route("/remove-from-session", name="pimcore_admin_document_page_removefromsession", methods={"DELETE"})
+     *
+     * {@inheritDoc}
+     */
+    public function removeFromSessionAction(Request $request)
+    {
+        return parent::removeFromSessionAction($request);
+    }
+
+    /**
+     * @Route("/change-master-document", name="pimcore_admin_document_page_changemasterdocument", methods={"PUT"})
+     *
+     * {@inheritDoc}
+     */
+    public function changeMasterDocumentAction(Request $request)
+    {
+        return parent::changeMasterDocumentAction($request);
+    }
+
+    /**
+     * @Route("/get-data-by-id", name="pimcore_admin_document_page_getdatabyid", methods={"GET"})
      *
      * @param Request $request
      *
@@ -45,6 +73,10 @@ class PageController extends DocumentControllerBase
     {
         $page = Document\Page::getById($request->get('id'));
 
+        if (!$page) {
+            throw $this->createNotFoundException('Page not found');
+        }
+
         // check for lock
         if ($page->isAllowed('save') || $page->isAllowed('publish') || $page->isAllowed('unpublish') || $page->isAllowed('delete')) {
             if (Element\Editlock::isLocked($request->get('id'), 'document')) {
@@ -53,49 +85,31 @@ class PageController extends DocumentControllerBase
             Element\Editlock::lock($request->get('id'), 'document');
         }
 
-        /** @var Document\Page $page */
         $page = clone $page;
         $page = $this->getLatestVersion($page);
 
         $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
-        $page->setVersions(array_splice($pageVersions, 0, 1));
+        $page->setVersions(array_splice($pageVersions, -1, 1));
         $page->getScheduledTasks();
-        $page->idPath = Element\Service::getIdPath($page);
-        $page->setUserPermissions($page->getUserPermissions());
         $page->setLocked($page->isLocked());
         $page->setParent(null);
 
-        if ($page->getContentMasterDocument()) {
-            $page->contentMasterDocumentPath = $page->getContentMasterDocument()->getRealFullPath();
-        }
-
-        $page->url = $page->getUrl();
-
         // unset useless data
-        $page->setElements(null);
+        $page->setEditables(null);
         $page->setChildren(null);
 
-        $this->addTranslationsData($page);
-        $this->minimizeProperties($page);
-
-        //Hook for modifying return value - e.g. for changing permissions based on object data
-        //data need to wrapped into a container in order to pass parameter to event listeners by reference so that they can change the values
         $data = $page->getObjectVars();
-        $data['versionDate'] = $page->getModificationDate();
 
-        $data['php'] = [
-            'classes' => array_merge([get_class($page)], array_values(class_parents($page))),
-            'interfaces' => array_values(class_implements($page))
-        ];
+        $this->addTranslationsData($page, $data);
+        $this->minimizeProperties($page, $data);
 
-        $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
+        if ($page->getContentMasterDocument()) {
+            $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
+        }
 
-        $event = new GenericEvent($this, [
-            'data' => $data,
-            'document' => $page
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
-        $data = $event->getArgument('data');
+        $data['url'] = $page->getUrl();
+
+        $this->preSendDataActions($data, $page);
 
         if ($page->isAllowed('view')) {
             return $this->adminJson($data);
@@ -105,7 +119,7 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/save", methods={"PUT", "POST"})
+     * @Route("/save", name="pimcore_admin_document_page_save", methods={"PUT", "POST"})
      *
      * @param Request $request
      *
@@ -115,75 +129,84 @@ class PageController extends DocumentControllerBase
      */
     public function saveAction(Request $request)
     {
-        if ($request->get('id')) {
-            $page = Document\Page::getById($request->get('id'));
+        $page = Document\Page::getById($request->get('id'));
 
-            $pageSession = $this->getFromSession($page);
-
-            if ($pageSession) {
-                $page = $pageSession;
-            } else {
-                $page = $this->getLatestVersion($page);
-            }
-
-            $page->setUserModification($this->getAdminUser()->getId());
-
-            if ($request->get('task') == 'unpublish') {
-                $page->setPublished(false);
-            }
-            if ($request->get('task') == 'publish') {
-                $page->setPublished(true);
-            }
-
-            $settings = [];
-            if ($request->get('settings')) {
-                $settings = $this->decodeJson($request->get('settings'));
-            }
-
-            // check if settings exist, before saving meta data
-            if ($request->get('settings') && is_array($settings)) {
-                $metaData = [];
-                for ($i = 1; $i < 30; $i++) {
-                    if (array_key_exists('metadata_' . $i, $settings)) {
-                        $metaData[] = $settings['metadata_' . $i];
-                    }
-                }
-                $page->setMetaData($metaData);
-            }
-
-            // only save when publish or unpublish
-            if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
-                $this->setValuesToDocument($request, $page);
-
-                $page->save();
-                $this->saveToSession($page);
-
-                return $this->adminJson([
-                    'success' => true,
-                    'data' => [
-                        'versionDate' => $page->getModificationDate(),
-                        'versionCount' => $page->getVersionCount()
-                    ]
-                ]);
-            } elseif ($page->isAllowed('save')) {
-                $this->setValuesToDocument($request, $page);
-
-                $page->saveVersion();
-                $this->saveToSession($page);
-
-                $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
-
-                return $this->adminJson(['success' => true, 'treeData' => $treeData]);
-            } else {
-                throw $this->createAccessDeniedHttpException();
-            }
+        if (!$page) {
+            throw $this->createNotFoundException('Page not found');
         }
 
-        throw $this->createNotFoundException();
+        /** @var Document\Page|null $pageSession */
+        $pageSession = $this->getFromSession($page);
+
+        if ($pageSession) {
+            $page = $pageSession;
+        } else {
+            /** @var Document\Page $page */
+            $page = $this->getLatestVersion($page);
+        }
+
+        $page->setUserModification($this->getAdminUser()->getId());
+
+        if ($request->get('task') == 'unpublish') {
+            $page->setPublished(false);
+        }
+        if ($request->get('task') == 'publish') {
+            $page->setPublished(true);
+        }
+
+        if ($request->get('missingRequiredEditable') !== null) {
+            $page->setMissingRequiredEditable(($request->get('missingRequiredEditable') == 'true') ? true : false);
+        }
+
+        $settings = [];
+        if ($request->get('settings')) {
+            $settings = $this->decodeJson($request->get('settings'));
+        }
+
+        // check if settings exist, before saving meta data
+        if ($request->get('settings') && is_array($settings)) {
+            $metaData = [];
+            for ($i = 1; $i < 30; $i++) {
+                if (array_key_exists('metadata_' . $i, $settings)) {
+                    $metaData[] = $settings['metadata_' . $i];
+                }
+            }
+            $page->setMetaData($metaData);
+        }
+
+        // only save when publish or unpublish
+        if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
+            $this->setValuesToDocument($request, $page);
+
+            $page->save();
+            $this->saveToSession($page);
+
+            $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
+            return $this->adminJson([
+                'success' => true,
+                'treeData' => $treeData,
+                'data' => [
+                    'versionDate' => $page->getModificationDate(),
+                    'versionCount' => $page->getVersionCount(),
+                ],
+            ]);
+        } elseif ($page->isAllowed('save')) {
+            $this->setValuesToDocument($request, $page);
+
+            $page->saveVersion();
+            $this->saveToSession($page);
+
+            $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+
+            return $this->adminJson(['success' => true, 'treeData' => $treeData]);
+        } else {
+            throw $this->createAccessDeniedHttpException();
+        }
     }
 
     /**
-     * @Route("/get-list", methods={"GET"})
+     * @Route("/get-list", name="pimcore_admin_document_page_getlist", methods={"GET"})
      *
      * @param Request $request
      *
@@ -197,12 +220,12 @@ class PageController extends DocumentControllerBase
 
         return $this->adminJson([
             'success' => true,
-            'data' => $data
+            'data' => $data,
         ]);
     }
 
     /**
-     * @Route("/generate-screenshot", methods={"POST"})
+     * @Route("/generate-screenshot", name="pimcore_admin_document_page_generatescreenshot", methods={"POST"})
      *
      * @param Request $request
      *
@@ -231,14 +254,16 @@ class PageController extends DocumentControllerBase
      */
     public function displayPreviewImageAction(Request $request)
     {
-        $document = Document::getById($request->get('id'));
+        $document = Document\Page::getById($request->get('id'));
         if ($document instanceof Document\Page) {
             return new BinaryFileResponse($document->getPreviewImageFilesystemPath((bool) $request->get('hdpi')), 200, ['Content-Type' => 'image/jpg']);
         }
+
+        throw $this->createNotFoundException('Page not found');
     }
 
     /**
-     * @Route("/check-pretty-url", methods={"POST"})
+     * @Route("/check-pretty-url", name="pimcore_admin_document_page_checkprettyurl", methods={"POST"})
      *
      * @param Request $request
      *
@@ -279,7 +304,7 @@ class PageController extends DocumentControllerBase
         $list = new Document\Listing();
         $list->setCondition('(CONCAT(path, `key`) = ? OR id IN (SELECT id from documents_page WHERE prettyUrl = ?))
             AND id != ?', [
-            $path, $path, $docId
+            $path, $path, $docId,
         ]);
 
         if ($list->getTotalCount() > 0) {
@@ -294,7 +319,7 @@ class PageController extends DocumentControllerBase
     }
 
     /**
-     * @Route("/clear-editable-data", methods={"PUT"})
+     * @Route("/clear-editable-data", name="pimcore_admin_document_page_cleareditabledata", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -305,19 +330,22 @@ class PageController extends DocumentControllerBase
         $targetGroupId = $request->get('targetGroup');
         $docId = $request->get('id');
 
-        $doc = Document::getById($docId);
+        $doc = Document\PageSnippet::getById($docId);
 
-        /** @var Document\Tag $element */
-        foreach ($doc->getElements() as $element) {
+        if (!$doc) {
+            throw $this->createNotFoundException('Document not found');
+        }
+
+        foreach ($doc->getEditables() as $editable) {
             if ($targetGroupId && $doc instanceof TargetingDocumentInterface) {
                 // remove target group specific elements
-                if (preg_match('/^' . preg_quote($doc->getTargetGroupElementPrefix($targetGroupId), '/') . '/', $element->getName())) {
-                    $doc->removeElement($element->getName());
+                if (preg_match('/^' . preg_quote($doc->getTargetGroupEditablePrefix($targetGroupId), '/') . '/', $editable->getName())) {
+                    $doc->removeEditable($editable->getName());
                 }
             } else {
                 // remove all but target group data
-                if (!preg_match('/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX, '/') . '/', $element->getName())) {
-                    $doc->removeElement($element->getName());
+                if (!preg_match('/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX, '/') . '/', $editable->getName())) {
+                    $doc->removeEditable($editable->getName());
                 }
             }
         }
@@ -325,7 +353,7 @@ class PageController extends DocumentControllerBase
         $this->saveToSession($doc, true);
 
         return $this->adminJson([
-            'success' => true
+            'success' => true,
         ]);
     }
 

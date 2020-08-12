@@ -16,6 +16,7 @@ namespace Pimcore\Http;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\RequestContext;
 
 class RequestHelper
 {
@@ -27,11 +28,18 @@ class RequestHelper
     protected $requestStack;
 
     /**
-     * @param RequestStack $requestStack
+     * @var requestContext
      */
-    public function __construct(RequestStack $requestStack)
+    protected $requestContext;
+
+    /**
+     * @param RequestStack $requestStack
+     * @param RequestContext $requestContext
+     */
+    public function __construct(RequestStack $requestStack, RequestContext $requestContext)
     {
         $this->requestStack = $requestStack;
+        $this->requestContext = $requestContext;
     }
 
     public function hasCurrentRequest(): bool
@@ -115,7 +123,7 @@ class RequestHelper
             "/^\/admin.*/",
             "/^\/install.*/",
             "/^\/plugin.*/",
-            "/^\/webservice.*/"
+            "/^\/webservice.*/",
         ];
 
         foreach ($excludePatterns as $pattern) {
@@ -143,7 +151,7 @@ class RequestHelper
             'pimcore_preview',
             'pimcore_admin',
             'pimcore_object_preview',
-            'pimcore_version'
+            'pimcore_version',
         ];
 
         foreach ($keys as $key) {
@@ -186,5 +194,32 @@ class RequestHelper
         $aip .= '255';
 
         return $aip;
+    }
+
+    /**
+     * @internal
+     *
+     * @param string $uri
+     *
+     * @return Request
+     */
+    public function createRequestWithContext($uri = '/')
+    {
+        $port = '';
+        $scheme = $this->requestContext->getScheme();
+
+        if ('http' === $scheme && 80 !== $this->requestContext->getHttpPort()) {
+            $port = ':'.$this->requestContext->getHttpPort();
+        } elseif ('https' === $scheme && 443 !== $this->requestContext->getHttpsPort()) {
+            $port = ':'.$this->requestContext->getHttpsPort();
+        }
+
+        $request = Request::create(
+            $scheme .'://'. $this->requestContext->getHost().$port.$this->requestContext->getBaseUrl().$uri,
+            $this->requestContext->getMethod(),
+            $this->requestContext->getParameters()
+        );
+
+        return $request;
     }
 }

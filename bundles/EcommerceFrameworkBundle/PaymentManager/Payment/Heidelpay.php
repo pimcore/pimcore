@@ -131,10 +131,8 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
 
         // a customerBirthdate attribute is needed if invoice should be used as payment method
         if (method_exists($order, 'getCustomerBirthdate')) {
-            /**
-             * @var Carbon $birthdate
-             */
             if ($birthdate = $order->getCustomerBirthdate()) {
+                /** @var Carbon $birthdate */
                 $customer->setBirthDate($birthdate->format('Y-m-d'));
             }
         }
@@ -165,7 +163,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
                     'heidelpay_paymentType' => $transaction->getPayment()->getPaymentType()->jsonSerialize(),
                     'heidelpay_paymentReference' => $config['paymentReference'],
                     'heidelpay_responseStatus' => '',
-                    'heidelpay_response' => $transaction->jsonSerialize()
+                    'heidelpay_response' => $transaction->jsonSerialize(),
                 ]
             );
             $orderAgent->updatePayment($paymentStatus);
@@ -202,8 +200,8 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
 
     public function handleResponse($response)
     {
-        /** @var OnlineShopOrder $order */
-        if (!$order = $response['order']) {
+        $order = $response['order'];
+        if (!$order instanceof OnlineShopOrder) {
             throw new \InvalidArgumentException('no order sent');
         }
 
@@ -229,7 +227,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
                         'paymentMethod' => get_class($payment->getPaymentType()),
                         'clientMessage' => '',
                         'merchantMessage' => '',
-                        'chargeId' => $payment->getChargeByIndex(0)->getId()
+                        'chargeId' => $payment->getChargeByIndex(0)->getId(),
                 ]);
 
                 return new Status(
@@ -244,7 +242,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
                         'heidelpay_paymentReference' => $paymentInfo->getPaymentReference(),
                         'heidelpay_paymentMethod' => get_class($payment->getPaymentType()),
                         'heidelpay_responseStatus' => 'completed',
-                        'heidelpay_response' => $payment->jsonSerialize()
+                        'heidelpay_response' => $payment->jsonSerialize(),
                     ]
                 );
             } elseif ($payment->isPending()) {
@@ -260,7 +258,7 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
                         'heidelpay_paymentReference' => $paymentInfo->getPaymentReference(),
                         'heidelpay_paymentMethod' => get_class($payment->getPaymentType()),
                         'heidelpay_responseStatus' => 'pending',
-                        'heidelpay_response' => $payment->jsonSerialize()
+                        'heidelpay_response' => $payment->jsonSerialize(),
                     ]
                 );
             }
@@ -341,11 +339,9 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
     public function cancelCharge(OnlineShopOrder $order, PriceInterface $price)
     {
         $heidelpay = new \heidelpayPHP\Heidelpay($this->privateAccessKey);
+        $heidelpayBrick = $order->getPaymentProvider()->getPaymentProviderHeidelPay();
 
-        /**
-         * @var PaymentProviderHeidelPay $heidelpayBrick
-         */
-        if ($heidelpayBrick = $order->getPaymentProvider()->getPaymentProviderHeidelPay()) {
+        if ($heidelpayBrick instanceof PaymentProviderHeidelPay) {
             $result = $heidelpay->cancelChargeById($heidelpayBrick->getAuth_paymentReference(), $heidelpayBrick->getAuth_chargeId(), $price->getAmount()->asNumeric());
 
             return $result->isSuccess();
@@ -364,11 +360,9 @@ class Heidelpay extends AbstractPayment implements PaymentInterface
     public function getMaxCancelAmount(OnlineShopOrder $order)
     {
         $heidelpay = new \heidelpayPHP\Heidelpay($this->privateAccessKey);
+        $heidelpayBrick = $order->getPaymentProvider()->getPaymentProviderHeidelPay();
 
-        /**
-         * @var PaymentProviderHeidelPay $heidelpayBrick
-         */
-        if ($heidelpayBrick = $order->getPaymentProvider()->getPaymentProviderHeidelPay()) {
+        if ($heidelpayBrick instanceof PaymentProviderHeidelPay) {
             $charge = $heidelpay->fetchChargeById($heidelpayBrick->getAuth_paymentReference(), $heidelpayBrick->getAuth_chargeId());
             $totalAmount = $charge->getAmount();
 

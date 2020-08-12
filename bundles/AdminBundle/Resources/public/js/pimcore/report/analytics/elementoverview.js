@@ -32,7 +32,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
     },
 
     getPanel: function () {
-    
+
         this.loadCounter = 0;
         this.initStores();
 
@@ -43,14 +43,14 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
             border: false,
             items: [this.getFilterPanel(),this.getContentPanel()]
         });
-        
+
         panel.on("afterrender", function (panel) {
             this.loadMask = new Ext.LoadMask({
                 target: panel,
                 msg: t("please_wait")
             });
             this.loadMask.show();
-            
+
             this.sourceStore.load();
             this.summaryStore.load();
             this.chartStore.load({
@@ -58,12 +58,12 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                     metric: "pageviews"
                 }
             });
-            
+
         }.bind(this));
-        
+
         return panel;
     },
-    
+
     getContentPanel: function () {
         var self = this;
 
@@ -89,16 +89,16 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
 
         summary.on("rowclick", function (grid, record, tr, rowIndex, e, eOpts ) {
             var record = grid.getStore().getAt(rowIndex);
-            
+
             var values = this.filterPanel.getForm().getFieldValues();
             values.metric = record.data.metric;
-                   
+
             this.chartStore.load({
                 params: values
             });
-        }.bind(this));       
-        
-        
+        }.bind(this));
+
+
         var panel = new Ext.Panel({
             region: "center",
             autoScroll: true,
@@ -192,12 +192,12 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                     }
                     ]
                  }]
-             }]      
+             }]
         });
-        
-        return panel;  
+
+        return panel;
     },
-    
+
     getFilterPanel: function () {
 
         if (!this.filterPanel) {
@@ -244,16 +244,16 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                         iconCls: "pimcore_icon_save",
                         cls: "pimcore_analytics_filter_form_item",
                         handler: function () {
-                            
+
                             var values = this.filterPanel.getForm().getFieldValues();
-                            
+
                             this.sourceStore.load({
                                 params: values
                             });
                             this.summaryStore.load({
                                 params: values
                             });
-                            
+
                             values.metric = "pageviews";
                             this.chartStore.load({
                                 params: values
@@ -265,10 +265,10 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
         }
 
         return this.filterPanel;
-    },  
-    
+    },
+
     initStores: function () {
-        
+
         var path = "";
         var id = "";
         var type = "";
@@ -277,11 +277,11 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
             path = this.reference.data.path + this.reference.data.key;
             type = "document";
         }
-        
+
         this.chartStore = new Ext.data.JsonStore({
             proxy: {
                 type: 'ajax',
-                url: "/admin/reports/analytics/chartmetricdata",
+                url: Routing.generate('pimcore_admin_reports_analytics_chartmetricdata'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
@@ -299,12 +299,12 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
                 beforeload: this.storeStart.bind(this)
             }
         });
-        
+
         this.summaryStore = new Ext.data.Store({
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
-                url: '/admin/reports/analytics/summary',
+                url: Routing.generate('pimcore_admin_reports_analytics_summary'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
@@ -326,7 +326,7 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
             autoDestroy: true,
             proxy: {
                 type: 'ajax',
-                url: '/admin/reports/analytics/source',
+                url: Routing.generate('pimcore_admin_reports_analytics_source'),
                 reader: {
                     type: 'json',
                     rootProperty: 'data'
@@ -344,14 +344,14 @@ pimcore.report.analytics.elementoverview = Class.create(pimcore.report.abstract,
             }
         });
     },
-    
+
     storeFinished: function () {
         this.loadCounter--;
         if(this.loadCounter < 1) {
             this.loadMask.hide();
         }
     },
-    
+
     storeStart: function () {
         if(this.loadCounter < 1) {
             this.loadMask.show();

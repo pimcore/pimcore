@@ -22,7 +22,7 @@ pimcore.settings.fileexplorer.file = Class.create({
 
     loadFileContents: function (path) {
         Ext.Ajax.request({
-            url: "/admin/misc/fileexplorer-content",
+            url: Routing.generate('pimcore_admin_misc_fileexplorercontent'),
             success: this.loadFileContentsComplete.bind(this),
             params: {
                 path: path
@@ -87,7 +87,7 @@ pimcore.settings.fileexplorer.file = Class.create({
         var content = this.textarea.getValue();
         Ext.Ajax.request({
             method: "put",
-            url: "/admin/misc/fileexplorer-content-save",
+            url: Routing.generate('pimcore_admin_misc_fileexplorercontentsave'),
             params: {
                 path: this.responsePath,
                 content: content

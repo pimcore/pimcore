@@ -29,8 +29,6 @@ pimcore.plugin.broker = {
     },
 
     pluginsAvailable: function () {
-        var size;
-
         if (this.plugins != null && this.plugins.length > 0) {
             return this.plugins.length;
         }

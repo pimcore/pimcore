@@ -113,7 +113,7 @@ class Installer extends MigrationInstaller
                 PRIMARY KEY (`id`),
                 UNIQUE INDEX `name` (`name`),
                 INDEX `active` (`active`)
-            ) ENGINE=InnoDB AUTO_INCREMENT=0;"
+            ) ENGINE=InnoDB AUTO_INCREMENT=0;",
     ];
 
     /**
@@ -335,7 +335,7 @@ class Installer extends MigrationInstaller
     {
         foreach ($this->permissionsToInstall as $permission) {
             $version->addSql('DELETE FROM users_permission_definitions WHERE `key` = :key', [
-                'key' => $permission
+                'key' => $permission,
             ]);
         }
     }

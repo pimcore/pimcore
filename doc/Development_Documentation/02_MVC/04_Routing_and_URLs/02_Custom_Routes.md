@@ -30,6 +30,7 @@ Following options are relevant:
 * *Defaults* - defaults for variables separated by | - e.g. key=value|key2=value2 
 * *Site* - Site for which this route should be applied to. 
 * *Priority* - priority in resolving the URL pattern. 
+* *Methods* - define which HTTP Methods are valid. You can define multiple by using a comma as delimiter. If empty, all are allowed. (one of `HEAD`, `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `PURGE`, `OPTIONS`, `TRACE` or `CONNECT`) 
 
 Routes are saved in PHP configuration files on the file system (`var/config/staticroutes.php`), so it's also possible to edit them directly in your 
 favorite IDE and keep track of the changes in your VCS (eg. Git).

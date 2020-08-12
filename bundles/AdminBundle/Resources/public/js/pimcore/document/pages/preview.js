@@ -57,9 +57,10 @@ pimcore.document.pages.preview = Class.create({
                     text: t("qr_codes"),
                     iconCls: "pimcore_icon_qrcode",
                     handler: function () {
-                        var codeUrl = "/admin/reports/qrcode/code?documentId=" + this.page.id;
+                        var codeUrl = Routing.generate('pimcore_admin_reports_qrcode_code', {documentId: this.page.id});
+
                         var download = function () {
-                            var codeUrl = "/admin/reports/qrcode/code?documentId=" + this.page.id + "&download=true";
+                            var codeUrl = Routing.generate('pimcore_admin_reports_qrcode_code', {documentId: this.page.id, download: true});
                             pimcore.helpers.download(codeUrl);
                         };
 

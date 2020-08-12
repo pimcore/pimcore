@@ -71,7 +71,7 @@ class ExpressionBuilder
         }
 
         $mapping = [
-            'and_not' => 'and not'
+            'and_not' => 'and not',
         ];
 
         if (isset($mapping[$operator])) {

@@ -19,7 +19,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Loader\ImplementationLoader\LoaderInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject;
-use Pimcore\Model\Webservice;
+use Pimcore\Tool;
 
 /**
  * Class Service
@@ -37,7 +37,8 @@ class Service
      */
     public static function generateClassDefinitionJson($class)
     {
-        $data = Webservice\Data\Mapper::map($class, '\\Pimcore\\Model\\Webservice\\Data\\ClassDefinition\\Out', 'out');
+        $class = clone $class;
+        $data = json_decode(json_encode($class));
         unset($data->name);
         unset($data->creationDate);
         unset($data->modificationDate);
@@ -47,17 +48,12 @@ class Service
 
         self::removeDynamicOptionsFromLayoutDefinition($data->layoutDefinitions);
 
-        //add propertyVisibility to export data
-        $data->propertyVisibility = $class->propertyVisibility;
-
-        $json = json_encode($data, JSON_PRETTY_PRINT);
-
-        return $json;
+        return json_encode($data, JSON_PRETTY_PRINT);
     }
 
     public static function removeDynamicOptionsFromLayoutDefinition(&$layout)
     {
-        if (method_exists($layout, 'getChilds')) {
+        if (method_exists($layout, 'getChildren')) {
             $children = $layout->getChildren();
             if (is_array($children)) {
                 foreach ($children as $child) {
@@ -76,6 +72,7 @@ class Service
      * @param DataObject\ClassDefinition $class
      * @param string $json
      * @param bool $throwException
+     * @param bool $ignoreId
      *
      * @return bool
      */
@@ -105,9 +102,9 @@ class Service
         $class->setModificationDate(time());
         $class->setUserModification($userId);
 
-        foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'cacheRawRelationData', 'showVariants', 'parentClass',
-                    'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
-                    'linkGeneratorReference'] as $importPropertyName) {
+        foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'showVariants', 'parentClass',
+                    'implementsInterfaces', 'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
+                    'linkGeneratorReference', 'compositeIndices', 'generateTypeDeclarations', ] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $class->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
@@ -125,12 +122,11 @@ class Service
      */
     public static function generateFieldCollectionJson($fieldCollection)
     {
+        $fieldCollection = clone $fieldCollection;
         $fieldCollection->setKey(null);
-        $fieldCollection->setFieldDefinitions(null);
+        $fieldCollection->setFieldDefinitions([]);
 
-        $json = json_encode($fieldCollection, JSON_PRETTY_PRINT);
-
-        return $json;
+        return json_encode($fieldCollection, JSON_PRETTY_PRINT);
     }
 
     /**
@@ -149,7 +145,7 @@ class Service
             $fieldCollection->setLayoutDefinitions($layout);
         }
 
-        foreach (['parentClass', 'title', 'group'] as $importPropertyName) {
+        foreach (['parentClass', 'implementsInterfaces', 'title', 'group', 'generateTypeDeclarations'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $fieldCollection->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
@@ -167,8 +163,9 @@ class Service
      */
     public static function generateObjectBrickJson($objectBrick)
     {
+        $objectBrick = clone $objectBrick;
         $objectBrick->setKey(null);
-        $objectBrick->setFieldDefinitions(null);
+        $objectBrick->setFieldDefinitions([]);
 
         // set classname attribute to the real class name not to the class ID
         // this will allow to import the brick on a different instance with identical class names but different class IDs
@@ -186,9 +183,7 @@ class Service
             }
         }
 
-        $json = json_encode($objectBrick, JSON_PRETTY_PRINT);
-
-        return $json;
+        return json_encode($objectBrick, JSON_PRETTY_PRINT);
     }
 
     /**
@@ -228,6 +223,8 @@ class Service
 
         $objectBrick->setClassDefinitions($toAssignClassDefinitions);
         $objectBrick->setParentClass($importData['parentClass']);
+        $objectBrick->setImplementsInterfaces($importData['implementsInterfaces'] ?? null);
+        $objectBrick->setGenerateTypeDeclarations($importData['generateTypeDeclarations'] ?? null);
         if (isset($importData['title'])) {
             $objectBrick->setTitle($importData['title']);
         }
@@ -244,7 +241,7 @@ class Service
      * @param bool $throwException
      * @param bool $insideLocalizedField
      *
-     * @return mixed
+     * @return Data|Layout|false
      *
      * @throws \Exception
      */
@@ -255,6 +252,7 @@ class Service
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.object.' . $array['datatype']);
 
             if ($loader->supports($array['fieldtype'])) {
+                /** @var Data|Layout $item */
                 $item = $loader->build($array['fieldtype']);
 
                 $insideLocalizedField = $insideLocalizedField || $item instanceof DataObject\ClassDefinition\Data\Localizedfields;
@@ -349,13 +347,94 @@ class Service
                     $default = null;
                 }
 
-                if ($colDefinition['Type'] == $type && strtolower($colDefinition['Null']) == strtolower($null)
-                    && $colDefinition['Default'] == $default) {
+                if (str_replace(' ', '', strtolower($colDefinition['Type'])) === str_replace(' ', '', strtolower($type)) &&
+                        strtolower($colDefinition['Null']) == strtolower($null) &&
+                        $colDefinition['Default'] == $default) {
                     return true;
                 }
             }
         }
 
         return false;
+    }
+
+    /**
+     * @param array $implementsParts
+     * @param string|null $newInterfaces A comma separated list of interfaces
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public static function buildImplementsInterfacesCode($implementsParts, ?string $newInterfaces)
+    {
+        if ($newInterfaces) {
+            $customParts = explode(',', $newInterfaces);
+            foreach ($customParts as $interface) {
+                $interface = trim($interface);
+                if (Tool::interfaceExists($interface)) {
+                    $implementsParts[] = $interface;
+                } else {
+                    throw new \Exception("interface '" . $interface . "' does not exist");
+                }
+            }
+        }
+
+        if ($implementsParts) {
+            return ' implements ' . implode(', ', $implementsParts);
+        }
+
+        return '';
+    }
+
+    /**
+     * @param array $useParts
+     * @param string|null $newTraits
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public static function buildUseTraitsCode($useParts, ?string $newTraits)
+    {
+        if (!is_array($useParts)) {
+            $useParts = [];
+        }
+
+        if ($newTraits) {
+            $customParts = explode(',', $newTraits);
+            foreach ($customParts as $trait) {
+                $trait = trim($trait);
+                if (Tool::traitExists($trait)) {
+                    $useParts[] = $trait;
+                } else {
+                    throw new \Exception("trait '" . $trait . "' does not exist");
+                }
+            }
+        }
+
+        return self::buildUseCode($useParts);
+    }
+
+    /**
+     * @param array $useParts
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public static function buildUseCode($useParts)
+    {
+        if ($useParts) {
+            $result = '';
+            foreach ($useParts as $part) {
+                $result .= 'use ' . $part . ";\r\n";
+            }
+            $result .= "\n";
+
+            return $result;
+        }
+
+        return '';
     }
 }
