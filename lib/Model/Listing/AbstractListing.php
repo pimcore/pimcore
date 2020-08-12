@@ -311,7 +311,11 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
                 if (!$value['ignore-value']) {
                     if (is_array($value['value'])) {
                         foreach ($value['value'] as $k => $v) {
-                            $params[$k] = $v;
+                            if (is_int($k)) {
+                                $params[] = $v;
+                            } else {
+                                $params[$k] = $v;
+                            }
                         }
                     } else {
                         $params[] = $value['value'];
