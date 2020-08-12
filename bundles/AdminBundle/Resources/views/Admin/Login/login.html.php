@@ -116,7 +116,7 @@ if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion
         }
     });
 
-    window.setInterval(refreshCsrfToken, <?= $view->csrfTokenRefreshInterval ?>);
+    window.setInterval(refreshCsrfToken, <?= $this->csrfTokenRefreshInterval ?>);
 
     formElement.addEventListener("submit", function(evt) {
         if(csrfRefreshInProgress) {
