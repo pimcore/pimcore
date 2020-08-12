@@ -88,7 +88,6 @@ class VariantsController extends AdminController
                 $requestedLanguage = $request->getLocale();
             }
 
-
             if ($object->isAllowed('publish')) {
                 $objectData = [];
                 foreach ($data as $key => $value) {

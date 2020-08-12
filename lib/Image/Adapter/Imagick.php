@@ -322,11 +322,11 @@ class Imagick extends Adapter
         // different from the colorspace of the embedded icc color profile
         // If that is the case we just ignore the color profiles
         if (isset($profiles['icc']) && in_array($imageColorspace, [\Imagick::COLORSPACE_CMYK, \Imagick::COLORSPACE_SRGB])) {
-            if(strpos($profiles['icc'], 'CMYK') !== false && $imageColorspace !== \Imagick::COLORSPACE_CMYK) {
+            if (strpos($profiles['icc'], 'CMYK') !== false && $imageColorspace !== \Imagick::COLORSPACE_CMYK) {
                 return $this;
             }
 
-            if(strpos($profiles['icc'], 'RGB') !== false && $imageColorspace !== \Imagick::COLORSPACE_SRGB) {
+            if (strpos($profiles['icc'], 'RGB') !== false && $imageColorspace !== \Imagick::COLORSPACE_SRGB) {
                 return $this;
             }
         }
