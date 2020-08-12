@@ -44,7 +44,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
         Ext.get(id).setStyle({
             display:"inline"
         });
-        Ext.get(id).insertHtml("beforeEnd",'<span class="pimcore_tag_link_text">' + this.getLinkContent() + '</span>');
+        Ext.get(id).insertHtml("beforeEnd",'<span class="pimcore_tag_link_text pimcore_editable_link_text">' + this.getLinkContent() + '</span>');
 
         var editButton = new Ext.Button({
             iconCls: "pimcore_icon_link pimcore_icon_overlay_edit",
@@ -113,7 +113,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
         this.window.close();
 
         // set text
-        Ext.get(this.id).query(".pimcore_tag_link_text")[0].innerHTML = this.getLinkContent();
+        Ext.get(this.id).query(".pimcore_tag_link_text pimcore_editable_link_text")[0].innerHTML = this.getLinkContent();
 
         this.reload();
     },
@@ -135,7 +135,7 @@ pimcore.document.tags.link = Class.create(pimcore.document.tag, {
         this.data = this.defaultData;
 
         // set text
-        Ext.get(this.id).query(".pimcore_tag_link_text")[0].innerHTML = this.getLinkContent();
+        Ext.get(this.id).query(".pimcore_tag_link_text pimcore_editable_link_text")[0].innerHTML = this.getLinkContent();
     },
 
     cancel: function () {

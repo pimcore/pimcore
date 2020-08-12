@@ -57,8 +57,8 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
                 body.setStyle(style);
                 body.getFirstChild().setStyle(style);
 
-                body.insertHtml("beforeEnd", '<div class="pimcore_tag_droptarget"></div>');
-                body.addCls("pimcore_tag_snippet_empty");
+                body.insertHtml("beforeEnd", '<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
+                body.addCls("pimcore_tag_snippet_empty pimcore_editable_snippet_empty");
 
                 el.getEl().on("contextmenu", this.onContextMenu.bind(this));
             } catch (e) {
@@ -140,7 +140,7 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
             success: function (response) {
                 var body = this.getBody();
                 body.getFirstChild().dom.innerHTML = response.responseText;
-                body.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
+                body.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
                 this.updateDimensions();
             }.bind(this),
             params: params
@@ -153,6 +153,7 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
         body.setStyle("height", "auto");
         parent.setStyle("height", "auto");
         body.removeCls("pimcore_tag_snippet_empty");
+        body.removeCls("pimcore_editable_snippet_empty");
     },
 
     onContextMenu: function (e) {
@@ -176,8 +177,8 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
                     this.data = {};
                     var body = this.getBody();
                     body.getFirstChild().dom.innerHTML = '';
-                    body.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
-                    body.addCls("pimcore_tag_snippet_empty");
+                    body.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget  pimcore_editable_droptarget"></div>');
+                    body.addCls("pimcore_tag_snippet_empty pimcore_editable_snippet_empty");
                     body.setStyle(height + "px");
 
                     if (this.options.reload) {

@@ -80,6 +80,7 @@ class Link extends Model\Document\Tag
         $classes = [
             'pimcore_editable',
             'pimcore_tag_' . $this->getType(),
+            'pimcore_editable_' . $this->getType(),
         ];
 
         return $classes;

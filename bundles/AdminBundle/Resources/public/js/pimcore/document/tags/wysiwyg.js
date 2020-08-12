@@ -37,7 +37,7 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
 
         Ext.get(id).appendChild(this.textarea);
 
-        Ext.get(id).insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
+        Ext.get(id).insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
 
         this.textarea.id = textareaId;
         this.textarea.innerHTML = data;
