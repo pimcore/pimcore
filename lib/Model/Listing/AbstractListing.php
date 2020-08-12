@@ -310,8 +310,12 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
                 // If there is not a placeholder, ignore value!
                 if (!$value['ignore-value']) {
                     if (is_array($value['value'])) {
-                        foreach ($value['value'] as $v) {
-                            $params[] = $v;
+                        foreach ($value['value'] as $k => $v) {
+                            if (is_int($k)) {
+                                $params[] = $v;
+                            } else {
+                                $params[$k] = $v;
+                            }
                         }
                     } else {
                         $params[] = $value['value'];
