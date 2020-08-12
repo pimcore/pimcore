@@ -168,17 +168,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             this.availableConfigs = response.availableConfigs;
             this.sharedConfigs = response.sharedConfigs;
 
-            if (response.onlyDirectChildren) {
-                this.onlyDirectChildren = response.onlyDirectChildren;
-            }
-
-            if (response.searchFilter) {
-                this.searchFilter = response.searchFilter;
-            }
-
-            if (response.sqlFilter) {
-                this.sqlFilter = response.sqlFilter;
-            }
+            this.onlyDirectChildren = response.onlyDirectChildren;
+            this.searchFilter = response.searchFilter;
+            this.sqlFilter = response.sqlFilter;
         } else {
             itemsPerPage = this.gridPageSize;
             fields = response;

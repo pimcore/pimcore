@@ -169,9 +169,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             }
         });
 
-        if (this.sqlFilter) {
-            this.updateSqlFilter();
-        }
+        this.updateSqlFilter();
 
         this.sqlButton = new Ext.Button({
             iconCls: "pimcore_icon_sql",
@@ -289,10 +287,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             });
 
             this.createSqlEditor();
-
-            if (this.searchFilter) {
-                this.store.getProxy().setExtraParam("query", this.searchFilter);
-            }
+            this.store.getProxy().setExtraParam("query", this.searchFilter);
 
             this.checkboxOnlyDirectChildren = new Ext.form.Checkbox({
                 name: "onlyDirectChildren",
