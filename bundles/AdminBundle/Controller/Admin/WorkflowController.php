@@ -148,7 +148,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
             $data = [
                 'success' => false,
                 'message' => 'transition failed',
-                'reason' => $reasons
+                'reasons' => $reasons
             ];
         }
 
