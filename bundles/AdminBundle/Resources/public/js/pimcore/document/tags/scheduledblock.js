@@ -10,7 +10,7 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  *
- * @deprecated since v6.7 and will be removed in 7. Use {@link pimcore.document.editables.scheduledblock} instead.
+ * @deprecated since v6.8 and will be removed in 7. Use {@link pimcore.document.editables.scheduledblock} instead.
  */
 
 pimcore.registerNS("pimcore.document.tags.scheduledblock");
