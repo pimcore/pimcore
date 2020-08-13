@@ -1,4 +1,6 @@
 # Upgrade Notes
+## 6.8.0
+- HybridAuth integration is deprecated and will be removed in Pimcore 7.
 
 ## 6.7.0
 - [Ecommerce][IndexService] Elastic Search worker does not use mockup cache anymore. Now mockup objects are build directly based on information in response of ES response (_source flag). Therefore `AbstractElasticSearch` Worker does not extend `AbstractMockupCacheWorker` anymore. 
