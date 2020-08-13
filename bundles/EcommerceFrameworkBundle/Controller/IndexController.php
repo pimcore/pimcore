@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Event\Ecommerce\AdminEvents;
@@ -60,8 +61,6 @@ class IndexController extends AdminController
 
     /**
      * @Route("/get-values-for-filter-field", name="pimcore_ecommerceframework_index_getvaluesforfilterfield", methods={"GET"})
-     *
-     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */
     public function getValuesForFilterFieldAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
