@@ -38,7 +38,7 @@ pimcore.element.note_details = Class.create({
                 buttons: [
                     {
                         text: t('close'),
-                        iconCls: "pimcore_icon_close",
+                        icon: '/bundles/pimcoreadmin/img/flat-white-icons/checkmark.svg',
                         handler: function(){
                             this.detailWindow.hide();
                             this.detailWindow.destroy();
