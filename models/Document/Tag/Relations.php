@@ -124,7 +124,9 @@ class Relations extends Model\Document\Tag implements \Iterator
         $return = '';
 
         foreach ($this->getElements() as $element) {
-            $return .= Element\Service::getElementType($element) . ': ' . $element->getFullPath() . '<br />';
+            if ($element instanceof Element\ElementInterface) {
+                $return .= Element\Service::getElementType($element) . ': ' . $element->getFullPath() . '<br />';
+            }
         }
 
         return $return;
