@@ -226,6 +226,8 @@ class PublicServicesController extends Controller
 
     /**
      * @param Request $request
+     *
+     * @deprecated
      */
     public function hybridauthAction(Request $request)
     {
