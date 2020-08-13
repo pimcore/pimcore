@@ -43,7 +43,7 @@ class EditableUsageResolver
      *
      * @return array
      *
-     * @deprecated since 6.7 and will be removed in. Use getUsedEditablenames instead.
+     * @deprecated since 6.8 and will be removed in. Use getUsedEditablenames instead.
      */
     public function getUsedTagnames(Document\PageSnippet $document)
     {

@@ -177,7 +177,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
      *
      * @return Editable|null
      *
-     * @deprecated since v6.7 and will be removed in 7. Use getDocumentEditable() instead.
+     * @deprecated since v6.8 and will be removed in 7. Use getDocumentEditable() instead.
      */
     protected function getDocumentTag(PageSnippet $document, $type, $inputName, array $options = [])
     {

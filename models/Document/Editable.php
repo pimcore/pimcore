@@ -706,7 +706,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @throws \Exception
      *
-     * @deprecated since v6.7 and will be removed in 7. use buildEditableName() instead
+     * @deprecated since v6.8 and will be removed in 7. use buildEditableName() instead
      */
     public static function buildTagName(string $type, string $name, Document $document = null)
     {
@@ -778,7 +778,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return string
      *
-     * @deprecated since v6.7 and will be removed in 7. Use buildEditableRealName() instead
+     * @deprecated since v6.8 and will be removed in 7. Use buildEditableRealName() instead
      */
     public static function buildTagRealName(string $name, Document $document): string
     {
