@@ -457,6 +457,15 @@ class Configuration implements ConfigurationInterface
                                         ->end()
                                         ->defaultTrue()
                                     ->end()
+                                    ->booleanNode('clip_auto_support')
+                                        ->beforeNormalization()
+                                            ->ifString()
+                                            ->then(function ($v) {
+                                                return (bool)$v;
+                                            })
+                                        ->end()
+                                        ->defaultTrue()
+                                    ->end()
                                     ->booleanNode('auto_clear_temp_files')
                                         ->beforeNormalization()
                                             ->ifString()
