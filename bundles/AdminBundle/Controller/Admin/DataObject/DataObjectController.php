@@ -188,8 +188,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             } else {
                 $childsList->setOrderKey(
                     sprintf(
-                        'CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC',
-                        $object->getChildrenSortBy()
+                        'CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci %s',
+                        $object->getChildrenSortBy(), $object->getChildrenSortOrder()
                     ),
                     false
                 );
