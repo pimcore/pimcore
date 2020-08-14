@@ -91,12 +91,8 @@ class DataObjectRouteHandler implements DynamicRouteHandlerInterface
     public function matchRequest(RouteCollection $collection, DynamicRequestContext $context)
     {
         $slug = null;
-        if ($site = $this->siteResolver->getSite($context->getRequest())) {
-            $slug = DataObject\Data\UrlSlug::resolveSlug($context->getOriginalPath(), $site->getId());
-        }
-        if (!$slug) {
-            $slug = DataObject\Data\UrlSlug::resolveSlug($context->getOriginalPath(), 0);
-        }
+        $site = $this->siteResolver->getSite($context->getRequest());
+        $slug = DataObject\Data\UrlSlug::resolveSlug($context->getOriginalPath(), $site ? $site->getId() : 0);
         if ($slug) {
             $object = DataObject::getById($slug->getObjectId());
             if ($object instanceof DataObject\Concrete && $object->isPublished()) {
