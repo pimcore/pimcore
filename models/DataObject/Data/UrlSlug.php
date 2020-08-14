@@ -330,7 +330,7 @@ class UrlSlug implements OwnerAwareFieldInterface
      *
      * @return UrlSlug|null
      */
-    public static function resolveSlug($path, int $siteId = 0)
+    public static function resolveSlug($path, $siteId = 0)
     {
         $cacheKey = $path . '~~' . $siteId;
         if (isset(self::$cache[$cacheKey])) {
