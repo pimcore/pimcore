@@ -327,7 +327,7 @@ If you prefer not using WebP, you can disable the support by adding the followin
 ```
 
 ## Clipping Support 
-Automatically clip images with embedded clipping path (8BIM / Adobe profile meta data) to generate thumbnails. 
+Images with an embedded clipping path (8BIM / Adobe profile meta data) are automatically clipped when generating thumbnails of them. 
     
 If you do not want to use thumbnail auto clipping, you can disable the support by adding the following config option: 
 ```yml
