@@ -141,7 +141,7 @@ class Ghostscript extends Adapter
      */
     public function getPageCount()
     {
-        $pages = Console::exec(self::getGhostscriptCli() . " -dNODISPLAY -q -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'", null, 120);
+        $pages = Console::exec(self::getGhostscriptCli() . " -dNODISPLAY -q --permit-file-read='" . $this->path . "' -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'", null, 120);
         $pages = trim($pages);
 
         if (!is_numeric($pages)) {
