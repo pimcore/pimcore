@@ -38,7 +38,9 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
     protected function preSendDataActions(&$data, Model\Document $document)
     {
-        $data['versionDate'] = $document->getModificationDate();
+        $documentFromDatabase = Model\Document::getById($document->getId(), true);
+
+        $data['versionDate'] = $documentFromDatabase->getModificationDate();
         $data['userPermissions'] = $document->getUserPermissions();
         $data['idPath'] = Element\Service::getIdPath($document);
 
