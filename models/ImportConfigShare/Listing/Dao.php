@@ -53,7 +53,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $amount = 0;
 
         try {
-            $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM importconfig_shares ' . $this->getCondition(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne('SELECT COUNT(*) FROM importconfig_shares ' . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
         }
 
