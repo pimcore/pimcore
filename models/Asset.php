@@ -166,13 +166,6 @@ class Asset extends Element\AbstractElement
     protected $hasMetaData = false;
 
     /**
-     * Dependencies of this asset
-     *
-     * @var Dependency|null
-     */
-    protected $dependencies;
-
-    /**
      * Contains a list of sibling documents
      *
      * @var array|null
