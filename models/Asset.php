@@ -28,7 +28,6 @@ use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Element\Service;
 use Pimcore\Tool\Mime;
 use Symfony\Component\EventDispatcher\GenericEvent;
 

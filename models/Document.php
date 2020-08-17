@@ -27,7 +27,6 @@ use Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Element\Service;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
