@@ -652,15 +652,17 @@ class DataObjectHelperController extends AdminController
         }
 
         return [
-            'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
+            'sortinfo' => $gridConfig['sortinfo'] ?? false,
             'language' => $language,
             'availableFields' => $availableFields,
             'settings' => $settings,
-            'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,
-            'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false,
+            'onlyDirectChildren' => $gridConfig['onlyDirectChildren'] ?? false,
+            'pageSize' => $gridConfig['pageSize'] ?? false,
             'availableConfigs' => $availableConfigs,
             'sharedConfigs' => $sharedConfigs,
             'context' => $context
+            'sqlFilter' => $gridConfig['sqlFilter'] ?? '',
+            'searchFilter' => $gridConfig['searchFilter'] ?? ''
         ];
     }
 
