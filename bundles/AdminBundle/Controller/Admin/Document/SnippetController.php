@@ -68,22 +68,22 @@ class SnippetController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-        $snippet = Document\Snippet::getById($request->get('id'));
+        $snippetFromDatabase = Document\Snippet::getById($request->get('id'));
 
-        if (!$snippet) {
+        if (!$snippetFromDatabase) {
             throw $this->createNotFoundException('Snippet not found');
         }
 
         // check for lock
-        if ($snippet->isAllowed('save') || $snippet->isAllowed('publish') || $snippet->isAllowed('unpublish') || $snippet->isAllowed('delete')) {
+        if ($snippetFromDatabase->isAllowed('save') || $snippetFromDatabase->isAllowed('publish') || $snippetFromDatabase->isAllowed('unpublish') || $snippetFromDatabase->isAllowed('delete')) {
             if (Element\Editlock::isLocked($request->get('id'), 'document')) {
                 return $this->getEditLockResponse($request->get('id'), 'document');
             }
             Element\Editlock::lock($request->get('id'), 'document');
         }
 
-        $snippet = clone $snippet;
-        $snippet = $this->getLatestVersion($snippet);
+        $snippetFromDatabase = clone $snippetFromDatabase;
+        $snippet = $this->getLatestVersion($snippetFromDatabase);
 
         $versions = Element\Service::getSafeVersionInfo($snippet->getVersions());
         $snippet->setVersions(array_splice($versions, -1, 1));
@@ -100,6 +100,8 @@ class SnippetController extends DocumentControllerBase
         $this->minimizeProperties($snippet, $data);
 
         $data['url'] = $snippet->getUrl();
+        // this used for the "this is not a published version" hint
+        $data['documentFromVersion'] = $snippet !== $snippetFromDatabase;
         if ($snippet->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $snippet->getContentMasterDocument()->getRealFullPath();
         }

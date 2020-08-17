@@ -71,22 +71,22 @@ class PageController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-        $page = Document\Page::getById($request->get('id'));
+        $pageFromDatabase = Document\Page::getById($request->get('id'));
 
-        if (!$page) {
+        if (!$pageFromDatabase) {
             throw $this->createNotFoundException('Page not found');
         }
 
         // check for lock
-        if ($page->isAllowed('save') || $page->isAllowed('publish') || $page->isAllowed('unpublish') || $page->isAllowed('delete')) {
+        if ($pageFromDatabase->isAllowed('save') || $pageFromDatabase->isAllowed('publish') || $pageFromDatabase->isAllowed('unpublish') || $pageFromDatabase->isAllowed('delete')) {
             if (Element\Editlock::isLocked($request->get('id'), 'document')) {
                 return $this->getEditLockResponse($request->get('id'), 'document');
             }
             Element\Editlock::lock($request->get('id'), 'document');
         }
 
-        $page = clone $page;
-        $page = $this->getLatestVersion($page);
+        $pageFromDatabase = clone $pageFromDatabase;
+        $page = $this->getLatestVersion($pageFromDatabase);
 
         $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
         $page->setVersions(array_splice($pageVersions, -1, 1));
@@ -108,6 +108,8 @@ class PageController extends DocumentControllerBase
         }
 
         $data['url'] = $page->getUrl();
+        // this used for the "this is not a published version" hint
+        $data['documentFromVersion'] = $page !== $pageFromDatabase;
 
         $this->preSendDataActions($data, $page);
 

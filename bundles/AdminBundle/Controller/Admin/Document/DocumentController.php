@@ -88,6 +88,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
     public function getDataByIdAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $document = Document::getById($request->get('id'));
+        $documentFromDatabase = Document::getById($document->getId(), true);
 
         if (!$document) {
             throw $this->createNotFoundException('Document not found');
@@ -95,7 +96,9 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         $document = clone $document;
         $data = $document->getObjectVars();
-        $data['versionDate'] = $document->getModificationDate();
+        $data['versionDate'] = $documentFromDatabase->getModificationDate();
+        // this used for the "this is not a published version" hint
+        $data['documentFromVersion'] = $document !== $documentFromDatabase;
 
         $data['php'] = [
             'classes' => array_merge([get_class($document)], array_values(class_parents($document))),

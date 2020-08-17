@@ -74,14 +74,14 @@ class EmailController extends DocumentControllerBase
         }
         Element\Editlock::lock($request->get('id'), 'document');
 
-        $email = Document\Email::getById($request->get('id'));
+        $emailFromDatabase = Document\Email::getById($request->get('id'));
 
-        if (!$email) {
+        if (!$emailFromDatabase) {
             throw $this->createNotFoundException('Email not found');
         }
 
-        $email = clone $email;
-        $email = $this->getLatestVersion($email);
+        $emailFromDatabase = clone $emailFromDatabase;
+        $email = $this->getLatestVersion($emailFromDatabase);
 
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
         $email->setVersions(array_splice($versions, -1, 1));
@@ -98,6 +98,8 @@ class EmailController extends DocumentControllerBase
         $this->minimizeProperties($email, $data);
 
         $data['url'] = $email->getUrl();
+        // this used for the "this is not a published version" hint
+        $data['documentFromVersion'] = $email !== $emailFromDatabase;
 
         $this->preSendDataActions($data, $email);
 
