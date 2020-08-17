@@ -331,8 +331,7 @@ class Predefined extends Model\AbstractModel
             $instance = $loader->build($this->type);
             $this->data = $instance->marshal($this->data);
         } catch (UnsupportedException $e) {
-            Logger::error("could not resolve asset metadata implementation for " . $this->type);
-
+            Logger::error('could not resolve asset metadata implementation for ' . $this->type);
         }
     }
 
@@ -344,7 +343,7 @@ class Predefined extends Model\AbstractModel
             $instance = $loader->build($this->type);
             $this->data = $instance->unmarshal($this->data);
         } catch (UnsupportedException $e) {
-            Logger::error("could not resolve asset metadata implementation for " . $this->type);
+            Logger::error('could not resolve asset metadata implementation for ' . $this->type);
         }
     }
 }

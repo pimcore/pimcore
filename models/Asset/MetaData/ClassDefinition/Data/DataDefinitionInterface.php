@@ -18,10 +18,10 @@ namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
 interface DataDefinitionInterface
 {
-
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
     public function isEmpty($data, $params = []);
@@ -36,6 +36,7 @@ interface DataDefinitionInterface
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
     public function getDataForListfolderGrid($data, $params = []);
@@ -43,6 +44,7 @@ interface DataDefinitionInterface
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
     public function getDataFromEditMode($data, $params = []);
@@ -50,6 +52,7 @@ interface DataDefinitionInterface
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
     public function getDataFromListfolderGrid($data, $params = []);
@@ -57,8 +60,8 @@ interface DataDefinitionInterface
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return array
      */
     public function resolveDependencies($data, $params = []);
-
 }

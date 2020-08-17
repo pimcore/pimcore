@@ -939,7 +939,7 @@ class AssetHelperController extends AdminController
 
                 $updateEvent = new GenericEvent($this, [
                     'data' => $data,
-                    'processed' => false
+                    'processed' => false,
                 ]);
 
                 $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_BATCH_UPDATE, $updateEvent);
@@ -951,7 +951,7 @@ class AssetHelperController extends AdminController
                 }
 
                 $language = null;
-                if (isset($data["language"])) {
+                if (isset($data['language'])) {
                     $language = $data['language'] != 'default' ? $data['language'] : null;
                 }
 
@@ -981,10 +981,10 @@ class AssetHelperController extends AdminController
                     foreach ($metadata as $idx => &$em) {
                         if ($em['name'] == $name && $em['language'] == $language) {
                             try {
-                                $dataImpl = $loader->build($em["type"]);
+                                $dataImpl = $loader->build($em['type']);
                                 $value = $dataImpl->getDataFromListfolderGrid($value, $em);
                             } catch (UnsupportedException $le) {
-                                Logger::error("could not resolve metadata implementation for " . $em["type"]);
+                                Logger::error('could not resolve metadata implementation for ' . $em['type']);
                             }
                             $em['data'] = $value;
                             $dirty = true;
@@ -995,7 +995,6 @@ class AssetHelperController extends AdminController
                     if (!$dirty) {
                         $defaulMetadata = ['title', 'alt', 'copyright'];
                         if (in_array($name, $defaulMetadata)) {
-
                             $newEm = [
                                 'name' => $name,
                                 'language' => $language,
@@ -1004,10 +1003,10 @@ class AssetHelperController extends AdminController
                             ];
 
                             try {
-                                $dataImpl = $loader->build($newEm["type"]);
-                                $newEm["data"] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
+                                $dataImpl = $loader->build($newEm['type']);
+                                $newEm['data'] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
                             } catch (UnsupportedException $le) {
-                                Logger::error("could not resolve metadata implementation for " . $newEm["type"]);
+                                Logger::error('could not resolve metadata implementation for ' . $newEm['type']);
                             }
 
                             $metadata[] = $newEm;
@@ -1016,7 +1015,6 @@ class AssetHelperController extends AdminController
                             $predefined = Metadata\Predefined::getByName($name);
                             if ($predefined && (empty($predefined->getTargetSubtype())
                                     || $predefined->getTargetSubtype() == $asset->getType())) {
-
                                 $newEm = [
                                     'name' => $name,
                                     'language' => $language,
@@ -1025,14 +1023,13 @@ class AssetHelperController extends AdminController
                                 ];
 
                                 try {
-                                    $dataImpl = $loader->build($newEm["type"]);
-                                    $newEm["data"] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
+                                    $dataImpl = $loader->build($newEm['type']);
+                                    $newEm['data'] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
                                 } catch (UnsupportedException $le) {
-                                    Logger::error("could not resolve metadata implementation for " . $newEm["type"]);
+                                    Logger::error('could not resolve metadata implementation for ' . $newEm['type']);
                                 }
 
                                 $metadata[] = $newEm;
-
 
                                 $dirty = true;
                             }

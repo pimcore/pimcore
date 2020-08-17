@@ -92,7 +92,7 @@ class SnippetController extends DocumentControllerBase
         $snippet->setParent(null);
 
         // unset useless data
-        $snippet->setElements(null);
+        $snippet->setEditables(null);
 
         $data = $snippet->getObjectVars();
 

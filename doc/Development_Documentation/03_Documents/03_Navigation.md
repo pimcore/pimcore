@@ -422,7 +422,7 @@ $mainNavigation = $this->navigation()->build([
         $page->setCustomSetting("myCustomProperty", $document->getProperty("myCustomProperty"));
         $page->setCustomSetting("subListClass", $document->getProperty("subListClass"));
         $page->setCustomSetting("title", $document->getTitle());
-        $page->setCustomSetting("headline", $document->getElement("headline")->getData());
+        $page->setCustomSetting("headline", $document->getEditable("headline")->getData());
     }]
 );
 

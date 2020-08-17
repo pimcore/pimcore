@@ -63,46 +63,57 @@ class Document extends Data
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function transformGetterData($data, $params = []) {
+    public function transformGetterData($data, $params = [])
+    {
         if (is_numeric($data)) {
-            return \Pimcore\Model\Document\Service::getElementById("document", $data);
+            return \Pimcore\Model\Document\Service::getElementById('document', $data);
         }
+
         return $data;
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function transformSetterData($data, $params = []) {
+    public function transformSetterData($data, $params = [])
+    {
         if ($data instanceof \Pimcore\Model\Document) {
             return $data->getId();
         }
+
         return $data;
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function getDataFromEditMode($data, $params = []) {
-        $element = Service::getElementByPath("document", $data);
+    public function getDataFromEditMode($data, $params = [])
+    {
+        $element = Service::getElementByPath('document', $data);
         if ($element) {
             return $element->getId();
         }
-        return "";
+
+        return '';
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function getDataForResource($data, $params = []) {
+    public function getDataForResource($data, $params = [])
+    {
         if ($data instanceof ElementInterface) {
             return $data->getId();
         }
@@ -111,37 +122,41 @@ class Document extends Data
     }
 
     /** @inheritDoc */
-    public function getDataForEditMode($data, $params = []) {
+    public function getDataForEditMode($data, $params = [])
+    {
         if (is_numeric($data)) {
-            $data = Service::getElementById("document", $data);
+            $data = Service::getElementById('document', $data);
         }
         if ($data instanceof ElementInterface) {
             return $data->getRealFullPath();
         } else {
-            return "";
+            return '';
         }
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function getDataForListfolderGrid($data, $params = []) {
+    public function getDataForListfolderGrid($data, $params = [])
+    {
         if (is_numeric($data)) {
             $data = \Pimcore\Model\Document::getById($data);
-        };
-
+        }
 
         if ($data instanceof \Pimcore\Model\Document) {
             return $data->getFullPath();
         }
+
         return $data;
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return array
      */
     public function resolveDependencies($data, $params = [])
@@ -151,21 +166,25 @@ class Document extends Data
             $elementType = $params['type'];
 
             $key = $elementType . '_' . $elementId;
+
             return [
                 $key => [
                     'id' => $elementId,
-                    'type' => $elementType
-                ]];
+                    'type' => $elementType,
+                ], ];
         }
+
         return [];
     }
 
     /**
      * @param mixed $data
      * @param array $params
+     *
      * @return mixed
      */
-    public function getDataFromListfolderGrid($data, $params = []) {
+    public function getDataFromListfolderGrid($data, $params = [])
+    {
         $data = \Pimcore\Model\Document::getByPath($data);
 
         if ($data instanceof AbstractElement) {

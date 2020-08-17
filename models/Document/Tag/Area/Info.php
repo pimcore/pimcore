@@ -235,14 +235,14 @@ class Info
      */
     public function getDocumentElement($name, $type = '')
     {
-        $element = null;
+        $editable = null;
         $document = $this->getDocument();
 
         if ($document instanceof Document\PageSnippet) {
             $name = Tag::buildTagName($type, $name, $document);
-            $element = $document->getElement($name);
+            $editable = $document->getEditable($name);
         }
 
-        return $element;
+        return $editable;
     }
 }

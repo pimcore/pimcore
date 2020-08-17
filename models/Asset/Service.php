@@ -225,22 +225,20 @@ class Service extends Model\Element\Service
                         $rawMetaData = $asset->getMetadata($field, $requestedLanguage, true, true);
                     }
 
-                    $metaData = $rawMetaData["data"] ?? null;
+                    $metaData = $rawMetaData['data'] ?? null;
 
                     if ($rawMetaData) {
-                        $type = $rawMetaData["type"];
+                        $type = $rawMetaData['type'];
                         if (!$loader) {
                             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
                         }
 
-
-                        $metaData = $rawMetaData["data"] ?? null;
+                        $metaData = $rawMetaData['data'] ?? null;
                         try {
                             /** @var Data $instance */
                             $instance = $loader->build($type);
-                            $metaData = $instance->getDataForListfolderGrid($rawMetaData["data"] ?? null, $rawMetaData);
+                            $metaData = $instance->getDataForListfolderGrid($rawMetaData['data'] ?? null, $rawMetaData);
                         } catch (UnsupportedException $e) {
-
                         }
                     }
 
@@ -354,7 +352,6 @@ class Service extends Model\Element\Service
         return $asset;
     }
 
-
     /**
      * @internal
      *
@@ -371,21 +368,19 @@ class Service extends Model\Element\Service
 
         $result = [];
         foreach ($metadata as $item) {
-
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
             try {
                 /** @var Data $instance */
                 $instance = $loader->build($item['type']);
 
-                if ($mode == "grid") {
+                if ($mode == 'grid') {
                     $transformedData = $instance->getDataFromListfolderGrid($item['data'], $item);
                 } else {
                     $transformedData = $instance->getDataFromEditMode($item['data'], $item);
                 }
 
-                $item["data"] = $transformedData;
+                $item['data'] = $transformedData;
             } catch (UnsupportedException $e) {
-
             }
 
             $result[] = $item;
@@ -405,10 +400,8 @@ class Service extends Model\Element\Service
             return $metadata;
         }
 
-
         $result = [];
         foreach ($metadata as $item) {
-
             $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
             $transformedData = $item['data'];
 
@@ -417,17 +410,16 @@ class Service extends Model\Element\Service
                 $instance = $loader->build($item['type']);
                 $transformedData = $instance->getDataForEditMode($item['data'], $item);
             } catch (UnsupportedException $e) {
-
             }
 
-            $item["data"] = $transformedData;
+            $item['data'] = $transformedData;
             //get the config from an predefined property-set (eg. select)
             $predefined = Model\Metadata\Predefined::getByName($item['name']);
             if ($predefined && $predefined->getType() == $item['type'] && $predefined->getConfig()) {
                 $item['config'] = $predefined->getConfig();
             }
 
-            $key = $item['name'] . "~" . $item['language'];
+            $key = $item['name'] . '~' . $item['language'];
             $result[$key] = $item;
         }
 

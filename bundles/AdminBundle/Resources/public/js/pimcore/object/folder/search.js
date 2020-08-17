@@ -168,9 +168,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             this.availableConfigs = response.availableConfigs;
             this.sharedConfigs = response.sharedConfigs;
 
-            if (response.onlyDirectChildren) {
-                this.onlyDirectChildren = response.onlyDirectChildren;
-            }
+            this.onlyDirectChildren = response.onlyDirectChildren;
+            this.searchFilter = response.searchFilter;
+            this.sqlFilter = response.sqlFilter;
         } else {
             itemsPerPage = this.gridPageSize;
             fields = response;
@@ -370,6 +370,9 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         var config = $super();
         config.onlyDirectChildren = this.onlyDirectChildren;
         config.pageSize = this.pagingtoolbar.pageSize;
+        config.searchFilter = this.searchField.getValue();
+        config.sqlFilter = this.sqlEditor.getValue();
+        config.onlyDirectChildren = this.checkboxOnlyDirectChildren.getValue();
         return config;
     },
 

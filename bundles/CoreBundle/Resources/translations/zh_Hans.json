@@ -951,5 +951,11 @@
     "default_value_generator": "Default value generator service / class",
     "no_value_set": "no value set",
     "delete_class_message": "Do you really want to delete class '%s' ?",
-    "replace_assignments_in_all_elements": "Replace assignments in all elements"
+    "replace_assignments_in_all_elements": "Replace assignments in all elements",
+    "fieldlookup": "Field Lookup",
+    "show_fieldlookup": "Show Field Lookup",
+    "different_number_of_columns": "Different number of columns",
+    "brick_limit_reached": "Limit ({bricklimit}) reached for brick: {brickname}",
+    "generate_type_declarations": "Generate Type Declarations",
+    "batch_change_language": "Batch update language"
 }

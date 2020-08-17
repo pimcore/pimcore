@@ -35,7 +35,7 @@ pimcore.object.tags.time = Class.create(pimcore.object.tags.abstract, {
             allowBlank: (!this.fieldConfig.mandatory),
             minValue: (this.fieldConfig.minValue) ? this.fieldConfig.minValue : null,
             maxValue: (this.fieldConfig.maxValue) ? this.fieldConfig.maxValue : null,
-            componentCls: "object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             increment: (this.fieldConfig.increment) ? this.fieldConfig.increment : 15
         });
 

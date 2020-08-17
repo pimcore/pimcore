@@ -952,15 +952,15 @@ class AssetController extends ElementControllerBase implements EventedController
                 $metadata = $this->decodeJson($request->get('metadata'));
 
                 $metadataEvent = new GenericEvent($this, [
-                    "id" => $asset->getId(),
-                    'metadata' => $metadata
+                    'id' => $asset->getId(),
+                    'metadata' => $metadata,
                 ]);
                 $eventDispatcher->dispatch(AdminEvents::ASSET_METADATA_PRE_SET, $metadataEvent);
 
                 $metadata = $metadataEvent->getArgument('metadata');
                 $metadataValues = $metadata['values'];
 
-                $metadataValues = Asset\Service::minimizeMetadata($metadataValues, "editor");
+                $metadataValues = Asset\Service::minimizeMetadata($metadataValues, 'editor');
                 $asset->setMetadataRaw($metadataValues);
             }
 
@@ -2421,7 +2421,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
                     $updateEvent = new GenericEvent($this, [
                         'data' => $data,
-                        'processed' => false
+                        'processed' => false,
                     ]);
 
                     $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_UPDATE, $updateEvent);
@@ -2433,7 +2433,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         return $this->adminJson(['success' => true]);
                     }
 
-                    $data = $updateEvent->getArgument("data");
+                    $data = $updateEvent->getArgument('data');
 
                     // save
                     $asset = Asset::getById($data['id']);
@@ -2459,12 +2459,11 @@ class AssetController extends ElementControllerBase implements EventedController
 
                         foreach ($metadata as $idx => &$em) {
                             if ($em['name'] == $key && $em['language'] == $language) {
-
                                 try {
-                                    $dataImpl = $loader->build($em["type"]);
+                                    $dataImpl = $loader->build($em['type']);
                                     $value = $dataImpl->getDataFromListfolderGrid($value, $em);
                                 } catch (UnsupportedException $le) {
-                                    Logger::error("could not resolve metadata implementation for " . $em["type"]);
+                                    Logger::error('could not resolve metadata implementation for ' . $em['type']);
                                 }
 
                                 $em['data'] = $value;
@@ -2484,14 +2483,13 @@ class AssetController extends ElementControllerBase implements EventedController
                                 ];
 
                                 try {
-                                    $dataImpl = $loader->build($newEm["type"]);
-                                    $newEm["data"] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
+                                    $dataImpl = $loader->build($newEm['type']);
+                                    $newEm['data'] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
                                 } catch (UnsupportedException $le) {
-                                    Logger::error("could not resolve metadata implementation for " . $newEm["type"]);
+                                    Logger::error('could not resolve metadata implementation for ' . $newEm['type']);
                                 }
 
                                 $metadata[] = $newEm;
-
 
                                 $dirty = true;
                             } else {
@@ -2506,10 +2504,10 @@ class AssetController extends ElementControllerBase implements EventedController
                                     ];
 
                                     try {
-                                        $dataImpl = $loader->build($newEm["type"]);
-                                        $newEm["data"] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
+                                        $dataImpl = $loader->build($newEm['type']);
+                                        $newEm['data'] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
                                     } catch (UnsupportedException $le) {
-                                        Logger::error("could not resolve metadata implementation for " . $newEm["type"]);
+                                        Logger::error('could not resolve metadata implementation for ' . $newEm['type']);
                                     }
 
                                     $metadata[] = $newEm;

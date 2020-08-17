@@ -25,6 +25,6 @@ if (!defined('TESTS_PATH')) {
     define('TESTS_PATH', __DIR__);
 }
 
-if (!defined('TESTS_PATH')) {
+if (!defined('PIMCORE_TEST')) {
     define('PIMCORE_TEST', true);
 }
