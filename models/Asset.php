@@ -854,7 +854,8 @@ class Asset extends Element\AbstractElement
             if (!empty($assetsConfig['versions']['steps'])
                 || !empty($assetsConfig['versions']['days'])
                 || $setModificationDate) {
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
+                $saveStackTrace = !$assetsConfig['versions']['disable_stack_trace'];
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
             }
 
             // hook should be also called if "save only new version" is selected

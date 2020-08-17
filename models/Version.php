@@ -95,6 +95,24 @@ class Version extends AbstractModel
      */
     public $stackTrace = '';
 
+    protected $generateStackTrace = true;
+
+    /**
+     * @return bool
+     */
+    public function getGenerateStackTrace()
+    {
+        return (bool) $this->generateStackTrace;
+    }
+
+    /**
+     * @param bool $generateStackTrace
+     */
+    public function setGenerateStackTrace(bool $generateStackTrace): void
+    {
+        $this->generateStackTrace = $generateStackTrace;
+    }
+
     /**
      * @var int
      */
@@ -173,11 +191,14 @@ class Version extends AbstractModel
             $this->setDate(time());
         }
 
-        // get stack trace
-        try {
-            throw new \Exception('not a real exception ... ;-)');
-        } catch (\Exception $e) {
-            $this->stackTrace = $e->getTraceAsString();
+        // get stack trace, if enabled
+        if ($this->getGenerateStackTrace())
+        {
+            try {
+                throw new \Exception('not a real exception ... ;-)');
+            } catch (\Exception $e) {
+                $this->stackTrace = $e->getTraceAsString();
+            }
         }
 
         $data = $this->getData();
