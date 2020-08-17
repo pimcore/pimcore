@@ -27,6 +27,7 @@ use Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
@@ -141,13 +142,6 @@ class Document extends Element\AbstractElement
      * @var int
      */
     protected $userModification;
-
-    /**
-     * Dependencies for this document
-     *
-     * @var Dependency|null
-     */
-    protected $dependencies;
 
     /**
      * List of Property, concerning the folder
@@ -629,20 +623,6 @@ class Document extends Element\AbstractElement
         } catch (\Exception $e) {
             Logger::crit($e);
         }
-    }
-
-    /**
-     * Returns the dependencies of the document
-     *
-     * @return Dependency
-     */
-    public function getDependencies()
-    {
-        if (!$this->dependencies) {
-            $this->dependencies = Dependency::getBySourceId($this->getId(), 'document');
-        }
-
-        return $this->dependencies;
     }
 
     /**
@@ -1399,7 +1379,7 @@ class Document extends Element\AbstractElement
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['dependencies', 'hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
+        $blockedVars = ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -1537,7 +1517,6 @@ class Document extends Element\AbstractElement
         $this->parent = null;
         $this->hasSiblings = [];
         $this->siblings = [];
-        $this->dependencies = null;
         $this->fullPathCache = null;
     }
 }

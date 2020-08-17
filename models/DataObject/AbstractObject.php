@@ -27,6 +27,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
+use Pimcore\Model\Element\Service;
 
 /**
  * @method AbstractObject\Dao getDao()
@@ -151,11 +152,6 @@ class AbstractObject extends Model\Element\AbstractElement
      * @var bool[]
      */
     protected $o_hasSiblings = [];
-
-    /**
-     * @var Model\Dependency|null
-     */
-    protected $o_dependencies;
 
     /**
      * @var array
@@ -868,18 +864,6 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return Model\Dependency
-     */
-    public function getDependencies()
-    {
-        if (!$this->o_dependencies) {
-            $this->o_dependencies = Model\Dependency::getBySourceId($this->getId(), 'object');
-        }
-
-        return $this->o_dependencies;
-    }
-
-    /**
      * @return string
      */
     public function getFullPath()
@@ -1268,7 +1252,7 @@ class AbstractObject extends Model\Element\AbstractElement
         $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = ['o_dependencies', 'o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
+        $blockedVars = ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -1507,7 +1491,6 @@ class AbstractObject extends Model\Element\AbstractElement
         // note that o_children is currently needed for the recycle bin
         $this->o_hasSiblings = [];
         $this->o_siblings = [];
-        $this->o_dependencies = null;
     }
 }
 

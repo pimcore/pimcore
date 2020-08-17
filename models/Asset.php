@@ -28,6 +28,7 @@ use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
 use Pimcore\Tool\Mime;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -1105,18 +1106,6 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @return Dependency
-     */
-    public function getDependencies()
-    {
-        if (!$this->dependencies) {
-            $this->dependencies = Dependency::getBySourceId($this->getId(), 'asset');
-        }
-
-        return $this->dependencies;
-    }
-
-    /**
      * @return int
      */
     public function getCreationDate()
@@ -1956,7 +1945,7 @@ class Asset extends Element\AbstractElement
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'hasChildren', 'versions', 'parent', 'stream'];
+        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the asset (eg. for a new version), including children for recyclebin
@@ -2092,7 +2081,6 @@ class Asset extends Element\AbstractElement
         $this->versions = null;
         $this->hasSiblings = null;
         $this->siblings = null;
-        $this->dependencies = null;
         $this->scheduledTasks = null;
         $this->closeStream();
     }
