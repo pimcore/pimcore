@@ -27,7 +27,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
-use Pimcore\Model\Element\Service;
 
 /**
  * @method AbstractObject\Dao getDao()
