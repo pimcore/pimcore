@@ -141,14 +141,46 @@ class Ghostscript extends Adapter
      */
     public function getPageCount()
     {
-        $pages = Console::exec(self::getGhostscriptCli() . " -dNODISPLAY -q --permit-file-read='" . $this->path . "' -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'", null, 120);
+        $pages = Console::exec($this->buildPageCountCommand(), null, 120);
         $pages = trim($pages);
 
-        if (!is_numeric($pages)) {
+        if (! is_numeric($pages)) {
             throw new \Exception('Unable to get page-count of ' . $this->path);
         }
 
-        return (int)$pages;
+        return (int) $pages;
+    }
+
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    protected function buildPageCountCommand()
+    {
+        $command = self::getGhostscriptCli() . " -dNODISPLAY -q";
+
+        if ($this->getVersion() >= 9.50) {
+            $command .= " --permit-file-read='" . $this->path . "'";
+        }
+
+        $command .= " -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'";
+
+        return $command;
+    }
+
+    /**
+     * Get the version of the installed CLI.
+     *
+     * @return float|null
+     * @throws \Exception
+     */
+    protected function getVersion()
+    {
+        if (! $this->isAvailable()) {
+            return null;
+        }
+
+        return (float) Console::exec(self::getGhostscriptCli() . ' --version');
     }
 
     /**
