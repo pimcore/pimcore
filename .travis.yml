@@ -169,6 +169,17 @@ jobs:
       cache:
         directories:
           - tmp-docs/pimcore-docs/vendor
+
+    # Test Installer
+    - name: "All Tests - PHP 7.4 | Symfony 3.4 | MySQL 5.7"
+      os: linux
+      sudo: required
+      php: 7.4
+      env:
+          - SYMFONY_VERSION="^3.4"
+          - DATABASE_SERVER="mysql-5.7"
+          - PIMCORE_TEST_INSTALLER=1
+
   fast_finish: true
 
 cache:

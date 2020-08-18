@@ -6,6 +6,13 @@ export PIMCORE_PROJECT_ROOT="${PWD}"
 
 CMD="vendor/bin/codecept run -c . -vvv"
 
+# Skip Installer tests by default. If PIMCORE_TEST_INSTALLER == 1, test only Installer.
+if [[ -z "$PIMCORE_TEST_INSTALLER" ]] || [[ "$PIMCORE_TEST_INSTALLER" -ne 1 ]]; then
+    CMD="$CMD --skip Installer"
+else
+    PIMCORE_TEST_SUITE="Installer"
+fi
+
 # add suite if configured
 if [[ -n "$PIMCORE_TEST_SUITE" ]]; then
     CMD="$CMD $PIMCORE_TEST_SUITE"

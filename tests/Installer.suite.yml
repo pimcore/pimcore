@@ -1,0 +1,5 @@
+actor: InstallerTester
+modules:
+    enabled:
+        - \Pimcore\Tests\Helper\Pimcore
+        - \Pimcore\Tests\Helper\Unit
