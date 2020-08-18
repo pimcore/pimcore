@@ -280,7 +280,7 @@ class Tag extends Model\AbstractModel
 
         $parentNames = array_reverse($parentNames);
 
-        return '/' . implode('/', $parentNames) . '/';
+        return '/' . implode('/', $parentNames);
     }
 
     public function __toString()
