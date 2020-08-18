@@ -383,10 +383,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
      */
     public function __sleep()
     {
+        $parentVars = parent::__sleep();
         $finalVars = [];
         $blockedVars = ['dependencies'];
-        $vars = get_object_vars($this);
-        foreach ($vars as $key => $value) {
+
+        foreach ($parentVars as $key => $value) {
             if (!in_array($key, $blockedVars)) {
                 $finalVars[] = $key;
             }
