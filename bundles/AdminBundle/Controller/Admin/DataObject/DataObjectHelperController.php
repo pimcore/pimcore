@@ -646,6 +646,11 @@ class DataObjectHelperController extends AdminController
         $settings['shareGlobally'] = $sharedGlobally ?? null;
         $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
+        $context = $gridConfig['context'] ?? null;
+        if ($context) {
+            $context = json_decode($context, true);
+        }
+
         return [
             'sortinfo' => $gridConfig['sortinfo'] ?? false,
             'language' => $language,
@@ -655,8 +660,9 @@ class DataObjectHelperController extends AdminController
             'pageSize' => $gridConfig['pageSize'] ?? false,
             'availableConfigs' => $availableConfigs,
             'sharedConfigs' => $sharedConfigs,
+            'context' => $context,
             'sqlFilter' => $gridConfig['sqlFilter'] ?? '',
-            'searchFilter' => $gridConfig['searchFilter'] ?? '',
+            'searchFilter' => $gridConfig['searchFilter'] ?? ''
         ];
     }
 
@@ -1068,6 +1074,7 @@ class DataObjectHelperController extends AdminController
         if ($object->isAllowed('list')) {
             try {
                 $classId = $request->get('class_id');
+                $context = $request->get('context');
 
                 $searchType = $request->get('searchType');
 
@@ -1075,6 +1082,9 @@ class DataObjectHelperController extends AdminController
                 $gridConfigData = $this->decodeJson($request->get('gridconfig'));
                 $gridConfigData['pimcore_version'] = Version::getVersion();
                 $gridConfigData['pimcore_revision'] = Version::getRevision();
+
+                $gridConfigData['context'] = $context;
+
                 unset($gridConfigData['settings']['isShared']);
 
                 $metadata = $request->get('settings');
@@ -1859,9 +1869,19 @@ class DataObjectHelperController extends AdminController
 
         $requestedLanguage = $this->extractLanguage($request);
 
+        $contextFromRequest = $request->get('context');
+        if ($contextFromRequest) {
+            $contextFromRequest = json_decode($contextFromRequest, true);
+        }
+
         $context = [
             'source' => 'pimcore-export',
         ];
+
+        if (is_array($contextFromRequest)) {
+            $context = array_merge($context, $contextFromRequest);
+        }
+
         $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $addTitles, $context);
 
         $fp = fopen($this->getCsvFile($fileHandle), 'a');

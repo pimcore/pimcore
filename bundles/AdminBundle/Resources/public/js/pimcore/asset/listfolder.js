@@ -72,7 +72,7 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
         });
     },
 
-    createGrid: function (fromConfig, response, settings, save) {
+    createGrid: function (fromConfig, response, settings, save, context) {
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
 
         var fields = [];
