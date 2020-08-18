@@ -292,7 +292,7 @@ class AssetHelperController extends AdminController
             'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false,
             'availableConfigs' => $availableConfigs,
             'sharedConfigs' => $sharedConfigs,
-            'context' => $context
+            'context' => $context,
         ];
     }
 

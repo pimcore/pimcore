@@ -404,12 +404,11 @@ class Service extends Model\Element\Service
                                 if ($csvMode) {
                                     $getterParams = ['language' => $requestedLanguage];
                                     $tempData = $def->getForCsvExport($object, $getterParams);
-                                } else if (method_exists($def, 'getDataForGrid')) {
+                                } elseif (method_exists($def, 'getDataForGrid')) {
                                     $tempData = $def->getDataForGrid($valueObject->value, $object, $params);
                                 } else {
                                     continue;
                                 }
-
 
                                 if ($def instanceof ClassDefinition\Data\Localizedfields) {
                                     $needLocalizedPermissions = true;
