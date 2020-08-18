@@ -579,6 +579,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
             @trigger_error('Listings should implement Countable interface', E_USER_DEPRECATED);
             return 0;
         }
-        return $this->getDao()->getTotalCount();
+        return $dao->getTotalCount();
     }
 }
