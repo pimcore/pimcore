@@ -44,6 +44,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     const OBJECT_CHILDREN_SORT_BY_DEFAULT = 'key';
     const OBJECT_CHILDREN_SORT_BY_INDEX = 'index';
+    const OBJECT_CHILDREN_SORT_ORDER_DEFAULT = 'ASC';
 
     /**
      * @var bool
@@ -176,7 +177,14 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     protected $o_childrenSortBy;
 
-    /** @var int */
+    /**
+     * @var string
+     */
+    protected $o_childrenSortOrder;
+
+    /**
+     * @var int
+     */
     protected $o_versionCount = 0;
 
     /**
@@ -417,7 +425,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setUnpublished($includingUnpublished);
             $list->setCondition('o_parentId = ?', $this->getId());
             $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
-            $list->setOrder('asc');
+            $list->setOrder($this->getChildrenSortOrder());
             $list->setObjectTypes($objectTypes);
             $this->o_children[$cacheKey] = $list->load();
             $this->o_hasChildren[$cacheKey] = (bool) count($this->o_children[$cacheKey]);
@@ -1465,6 +1473,27 @@ class AbstractObject extends Model\Element\AbstractElement
         $cacheKey = $objectTypes . (!empty($includingUnpublished) ? '_' : '') . (string)$includingUnpublished;
 
         return $cacheKey;
+    }
+
+    /**
+     * @param string | null $o_reverseSort
+     *
+     * @return AbstractObject
+     */
+    public function setChildrenSortOrder(?string $o_reverseSort): Element\ElementInterface
+    {
+        $this->o_childrenSortOrder = $o_reverseSort;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChildrenSortOrder(): string
+    {
+        return $this->o_childrenSortOrder ?? self::OBJECT_CHILDREN_SORT_ORDER_DEFAULT;
+
     }
 
     /**

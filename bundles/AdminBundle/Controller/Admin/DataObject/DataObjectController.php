@@ -182,11 +182,15 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $childsList->setCondition($condition);
             $childsList->setLimit($limit);
             $childsList->setOffset($offset);
+
             if ($object->getChildrenSortBy() === 'index') {
                 $childsList->setOrderKey('objects.o_index ASC', false);
             } else {
                 $childsList->setOrderKey(
-                    sprintf('CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci ASC', $object->getChildrenSortBy()),
+                    sprintf(
+                        'CAST(objects.o_%s AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci %s',
+                        $object->getChildrenSortBy(), $object->getChildrenSortOrder() ?? 'ASC'
+                    ),
                     false
                 );
             }
@@ -224,6 +228,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             'objects' => $objects,
         ]);
         $eventDispatcher->dispatch(AdminEvents::OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
+
         $objects = $event->getArgument('objects');
 
         if ($limit) {
@@ -247,14 +252,16 @@ class DataObjectController extends ElementControllerBase implements EventedContr
      *
      * @return array
      */
-    protected function getTreeNodeConfig($element)
+    protected function getTreeNodeConfig($element): array
     {
         $child = $element;
 
         $tmpObject = [
             'id' => $child->getId(),
             'idx' => intval($child->getIndex()),
+            'key' => $child->getKey(),
             'sortBy' => $child->getChildrenSortBy(),
+            'sortOrder' => $child->getChildrenSortOrder(),
             'text' => htmlspecialchars($child->getKey()),
             'type' => $child->getType(),
             'path' => $child->getRealFullPath(),
@@ -996,6 +1003,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $object = DataObject::getById($request->get('id'));
         if ($object) {
             $object->setChildrenSortBy($request->get('sortBy'));
+            $object->setChildrenSortOrder($request->get('childrenSortOrder'));
             $object->save();
 
             return $this->json(['success' => true]);
