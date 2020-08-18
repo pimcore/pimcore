@@ -1248,7 +1248,6 @@ class AbstractObject extends Model\Element\AbstractElement
 
     public function __sleep()
     {
-        $finalVars = [];
         $parentVars = parent::__sleep();
 
         $blockedVars = ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
@@ -1262,13 +1261,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $blockedVars = array_merge($blockedVars, ['o_children', 'o_properties']);
         }
 
-        foreach ($parentVars as $key) {
-            if (!in_array($key, $blockedVars)) {
-                $finalVars[] = $key;
-            }
-        }
-
-        return $finalVars;
+        return array_diff($parentVars, $blockedVars);
     }
 
     public function __wakeup()
