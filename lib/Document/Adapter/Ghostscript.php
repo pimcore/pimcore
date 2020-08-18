@@ -27,6 +27,11 @@ class Ghostscript extends Adapter
     protected $path;
 
     /**
+     * @var float|null
+     */
+    private $version = null;
+
+    /**
      * @return bool
      */
     public function isAvailable()
@@ -176,11 +181,11 @@ class Ghostscript extends Adapter
      */
     protected function getVersion()
     {
-        if (! $this->isAvailable()) {
-            return null;
+        if (is_null($this->version)) {
+            $this->version = (float) Console::exec(self::getGhostscriptCli() . ' --version');
         }
 
-        return (float) Console::exec(self::getGhostscriptCli() . ' --version');
+        return $this->version;
     }
 
     /**
