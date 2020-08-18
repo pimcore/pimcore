@@ -15,7 +15,7 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Tests\Unit\Notification\Service;
+namespace Pimcore\Tests\Service\Notification\Service;
 
 use Pimcore\Model\Notification\Service\NotificationService;
 use Pimcore\Model\User;
