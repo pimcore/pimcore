@@ -599,7 +599,7 @@ pimcore.element.selector.object = Class.create(pimcore.element.selector.abstract
         this.pagingtoolbar.moveFirst();
     },
 
-    createGrid: function (fromConfig, response, settings, save) {
+    createGrid: function (fromConfig, response, settings, save, context) {
         var selectedClass = this.classChangeCombo.getValue();
 
         this.initClassStore(selectedClass,response, save);

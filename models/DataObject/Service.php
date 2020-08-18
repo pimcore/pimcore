@@ -293,6 +293,7 @@ class Service extends Model\Element\Service
     public static function gridObjectData($object, $fields = null, $requestedLanguage = null, $params = [])
     {
         $data = Element\Service::gridElementData($object);
+        $csvMode = $params['csvMode'] ?? false;
 
         if ($object instanceof Concrete) {
             $context = ['object' => $object,
@@ -388,7 +389,7 @@ class Service extends Model\Element\Service
                             $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey, $def, $context, $brickDescriptor);
                             $data['inheritedFields'][$dataKey] = ['inherited' => $valueObject->objectid != $object->getId(), 'objectid' => $valueObject->objectid];
 
-                            if (method_exists($def, 'getDataForGrid')) {
+                            if ($csvMode || method_exists($def, 'getDataForGrid')) {
                                 if ($brickKey) {
                                     $context['containerType'] = 'objectbrick';
                                     $context['containerKey'] = $brickType;
@@ -400,7 +401,15 @@ class Service extends Model\Element\Service
                                     $params['purpose'] = 'gridview';
                                 }
 
-                                $tempData = $def->getDataForGrid($valueObject->value, $object, $params);
+                                if ($csvMode) {
+                                    $getterParams = ['language' => $requestedLanguage];
+                                    $tempData = $def->getForCsvExport($object, $getterParams);
+                                } else if (method_exists($def, 'getDataForGrid')) {
+                                    $tempData = $def->getDataForGrid($valueObject->value, $object, $params);
+                                } else {
+                                    continue;
+                                }
+
 
                                 if ($def instanceof ClassDefinition\Data\Localizedfields) {
                                     $needLocalizedPermissions = true;
