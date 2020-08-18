@@ -213,16 +213,11 @@ abstract class AbstractModel implements ModelInterface
      */
     public function __sleep()
     {
-        $finalVars = [];
         $blockedVars = ['dao', 'o_dirtyFields'];
-        $vars = get_object_vars($this);
-        foreach ($vars as $key => $value) {
-            if (!in_array($key, $blockedVars)) {
-                $finalVars[] = $key;
-            }
-        }
 
-        return $finalVars;
+        $vars = get_object_vars($this);
+
+        return array_diff(array_keys($vars), $blockedVars);
     }
 
     /**
