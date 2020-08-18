@@ -133,7 +133,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->insertOrUpdate(self::TABLE_NAME, $data, ['id' => $this->model->getId()]);
+        $this->db->insertOrUpdate(self::TABLE_NAME, $data);
     }
 
     /**

@@ -30,7 +30,7 @@ class QuantityValue implements OwnerAwareFieldInterface
     protected $value;
 
     /**
-     * @var int
+     * @var string
      */
     protected $unitId;
 
@@ -61,7 +61,7 @@ class QuantityValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @param int $unitId
+     * @param string $unitId
      */
     public function setUnitId($unitId)
     {
@@ -71,7 +71,7 @@ class QuantityValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function getUnitId()
     {
