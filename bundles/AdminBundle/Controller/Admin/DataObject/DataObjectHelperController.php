@@ -662,7 +662,7 @@ class DataObjectHelperController extends AdminController
             'sharedConfigs' => $sharedConfigs,
             'context' => $context,
             'sqlFilter' => $gridConfig['sqlFilter'] ?? '',
-            'searchFilter' => $gridConfig['searchFilter'] ?? ''
+            'searchFilter' => $gridConfig['searchFilter'] ?? '',
         ];
     }
 
