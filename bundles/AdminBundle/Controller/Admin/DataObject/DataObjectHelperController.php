@@ -660,7 +660,7 @@ class DataObjectHelperController extends AdminController
             'pageSize' => $gridConfig['pageSize'] ?? false,
             'availableConfigs' => $availableConfigs,
             'sharedConfigs' => $sharedConfigs,
-            'context' => $context
+            'context' => $context,
             'sqlFilter' => $gridConfig['sqlFilter'] ?? '',
             'searchFilter' => $gridConfig['searchFilter'] ?? ''
         ];
