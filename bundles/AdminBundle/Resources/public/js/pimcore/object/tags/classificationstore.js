@@ -149,7 +149,7 @@ pimcore.object.tags.classificationstore = Class.create(pimcore.object.tags.abstr
         } else {
             var panelConf = {
                 autoScroll: true,
-                cls: "object_field",
+                cls: "object_field object_field_type_" + this.type,
                 activeTab: 0,
                 height: "auto",
                 items: [],

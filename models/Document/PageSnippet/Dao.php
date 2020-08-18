@@ -27,37 +27,37 @@ use Pimcore\Model\Version;
 abstract class Dao extends Model\Document\Dao
 {
     /**
-     * Delete all elements containing the content (tags) from the database
+     * Delete all editables containing the content (tags) from the database
      */
-    public function deleteAllElements()
+    public function deleteAllEditables()
     {
         $this->db->delete('documents_elements', ['documentId' => $this->model->getId()]);
     }
 
     /**
-     * Get all elements containing the content (tags) from the database
+     * Get all editables containing the content (tags) from the database
      *
      * @return Document\Tag[]
      */
-    public function getElements()
+    public function getEditables()
     {
-        $elementsRaw = $this->db->fetchAll('SELECT * FROM documents_elements WHERE documentId = ?', [$this->model->getId()]);
+        $editablesRaw = $this->db->fetchAll('SELECT * FROM documents_elements WHERE documentId = ?', [$this->model->getId()]);
 
-        $elements = [];
+        $editables = [];
         $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
 
-        foreach ($elementsRaw as $elementRaw) {
-            /** @var Document\Tag $element */
-            $element = $loader->build($elementRaw['type']);
-            $element->setName($elementRaw['name']);
-            $element->setDocument($this->model);
-            $element->setDataFromResource($elementRaw['data']);
+        foreach ($editablesRaw as $editableRaw) {
+            /** @var Document\Tag $editable */
+            $editable = $loader->build($editableRaw['type']);
+            $editable->setName($editableRaw['name']);
+            $editable->setDocument($this->model);
+            $editable->setDataFromResource($editableRaw['data']);
 
-            $elements[$elementRaw['name']] = $element;
-            $this->model->setElement($elementRaw['name'], $element);
+            $editables[$editableRaw['name']] = $editable;
+            $this->model->setEditable($editableRaw['name'], $editable);
         }
 
-        return $elements;
+        return $editables;
     }
 
     /**

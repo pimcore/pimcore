@@ -95,7 +95,7 @@ class PageController extends DocumentControllerBase
         $page->setParent(null);
 
         // unset useless data
-        $page->setElements(null);
+        $page->setEditables(null);
         $page->setChildren(null);
 
         $data = $page->getObjectVars();
@@ -336,16 +336,16 @@ class PageController extends DocumentControllerBase
             throw $this->createNotFoundException('Document not found');
         }
 
-        foreach ($doc->getElements() as $element) {
+        foreach ($doc->getEditables() as $editable) {
             if ($targetGroupId && $doc instanceof TargetingDocumentInterface) {
                 // remove target group specific elements
-                if (preg_match('/^' . preg_quote($doc->getTargetGroupElementPrefix($targetGroupId), '/') . '/', $element->getName())) {
-                    $doc->removeElement($element->getName());
+                if (preg_match('/^' . preg_quote($doc->getTargetGroupEditablePrefix($targetGroupId), '/') . '/', $editable->getName())) {
+                    $doc->removeEditable($editable->getName());
                 }
             } else {
                 // remove all but target group data
-                if (!preg_match('/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX, '/') . '/', $element->getName())) {
-                    $doc->removeElement($element->getName());
+                if (!preg_match('/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX, '/') . '/', $editable->getName())) {
+                    $doc->removeEditable($editable->getName());
                 }
             }
         }

@@ -501,6 +501,15 @@ class Configuration implements ConfigurationInterface
                                 ->end()
                                 ->defaultTrue()
                             ->end()
+                            ->booleanNode('disable_stack_trace')
+                                ->beforeNormalization()
+                                    ->ifString()
+                                    ->then(function ($v) {
+                                        return (bool)$v;
+                                    })
+                                ->end()
+                                ->defaultFalse()
+                            ->end()
                         ->end()
                     ->end()
                     ->scalarNode('icc_rgb_profile')
@@ -560,6 +569,15 @@ class Configuration implements ConfigurationInterface
                             ->children()
                                 ->scalarNode('days')->defaultNull()->end()
                                 ->scalarNode('steps')->defaultNull()->end()
+                                ->booleanNode('disable_stack_trace')
+                                    ->beforeNormalization()
+                                    ->ifString()
+                                        ->then(function ($v) {
+                                            return (bool)$v;
+                                        })
+                                    ->end()
+                                    ->defaultFalse()
+                                ->end()
                             ->end()
                         ->end()
                     ->end();
@@ -613,6 +631,15 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('steps')
                             ->defaultNull()
                         ->end()
+                        ->booleanNode('disable_stack_trace')
+                            ->beforeNormalization()
+                            ->ifString()
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
+                            ->end()
+                            ->defaultFalse()
+                        ->end()
                     ->end()
                 ->end()
                 ->arrayNode('error_pages')
@@ -654,6 +681,7 @@ class Configuration implements ConfigurationInterface
                             ->info('Sets naming strategy used to build editable names')
                             ->values(['legacy', 'nested'])
                             ->defaultValue('nested')
+                            ->setDeprecated('The "%node%" option is deprecated. Migrate to the new editable naming scheme!')
                         ->end()
                     ->end()
                 ->end()

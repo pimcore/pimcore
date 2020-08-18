@@ -393,17 +393,17 @@ class Data extends \Pimcore\Model\AbstractModel
                 $this->data = ' ' . $element->getHref();
             } elseif ($element instanceof Document\PageSnippet) {
                 $this->published = $element->isPublished();
-                $elements = $element->getElements();
-                if (is_array($elements) && !empty($elements)) {
-                    foreach ($elements as $tag) {
-                        if ($tag instanceof Document\Tag\TagInterface) {
+                $editables = $element->getEditables();
+                if (is_array($editables) && !empty($editables)) {
+                    foreach ($editables as $editable) {
+                        if ($editable instanceof Document\Tag\TagInterface) {
                             // areabrick elements are handled by getElementTypes()/getElements() as they return area elements as well
-                            if ($tag instanceof Document\Tag\Area || $tag instanceof Document\Tag\Areablock) {
+                            if ($editable instanceof Document\Tag\Area || $editable instanceof Document\Tag\Areablock) {
                                 continue;
                             }
 
                             ob_start();
-                            $this->data .= strip_tags($tag->frontend()).' ';
+                            $this->data .= strip_tags($editable->frontend()).' ';
                             $this->data .= ob_get_clean();
                         }
                     }

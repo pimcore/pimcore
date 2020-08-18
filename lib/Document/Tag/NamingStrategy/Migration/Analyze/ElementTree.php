@@ -26,6 +26,9 @@ use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\BuildEditabl
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\LogicException;
 use Pimcore\Model\Document;
 
+/**
+ * @deprecated
+ */
 final class ElementTree
 {
     /**

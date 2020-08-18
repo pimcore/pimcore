@@ -3268,7 +3268,8 @@
                   "PaymentProviderMpay24",
                   "PaymentProviderOGone",
                   "PaymentProviderWirecardSeamless",
-                  "PaymentProviderHeidelPay"
+                  "PaymentProviderHeidelPay",
+                  "PaymentProviderHobex"
                 ],
                 "maxItems": "",
                 "border": false,

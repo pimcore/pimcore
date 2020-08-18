@@ -55,11 +55,9 @@ trait Wrapper
     }
 
     /**
-     * @param bool $isNested
-     *
      * @throws \Exception
      */
-    public function delete(bool $isNested = false)
+    public function delete()
     {
         throw $this->getHardlinkError();
     }
