@@ -169,7 +169,8 @@ pimcore.object.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.g
                 language: language,
                 limit: 1,
                 csvMode: csvMode,
-                specificId: this.previewSettings.specificId
+                specificId: this.previewSettings.specificId,
+                context : Ext.encode(this.context)
             },
             success: function (response) {
                 let responseData = Ext.decode(response.responseText);
