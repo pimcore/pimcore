@@ -180,7 +180,8 @@ abstract class PageSnippet extends Model\Document
             if (!empty($documentsConfig['versions']['steps'])
                 || !empty($documentsConfig['versions']['days'])
                 || $setModificationDate) {
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
+                $saveStackTrace = !$documentsConfig['versions']['disable_stack_trace'];
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
             }
 
             // hook should be also called if "save only new version" is selected
