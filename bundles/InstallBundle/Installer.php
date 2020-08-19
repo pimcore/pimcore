@@ -22,6 +22,7 @@ use Doctrine\DBAL\DriverManager;
 use PDO;
 use Pimcore\Bundle\InstallBundle\Event\InstallerStepEvent;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
+use Pimcore\Bundle\InstallBundle\SystemConfig\PartialConfigWriter;
 use Pimcore\Config;
 use Pimcore\Console\Style\PimcoreStyle;
 use Pimcore\Db\Connection;
@@ -95,11 +96,6 @@ class Installer
     private $skipDatabaseConfig = false;
 
     /**
-     * @var ConfigWriter
-     */
-    private $configWriter;
-
-    /**
      * @param bool $skipDatabaseConfig
      */
     public function setSkipDatabaseConfig(bool $skipDatabaseConfig): void
@@ -126,12 +122,10 @@ class Installer
 
     public function __construct(
         LoggerInterface $logger,
-        EventDispatcherInterface $eventDispatcher,
-        ConfigWriter $configWriter = null
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
-        $this->configWriter = $configWriter ?? new ConfigWriter();
     }
 
     public function setDbCredentials(array $dbCredentials = [])
@@ -366,7 +360,13 @@ class Installer
             unset($dbConfig['driverOptions']);
         }
 
-        $this->createConfigFiles([
+        $configWriter = new PartialConfigWriter(
+            new ConfigWriter(),
+            // Skip 'writeDbConfig' if opted out
+            $this->skipDatabaseConfig ? ['writeDbConfig'] : []
+        );
+
+        $configWriter->createConfigFiles([
             'doctrine' => [
                 'dbal' => [
                   'connections' => [
@@ -559,17 +559,6 @@ class Installer
             $stdErr->note('Installing assets failed. Please run the following command manually:');
             $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
         }
-    }
-
-    public function createConfigFiles(array $config)
-    {
-        if (!$this->skipDatabaseConfig) {
-            $this->configWriter->writeDbConfig($config);
-        }
-
-        $this->configWriter->writeSystemConfig();
-        $this->configWriter->writeDebugModeConfig();
-        $this->configWriter->generateParametersFile();
     }
 
     private function clearKernelCacheDir(KernelInterface $kernel)

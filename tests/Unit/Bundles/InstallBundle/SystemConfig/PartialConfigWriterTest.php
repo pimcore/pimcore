@@ -1,16 +1,14 @@
 <?php
 
-namespace Pimcore\Tests\Unit\Bundles\InstallBundle;
+namespace Pimcore\Tests\Unit\Bundles\InstallBundle\SystemConfig;
 
 use PHPUnit\Framework\TestCase;
-use Pimcore\Bundle\InstallBundle\Installer;
 use Pimcore\Bundle\InstallBundle\SystemConfig\ConfigWriter;
+use Pimcore\Bundle\InstallBundle\SystemConfig\PartialConfigWriter;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class InstallerTest extends TestCase
+class PartialConfigWriterTest extends TestCase
 {
     /**
      * @var ConfigWriter|ObjectProphecy
@@ -18,22 +16,17 @@ class InstallerTest extends TestCase
     private $configWriter;
 
     /**
-     * @var Installer
+     * @var PartialConfigWriter
      */
-    private $installer;
+    private $partialConfigWriter;
 
     protected function setUp()
     {
         parent::setUp();
 
-        $logger = $this->prophesize(LoggerInterface::class);
-        $eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
-
         $this->configWriter = $this->prophesize(ConfigWriter::class);
 
-        $this->installer = new Installer(
-            $logger->reveal(),
-            $eventDispatcher->reveal(),
+        $this->partialConfigWriter = new PartialConfigWriter(
             $this->configWriter->reveal()
         );
     }
@@ -43,11 +36,14 @@ class InstallerTest extends TestCase
      *
      * @test
      */
-    public function installer_skips_database_connection_setup_if_configured(): void
+    public function writer_skips_database_connection_setup_if_configured(): void
     {
         // Opt out of writing database config.
-        $this->installer->setSkipDatabaseConfig(true);
-        $this->installer->createConfigFiles([]);
+        $this->partialConfigWriter = new PartialConfigWriter(
+            $this->configWriter->reveal(),
+            ['writeDbConfig']
+        );
+        $this->partialConfigWriter->createConfigFiles([]);
 
         // Ensure that database config file has not been written.
         $this->configWriter->writeDbConfig(Argument::any())->shouldNotHaveBeenCalled();
@@ -59,14 +55,14 @@ class InstallerTest extends TestCase
     }
 
     /**
-     * Ensure that installer writes database config files by default.
+     * Ensure that writer creates database config files by default.
      *
      * @test
      */
-    public function installer_writes_database_config_by_default(): void
+    public function writer_writes_database_config_by_default(): void
     {
         $dbConfig = [];
-        $this->installer->createConfigFiles($dbConfig);
+        $this->partialConfigWriter->createConfigFiles($dbConfig);
 
         // Ensure that database config file has been written.
         $this->configWriter->writeDbConfig($dbConfig)->shouldHaveBeenCalled();
