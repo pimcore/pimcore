@@ -150,10 +150,16 @@ class InstallCommandTest extends TestCase
      */
     private function symlink(string $link, string $target): void
     {
+        // Drop link / file if it already exists.
+        if (is_file($link)) {
+            unlink($link);
+        }
+
         $dir = dirname($link);
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
+
         symlink(
             $target,
             $link
