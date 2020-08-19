@@ -86,8 +86,7 @@ class InstallCommandTest extends TestCase
         self::assertFileExists($dbConfigFile);
 
         // Ensure that local database config file is not created when opted out.
-        unlink($systemFile);
-        unlink($dbConfigFile);
+        $this->filesystem->remove([$systemFile, $dbConfigFile]);
 
         $this->assertInstallerCommandRunsSuccessfully(['--skip-database-config' => true]);
 
