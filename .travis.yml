@@ -170,8 +170,8 @@ jobs:
         directories:
           - tmp-docs/pimcore-docs/vendor
 
-    # Test Installer
-    - name: "All Tests - PHP 7.4 | Symfony 3.4 | MySQL 5.7"
+    # Test only installer command
+    - name: "Installer tests - PHP 7.4 | Symfony 3.4 | MySQL 5.7"
       os: linux
       sudo: required
       php: 7.4
