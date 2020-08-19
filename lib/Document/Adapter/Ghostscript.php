@@ -27,6 +27,11 @@ class Ghostscript extends Adapter
     protected $path;
 
     /**
+     * @var float|null
+     */
+    private $version = null;
+
+    /**
      * @return bool
      */
     public function isAvailable()
@@ -141,14 +146,47 @@ class Ghostscript extends Adapter
      */
     public function getPageCount()
     {
-        $pages = Console::exec(self::getGhostscriptCli() . " -dNODISPLAY -q -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'", null, 120);
+        $pages = Console::exec($this->buildPageCountCommand(), null, 120);
         $pages = trim($pages);
 
-        if (!is_numeric($pages)) {
+        if (! is_numeric($pages)) {
             throw new \Exception('Unable to get page-count of ' . $this->path);
         }
 
-        return (int)$pages;
+        return (int) $pages;
+    }
+
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    protected function buildPageCountCommand()
+    {
+        $command = self::getGhostscriptCli() . " -dNODISPLAY -q";
+
+        // Adding permit-file-read flag to prevent issue with Ghostscript's SAFER mode which is enabled by default as of version 9.50.
+        if ($this->getVersion() >= 9.50) {
+            $command .= " --permit-file-read='" . $this->path . "'";
+        }
+
+        $command .= " -c '(" . $this->path . ") (r) file runpdfbegin pdfpagecount = quit'";
+
+        return $command;
+    }
+
+    /**
+     * Get the version of the installed Ghostscript CLI.
+     *
+     * @return float
+     * @throws \Exception
+     */
+    protected function getVersion()
+    {
+        if (is_null($this->version)) {
+            $this->version = (float) Console::exec(self::getGhostscriptCli() . ' --version');
+        }
+
+        return $this->version;
     }
 
     /**
