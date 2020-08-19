@@ -96,10 +96,7 @@ class InstallCommandTest extends TestCase
 
     protected function tearDown(): void
     {
-        // Clean up the symlink for migrations.
-        $this->filesystem->remove(PIMCORE_PROJECT_ROOT.'/vendor/pimcore/pimcore/bundles/CoreBundle/Migrations');
-
-        // Restore system files.
+        // Restore disposed system files.
         array_map(
             [$this, 'restoreFile'],
             [

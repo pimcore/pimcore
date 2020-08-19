@@ -19,8 +19,9 @@ class PartialConfigWriter
     /**
      * Allows configuring which of the config files should be written.
      *
-     * @param ConfigWriter $configWriter
-     * @param array $skip
+     * @param ConfigWriter  $configWriter
+     * @param array         $skip           array of method names in config writer to skip.
+     *                                      Currently only skipping 'writeDbConfig' is implemented.
      */
     public function __construct(ConfigWriter $configWriter, array $skip = [])
     {
@@ -28,6 +29,11 @@ class PartialConfigWriter
         $this->skip = $skip;
     }
 
+    /**
+     * Creates all system config files. If configured writing DB config is skipped.
+     *
+     * @param array $config
+     */
     public function createConfigFiles(array $config)
     {
         if (!in_array('writeDbConfig', $this->skip, true)) {
