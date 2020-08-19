@@ -63,15 +63,15 @@ class InstallerTest extends TestCase
      *
      * @test
      */
-    public function installer_wries_database_config_by_default(): void
+    public function installer_writes_database_config_by_default(): void
     {
         $dbConfig = [];
         $this->installer->createConfigFiles($dbConfig);
 
-        // Ensure that database config file has not been written.
+        // Ensure that database config file has been written.
         $this->configWriter->writeDbConfig($dbConfig)->shouldHaveBeenCalled();
 
-        // Make sure other config types have been written.
+        // Make sure other config types have been written also.
         $this->configWriter->writeSystemConfig()->shouldHaveBeenCalled();
         $this->configWriter->writeDebugModeConfig()->shouldHaveBeenCalled();
         $this->configWriter->generateParametersFile()->shouldHaveBeenCalled();
