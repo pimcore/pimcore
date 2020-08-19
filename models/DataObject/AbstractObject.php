@@ -1493,7 +1493,6 @@ class AbstractObject extends Model\Element\AbstractElement
     public function getChildrenSortOrder(): string
     {
         return $this->o_childrenSortOrder ?? self::OBJECT_CHILDREN_SORT_ORDER_DEFAULT;
-
     }
 
     /**

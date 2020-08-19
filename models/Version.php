@@ -179,8 +179,7 @@ class Version extends AbstractModel
         }
 
         // get stack trace, if enabled
-        if ($this->getGenerateStackTrace())
-        {
+        if ($this->getGenerateStackTrace()) {
             try {
                 throw new \Exception('not a real exception ... ;-)');
             } catch (\Exception $e) {
@@ -792,5 +791,4 @@ class Version extends AbstractModel
     {
         return $this->stackTrace;
     }
-
 }
