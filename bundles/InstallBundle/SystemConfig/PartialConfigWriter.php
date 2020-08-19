@@ -42,7 +42,7 @@ class PartialConfigWriter
     /**
      * @return True if config type should be skipped, False - otherwise.
      */
-    private function skip(string $configType): bool
+    private function skip(string $configType)
     {
         return in_array($configType, $this->skip, true);
     }
