@@ -30,20 +30,12 @@ class PartialConfigWriter
 
     public function createConfigFiles(array $config)
     {
-        if (!$this->skip('writeDbConfig')) {
+        if (!in_array('writeDbConfig', $this->skip, true)) {
             $this->configWriter->writeDbConfig($config);
         }
 
         $this->configWriter->writeSystemConfig();
         $this->configWriter->writeDebugModeConfig();
         $this->configWriter->generateParametersFile();
-    }
-
-    /**
-     * @return True if config type should be skipped, False - otherwise.
-     */
-    private function skip(string $configType)
-    {
-        return in_array($configType, $this->skip, true);
     }
 }
