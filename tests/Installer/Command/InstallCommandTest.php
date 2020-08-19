@@ -10,6 +10,7 @@ use Pimcore\Db;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Tests\Test\TestCase;
 use Symfony\Component\Console\Tester\ApplicationTester;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * This test covers InstallCommand from the installer bundle. The real command is instantiated
@@ -38,8 +39,8 @@ class InstallCommandTest extends TestCase
         // that is configured in the config file.
         // @See bundles/CoreBundle/Resources/config/pimcore/default.yml:269
         $this->symlink(
-            PIMCORE_PROJECT_ROOT."/vendor/pimcore/pimcore/bundles/CoreBundle/Migrations",
-            PIMCORE_PROJECT_ROOT.'/bundles/CoreBundle/Migrations'
+            PIMCORE_PROJECT_ROOT.'/bundles/CoreBundle/Migrations',
+            PIMCORE_PROJECT_ROOT."/vendor/pimcore/pimcore/bundles/CoreBundle/Migrations"
         );
 
         // These are the files that installer creates during installation. We throw them into a
@@ -140,28 +141,33 @@ class InstallCommandTest extends TestCase
      */
     private function restoreFile(string $filePath): void
     {
-        if (is_file($filePath.'.backup')) {
-            rename($filePath.'.backup', $filePath);
+        $backupFile = "{$filePath}.backup";
+        if (is_file($backupFile) || is_dir($backupFile)) {
+            rename($backupFile, $filePath);
         }
     }
 
     /**
      * Creates a symlink ($link) for a $target. If the link folder does not exist it will be
      * recursively craeted.
+     * @param string $src
+     * @param string $dst
      */
-    private function symlink(string $link, string $target): void
+    private function symlink(string $src, string $dst): void
     {
         // Drop link / file if it already exists.
-        if (is_dir($link) || is_file($link)) {
-            $this->disposeFile($link);
+        if (is_link($dst) || is_file($dst)) {
+            unlink($dst);
         }
 
-        $dir = dirname($link);
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
+        // Dispose file or dir if it already exists.
+        if (is_dir($dst) || is_file($dst)) {
+            $this->disposeFile($dst);
         }
 
-        symlink($target, $link);
+        $filesystem = new Filesystem();
+        $filesystem->mkdir(dirname($dst));
+        $filesystem->mirror($src, $dst);
     }
 
     /**
