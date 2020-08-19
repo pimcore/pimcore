@@ -28,9 +28,15 @@ class InstallCommandTest extends TestCase
      */
     private $db;
 
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
+
     protected function setUp(): void
     {
         parent::setUp();
+        $this->filesystem = new Filesystem();
 
         // Installer needs access to pimcore core migrations. Migrations paths are configured in
         // such way that they can only be executed when pimcore is in vendor folder. In our case
@@ -38,7 +44,7 @@ class InstallCommandTest extends TestCase
         // around this issue we create a symlink to the correct migrations folder under the path
         // that is configured in the config file.
         // @See bundles/CoreBundle/Resources/config/pimcore/default.yml:269
-        $this->symlink(
+        $this->installMigrations(
             PIMCORE_PROJECT_ROOT.'/bundles/CoreBundle/Migrations',
             PIMCORE_PROJECT_ROOT."/vendor/pimcore/pimcore/bundles/CoreBundle/Migrations"
         );
@@ -92,7 +98,7 @@ class InstallCommandTest extends TestCase
     protected function tearDown(): void
     {
         // Clean up the symlink for migrations.
-        unlink(PIMCORE_PROJECT_ROOT.'/vendor/pimcore/pimcore/bundles/CoreBundle/Migrations');
+        $this->filesystem->remove(PIMCORE_PROJECT_ROOT.'/vendor/pimcore/pimcore/bundles/CoreBundle/Migrations');
 
         // Restore system files.
         array_map(
@@ -129,9 +135,7 @@ class InstallCommandTest extends TestCase
      */
     private function disposeFile(string $filePath): void
     {
-        if (is_file($filePath)) {
-            rename($filePath, $filePath.'.backup');
-        }
+        $this->moveIfExits($filePath, $this->createBackupFileName($filePath));
     }
 
     /**
@@ -141,10 +145,7 @@ class InstallCommandTest extends TestCase
      */
     private function restoreFile(string $filePath): void
     {
-        $backupFile = "{$filePath}.backup";
-        if (is_file($backupFile) || is_dir($backupFile)) {
-            rename($backupFile, $filePath);
-        }
+        $this->moveIfExits($this->createBackupFileName($filePath), $filePath);
     }
 
     /**
@@ -153,21 +154,11 @@ class InstallCommandTest extends TestCase
      * @param string $src
      * @param string $dst
      */
-    private function symlink(string $src, string $dst): void
+    private function installMigrations(string $src, string $dst): void
     {
-        // Drop link / file if it already exists.
-        if (is_link($dst) || is_file($dst)) {
-            unlink($dst);
-        }
-
-        // Dispose file or dir if it already exists.
-        if (is_dir($dst) || is_file($dst)) {
-            $this->disposeFile($dst);
-        }
-
-        $filesystem = new Filesystem();
-        $filesystem->mkdir(dirname($dst));
-        $filesystem->mirror($src, $dst);
+        $this->disposeFile($dst);
+        $this->filesystem->mkdir(dirname($dst));
+        $this->filesystem->mirror($src, $dst);
     }
 
     /**
@@ -196,5 +187,28 @@ class InstallCommandTest extends TestCase
         self::assertStringNotContainsString('ERROR', $output);
 
         return $output;
+    }
+
+    /**
+     * @param string $filePath
+     * @return string
+     */
+    private function createBackupFileName(string $filePath): string
+    {
+        return "/tmp{$filePath}.backup";
+    }
+
+    /**
+     * @param string $source
+     * @param string $destination
+     */
+    private function moveIfExits(string $source, string $destination): void
+    {
+        if ($this->filesystem->exists($source)) {
+            is_dir($source)
+                ? $this->filesystem->mirror($source, $destination)
+                : $this->filesystem->copy($source, $destination);
+            $this->filesystem->remove($source);
+        }
     }
 }
