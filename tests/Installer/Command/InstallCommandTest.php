@@ -99,6 +99,7 @@ class InstallCommandTest extends TestCase
             [
                 Config::locateConfigFile('system.yml'),
                 PIMCORE_APP_ROOT.'/config/local/database.yml',
+                PIMCORE_PROJECT_ROOT.'/vendor/pimcore/pimcore/bundles/CoreBundle/Migrations',
             ]
         );
 
@@ -151,8 +152,8 @@ class InstallCommandTest extends TestCase
     private function symlink(string $link, string $target): void
     {
         // Drop link / file if it already exists.
-        if (is_file($link)) {
-            unlink($link);
+        if (is_dir($link) || is_file($link)) {
+            $this->disposeFile($link);
         }
 
         $dir = dirname($link);
@@ -160,10 +161,7 @@ class InstallCommandTest extends TestCase
             mkdir($dir, 0777, true);
         }
 
-        symlink(
-            $target,
-            $link
-        );
+        symlink($target, $link);
     }
 
     /**
