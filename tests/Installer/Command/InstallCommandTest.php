@@ -145,8 +145,8 @@ class InstallCommandTest extends TestCase
     }
 
     /**
-     * Creates a symlink ($link) for a $target. If the link folder does not exist it will be
-     * recursively craeted.
+     * Mirrors the $src dir to the $dst dir (creates a backup of $dst first).
+     *
      * @param string $src
      * @param string $dst
      */
