@@ -1791,7 +1791,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objects = [];
             foreach ($list->getObjects() as $object) {
                 if($csvMode){
-                    $helperDefinitions = DataObject\Service::getHelperDefinitions();
                     $o = DataObject\Service::getCsvDataForObject($object,$requestedLanguage,$request->get('fields'),DataObject\Service::getHelperDefinitions(),$localeService,false,$allParams['context']);
                 }else{
                     $o = DataObject\Service::gridObjectData($object, $allParams['fields'] ?? null, $requestedLanguage,
