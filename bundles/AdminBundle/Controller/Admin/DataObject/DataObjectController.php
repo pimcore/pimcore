@@ -1594,6 +1594,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $allParams = array_merge($request->request->all(), $request->query->all());
         $csvMode = $allParams['csvMode'] ?? false;
 
+        if($allParams['context']){
+            $allParams['context'] = json_decode($allParams['context'],true);
+        }else{
+            $allParams['context'] = [];
+        }
+
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams,
         ]);
@@ -1784,8 +1790,13 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $objects = [];
             foreach ($list->getObjects() as $object) {
-                $o = DataObject\Service::gridObjectData($object, $allParams['fields'] ?? null, $requestedLanguage,
-                    ['csvMode' => $csvMode]);
+                if($csvMode){
+                    $o = DataObject\Service::getCsvDataForObject($object,$requestedLanguage,$request->get('fields'),DataObject\Service::getHelperDefinitions(),$localeService,false,$allParams['context']);
+                }else{
+                    $o = DataObject\Service::gridObjectData($object, $allParams['fields'] ?? null, $requestedLanguage,
+                        ['csvMode' => $csvMode]);
+                }
+
                 // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_object is insufficient and could lead security breach
                 if ($object->isAllowed('list')) {
                     $objects[] = $o;
