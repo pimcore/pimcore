@@ -160,6 +160,19 @@ class Tag extends Model\AbstractModel
         return $tag->getDao()->getElementsForTag($tag, $type, $subtypes, $classNames, $considerChildTags);
     }
 
+    /**
+     * @param string $path name path of tags
+     *
+     * @return Tag|null
+     */
+    public static function getByPath($path) {
+        try {
+            return (new self)->getDao()->getByPath($path);
+        } catch(\Exception $e) {
+            return null;
+        }
+    }
+
     public function save()
     {
         $this->correctPath();
@@ -276,7 +289,12 @@ class Tag extends Model\AbstractModel
 
         $parentNames = array_reverse($parentNames);
 
-        return '/' . implode('/', $parentNames) . '/';
+        return '/' . implode('/', $parentNames);
+    }
+
+    public function __toString()
+    {
+        return $this->getNamePath();
     }
 
     /**
