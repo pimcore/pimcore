@@ -363,7 +363,7 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         $className = DataObject::class;
         // get classname
-        if (!in_array(static::class, [__CLASS__, Concrete::class], true)) {
+        if (!in_array(static::class, [__CLASS__, Concrete::class, Folder::class], true)) {
             /** @var Concrete $tmpObject */
             $tmpObject = new static();
             $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
