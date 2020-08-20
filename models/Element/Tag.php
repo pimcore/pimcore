@@ -160,8 +160,17 @@ class Tag extends Model\AbstractModel
         return $tag->getDao()->getElementsForTag($tag, $type, $subtypes, $classNames, $considerChildTags);
     }
 
+    /**
+     * @param string $path
+     *
+     * @return Tag|null
+     */
     public static function getByPath($path) {
-        return (new self)->getDao()->getByPath($path);
+        try {
+            return (new self)->getDao()->getByPath($path);
+        } catch(\Exception $e) {
+            return null;
+        }
     }
 
     public function save()
