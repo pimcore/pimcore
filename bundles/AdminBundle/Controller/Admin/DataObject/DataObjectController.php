@@ -1594,7 +1594,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $allParams = array_merge($request->request->all(), $request->query->all());
         $csvMode = $allParams['csvMode'] ?? false;
 
-        if($allParams['context']){
+        if(isset($allParams['context']) && $allParams['context']){
             $allParams['context'] = json_decode($allParams['context'],true);
         }else{
             $allParams['context'] = [];
