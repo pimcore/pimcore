@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use DataObject\Traits\DefaultValueTrait;
+    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     use Extension\ColumnType;
     use Extension\QueryColumnType;
