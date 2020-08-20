@@ -104,12 +104,12 @@ abstract class AbstractRelations extends Data implements
             }
         }
 
-        $db = Db::get();
-
         $data = $this->getDataFromObjectParam($object, $params);
         $relations = $this->prepareDataForPersistence($data, $object, $params);
 
         if (is_array($relations) && !empty($relations)) {
+            $db = Db::get();
+
             foreach ($relations as $relation) {
                 $this->enrichDataRow($object, $params, $classId, $relation);
 
