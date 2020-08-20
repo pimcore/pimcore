@@ -17,8 +17,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
-use Pimcore\Logger;
-
 /**
  * @internal not for public use
  */
@@ -27,12 +25,13 @@ trait NullablePhpdocReturnTypeTrait
     /**
      * @return string|null
      */
-    public function getPhpdocReturnType(): ?string {
+    public function getPhpdocReturnType(): ?string
+    {
         if ($this->phpdocType) {
             return $this->phpdocType . '|null';
         }
-        return null;
 
+        return null;
     }
 
     /**
@@ -46,7 +45,4 @@ trait NullablePhpdocReturnTypeTrait
 
         return null;
     }
-
-
-
 }

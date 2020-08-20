@@ -158,11 +158,12 @@ class Ghostscript extends Adapter
 
     /**
      * @return string
+     *
      * @throws \Exception
      */
     protected function buildPageCountCommand()
     {
-        $command = self::getGhostscriptCli() . " -dNODISPLAY -q";
+        $command = self::getGhostscriptCli() . ' -dNODISPLAY -q';
 
         // Adding permit-file-read flag to prevent issue with Ghostscript's SAFER mode which is enabled by default as of version 9.50.
         if ($this->getVersion() >= 9.50) {
@@ -178,6 +179,7 @@ class Ghostscript extends Adapter
      * Get the version of the installed Ghostscript CLI.
      *
      * @return float
+     *
      * @throws \Exception
      */
     protected function getVersion()
