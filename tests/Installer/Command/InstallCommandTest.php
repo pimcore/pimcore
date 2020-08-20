@@ -153,7 +153,6 @@ class InstallCommandTest extends TestCase
     private function installMigrations(string $src, string $dst): void
     {
         $this->disposeFile($dst);
-        $this->filesystem->mkdir(dirname($dst));
         $this->filesystem->mirror($src, $dst);
     }
 
