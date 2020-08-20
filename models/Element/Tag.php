@@ -161,7 +161,7 @@ class Tag extends Model\AbstractModel
     }
 
     /**
-     * @param string $path
+     * @param string $path name path of tags
      *
      * @return Tag|null
      */
