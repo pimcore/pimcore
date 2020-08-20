@@ -302,6 +302,7 @@ class Dao extends Model\Dao\AbstractDao
         $parentTagId = 0;
 
         $tag = null;
+        $tagPath = ltrim($tagPath, '/');
         foreach (explode('/', $tagPath) as $tagItem) {
             $tags = new Tag\Listing();
             $tags->addConditionParam('name = ?', $tagItem);
