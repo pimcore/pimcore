@@ -37,12 +37,16 @@ class TagsController extends AdminController
      */
     public function addAction(Request $request)
     {
-        $tag = new Tag();
-        $tag->setName(strip_tags($request->get('text')));
-        $tag->setParentId(intval($request->get('parentId')));
-        $tag->save();
+        try {
+            $tag = new Tag();
+            $tag->setName(strip_tags($request->get('text')));
+            $tag->setParentId(intval($request->get('parentId')));
+            $tag->save();
 
-        return $this->adminJson(['success' => true, 'id' => $tag->getId()]);
+            return $this->adminJson(['success' => true, 'id' => $tag->getId()]);
+        } catch (\Exception $e) {
+            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+        }
     }
 
     /**
