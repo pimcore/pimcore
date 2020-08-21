@@ -165,10 +165,11 @@ class Tag extends Model\AbstractModel
      *
      * @return Tag|null
      */
-    public static function getByPath($path) {
+    public static function getByPath($path)
+    {
         try {
             return (new self)->getDao()->getByPath($path);
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }

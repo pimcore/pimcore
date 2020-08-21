@@ -298,7 +298,8 @@ class Dao extends Model\Dao\AbstractDao
      *
      * @return null|Tag
      */
-    public function getByPath($tagPath) {
+    public function getByPath($tagPath)
+    {
         $parentTagId = 0;
 
         $tag = null;
