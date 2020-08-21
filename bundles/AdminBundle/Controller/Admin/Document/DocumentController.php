@@ -95,6 +95,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
 
         $document = clone $document;
         $data = $document->getObjectVars();
+        $data['versionDate'] = $document->getModificationDate();
 
         $data['php'] = [
             'classes' => array_merge([get_class($document)], array_values(class_parents($document))),
