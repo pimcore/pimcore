@@ -1594,9 +1594,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $allParams = array_merge($request->request->all(), $request->query->all());
         $csvMode = $allParams['csvMode'] ?? false;
 
-        if(isset($allParams['context']) && $allParams['context']){
-            $allParams['context'] = json_decode($allParams['context'],true);
-        }else{
+        if (isset($allParams['context']) && $allParams['context']) {
+            $allParams['context'] = json_decode($allParams['context'], true);
+        } else {
             $allParams['context'] = [];
         }
 
@@ -1790,9 +1790,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
 
             $objects = [];
             foreach ($list->getObjects() as $object) {
-                if($csvMode){
-                    $o = DataObject\Service::getCsvDataForObject($object,$requestedLanguage,$request->get('fields'),DataObject\Service::getHelperDefinitions(),$localeService,false,$allParams['context']);
-                }else{
+                if ($csvMode) {
+                    $o = DataObject\Service::getCsvDataForObject($object, $requestedLanguage, $request->get('fields'), DataObject\Service::getHelperDefinitions(), $localeService, false, $allParams['context']);
+                } else {
                     $o = DataObject\Service::gridObjectData($object, $allParams['fields'] ?? null, $requestedLanguage,
                         ['csvMode' => $csvMode]);
                 }
