@@ -123,3 +123,29 @@ Settings for outbound HTTP connectivity of Pimcore - needed e.g. for Pimcore Upd
 Possibility for configuring different newsletter delivery settings from the default e-mail settings.
  
  
+## Access system config in PHP Controller
+Using \Pimcore\Config::getSystemConfig(); is deprecated. Access the system config using the default symfony way in your controllers:
+```php 
+<?php
+
+namespace AppBundle\Controller;
+
+use Pimcore\Controller\FrontendController;
+use Symfony\Component\HttpFoundation\Request;
+
+class DefaultController extends FrontendController
+{
+ 
+    /**
+     * @param Request $request
+     */
+    public function defaultAction(Request $request)
+    {
+    
+        $pimcoreconfig = $this->getParameter('pimcore.config');
+        //Read config values like $pimcoreconfig['email']['sender']['email']
+    
+    }
+
+}
+```
