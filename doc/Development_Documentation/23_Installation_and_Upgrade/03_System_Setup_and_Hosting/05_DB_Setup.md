@@ -3,7 +3,7 @@
 Pimcore requires a standard MySQL database, the only thing you should assure is that the database uses `utf8mb4` as character set.  
 If you create a new database just set the character set to `utf8mb4`.
 
-You also might want to set `lower_case_table_names=1` to make sure that tables for pimcore classes are created in lower case even though
+You also might want to set `lower_case_table_names=1` to make sure that tables for Pimcore classes are created in lower case even though
 their class names contain capital letters.
 
 > Note: You have to create the database manually before you can continue with the web-based installer, 
