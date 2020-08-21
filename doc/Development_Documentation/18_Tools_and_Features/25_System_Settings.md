@@ -124,7 +124,8 @@ Possibility for configuring different newsletter delivery settings from the defa
  
  
 ## Access system config in PHP Controller
-Using \Pimcore\Config::getSystemConfig(); is deprecated. Access the system config using the default symfony way in your controllers:
+Using `\Pimcore\Config::getSystemConfig()` is deprecated. Access the system config using the default Symfony way in your controllers:
+
 ```php 
 <?php
 
