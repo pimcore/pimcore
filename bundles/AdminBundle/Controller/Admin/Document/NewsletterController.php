@@ -79,22 +79,23 @@ class NewsletterController extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request): JsonResponse
     {
-        $emailFromDatabase = Document\Newsletter::getById($request->get('id'));
+        $email = Document\Newsletter::getById($request->get('id'));
 
-        if (!$emailFromDatabase) {
+        if (!$email) {
             throw $this->createNotFoundException('Document not found');
         }
 
         // check for lock
-        if ($emailFromDatabase->isAllowed('save') || $emailFromDatabase->isAllowed('publish') || $emailFromDatabase->isAllowed('unpublish') || $emailFromDatabase->isAllowed('delete')) {
+        if ($email->isAllowed('save') || $email->isAllowed('publish') || $email->isAllowed('unpublish') || $email->isAllowed('delete')) {
             if (Element\Editlock::isLocked($request->get('id'), 'document')) {
                 return $this->getEditLockResponse($request->get('id'), 'document');
             }
             Element\Editlock::lock($request->get('id'), 'document');
         }
 
-        $emailFromDatabase = clone $emailFromDatabase;
-        $email = $this->getLatestVersion($emailFromDatabase);
+        $email = clone $email;
+        $isLatestVersion = true;
+        $email = $this->getLatestVersion($email, $isLatestVersion);
 
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
         $email->setVersions(array_splice($versions, -1, 1));
@@ -112,7 +113,7 @@ class NewsletterController extends DocumentControllerBase
 
         $data['url'] = $email->getUrl();
         // this used for the "this is not a published version" hint
-        $data['documentFromVersion'] = $email !== $emailFromDatabase;
+        $data['documentFromVersion'] = !$isLatestVersion;
 
         $this->preSendDataActions($data, $email);
 

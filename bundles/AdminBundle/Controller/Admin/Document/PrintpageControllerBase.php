@@ -34,22 +34,23 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function getDataByIdAction(Request $request)
     {
-        $pageFromDatabase = Document\PrintAbstract::getById($request->get('id'));
+        $page = Document\PrintAbstract::getById($request->get('id'));
 
-        if (!$pageFromDatabase) {
+        if (!$page) {
             throw $this->createNotFoundException('Document not found');
         }
 
         // check for lock
-        if ($pageFromDatabase->isAllowed('save') || $pageFromDatabase->isAllowed('publish') || $pageFromDatabase->isAllowed('unpublish') || $pageFromDatabase->isAllowed('delete')) {
+        if ($page->isAllowed('save') || $page->isAllowed('publish') || $page->isAllowed('unpublish') || $page->isAllowed('delete')) {
             if (\Pimcore\Model\Element\Editlock::isLocked($request->get('id'), 'document')) {
                 return $this->getEditLockResponse($request->get('id'), 'document');
             }
             \Pimcore\Model\Element\Editlock::lock($request->get('id'), 'document');
         }
 
-        $pageFromDatabase = clone $pageFromDatabase;
-        $page = $this->getLatestVersion($pageFromDatabase);
+        $page = clone $page;
+        $isLatestVersion = true;
+        $page = $this->getLatestVersion($page, $isLatestVersion);
 
         $page->getVersions();
         $page->getScheduledTasks();
@@ -66,7 +67,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
         $data['url'] = $page->getUrl();
         // this used for the "this is not a published version" hint
-        $data['documentFromVersion'] = $page !== $pageFromDatabase;
+        $data['documentFromVersion'] = !$isLatestVersion;
         if ($page->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $page->getContentMasterDocument()->getRealFullPath();
         }

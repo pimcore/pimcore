@@ -261,13 +261,15 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
     /**
      * @param Model\Document\PageSnippet $document
+     * @param bool $isLatestVersion
      *
      * @return Model\Document\PageSnippet
      */
-    protected function getLatestVersion(Model\Document\PageSnippet $document)
+    protected function getLatestVersion(Model\Document\PageSnippet $document, &$isLatestVersion = true)
     {
         $latestVersion = $document->getLatestVersion();
         if ($latestVersion) {
+            $isLatestVersion = false;
             $latestDoc = $latestVersion->loadData();
             if ($latestDoc instanceof Model\Document\PageSnippet) {
                 return $latestDoc;
