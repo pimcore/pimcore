@@ -14,7 +14,7 @@ their class names contain capital letters.
 While setting up the MySQL Server you can enforce `utf8mb4` character set and [lower case table names](https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_lower_case_table_names) by placing a `pimcore.cnf` file with the following contents into the server config directory (e.g. `/etc/mysql/conf.d/`). Refer to the server configuration manual applicable to your environment to determine the location of the server config directory.
 
 ```cnf
-# MySQL Server configuration for pimcore.
+# MySQL Server configuration for Pimcore.
 # @See https://dev.mysql.com/doc/refman/8.0/en/option-files.html
 # @See https://pimcore.com/docs/6.x/Development_Documentation/Installation_and_Upgrade/System_Setup_and_Hosting/DB_Setup.html
 
