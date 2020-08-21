@@ -9,7 +9,7 @@ their class names contain capital letters.
 > Note: You have to create the database manually before you can continue with the web-based installer, 
 > which automatically creates the underlying database schema for Pimcore.
 
-### Dabase server configuration
+### Database Server Configuration
 
 While setting up the MySQL Server you can enforce `utf8mb4` character set and [lover case table names](https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_lower_case_table_names) by placing a pimcore.cnf file with the following contents into the server config directory (e.g. `/etc/mysql/conf.d/`). Refer to server configuration manual applicable to your environment to determine the location of server config directory.
 
