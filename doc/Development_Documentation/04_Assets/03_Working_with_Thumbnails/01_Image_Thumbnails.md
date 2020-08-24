@@ -326,6 +326,17 @@ If you prefer not using WebP, you can disable the support by adding the followin
                 webp_auto_support: false
 ```
 
+## Clipping Support 
+Images with an embedded clipping path (8BIM / Adobe profile meta data) are automatically clipped when generating thumbnails of them. 
+    
+If you do not want to use thumbnail auto clipping, you can disable the support by adding the following config option: 
+```yml
+    assets:
+        image:
+            thumbnails:
+                clip_auto_support: false
+```
+
 #### Note on using WebP with Imagick using delegates
 Please ensure that your delegate definition for WebP encoding includes the `-q` flag, otherwise the quality 
 setting on thumbnails will not be considered and the default value of `75` is being used by `cwebp`.

@@ -25,6 +25,8 @@ use Pimcore\Tool\Cast;
 
 class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface
 {
+    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
+
     /**
      * Static type of this element
      *
