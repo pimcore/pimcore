@@ -17,22 +17,18 @@
 
 namespace Pimcore\Model;
 
-use DeepCopy\DeepCopy;
 use Pimcore\Event\Model\VersionEvent;
 use Pimcore\Event\VersionEvents;
 use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\Element\ElementDescriptor;
+use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
+use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Version\MarshalMatcher;
-use Pimcore\Model\Version\PimcoreClassDefinitionMatcher;
-use Pimcore\Model\Version\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Model\Version\SetDumpStateFilter;
-use Pimcore\Model\Version\UnmarshalMatcher;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -266,26 +262,13 @@ class Version extends AbstractModel
      */
     public function marshalData($data)
     {
-        $sourceType = Service::getType($data);
-        $sourceId = $data->getId();
+        $context = [
+            'source' => __METHOD__,
+            'conversion' => 'marshal',
+            'defaultFilter' => true,
+        ];
 
-        $copier = new DeepCopy();
-        $copier->skipUncloneable(true);
-        $copier->addTypeFilter(
-            new \DeepCopy\TypeFilter\ReplaceFilter(
-                function ($currentValue) {
-                    if ($currentValue instanceof ElementInterface) {
-                        $elementType = Service::getType($currentValue);
-                        $descriptor = new ElementDescriptor($elementType, $currentValue->getId());
-
-                        return $descriptor;
-                    }
-
-                    return $currentValue;
-                }
-            ),
-            new MarshalMatcher($sourceType, $sourceId)
-        );
+        $copier = Service::getDeepCopyInstance($data, $context);
 
         if ($data instanceof Concrete) {
             $copier->addFilter(
@@ -302,11 +285,7 @@ class Version extends AbstractModel
             );
         }
 
-        $copier->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
-        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Pimcore\Templating\Model\ViewModelInterface'));
-        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Psr\Container\ContainerInterface'));
         $copier->addFilter(new SetDumpStateFilter(true), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
-        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Pimcore\Model\DataObject\ClassDefinition'));
         $newData = $copier->copy($data);
 
         return $newData;
@@ -319,21 +298,12 @@ class Version extends AbstractModel
      */
     public function unmarshalData($data)
     {
-        $copier = new DeepCopy();
-        $copier->addTypeFilter(
-            new \DeepCopy\TypeFilter\ReplaceFilter(
-                function ($currentValue) {
-                    if ($currentValue instanceof ElementDescriptor) {
-                        $value = Service::getElementById($currentValue->getType(), $currentValue->getId());
-
-                        return $value;
-                    }
-
-                    return $currentValue;
-                }
-            ),
-            new UnmarshalMatcher()
-        );
+        $context = [
+            'source' => __METHOD__,
+            'conversion' => 'unmarshal',
+            'defaultFilters' => false,
+        ];
+        $copier = Service::getDeepCopyInstance($data, $context);
 
         if ($data instanceof Concrete) {
             $copier->addFilter(
