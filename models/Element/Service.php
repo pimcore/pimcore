@@ -1482,13 +1482,13 @@ class Service extends Model\AbstractModel
      *
      * @return DeepCopy
      */
-    public static function getDeepCopyInstance($element, $context = []): DeepCopy
+    public static function getDeepCopyInstance(?ElementInterface $element, ?array $context = []): DeepCopy
     {
         $copier = new DeepCopy();
         $copier->skipUncloneable(true);
 
         if ($element instanceof ElementInterface) {
-            if (($context['conversion'] ?? false) == 'marshal') {
+            if (($context['conversion'] ?? false) === 'marshal') {
                 $sourceType = Service::getType($element);
                 $sourceId = $element->getId();
 
@@ -1507,7 +1507,7 @@ class Service extends Model\AbstractModel
                     ),
                     new MarshalMatcher($sourceType, $sourceId)
                 );
-            } elseif (($context['conversion'] ?? false) == 'unmarshal') {
+            } elseif (($context['conversion'] ?? false) === 'unmarshal') {
                 $copier->addTypeFilter(
                     new \DeepCopy\TypeFilter\ReplaceFilter(
                         function ($currentValue) {
