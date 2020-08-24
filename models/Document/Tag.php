@@ -104,7 +104,7 @@ abstract class Tag extends Model\AbstractModel implements Model\Document\Tag\Tag
     protected $inherited = false;
 
     /**
-     * @var bool
+     * @var string
      */
     protected $inDialogBox = null;
 
