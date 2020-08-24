@@ -86,7 +86,8 @@ class PageController extends DocumentControllerBase
         }
 
         $page = clone $page;
-        $page = $this->getLatestVersion($page);
+        $isLatestVersion = true;
+        $page = $this->getLatestVersion($page, $isLatestVersion);
 
         $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
         $page->setVersions(array_splice($pageVersions, -1, 1));
@@ -108,6 +109,7 @@ class PageController extends DocumentControllerBase
         }
 
         $data['url'] = $page->getUrl();
+        $data['documentFromVersion'] = !$isLatestVersion;
 
         $this->preSendDataActions($data, $page);
 
