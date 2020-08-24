@@ -118,7 +118,7 @@ class Dependency extends AbstractModel
      * @param int|null $offset
      * @param int|null $limit
      *
-     * @return array{type: string, id: int}
+     * @return array
      */
     public function getRequiredBy($offset = null, $limit = null)
     {

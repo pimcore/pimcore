@@ -572,6 +572,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         reset($this->data);
     }
 
+    /**
+     * @return int
+     */
     public function count()
     {
         $dao = $this->getDao();
