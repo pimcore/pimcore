@@ -691,7 +691,7 @@ class Video extends Model\Document\Tag
             }
 
             $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video '.$options['class'].'">
-                <iframe src="https://player.vimeo.com/video/' . $vimeoId . '?title=0&amp;byline=0&amp;portrait=0'. $additional_params .'" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+                <iframe src="https://player.vimeo.com/video/' . $vimeoId . '?dnt=1&title=0&amp;byline=0&amp;portrait=0'. $additional_params .'" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
             </div>';
 
             return $code;
