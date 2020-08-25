@@ -5,22 +5,24 @@ namespace Pimcore\Web2Print\Processor;
 use Pimcore\Config;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
-use Pimcore\Tests\Helper\Pimcore;
-use Pimcore\Tool;
 use Pimcore\Web2Print\Processor;
+use Pimcore\Event\DocumentEvents;
 use Spiritix\Html2Pdf\Converter;
 use Spiritix\Html2Pdf\Input\StringInput;
 use Spiritix\Html2Pdf\Input\UrlInput;
 use Spiritix\Html2Pdf\Output\FileOutput;
 use Spiritix\Html2Pdf\Output\StringOutput;
-use Symfony\Bundle\MakerBundle\Str;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Templating\EngineInterface;
 
 class HeadlessChrome extends Processor
 {
-    const NODE_PATH = '/usr/local/node-v14.4.0-linux-x64/bin/node';
+    private $nodePath = "";
 
+    /**
+     * @param Document\PrintAbstract $document
+     * @param object $config
+     * @return string
+     * @throws \Exception
+     */
     protected function buildPdf(Document\PrintAbstract $document, $config)
     {
         $this->config = $config;
@@ -52,18 +54,37 @@ class HeadlessChrome extends Processor
         } catch (\Exception $e) {
             Logger::error($e);
             $document->setLastGenerateMessage($e->getMessage());
-            throw new \Exception('Error during REST-Request:' . $e->getMessage());
+            throw new \Exception('Error during PDF-Generation:' . $e->getMessage());
         }
 
         $document->setLastGenerateMessage('');
         return $pdf;
     }
 
+    /**
+     * @return array
+     */
     public function getProcessingOptions()
     {
-        return [];
+        $event = new PrintConfigEvent($this, [
+            'options' => [],
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS, $event);
+        return (array)$event->getArgument('options');
+
+        $event = new PrintConfigEvent($this, [
+            'options' => [],
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS, $event);
+        return (array)$event->getArgument('options');
     }
 
+    /**
+     * @param string $html
+     * @param array $params
+     * @param bool $returnFilePath
+     * @return string
+     */
     public function getPdfFromString($html, $params = [], $returnFilePath = false)
     {
         $path = PIMCORE_SYSTEM_TEMP_DIRECTORY . DIRECTORY_SEPARATOR . uniqid('web2print_') . '.pdf';
@@ -72,19 +93,24 @@ class HeadlessChrome extends Processor
 
         $output = $returnFilePath ? new FileOutput() : new StringOutput();
         $converter = new Converter($input, $output);
-        $converter->setNodePath(self::NODE_PATH);
+        if($this->nodePath){
+            $converter->setNodePath($this->nodePath);
+        }
         $converter->setOptions($params);
 
         /** @var StringOutput $output */
         $output = $converter->convert();
 
-        if($returnFilePath){
+        if($returnFilePath) {
             $output->store($path);
             return $path;
         }
         return $output->get();
     }
 
+    /**
+     * @return array
+     */
     private function getDefaultOptions() : array {
         return [
             'landscape' => false,
@@ -96,7 +122,16 @@ class HeadlessChrome extends Processor
                 'right' => "8 mm",
                 'left' => "8 mm",
             ],
-            'displayHeaderFooter' => true,
+            'displayHeaderFooter' => false,
         ];
+    }
+
+    /**
+     * @param string $nodePath
+     * @return $this
+     */
+    public function setNodePath(string $nodePath) : self{
+        $this->nodePath = $nodePath;
+        return $this;
     }
 }
