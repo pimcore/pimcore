@@ -35,7 +35,8 @@ class MarshalMatcher extends TypeMatcher
      * @param string $sourceType
      * @param int $sourceId
      */
-    public function __construct($sourceType, $sourceId)
+    public function __construct(string $sourceType, int $sourceId)
+
     {
         $this->sourceType = $sourceType;
         $this->sourceId = $sourceId;
@@ -46,11 +47,12 @@ class MarshalMatcher extends TypeMatcher
      *
      * @return bool
      */
-    public function matches($element)
+    public function matches($element): bool
     {
         if ($element instanceof ElementInterface) {
             $elementType = Service::getType($element);
-            if ($elementType == $this->sourceType && $element->getId() == $this->sourceId) {
+            if ($elementType === $this->sourceType && $element->getId() === $this->sourceId) {
+
                 return false;
             }
 

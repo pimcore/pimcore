@@ -31,7 +31,7 @@ class PimcoreClassDefinitionMatcher implements Matcher
      *
      * @param string $matchType
      */
-    public function __construct($matchType)
+    public function __construct(string $matchType)
     {
         $this->matchType = $matchType;
     }
@@ -42,7 +42,7 @@ class PimcoreClassDefinitionMatcher implements Matcher
      *
      * @return bool
      */
-    public function matches($object, $property)
+    public function matches($object, $property): bool
     {
         // TODO check if matcher only works for container type object (but not for localized fields, bricks, etc...)
 

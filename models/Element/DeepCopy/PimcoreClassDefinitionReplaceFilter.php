@@ -51,7 +51,7 @@ class PimcoreClassDefinitionReplaceFilter implements Filter
         $reflectionProperty = ReflectionHelper::getProperty($object, $property);
         $reflectionProperty->setAccessible(true);
 
-        $value = call_user_func($this->callback, $object, $fieldDefinition, $property, $reflectionProperty->getValue($object));
+        $value = ($this->callback)($object, $fieldDefinition, $property, $reflectionProperty->getValue($object));
 
         $reflectionProperty->setValue($object, $value);
     }
