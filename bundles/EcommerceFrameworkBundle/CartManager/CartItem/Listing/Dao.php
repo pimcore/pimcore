@@ -40,9 +40,11 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 
     public function getTotalCount()
     {
-        $amount = $this->db->fetchRow('SELECT COUNT(*) as amount FROM `' . \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Dao::TABLE_NAME . '`' . $this->getCondition());
-
-        return $amount['amount'];
+        try {
+            return (int)$this->db->fetchOne('SELECT COUNT(*) FROM `' . \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem\Dao::TABLE_NAME . '`' . $this->getCondition());
+        } catch(\Exception $e) {
+            return 0;
+        }
     }
 
     public function getTotalAmount()

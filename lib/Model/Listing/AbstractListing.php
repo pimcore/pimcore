@@ -24,7 +24,7 @@ use Pimcore\Model\AbstractModel;
  *
  * @method \Pimcore\Db\ZendCompatibility\QueryBuilder getQuery()
  */
-abstract class AbstractListing extends AbstractModel implements \Iterator
+abstract class AbstractListing extends AbstractModel implements \Iterator, \Countable
 {
     /**
      * @var array
@@ -581,5 +581,18 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     {
         $this->getData();
         reset($this->data);
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        $dao = $this->getDao();
+        if(!\method_exists($dao, 'getTotalCount')) {
+            @trigger_error('Listings should implement Countable interface', E_USER_DEPRECATED);
+            return 0;
+        }
+        return $dao->getTotalCount();
     }
 }
