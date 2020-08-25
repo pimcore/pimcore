@@ -358,7 +358,9 @@ class AbstractObject extends Model\Element\AbstractElement
         if (!in_array(static::class, [__CLASS__, Concrete::class, Folder::class], true)) {
             /** @var Concrete $tmpObject */
             $tmpObject = new static();
-            $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
+            if ($tmpObject instanceof Concrete) {
+                $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
+            }
         }
 
         if (is_array($config)) {
