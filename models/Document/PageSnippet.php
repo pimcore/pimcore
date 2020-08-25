@@ -420,7 +420,6 @@ abstract class PageSnippet extends Model\Document
      */
     public function setEditable(string $name, Tag $data)
     {
-        $this->getEditables();
         $this->editables[$name] = $data;
 
         return $this;
@@ -445,7 +444,6 @@ abstract class PageSnippet extends Model\Document
      */
     public function removeEditable(string $name)
     {
-        $this->getEditables();
         if (isset($this->editables[$name])) {
             unset($this->editables[$name]);
         }
