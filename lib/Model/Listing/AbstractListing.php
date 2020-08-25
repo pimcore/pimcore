@@ -336,7 +336,6 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
                     $conditionVariableTypes[$pkey] = \Doctrine\DBAL\Connection::PARAM_INT_ARRAY;
                 }
             } else {
-
                 if (is_bool($param)) {
                     $type = \PDO::PARAM_BOOL;
                 } elseif (is_int($param)) {
@@ -589,10 +588,12 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
     public function count()
     {
         $dao = $this->getDao();
-        if(!\method_exists($dao, 'getTotalCount')) {
+        if (!\method_exists($dao, 'getTotalCount')) {
             @trigger_error('Listings should implement Countable interface', E_USER_DEPRECATED);
+
             return 0;
         }
+
         return $dao->getTotalCount();
     }
 }
