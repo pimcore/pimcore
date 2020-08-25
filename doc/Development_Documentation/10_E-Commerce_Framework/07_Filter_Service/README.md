@@ -127,7 +127,7 @@ changed by the user in the frontend.
 - `Filters` that are visible in the frontend. 
 
 
-![FilterDefinition](../img/filter-definitions.jpg)
+![FilterDefinition](../../img/filter-definitions.jpg)
 
 
 The configuration of preconditions and filters is done by field collection entries, whereby the field collection types 
