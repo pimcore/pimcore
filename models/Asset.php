@@ -854,7 +854,7 @@ class Asset extends Element\AbstractElement
             if (!empty($assetsConfig['versions']['steps'])
                 || !empty($assetsConfig['versions']['days'])
                 || $setModificationDate) {
-                $saveStackTrace = !$assetsConfig['versions']['disable_stack_trace'];
+                $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
             }
 
