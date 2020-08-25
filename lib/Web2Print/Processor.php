@@ -21,14 +21,14 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Tool;
+use Pimcore\Web2Print\Processor\HeadlessChrome;
 use Pimcore\Web2Print\Processor\PdfReactor8;
 use Pimcore\Web2Print\Processor\WkHtmlToPdf;
 
 abstract class Processor
 {
     /**
-     * @return PdfReactor8|WkHtmlToPdf
-     *
+     * @return HeadlessChrome|PdfReactor8|WkHtmlToPdf
      * @throws \Exception
      */
     public static function getInstance()
@@ -39,8 +39,10 @@ abstract class Processor
             return new PdfReactor8();
         } elseif ($config->get('generalTool') === 'wkhtmltopdf') {
             return new WkHtmlToPdf();
+        } elseif ($config->get('generalTool') === 'headlesschrome') {
+            return new HeadlessChrome();
         } else {
-            throw new \Exception('Invalid Configuation - ' . $config->get('generalTool'));
+            throw new \Exception('Invalid Configuration - ' . $config->get('generalTool'));
         }
     }
 
@@ -56,7 +58,7 @@ abstract class Processor
     {
         $document = $this->getPrintDocument($documentId);
         if (Model\Tool\TmpStore::get($document->getLockKey())) {
-            throw new \Exception('Process with given document alredy running.');
+            throw new \Exception('Process with given document already running.');
         }
         Model\Tool\TmpStore::add($document->getLockKey(), true);
 
