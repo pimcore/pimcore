@@ -5,7 +5,7 @@ Preview Generators provide a Service to get more control over the preview Tab. T
 
 Providers need to implement: `\Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface`
 
-Parameters return in the `getParams` method will be rendered as ext-js ComboBoxes. Whatever the User chooses will be passed to the `generatePreviewUrl` method.
+Parameters returned in the `getParams` method will be rendered as ext-js ComboBoxes. Whatever the User chooses will be passed to the `generatePreviewUrl` method.
 
 
 Provide a Preview Generator within the Class settings:
