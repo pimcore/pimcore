@@ -12,7 +12,7 @@ interface PreviewGeneratorInterface
      * @param array $params
      * @return string
      */
-    public function generatePreviewUrl(\Pimcore\Model\DataObject\Concrete $object, array $params);
+    public function generatePreviewUrl(\Pimcore\Model\DataObject\Concrete $object, array $params): string;
 
 
     /**
