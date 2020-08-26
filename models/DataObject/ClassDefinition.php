@@ -1381,7 +1381,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getPreviewGeneratorReference(): string
+    public function getPreviewGeneratorReference(): ?string
     {
         return $this->previewGeneratorReference;
     }
@@ -1389,7 +1389,7 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @param string $previewGeneratorReference
      */
-    public function setPreviewGeneratorReference(string $previewGeneratorReference): void
+    public function setPreviewGeneratorReference(?string $previewGeneratorReference): void
     {
         $this->previewGeneratorReference = $previewGeneratorReference;
     }
