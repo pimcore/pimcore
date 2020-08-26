@@ -18,5 +18,5 @@ interface PreviewGeneratorInterface
     /**
      * @return array
      */
-    public function getParams(\Pimcore\Model\DataObject\Concrete $object);
+    public function getParams(\Pimcore\Model\DataObject\Concrete $object): array;
 }
