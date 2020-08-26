@@ -67,7 +67,7 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
 
         $trackedCodes = $this->session->getFlashBag()->get(self::FLASH_MESSAGE_BAG_KEY);
 
-        if (is_array($trackedCodes) && sizeof($trackedCodes)) {
+        if (is_array($trackedCodes) && count($trackedCodes)) {
             foreach ($this->trackingManger->getTrackers() as $tracker) {
                 if ($tracker instanceof TrackingCodeAwareInterface && isset($trackedCodes[get_class($tracker)])) {
                     foreach ($trackedCodes[get_class($tracker)] as $trackedCode) {

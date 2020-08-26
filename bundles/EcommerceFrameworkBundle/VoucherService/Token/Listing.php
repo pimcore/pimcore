@@ -66,7 +66,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
             throw new \Exception('Unable to load series tokens: no VoucherSeriesId given.', 100);
         }
 
-        if (sizeof($filter)) {
+        if (count($filter)) {
             if (!empty($filter['token'])) {
                 $this->addConditionParam('token LIKE ?', '%' . $filter['token'] . '%');
             }
@@ -302,10 +302,10 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
             $queryParts[] = 't.timestamp < STR_TO_DATE(' . $param . ",'%Y-%m-%d')";
         }
 
-        if (sizeof($queryParts) == 1) {
+        if (count($queryParts) == 1) {
             $reservationsQuery = $reservationsQuery . ' AND ' . $queryParts[0];
             $tokensQuery = $tokensQuery . ' AND ' . $queryParts[0];
-        } elseif (sizeof($queryParts) > 1) {
+        } elseif (count($queryParts) > 1) {
             $reservationsQuery = $reservationsQuery . ' AND (' . implode(' AND ', $queryParts) . ')';
             $tokensQuery = $tokensQuery . ' AND (' . implode(' AND ', $queryParts) . ')';
         }
