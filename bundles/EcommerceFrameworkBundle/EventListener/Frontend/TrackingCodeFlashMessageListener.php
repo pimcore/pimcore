@@ -65,13 +65,16 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
             return;
         }
 
-        $trackedCodes = $this->session->getFlashBag()->get(self::FLASH_MESSAGE_BAG_KEY);
+       // Avoid autostart session by accessing the FlashBag.
+        if ($this->session->isStarted()) {
+            $trackedCodes = $this->session->getFlashBag()->get(self::FLASH_MESSAGE_BAG_KEY);
 
-        if (is_array($trackedCodes) && sizeof($trackedCodes)) {
-            foreach ($this->trackingManger->getTrackers() as $tracker) {
-                if ($tracker instanceof TrackingCodeAwareInterface && isset($trackedCodes[get_class($tracker)])) {
-                    foreach ($trackedCodes[get_class($tracker)] as $trackedCode) {
-                        $tracker->trackCode($trackedCode);
+            if (is_array($trackedCodes) && sizeof($trackedCodes)) {
+                foreach ($this->trackingManger->getTrackers() as $tracker) {
+                    if ($tracker instanceof TrackingCodeAwareInterface && isset($trackedCodes[get_class($tracker)])) {
+                        foreach ($trackedCodes[get_class($tracker)] as $trackedCode) {
+                            $tracker->trackCode($trackedCode);
+                        }
                     }
                 }
             }
