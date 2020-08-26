@@ -5,7 +5,7 @@ Preview Generators provide a Service to get more control over the preview Tab. T
 
 Providers need to implement: `\Pimcore\Model\DataObject\ClassDefinition\PreviewGeneratorInterface`
 
-Parameters return in the `getParams` method will be rendered as ext-js ComboBoxes. Whatever the User chooses will be passed to the `generatePreviewUrl` method.
+Parameters returned in the `getParams` method will be rendered as ext-js ComboBoxes. Whatever the User chooses will be passed to the `generatePreviewUrl` method.
 
 
 Provide a Preview Generator within the Class settings:
@@ -30,7 +30,7 @@ class ProductPreviewParamProvider implements \Pimcore\Model\DataObject\ClassDefi
      * @param array $params
      * @return string
      */
-    public function generatePreviewUrl(\Pimcore\Model\DataObject\Concrete $object, array $params) {
+    public function generatePreviewUrl(\Pimcore\Model\DataObject\Concrete $object, array $params): string {
         $additionalParams = [];
         foreach($this->getParams($object) as $paramStore) {
             $paramName = $paramStore['name'];
@@ -45,7 +45,7 @@ class ProductPreviewParamProvider implements \Pimcore\Model\DataObject\ClassDefi
     /**
      * @return array
      */
-    public function getParams(\Pimcore\Model\DataObject\Concrete $object) {
+    public function getParams(\Pimcore\Model\DataObject\Concrete $object): array {
         return [
             [
                 'name' => '_locale',
