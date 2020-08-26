@@ -693,7 +693,7 @@ class AssetHelperController extends AdminController
                 $line = implode($delimiter, $line) . "\r\n";
                 fwrite($fp, $line);
             } else {
-                fputs($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)) . "\r\n");
+                fwrite($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)) . "\r\n");
             }
         }
 
