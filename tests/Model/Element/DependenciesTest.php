@@ -90,8 +90,8 @@ class DependenciesTest extends ModelTestCase
         $requiredBy = $dependencies->getRequiredBy();
 
         $this->assertEquals(3, count($requires), 'DataObject: requires dependencies not saved or loaded properly');
-        $this->assertEquals($targets[0]->getId(), $requires[0]["id"], 'DataObject: requires dependency not saved or loaded properly');
-        $this->assertEquals($targets[2]->getId(), $requiredBy[0]["id"], 'DataObject: requiredBy dependency not saved or loaded properly');
+        $this->assertEquals($targets[0]->getId(), $requires[0]['id'], 'DataObject: requires dependency not saved or loaded properly');
+        $this->assertEquals($targets[2]->getId(), $requiredBy[0]['id'], 'DataObject: requiredBy dependency not saved or loaded properly');
     }
 
     /**
@@ -115,8 +115,8 @@ class DependenciesTest extends ModelTestCase
         $requiredBy = $dependencies->getRequiredBy();
 
         $this->assertEquals(3, count($requires), 'Document: requires dependencies not saved or loaded properly');
-        $this->assertEquals($targets[0]->getId(), $requires[0]["id"], 'Document: requires dependency not saved or loaded properly');
-        $this->assertEquals($targets[2]->getId(), $requiredBy[0]["id"], 'Document: requiredBy dependency not saved or loaded properly');
+        $this->assertEquals($targets[0]->getId(), $requires[0]['id'], 'Document: requires dependency not saved or loaded properly');
+        $this->assertEquals($targets[2]->getId(), $requiredBy[0]['id'], 'Document: requiredBy dependency not saved or loaded properly');
     }
 
     /**
@@ -140,8 +140,8 @@ class DependenciesTest extends ModelTestCase
         $requiredBy = $dependencies->getRequiredBy();
 
         $this->assertEquals(3, count($requires), 'Asset: requires dependencies not saved or loaded properly');
-        $this->assertEquals($targets[0]->getId(), $requires[0]["id"], 'Asset: requires dependency not saved or loaded properly');
-        $this->assertEquals($targets[2]->getId(), $requiredBy[0]["id"], 'Asset: requiredBy dependency not saved or loaded properly');
+        $this->assertEquals($targets[0]->getId(), $requires[0]['id'], 'Asset: requires dependency not saved or loaded properly');
+        $this->assertEquals($targets[2]->getId(), $requiredBy[0]['id'], 'Asset: requiredBy dependency not saved or loaded properly');
     }
 
     /**
