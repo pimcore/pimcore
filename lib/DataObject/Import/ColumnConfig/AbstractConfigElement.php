@@ -39,8 +39,8 @@ abstract class AbstractConfigElement implements ConfigElementInterface
 
     public function __construct(\stdClass $config, $context = null)
     {
-        $this->attribute = $config->attribute;
-        $this->label = $config->label;
+        $this->attribute = $config->attribute ?? null;
+        $this->label = $config->label ?? null;
         $this->context = $context;
     }
 
