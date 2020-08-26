@@ -28,6 +28,19 @@ pimcore.object.preview = Class.create({
 
             this.frameId = 'object_preview_iframe_' + this.object.id;
 
+            let items = [];
+            if(this.object.data.general.previewParams) {
+                let paramPanel = this.getParamsPanel();
+                items.push(paramPanel);
+            }
+
+
+            let iFramePanel = Ext.create('Ext.panel.Panel', {
+                html: '<iframe src="about:blank" style="width: 100%;" onload="' + iframeOnLoad
+                    + '" frameborder="0" id="' + this.frameId + '"></iframe>'
+            });
+            items.push(iFramePanel);
+
             this.layout = Ext.create('Ext.panel.Panel', {
                 title: t('preview'),
                 border: false,
@@ -35,8 +48,7 @@ pimcore.object.preview = Class.create({
                 closable: false,
                 iconCls: "pimcore_material_icon_devices pimcore_material_icon",
                 bodyCls: "pimcore_overflow_scrolling",
-                html: '<iframe src="about:blank" style="width: 100%;" onload="' + iframeOnLoad
-                    + '" frameborder="0" id="' + this.frameId + '"></iframe>'
+                items: items
             });
 
             this.layout.on("resize", this.setLayoutFrameDimensions.bind(this));
@@ -73,8 +85,21 @@ pimcore.object.preview = Class.create({
     },
 
     loadCurrentPreview: function () {
+
+        let params = {};
+        if(this.paramSelects && this.paramSelects.length) {
+            for(let i = 0; i < this.paramSelects.length; i++) {
+                if(this.paramSelects[i].getValue()) {
+                    params[this.paramSelects[i].fieldLabel] = this.paramSelects[i].getValue();
+                }
+            }
+        }
+
         var date = new Date();
-        var url = Routing.generate('pimcore_admin_dataobject_dataobject_preview', {id: this.object.data.general.o_id, time: date.getTime()});
+        params['id'] = this.object.data.general.o_id;
+        params['time'] = date.getTime();
+
+        var url = Routing.generate('pimcore_admin_dataobject_dataobject_preview', params);
 
         try {
             Ext.get(this.frameId).dom.src = url;
@@ -92,5 +117,43 @@ pimcore.object.preview = Class.create({
                 this.preview.loadCurrentPreview();
             }
         }.bind(this.object));
+    },
+
+    getParamsPanel: function() {
+
+        var that = this;
+        this.paramSelects = [];
+
+        let params = this.object.data.general.previewParams;
+        for(let i=0; i<params.length; i++) {
+            let paramStore = Ext.create('Ext.data.Store', {
+                data: params[i].values
+            });
+
+            let paramSelect = Ext.create('Ext.form.ComboBox', {
+                fieldLabel: params[i].name,
+                store: paramStore,
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'abbr',
+                margin: "10 10 10 10",
+                labelWidth: '',
+                listeners: {
+                    select: function(combo, records, eOpts) {
+                        that.loadCurrentPreview();
+                    }
+                },
+            });
+
+            this.paramSelects.push(paramSelect);
+        }
+
+        return Ext.create('Ext.panel.Panel', {
+            layout: {
+                type: 'hbox',
+                align: 'stretch',
+            },
+            items: this.paramSelects,
+        });
     }
 });

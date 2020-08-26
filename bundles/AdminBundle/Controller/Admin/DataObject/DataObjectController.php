@@ -445,6 +445,9 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['general']['showFieldLookup'] = $objectFromDatabase->getClass()->getShowFieldLookup();
             if ($objectFromDatabase instanceof DataObject\Concrete) {
                 $objectData['general']['linkGeneratorReference'] = $objectFromDatabase->getClass()->getLinkGeneratorReference();
+                if($previewGenerator = $objectFromDatabase->getClass()->getPreviewGenerator()) {
+                    $objectData['general']['previewParams'] = $previewGenerator->getParams($objectFromDatabase);
+                }
             }
 
             $objectData['layout'] = $objectFromDatabase->getClass()->getLayoutDefinitions();
@@ -2086,6 +2089,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 $url = str_replace('%_locale', $this->getAdminUser()->getLanguage(), $url);
             } elseif ($linkGenerator = $object->getClass()->getLinkGenerator()) {
                 $url = $linkGenerator->generate($object, ['preview' => true, 'context' => $this]);
+            } elseif($previewService = $object->getClass()->getPreviewGenerator()) {
+                $url = $previewService->generatePreviewUrl($object, array_merge(['preview' => true, 'context' => $this], $request->query->all()));
             }
 
             if (!$url) {

@@ -160,6 +160,11 @@ class ClassDefinition extends Model\AbstractModel
     public $linkGeneratorReference;
 
     /**
+     * @var string
+     */
+    public $previewGeneratorReference;
+
+    /**
      * @var array
      */
     public $compositeIndices = [];
@@ -1372,6 +1377,31 @@ class ClassDefinition extends Model\AbstractModel
     {
         return DataObject\ClassDefinition\Helper\LinkGeneratorResolver::resolveGenerator($this->getLinkGeneratorReference());
     }
+
+    /**
+     * @return string
+     */
+    public function getPreviewGeneratorReference(): string
+    {
+        return $this->previewGeneratorReference;
+    }
+
+    /**
+     * @param string $previewGeneratorReference
+     */
+    public function setPreviewGeneratorReference(string $previewGeneratorReference): void
+    {
+        $this->previewGeneratorReference = $previewGeneratorReference;
+    }
+
+    /**
+     * @return DataObject\ClassDefinition\PreviewGeneratorInterface|null
+     */
+    public function getPreviewGenerator()
+    {
+        return DataObject\ClassDefinition\Helper\PreviewGeneratorResolver::resolveGenerator($this->getPreviewGeneratorReference());
+    }
+
 
     /**
      * @return bool
