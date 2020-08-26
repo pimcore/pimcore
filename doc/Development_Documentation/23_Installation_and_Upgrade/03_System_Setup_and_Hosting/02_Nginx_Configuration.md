@@ -39,6 +39,7 @@ server {
     # Filesize depending on your data
     client_max_body_size 100m;
 
+    # It is recommended to seclude logs per virtual host
     access_log  /var/log/access.log;
     error_log   /var/log/error.log error;
 
@@ -179,7 +180,7 @@ server {
 
 The following configuration provides an approperiate base for a secure application hosting. It can be adapted to your setup and preferences. However it is primarily taking security into account. It is recommended to develop within a secured environment, too.
 
-```
+```nginx
 # mime types are covered in nginx.conf by:
 # http {
 #   include       mime.types;
@@ -259,7 +260,7 @@ server {
     ssl_stapling_verify on;
 
     # verify chain of trust of OCSP response using Root CA and Intermediate certs
-    # Run the following commands to get chain of trust
+    # Run the following commands to get chain of trust for LetsEncrypt
     # curl https://letsencrypt.org/certs/isrgrootx1.pem.txt > /etc/ssl/letsencrypt.cot.pem \
     # && curl https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem.txt >> /etc/ssl/letsencrypt.cot.pem \
     # && curl https://letsencrypt.org/certs/letsencryptauthorityx3.pem.txt >> /etc/ssl/letsencrypt.cot.pem \
@@ -296,7 +297,7 @@ server {
     # Please check how to properly evaluate, define and include to your needs
     # Thanks to: https://fearby.com/article/set-up-feature-policy-referrer-policy-and-content-security-policy-headers-in-nginx/
     # For pre-writing these.
-    # Note: Mobile functionalities were explicitly not included.
+    # Note: Mobile functionalities were explicitly not included.gi
     add_header Feature-Policy "geolocation 'none';midi 'none';sync-xhr 'none';microphone 'none';camera 'none';magnetometer 'none';gyroscope 'none';fullscreen 'self';payment 'none';";
 
     # set X-Frame-Options
