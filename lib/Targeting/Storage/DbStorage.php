@@ -19,7 +19,7 @@ namespace Pimcore\Targeting\Storage;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Storage\Traits\TimestampsTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -303,7 +303,7 @@ EOF;
             return null;
         }
 
-        $dateTime = $this->db->convertToPHPValue($result, Type::DATETIME);
+        $dateTime = $this->db->convertToPHPValue($result, Types::DATETIME_MUTABLE);
 
         return \DateTimeImmutable::createFromMutable($dateTime);
     }
@@ -335,8 +335,8 @@ EOF;
                 'creationDate' => $timestamps['createdAt'],
                 'modificationDate' => $timestamps['updatedAt'],
             ], [
-                'creationDate' => Type::DATETIME,
-                'modificationDate' => Type::DATETIME,
+                'creationDate' => Types::DATETIME_MUTABLE,
+                'modificationDate' => Types::DATETIME_MUTABLE,
             ]
         );
     }
