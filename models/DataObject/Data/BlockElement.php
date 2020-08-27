@@ -18,13 +18,13 @@
 namespace Pimcore\Model\DataObject\Data;
 
 use DeepCopy\DeepCopy;
+use DeepCopy\TypeMatcher\TypeMatcher;
 use Pimcore\Cache\Runtime;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Version\UnmarshalMatcher;
 
 class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
 {
@@ -148,7 +148,17 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
                     return $currentValue;
                 }
             ),
-            new UnmarshalMatcher()
+            new class(ElementInterface::class) extends TypeMatcher {
+                /**
+                 * @param mixed $element
+                 *
+                 * @return bool
+                 */
+                public function matches($element)
+                {
+                    return $element instanceof ElementInterface;
+                }
+            }
         );
         $this->data = $copier->copy($this->data);
     }
