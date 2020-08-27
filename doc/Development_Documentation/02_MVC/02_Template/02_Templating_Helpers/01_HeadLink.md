@@ -35,7 +35,7 @@ You may specify a headLink at any time.
 Typically, you will specify global links in your layout script, and application specific links in your 
 application view scripts. In your layout script, in the `<head>` section, you will then echo the helper to output it.
 
-```php 
+```php
 <?php // setting links in a view script:
 $this->headLink()->appendStylesheet('/styles/basic.css'); 
 $this->headLink(['rel' => 'icon', 'href' => '/img/favicon.ico'], 'PREPEND')

@@ -38,7 +38,7 @@ for the generation of the text version by calling `enableHtml2textBinary()`. (re
 
 ## Usage Example
 
-```php 
+```php
 $params = ['firstName' => 'Pim', 'lastName' => 'Core', 'product' => 73613];
  
 //sending an email document (pimcore document)

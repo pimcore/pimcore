@@ -35,7 +35,7 @@ possible and use PHP just printing out data.
 
 #### Example
 
-```php 
+```php
 <!DOCTYPE html>
 <html lang="en">
 <head>

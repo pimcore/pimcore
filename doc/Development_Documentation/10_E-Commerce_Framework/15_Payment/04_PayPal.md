@@ -14,7 +14,7 @@ Add `paypal/paypal-checkout-sdk:^1` to your `composer.json`.
 
 Setup payment provider in e-commerce framework configuration tree and add PayPal API 
 credentials to it: 
-```yml 
+```yml
     payment_manager.
         providers: 
             paypal:
@@ -104,7 +104,7 @@ Initialize checkout manager, call `startOrderPayment` and then `initPayment` of 
 implementation. It is creating an order at PayPal and its response is the default PayPal 
 response, which need to be returned as a json response of the action.  
 
-```php 
+```php
 
 //in your payment controller, e.g. startPaymentAction
 
@@ -139,7 +139,7 @@ committing the order.
 Depending on your settings (see below), the payment is also automatically captured. If not
 you need to capture the payment manually by calling `$payment->executeDebit()`.  
 
-```php 
+```php
 
 public function handleResponseAction() {
 
@@ -172,7 +172,7 @@ If you are updating an existing Pimcore instance (with originated before 6.0.1),
 ### Configuration Options
 In payment configuration, following options are available: 
 
-```yml 
+```yml
     payment_manager.
         providers: 
             paypal:
