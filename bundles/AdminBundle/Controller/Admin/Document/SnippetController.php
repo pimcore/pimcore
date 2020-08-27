@@ -83,7 +83,8 @@ class SnippetController extends DocumentControllerBase
         }
 
         $snippet = clone $snippet;
-        $snippet = $this->getLatestVersion($snippet);
+        $isLatestVersion = true;
+        $snippet = $this->getLatestVersion($snippet, $isLatestVersion);
 
         $versions = Element\Service::getSafeVersionInfo($snippet->getVersions());
         $snippet->setVersions(array_splice($versions, -1, 1));
@@ -100,6 +101,8 @@ class SnippetController extends DocumentControllerBase
         $this->minimizeProperties($snippet, $data);
 
         $data['url'] = $snippet->getUrl();
+        // this used for the "this is not a published version" hint
+        $data['documentFromVersion'] = !$isLatestVersion;
         if ($snippet->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $snippet->getContentMasterDocument()->getRealFullPath();
         }

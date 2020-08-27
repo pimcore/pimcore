@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Model\DataObject\Traits\DefaultValueTrait;
+    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType {
