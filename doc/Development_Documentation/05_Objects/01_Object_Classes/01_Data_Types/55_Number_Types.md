@@ -32,7 +32,7 @@ Start off with defining a global list of known units.
 
 This can also be achieved programmatically.
 
-```php 
+```php
 $unit = new Pimcore\Model\DataObject\QuantityValue\Unit();
 $unit->setAbbreviation("km");   // mandatory
 $unit->setLongname("kilometers");

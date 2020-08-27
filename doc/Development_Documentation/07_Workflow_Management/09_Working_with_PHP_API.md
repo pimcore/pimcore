@@ -14,7 +14,7 @@ and apply global actions (`applyGlobalAction()`).
 See following example how to interact with workflows with PHP API. 
 
 
-```php 
+```php
 
 /**
  * $object ... your element, e.g. a Pimcore data object

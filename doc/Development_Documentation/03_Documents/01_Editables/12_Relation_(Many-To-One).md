@@ -33,7 +33,7 @@ You can just create the code line like, below:
 
 <div class="code-section">
 
-```php 
+```php
 <?= $this->relation("myRelation"); ?>
 ```
 

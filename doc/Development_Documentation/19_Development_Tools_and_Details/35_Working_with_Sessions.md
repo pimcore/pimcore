@@ -34,7 +34,7 @@ class SessionCartConfigurator implements SessionConfiguratorInterface
 ```
 
 #### Session Configurator Service Definition
-```yml 
+```yml
 services:
     test.session.configurator.session_cart:
         class: TestBundle\Session\Configurator\SessionCartConfigurator
