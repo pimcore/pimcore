@@ -152,12 +152,22 @@ Having set up the navigation container as shown above, you can easily use it to 
 
 ### Breadcrumbs
 
+<div class="code-section">
+
 ```php
 <div class="my-breadcrumbs">
     <a href="/"><?= $this->translate("Home") ?></a>
     <?= $this->navigation()->breadcrumbs()->setMinDepth(null)->render($mainNavigation); ?>
 </div>
 ```
+
+```twig
+<div class="my-breadcrumbs">
+    <a href="/">{{ 'Home'|trans }}</a> >
+    {{ pimcore_render_nav(mainNavigation, 'breadcrumbs') }}
+</div>
+```
+</div>
 
 ### Sidebar Navigation
 
