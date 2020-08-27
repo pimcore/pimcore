@@ -27,24 +27,24 @@ Admin translations underly the same case sensitivity logic as [shared translatio
 <div class="code-section">
 
 ```php
- <?= $this->select("select", [
-     "store" => [
-         ["option1", $this->translate("Option One", [], "admin")],
-         ["option2", $this->translate("Option Two", [], "admin")],
-         ["option3", $this->translate("Option Three", [], "admin")]
-     ]
- ]); ?>
- ```
- ```twig
- {{ pimcore_select("select", {
+<?= $this->select("select", [
+    "store" => [
+        ["option1", $this->translate("Option One", [], "admin")],
+        ["option2", $this->translate("Option Two", [], "admin")],
+        ["option3", $this->translate("Option Three", [], "admin")]
+    ]
+]); ?>
+```
+
+```twig
+{{ pimcore_select("select", {
 	"store": [
 		["option1", {{ "Option One"|trans({}, 'admin') }}],
 		["option2", {{ "Option Two"|trans({}, 'admin') }}],
 		["option3", {{ "Option Three"|trans({}, 'admin') }}]
 	]
 }) }}
- ```
-
+```
 </div>
 
 #### Adding your own admin languages (since v6.3.6)
