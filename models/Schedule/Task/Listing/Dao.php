@@ -42,4 +42,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         return $tasks;
     }
+
+    public function getTotalCount()
+    {
+        try {
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM schedule_tasks ' . $this->getCondition(), $this->model->getConditionVariables());
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
 }
