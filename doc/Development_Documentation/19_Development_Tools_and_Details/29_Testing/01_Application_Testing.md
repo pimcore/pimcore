@@ -16,13 +16,13 @@ As Pimcore is a standard Symfony application, you can use Symfony's PHPUnit test
 bootstrap file to ensure the Pimcore startup process has everything it needs. Start by adding Symfony's PHPUnit bridge
 to your project:
 
-```
+```bash
 $ composer require --dev 'symfony/phpunit-bridge:*'
 ```
 
 With `symfony/phpunit-bridge` comes `vendor/bin/simple-phpunit` which uses its own PHPUnit version. For `simple-phpunit` to use the right version, you need to exclude `phpunit` from the autoloader's classmap and afterwards update the autoloader with `composer dump-autoload -o`
 
-```
+```json
   "autoload": {
     ...
 
@@ -171,7 +171,6 @@ include "../../vendor/autoload.php";
 
 \Pimcore\Bootstrap::setProjectRoot();
 \Pimcore\Bootstrap::bootstrap();
-
 ```
 
 Now we're ready to write tests which depend on a bootstrapped environment. Symfony already provides `KernelTestCase` and
@@ -312,7 +311,7 @@ You can create any amount of test suites in Codeception. To match the PHPUnit ex
 `unit` and `functional` for unit and functional testing. The following commands should create the basic directory/file 
 structure in `tests/`:
 
-```
+```bash
 $ vendor/bin/codecept -c tests/codeception.dist.yml generate:suite unit
 $ vendor/bin/codecept -c tests/codeception.dist.yml generate:suite functional
 ```
