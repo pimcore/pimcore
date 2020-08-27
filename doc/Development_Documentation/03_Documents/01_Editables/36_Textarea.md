@@ -47,6 +47,7 @@ The textarea editable is very similar to the [Input](./16_Input.md) editable, th
     }) }}
 </p>
 ```
+
 </div>
 
 In the editmode, you can see the textarea and the predefined `placeholder`.

@@ -69,8 +69,8 @@ You can also pass every valid `<img>` tag attribute ([w3.org Image](http://www.w
 ```twig
 {{ pimcore_image("myImage") }}
 ```
-</div>
 
+</div>
 
 The code above generates an image area in the backend and displays the image at the frontend.
 
@@ -106,6 +106,7 @@ Learn more about thumbnails here: [Image Thumbnails](../../04_Assets/03_Working_
     "thumbnail": "contentimages"
 }) }}
 ```
+
 </div>
 
 ###### Backend Preview
@@ -145,6 +146,7 @@ You can also change the thumbnail configuration:
     }
 }) }}
 ```
+
 </div>
 
 ### An Example Using Custom Attributes
@@ -170,11 +172,13 @@ You can also change the thumbnail configuration:
     }
 }) }}
 ```
+
 </div>
 
 And this is how the rendered html looks: `<img custom-attr="value" data-role="image" src="/var/tmp/image-thumbnails/0/56/thumb__content/dsc03807.jpeg" />`
 
 ### Other Advanced Examples
+
 <div class="code-section">
 
 ```php
@@ -251,8 +255,8 @@ And this is how the rendered html looks: `<img custom-attr="value" data-role="im
     "dropClass": "myCustomImageDropTarget"
 }) }}
 <div class="myCustomImageDropTarget someClass">My second alternative drop target</div>
-
 ```
+
 </div>
 
 ## Field-specific Image Cropping for Documents
@@ -282,6 +286,7 @@ You can get the data with the methods `getMarker()` and `getHotspots()`.
 All dimensions are in percent and therefore independent from the image size, you have to change them back to pixels according to your image size.
  
 ### Code Usage Example
+
 <div class="code-section">
  
 ```php
@@ -369,6 +374,7 @@ All dimensions are in percent and therefore independent from the image size, you
     </p>
 </div>
 ```
+
 </div>
 
 `getHotspots` output:
