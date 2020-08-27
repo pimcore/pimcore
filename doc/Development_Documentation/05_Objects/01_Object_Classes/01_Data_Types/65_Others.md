@@ -43,7 +43,7 @@ $l->setTitle("Visit pimcore.org");
 $object->setLink($l);
 ```
 
-In the database the link is stored in a TEXT column which holds the serialized data of an ```Pimcore\Model\DataObject\Data\Link```.
+In the database the link is stored in a TEXT column which holds the serialized data of an `Pimcore\Model\DataObject\Data\Link`.
 
 In the frontend (template) you can use the following code to the the html for the link. 
 
