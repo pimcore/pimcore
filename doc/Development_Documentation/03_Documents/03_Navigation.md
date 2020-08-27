@@ -200,27 +200,27 @@ The example CSS below shows how to do that (includes 3 Levels):
 
 ```css
 #navigation ul li ul {
-    display:none;
+    display:none;
 }
- 
+
 #navigation ul li.active ul {
-    display:block;
+    display:block;
 }
- 
+
 #navigation ul li.active ul li ul {
-    display:none;
+    display:none;
 }
- 
+
 #navigation ul li.active ul li.active ul {
-    display:block;
+    display:block;
 }
- 
+
 #navigation ul li.active ul li.active ul li ul {
-    display:none;
+    display:none;
 }
- 
+
 #navigation ul li.active ul li.active ul li.active ul{
-    display:block;
+    display:block;
 }
 ```
 
