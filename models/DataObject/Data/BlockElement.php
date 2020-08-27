@@ -22,10 +22,8 @@ use Pimcore\Cache\Runtime;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
-use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Version\MarshalMatcher;
 use Pimcore\Model\Version\UnmarshalMatcher;
 
 class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
@@ -136,7 +134,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {
                     if ($currentValue instanceof ElementInterface) {
-                        $cacheKey = $currentValue->getCacheKey();
+                        $cacheKey = $currentValue->getCacheTag();
                         if (Runtime::isRegistered($cacheKey)) {
                             // we don't want the copy from the runtime but cache is fine
                             Runtime::getInstance()->offsetUnset($cacheKey);
