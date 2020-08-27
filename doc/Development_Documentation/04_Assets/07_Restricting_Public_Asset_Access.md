@@ -34,12 +34,11 @@ RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 
 # ASSETS: check if request method is GET (because of WebDAV) and if the requested file (asset) exists on the filesystem, if both match, deliver the asset directly
 ...
-
 ```
 
 **Nginx**
 Add the following parts to your Nginx configuration directly after the index directive. 
-````
+```
 location ~ ^/protected/.* {
   return 403;
 }
@@ -51,7 +50,7 @@ location ~ ^/var/.*/protected(.*) {
 location ~ ^/cache-buster\-[\d]+/protected(.*) {
   return 403;
 }
-````
+```
 A full configuration example can be found [on this page](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
 
 
@@ -82,13 +81,12 @@ RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 
 # ASSETS: check if request method is GET (because of WebDAV) and if the requested file (asset) exists on the filesystem, if both match, deliver the asset directly
 ...
- 
 ```
 
 **Nginx**
 Add the following parts to your Nginx configuration directly after the index directive. 
 
-````
+```
 rewrite ^(/protected/.*) /app.php$is_args$args last;
 
 location ~ ^/var/.*/protected(.*) {
@@ -98,13 +96,13 @@ location ~ ^/var/.*/protected(.*) {
 location ~ ^/cache-buster\-[\d]+/protected(.*) {
   return 403;
 }
-````
+```
 A full configuration example can be found [on this page](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
 
 
 In the application, there has to be a route in (app/config/routing.yml) and a controller action that handles the request, e.g. like the following:
 
-```php
+```yaml
 // app/config/routing.yml
 
 // important this has to be the first route in the file!
@@ -113,11 +111,10 @@ asset_protect:
     defaults: { _controller: MyAssetController:protectedAsset }
     requirements:
         path: '.*'
-
 ```
 
 
-```php 
+```php
 <?php
 
 namespace AppBundle\Controller;
@@ -142,9 +139,9 @@ class MyAssetController extends FrontendController
         // modify it the way you need it for your use-case
         $pathInfo = $request->getPathInfo();
         $asset = Asset::getByPath($pathInfo);
-        if($asset){
+        if ($asset){
             return new BinaryFileResponse($asset->getFileSystemPath());
-        } elseif(preg_match('@.*/(image|video)-thumb__[\d]+__.*@', $pathInfo, $matches)) {
+        } elseif (preg_match('@.*/(image|video)-thumb__[\d]+__.*@', $pathInfo, $matches)) {
 
             $filePath = PIMCORE_TEMPORARY_DIRECTORY . '/' . $matches[1] . '-thumbnails' . urldecode($pathInfo);
 
@@ -161,7 +158,7 @@ class MyAssetController extends FrontendController
                     $parameters = $matcher->matchRequest($request);
                     $response = $this->forward('PimcoreCoreBundle:PublicServices:thumbnail', $parameters);
                     return $response;
-                } catch(\Exception $e) {
+                } catch (\Exception $e) {
                     // nothing to do
                 }
             }

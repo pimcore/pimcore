@@ -140,9 +140,9 @@ Pimcore documents to set up manual landing pages etc.
 Both is demonstrated at our [Demo](https://demo.pimcore.fun) and also available as 
 [source code](https://github.com/pimcore/demo). 
 
-In case that a filter contains relational objects (```FilterMultiRelation```, ```FilterRelation```, etc.), 
-the ```getName()``` method of the object is used to render the text in pre-select lists and filters. 
-Implement the ```getNameForFilterDefinition()``` method in your data objects to show customized (HTML) texts, including icons. 
+In case that a filter contains relational objects (FilterMultiRelation`, `FilterRelation`, etc.), 
+the `getName()` method of the object is used to render the text in pre-select lists and filters. 
+Implement the `getNameForFilterDefinition()` method in your data objects to show customized (HTML) texts, including icons. 
 
 ## 3 - Putting it all together
 Once Filter Types and Filter Definitions are set up, it is quite easy to put it all together and use the *Filter Service* 
@@ -152,7 +152,7 @@ in controller actions.
 For setting up the *Filter Service* (including Product List with `Zend\Paginator`) within the controller use following 
 sample: 
 
-```php 
+```php
 <?php 
 $ecommerceFactory = \Pimcore\Bundle\EcommerceFrameworkBundle\Factory::getInstance();
 
@@ -190,7 +190,7 @@ For putting all filters to the frontend use following sample. It is important th
 to get the parameter of changed filters delivered back to the controller. 
 
 <div class="code-section">
-    
+
 ```php
 <?php if($this->filterDefinitionObject->getFilters()): ?>
 	<div class="widget">

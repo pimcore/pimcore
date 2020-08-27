@@ -28,7 +28,7 @@ q={"o_modificationDate" : {"$gt" : "1000"}}
 
 ... SQL equivalent ...
 where ((`o_modificationDate` > '1000') )
-````
+```
 
 
 ```
