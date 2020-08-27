@@ -8,24 +8,28 @@ The following code makes the `<h1>` headline editable in a document:
 
 <div class="code-section">
 
-```php 
+```php
 <h1><?= $this->input("headline") ?></h1>
 ```
 
-```twig 
+```twig
 <h1>{{ pimcore_input("headline") }}</h1>
 ```
+
+</div>
 
 In some cases, especially with areablocks, editables could throw exceptions. Since Pimcore internally uses the `__toString` method to render
 the editables, Pimcore can't throw exceptions there. Therefore Pimcore catches the exception, and puts it out as string if DEBUG Mode is enabled.
 
 To prevent that and to have Pimcore throw the Exception, you can call editables like:
 
-```php 
+<div class="code-section">
+
+```php
 <h1><?= $this->input("headline")->render() ?></h1>
 ```
 
-```twig 
+```twig
 <h1>{{ pimcore_input("headline").render() }}</h1>
 ```
 
