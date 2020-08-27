@@ -209,7 +209,7 @@ server {
     # Please note that return is cheaper than redirect    
     # See: https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/#taxing-rewrites
     location / {
-       return 301 https://pimcore.loc$request_uri;
+       return 301 https://$host$request_uri;
     } 
 }
 
