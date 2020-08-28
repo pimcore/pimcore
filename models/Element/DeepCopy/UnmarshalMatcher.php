@@ -26,16 +26,8 @@ class UnmarshalMatcher extends TypeMatcher
      */
     public function __construct()
     {
-    }
+        parent::__construct(\Pimcore\Model\Element\ElementDescriptor::class);
 
-    /**
-     * @param mixed $element
-     *
-     * @return bool
-     */
-    public function matches($element): bool
-    {
-        return $element instanceof \Pimcore\Model\Element\ElementDescriptor;
     }
 }
 
