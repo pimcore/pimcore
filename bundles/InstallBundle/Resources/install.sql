@@ -14,7 +14,7 @@ CREATE TABLE `application_logs` (
   `source` varchar(190) DEFAULT NULL,
   `relatedobject` int(11) unsigned DEFAULT NULL,
   `relatedobjecttype` enum('object','document','asset') DEFAULT NULL,
-  `maintenanceChecked` tinyint(4) DEFAULT NULL,
+  `maintenanceChecked` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `component` (`component`),
   KEY `timestamp` (`timestamp`),
@@ -90,7 +90,7 @@ CREATE TABLE `custom_layouts` (
 	`modificationDate` INT(11) UNSIGNED NULL DEFAULT NULL,
 	`userOwner` INT(11) UNSIGNED NULL DEFAULT NULL,
 	`userModification` INT(11) UNSIGNED NULL DEFAULT NULL,
-	`default` tinyint(4) NOT NULL DEFAULT '0',
+	`default` tinyint(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `name` (`name`, `classId`)
 ) DEFAULT CHARSET=utf8mb4;
