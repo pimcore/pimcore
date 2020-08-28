@@ -29,7 +29,7 @@ interface ViewModelInterface extends \Countable, \IteratorAggregate, \ArrayAcces
      * @param string $key
      * @param mixed|null $default
      *
-     * @return bool
+     * @return mixed
      */
     public function get($key, $default = null);
 
