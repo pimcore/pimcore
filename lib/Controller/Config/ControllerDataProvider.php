@@ -232,6 +232,11 @@ class ControllerDataProvider
             $templates = array_merge($templates, $this->findTemplates($appPath));
         }
 
+        $symfonyPath = realpath(implode(DIRECTORY_SEPARATOR, [PIMCORE_PROJECT_ROOT, 'templates']));
+        if ($symfonyPath && file_exists($symfonyPath) && is_dir($symfonyPath)) {
+            $templates = array_merge($templates, $this->findTemplates($symfonyPath));
+        }
+
         foreach ($this->getBundles() as $bundle) {
             $bundlePath = realpath(implode(DIRECTORY_SEPARATOR, [$bundle->getPath(), 'Resources', 'views']));
             if ($bundlePath && file_exists($bundlePath) && is_dir($bundlePath)) {
