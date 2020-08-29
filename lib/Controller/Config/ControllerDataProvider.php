@@ -215,7 +215,7 @@ class ControllerDataProvider
     }
 
     /**
-     * Builds a list of all available templates in bundles and in app/Resources/views
+     * Builds a list of all available templates in bundles, in app/Resources/views, and Symfony locations
      *
      * @return array
      */
@@ -228,7 +228,7 @@ class ControllerDataProvider
         $templates = [];
 
         $appPath = realpath(implode(DIRECTORY_SEPARATOR, [PIMCORE_APP_ROOT, 'Resources', 'views']));
-        if ($appPath && file_exists($appPath) && is_dir($appPath)) {
+        if ($appPath && is_dir($appPath)) {
             $templates = array_merge($templates, $this->findTemplates($appPath));
         }
 
@@ -239,7 +239,7 @@ class ControllerDataProvider
 
         foreach ($this->getBundles() as $bundle) {
             $bundlePath = realpath(implode(DIRECTORY_SEPARATOR, [$bundle->getPath(), 'Resources', 'views']));
-            if ($bundlePath && file_exists($bundlePath) && is_dir($bundlePath)) {
+            if ($bundlePath && is_dir($bundlePath)) {
                 $templates = array_merge($templates, $this->findTemplates($bundlePath, $bundle->getName()));
             }
         }
