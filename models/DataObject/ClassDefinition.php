@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject;
 
+use Brick\VarExporter\VarExporter;
 use Pimcore\Cache;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
@@ -585,7 +586,19 @@ class ClassDefinition extends Model\AbstractModel
 
             self::cleanupForExport($clone->layoutDefinitions);
 
-            $exportedClass = var_export($clone, true);
+            // check if the class definition file should be generated using brick/varexporter
+            // for more details head over to https://github.com/brick/varexporter
+            if(PIMCORE_CLASS_DEFINITION_PRETTY_PRINT && PIMCORE_CLASS_DEFINITION_PRETTY_PRINT === 'true') {
+
+                // export using brick/varexporter
+                $exportedClass = VarExporter::export($clone);
+
+            } else {
+
+                // otherwise use the native var_export
+                $exportedClass = var_export($clone, true);
+
+            }
 
             $data = '<?php ';
             $data .= "\n\n";
