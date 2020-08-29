@@ -233,7 +233,7 @@ class ControllerDataProvider
         }
 
         $symfonyPath = realpath(implode(DIRECTORY_SEPARATOR, [PIMCORE_PROJECT_ROOT, 'templates']));
-        if ($symfonyPath && file_exists($symfonyPath) && is_dir($symfonyPath)) {
+        if ($symfonyPath && is_dir($symfonyPath)) {
             $templates = array_merge($templates, $this->findTemplates($symfonyPath));
         }
 
