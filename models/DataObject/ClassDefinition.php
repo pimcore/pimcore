@@ -588,7 +588,7 @@ class ClassDefinition extends Model\AbstractModel
 
             // check if the class definition file should be generated using brick/varexporter
             // for more details head over to https://github.com/brick/varexporter
-            if(PIMCORE_CLASS_DEFINITION_PRETTY_PRINT && PIMCORE_CLASS_DEFINITION_PRETTY_PRINT === 'true') {
+            if(defined("PIMCORE_CLASS_DEFINITION_PRETTY_PRINT") && getenv("PIMCORE_CLASS_DEFINITION_PRETTY_PRINT") === 'true') {
 
                 // export using brick/varexporter
                 $exportedClass = VarExporter::export($clone);
