@@ -476,6 +476,6 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
         } else {
             $value = null;
         }
-        return $importValue;
+        return $value;
     }
 }
