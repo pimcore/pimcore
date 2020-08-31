@@ -70,12 +70,13 @@ class Hardlink extends Document
     public function resolveDependencies()
     {
         $dependencies = parent::resolveDependencies();
+        $sourceDocument = $this->getSourceDocument();
 
-        if ($this->getSourceDocument() instanceof Document) {
-            $key = 'document_' . $this->getSourceDocument()->getId();
+        if ($sourceDocument instanceof Document) {
+            $key = 'document_' . $sourceDocument->getId();
 
             $dependencies[$key] = [
-                'id' => $this->getSourceDocument()->getId(),
+                'id' => $sourceDocument->getId(),
                 'type' => 'document',
             ];
         }
