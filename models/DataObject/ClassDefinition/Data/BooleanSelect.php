@@ -470,9 +470,9 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
         if ($importValue === "1") {
-            $value = self::YES_VALUE;
+            $value = true;
         } else if ($importValue === "0") {
-            $value = self::NO_VALUE;
+            $value = false;
         } else {
             $value = null;
         }
