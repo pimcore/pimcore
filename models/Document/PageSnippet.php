@@ -246,27 +246,27 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @see Document::resolveDependencies
-     *
      * @return array
      */
     public function resolveDependencies()
     {
-        $dependencies = parent::resolveDependencies();
+        $dependencies = [parent::resolveDependencies()];
 
         foreach ($this->getEditables() as $editable) {
-            $dependencies = array_merge($dependencies, $editable->resolveDependencies());
+            $dependencies[] = $editable->resolveDependencies();
         }
 
         if ($this->getContentMasterDocument() instanceof Document) {
-            $key = 'document_' . $this->getContentMasterDocument()->getId();
-            $dependencies[$key] = [
-                'id' => $this->getContentMasterDocument()->getId(),
-                'type' => 'document',
+            $masterDocumentId = $this->getContentMasterDocument()->getId();
+            $dependencies[] = [
+                'document_' . $masterDocumentId => [
+                    'id' => $masterDocumentId,
+                    'type' => 'document',
+                ],
             ];
         }
 
-        return $dependencies;
+        return array_merge(...$dependencies);
     }
 
     /**
