@@ -386,15 +386,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         if ($this->getClass() instanceof ClassDefinition) {
             foreach ($this->getClass()->getFieldDefinitions() as $field) {
                 $key = $field->getName();
-                $dependencies[] = $field->resolveDependencies(
-                    isset($this->$key) ? $this->$key : null
-                );
+                $dependencies[] = $field->resolveDependencies($this->$key ?? null);
             }
         }
 
-        $dependencies = array_merge(...$dependencies);
-
-        return $dependencies;
+        return array_merge(...$dependencies);
     }
 
     /**
