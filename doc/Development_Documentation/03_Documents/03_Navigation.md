@@ -491,8 +491,8 @@ $navigation->addPage([
  {% do mainNavigation.addPage({
                             'order': -1,
                             'uri': navStartNode.url,
-                            'label': 'Home',
-                            'title': "Home"
+                            'label': 'Home'|trans,
+                            'title': 'Home'|trans,
                         })
 %}
 ```
