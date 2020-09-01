@@ -23,20 +23,19 @@ use Pimcore\Model\Element\Service;
 
 class MarshalMatcher extends TypeMatcher
 {
-    /** @var string */
+    /** @var string|null */
     private $sourceType;
 
-    /** @var int */
+    /** @var int|null */
     private $sourceId;
 
     /**
      * MarshalMatcher constructor.
      *
-     * @param string $sourceType
-     * @param int $sourceId
+     * @param string|null $sourceType
+     * @param int|null $sourceId
      */
-    public function __construct(string $sourceType, int $sourceId)
-
+    public function __construct(?string $sourceType, ?int $sourceId)
     {
         $this->sourceType = $sourceType;
         $this->sourceId = $sourceId;

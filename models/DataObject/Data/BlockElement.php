@@ -17,13 +17,16 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
+use DeepCopy\DeepCopy;
 use Pimcore\Cache\Runtime;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
-use Pimcore\Model\Element\DeepCopy\UnmarshalMatcher;
 use Pimcore\Model\Element\ElementDescriptor;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Pimcore\Model\Version\MarshalMatcher;
+use Pimcore\Model\Version\UnmarshalMatcher;
 
 class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
 {
@@ -127,7 +130,8 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
 
     protected function renewReferences()
     {
-        $copier = Service::getDeepCopyInstance(null, ['source' => __METHOD__]);
+        $copier = new DeepCopy();
+        $copier->skipUncloneable(true);
         $copier->addTypeFilter(
             new \DeepCopy\TypeFilter\ReplaceFilter(
                 function ($currentValue) {
@@ -173,7 +177,23 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
      */
     public function __sleep()
     {
-        $copier = Service::getDeepCopyInstance(null, ['source' => __METHOD__]);
+        $copier = new DeepCopy();
+        $copier->skipUncloneable(true);
+        $copier->addTypeFilter(
+            new \DeepCopy\TypeFilter\ReplaceFilter(
+                function ($currentValue) {
+                    if ($currentValue instanceof ElementInterface) {
+                        $elementType = Service::getType($currentValue);
+                        $descriptor = new ElementDescriptor($elementType, $currentValue->getId());
+
+                        return $descriptor;
+                    }
+
+                    return $currentValue;
+                }
+            ),
+            new MarshalMatcher(null, null)
+        );
 
         $this->needsRenewReferences = true;
         $this->data = $copier->copy($this->data);
