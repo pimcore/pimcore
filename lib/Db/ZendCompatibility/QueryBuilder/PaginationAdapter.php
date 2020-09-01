@@ -139,7 +139,7 @@ class PaginationAdapter implements AdapterInterface
             $result = $rowCount->query(\PDO::FETCH_ASSOC)->fetch();
 
             $this->_rowCount = count($result) > 0 ? $result[$rowCountColumn] : 0;
-        } elseif (is_integer($rowCount)) {
+        } elseif (is_int($rowCount)) {
             $this->_rowCount = $rowCount;
         } else {
             throw new \Exception('Invalid row count');

@@ -27,6 +27,7 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     use Extension\QueryColumnType;
 
     use Model\DataObject\Traits\DefaultValueTrait;
+    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element

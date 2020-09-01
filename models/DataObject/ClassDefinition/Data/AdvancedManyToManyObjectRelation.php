@@ -350,7 +350,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
                 $item = $o->getRealFullPath();
 
-                if (sizeof($metaObject->getData())) {
+                if (count($metaObject->getData())) {
                     $subItems = [];
                     foreach ($metaObject->getData() as $key => $value) {
                         if (!$value) {
@@ -359,7 +359,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         $subItems[] = $key . ': ' . $value;
                     }
 
-                    if (sizeof($subItems)) {
+                    if (count($subItems)) {
                         $item .= ' <br/><span class="preview-metadata">[' . implode(' | ', $subItems) . ']</span>';
                     }
                 }

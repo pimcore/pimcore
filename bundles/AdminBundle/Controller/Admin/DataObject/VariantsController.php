@@ -76,14 +76,71 @@ class VariantsController extends AdminController
 
             // save
             $object = DataObject\Concrete::getById($data['id']);
+            $class = $object->getClass();
+
+            $requestedLanguage = $allParams['language'] ?? null;
+            if ($requestedLanguage) {
+                if ($requestedLanguage != 'default') {
+                    //                $this->get('translator')->setLocale($requestedLanguage);
+                    $request->setLocale($requestedLanguage);
+                }
+            } else {
+                $requestedLanguage = $request->getLocale();
+            }
 
             if ($object->isAllowed('publish')) {
                 $objectData = [];
                 foreach ($data as $key => $value) {
                     $parts = explode('~', $key);
+                    if (substr($key, 0, 1) == '~') {
+                        $type = $parts[1];
+                        $field = $parts[2];
+                        $keyid = $parts[3];
 
-                    if (count($parts) > 1) {
+                        if ($type == 'classificationstore') {
+                            $groupKeyId = explode('-', $keyid);
+                            $groupId = $groupKeyId[0];
+                            $keyid = $groupKeyId[1];
+
+                            $getter = 'get' . ucfirst($field);
+                            if (method_exists($object, $getter)) {
+
+                                /** @var DataObject\ClassDefinition\Data\Classificationstore $csFieldDefinition */
+                                $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
+                                $csLanguage = $requestedLanguage;
+                                if (!$csFieldDefinition->isLocalized()) {
+                                    $csLanguage = 'default';
+                                }
+
+                                /** @var DataObject\Classificationstore $classificationStoreData */
+                                $classificationStoreData = $object->$getter();
+
+                                $keyConfig = DataObject\Classificationstore\KeyConfig::getById($keyid);
+                                if ($keyConfig) {
+                                    $fieldDefinition = $keyDef = DataObject\Classificationstore\Service::getFieldDefinitionFromJson(
+                                        json_decode($keyConfig->getDefinition()),
+                                        $keyConfig->getType()
+                                    );
+                                    if ($fieldDefinition && method_exists($fieldDefinition, 'getDataFromGridEditor')) {
+                                        $value = $fieldDefinition->getDataFromGridEditor($value, $object, []);
+                                    }
+                                }
+
+                                $activeGroups = $classificationStoreData->getActiveGroups() ? $classificationStoreData->getActiveGroups() : [];
+                                $activeGroups[$groupId] = true;
+                                $classificationStoreData->setActiveGroups($activeGroups);
+                                $classificationStoreData->setLocalizedKeyValue($groupId, $keyid, $value, $csLanguage);
+                            }
+                        }
+                    } elseif (count($parts) > 1) {
                         $brickType = $parts[0];
+                        $brickDescriptor = null;
+
+                        if (strpos($brickType, '?') !== false) {
+                            $brickDescriptor = substr($brickType, 1);
+                            $brickDescriptor = json_decode($brickDescriptor, true);
+                            $brickType = $brickDescriptor['containerKey'];
+                        }
                         $brickKey = $parts[1];
                         $brickField = DataObject\Service::getFieldForBrickType($object->getClass(), $brickType);
 
@@ -98,10 +155,34 @@ class VariantsController extends AdminController
                             $brick = new $classname($object);
                             $object->$fieldGetter()->$brickSetter($brick);
                         }
-                        $brick->$valueSetter($value);
-                    } else {
-                        $objectData[$key] = $value;
+
+                        if ($brickDescriptor) {
+                            $brickDefinition = DataObject\Objectbrick\Definition::getByKey($brickType);
+                            /** @var DataObject\ClassDefinition\Data\Localizedfields $fieldDefinitionLocalizedFields */
+                            $fieldDefinitionLocalizedFields = $brickDefinition->getFieldDefinition('localizedfields');
+                            $fieldDefinition = $fieldDefinitionLocalizedFields->getFieldDefinition($brickKey);
+                        } else {
+                            $fieldDefinition = $this->getFieldDefinitionFromBrick($brickType, $brickKey);
+                        }
+
+                        if ($fieldDefinition && method_exists($fieldDefinition, 'getDataFromGridEditor')) {
+                            $value = $fieldDefinition->getDataFromGridEditor($value, $object, []);
+                        }
+
+                        if ($brickDescriptor) {
+                            /** @var DataObject\Localizedfield $localizedFields */
+                            $localizedFields = $brick->getLocalizedfields();
+                            $localizedFields->setLocalizedValue($brickKey, $value);
+                        } else {
+                            $brick->$valueSetter($value);
+                        }
                     }
+                    $fieldDefinition = $this->getFieldDefinition($class, $key);
+                    if ($fieldDefinition && method_exists($fieldDefinition, 'getDataFromGridEditor')) {
+                        $value = $fieldDefinition->getDataFromGridEditor($value, $object, []);
+                    }
+
+                    $objectData[$key] = $value;
                 }
 
                 $object->setValues($objectData);
@@ -150,5 +231,43 @@ class VariantsController extends AdminController
                 throw new \Exception('Permission denied');
             }
         }
+    }
+
+    /**
+     * @param DataObject\ClassDefinition $class
+     * @param string $key
+     *
+     * @return DataObject\ClassDefinition\Data|null
+     */
+    protected function getFieldDefinition($class, $key)
+    {
+        $fieldDefinition = $class->getFieldDefinition($key);
+        if ($fieldDefinition) {
+            return $fieldDefinition;
+        }
+
+        $localized = $class->getFieldDefinition('localizedfields');
+        if ($localized instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+            $fieldDefinition = $localized->getFieldDefinition($key);
+        }
+
+        return $fieldDefinition;
+    }
+
+    /**
+     * @param string $brickType
+     * @param string $key
+     *
+     * @return DataObject\ClassDefinition\Data|null
+     */
+    protected function getFieldDefinitionFromBrick($brickType, $key)
+    {
+        $brickDefinition = DataObject\Objectbrick\Definition::getByKey($brickType);
+        $fieldDefinition = null;
+        if ($brickDefinition) {
+            $fieldDefinition = $brickDefinition->getFieldDefinition($key);
+        }
+
+        return $fieldDefinition;
     }
 }

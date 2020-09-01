@@ -26,6 +26,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -348,7 +349,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        $value = null;
+        $video = null;
 
         if ($importValue && strpos($importValue, '~')) {
             list($type, $data) = explode('~', $importValue);
@@ -367,7 +368,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             }
         }
 
-        return $value;
+        return $video;
     }
 
     /**

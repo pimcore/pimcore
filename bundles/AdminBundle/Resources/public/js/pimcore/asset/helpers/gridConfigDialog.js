@@ -134,7 +134,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
             if (preview) {
                 this.requestPreview();
             } else {
-                this.callback(this.data, this.settings, save);
+                this.callback(this.data, this.settings, save, this.context);
                 this.window.close();
             }
         } else {
@@ -152,7 +152,7 @@ pimcore.asset.helpers.gridConfigDialog = Class.create(pimcore.element.helpers.gr
                     if (preview) {
                         this.requestPreview();
                     } else {
-                        this.callback(this.data, this.settings, save);
+                        this.callback(this.data, this.settings, save, this.context);
                         this.window.close();
                     }
 

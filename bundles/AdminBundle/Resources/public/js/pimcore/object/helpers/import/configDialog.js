@@ -75,7 +75,7 @@ pimcore.object.helpers.import.configDialog = Class.create({
         this.csvPreviewPanel = new pimcore.object.helpers.import.csvPreviewTab(this.config, this);
         this.columnConfigPanel = new pimcore.object.helpers.import.columnConfigurationTab(this.config, this);
         this.resolverSettingsPanel = new pimcore.object.helpers.import.resolverSettingsTab(this.config, this);
-        this.csvSettingsPanel = new pimcore.object.helpers.import.csvSettingsTab(this.config, this);
+        this.csvSettingsPanel = new pimcore.object.helpers.import.csvSettingsTab(this.config, true, this);
         this.saveAndSharePanel = new pimcore.object.helpers.import.saveAndShareTab(this.config, this);
         this.reportPanel = new pimcore.object.helpers.import.reportTab(this.config, this);
 

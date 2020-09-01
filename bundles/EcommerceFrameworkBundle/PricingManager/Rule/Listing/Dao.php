@@ -55,4 +55,13 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
     {
         return $this->ruleClass;
     }
+
+    public function getTotalCount()
+    {
+        try {
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM `' . \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Dao::TABLE_NAME . '`' . $this->getCondition());
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
 }

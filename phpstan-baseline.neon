@@ -161,6 +161,11 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
 
 		-
+			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\DefaultMysql\\:\\:load\\(\\) should return array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\IndexableInterface\\> but returns array\\<int, array\\|Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\>\\.$#"
+			count: 1
+			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultMysql.php
+
+		-
 			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:\\$creationDate \\(DateTime\\) does not accept null\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
