@@ -1900,7 +1900,7 @@ class DataObjectHelperController extends AdminController
                 $line = implode($delimiter, $line);
                 fwrite($fp, $line);
             } else {
-                fputs($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)));
+                fwrite($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)));
             }
             if ($i < $lineCount - 1) {
                 fwrite($fp, "\r\n");

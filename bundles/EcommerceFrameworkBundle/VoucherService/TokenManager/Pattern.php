@@ -393,7 +393,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         $finalLength = $this->getFinalTokenLength();
         $insertParts = [];
 
-        if (sizeof($insertTokens) > 0) {
+        if (count($insertTokens) > 0) {
             foreach ($insertTokens as $token) {
                 $insertParts[] =
                     "('" .
@@ -490,7 +490,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             }
 
             // If there are tokens to insert add them to query.
-            if (sizeof($insertTokens)) {
+            if (count($insertTokens)) {
                 $resultTokenSet[] = $insertTokens;
             }
 
@@ -551,7 +551,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             $paginator->setCurrentPageNumber($params['page']);
 
             $viewParamsBag['paginator'] = $paginator;
-            $viewParamsBag['count'] = sizeof($tokens);
+            $viewParamsBag['count'] = count($tokens);
         } else {
             $viewParamsBag['msg']['result'] = 'bundle_ecommerce_voucherservice_msg-error-token-noresult';
         }
