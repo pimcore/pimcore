@@ -488,7 +488,7 @@ $navigation->addPage([
 ]);
 ```
 ```twig
- {% do mainNavigation.addPage({
+ {% do navigation.addPage({
                             'order': -1,
                             'uri': '/',
                             'label': 'Home'|trans,
