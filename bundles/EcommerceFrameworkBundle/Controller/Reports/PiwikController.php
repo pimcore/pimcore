@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PiwikController extends AdminController
 {
     /**
-     * @Route("/reports", methods={"GET"})
+     * @Route("/reports", name="pimcore_ecommerceframework_reports_piwik_reports", methods={"GET"})
      */
     public function reportsAction(PiwikReportsProvider $reportsProvider)
     {

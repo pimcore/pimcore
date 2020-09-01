@@ -88,6 +88,21 @@ class Installer
     private $importDatabaseDataDump = true;
 
     /**
+     * skip writing database.yml file
+     *
+     * @var bool
+     */
+    private $skipDatabaseConfig = false;
+
+    /**
+     * @param bool $skipDatabaseConfig
+     */
+    public function setSkipDatabaseConfig(bool $skipDatabaseConfig): void
+    {
+        $this->skipDatabaseConfig = $skipDatabaseConfig;
+    }
+
+    /**
      * @var array
      */
     private $stepEvents = [
@@ -542,7 +557,11 @@ class Installer
     private function createConfigFiles(array $config)
     {
         $writer = new ConfigWriter();
-        $writer->writeDbConfig($config);
+
+        if (!$this->skipDatabaseConfig) {
+            $writer->writeDbConfig($config);
+        }
+
         $writer->writeSystemConfig();
         $writer->writeDebugModeConfig();
         $writer->generateParametersFile();

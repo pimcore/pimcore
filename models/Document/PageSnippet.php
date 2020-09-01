@@ -98,7 +98,6 @@ abstract class PageSnippet extends Model\Document
      */
     protected $inheritedEditables = [];
 
-
     public function __construct()
     {
         $this->elements = & $this->editables;
@@ -181,7 +180,8 @@ abstract class PageSnippet extends Model\Document
             if (!empty($documentsConfig['versions']['steps'])
                 || !empty($documentsConfig['versions']['days'])
                 || $setModificationDate) {
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
+                $saveStackTrace = !($documentsConfig['versions']['disable_stack_trace'] ?? false);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
             }
 
             // hook should be also called if "save only new version" is selected
@@ -355,7 +355,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @param string $name
      * @param string $type
-     * @param string $data
+     * @param mixed $data
      *
      * @return $this
      *
@@ -363,7 +363,7 @@ abstract class PageSnippet extends Model\Document
      */
     public function setRawElement($name, $type, $data)
     {
-        return $this->setRawEditable($name, $type,$data);
+        return $this->setRawEditable($name, $type, $data);
     }
 
     /**
@@ -419,7 +419,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      */
-    public function setEditable(string $name,Tag $data)
+    public function setEditable(string $name, Tag $data)
     {
         $this->editables[$name] = $data;
 

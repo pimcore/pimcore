@@ -1,12 +1,13 @@
 # Upgrade Notes
 ## 6.8.0
+- HybridAuth integration is deprecated and will be removed in Pimcore 7.
 - Javascript - All classes under namespaces `pimcore.document.tags` are deprecated and will be removed in 7. These are moved to new namespace `pimcore.document.editables`. 
 If you have custom editables or wysiwyg global config then please change namespace from `pimcore.document.tags.*` to `pimcore.document.editables.*`
 - Javascript - Class `pimcore.document.tag` is deprecated as well and will be removed in 7. Use new class `pimcore.document.editable` instead.
 
 ## 6.7.0
 - [Ecommerce][IndexService] Elastic Search worker does not use mockup cache anymore. Now mockup objects are build directly based on information in response of ES response (_source flag). Therefore `AbstractElasticSearch` Worker does not extend `AbstractMockupCacheWorker` anymore. 
-- Rules regarding default values in combination with inheritance enabled have been clarified. Read [this](../../05_Objects/01_Object_Classes/01_Data_Types/README.md) for details.
+- Rules regarding default values in combination with inheritance enabled have been clarified. Read [this](../../05_Objects/01_Object_Classes/01_Data_Types/README.md#page_Default-values) for details.
 - [Ecommerce] Deprecated FactFinder integration and will be removed in Pimcore 7.
 - Saving unpublished data objects via API will not throw Validation exceptions anymore (just like Admin UI). Please set `omitMandatoryCheck` explicitly to `false` to force mandatory checks.
 - `\Pimcore\DataObject\GridColumnConfig\Operator\ObjectBrickGetter` operator is deprecated and will be removed in 7.0.0

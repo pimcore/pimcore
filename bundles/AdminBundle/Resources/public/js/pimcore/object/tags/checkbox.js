@@ -135,6 +135,10 @@ pimcore.object.tags.checkbox = Class.create(pimcore.object.tags.abstract, {
             }
         };
 
+        if (this.fieldConfig.labelWidth) {
+            componentCfg.labelWidth = this.fieldConfig.labelWidth;
+        }
+
         this.component = Ext.create('Ext.form.FieldContainer', componentCfg);
 
         return this.component;

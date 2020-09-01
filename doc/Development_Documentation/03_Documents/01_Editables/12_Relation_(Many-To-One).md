@@ -76,10 +76,8 @@ options in the editable configuration.
     "classes": ["person"]
 }) }}
 ```
+
 </div>
-
-
-
 
 
 We restricted the `myRelation` editable to the following entities: 
@@ -115,4 +113,5 @@ Another useful use-case for the relation editable is a download link.
     {% endif %}
 {% endif %}
 ```
+
 </div>

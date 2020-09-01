@@ -956,9 +956,9 @@ class UserController extends AdminController implements EventedControllerInterfa
         }
 
         $token = Tool\Authentication::generateToken($user->getName());
-        $link = $this->generateUrl('pimcore_admin_login_check', [
+        $link = $this->generateCustomUrl([
             'token' => $token,
-        ], UrlGeneratorInterface::ABSOLUTE_URL);
+        ]);
 
         return $this->adminJson([
             'success' => true,
@@ -1177,10 +1177,10 @@ class UserController extends AdminController implements EventedControllerInterfa
                 }
 
                 $token = Tool\Authentication::generateToken($user->getName());
-                $loginUrl = $this->generateUrl('pimcore_admin_login_check', [
+                $loginUrl = $this->generateCustomUrl([
                     'token' => $token,
-                    'reset' => 'true',
-                ], UrlGeneratorInterface::ABSOLUTE_URL);
+                    'reset' => true,
+                ]);
 
                 try {
                     $mail = Tool::getMail([$user->getEmail()], 'Pimcore login invitation for ' . Tool::getHostname());
@@ -1218,5 +1218,26 @@ class UserController extends AdminController implements EventedControllerInterfa
         }
 
         return $this->getAdminUser()->getId();
+    }
+
+    /**
+     *
+     * @param array $params
+     * @param string $fallbackUrl
+     * @param int $referenceType //UrlGeneratorInterface::ABSOLUTE_URL, ABSOLUTE_PATH, RELATIVE_PATH, NETWORK_PATH
+     *
+     * @return string The generated URL
+     */
+    private function generateCustomUrl(array $params, $fallbackUrl = 'pimcore_admin_login_check', $referenceType = UrlGeneratorInterface::ABSOLUTE_URL): string
+    {
+        try {
+            //try to generate invitation link for custom admin point
+            $loginUrl = $this->generateUrl('my_custom_admin_entry_point', $params, $referenceType);
+        } catch (\Exception $e) {
+            //use default login check for invitation link
+            $loginUrl = $this->generateUrl($fallbackUrl, $params, $referenceType);
+        }
+
+        return $loginUrl;
     }
 }
