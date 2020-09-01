@@ -490,7 +490,7 @@ $navigation->addPage([
 ```twig
  {% do mainNavigation.addPage({
                             'order': -1,
-                            'uri': navStartNode.url,
+                            'uri': '/',
                             'label': 'Home'|trans,
                             'title': 'Home'|trans,
                         })
