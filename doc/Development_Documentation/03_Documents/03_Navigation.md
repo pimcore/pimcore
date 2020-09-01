@@ -148,9 +148,12 @@ Having set up the navigation container as shown above, you can easily use it to 
         }) }}
 </div>
 ```
+
 </div>
 
 ### Breadcrumbs
+
+<div class="code-section">
 
 ```php
 <div class="my-breadcrumbs">
@@ -158,6 +161,14 @@ Having set up the navigation container as shown above, you can easily use it to 
     <?= $this->navigation()->breadcrumbs()->setMinDepth(null)->render($mainNavigation); ?>
 </div>
 ```
+
+```twig
+<div class="my-breadcrumbs">
+    <a href="/">{{ 'Home'|trans }}</a> >
+    {{ pimcore_render_nav(mainNavigation, 'breadcrumbs') }}
+</div>
+```
+</div>
 
 ### Sidebar Navigation
 
@@ -486,6 +497,15 @@ $navigation->addPage([
    'label' => 'home', //visible label
    'title' => 'Homepage' //tooltip text
 ]);
+```
+```twig
+ {% do navigation.addPage({
+                            'order': -1,
+                            'uri': '/',
+                            'label': 'Home'|trans,
+                            'title': 'Home'|trans,
+                        })
+%}
 ```
 
 If you retrieve the **home** document (which always has the ID 1) you can also retrieve its navigation properties so that they can be edited from the Pimcore admin interface like all the other documents.

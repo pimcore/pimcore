@@ -63,7 +63,7 @@ After the installer has finished, you can open the admin interface: `https://you
 
 ##### Debugging installation issues
 
-The installer writes a log in `var/installer/logs` which contains any errors encountered during the installation. Please
+The installer writes a log in `var/logs` which contains any errors encountered during the installation. Please
 have a look at the logs as a starting point when debugging installation issues.
 
 

@@ -23,6 +23,9 @@ Admin translations use the same translator component (Symfony) but on a differen
 Admin translations underly the same case sensitivity logic as [shared translations](./04_Shared_Translations.md#page_Translations_case_sensitivity).
 
 #### Example: Translate Options of a Select Editable
+
+<div class="code-section">
+
 ```php
  <?= $this->select("select", [
      "store" => [
@@ -41,7 +44,9 @@ Admin translations underly the same case sensitivity logic as [shared translatio
 	]
 }) }}
  ```
- 
+
+</div>
+
 #### Adding your own admin languages (since v6.3.6)
 Pimcore comes with a set of translations which are managed by [POEditor](https://poeditor.com/join/project/VWmZyvFVMH). 
 However, the amount of available languages is limited, because only languages with certain translation progress are

@@ -31,7 +31,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class IndexController extends AdminController
 {
     /**
-     * @Route("/get-filter-groups", methods={"GET"})
+     * @Route("/get-filter-groups", name="pimcore_ecommerceframework_index_getfiltergroups", methods={"GET"})
      *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */
@@ -59,9 +59,7 @@ class IndexController extends AdminController
     }
 
     /**
-     * @Route("/get-values-for-filter-field", methods={"GET"})
-     *
-     * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
+     * @Route("/get-values-for-filter-field", name="pimcore_ecommerceframework_index_getvaluesforfilterfield", methods={"GET"})
      */
     public function getValuesForFilterFieldAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
@@ -106,7 +104,7 @@ class IndexController extends AdminController
     }
 
     /**
-     * @Route("/get-fields", methods={"GET"})
+     * @Route("/get-fields", name="pimcore_ecommerceframework_index_getfields", methods={"GET"})
      *
      * @param Request $request
      *
@@ -158,7 +156,7 @@ class IndexController extends AdminController
     }
 
     /**
-     * @Route("/get-all-tenants", methods={"GET"})
+     * @Route("/get-all-tenants", name="pimcore_ecommerceframework_index_getalltenants", methods={"GET"})
      *
      * @return \Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse
      */

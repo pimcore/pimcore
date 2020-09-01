@@ -457,6 +457,15 @@ class Configuration implements ConfigurationInterface
                                         ->end()
                                         ->defaultTrue()
                                     ->end()
+                                    ->booleanNode('clip_auto_support')
+                                        ->beforeNormalization()
+                                            ->ifString()
+                                            ->then(function ($v) {
+                                                return (bool)$v;
+                                            })
+                                        ->end()
+                                        ->defaultTrue()
+                                    ->end()
                                     ->booleanNode('auto_clear_temp_files')
                                         ->beforeNormalization()
                                             ->ifString()
@@ -500,6 +509,15 @@ class Configuration implements ConfigurationInterface
                                     })
                                 ->end()
                                 ->defaultTrue()
+                            ->end()
+                            ->booleanNode('disable_stack_trace')
+                                ->beforeNormalization()
+                                    ->ifString()
+                                    ->then(function ($v) {
+                                        return (bool)$v;
+                                    })
+                                ->end()
+                                ->defaultFalse()
                             ->end()
                         ->end()
                     ->end()
@@ -560,6 +578,15 @@ class Configuration implements ConfigurationInterface
                             ->children()
                                 ->scalarNode('days')->defaultNull()->end()
                                 ->scalarNode('steps')->defaultNull()->end()
+                                ->booleanNode('disable_stack_trace')
+                                    ->beforeNormalization()
+                                    ->ifString()
+                                        ->then(function ($v) {
+                                            return (bool)$v;
+                                        })
+                                    ->end()
+                                    ->defaultFalse()
+                                ->end()
                             ->end()
                         ->end()
                     ->end();
@@ -612,6 +639,15 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('steps')
                             ->defaultNull()
+                        ->end()
+                        ->booleanNode('disable_stack_trace')
+                            ->beforeNormalization()
+                            ->ifString()
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
+                            ->end()
+                            ->defaultFalse()
                         ->end()
                     ->end()
                 ->end()

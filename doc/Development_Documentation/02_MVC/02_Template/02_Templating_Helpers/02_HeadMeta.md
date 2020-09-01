@@ -43,6 +43,8 @@ You may specify a new meta tag at any time. Typically, you will specify client-s
 For instance, if you wish to specify SEO description, you'd be creating a meta name tag with the name 
 'keywords' and the content the keywords you wish to associate with your page:
 
+<div class="code-section">
+
 ```php
 // setting meta description
 $this->headMeta()->appendName('description', 'My SEO description for my awesome page');
@@ -68,7 +70,11 @@ $this->headMeta()->appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8')
 {% do pimcore_head_meta().appendHttpEquiv('Content-Type', 'text/html; charset=UTF-8').appendHttpEquiv('Content-Language', 'en-US') %}
 ```
 
+</div>
+
 When you're ready to place your meta tags in the layout, simply echo the helper:
+
+<div class="code-section">
 
 ```php
 <?= $this->headMeta() ?>
@@ -77,3 +83,5 @@ When you're ready to place your meta tags in the layout, simply echo the helper:
 ```twig
 {{ pimcore_head_meta() }}
 ```
+
+</div>

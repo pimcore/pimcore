@@ -28,6 +28,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element

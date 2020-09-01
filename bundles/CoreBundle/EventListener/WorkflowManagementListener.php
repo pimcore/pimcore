@@ -183,7 +183,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
 
             $marking = $workflow->getMarking($element);
 
-            if (!sizeof($marking->getPlaces())) {
+            if (!count($marking->getPlaces())) {
                 continue;
             }
 

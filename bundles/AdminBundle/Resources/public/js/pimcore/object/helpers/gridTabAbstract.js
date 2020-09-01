@@ -67,6 +67,12 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             objectId = this.element.id;
         }
 
+
+        var classStore = pimcore.globalmanager.get("object_types_store");
+        var klassIndex = classStore.findExact("id", this.classId);
+        var klass = classStore.getAt(klassIndex);
+        var className = klass.get("text");
+
         var columnConfig = {
             language: gridConfig.language,
             pageSize: gridConfig.pageSize,
@@ -74,10 +80,10 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             objectId: objectId,
             selectedGridColumns: visibleColumns
         };
-        var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function (data, settings, save) {
+        var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function (data, settings, save, context) {
                 this.gridLanguage = data.language;
                 this.gridPageSize = data.pageSize;
-                this.createGrid(true, data.columns, settings, save);
+                this.createGrid(true, data.columns, settings, save, context);
             }.bind(this),
             function () {
                 Ext.Ajax.request({
@@ -111,8 +117,17 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             {
                 allowPreview: true,
                 classId: this.classId,
-                objectId: objectId
-            }
+                objectId: objectId,
+                csvMode: 0,
+                showPreviewSelector: true,
+                previewSelectorTypes: ['object'],
+                previewSelectorSubTypes: {
+                    'object' : ['object', 'variant']},
+                previewSelectorSpecific: {
+                    classes: [className]
+                }
+            },
+            null
         )
 
     },

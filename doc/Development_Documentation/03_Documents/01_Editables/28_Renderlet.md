@@ -51,7 +51,7 @@ The code below shows how to use renderlet to create gallery based on it.
 ### Specify the Renderlet Editable in a Template
 
 <div class="code-section">
-    
+
 ```php
 <section id="renderlet-gallery">
     <?= $this->renderlet("myGallery", [
@@ -62,8 +62,8 @@ The code below shows how to use renderlet to create gallery based on it.
     ]); ?>
 </section>
 ```
-    
-```twig    
+
+```twig
 <section id="renderlet-gallery">
     {{
         pimcore_renderlet('myGallery', {
@@ -74,7 +74,8 @@ The code below shows how to use renderlet to create gallery based on it.
         })
     }}
 </section>
-``` 
+```
+
 </div>
 
 Now editors are able to put elements onto the renderlet in the editmode.

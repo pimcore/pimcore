@@ -374,6 +374,7 @@ CREATE TABLE `objects` (
   `o_classId` VARCHAR(50) NULL DEFAULT NULL,
   `o_className` varchar(255) DEFAULT NULL,
   `o_childrenSortBy` ENUM('key','index') NULL DEFAULT NULL,
+  `o_childrenSortOrder` ENUM('ASC','DESC') NULL DEFAULT NULL,
   `o_versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`o_id`),
   UNIQUE KEY `fullpath` (`o_path`,`o_key`),

@@ -663,12 +663,17 @@ pimcore.object.tree = Class.create({
                 sortByItems.push({
                     text: t('by_key'),
                     iconCls: "pimcore_icon_alphabetical_sorting_az",
-                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'key')
+                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'key', 'ASC')
+                });
+                sortByItems.push({
+                    text: t('by_key_reverse'),
+                    iconCls: "pimcore_icon_alphabetical_sorting_za",
+                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'key', 'DESC')
                 });
                 sortByItems.push({
                     text: t('by_index'),
                     iconCls: "pimcore_icon_index_sorting",
-                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'index')
+                    handler: this.changeObjectChildrenSortBy.bind(this, tree, record, 'index', 'ASC')
                 });
             }
 
@@ -1019,11 +1024,12 @@ pimcore.object.tree = Class.create({
 
     },
 
-    changeObjectChildrenSortBy: function (tree, record, sortBy) {
+    changeObjectChildrenSortBy: function (tree, record, sortBy, childrenSortOrder = 'ASC') {
 
         var parameters = {
             id: record.data.id,
-            sortBy: sortBy
+            sortBy: sortBy,
+            childrenSortOrder: childrenSortOrder
         };
 
         Ext.Ajax.request({

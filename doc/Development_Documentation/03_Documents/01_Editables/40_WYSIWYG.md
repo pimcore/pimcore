@@ -49,6 +49,7 @@ The following code specifies the height for the rendered WYSIWYG editable (has n
     }}
 </section>
 ```
+
 </div>
 
 If you have a look at the editmode, you will see that our WYSIWYG is rendered with the full toolbar.
@@ -64,6 +65,7 @@ The WYSIWYG editable allows us to specify the toolbar.
 If you have to limit styling options (for example only basic styles like `<b>` tag and lists would be allowed), just use `toolbarGroups` option.  
 There is also the option to disable the pimcore generated default toolbar by setting the option `toolbarGroups` explicitly to `false`. In this case,
 either the configuration from the customConfig-file or if absent the ckeditor default will be loaded.
+
 <div class="code-section">
 
 ```php
@@ -93,6 +95,7 @@ either the configuration from the customConfig-file or if absent the ckeditor de
     }}
 </section>
 ```
+
 </div>
 
 Now the user can use only the limited toolbar.
@@ -102,6 +105,8 @@ Now the user can use only the limited toolbar.
 
 There is also an additional way to specify the configuration by adding `customConfig`. 
 
+<div class="code-section">
+
 ```php
 <section id="marked-content">
     <?= $this->wysiwyg("specialContent", [
@@ -110,6 +115,7 @@ There is also an additional way to specify the configuration by adding `customCo
     ]); ?>
 </section>
 ```
+
 ```twig
 <section id="marked-content">
     {{  pimcore_wysiwyg('specialContent', {
@@ -119,6 +125,8 @@ There is also an additional way to specify the configuration by adding `customCo
     }}
 </section>
 ```
+
+</div>
 
 The `custom_config.js` file could look like the following (please refer to the [CKEditor documentation](https://docs.ckeditor.com/ckeditor4/docs/#!/guide/dev_configuration-section-using-a-custom-configuration-file) for further details):
 
@@ -202,6 +210,8 @@ class EditmodeListener implements EventSubscriberInterface
 
 With the following code you can get the text even in editmode:
 
+<div class="code-section">
+
 ```php
 <?= $this->wysiwyg("specialContent"); ?>
 <?php if($this->editmode): ?>
@@ -220,5 +230,7 @@ With the following code you can get the text even in editmode:
     {{ pimcore_wysiwyg('specialContent').getData() }}
 </div>
 ```
+
+</div>
 
 ![WYSIWYG with preview - editmode](../../img/editables_wysiwyg_with_preview_editmode.png)

@@ -25,6 +25,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
