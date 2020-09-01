@@ -82,7 +82,7 @@ class MultiSelectCategory extends AbstractFilterType
             }
         }
 
-        if (sizeof($conditions)) {
+        if (count($conditions)) {
             if ($filterDefinition->getUseAndCondition()) {
                 $conditions = implode(' AND ', $conditions);
             } else {

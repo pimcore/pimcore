@@ -50,6 +50,8 @@ Output returned by `getPosterAsset`:
 
 To create a container for local video files you can just use the `$this->video` helperwithout any options.
 
+<div class="code-section">
+
 ```php
 <section id="campaign_video">
     <?= $this->video("campaignVideo", [
@@ -67,6 +69,8 @@ To create a container for local video files you can just use the `$this->video` 
     }) }}
 </section>
 ```
+
+</div>
 
 In the editmode, there is now a container available where you can assign an asset path and a video poster. 
 
@@ -86,6 +90,8 @@ Have a look at the frontend preview:
 ![Video editable - YouTube configuration - frontend](../../img/editables_video_youtube_frontend.png)
 
 In the configuration, you could also specify additional options for external services.
+
+<div class="code-section">
 
 ```php
 <section id="campaign_video">
@@ -122,7 +128,12 @@ In the configuration, you could also specify additional options for external ser
 </section>
 ```
 
+</div>
+
 ### HTML5 with Automatic Video Transcoding (using video.js)
+
+<div class="code-section">
+
 ```php
 <!DOCTYPE HTML>
 <html>
@@ -167,6 +178,8 @@ In the configuration, you could also specify additional options for external ser
 </body>
 </html>
 ```
+
+</div>
 
 Read more about [Video Thumbnails](../../04_Assets/03_Working_with_Thumbnails/03_Video_Thumbnails.md).
 

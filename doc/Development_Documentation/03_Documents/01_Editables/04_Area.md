@@ -46,6 +46,8 @@ Brick-specific configurations are passed using the `params` configuration (see a
 
 ## Example with Parameters
 
+<div class="code-section">
+
 ```php
 <div>
     <?= $this->area('myArea', [
@@ -61,6 +63,7 @@ Brick-specific configurations are passed using the `params` configuration (see a
     ]); ?>
 </div>
 ```
+
 ```twig
 <div>
     {{ pimcore_area('myArea', {
@@ -75,6 +78,8 @@ Brick-specific configurations are passed using the `params` configuration (see a
 </div>
 ```
 
+</div>
+
 Get the params in your brick:
 
 ```php
@@ -82,7 +87,6 @@ Get the params in your brick:
     <?= $this->param1; ?>
 </div>
 ```
-
 
 ### Accessing Data Within an Area Element
 
