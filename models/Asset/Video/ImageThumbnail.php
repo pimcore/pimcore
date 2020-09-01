@@ -192,14 +192,6 @@ class ImageThumbnail
      */
     protected function createConfig($selector)
     {
-        $config = Image\Thumbnail\Config::getByAutoDetect($selector);
-        if ($config) {
-            $format = strtolower($config->getFormat());
-            if ($format == 'source') {
-                $config->setFormat('PNG');
-            }
-        }
-
-        return $config;
+        return Image\Thumbnail\Config::getByAutoDetect($selector);
     }
 }
