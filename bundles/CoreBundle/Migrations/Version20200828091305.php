@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Migrations;
+namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\DBALException;
