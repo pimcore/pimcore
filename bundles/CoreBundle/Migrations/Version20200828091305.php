@@ -12,8 +12,6 @@ use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
  * Class Version20200828091305
  *
  * Migrates tables from tinyint(4) to tinyint(1) for boolean-type content
- *
- * @package App\Migrations
  */
 class Version20200828091305 extends AbstractPimcoreMigration
 {
