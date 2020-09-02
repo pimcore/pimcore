@@ -257,7 +257,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        if ($data[$this->getName() . '__value'] || $data[$this->getName() . '__unit']) {
+        if (strlen($data[$this->getName() . '__value']) > 0 || $data[$this->getName() . '__unit']) {
             $quantityValue = new Model\DataObject\Data\QuantityValue((float)$data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
 
             if (isset($params['owner'])) {
@@ -328,7 +328,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if ($data['value'] || $data['unit']) {
+        if (strlen($data['value']) > 0 || $data['unit']) {
             if (is_numeric($data['unit'])) {
                 if ($data['unit'] == -1 || $data['unit'] == null || empty($data['unit'])) {
                     return new Model\DataObject\Data\QuantityValue($data['value'], null);
