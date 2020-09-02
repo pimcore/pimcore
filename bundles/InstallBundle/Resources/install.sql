@@ -873,7 +873,7 @@ DROP TABLE IF EXISTS `element_workflow_state`;
 CREATE TABLE `element_workflow_state` (
   `cid` int(10) NOT NULL DEFAULT '0',
   `ctype` enum('document','asset','object') NOT NULL,
-  `place` varchar(255) DEFAULT NULL,
+  `place` text DEFAULT NULL,
   `workflow` varchar(100) NOT NULL,
   PRIMARY KEY (`cid`,`ctype`,`workflow`)
 ) DEFAULT CHARSET=utf8mb4;
