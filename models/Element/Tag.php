@@ -205,9 +205,9 @@ class Tag extends Model\AbstractModel
         $this->getDao()->save();
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_UPDATE, new TagEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_UPDATE, new TagEvent($this));
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_ADD, new TagEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_ADD, new TagEvent($this));
         }
     }
 
