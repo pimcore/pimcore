@@ -20,7 +20,6 @@ declare(strict_types=1);
 
 namespace Pimcore\DataObject\Import;
 
-use DeepCopy\DeepCopy;
 use Pimcore\DataObject\Import\ColumnConfig\ConfigElementInterface;
 use Pimcore\DataObject\Import\ColumnConfig\Operator\Factory\OperatorFactoryInterface;
 use Pimcore\DataObject\Import\ColumnConfig\Operator\OperatorInterface;
@@ -29,6 +28,7 @@ use Pimcore\DataObject\Import\ColumnConfig\Value\ValueInterface;
 use Pimcore\DataObject\Import\Resolver\ResolverInterface;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
+use \Pimcore\Model\Element\Service as ElementService;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\ImportConfig;
 use Pimcore\Model\User;
@@ -297,7 +297,7 @@ class Service
                             $validLanguages = Tool::getValidLanguages();
                         }
                         foreach ($validLanguages as $validLanguage) {
-                            $copier = new DeepCopy();
+                            $copier = ElementService::getDeepCopyInstance(null, ['source' => __METHOD__]);
                             $lfImportColumn = $copier->copy($importColumn);
                             $lfImportColumn->attributes->class = 'LocaleSwitcher';
                             $lfImportColumn->attributes->locale = $validLanguage;
