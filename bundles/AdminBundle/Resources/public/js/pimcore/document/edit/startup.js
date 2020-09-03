@@ -133,7 +133,8 @@ Ext.onReady(function () {
         }
         editableNames.push(name);
 
-        var editable = new pimcore.document.editables[type](id, name, options, data, inherited);
+        // @TODO: change pimcore.document.tags to pimcore.document.editables in v7
+        var editable = new pimcore.document.tags[type](id, name, options, data, inherited);
         editable.setRealName(config.realName);
         editable.setInherited(inherited);
 
