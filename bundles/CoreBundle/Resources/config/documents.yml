@@ -36,7 +36,7 @@ services:
         public: true
         calls:
             - [addHandler, ['@Pimcore\Document\Editable\EditableHandler']]
-        deprecated: 'The "%alias_id%" service is deprecated. Use "Pimcore\Document\Editable\EditableHandler" instead'
+        deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Document\Editable\EditableHandler" instead'
 
     # get default editable handler when type hinting against interface
     Pimcore\Document\Editable\EditableHandlerInterface: '@Pimcore\Document\Editable\DelegatingEditableHandler'
