@@ -39,7 +39,9 @@ services:
         deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Document\Editable\EditableHandler" instead'
 
     # get default editable handler when type hinting against interface
-    Pimcore\Document\Editable\EditableHandlerInterface: '@Pimcore\Document\Editable\DelegatingEditableHandler'
+    Pimcore\Document\Editable\EditableHandlerInterface:
+        alias: Pimcore\Document\Editable\DelegatingEditableHandler
+        public: true
 
     pimcore.document.tag.handler:
         alias: Pimcore\Document\Editable\DelegatingEditableHandler
