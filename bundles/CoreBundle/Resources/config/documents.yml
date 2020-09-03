@@ -53,7 +53,7 @@ services:
     # get default tag handler when type hinting against interface
     Pimcore\Document\Tag\TagHandlerInterface:
         alias: Pimcore\Document\Tag\DelegatingTagHandler
-        deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Document\Editable\DelegatingEditableHandler" instead'
+        deprecated: 'The "%alias_id%" service is deprecated. Use "Pimcore\Document\Editable\DelegatingEditableHandler" instead'
 
 
     # default editable handler rendering pimcore5+ tags
@@ -70,7 +70,7 @@ services:
 
     Pimcore\Document\Tag\TagHandler:
         alias: Pimcore\Document\Editable\EditableHandler
-        deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Document\Editable\EditableHandler" instead'
+        deprecated: 'The "%alias_id%" service is deprecated. Use "Pimcore\Document\Editable\EditableHandler" instead'
 
     #
     # AREABRICKS
@@ -110,7 +110,7 @@ services:
     Pimcore\Document\Tag\TagUsageResolver:
         alias: Pimcore\Document\Editable\EditableUsageResolver
         public: true
-        deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Document\Editable\EditableUsageResolver" instead'
+        deprecated: 'The "%alias_id%" service is deprecated. Use "Pimcore\Document\Editable\EditableUsageResolver" instead'
 
     Pimcore\Document\DocumentStack:
         public: true

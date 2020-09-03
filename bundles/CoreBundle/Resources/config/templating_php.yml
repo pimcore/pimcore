@@ -33,7 +33,7 @@ services:
 
     Pimcore\Templating\HelperBroker\DocumentTag:
         alias: Pimcore\Templating\HelperBroker\DocumentEditable
-        deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Templating\HelperBroker\DocumentEditable" instead'
+        deprecated: 'The "%alias_id%" service is deprecated. Use "Pimcore\Templating\HelperBroker\DocumentEditable" instead'
 
     Pimcore\Templating\HelperBroker\DocumentMethod:
         public: false

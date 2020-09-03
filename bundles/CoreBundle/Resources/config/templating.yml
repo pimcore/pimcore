@@ -26,7 +26,7 @@ services:
 
     Pimcore\Templating\Renderer\TagRenderer:
         alias: Pimcore\Templating\Renderer\EditableRenderer
-        deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Templating\Renderer\EditableRenderer" instead'
+        deprecated: 'The "%alias_id%" service is deprecated. Use "Pimcore\Templating\Renderer\EditableRenderer" instead'
 
     # NAVIGATION
 
