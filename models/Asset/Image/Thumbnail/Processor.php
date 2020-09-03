@@ -149,6 +149,9 @@ class Processor
 
         if (self::hasWebpSupport() && $image->supportsFormat('webp')) {
             // We can use wepb - no need to optimize.
+            // @TODO Why can we just adjust the format here without checking if
+            // the format  is source / original and / or if any preserving
+            // option is active?
             $contentOptimized = false;
             $format = 'webp';
         }
@@ -168,11 +171,6 @@ class Processor
         $fileExtension = $format;
         if ($format == 'original') {
             $fileExtension = \Pimcore\File::getFileExtension($fileSystemPath);
-            // If we can optimize we check if the original is compatible and
-            // set the concrete target format to do so.
-            if ($contentOptimized && $contentOptimized = in_array($fileExtension, ['jpg', 'jpeg', 'png', 'pjpeg'])) {
-                $format = $fileExtension;
-            }
         } elseif ($format === 'pjpeg' || $format === 'jpeg') {
             $fileExtension = 'jpg';
         }
@@ -359,11 +357,6 @@ class Processor
                     }
                 }
             }
-        }
-
-        // Ensure the image optimization is only called with a compatible format.
-        if ($contentOptimized && !self::hasWebpSupport() && !in_array($format, ['jpeg', 'png', 'pjpeg'])) {
-            $format = $image->getContentOptimizedFormat();
         }
 
         $tmpFsPath = preg_replace('@\.([\w]+)$@', uniqid('.tmp-', true) . '.$1', $fsPath);
