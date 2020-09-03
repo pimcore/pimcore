@@ -176,7 +176,6 @@ pimcore:
 
             prefixes:
                 - \Pimcore\Model\Document\Editable\
-                - \Document_Editable_
         tags: # @TODO to be removed in v7
             map:
                 href: \Pimcore\Model\Document\Tag\Relation
@@ -184,7 +183,7 @@ pimcore:
 
             prefixes:
                 - \Pimcore\Model\Document\Tag\
-                - \Document_Tag_
+                - \Document_Tag_ # @TODO to be removed in v7
     newsletter:
         source_adapters:
             defaultAdapter: pimcore.document.newsletter.factory.default

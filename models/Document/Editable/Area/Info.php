@@ -67,7 +67,7 @@ class Info
 
     public function __construct()
     {
-        $this->tag = $this->editable;
+        $this->tag = & $this->editable;
     }
 
     /**

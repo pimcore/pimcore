@@ -227,7 +227,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     private function getEditableHandler()
     {
         // TODO inject area handler via DI when tags are built through container
-        return \Pimcore::getContainer()->get('pimcore.document.editable.handler');
+        return \Pimcore::getContainer()->get(EditableHandlerInterface::class);
     }
 
     /**

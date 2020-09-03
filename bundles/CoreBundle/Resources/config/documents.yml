@@ -17,60 +17,44 @@ services:
     pimcore.document.tag.naming.strategy.nested:
         class: Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy
 
-    pimcore.document.editable.block_state_stack:
-        class: Pimcore\Document\Editable\Block\BlockStateStack
+    Pimcore\Document\Editable\Block\BlockStateStack:
         public: true
 
     pimcore.document.tag.block_state_stack:
-        alias: Pimcore\Document\Tag\Block\BlockStateStack
+        alias: Pimcore\Document\Editable\Block\BlockStateStack
         public: true
-        deprecated: 'The "%alias_id%" service is deprecated. Use "pimcore.document.editable.block_state_stack" instead'
+        deprecated: 'The "%alias_id%" service is deprecated. Use "Pimcore\Document\Editable\Block\BlockStateStack" instead'
 
-    Pimcore\Document\Tag\Block\BlockStateStack: ~
-    Pimcore\Document\Editable\Block\BlockStateStack: ~
+    Pimcore\Document\Tag\Block\BlockStateStack:
+        alias: Pimcore\Document\Editable\Block\BlockStateStack
+        deprecated: 'The "%alias_id%" service is deprecated. Use "Pimcore\Document\Editable\Block\BlockStateStack" instead'
 
-    # get default tag handler when type hinting against interface
-    Pimcore\Document\Tag\TagHandlerInterface: '@Pimcore\Document\Tag\DelegatingTagHandler'
+
+    # delegating tag handler holds a collection of tag handlers it delegates to (e.g. default and legacy)
+    # @TODO delegating will be removed in Pimcore 7
+    Pimcore\Document\Editable\DelegatingEditableHandler:
+        public: true
+        calls:
+            - [addHandler, ['@Pimcore\Document\Editable\EditableHandler']]
+        deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Document\Editable\EditableHandler" instead'
 
     # get default editable handler when type hinting against interface
     Pimcore\Document\Editable\EditableHandlerInterface: '@Pimcore\Document\Editable\DelegatingEditableHandler'
 
-    # public alias to delegating tag handler
     pimcore.document.tag.handler:
-        alias: Pimcore\Document\Tag\DelegatingTagHandler
-        public: true
-        deprecated: 'The "%alias_id%" service is deprecated. Use "pimcore.document.editable.handler" instead'
-
-    # public alias to delegating tag handler
-    pimcore.document.editable.handler:
         alias: Pimcore\Document\Editable\DelegatingEditableHandler
         public: true
+        deprecated: 'The "%alias_id%" service is deprecated. Use "Pimcore\Document\Editable\DelegatingEditableHandler" instead'
 
-    # delegating tag handler holds a collection of tag handlers it delegates to (e.g. default and legacy)
     Pimcore\Document\Tag\DelegatingTagHandler:
-        class: Pimcore\Document\Tag\DelegatingTagHandler
-        calls:
-            - [addHandler, ['@Pimcore\Document\Tag\TagHandler']]
+        alias: Pimcore\Document\Editable\DelegatingEditableHandler
         deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Document\Editable\DelegatingEditableHandler" instead'
 
-    # delegating tag handler holds a collection of tag handlers it delegates to (e.g. default and legacy)
-    Pimcore\Document\Editable\DelegatingEditableHandler:
-        class: Pimcore\Document\Editable\DelegatingEditableHandler
-        calls:
-            - [addHandler, ['@Pimcore\Document\Editable\EditableHandler']]
+    # get default tag handler when type hinting against interface
+    Pimcore\Document\Tag\TagHandlerInterface:
+        alias: Pimcore\Document\Tag\DelegatingTagHandler
+        deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Document\Editable\DelegatingEditableHandler" instead'
 
-    # default tag handler rendering pimcore5+ tags
-    Pimcore\Document\Tag\TagHandler:
-        public: false
-        arguments:
-            $templating: '@templating'
-            $translator: '@Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator'
-            $responseStack: '@Pimcore\Http\ResponseStack'
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: pimcore }
-        deprecated: 'The "%service_id%" service is deprecated.'
 
     # default editable handler rendering pimcore5+ tags
     Pimcore\Document\Editable\EditableHandler:
@@ -83,6 +67,11 @@ services:
             - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: pimcore }
+
+    Pimcore\Document\Tag\TagHandler:
+        alias: Pimcore\Document\Editable\EditableHandler
+        deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Document\Editable\EditableHandler" instead'
+
     #
     # AREABRICKS
     #
@@ -115,12 +104,13 @@ services:
         arguments:
             $fragmentRenderer: '@fragment.renderer.inline'
 
-    Pimcore\Document\Tag\TagUsageResolver:
-        public: true
-        deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Document\Editable\EditableUsageResolver" instead'
-
     Pimcore\Document\Editable\EditableUsageResolver:
         public: true
+
+    Pimcore\Document\Tag\TagUsageResolver:
+        alias: Pimcore\Document\Editable\EditableUsageResolver
+        public: true
+        deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Document\Editable\EditableUsageResolver" instead'
 
     Pimcore\Document\DocumentStack:
         public: true

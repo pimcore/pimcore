@@ -43,11 +43,11 @@ class EditableUsageResolver
      *
      * @return array
      *
-     * @deprecated since 6.8 and will be removed in. Use getUsedEditablenames instead.
+     * @deprecated since 6.8 and will be removed in v7. Use getUsedEditableNames() instead.
      */
     public function getUsedTagnames(Document\PageSnippet $document)
     {
-        return $this->getUsedEditablenames($document);
+        return $this->getUsedEditableNames($document);
     }
 
     /**
@@ -55,7 +55,7 @@ class EditableUsageResolver
      *
      * @return array
      */
-    public function getUsedEditablenames(Document\PageSnippet $document)
+    public function getUsedEditableNames(Document\PageSnippet $document)
     {
         $this->registerEventSubscriber();
 

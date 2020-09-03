@@ -19,6 +19,7 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\Block\BlockState;
+use Pimcore\Document\Editable\Block\BlockStateStack;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\Document\EditableNameEvent;
 use Pimcore\Logger;
@@ -115,7 +116,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     public static function factory($type, $name, $documentId, $config = null, $controller = null, $view = null, $editmode = null)
     {
-        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.editable');
+        $loader = \Pimcore::getContainer()->get(Document\Editable\Loader\EditableLoader::class);
 
         /** @var Editable $editable */
         $editable = $loader->build($type);
@@ -691,7 +692,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     protected function getBlockState(): BlockState
     {
-        return \Pimcore::getContainer()->get('pimcore.document.tag.block_state_stack')->getCurrentState();
+        return \Pimcore::getContainer()->get(BlockStateStack::class)->getCurrentState();
     }
 
     /**
@@ -739,7 +740,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         // set suffixes if the editable is inside a block
 
         $container = \Pimcore::getContainer();
-        $blockState = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
+        $blockState = $container->get(BlockStateStack::class)->getCurrentState();
         $namingStrategy = $container->get('pimcore.document.tag.naming.strategy');
 
         // if element not nested inside a hierarchical element (e.g. block), add the
@@ -793,8 +794,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     public static function buildEditableRealName(string $name, Document $document): string
     {
-        $container = \Pimcore::getContainer();
-        $blockState = $container->get('pimcore.document.tag.block_state_stack')->getCurrentState();
+        $blockState = \Pimcore::getContainer()->get(BlockStateStack::class)->getCurrentState();
 
         // if element not nested inside a hierarchical element (e.g. block), add the
         // targeting prefix if configured on the document. hasBlocks() determines if

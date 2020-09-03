@@ -73,14 +73,12 @@ class DocumentEditableExtension extends AbstractExtension
     }
 
     /**
-     * @see \Pimcore\View::tag
-     *
      * @param array $context
      * @param string $name
      * @param string $inputName
      * @param array $options
      *
-     * @return \Pimcore\Model\Document\Tag|string
+     * @return \Pimcore\Model\Document\Editable|string
      *
      * @deprecated since v6.8 and will be removed in 7. use renderEditable instead.
      */
@@ -90,8 +88,6 @@ class DocumentEditableExtension extends AbstractExtension
     }
 
     /**
-     * @see \Pimcore\View::tag
-     *
      * @param array $context
      * @param string $name
      * @param string $inputName

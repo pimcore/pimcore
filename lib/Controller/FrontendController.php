@@ -21,6 +21,7 @@ use Pimcore\Http\Request\Resolver\ResponseHeaderResolver;
 use Pimcore\Http\Request\Resolver\ViewModelResolver;
 use Pimcore\Model\Document;
 use Pimcore\Templating\Model\ViewModel;
+use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -174,7 +175,7 @@ abstract class FrontendController extends Controller implements EventedControlle
             $document = $this->document;
         }
 
-        $editableRenderer = $this->container->get('\Pimcore\Templating\Renderer\EditableRenderer');
+        $editableRenderer = $this->container->get(EditableRenderer::class);
 
         return $editableRenderer->getEditable($document, $type, $inputName, $options);
     }

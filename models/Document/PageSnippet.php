@@ -380,7 +380,7 @@ abstract class PageSnippet extends Model\Document
         try {
             if ($type) {
                 /** @var EditableLoaderInterface $loader */
-                $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.editable');
+                $loader = \Pimcore::getContainer()->get(Document\Editable\Loader\EditableLoader::class);
                 $editable = $loader->build($type);
 
                 $this->editables = $this->editables ?? [];
@@ -764,7 +764,7 @@ abstract class PageSnippet extends Model\Document
                 $documentCopy = Service::cloneMe($this);
                 if ($documentCopy instanceof self) {
                     // rendering could fail if the controller/action doesn't exist, in this case we can skip the required check
-                    $editableNames = $editableUsageResolver->getUsedEditablenames($documentCopy);
+                    $editableNames = $editableUsageResolver->getUsedEditableNames($documentCopy);
                     foreach ($editableNames as $editableName) {
                         $editable = $documentCopy->getEditable($editableName);
                         if ($editable instanceof Editable && in_array($editable->getType(), $allowedTypes)) {

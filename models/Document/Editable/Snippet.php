@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Cache;
+use Pimcore\Document\Editable\EditableHandlerInterface;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
@@ -107,7 +108,7 @@ class Snippet extends Model\Document\Editable
         // TODO inject services via DI when tags are built through container
         $container = \Pimcore::getContainer();
 
-        $editableHandler = $container->get('pimcore.document.editable.handler');
+        $editableHandler = $container->get(EditableHandlerInterface::class);
         $targetingConfigurator = $container->get(DocumentTargetingConfigurator::class);
 
         if (!$editableHandler->supports($this->view)) {

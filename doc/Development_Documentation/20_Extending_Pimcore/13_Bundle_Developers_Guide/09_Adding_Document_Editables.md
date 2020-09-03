@@ -17,7 +17,7 @@ but it's best practice to put your editables into a `Model\Document\Editable` su
 
 ```php
 <?php
-// src/AppBundle/Model/Document/Editable
+// src/AppBundle/Model/Document/Editable/Markdown.php
 
 namespace AppBundle\Model\Document\Editable;
 

@@ -17,19 +17,16 @@ services:
 
     Pimcore\Templating\Renderer\IncludeRenderer: ~
 
-    Pimcore\Templating\Renderer\TagRenderer:
-        arguments:
-            $editableLoader: '@pimcore.implementation_loader.document.tag'
-        calls:
-            - [setLogger, ['@logger']]
-        deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Templating\Renderer\EditableRenderer" instead'
-
     Pimcore\Templating\Renderer\EditableRenderer:
         alias:
         arguments:
-            $editableLoader: '@pimcore.implementation_loader.document.editable'
+            $editableLoader: '@Pimcore\Model\Document\Editable\Loader\EditableLoader'
         calls:
             - [setLogger, ['@logger']]
+
+    Pimcore\Templating\Renderer\TagRenderer:
+        alias: Pimcore\Templating\Renderer\EditableRenderer
+        deprecated: 'The "%service_id%" service is deprecated. Use "Pimcore\Templating\Renderer\EditableRenderer" instead'
 
     # NAVIGATION
 

@@ -59,13 +59,12 @@ class BlockName implements \JsonSerializable
     }
 
     /**
-     * Create an instance from a document tag
-     *
+     * @TODO remove in v7
      * @param Editable $tag
      *
      * @return BlockName
      *
-     * @deprecated since
+     * @deprecated since 6.8, will be removed in v7, use createFromEditable() instead
      */
     public static function createFromTag(Editable $tag): BlockName
     {

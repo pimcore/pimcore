@@ -18,6 +18,7 @@
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Document\Editable\Block\BlockName;
+use Pimcore\Document\Editable\EditableHandlerInterface;
 use Pimcore\Model;
 use Pimcore\Tool\HtmlUtils;
 
@@ -27,9 +28,7 @@ use Pimcore\Tool\HtmlUtils;
 class Area extends Model\Document\Editable
 {
     /**
-     * @see EditableInterface::getType
-     *
-     * @return string
+     * @inheritDoc
      */
     public function getType()
     {
@@ -37,9 +36,7 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::getData
-     *
-     * @return mixed
+     * @inheritDoc
      */
     public function getData()
     {
@@ -47,9 +44,7 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::admin
-     *
-     * @return void
+     * @inheritDoc
      */
     public function admin()
     {
@@ -67,16 +62,14 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::frontend
-     *
-     * @return void
+     * @inheritDoc
      */
     public function frontend()
     {
         $options = $this->getOptions();
 
         // TODO inject area handler via DI when tags are built through container
-        $editableHandler = \Pimcore::getContainer()->get('pimcore.document.editable.handler');
+        $editableHandler = \Pimcore::getContainer()->get(EditableHandlerInterface::class);
 
         // don't show disabled bricks
         if (!$editableHandler->isBrickEnabled($this, $options['type'] && $options['dontCheckEnabled'] != true)) {
@@ -118,11 +111,7 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * @inheritDoc
      */
     public function setDataFromResource($data)
     {
@@ -130,11 +119,7 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @see EditableInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
+     * @inheritDoc
      */
     public function setDataFromEditmode($data)
     {
@@ -142,7 +127,7 @@ class Area extends Model\Document\Editable
     }
 
     /**
-     * @return bool
+     * @inheritDoc
      */
     public function isEmpty()
     {
