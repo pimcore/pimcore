@@ -485,7 +485,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         //
         // TODO symfony cache adapters serialize as well - find a way to avoid double serialization
 
-
         $item = $this->itemPool->createCacheItem($key, $itemData);
         $item->expiresAfter($lifetime);
 
