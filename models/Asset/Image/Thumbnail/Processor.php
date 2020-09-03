@@ -100,8 +100,8 @@ class Processor
         $generated = false;
         $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
         $format = strtolower($config->getFormat());
-        // Optimize by default.
-        $contentOptimized = true;
+        // Optimize if allowed to strip info.
+        $contentOptimized = (!$config->isPreserveColor() && !$config->isPreserveMetaData());
 
         if (self::containsTransformationType($config, '1x1_pixel')) {
             return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -168,8 +168,9 @@ class Processor
         $fileExtension = $format;
         if ($format == 'original') {
             $fileExtension = \Pimcore\File::getFileExtension($fileSystemPath);
-            // If we can optimize we need to set the concrete format to do so.
-            if ($contentOptimized = in_array($fileExtension, ['jpg', 'jpeg', 'png', 'pjpeg'])) {
+            // If we can optimize we check if the original is compatible and
+            // set the concrete target format to do so.
+            if ($contentOptimized && $contentOptimized = in_array($fileExtension, ['jpg', 'jpeg', 'png', 'pjpeg'])) {
                 $format = $fileExtension;
             }
         } elseif ($format === 'pjpeg' || $format === 'jpeg') {
