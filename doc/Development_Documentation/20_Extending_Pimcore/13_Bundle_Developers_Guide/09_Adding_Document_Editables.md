@@ -2,7 +2,7 @@
 
 With bundles, it is also possible to add an individual Document Editable. 
 
-Previously, the only way to define editables was to create them in a special namespace `Pimcore\Model\Document\Tag`. This
+Previously, the only way to define editables was to create them in a special namespace `Pimcore\Model\Document\Editable`. This
 is still possible, but now editables can be in any namespace as long as the editable is correctly registered. Registration
 can be done via 2 config entries which define a list of prefixes (namespaces) to be searched and a static mapping from
 editable name to class name. For best performance, you should always use the class mapping as it avoids having to look
@@ -12,18 +12,18 @@ To register a new editable, you need to follow 3 steps:
 
 ## 1) Create the editable class
 
-The editable **must** extend `Pimcore\Model\Document\Tag`. Lets create a `Markdown` editable (the namespace does not matter
-but it's best practice to put your editables into a `Model\Document\Tag` sub-namespace):
+The editable **must** extend `Pimcore\Model\Document\Editable`. Lets create a `Markdown` editable (the namespace does not matter
+but it's best practice to put your editables into a `Model\Document\Editable` sub-namespace):
 
 ```php
 <?php
-// src/AppBundle/Model/Document/Tag
+// src/AppBundle/Model/Document/Editable/Markdown.php
 
-namespace AppBundle\Model\Document\Tag;
+namespace AppBundle\Model\Document\Editable;
 
-class Markdown extends \Pimcore\Model\Document\Tag
+class Markdown extends \Pimcore\Model\Document\Editable
 {
-    // methods as required by Pimcore\Model\Document\Tag and Pimcore\Model\Document\Tag\TagInterface
+    // methods as required by Pimcore\Model\Document\Editable and Pimcore\Model\Document\Editable\EditableInterface
 }
 ```
 
@@ -38,9 +38,9 @@ in a configuration file which is [automatically loaded](./03_Auto_Loading_Config
 
 pimcore:
     documents:
-        tags:
+        editables:
             map:
-                markdown: \AppBundle\Model\Document\Tag\Markdown
+                markdown: \AppBundle\Model\Document\Editable\Markdown
 ```
 
 ## 3) Create frontend JS

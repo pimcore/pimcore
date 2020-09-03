@@ -1441,9 +1441,9 @@ parameters:
 			path: lib/Document/Tag/TagHandler.php
 
 		-
-			message: "#^Property Pimcore\\\\Document\\\\Tag\\\\TagUsageResolver\\:\\:\\$subscriber \\(Pimcore\\\\Document\\\\Tag\\\\UsageRecorderSubscriber\\) does not accept null\\.$#"
+			message: "#^Property Pimcore\\\\Document\\\\Editable\\\\EditableUsageResolver\\:\\:\\$subscriber \\(Pimcore\\\\Document\\\\Editable\\\\UsageRecorderSubscriber\\) does not accept null\\.$#"
 			count: 1
-			path: lib/Document/Tag/TagUsageResolver.php
+			path: lib/Document/Editable/EditableUsageResolver.php
 
 		-
 			message: "#^Property Pimcore\\\\Event\\\\Admin\\\\Login\\\\LoginFailedEvent\\:\\:\\$credentials \\(string\\) does not accept array\\.$#"
@@ -1686,7 +1686,7 @@ parameters:
 			path: lib/Translation/AttributeSet/AttributeSet.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Tag\\:\\:setText\\(\\)\\.$#"
+			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Editable\\:\\:setText\\(\\)\\.$#"
 			count: 1
 			path: lib/Translation/ImporterService/Importer/DocumentImporter.php
 
@@ -1814,3 +1814,10 @@ parameters:
 			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Webservice\\\\Data\\\\DataObject\\\\Element\\:\\:\\$fieldcollection\\.$#"
 			count: 1
 			path: models/Webservice/Data/DataObject/Concrete.php
+
+		-
+			message: "#^Property Pimcore\\\\Templating\\\\Renderer\\\\EditableRenderer\\:\\:\\$editableLoader \\(Pimcore\\\\Model\\\\Document\\\\Editable\\\\Loader\\\\EditableLoader\\) does not accept Pimcore\\\\Model\\\\Document\\\\Editable\\\\Loader\\\\EditableLoaderInterface\\.$#"
+			count: 1
+			path: lib/Templating/Renderer/EditableRenderer.php
+
+

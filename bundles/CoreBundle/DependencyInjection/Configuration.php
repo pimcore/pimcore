@@ -628,10 +628,21 @@ class Configuration implements ConfigurationInterface
                     ->ignoreExtraKeys()
                     ->addDefaultsIfNotSet();
 
-        $this->addImplementationLoaderNode($documentsNode, 'tags');
-
         $documentsNode
             ->children()
+                ->arrayNode('tags')
+                    ->setDeprecated('The "%node%" option is deprecated. Use "editables" instead.')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('map')
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')->end()
+                        ->end()
+                        ->arrayNode('prefixes')
+                            ->prototype('scalar')->end()
+                        ->end()
+                    ->end()
+                ->end()
                 ->arrayNode('versions')
                     ->children()
                         ->scalarNode('days')
@@ -686,6 +697,13 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('editables')
                     ->addDefaultsIfNotSet()
                     ->children()
+                        ->arrayNode('map')
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')->end()
+                        ->end()
+                        ->arrayNode('prefixes')
+                            ->prototype('scalar')->end()
+                        ->end()
                         ->enumNode('naming_strategy')
                             ->info('Sets naming strategy used to build editable names')
                             ->values(['legacy', 'nested'])

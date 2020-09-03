@@ -17,72 +17,17 @@
 
 namespace Pimcore\Model\Document\Tag;
 
-use Pimcore\Model\Document\PageSnippet;
+use Pimcore\Model\Document\Editable\EditableInterface;
 
-interface TagInterface
-{
-    /**
-     * Return the data for direct output to the frontend, can also contain HTML code!
-     *
-     * @return string|void
-     */
-    public function frontend();
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', TagInterface::class, EditableInterface::class), E_USER_DEPRECATED);
 
-    /**
-     * Return the data for the admin, can also contain HTML code!
-     *
-     * @return string|void
-     */
-    public function admin();
+class_exists(EditableInterface::class);
 
+if (false) {
     /**
-     * Get the current data stored for the element
-     * this is used as general fallback for the methods getDataForResource(), admin(), getValue()
-     *
-     * @return mixed
+     * @deprecated use \Pimcore\Model\Document\Editable\EditableInterface instead.
      */
-    public function getData();
-
-    /**
-     * Return the type of the element
-     *
-     * @return string
-     */
-    public function getType();
-
-    /**
-     * Receives the data from the editmode and convert this to the internal data in the object eg. image-id to Asset\Image
-     *
-     * @param mixed $data
-     *
-     * @return $this
-     */
-    public function setDataFromEditmode($data);
-
-    /**
-     * Receives the data from the resource, an convert to the internal data in the object eg. image-id to Asset\Image
-     *
-     * @param mixed $data
-     *
-     * @return $this
-     */
-    public function setDataFromResource($data);
-
-    /**
-     * Returns the current tag's data for web service export
-     *
-     * @deprecated
-     *
-     * @param PageSnippet|null $document
-     * @param array $params
-     * @abstract
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($document = null, $params = []);
-
-    /**
-     * @return bool
-     */
-    public function isEmpty();
+    interface TagInterface extends EditableInterface
+    {
+    }
 }

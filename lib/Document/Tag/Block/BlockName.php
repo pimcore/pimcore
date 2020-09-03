@@ -17,83 +17,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Tag\Block;
 
-use Pimcore\Model\Document\Tag;
+use Pimcore\Document\Editable\Block\BlockName as EditableBlockName;
 
-/**
- * Simple value object containing both name and real name of
- * a block.
- */
-final class BlockName implements \JsonSerializable
-{
-    /**
-     * @var string
-     */
-    private $name;
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', BlockName::class, EditableBlockName::class), E_USER_DEPRECATED);
 
-    /**
-     * @var string
-     */
-    private $realName;
+class_exists(EditableBlockName::class);
 
+if (false) {
     /**
-     * @param string $name
-     * @param string $realName
+     * @deprecated use \Pimcore\Document\Editable\Block\BlockName instead.
      */
-    public function __construct(string $name, string $realName)
+    class BlockName extends EditableBlockName
     {
-        $this->name = $name;
-        $this->realName = $realName;
-    }
-
-    /**
-     * Factory method to create an instance from strings
-     *
-     * @param string $name
-     * @param string $realName
-     *
-     * @return BlockName
-     */
-    public static function createFromNames(string $name, string $realName): BlockName
-    {
-        return new self($name, $realName);
-    }
-
-    /**
-     * Create an instance from a document tag
-     *
-     * @param Tag $tag
-     *
-     * @return BlockName
-     */
-    public static function createFromTag(Tag $tag): BlockName
-    {
-        return new self($tag->getName(), $tag->getRealName());
-    }
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRealName(): string
-    {
-        return $this->realName;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function jsonSerialize()
-    {
-        return [
-            'name' => $this->name,
-            'realName' => $this->realName,
-        ];
     }
 }
