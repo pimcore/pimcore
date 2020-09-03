@@ -168,6 +168,10 @@ class Processor
         $fileExtension = $format;
         if ($format == 'original') {
             $fileExtension = \Pimcore\File::getFileExtension($fileSystemPath);
+            // If we can optimize we need to set the concrete format to do so.
+            if ($contentOptimized = in_array($fileExtension, ['jpg', 'jpeg', 'png', 'pjpeg'])) {
+                $format = $fileExtension;
+            }
         } elseif ($format === 'pjpeg' || $format === 'jpeg') {
             $fileExtension = 'jpg';
         }
