@@ -42,7 +42,7 @@ final class TagEvents
      *
      * @var string
      */
-    const POST_UPDATE = 'pimcore.tag.postSave';
+    const POST_UPDATE = 'pimcore.tag.postUpdate';
 
     /**
      * @Event("Pimcore\Event\Model\TagEvent")
