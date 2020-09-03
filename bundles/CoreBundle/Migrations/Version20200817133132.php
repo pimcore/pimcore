@@ -30,7 +30,6 @@ class Version20200817133132 extends AbstractPimcoreMigration
                     $this->addSql('ALTER TABLE `'.$relationTable.'` ADD COLUMN `id` BIGINT(20) NOT NULL PRIMARY KEY AUTO_INCREMENT FIRST');
                 }
             }
-
         } catch (\Exception $e) {
             $this->writeMessage('An error occurred while performing migrations: ' . $e->getMessage());
         }
@@ -53,7 +52,6 @@ class Version20200817133132 extends AbstractPimcoreMigration
                     $this->addSql('ALTER TABLE `'.$relationTable.'` DROP COLUMN `id`');
                 }
             }
-
         } catch (\Exception $e) {
             $this->writeMessage('An error occurred while performing migrations: ' . $e->getMessage());
         }
