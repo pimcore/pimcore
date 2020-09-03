@@ -14,131 +14,17 @@
 
 namespace Pimcore\Document\Tag;
 
-use Pimcore\Document\Tag\Exception\NotFoundException;
-use Pimcore\Model\Document\Tag;
-use Pimcore\Model\Document\Tag\Area\Info;
-use Pimcore\Templating\Model\ViewModelInterface;
+use Pimcore\Document\Editable\DelegatingEditableHandler;
 
-/**
- * @deprecated
- */
-class DelegatingTagHandler implements TagHandlerInterface
-{
-    /**
-     * @var TagHandlerInterface[]
-     */
-    protected $handlers = [];
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', DelegatingTagHandler::class, DelegatingEditableHandler::class), E_USER_DEPRECATED);
 
+class_exists(DelegatingEditableHandler::class);
+
+if (false) {
     /**
-     * Register a handler
-     *
-     * @param TagHandlerInterface $handler
-     *
-     * @return $this
+     * @deprecated use \Pimcore\Document\Editable\DelegatingEditableHandler instead.
      */
-    public function addHandler(TagHandlerInterface $handler)
+    class DelegatingTagHandler extends DelegatingEditableHandler
     {
-        $this->handlers[] = $handler;
-
-        return $this;
-    }
-
-    /**
-     * Get the matching handler for a view
-     *
-     * @param ViewModelInterface $view
-     *
-     * @return TagHandlerInterface
-     */
-    public function getHandlerForView($view)
-    {
-        foreach ($this->handlers as $handler) {
-            if ($handler->supports($view)) {
-                return $handler;
-            }
-        }
-
-        throw new NotFoundException(sprintf(
-            'No handler found for view type %s',
-            $view ? get_class($view) : 'null'
-        ));
-    }
-
-    /**
-     * Get the matching handler for a Tag
-     *
-     * @param Tag|Tag\Area|Tag\Areablock $tag
-     *
-     * @return TagHandlerInterface
-     */
-    public function getHandlerForTag(Tag $tag)
-    {
-        $view = $tag->getView();
-
-        try {
-            return $this->getHandlerForView($view);
-        } catch (NotFoundException $e) {
-            throw new NotFoundException(sprintf(
-                'No handler found for tag %s and view type %s',
-                $tag->getName(),
-                $view ? get_class($view) : 'null'
-            ), 0, $e);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($view)
-    {
-        try {
-            $this->getHandlerForView($view);
-
-            return true;
-        } catch (NotFoundException $e) {
-            // noop
-        }
-
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isBrickEnabled(Tag $tag, $brick)
-    {
-        $handler = $this->getHandlerForTag($tag);
-
-        return $handler->isBrickEnabled($tag, $brick);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getAvailableAreablockAreas(Tag\Areablock $tag, array $options)
-    {
-        $handler = $this->getHandlerForTag($tag);
-
-        return $handler->getAvailableAreablockAreas($tag, $options);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function renderAreaFrontend(Info $info)
-    {
-        $handler = $this->getHandlerForTag($info->getTag());
-
-        return $handler->renderAreaFrontend($info);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function renderAction($view, $controller, $action, $parent = null, array $attributes = [], array $query = [], array $options = [])
-    {
-        $handler = $this->getHandlerForView($view);
-
-        return $handler->renderAction($view, $controller, $action, $parent, $attributes, $query, $options);
     }
 }

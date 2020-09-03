@@ -17,112 +17,17 @@
 
 namespace Pimcore\Model\Document\Tag;
 
-use Pimcore\Model;
+use Pimcore\Model\Document\Editable\Checkbox as EditableCheckbox;
 
-/**
- * @method \Pimcore\Model\Document\Tag\Dao getDao()
- */
-class Checkbox extends Model\Document\Tag
-{
-    /**
-     * Contains the checkbox value
-     *
-     * @var bool
-     */
-    public $value = false;
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', Checkbox::class, EditableCheckbox::class), E_USER_DEPRECATED);
 
+class_exists(EditableCheckbox::class);
+
+if (false) {
     /**
-     * @see TagInterface::getType
-     *
-     * @return string
+     * @deprecated use \Pimcore\Model\Document\Editable\Checkbox instead.
      */
-    public function getType()
+    class Checkbox extends EditableCheckbox
     {
-        return 'checkbox';
-    }
-
-    /**
-     * @see TagInterface::getData
-     *
-     * @return mixed
-     */
-    public function getData()
-    {
-        return $this->value;
-    }
-
-    /**
-     * @see TagInterface::frontend
-     *
-     * @return string
-     */
-    public function frontend()
-    {
-        return (string)$this->value;
-    }
-
-    /**
-     * @see TagInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
-     */
-    public function setDataFromResource($data)
-    {
-        $this->value = (bool) $data;
-
-        return $this;
-    }
-
-    /**
-     * @see TagInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
-     */
-    public function setDataFromEditmode($data)
-    {
-        $this->value = (bool) $data;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEmpty()
-    {
-        return !$this->value;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isChecked()
-    {
-        return $this->value;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     *
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if ($data->bool === null || is_bool($data)) {
-            $this->value = (bool) $data->value;
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
     }
 }
