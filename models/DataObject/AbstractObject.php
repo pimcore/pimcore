@@ -309,7 +309,9 @@ class AbstractObject extends Model\Element\AbstractElement
                         $object->__getRawRelationData();
                     }
 
-                    Cache::save($object, $cacheKey);
+                    if (!$force) {
+                        Cache::save($object, $cacheKey);
+                    }
                 } else {
                     throw new \Exception('No entry for object id ' . $id);
                 }

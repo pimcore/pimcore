@@ -14,13 +14,19 @@
 
 namespace Pimcore\Cache\Core;
 
+use DeepCopy\DeepCopy;
 use Pimcore\Cache\Pool\CacheItem;
 use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Cache\Pool\PurgeableCacheItemPoolInterface;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
+use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Element\Service;
+use Pimcore\Model\Version\MarshalMatcher;
+use Pimcore\Model\Version\SetDumpStateFilter;
+use Pimcore\Model\Version\UnmarshalMatcher;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
@@ -270,7 +276,28 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         if ($item->isHit()) {
             $data = $item->get();
+
             $data = unserialize($data);
+
+            // TODO if this change is really for release 6.8 we could simplify this and
+            // use the service instead.
+            // see  "Add service for DeepCopy/ElementDescriptor tasks", https://github.com/pimcore/pimcore/pull/6983
+            $copier = new DeepCopy();
+            $copier->addTypeFilter(
+                new \DeepCopy\TypeFilter\ReplaceFilter(
+                    function ($currentValue) {
+                        if ($currentValue instanceof ElementDescriptor) {
+                            $value = Service::getElementById($currentValue->getType(), $currentValue->getId());
+
+                            return $value;
+                        }
+
+                        return $currentValue;
+                    }
+                ),
+                new UnmarshalMatcher()
+            );
+            $data = $copier->copy($data);
 
             if (is_object($data)) {
                 $data->____pimcore_cache_item__ = $key; // TODO where is this used?
@@ -447,21 +474,18 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 return null;
             }
 
-            // dump state is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
-            if ($data instanceof ElementDumpStateInterface) {
-                $data->setInDumpState(false);
-            }
-        }
-
-        if (is_object($data) && isset($data->____pimcore_cache_item__)) {
+            $itemData = $data;
+        } else  if (is_object($data) && isset($data->____pimcore_cache_item__)) {
             unset($data->____pimcore_cache_item__);
+            $itemData = serialize($data);
+
         }
 
         // See #1005 - serialize the element now as we don't know what happens until it is actually persisted on shutdown and we
         // could end up with corrupt objects in cache
         //
         // TODO symfony cache adapters serialize as well - find a way to avoid double serialization
-        $itemData = serialize($data);
+
 
         $item = $this->itemPool->createCacheItem($key, $itemData);
         $item->expiresAfter($lifetime);
@@ -554,6 +578,11 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         if ($data instanceof ElementInterface) {
+            // fetch a fresh copy
+            $type = Service::getElementType($data);
+            $data = Service::getElementById($type, $data->getId(), true);
+
+
             if (!$data->__isBasedOnLatestData()) {
                 $this->logger->warning('Not saving {key} to cache as element is not based on latest data', [
                     'key' => $item->getKey(),
@@ -563,6 +592,36 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 // all other entities shouldn't have references at all in the cache so it shouldn't matter
                 return false;
             }
+
+            // dump state is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
+            $data->setInDumpState(false);
+
+            // TODO if this change is really for release 6.8 we could simplify this and
+            // use the service instead.
+            // see  "Add service for DeepCopy/ElementDescriptor tasks", https://github.com/pimcore/pimcore/pull/6983
+
+            $copier = new DeepCopy();
+            $copier->skipUncloneable(true);
+            $copier->addTypeFilter(
+                new \DeepCopy\TypeFilter\ReplaceFilter(
+                    function ($currentValue) {
+                        if ($currentValue instanceof ElementInterface) {
+                            $elementType = Service::getType($currentValue);
+                            $descriptor = new ElementDescriptor($elementType, $currentValue->getId());
+
+                            return $descriptor;
+                        }
+
+                        return $currentValue;
+                    }
+                ),
+                new MarshalMatcher($type, $data->getId())
+            );
+            $copier->addFilter(new SetDumpStateFilter(false), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
+            $data = $copier->copy($data);
+
+            $serializedData = serialize($data);
+            $item->set($serializedData);
         }
 
         $result = $this->itemPool->save($item);
@@ -852,7 +911,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
             if (null === $cacheItem) {
                 $result = false;
-            // item shouldn't go to the cache (either because it's tags are ignored or were cleared within this process) -> see $this->prepareCacheTags();
+                // item shouldn't go to the cache (either because it's tags are ignored or were cleared within this process) -> see $this->prepareCacheTags();
             } else {
                 $result = $this->storeCacheItem($queueItem->getCacheItem(), $queueItem->getData(), $queueItem->isForce());
                 if (!$result) {

@@ -295,7 +295,9 @@ class Document extends Element\AbstractElement
 
                 $document->resetDirtyMap();
 
-                \Pimcore\Cache::save($document, $cacheKey);
+                if (!$force) {
+                    \Pimcore\Cache::save($document, $cacheKey);
+                }
             } else {
                 \Pimcore\Cache\Runtime::set($cacheKey, $document);
             }
