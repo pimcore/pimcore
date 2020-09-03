@@ -25,42 +25,44 @@ class Version20200828091305 extends AbstractPimcoreMigration
 
     /**
      * @param Schema $schema
+     *
      * @throws ConnectionException|DBALException
      */
     public function up(Schema $schema)
     {
-        $tinyint = "tinyint(1)";
+        $tinyint = 'tinyint(1)';
         $db = \Pimcore\Db::get();
 
         $this->writeMessage("Migrating tables to {$tinyint}");
         $this->addSql("ALTER TABLE `custom_layouts` CHANGE `default` `default` {$tinyint} NOT NULL default '0';");
-        $this->addSql("ALTER TABLE `" . ApplicationLoggerDb::TABLE_NAME . "` CHANGE `maintenanceChecked` `maintenanceChecked` {$tinyint} DEFAULT NULL;");
+        $this->addSql('ALTER TABLE `' . ApplicationLoggerDb::TABLE_NAME . "` CHANGE `maintenanceChecked` `maintenanceChecked` {$tinyint} DEFAULT NULL;");
 
         $archiveTables = $db->query("SHOW TABLES LIKE '" . ApplicationLoggerDb::TABLE_NAME . "_%'")->fetchAll(\Doctrine\DBAL\FetchMode::COLUMN);
         if (!empty($archiveTables)) {
             foreach ($archiveTables as $at) {
-                $this->addSql("ALTER TABLE " . $db->quoteTableAs($at) . " MODIFY `maintenanceChecked` {$tinyint};");
+                $this->addSql('ALTER TABLE ' . $db->quoteTableAs($at) . " MODIFY `maintenanceChecked` {$tinyint};");
             }
         }
     }
 
     /**
      * @param Schema $schema
+     *
      * @throws ConnectionException|DBALException
      */
     public function down(Schema $schema)
     {
-        $tinyint = "tinyint(4)";
+        $tinyint = 'tinyint(4)';
         $db = \Pimcore\Db::get();
 
         $this->writeMessage("Restoring tables to {$tinyint}");
         $this->addSql("ALTER TABLE `custom_layouts` CHANGE `default` `default` {$tinyint} NOT NULL default '0';");
-        $this->addSql("ALTER TABLE `" . ApplicationLoggerDb::TABLE_NAME . "` CHANGE `maintenanceChecked` `maintenanceChecked` {$tinyint} DEFAULT NULL;");
+        $this->addSql('ALTER TABLE `' . ApplicationLoggerDb::TABLE_NAME . "` CHANGE `maintenanceChecked` `maintenanceChecked` {$tinyint} DEFAULT NULL;");
 
         $archiveTables = $db->query("SHOW TABLES LIKE '" . ApplicationLoggerDb::TABLE_NAME . "_%'")->fetchAll(\Doctrine\DBAL\FetchMode::COLUMN);
         if (!empty($archiveTables)) {
             foreach ($archiveTables as $at) {
-                $this->addSql("ALTER TABLE " . $db->quoteTableAs($at) . " MODIFY `maintenanceChecked` {$tinyint};");
+                $this->addSql('ALTER TABLE ' . $db->quoteTableAs($at) . " MODIFY `maintenanceChecked` {$tinyint};");
             }
         }
     }
