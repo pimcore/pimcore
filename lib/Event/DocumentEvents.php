@@ -176,8 +176,19 @@ final class DocumentEvents
      * The TAG_NAME event is triggered when a document tag name is built.
      *
      * @Event("Pimcore\Event\Model\Document\TagNameEvent")
+     *
+     * @deprecated since 6.8 and will be removed in 7. use EDITABLE_NAME instead.
      */
     const TAG_NAME = 'pimcore.document.tag.name';
+
+    /**
+     * The EDITABLE_NAME event is triggered when a document editable name is built.
+     *
+     * @Event("Pimcore\Event\Model\Document\TagNameEvent")
+     *
+     * @TODO: change value to 'pimcore.document.editable.name' in Pimcore 7
+     */
+    const EDITABLE_NAME = 'pimcore.document.tag.name';
 
     /**
      * The RENDERER_PRE_RENDER event is triggered before the DocumentRenderer renders a document

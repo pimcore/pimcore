@@ -138,14 +138,14 @@ CKEDITOR.editorConfig = function (config) {
 
 ##### Global Configuration
 
-You can add a Global Configuration for all WYSIWYG Editors for all documents by setting `pimcore.document.tags.wysiwyg.defaultEditorConfig`.
+You can add a Global Configuration for all WYSIWYG Editors for all documents by setting `pimcore.document.editables.wysiwyg.defaultEditorConfig`.
 
 For this purpose, you can create a [Pimcore Bundle](../../20_Extending_Pimcore/13_Bundle_Developers_Guide) and add the
 configuration in a file in the `Resources/public` directory  of your bundle (e.g. `Resources/public/js/editmode.js`).
 
 ```
-pimcore.document.tags.wysiwyg.defaultEditorConfig = pimcore.document.tags.wysiwyg.defaultEditorConfig || {};
-pimcore.document.tags.wysiwyg.defaultEditorConfig.uiColor = '#AADC6E';
+pimcore.document.editables.wysiwyg.defaultEditorConfig = pimcore.document.editables.wysiwyg.defaultEditorConfig || {};
+pimcore.document.editables.wysiwyg.defaultEditorConfig.uiColor = '#AADC6E';
 ```
 
 To load that file in editmode, you need to implement `getEditmodeJsPaths` in your bundle class. Given your bundle is named

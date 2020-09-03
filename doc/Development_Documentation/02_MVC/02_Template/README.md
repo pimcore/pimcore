@@ -2,8 +2,7 @@
 
 ## Introduction
 
-In general the templates are located in: `/app/Resources/views/[Controller]/[action].html.(php|twig)` 
-(both controller as well as action without their suffix).  
+In general the templates are located in: `/app/Resources/views/[Controller]/[action].html.(php|twig)` but [Symfony-style locations](https://symfony.com/doc/4.4/best_practices.html#use-the-default-directory-structure) also work (both controller as well as action without their suffix).  
 
 Pimcore uses an enhanced version of [Symfony's PHP templating engine](http://symfony.com/doc/3.4/templating/PHP.html).
 For historical reasons, Pimcore defaults to PHP as template language, but can easily reconfigured to use [Twig](./00_Twig.md)

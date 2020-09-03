@@ -17,34 +17,17 @@
 
 namespace Pimcore\Model\Document\Tag\Block;
 
-use Pimcore\Model\Document;
+use Pimcore\Model\Document\Editable\Block\Item as EditableBlockItem;
 
-class Item extends AbstractBlockItem
-{
-    protected function getItemType(): string
-    {
-        return 'block';
-    }
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', Item::class, EditableBlockItem::class), E_USER_DEPRECATED);
 
+class_exists(EditableBlockItem::class);
+
+if (false) {
     /**
-     * @param string $func
-     * @param array $args
-     *
-     * @return Document\Tag|null
+     * @deprecated use \Pimcore\Model\Document\Editable\Block\Item instead.
      */
-    public function __call($func, $args)
+    class Item extends EditableBlockItem
     {
-        $element = $this->getElement($args[0]);
-        $class = 'Pimcore\\Model\\Document\\Tag\\' . str_replace('get', '', $func);
-
-        if ($element === null) {
-            return new $class;
-        }
-
-        if (!strcasecmp(get_class($element), $class)) {
-            return $element;
-        }
-
-        return null;
     }
 }

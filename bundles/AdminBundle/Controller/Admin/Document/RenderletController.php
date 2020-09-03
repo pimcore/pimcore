@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Document\Tag\TagHandlerInterface;
+use Pimcore\Document\Editable\EditableHandlerInterface;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\AbstractElement;
@@ -41,7 +41,7 @@ class RenderletController extends AdminController
      *
      * @param Request $request
      * @param ActionRenderer $actionRenderer
-     * @param TagHandlerInterface $tagHandler
+     * @param EditableHandlerInterface $editableHandler
      * @param LocaleServiceInterface $localeService
      *
      * @return Response
@@ -49,7 +49,7 @@ class RenderletController extends AdminController
     public function renderletAction(
         Request $request,
         ActionRenderer $actionRenderer,
-        TagHandlerInterface $tagHandler,
+        EditableHandlerInterface $editableHandler,
         LocaleServiceInterface $localeService
     ) {
         $query = $request->query->all();
@@ -97,7 +97,7 @@ class RenderletController extends AdminController
             $localeService->setLocale($attributes['_locale']);
         }
 
-        $result = $tagHandler->renderAction(new ViewModel(), $controller, $action, $moduleOrBundle, $attributes, $query);
+        $result = $editableHandler->renderAction(new ViewModel(), $controller, $action, $moduleOrBundle, $attributes, $query);
 
         return new Response($result);
     }
