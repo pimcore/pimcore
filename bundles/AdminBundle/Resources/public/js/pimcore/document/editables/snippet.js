@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.document.tags.snippet");
-pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
+pimcore.registerNS("pimcore.document.editables.snippet");
+pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
 
     initialize: function(id, name, options, data, inherited) {
         this.id = id;
@@ -57,8 +57,8 @@ pimcore.document.tags.snippet = Class.create(pimcore.document.tag, {
                 body.setStyle(style);
                 body.getFirstChild().setStyle(style);
 
-                body.insertHtml("beforeEnd", '<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
-                body.addCls("pimcore_tag_snippet_empty pimcore_editable_snippet_empty");
+                body.insertHtml("beforeEnd", '<div class="pimcore_tag_droptarget"></div>');
+                body.addCls("pimcore_tag_snippet_empty");
 
                 el.getEl().on("contextmenu", this.onContextMenu.bind(this));
             } catch (e) {

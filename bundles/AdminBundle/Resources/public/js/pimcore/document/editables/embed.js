@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.document.tags.embed");
-pimcore.document.tags.embed = Class.create(pimcore.document.tag, {
+pimcore.registerNS("pimcore.document.editables.embed");
+pimcore.document.editables.embed = Class.create(pimcore.document.editable, {
 
     initialize: function(id, name, options, data, inherited) {
         this.id = id;

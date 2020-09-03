@@ -12,8 +12,8 @@
  */
 
 /*global CKEDITOR*/
-pimcore.registerNS("pimcore.document.tags.wysiwyg");
-pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
+pimcore.registerNS("pimcore.document.editables.wysiwyg");
+pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
 
     type: "wysiwyg",
 
@@ -104,8 +104,8 @@ pimcore.document.tags.wysiwyg = Class.create(pimcore.document.tag, {
             eConfig.entities_latin = false;
             eConfig.extraAllowedContent = "*[pimcore_type,pimcore_id]";
 
-            if(typeof(pimcore.document.tags.wysiwyg.defaultEditorConfig) == 'object'){
-                eConfig = mergeObject(eConfig, pimcore.document.tags.wysiwyg.defaultEditorConfig);
+            if(typeof(pimcore.document.editables.wysiwyg.defaultEditorConfig) == 'object'){
+                eConfig = mergeObject(eConfig, pimcore.document.editables.wysiwyg.defaultEditorConfig);
             }
 
             eConfig = mergeObject(eConfig, specificConfig);

@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.document.tags.renderlet");
-pimcore.document.tags.renderlet = Class.create(pimcore.document.tag, {
+pimcore.registerNS("pimcore.document.editables.renderlet");
+pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
 
     defaultHeight: 100,
 

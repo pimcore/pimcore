@@ -11,8 +11,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-pimcore.registerNS("pimcore.document.tags.video");
-pimcore.document.tags.video = Class.create(pimcore.document.tag, {
+pimcore.registerNS("pimcore.document.editables.video");
+pimcore.document.editables.video = Class.create(pimcore.document.editable, {
 
     initialize: function(id, name, options, data, inherited) {
         this.id = id;
