@@ -223,8 +223,8 @@ HTML;
         }
 
         $code = '
-        <div id="pimcore_pdf_' . $this->getName() . '" class="pimcore_tag_pdf">
-            <div class="pimcore_tag_video_error" style="line-height: 50px; text-align:center; width: 100%; min-height: 50px; background: #ececec;">
+        <div id="pimcore_pdf_' . $this->getName() . '" class="pimcore_tag_pdf pimcore_editable_pdf">
+            <div class="pimcore_tag_video_error pimcore_editable_video_error" style="line-height: 50px; text-align:center; width: 100%; min-height: 50px; background: #ececec;">
                 ' . $message . '
             </div>
         </div>';

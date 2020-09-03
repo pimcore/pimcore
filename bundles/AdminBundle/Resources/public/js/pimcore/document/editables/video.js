@@ -37,7 +37,7 @@ pimcore.document.editables.video = Class.create(pimcore.document.editable, {
             button.hide();
         }
         this.button = button;
-        var emptyContainer = element.query(".pimcore_tag_video_empty")[0];
+        var emptyContainer = element.query(".pimcore_editable_video_empty")[0];
         if(emptyContainer) {
             emptyContainer = Ext.get(emptyContainer);
             emptyContainer.on("click", this.openEditor.bind(this));

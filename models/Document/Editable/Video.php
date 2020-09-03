@@ -374,7 +374,7 @@ class Video extends Model\Document\Editable
                 $image = $this->getPosterThumbnailImage($asset);
 
                 if ($inAdmin && isset($options['editmodeImagePreview']) && $options['editmodeImagePreview']) {
-                    $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video '.$options['class'].'">';
+                    $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '.$options['class'].'">';
                     $code .= '<img width="' . $this->getWidth() . '" src="' . $image . '" />';
                     $code .= '</div>';
 
@@ -468,8 +468,8 @@ class Video extends Model\Document\Editable
         }
 
         $code = '
-        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
-            <div class="pimcore_tag_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight() - 1) . 'px; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
+        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video">
+            <div class="pimcore_tag_video_error pimcore_editable_video_error" style="text-align:center; width: ' . $width . '; height: ' . ($this->getHeight() - 1) . 'px; border:1px solid #000; background: url(/bundles/pimcoreadmin/img/filetype-not-supported.svg) no-repeat center center #fff;">
                 ' . $message . '
             </div>
         </div>';
@@ -615,7 +615,7 @@ class Video extends Model\Document\Editable
             }
         }
 
-        $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video '.$options['class'].'">
+        $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '.$options['class'].'">
             <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $seriesPrefix . $youtubeId . $wmode . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
@@ -690,7 +690,7 @@ class Video extends Model\Document\Editable
                 }
             }
 
-            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video '.$options['class'].'">
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '.$options['class'].'">
                 <iframe src="https://player.vimeo.com/video/' . $vimeoId . '?dnt=1&title=0&amp;byline=0&amp;portrait=0'. $additional_params .'" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
             </div>';
 
@@ -767,7 +767,7 @@ class Video extends Model\Document\Editable
                 }
             }
 
-            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video '.$options['class'].'">
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '.$options['class'].'">
                 <iframe src="https://www.dailymotion.com/embed/video/' . $dailymotionId . '?' . $additional_params .'" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
             </div>';
 
@@ -810,7 +810,7 @@ class Video extends Model\Document\Editable
             $durationParts[] = $duration . 'S';
             $durationString = implode('', $durationParts);
 
-            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">' . "\n";
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video">' . "\n";
 
             $uploadDate = new \DateTime();
             $uploadDate->setTimestamp($video->getCreationDate());
@@ -901,7 +901,7 @@ class Video extends Model\Document\Editable
     {
         $uid = 'video_' . uniqid();
         $code = '
-        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video">
+        <div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video">
             <style type="text/css">
                 #' . $uid . ' .pimcore_tag_video_progress_status {
                     box-sizing:content-box;
@@ -919,9 +919,9 @@ class Video extends Model\Document\Editable
                     opacity: 0.8;
                 }
             </style>
-            <div class="pimcore_tag_video_progress" id="' . $uid . '">
+            <div class="pimcore_tag_video_progress pimcore_editable_video_progress" id="' . $uid . '">
                 <img src="' . $thumbnail . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;">
-                <div class="pimcore_tag_video_progress_status"></div>
+                <div class="pimcore_tag_video_progress_status pimcore_editable_video_progress_status"></div>
             </div>
         </div>';
 
@@ -935,7 +935,7 @@ class Video extends Model\Document\Editable
     {
         $uid = 'video_' . uniqid();
 
-        return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video"><div class="pimcore_tag_video_empty" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;"></div></div>';
+        return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video"><div class="pimcore_tag_video_empty" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;"></div></div>';
     }
 
     /**

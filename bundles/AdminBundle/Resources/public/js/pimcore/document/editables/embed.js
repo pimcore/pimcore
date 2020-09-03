@@ -34,7 +34,7 @@ pimcore.document.editables.embed = Class.create(pimcore.document.editable, {
         button.render(element.insertHtml("afterBegin", '<div class="pimcore_video_edit_button"></div>'));
 
         if(empty(this.data["url"])) {
-            element.addCls("pimcore_tag_embed_empty");
+            element.addCls("pimcore_tag_embed_empty pimcore_editable_embed_empty");
             element.on("click", this.openEditor.bind(this));
         }
     },
