@@ -100,7 +100,8 @@ class Processor
         $generated = false;
         $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
         $format = strtolower($config->getFormat());
-        $contentOptimizedFormat = false;
+        // Optimize by default.
+        $contentOptimized = true;
 
         if (self::containsTransformationType($config, '1x1_pixel')) {
             return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -118,10 +119,12 @@ class Processor
             if ($format === 'jpeg') {
                 $format = 'pjpeg';
             }
-            $contentOptimizedFormat = true; // format can change depending of the content (alpha-channel, ...)
         }
 
         if ($format == 'print') {
+            // Don't optimize images for print as we assume we want images as
+            // untouched as possible.
+            $contentOptimized = false;
             $format = self::getAllowedFormat($fileExt, ['svg', 'jpeg', 'png', 'tiff'], 'png');
 
             if (($format == 'tiff') && \Pimcore\Tool::isFrontendRequestByAdmin()) {
@@ -134,6 +137,7 @@ class Processor
                 return $asset->getFullPath();
             }
         } elseif ($format == 'tiff') {
+            $contentOptimized = false;
             if (\Pimcore\Tool::isFrontendRequestByAdmin()) {
                 // return a webformat in admin -> tiff cannot be displayed in browser
                 $format = 'png';
@@ -143,7 +147,9 @@ class Processor
 
         $image = Asset\Image::getImageTransformInstance();
 
-        if ($contentOptimizedFormat && self::hasWebpSupport() && $image->supportsFormat('webp')) {
+        if (self::hasWebpSupport() && $image->supportsFormat('webp')) {
+            // We can use wepb - no need to optimize.
+            $contentOptimized = false;
             $format = 'webp';
         }
 
@@ -350,7 +356,8 @@ class Processor
             }
         }
 
-        if ($contentOptimizedFormat && !self::hasWebpSupport()) {
+        // Ensure the image optimization is only called with a compatible format.
+        if ($contentOptimized && !self::hasWebpSupport() && !in_array($format, ['jpeg', 'png', 'pjpeg'])) {
             $format = $image->getContentOptimizedFormat();
         }
 
@@ -360,7 +367,7 @@ class Processor
 
         $generated = true;
 
-        if ($contentOptimizedFormat) {
+        if ($contentOptimized) {
             $filePath = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/', '', $fsPath);
             $tmpStoreKey = 'thumb_' . $asset->getId() . '__' . md5($filePath);
             TmpStore::add($tmpStoreKey, $filePath, 'image-optimize-queue');
