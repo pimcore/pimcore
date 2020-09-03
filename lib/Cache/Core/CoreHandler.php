@@ -478,7 +478,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         } else  if (is_object($data) && isset($data->____pimcore_cache_item__)) {
             unset($data->____pimcore_cache_item__);
             $itemData = serialize($data);
-
         }
 
         // See #1005 - serialize the element now as we don't know what happens until it is actually persisted on shutdown and we
