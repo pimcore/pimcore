@@ -1795,7 +1795,7 @@ class DataObjectHelperController extends AdminController
 
         $ids = $list->loadIdList();
 
-        $jobs = array_chunk($ids, 100);
+        $jobs = array_chunk($ids, 20);
 
         $fileHandle = uniqid('export-');
         file_put_contents($this->getCsvFile($fileHandle), '');
