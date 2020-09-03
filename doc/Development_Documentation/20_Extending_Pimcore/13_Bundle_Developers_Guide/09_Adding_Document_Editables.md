@@ -45,15 +45,15 @@ pimcore:
 
 ## 3) Create frontend JS
 
-For the frontend, a JavaScript class needs to be added `pimcore.document.tags.markdown`. It can 
-extend any of the existing `pimcore.document.tags` and must return it's type by overwriting 
+For the frontend, a JavaScript class needs to be added `pimcore.document.editables.markdown`. It can 
+extend any of the existing `pimcore.document.editables.*` class and must return it's type by overwriting 
 the function `getType()`. If you extend from other bundles tags make sure your bundle is loaded after your parent tag has been initialized.
 
 ```js
-// src/Resources/public/js/pimcore/document/tags/markdown.js
+// src/Resources/public/js/pimcore/document/editables/markdown.js
 
-pimcore.registerNS("pimcore.document.tags.markdown");
-pimcore.document.tags.markdown = Class.create(pimcore.document.tags.textarea, {
+pimcore.registerNS("pimcore.document.editables.markdown");
+pimcore.document.editables.markdown = Class.create(pimcore.document.editables.textarea, {
     getType: function () {
         return "markdown";
     }

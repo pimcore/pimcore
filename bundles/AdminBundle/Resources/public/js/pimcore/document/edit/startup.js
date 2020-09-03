@@ -133,11 +133,12 @@ Ext.onReady(function () {
         }
         editableNames.push(name);
 
-        var tag = new pimcore.document.tags[type](id, name, options, data, inherited);
-        tag.setRealName(config.realName);
-        tag.setInherited(inherited);
+        // @TODO: change pimcore.document.tags to pimcore.document.editables in v7
+        var editable = new pimcore.document.tags[type](id, name, options, data, inherited);
+        editable.setRealName(config.realName);
+        editable.setInherited(inherited);
 
-        return tag;
+        return editable;
     }
 
     if (typeof Ext == "object" && typeof pimcore == "object") {
