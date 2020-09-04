@@ -104,7 +104,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
 
             //load relation and check if relation loads correctly
             $blockItems = $object->getTestBlock();
-            $relationObjects = $blockItems[0]['blockrelations']->getData();
+            $relationObjects = $blockItems[0]['blockobjects']->getData();
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
