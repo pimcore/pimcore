@@ -88,4 +88,3 @@ class EditableUsageResolver
 }
 
 class_alias(EditableUsageResolver::class, 'Pimcore\Document\Tag\TagUsageResolver');
-

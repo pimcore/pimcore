@@ -16,8 +16,8 @@ namespace Pimcore\Templating\Renderer;
 
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document\Editable;
-use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
+use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Templating\Model\ViewModel;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

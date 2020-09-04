@@ -60,6 +60,7 @@ class BlockName implements \JsonSerializable
 
     /**
      * @TODO remove in v7
+     *
      * @param Editable $tag
      *
      * @return BlockName

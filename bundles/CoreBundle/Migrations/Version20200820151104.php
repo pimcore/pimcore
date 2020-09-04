@@ -17,7 +17,7 @@ class Version20200820151104 extends AbstractPimcoreMigration
     {
         $skipIds = [];
         /** @var Tag $tag */
-        foreach($tags as $tag) {
+        foreach ($tags as $tag) {
             if (!in_array($tag->getId(), $skipIds)) {
                 $duplicateTags = new Tag\Listing();
                 $duplicateTags->setCondition('name = ? AND parentId = ? AND id != ?', [$tag->getName(), $tag->getParentId(), $tag->getId()]);
@@ -31,12 +31,11 @@ class Version20200820151104 extends AbstractPimcoreMigration
                         $duplicateTag->setName($newName);
                         $duplicateTag->save();
 
-                        $this->writeMessage('<info>Attention: </info>' . sprintf('Tag(ID: %d): "%s" renamed to "%s"', $duplicateTag->getId() , $oldName, $newName));
+                        $this->writeMessage('<info>Attention: </info>' . sprintf('Tag(ID: %d): "%s" renamed to "%s"', $duplicateTag->getId(), $oldName, $newName));
                         $skipIds[] = $duplicateTag->getId();
                     } catch (\Exception $e) {
                         $this->writeMessage('An error occurred while renaming tags for table migrations: ' . $e->getMessage());
                     }
-
                 }
             }
 
@@ -54,7 +53,7 @@ class Version20200820151104 extends AbstractPimcoreMigration
         try {
             //correct duplicate tags on same level
             $tags = new Tag\Listing();
-            $tags->setCondition("parentId = 0");
+            $tags->setCondition('parentId = 0');
             $this->renameDuplicateTags($tags);
 
             //add composite index for tags uniqueness at same level

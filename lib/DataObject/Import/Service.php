@@ -28,7 +28,7 @@ use Pimcore\DataObject\Import\ColumnConfig\Value\ValueInterface;
 use Pimcore\DataObject\Import\Resolver\ResolverInterface;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
-use \Pimcore\Model\Element\Service as ElementService;
+use Pimcore\Model\Element\Service as ElementService;
 use Pimcore\Model\GridConfig;
 use Pimcore\Model\ImportConfig;
 use Pimcore\Model\User;

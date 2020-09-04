@@ -14,8 +14,8 @@
 
 namespace Pimcore\Twig\Extension;
 
-use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Editable\BlockInterface;
+use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;

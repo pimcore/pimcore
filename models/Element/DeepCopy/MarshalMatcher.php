@@ -51,7 +51,6 @@ class MarshalMatcher extends TypeMatcher
         if ($element instanceof ElementInterface) {
             $elementType = Service::getType($element);
             if ($elementType === $this->sourceType && $element->getId() === $this->sourceId) {
-
                 return false;
             }
 

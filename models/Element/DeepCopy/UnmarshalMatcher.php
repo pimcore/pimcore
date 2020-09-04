@@ -27,7 +27,6 @@ class UnmarshalMatcher extends TypeMatcher
     public function __construct()
     {
         parent::__construct(\Pimcore\Model\Element\ElementDescriptor::class);
-
     }
 }
 
