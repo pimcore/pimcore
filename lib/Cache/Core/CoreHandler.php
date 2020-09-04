@@ -279,24 +279,12 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
             $data = unserialize($data);
 
-            // TODO if this change is really for release 6.8 we could simplify this and
-            // use the service instead.
-            // see  "Add service for DeepCopy/ElementDescriptor tasks", https://github.com/pimcore/pimcore/pull/6983
-            $copier = new DeepCopy();
-            $copier->addTypeFilter(
-                new \DeepCopy\TypeFilter\ReplaceFilter(
-                    function ($currentValue) {
-                        if ($currentValue instanceof ElementDescriptor) {
-                            $value = Service::getElementById($currentValue->getType(), $currentValue->getId());
-
-                            return $value;
-                        }
-
-                        return $currentValue;
-                    }
-                ),
-                new UnmarshalMatcher()
-            );
+            $context = [
+                'source' => __METHOD__,
+                'conversion' => 'unmarshal'
+            ];
+            $copier = Service::getDeepCopyInstance($data, $context);
+            $copier->addFilter(new SetDumpStateFilter(false), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
             $data = $copier->copy($data);
 
             if (is_object($data)) {
@@ -596,27 +584,11 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             // dump state is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
             $data->setInDumpState(false);
 
-            // TODO if this change is really for release 6.8 we could simplify this and
-            // use the service instead.
-            // see  "Add service for DeepCopy/ElementDescriptor tasks", https://github.com/pimcore/pimcore/pull/6983
-
-            $copier = new DeepCopy();
-            $copier->skipUncloneable(true);
-            $copier->addTypeFilter(
-                new \DeepCopy\TypeFilter\ReplaceFilter(
-                    function ($currentValue) {
-                        if ($currentValue instanceof ElementInterface) {
-                            $elementType = Service::getType($currentValue);
-                            $descriptor = new ElementDescriptor($elementType, $currentValue->getId());
-
-                            return $descriptor;
-                        }
-
-                        return $currentValue;
-                    }
-                ),
-                new MarshalMatcher($type, $data->getId())
-            );
+            $context = [
+                'source' => __METHOD__,
+                'conversion' => 'marshal'
+            ];
+            $copier = Service::getDeepCopyInstance($data, $context);
             $copier->addFilter(new SetDumpStateFilter(false), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
             $data = $copier->copy($data);
 
