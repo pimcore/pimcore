@@ -290,9 +290,7 @@ class Asset extends Element\AbstractElement
 
                 $asset->resetDirtyMap();
 
-                if (!$force) {
-                    \Pimcore\Cache::save($asset, $cacheKey);
-                }
+                \Pimcore\Cache::save($asset, $cacheKey);
             } else {
                 \Pimcore\Cache\Runtime::set($cacheKey, $asset);
             }

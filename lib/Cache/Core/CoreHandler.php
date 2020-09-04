@@ -14,19 +14,15 @@
 
 namespace Pimcore\Cache\Core;
 
-use DeepCopy\DeepCopy;
 use Pimcore\Cache\Pool\CacheItem;
 use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Cache\Pool\PurgeableCacheItemPoolInterface;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
-use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Version\MarshalMatcher;
 use Pimcore\Model\Version\SetDumpStateFilter;
-use Pimcore\Model\Version\UnmarshalMatcher;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
@@ -128,6 +124,11 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      * @var int
      */
     protected $maxWriteToCacheItems = 50;
+
+    /**
+     * @var bool
+     */
+    protected $writeInProgress = false;
 
     /**
      * @var \Closure
@@ -555,6 +556,10 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     protected function storeCacheItem(PimcoreCacheItemInterface $item, $data, $force = false)
     {
+        if ($this->writeInProgress) {
+            return;
+        }
+
         if (!$this->enabled) {
             // TODO return true here as the noop (not storing anything) is basically successful?
             return false;
@@ -564,6 +569,9 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         if ($this->cacheCleared && !$force) {
             return false;
         }
+
+
+        $this->writeInProgress = true;
 
         if ($data instanceof ElementInterface) {
             // fetch a fresh copy
@@ -578,6 +586,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
                 // TODO: this check needs to be done recursive, especially for Objects (like cache tags)
                 // all other entities shouldn't have references at all in the cache so it shouldn't matter
+                $this->writeInProgress = false;
                 return false;
             }
 
@@ -597,6 +606,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         $result = $this->itemPool->save($item);
+        $this->writeInProgress = false;
 
         if ($result) {
             $this->logger->debug('Added entry {key} to cache', ['key' => $item->getKey()]);
