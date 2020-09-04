@@ -226,8 +226,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         }
                     }
 
-                    $blockElement->setNeedsRenewReferences(true);
-
                     $this->setBlockElementOwner($blockElement, $params);
 
                     $items[$elementName] = $blockElement;
