@@ -47,7 +47,6 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DocumentController extends ElementControllerBase implements EventedControllerInterface
 {
-    use AdminStyleTrait;
     use DocumentTreeConfigTrait;
 
     /**

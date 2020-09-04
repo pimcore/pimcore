@@ -34,7 +34,6 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 abstract class DocumentControllerBase extends AdminController implements EventedControllerInterface
 {
-    use AdminStyleTrait;
     use ApplySchedulerDataTrait;
     use DocumentTreeConfigTrait;
 
