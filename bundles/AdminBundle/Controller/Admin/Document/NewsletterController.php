@@ -159,7 +159,7 @@ class NewsletterController extends DocumentControllerBase
             $page->save();
             $this->saveToSession($page);
 
-            $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_TREE, $treeData);
+            $treeData = $this->getTreeNodeConfig($page);
 
             return $this->adminJson([
                 'success' => true,

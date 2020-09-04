@@ -124,7 +124,7 @@ class FolderController extends DocumentControllerBase
             $this->setValuesToDocument($request, $folder);
             $folder->save();
 
-            $this->addAdminStyle($folder, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+            $treeData = $this->getTreeNodeConfig($folder);
 
             return $this->adminJson(['success' => true, 'treeData' => $treeData]);
         } else {

@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
@@ -33,8 +34,8 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 abstract class DocumentControllerBase extends AdminController implements EventedControllerInterface
 {
-    use AdminStyleTrait;
     use ApplySchedulerDataTrait;
+    use DocumentTreeConfigTrait;
 
     protected function preSendDataActions(&$data, Model\Document $document)
     {

@@ -157,7 +157,7 @@ class SnippetController extends DocumentControllerBase
             $snippet->save();
             $this->saveToSession($snippet);
 
-            $this->addAdminStyle($snippet, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+            $treeData = $this->getTreeNodeConfig($snippet);
 
             return $this->adminJson([
                 'success' => true,
