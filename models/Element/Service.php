@@ -1477,12 +1477,12 @@ class Service extends Model\AbstractModel
 
     /**
      *
-     * @param ElementInterface|null $element
+     * @param mixed|null $element
      * @param array|null $context
      *
      * @return DeepCopy
      */
-    public static function getDeepCopyInstance(?ElementInterface $element, ?array $context = []): DeepCopy
+    public static function getDeepCopyInstance($element, ?array $context = []): DeepCopy
     {
         $copier = new DeepCopy();
         $copier->skipUncloneable(true);
