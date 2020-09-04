@@ -198,6 +198,11 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
         $this->needsRenewReferences = true;
         $this->data = $copier->copy($this->data);
 
+        if ($this->data instanceof OwnerAwareFieldInterface) {
+            //Remove child's owner, cause it make recursion on serialization
+            $this->data->setOwner(null, '');
+        }
+
         return parent::__sleep();
     }
 
