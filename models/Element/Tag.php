@@ -101,7 +101,7 @@ class Tag extends Model\AbstractModel
     {
         $event = new TagEvent($tag, [
             'elementType' => $cType,
-            'elementId' => $cType,
+            'elementId' => $cId,
         ]);
         \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_ADD_TO_ELEMENT, $event);
 
@@ -121,7 +121,7 @@ class Tag extends Model\AbstractModel
     {
         $event = new TagEvent($tag, [
             'elementType' => $cType,
-            'elementId' => $cType,
+            'elementId' => $cId,
         ]);
         \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_REMOVE_FROM_ELEMENT, $event);
 
@@ -377,15 +377,11 @@ class Tag extends Model\AbstractModel
      */
     public function delete()
     {
-        try {
-            \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_DELETE, new TagEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_DELETE, new TagEvent($this));
 
-            $this->getDao()->delete();
+        $this->getDao()->delete();
 
-            \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_DELETE, new TagEvent($this));
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_DELETE, new TagEvent($this));
     }
 
     /**
