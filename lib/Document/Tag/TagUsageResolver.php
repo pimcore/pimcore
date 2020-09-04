@@ -17,55 +17,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Tag;
 
-use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
-use Pimcore\Document\Renderer\DocumentRenderer;
-use Pimcore\Http\Request\Resolver\EditmodeResolver;
-use Pimcore\Model\Document;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Pimcore\Document\Editable\EditableUsageResolver;
 
-class TagUsageResolver
-{
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', TagUsageResolver::class, EditableUsageResolver::class), E_USER_DEPRECATED);
+
+class_exists(EditableUsageResolver::class);
+
+if (false) {
     /**
-     * @var UsageRecorderSubscriber
+     * @deprecated use \Pimcore\Document\Editable\TagUsageResolver instead.
      */
-    protected $subscriber;
-    protected $dispatcher;
-    protected $renderer;
-
-    public function __construct(EventDispatcherInterface $eventDispatcher, DocumentRenderer $documentRenderer)
+    class TagUsageResolver extends EditableUsageResolver
     {
-        $this->dispatcher = $eventDispatcher;
-        $this->renderer = $documentRenderer;
-    }
-
-    public function getUsedTagnames(Document\PageSnippet $document)
-    {
-        $this->registerEventSubscriber();
-
-        // we render in editmode, so that we can ensure all elements that can be edited are present in the export
-        // this is especially necessary when lazy loading certain elements on a page (eg. using ajax-include and similar solutions)
-        $this->renderer->render($document, [EditmodeResolver::ATTRIBUTE_EDITMODE => true, ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS => true]);
-        $names = $this->subscriber->getRecordedTagNames();
-        $this->unregisterEventSubscriber();
-
-        $names = array_unique($names);
-
-        return $names;
-    }
-
-    protected function registerEventSubscriber()
-    {
-        if (!$this->subscriber) {
-            $this->subscriber = new UsageRecorderSubscriber();
-            $this->dispatcher->addSubscriber($this->subscriber);
-        }
-    }
-
-    protected function unregisterEventSubscriber()
-    {
-        if ($this->subscriber) {
-            $this->dispatcher->removeSubscriber($this->subscriber);
-            $this->subscriber = null;
-        }
     }
 }

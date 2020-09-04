@@ -501,11 +501,12 @@ CREATE TABLE `tags` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(10) unsigned DEFAULT NULL,
   `idPath` varchar(190) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL COLLATE utf8_bin,
   PRIMARY KEY (`id`),
   KEY `idpath` (`idPath`),
   KEY `parentid` (`parentId`),
-  KEY `name` (`name`)
+  KEY `name` (`name`),
+  UNIQUE INDEX `idPath_name` (`idPath`,`name`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS  `tags_assignment`;

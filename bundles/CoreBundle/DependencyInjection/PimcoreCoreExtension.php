@@ -23,7 +23,8 @@ use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Migrations\Configuration\ConfigurationFactory;
-use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
+use Pimcore\Model\Document\Editable\Loader\EditableLoader;
+use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
@@ -199,9 +200,10 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     private function configureImplementationLoaders(ContainerBuilder $container, array $config)
     {
         $services = [
-            'pimcore.implementation_loader.document.tag' => [
-                'config' => $config['documents']['tags'],
-                'prefixLoader' => DocumentTagPrefixLoader::class,
+            EditableLoader::class => [
+                //@TODO just use $config['documents']['editables'] in Pimcore 7
+                'config' => array_replace_recursive($config['documents']['tags'], $config['documents']['editables']),
+                'prefixLoader' => DocumentEditablePrefixLoader::class,
             ],
             'pimcore.implementation_loader.object.data' => [
                 'config' => $config['objects']['class_definitions']['data'],

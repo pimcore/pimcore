@@ -17,12 +17,17 @@
 
 namespace Pimcore\Model\Document\Tag\Areablock;
 
-use Pimcore\Model\Document\Tag\Block\AbstractBlockItem;
+use Pimcore\Model\Document\Editable\Areablock\Item as AreablockItem;
 
-class Item extends AbstractBlockItem
-{
-    protected function getItemType(): string
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', Item::class, AreablockItem::class), E_USER_DEPRECATED);
+
+class_exists(AreablockItem::class);
+
+if (false) {
+    /**
+     * @deprecated use \Pimcore\Model\Document\Editable\Areablock\Item instead.
+     */
+    class Item extends AreablockItem
     {
-        return 'areablock';
     }
 }

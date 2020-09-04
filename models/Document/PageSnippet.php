@@ -17,13 +17,13 @@
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Document\Tag\TagUsageResolver;
+use Pimcore\Document\Editable\EditableUsageResolver;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\Tag\Loader\TagLoaderInterface;
+use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
@@ -379,8 +379,8 @@ abstract class PageSnippet extends Model\Document
     {
         try {
             if ($type) {
-                /** @var TagLoaderInterface $loader */
-                $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
+                /** @var EditableLoaderInterface $loader */
+                $loader = \Pimcore::getContainer()->get(Document\Editable\Loader\EditableLoader::class);
                 $editable = $loader->build($type);
 
                 $this->editables = $this->editables ?? [];
@@ -400,7 +400,7 @@ abstract class PageSnippet extends Model\Document
      * Set an element with the given key/name
      *
      * @param string $name
-     * @param Tag $data
+     * @param Editable $data
      *
      * @return $this
      *
@@ -415,11 +415,11 @@ abstract class PageSnippet extends Model\Document
      * Set an element with the given key/name
      *
      * @param string $name
-     * @param Tag $data
+     * @param Editable $data
      *
      * @return $this
      */
-    public function setEditable(string $name, Tag $data)
+    public function setEditable(string $name, Editable $data)
     {
         $this->editables[$name] = $data;
 
@@ -457,7 +457,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @param string $name
      *
-     * @return Tag|null
+     * @return Editable|null
      *
      * @deprecated since v6.7 and will be removed in 7. Use getEditable() instead.
      */
@@ -471,7 +471,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @param string $name
      *
-     * @return Tag|null
+     * @return Editable|null
      */
     public function getEditable(string $name)
     {
@@ -590,7 +590,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return Tag[]
+     * @return Editable[]
      *
      * @deprecated since v6.7 and will be removed in 7. Use getEditables() instead.
      */
@@ -600,7 +600,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return Tag[]
+     * @return Editable[]
      */
     public function getEditables(): array
     {
@@ -758,18 +758,18 @@ abstract class PageSnippet extends Model\Document
         $allowedTypes = ['input', 'wysiwyg', 'textarea', 'numeric'];
 
         if ($this->getMissingRequiredEditable() === null) {
-            /** @var TagUsageResolver $tagUsageResolver */
-            $tagUsageResolver = \Pimcore::getContainer()->get(TagUsageResolver::class);
+            /** @var EditableUsageResolver $editableUsageResolver */
+            $editableUsageResolver = \Pimcore::getContainer()->get(EditableUsageResolver::class);
             try {
                 $documentCopy = Service::cloneMe($this);
                 if ($documentCopy instanceof self) {
                     // rendering could fail if the controller/action doesn't exist, in this case we can skip the required check
-                    $tagNames = $tagUsageResolver->getUsedTagnames($documentCopy);
-                    foreach ($tagNames as $tagName) {
-                        $tag = $documentCopy->getEditable($tagName);
-                        if ($tag instanceof Tag && in_array($tag->getType(), $allowedTypes)) {
-                            $documentOptions = $tag->getOptions();
-                            if ($tag->isEmpty() && isset($documentOptions['required']) && $documentOptions['required'] == true) {
+                    $editableNames = $editableUsageResolver->getUsedEditableNames($documentCopy);
+                    foreach ($editableNames as $editableName) {
+                        $editable = $documentCopy->getEditable($editableName);
+                        if ($editable instanceof Editable && in_array($editable->getType(), $allowedTypes)) {
+                            $documentOptions = $editable->getOptions();
+                            if ($editable->isEmpty() && isset($documentOptions['required']) && $documentOptions['required'] == true) {
                                 $this->setMissingRequiredEditable(true);
                                 break;
                             }
