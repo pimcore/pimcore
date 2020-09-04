@@ -557,7 +557,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     protected function storeCacheItem(PimcoreCacheItemInterface $item, $data, $force = false)
     {
         if ($this->writeInProgress) {
-            return;
+            return false;
         }
 
         if (!$this->enabled) {
