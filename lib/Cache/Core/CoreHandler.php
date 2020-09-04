@@ -613,7 +613,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         $result = $this->itemPool->save($item);
-        $this->writeInProgress = true;
+        $this->writeInProgress = false;
 
         if ($result) {
             $this->logger->debug('Added entry {key} to cache', ['key' => $item->getKey()]);
