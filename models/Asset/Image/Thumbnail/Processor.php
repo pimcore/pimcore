@@ -359,6 +359,11 @@ class Processor
             }
         }
 
+        // @TODO: Should this somehow check if a format switch is acutally allowed?
+        if ($contentOptimized && !self::hasWebpSupport()) {
+            $format = $image->getContentOptimizedFormat();
+        }
+
         $tmpFsPath = preg_replace('@\.([\w]+)$@', uniqid('.tmp-', true) . '.$1', $fsPath);
         $image->save($tmpFsPath, $format, $config->getQuality());
         @rename($tmpFsPath, $fsPath); // atomic rename to avoid race conditions
