@@ -101,7 +101,8 @@ class Processor
         $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
         $format = strtolower($config->getFormat());
         // Optimize if allowed to strip info.
-        $contentOptimized = (!$config->isPreserveColor() && !$config->isPreserveMetaData());
+        $optimizedContent = (!$config->isPreserveColor() && !$config->isPreserveMetaData());
+        $optimizedFormat = false;
 
         if (self::containsTransformationType($config, '1x1_pixel')) {
             return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -115,6 +116,7 @@ class Processor
 
         // simple detection for source type if SOURCE is selected
         if ($format == 'source' || empty($format)) {
+            $optimizedFormat = true;
             $format = self::getAllowedFormat($fileExt, ['pjpeg', 'jpeg', 'gif', 'png'], 'png');
             if ($format === 'jpeg') {
                 $format = 'pjpeg';
@@ -124,7 +126,7 @@ class Processor
         if ($format == 'print') {
             // Don't optimize images for print as we assume we want images as
             // untouched as possible.
-            $contentOptimized = false;
+            $optimizedFormat = $optimizedContent = false;
             $format = self::getAllowedFormat($fileExt, ['svg', 'jpeg', 'png', 'tiff'], 'png');
 
             if (($format == 'tiff') && \Pimcore\Tool::isFrontendRequestByAdmin()) {
@@ -137,7 +139,7 @@ class Processor
                 return $asset->getFullPath();
             }
         } elseif ($format == 'tiff') {
-            $contentOptimized = false;
+            $optimizedFormat = $optimizedContent = false;
             if (\Pimcore\Tool::isFrontendRequestByAdmin()) {
                 // return a webformat in admin -> tiff cannot be displayed in browser
                 $format = 'png';
@@ -152,7 +154,7 @@ class Processor
             // @TODO Why can we just adjust the format here without checking if
             // the format  is source / original and / or if any preserving
             // option is active?
-            $contentOptimized = false;
+            $optimizedFormat = $optimizedContent = false;
             $format = 'webp';
         }
 
@@ -359,8 +361,7 @@ class Processor
             }
         }
 
-        // @TODO: Should this somehow check if a format switch is acutally allowed?
-        if ($contentOptimized && !self::hasWebpSupport()) {
+        if ($optimizedFormat) {
             $format = $image->getContentOptimizedFormat();
         }
 
@@ -370,7 +371,7 @@ class Processor
 
         $generated = true;
 
-        if ($contentOptimized) {
+        if ($optimizedContent) {
             $filePath = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/', '', $fsPath);
             $tmpStoreKey = 'thumb_' . $asset->getId() . '__' . md5($filePath);
             TmpStore::add($tmpStoreKey, $filePath, 'image-optimize-queue');
