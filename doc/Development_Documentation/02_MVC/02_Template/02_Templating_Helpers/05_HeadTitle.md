@@ -11,6 +11,8 @@ You may specify a title tag at any time.
 A typical usage would have you setting title segments for each level of depth in your application: site, 
 controller, action, and potentially resource.
 
+<div class="code-section">
+
 ```php
 $this->headTitle("My first part")
      ->headTitle("The 2nd part");
@@ -33,7 +35,11 @@ $this->headTitle()->setSeparator(' / ');
 {% do pimcore_head_title().setSeparator(' / ') %}
 ```
 
+</div>
+
 When you're finally ready to render the title in your layout script, simply echo the helper:
+
+<div class="code-section">
 
 ```php
 <?= $this->headTitle() ?>
@@ -45,3 +51,4 @@ When you're finally ready to render the title in your layout script, simply echo
 {# renders My first part / The 2nd part / My Pimcore Website #}
 ```
 
+</div>

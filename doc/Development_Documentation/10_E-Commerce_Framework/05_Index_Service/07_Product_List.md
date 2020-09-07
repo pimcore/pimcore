@@ -21,5 +21,5 @@ All filtered attributes need to be in the *Product Index*. The Product List impl
 interfaces and can be used in foreach loops and in combination with `Zend\Paginator`. 
 
 > For logging standard Symfony logging is used. E-Commerce Framework Product Indices log into special channels like
-> `pimcore_ecommerce_indexupdater`, `pimcore_ecommerce_sql`, `pimcore_ecommerce_factfinder`, `pimcore_ecommerce_es`
+> `pimcore_ecommerce_indexupdater`, `pimcore_ecommerce_sql`, `pimcore_ecommerce_factfinder ` (Deprecated since 6.7.0), `pimcore_ecommerce_es`
 > and `pimcore_ecommerce_findologic`. 

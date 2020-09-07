@@ -14,7 +14,7 @@ CREATE TABLE `application_logs` (
   `source` varchar(190) DEFAULT NULL,
   `relatedobject` int(11) unsigned DEFAULT NULL,
   `relatedobjecttype` enum('object','document','asset') DEFAULT NULL,
-  `maintenanceChecked` tinyint(4) DEFAULT NULL,
+  `maintenanceChecked` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `component` (`component`),
   KEY `timestamp` (`timestamp`),
@@ -50,7 +50,7 @@ CREATE TABLE `assets_metadata` (
   `name` varchar(190) NOT NULL,
   `language` varchar(10) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` ENUM('input','textarea','asset','document','object','date','select','checkbox') DEFAULT NULL,
-  `data` text,
+  `data` longtext,
   PRIMARY KEY (`cid`, `name`, `language`),
 	INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -90,7 +90,7 @@ CREATE TABLE `custom_layouts` (
 	`modificationDate` INT(11) UNSIGNED NULL DEFAULT NULL,
 	`userOwner` INT(11) UNSIGNED NULL DEFAULT NULL,
 	`userModification` INT(11) UNSIGNED NULL DEFAULT NULL,
-	`default` tinyint(4) NOT NULL DEFAULT '0',
+	`default` tinyint(1) NOT NULL DEFAULT '0',
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `name` (`name`, `classId`)
 ) DEFAULT CHARSET=utf8mb4;
@@ -374,6 +374,7 @@ CREATE TABLE `objects` (
   `o_classId` VARCHAR(50) NULL DEFAULT NULL,
   `o_className` varchar(255) DEFAULT NULL,
   `o_childrenSortBy` ENUM('key','index') NULL DEFAULT NULL,
+  `o_childrenSortOrder` ENUM('ASC','DESC') NULL DEFAULT NULL,
   `o_versionCount` INT UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`o_id`),
   UNIQUE KEY `fullpath` (`o_path`,`o_key`),
@@ -465,7 +466,7 @@ CREATE TABLE `search_backend_data` (
   `maintype` varchar(8) NOT NULL DEFAULT '',
   `type` varchar(20) DEFAULT NULL,
   `subtype` varchar(190) DEFAULT NULL,
-  `published` int(11) unsigned DEFAULT NULL,
+  `published` tinyint(1) unsigned DEFAULT NULL,
   `creationDate` int(11) unsigned DEFAULT NULL,
   `modificationDate` int(11) unsigned DEFAULT NULL,
   `userOwner` int(11) DEFAULT NULL,
@@ -500,11 +501,12 @@ CREATE TABLE `tags` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `parentId` int(10) unsigned DEFAULT NULL,
   `idPath` varchar(190) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL COLLATE utf8_bin,
   PRIMARY KEY (`id`),
   KEY `idpath` (`idPath`),
   KEY `parentid` (`parentId`),
-  KEY `name` (`name`)
+  KEY `name` (`name`),
+  UNIQUE INDEX `idPath_name` (`idPath`,`name`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
 DROP TABLE IF EXISTS  `tags_assignment`;
@@ -872,7 +874,7 @@ DROP TABLE IF EXISTS `element_workflow_state`;
 CREATE TABLE `element_workflow_state` (
   `cid` int(10) NOT NULL DEFAULT '0',
   `ctype` enum('document','asset','object') NOT NULL,
-  `place` varchar(255) DEFAULT NULL,
+  `place` text DEFAULT NULL,
   `workflow` varchar(100) NOT NULL,
   PRIMARY KEY (`cid`,`ctype`,`workflow`)
 ) DEFAULT CHARSET=utf8mb4;

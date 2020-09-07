@@ -48,7 +48,7 @@ Ext.define('Portal.view.PortalDropZone', {
             this.lastCW = cw;
         }else if(this.lastCW != cw){
             this.lastCW = cw;
-            portal.doLayout();
+            portal.updateLayout();
             this.grid = this.getGrid();
         }
 

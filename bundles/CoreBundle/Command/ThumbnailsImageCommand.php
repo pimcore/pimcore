@@ -82,13 +82,15 @@ class ThumbnailsImageCommand extends AbstractCommand
 
     protected function fetchItems(InputInterface $input): array
     {
+        $list = new Asset\Listing();
+
         // get only images
         $conditions = ["type = 'image'"];
 
         if ($input->getOption('parent')) {
             $parent = Asset::getById($input->getOption('parent'));
             if ($parent instanceof Asset\Folder) {
-                $conditions[] = "path LIKE '".$parent->getRealFullPath()."/%'";
+                $conditions[] = "path LIKE '" . $list->escapeLike($parent->getRealFullPath()) . "/%'";
             } else {
                 $this->writeError($input->getOption('parent').' is not a valid asset folder ID!');
                 exit(1);
@@ -99,7 +101,6 @@ class ThumbnailsImageCommand extends AbstractCommand
             $conditions[] = sprintf('id in (%s)', implode(',', $ids));
         }
 
-        $list = new Asset\Listing();
         $list->setCondition(implode(' AND ', $conditions));
 
         return $list->loadIdList();

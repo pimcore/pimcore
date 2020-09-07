@@ -46,7 +46,7 @@ class PricingController extends AdminController implements EventedControllerInte
     }
 
     /**
-     * @Route("/list", methods={"GET"})
+     * @Route("/list", name="pimcore_ecommerceframework_pricing_list", methods={"GET"})
      */
     public function listAction()
     {
@@ -84,7 +84,7 @@ class PricingController extends AdminController implements EventedControllerInte
     /**
      * get priceing rule details as json
      *
-     * @Route("/get", methods={"GET"})
+     * @Route("/get", name="pimcore_ecommerceframework_pricing_get", methods={"GET"})
      *
      * @param Request $request
      *
@@ -131,7 +131,7 @@ class PricingController extends AdminController implements EventedControllerInte
     /**
      * add new rule
      *
-     * @Route("/add", methods={"POST"})
+     * @Route("/add", name="pimcore_ecommerceframework_pricing_add", methods={"POST"})
      *
      * @param Request $request
      *
@@ -164,7 +164,7 @@ class PricingController extends AdminController implements EventedControllerInte
     /**
      * delete exiting rule
      *
-     * @Route("/delete", methods={"DELETE"})
+     * @Route("/delete", name="pimcore_ecommerceframework_pricing_delete", methods={"DELETE"})
      *
      * @param Request $request
      *
@@ -194,7 +194,7 @@ class PricingController extends AdminController implements EventedControllerInte
     /**
      * save rule config
      *
-     * @Route("/save", methods={"PUT"})
+     * @Route("/save", name="pimcore_ecommerceframework_pricing_save", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -286,7 +286,7 @@ class PricingController extends AdminController implements EventedControllerInte
     }
 
     /**
-     * @Route("/save-order", methods={"PUT"})
+     * @Route("/save-order", name="pimcore_ecommerceframework_pricing_save-order", methods={"PUT"})
      *
      * @param Request $request
      *
@@ -315,7 +315,7 @@ class PricingController extends AdminController implements EventedControllerInte
     }
 
     /**
-     * @Route("/get-config", methods={"GET"})
+     * @Route("/get-config", name="pimcore_ecommerceframework_pricing_get-config", methods={"GET"})
      *
      * @return JsonResponse
      */

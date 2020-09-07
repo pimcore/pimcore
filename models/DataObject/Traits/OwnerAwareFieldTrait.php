@@ -38,6 +38,8 @@ trait OwnerAwareFieldTrait
     protected $_language;
 
     /**
+     * @internal
+     *
      * @param mixed $owner
      * @param string $fieldname
      * @param string|null $language
@@ -49,6 +51,9 @@ trait OwnerAwareFieldTrait
         $this->_language = $language;
     }
 
+    /**
+     * @internal
+     */
     protected function markMeDirty()
     {
         if ($this->_owner && $this->_owner instanceof DirtyIndicatorInterface) {

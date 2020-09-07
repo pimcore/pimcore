@@ -6,8 +6,8 @@ The link editable is used for dynamic link creation in documents.
 
 ## Configuration
 
-You can pass every valid attribute an `<a>`-tag can have ([w3.org - Link](http://www.w3.org/TR/html401/struct/links.html#h-12.2)), 
-such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title` and additionally the following: 
+You can pass every valid attribute an `<a>`-tag can have ([w3.org - Link](https://www.w3.org/TR/html52/textlevel-semantics.html#the-a-element)), 
+such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*`, `aria-*` and additionally the following: 
 
 | Name     | Type     | Description                                                             |
 |----------|----------|-------------------------------------------------------------------------|
@@ -43,12 +43,14 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title` and addi
     <?= $this->link("blogLink"); ?>
 </p>
 ```
+
 ```twig
 <p>
     {{ "Visit our" | trans }}
     {{ pimcore_link('blogLink') }}
 </p>
 ```
+
 </div>
 You could see the backend preview in the picture, below.
 
@@ -76,6 +78,7 @@ Let's see how to make a list of links with [Block](./06_Block.md).
     <?php endwhile; ?>
 </ul>
 ```
+
 ```twig
 <h3>{{ "Useful links" | trans }}</h3>
 <ul>
@@ -84,6 +87,7 @@ Let's see how to make a list of links with [Block](./06_Block.md).
     {% endfor %}
 </ul>
 ```
+
 </div>
 
 The above example renders a list of links: 

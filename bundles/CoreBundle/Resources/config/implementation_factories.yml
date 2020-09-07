@@ -9,10 +9,14 @@ services:
     # Class maps and prefixes will be set from the extension as they are loaded from config
     #
 
-    # document tag loader
-    pimcore.implementation_loader.document.tag:
-        class: Pimcore\Model\Document\Tag\Loader\TagLoader
+    # document editable loader
+    Pimcore\Model\Document\Editable\Loader\EditableLoader:
         public: true
+
+    pimcore.implementation_loader.document.tag:
+        alias: Pimcore\Model\Document\Editable\Loader\EditableLoader
+        public: true
+        deprecated: 'The "%alias_id%" service is deprecated. Use "Pimcore\Model\Document\Editable\Loader\EditableLoader" instead'
 
     # object data loader
     pimcore.implementation_loader.object.data:

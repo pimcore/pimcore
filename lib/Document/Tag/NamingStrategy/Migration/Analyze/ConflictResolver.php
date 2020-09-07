@@ -28,6 +28,9 @@ use Pimcore\Model\Document;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\CliDumper;
 
+/**
+ * @deprecated
+ */
 class ConflictResolver implements ConflictResolverInterface
 {
     /**

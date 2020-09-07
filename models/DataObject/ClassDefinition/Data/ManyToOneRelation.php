@@ -24,13 +24,14 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 
-class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface
+class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
+    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -350,7 +351,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof Element\AbstractElement) {
-            return $data->getRealFullPath();
+            return Element\Service::getElementType($data).' '.$data->getRealFullPath();
         }
 
         return '';
@@ -718,7 +719,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      *
      * @return bool
      */
-    public function isEqual($value1, $value2)
+    public function isEqual($value1, $value2): bool
     {
         $value1 = $value1 ? $value1->getType() . $value1->getId() : null;
         $value2 = $value2 ? $value2->getType() . $value2->getId() : null;
@@ -732,6 +733,18 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /** @inheritDoc */
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\Pimcore\Model\Element\AbstractElement';
+    }
+
+    /** @inheritDoc */
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\Pimcore\Model\Element\AbstractElement';
     }
 
     /**

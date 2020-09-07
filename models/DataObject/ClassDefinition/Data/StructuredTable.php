@@ -20,8 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class StructuredTable extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class StructuredTable extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -658,5 +659,20 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         $this->labelFirstCell = $masterDefinition->labelFirstCell;
         $this->cols = $masterDefinition->cols;
         $this->rows = $masterDefinition->rows;
+    }
+
+    /**
+     *
+     * @param DataObject\Data\StructuredTable|null $oldValue
+     * @param DataObject\Data\StructuredTable|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldData = $oldValue instanceof DataObject\Data\StructuredTable ? $oldValue->getData() : [];
+        $newData = $newValue instanceof DataObject\Data\StructuredTable ? $newValue->getData() : [];
+
+        return $this->isEqualArray($oldData, $newData);
     }
 }

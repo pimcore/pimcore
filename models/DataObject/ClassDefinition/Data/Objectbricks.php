@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\Objectbrick;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 
-class Objectbricks extends Data implements CustomResourcePersistingInterface
+class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface
 {
     /**
      * Static type of this element
@@ -698,6 +698,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     {
         // getter
 
+        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
         $key = $this->getName();
         $code = '';
 
@@ -706,7 +712,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
         $code .= '/**' . "\n";
         $code .= '* @return ' . $classname . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " () {\n";
+        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration .  " {\n";
 
         $code .= "\t" . '$data = $this->' . $key . ";\n";
         $code .= "\t" . 'if(!$data) { ' . "\n";
@@ -767,12 +773,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
                         throw new Model\Element\ValidationException('Maximum limit reached for items in brick: ' . $this->getName());
                     }
 
-                    if (!$omitMandatoryCheck) {
-                        //needed when new brick is added but not saved yet - then validity check fails.
-                        if (!$item->getFieldname()) {
-                            $item->setFieldname($data->getFieldname());
-                        }
+                    //needed when new brick is added but not saved yet - then validity check fails.
+                    if (!$item->getFieldname()) {
+                        $item->setFieldname($data->getFieldname());
+                    }
 
+                    if (!$omitMandatoryCheck) {
                         foreach ($collectionDef->getFieldDefinitions() as $fd) {
                             try {
                                 $key = $fd->getName();

@@ -131,7 +131,7 @@ pimcore.object.tags.urlSlug = Class.create(pimcore.object.tags.abstract, {
             name: "slug",
             labelWidth: 100,
             value: siteData['slug'],
-            componentCls: "object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             validator: function(value) {
 
 

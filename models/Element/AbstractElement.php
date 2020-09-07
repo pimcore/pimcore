@@ -32,6 +32,11 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     use DirtyIndicatorTrait;
 
     /**
+     * @var Model\Dependency|null
+     */
+    protected $dependencies;
+
+    /**
      * @var int
      */
     protected $__dataVersionTimestamp = null;
@@ -312,12 +317,13 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @param string|null $versionNote
      * @param bool $saveOnlyVersion
+     * @param bool $saveStackTrace
      *
      * @return Model\Version
      *
      * @throws \Exception
      */
-    protected function doSaveVersion($versionNote = null, $saveOnlyVersion = true)
+    protected function doSaveVersion($versionNote = null, $saveOnlyVersion = true, $saveStackTrace = true)
     {
         /**
          * @var Model\Version $version
@@ -329,6 +335,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $version->setUserId($this->getUserModification());
         $version->setData($this);
         $version->setNote($versionNote);
+        $version->setGenerateStackTrace($saveStackTrace);
 
         if ($saveOnlyVersion) {
             $versionCount = $this->getDao()->getVersionCountForUpdate();
@@ -346,7 +353,14 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     /**
      * @return Model\Dependency
      */
-    abstract public function getDependencies();
+    public function getDependencies()
+    {
+        if (!$this->dependencies) {
+            $this->dependencies = Model\Dependency::getBySourceId($this->getId(), Service::getElementType($this));
+        }
+
+        return $this->dependencies;
+    }
 
     /**
      * @return Model\Schedule\Task[]
@@ -362,5 +376,22 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     public function getVersions()
     {
         return [];
+    }
+
+    /**
+     * @return array
+     */
+    public function __sleep()
+    {
+        $parentVars = parent::__sleep();
+        $blockedVars = ['dependencies'];
+
+        return array_diff($parentVars, $blockedVars);
+    }
+
+    public function __clone()
+    {
+        parent::__clone();
+        $this->dependencies = null;
     }
 }

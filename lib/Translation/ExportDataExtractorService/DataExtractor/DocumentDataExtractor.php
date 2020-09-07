@@ -71,7 +71,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
      */
     protected function addDoumentTags(Document $document, AttributeSet $result): DocumentDataExtractor
     {
-        $elements = [];
+        $editables = [];
         $service = new Document\Service;
 
         $translations = $service->getTranslations($document);
@@ -79,13 +79,13 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
         if ($document instanceof Document\PageSnippet) {
             $tagNames = $this->tagUsageResolver->getUsedTagnames($document);
             foreach ($tagNames as $tagName) {
-                if ($tag = $document->getElement($tagName)) {
-                    $elements[] = $tag;
+                if ($tag = $document->getEditable($tagName)) {
+                    $editables[] = $tag;
                 }
             }
         }
 
-        foreach ($elements as $tag) {
+        foreach ($editables as $tag) {
             if (in_array($tag->getType(), self::EXPORTABLE_TAGS)) {
                 if ($tag instanceof Document\Tag\Image || $tag instanceof Document\Tag\Link) {
                     $content = $tag->getText();
@@ -99,7 +99,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
                         $targetDocument = Document::getById($translations[$targetLanguage]);
 
                         if ($targetDocument instanceof  Document\PageSnippet) {
-                            $targetTag = $targetDocument->getElement($tag->getName());
+                            $targetTag = $targetDocument->getEditable($tag->getName());
                             if ($targetTag instanceof Document\Tag\Image || $targetTag instanceof Document\Tag\Link) {
                                 $targetContent[$targetLanguage] = $targetTag->getText();
                             } else {

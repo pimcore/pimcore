@@ -23,8 +23,10 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Webservice;
 use Pimcore\Tool\Cast;
 
-class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface
+class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface
 {
+    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
+
     /**
      * Static type of this element
      *
@@ -694,7 +696,7 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
         $code = '';
 
         $code .= '/**' . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
         $code .= 'public function get' . ucfirst($key) . " () {\n";
 

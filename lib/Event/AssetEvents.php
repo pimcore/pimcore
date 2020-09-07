@@ -52,6 +52,16 @@ final class AssetEvents
 
     /**
      * Arguments:
+     *  - metadata
+     *
+     * @Event("Pimcore\Event\Model\AssetEvent")
+     *
+     * @var string
+     */
+    const PRE_GET_METADATA = 'pimcore.asset.preGetMetadata';
+
+    /**
+     * Arguments:
      *  - saveVersionOnly | is set if method saveVersion() was called instead of save()
      *  - oldPath | the old full path in case the path has changed
      *

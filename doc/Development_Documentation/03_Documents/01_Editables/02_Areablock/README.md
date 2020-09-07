@@ -12,7 +12,7 @@ The areablock is the content construction kit for documents offered by Pimcore.
 Similar to the other document editables, an areablock can be integrated in any document view template as follows:
 
 <div class="code-section">
-    
+
 ```php
 <?= $this->areablock('myAreablock'); ?>
 ```
@@ -20,12 +20,13 @@ Similar to the other document editables, an areablock can be integrated in any d
 ```twig
 {{ pimcore_areablock("myAreablock") }}
 ```
+
 </div>
 
 Advanced usage with allowed areas, below:
 
 <div class="code-section">
-    
+
 ```php
 <?= $this->areablock("myAreablock", [
     "allowed" => ["iframe","googletagcloud","spacer","rssreader"],
@@ -70,6 +71,7 @@ Advanced usage with allowed areas, below:
         })
     }}
 ```
+
 </div>
 
 ##### Accessing Parameters from the Brick File
@@ -103,6 +105,7 @@ And you can see the effect, below:
 | `reload`            | bool   | Set to `true`, to force a reload in editmode after reordering items (default: `false`)                                                                                                       |
 | `dontCheckEnabled`  | bool   | Set to `true` to display all installed area bricks, regardless if they are enabled in the extension manager                                                                                  |
 | `limit`             | int    | Limit the amount of elements                                                                                                                                                                 |
+| `limits`            | array  | An array of area-ID's with count to limit the amount of certain elements e.g. {"iframe": 1, "teasers": 2} (since v6.7.0)                                                                      |
 | `areablock_toolbar` | array  | Array with option that allows you to configure the toolbar. Possible options are `width`, `buttonWidth` and `buttonMaxCharacters`                                                            |
 | `controlsAlign`     | string | The position of the control button bar. Options are: `top`, `right` and `left`.                                                                                                              |
 | `controlsTrigger`   | string | Options are: `hover`(default) and `fixed` .                                                                                                              |
@@ -130,6 +133,7 @@ Brick-specific configurations are passed using the `params` or `globalParams` co
     ]
 ]); ?>
 ```
+
 ## Methods
 
 | Name                | Return    | Description                                                                            |
@@ -143,6 +147,38 @@ Brick-specific configurations are passed using the `params` or `globalParams` co
 ## How to Create Bricks for the Areablock
 
 You can read about **bricks** in the [Bricks](./02_Bricks.md) section.
+
+## Limit certain Bricks for the Areablock (since v6.7.0)
+
+You can limit certain bricks for the Areablock by using `limits` configurations.
+##### Example
+
+<div class="code-section">
+
+```php
+<?= $this->areablock("myAreablock", [
+        "allowed" => ["iframe","teasers","wysiwyg"],
+        "limits" => [
+            "iframe" => 1,
+            "teasers" => 2,
+        ],
+        "limit" => 5,
+]); ?>
+```
+
+```twig
+{{ pimcore_areablock("myAreablock", {
+        "allowed": ["iframe","teasers","wysiwyg"],
+        "limits": {
+            "iframe": 1,
+            "teasers": 2
+        },
+        "limit": 5
+    })
+}}
+```
+
+</div>
 
 ## Using Manual Mode
 

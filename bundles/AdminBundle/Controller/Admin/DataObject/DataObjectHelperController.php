@@ -646,16 +646,23 @@ class DataObjectHelperController extends AdminController
         $settings['shareGlobally'] = $sharedGlobally ?? null;
         $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
+        $context = $gridConfig['context'] ?? null;
+        if ($context) {
+            $context = json_decode($context, true);
+        }
+
         return [
-            'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
+            'sortinfo' => $gridConfig['sortinfo'] ?? false,
             'language' => $language,
             'availableFields' => $availableFields,
             'settings' => $settings,
-            'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,
-            'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false,
+            'onlyDirectChildren' => $gridConfig['onlyDirectChildren'] ?? false,
+            'pageSize' => $gridConfig['pageSize'] ?? false,
             'availableConfigs' => $availableConfigs,
             'sharedConfigs' => $sharedConfigs,
-
+            'context' => $context,
+            'sqlFilter' => $gridConfig['sqlFilter'] ?? '',
+            'searchFilter' => $gridConfig['searchFilter'] ?? '',
         ];
     }
 
@@ -1067,6 +1074,7 @@ class DataObjectHelperController extends AdminController
         if ($object->isAllowed('list')) {
             try {
                 $classId = $request->get('class_id');
+                $context = $request->get('context');
 
                 $searchType = $request->get('searchType');
 
@@ -1074,6 +1082,9 @@ class DataObjectHelperController extends AdminController
                 $gridConfigData = $this->decodeJson($request->get('gridconfig'));
                 $gridConfigData['pimcore_version'] = Version::getVersion();
                 $gridConfigData['pimcore_revision'] = Version::getRevision();
+
+                $gridConfigData['context'] = $context;
+
                 unset($gridConfigData['settings']['isShared']);
 
                 $metadata = $request->get('settings');
@@ -1734,7 +1745,7 @@ class DataObjectHelperController extends AdminController
 
                 $eventDispatcher->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
 
-                $object->setUserModification($this->getUser());
+                $object->setUserModification($this->getAdminUser()->getId());
                 $object->save();
 
                 $eventDispatcher->dispatch(DataObjectImportEvents::POST_SAVE, $eventData);
@@ -1857,12 +1868,30 @@ class DataObjectHelperController extends AdminController
         $addTitles = $request->get('initial');
 
         $requestedLanguage = $this->extractLanguage($request);
-        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $addTitles);
+
+        $contextFromRequest = $request->get('context');
+        if ($contextFromRequest) {
+            $contextFromRequest = json_decode($contextFromRequest, true);
+        }
+
+        $context = [
+            'source' => 'pimcore-export',
+        ];
+
+        if (is_array($contextFromRequest)) {
+            $context = array_merge($context, $contextFromRequest);
+        }
+
+        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $addTitles, $context);
 
         $fp = fopen($this->getCsvFile($fileHandle), 'a');
 
         $firstLine = true;
         $lineCount = count($csv);
+
+        if (!$addTitles) {
+            fwrite($fp, "\r\n");
+        }
 
         for ($i = 0; $i < $lineCount; $i++) {
             $line = $csv[$i];
@@ -1871,7 +1900,7 @@ class DataObjectHelperController extends AdminController
                 $line = implode($delimiter, $line);
                 fwrite($fp, $line);
             } else {
-                fputs($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)));
+                fwrite($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)));
             }
             if ($i < $lineCount - 1) {
                 fwrite($fp, "\r\n");
@@ -1945,12 +1974,6 @@ class DataObjectHelperController extends AdminController
 
         throw $this->createNotFoundException('XLSX file not found');
     }
-
-
-
-
-
-
 
     /**
      * Flattens object data to an array with key=>value where

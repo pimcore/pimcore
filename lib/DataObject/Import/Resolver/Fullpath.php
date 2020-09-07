@@ -38,9 +38,9 @@ class Fullpath extends AbstractResolver
 
     public function resolve(\stdClass $config, int $parentId, array $rowData)
     {
-        $createOnDemand = filter_var($config->resolverSettings->createOnDemand, FILTER_VALIDATE_BOOLEAN);
-        $createParents = filter_var($config->resolverSettings->createParents, FILTER_VALIDATE_BOOLEAN);
-        $skipIfExists = filter_var($config->resolverSettings->skipIfExists, FILTER_VALIDATE_BOOLEAN);
+        $createOnDemand = filter_var($config->resolverSettings->createOnDemand ?? false, FILTER_VALIDATE_BOOLEAN);
+        $createParents = filter_var($config->resolverSettings->createParents ?? false, FILTER_VALIDATE_BOOLEAN);
+        $skipIfExists = filter_var($config->resolverSettings->skipIfExists ?? false, FILTER_VALIDATE_BOOLEAN);
         $service = ImportClassResolver::resolveClassOrService($config->resolverSettings->phpClassOrService);
 
         $fullpath = $rowData[$this->getIdColumn($config)];

@@ -17,9 +17,32 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\FactF
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @deprecated since version 6.7.0 and will be removed in 7.0.0.
+ *
+ */
 class MultiSelect extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\MultiSelect
 {
+    /**
+     * @param TranslatorInterface $translator
+     * @param EngineInterface $templatingEngine
+     * @param string $template for rendering the filter frontend
+     * @param array $options for additional options
+     */
+    public function __construct(TranslatorInterface $translator, EngineInterface $templatingEngine, RequestStack $requestStack, string $template, array $options = [])
+    {
+        @trigger_error(
+            'Class ' . self::class . ' is deprecated since version 6.7.0 and will be removed in 7.0.0.',
+            E_USER_DEPRECATED
+        );
+
+        parent::__construct($translator, $templatingEngine, $requestStack, $template, $options);
+    }
+
     /**
      * @param AbstractFilterDefinitionType $filterDefinition
      * @param ProductListInterface                 $productList

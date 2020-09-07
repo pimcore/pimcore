@@ -166,6 +166,10 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
     public function __wakeup()
     {
         $this->needsRenewReferences = true;
+
+        if ($this->data instanceof OwnerAwareFieldInterface) {
+            $this->data->setOwner($this, $this->getName());
+        }
     }
 
     /**
@@ -211,5 +215,13 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface
     public function setNeedsRenewReferences(bool $needsRenewReferences)
     {
         $this->needsRenewReferences = (bool) $needsRenewReferences;
+    }
+
+    /**
+     * @param string $language
+     */
+    public function setLanguage(string $language)
+    {
+        $this->_language = $language;
     }
 }

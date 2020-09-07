@@ -150,7 +150,20 @@ pimcore_ecommerce_config:
                       merchant_id: todo
                       password: todo
                       testSystem: false
-                      debugMode: false                                                             
+                      debugMode: false                  
+            hobex:
+                    provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\Hobex                    
+                    profile: sandbox
+                    profiles:
+                        sandbox:
+                            entityId: '8a829418530df1d201531299e097175c'
+                            authorizationBearer: 'OGE4Mjk0MTg1MzBkZjFkMjAxNTMxMjk5ZTJjMTE3YWF8ZzJnU3BnS2hLUw=='
+                            testSystem: true
+                            payment_methods:
+                                - VISA
+                                - MASTER
+                                - SOFORTUEBERWEISUNG
+                                - SEPA                                                                 
 ```
 
 The payment provider name will be referenced from the checkout manager configuration and can be used to fetch a specific
@@ -168,6 +181,7 @@ Currently following Payment Providers are integrated into the framework:
 - [MPay24](./07_MPay24.md)
 - [PayU](./08_PayU.md)
 - [Heidelpay](./09_Heidelpay.md)
+- [Hobex](./11_Hobex.md)
 
 
 ## Further Payment Aspects

@@ -19,6 +19,9 @@ namespace Pimcore\Document\Tag\NamingStrategy\Migration;
 
 use Pimcore\Model\Document;
 
+/**
+ * @deprecated
+ */
 final class MappingError
 {
     /**

@@ -24,17 +24,17 @@ use Pimcore\Model\AbstractModel;
  *
  * @method \Pimcore\Db\ZendCompatibility\QueryBuilder getQuery()
  */
-abstract class AbstractListing extends AbstractModel implements \Iterator
+abstract class AbstractListing extends AbstractModel implements \Iterator, \Countable
 {
     /**
-     * @var string|array
+     * @var array
      */
-    protected $order;
+    protected $order = [];
 
     /**
      * @var array
      */
-    protected $orderKey;
+    protected $orderKey = [];
 
     /**
      * @var int
@@ -136,7 +136,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     }
 
     /**
-     * @return array|string
+     * @return array
      */
     public function getOrder()
     {
@@ -186,17 +186,18 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
 
         $this->order = [];
 
-        if (is_string($order) && !empty($order)) {
-            $order = strtoupper($order);
-            if (in_array($order, $this->validOrders)) {
-                $this->order[] = $order;
-            }
-        } elseif (is_array($order) && !empty($order)) {
-            $this->order = [];
-            foreach ($order as $o) {
-                $o = strtoupper($o);
-                if (in_array($o, $this->validOrders)) {
-                    $this->order[] = $o;
+        if (!empty($order)) {
+            if (is_string($order)) {
+                $order = strtoupper($order);
+                if (in_array($order, $this->validOrders)) {
+                    $this->order[] = $order;
+                }
+            } elseif (is_array($order)) {
+                foreach ($order as $o) {
+                    $o = strtoupper($o);
+                    if (in_array($o, $this->validOrders)) {
+                        $this->order[] = $o;
+                    }
                 }
             }
         }
@@ -310,7 +311,11 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
                 if (!$value['ignore-value']) {
                     if (is_array($value['value'])) {
                         foreach ($value['value'] as $k => $v) {
-                            $params[$k] = $v;
+                            if (is_int($k)) {
+                                $params[] = $v;
+                            } else {
+                                $params[$k] = $v;
+                            }
                         }
                     } else {
                         $params[] = $value['value'];
@@ -331,7 +336,17 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
                     $conditionVariableTypes[$pkey] = \Doctrine\DBAL\Connection::PARAM_INT_ARRAY;
                 }
             } else {
-                $conditionVariableTypes[$pkey] = \PDO::PARAM_STR;
+                if (is_bool($param)) {
+                    $type = \PDO::PARAM_BOOL;
+                } elseif (is_int($param)) {
+                    $type = \PDO::PARAM_INT;
+                } elseif (is_null($param)) {
+                    $type = \PDO::PARAM_NULL;
+                } else {
+                    $type = \PDO::PARAM_STR;
+                }
+
+                $conditionVariableTypes[$pkey] = $type;
             }
         }
 
@@ -424,6 +439,18 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
         $db = Db::get();
 
         return $db->quote($value, $type);
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return string
+     */
+    public function escapeLike(string $value): string
+    {
+        $db = Db::get();
+
+        return $db->escapeLike($value);
     }
 
     /**
@@ -553,5 +580,20 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     {
         $this->getData();
         reset($this->data);
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        $dao = $this->getDao();
+        if (!\method_exists($dao, 'getTotalCount')) {
+            @trigger_error('Listings should implement Countable interface', E_USER_DEPRECATED);
+
+            return 0;
+        }
+
+        return $dao->getTotalCount();
     }
 }

@@ -276,11 +276,11 @@ class Newsletter
     }
 
     /**
-     * @param string|null $classId
+     * @param string $classId
      *
      * @throws Exception
      */
-    public function __construct($classId = null)
+    public function __construct($classId)
     {
         $class = null;
         if (is_numeric($classId)) {

@@ -17,130 +17,17 @@
 
 namespace Pimcore\Model\Document\Tag\Area;
 
-use Pimcore\Templating\Model\ViewModelInterface;
+use Pimcore\Model\Document\Editable\Area\AbstractArea as EditableAbstractArea;
 
-abstract class AbstractArea
-{
-    /**
-     * @var ViewModelInterface
-     */
-    protected $view;
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', AbstractArea::class, EditableAbstractArea::class), E_USER_DEPRECATED);
 
-    /**
-     * @var \Pimcore\Config\Config
-     */
-    protected $config;
+class_exists(EditableAbstractArea::class);
 
+if (false) {
     /**
-     * @var Info
+     * @deprecated use \Pimcore\Model\Document\Editable\Area\AbstractArea instead.
      */
-    protected $brick;
-
-    /**
-     * @var array
-     */
-    protected $params = [];
-
-    /**
-     * @param ViewModelInterface $view
-     *
-     * @return $this
-     */
-    public function setView($view)
+    class AbstractArea extends EditableAbstractArea
     {
-        $this->view = $view;
-
-        return $this;
-    }
-
-    /**
-     * @return ViewModelInterface
-     */
-    public function getView()
-    {
-        return $this->view;
-    }
-
-    /**
-     * @param \Pimcore\Config\Config $config
-     *
-     * @return $this
-     */
-    public function setConfig($config)
-    {
-        $this->config = $config;
-
-        return $this;
-    }
-
-    /**
-     * @return \Pimcore\Config\Config
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    /**
-     * @param string $key
-     *
-     * @return mixed
-     */
-    public function getParam($key)
-    {
-        if (array_key_exists($key, $this->params)) {
-            return $this->params[$key];
-        }
-
-        return null;
-    }
-
-    /**
-     * @return array
-     */
-    public function getAllParams()
-    {
-        return $this->params;
-    }
-
-    /**
-     * @param string $key
-     * @param mixed $value
-     */
-    public function addParam($key, $value)
-    {
-        $this->params[$key] = $value;
-    }
-
-    /**
-     * @param array $params
-     *
-     * @return $this
-     */
-    public function setParams($params)
-    {
-        $this->params = $params;
-
-        return $this;
-    }
-
-    /**
-     * @param Info $brick
-     *
-     * @return $this
-     */
-    public function setBrick($brick)
-    {
-        $this->brick = $brick;
-
-        return $this;
-    }
-
-    /**
-     * @return Info
-     */
-    public function getBrick()
-    {
-        return $this->brick;
     }
 }

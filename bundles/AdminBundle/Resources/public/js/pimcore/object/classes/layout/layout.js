@@ -34,6 +34,10 @@ pimcore.object.classes.layout.layout = Class.create({
         }
     },
 
+    supportsTitle: function () {
+        return true;
+    },
+
     getType: function () {
         return this.type;
     },
@@ -41,22 +45,100 @@ pimcore.object.classes.layout.layout = Class.create({
     getLayout: function () {
 
         var regionData = [
-            [ "-", "" ],
-            [ "center", "center" ],
-            [ "north", "north" ],
-            [ "south", "south" ],
-            [ "east", "east" ],
-            [ "west", "west" ]
+            ["-", ""],
+            ["center", "center"],
+            ["north", "north"],
+            ["south", "south"],
+            ["east", "east"],
+            ["west", "west"]
         ];
 
         var regionStore = Ext.create('Ext.data.ArrayStore', {
-            data     : regionData,
-            fields   : [
+            data: regionData,
+            fields: [
                 'display',
                 'value'
             ]
         });
 
+        let items = [
+            {
+                xtype: "textfield",
+                fieldLabel: t("name"),
+                name: "name",
+                enableKeyEvents: true,
+                value: this.datax.name
+            },
+            {
+                xtype: "combo",
+                fieldLabel: t("region"),
+                name: "region",
+                value: this.datax.region,
+                store: regionStore,
+                displayField: 'display',
+                valueField: 'value',
+                triggerAction: 'all',
+                editable: false
+            }];
+
+        if (this.supportsTitle()) {
+            items.push({
+                xtype: "textfield",
+                fieldLabel: t("title"),
+                name: "title",
+                value: this.datax.title
+            });
+        }
+
+        items = items.concat([
+            {
+                xtype: "numberfield",
+                fieldLabel: t("width"),
+                name: "width",
+                value: this.datax.width
+            },
+            {
+                xtype: "numberfield",
+                fieldLabel: t("height"),
+                name: "height",
+                value: this.datax.height
+            },
+            {
+                xtype: "checkbox",
+                fieldLabel: t("collapsible"),
+                name: "collapsible",
+                checked: this.datax.collapsible || this.datax.collapsed,
+                listeners: {
+                    change: function (row, checked) {
+                        if (!checked) {
+                            //force uncheck on collapsed checkbox
+                            row.nextNode().setValue(false);
+                        }
+                    }
+                }
+            },
+            {
+                xtype: "checkbox",
+                fieldLabel: t("collapsed"),
+                name: "collapsed",
+                checked: this.datax.collapsed,
+                listeners: {
+                    change: function (row, checked) {
+                        if (checked) {
+                            //force check on collapsible checkbox
+                            row.previousNode().setValue(true);
+                        }
+                    }
+                }
+            },
+            {
+                xtype: "textfield",
+                fieldLabel: t("css_style") + " (float: left; margin:10px; ...)",
+                name: "bodyStyle",
+                width: 400,
+                value: this.datax.bodyStyle
+            }
+        ]);
 
         this.layout = new Ext.Panel({
             title: '<b>' + this.getTypeName() + '</b>',
@@ -66,79 +148,7 @@ pimcore.object.classes.layout.layout = Class.create({
                     xtype: "form",
                     bodyStyle: "padding: 10px;",
                     style: "margin: 0 0 10px 0",
-                    items: [
-                        {
-                            xtype: "textfield",
-                            fieldLabel: t("name"),
-                            name: "name",
-                            enableKeyEvents: true,
-                            value: this.datax.name
-                        },
-                        {
-                            xtype: "combo",
-                            fieldLabel: t("region"),
-                            name: "region",
-                            value: this.datax.region,
-                            store: regionStore,
-                            displayField: 'display',
-                            valueField: 'value',
-                            triggerAction: 'all',
-                            editable: false
-                        },
-                        {
-                            xtype: "textfield",
-                            fieldLabel: t("title"),
-                            name: "title",
-                            value: this.datax.title
-                        },
-                        {
-                            xtype: "numberfield",
-                            fieldLabel: t("width"),
-                            name: "width",
-                            value: this.datax.width
-                        },
-                        {
-                            xtype: "numberfield",
-                            fieldLabel: t("height"),
-                            name: "height",
-                            value: this.datax.height
-                        },
-                        {
-                            xtype: "checkbox",
-                            fieldLabel: t("collapsible"),
-                            name: "collapsible",
-                            checked: this.datax.collapsible || this.datax.collapsed,
-                            listeners: {
-                                change: function (row, checked) {
-                                    if(!checked) {
-                                        //force uncheck on collapsed checkbox
-                                        row.nextNode().setValue(false);
-                                    }
-                                }
-                            }
-                        },
-                        {
-                            xtype: "checkbox",
-                            fieldLabel: t("collapsed"),
-                            name: "collapsed",
-                            checked: this.datax.collapsed,
-                            listeners: {
-                                change: function (row, checked) {
-                                    if(checked) {
-                                        //force check on collapsible checkbox
-                                        row.previousNode().setValue(true);
-                                    }
-                                }
-                            }
-                        },
-                        {
-                            xtype: "textfield",
-                            fieldLabel: t("css_style") + " (float: left; margin:10px; ...)",
-                            name: "bodyStyle",
-                            width: 400,
-                            value: this.datax.bodyStyle
-                        }
-                    ]
+                    items: items
                 }
             ]
         });
@@ -151,7 +161,7 @@ pimcore.object.classes.layout.layout = Class.create({
 
     layoutRendered: function (layout) {
 
-        var items = this.layout.queryBy(function() {
+        var items = this.layout.queryBy(function () {
             return true;
         });
 
@@ -165,7 +175,7 @@ pimcore.object.classes.layout.layout = Class.create({
 
     updateName: function () {
 
-        var items = this.layout.queryBy(function() {
+        var items = this.layout.queryBy(function () {
             return true;
         });
 
@@ -183,7 +193,7 @@ pimcore.object.classes.layout.layout = Class.create({
 
     applyData: function () {
 
-        var items = this.layout.queryBy(function() {
+        var items = this.layout.queryBy(function () {
             return true;
         });
 
@@ -197,15 +207,15 @@ pimcore.object.classes.layout.layout = Class.create({
         this.datax.datatype = "layout";
     },
 
-    setInCustomLayoutEditor: function(inCustomLayoutEditor) {
+    setInCustomLayoutEditor: function (inCustomLayoutEditor) {
         this.inCustomLayoutEditor = inCustomLayoutEditor;
     },
 
-    isInCustomLayoutEditor: function() {
+    isInCustomLayoutEditor: function () {
         return this.inCustomLayoutEditor;
     },
 
-    getIconFormElement: function() {
+    getIconFormElement: function () {
         var iconStore = new Ext.data.ArrayStore({
             proxy: {
                 url: Routing.generate('pimcore_admin_dataobject_class_geticons'),
@@ -260,7 +270,7 @@ pimcore.object.classes.layout.layout = Class.create({
                     iconCls: "pimcore_icon_refresh",
                     xtype: "button",
                     tooltip: t("refresh"),
-                    handler: function(iconField) {
+                    handler: function (iconField) {
                         iconField.inputEl.applyStyles("background:url(" + iconField.getValue() + ") right center no-repeat;");
                     }.bind(this, iconField)
                 },

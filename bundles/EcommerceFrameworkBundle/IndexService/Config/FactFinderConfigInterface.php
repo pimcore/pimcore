@@ -17,6 +17,8 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFactFinder as DefaultFactFinderWorker;
 
 /**
+ * @deprecated since version 6.7.0 and will be removed in 7.0.0.
+ *
  * Interface for IndexService Tenant Configurations using factfinder as index
  */
 interface FactFinderConfigInterface extends ConfigInterface

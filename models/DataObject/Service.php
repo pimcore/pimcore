@@ -293,6 +293,7 @@ class Service extends Model\Element\Service
     public static function gridObjectData($object, $fields = null, $requestedLanguage = null, $params = [])
     {
         $data = Element\Service::gridElementData($object);
+        $csvMode = $params['csvMode'] ?? false;
 
         if ($object instanceof Concrete) {
             $context = ['object' => $object,
@@ -388,7 +389,7 @@ class Service extends Model\Element\Service
                             $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey, $def, $context, $brickDescriptor);
                             $data['inheritedFields'][$dataKey] = ['inherited' => $valueObject->objectid != $object->getId(), 'objectid' => $valueObject->objectid];
 
-                            if (method_exists($def, 'getDataForGrid')) {
+                            if ($csvMode || method_exists($def, 'getDataForGrid')) {
                                 if ($brickKey) {
                                     $context['containerType'] = 'objectbrick';
                                     $context['containerKey'] = $brickType;
@@ -400,7 +401,14 @@ class Service extends Model\Element\Service
                                     $params['purpose'] = 'gridview';
                                 }
 
-                                $tempData = $def->getDataForGrid($valueObject->value, $object, $params);
+                                if ($csvMode) {
+                                    $getterParams = ['language' => $requestedLanguage];
+                                    $tempData = $def->getForCsvExport($object, $getterParams);
+                                } elseif (method_exists($def, 'getDataForGrid')) {
+                                    $tempData = $def->getDataForGrid($valueObject->value, $object, $params);
+                                } else {
+                                    continue;
+                                }
 
                                 if ($def instanceof ClassDefinition\Data\Localizedfields) {
                                     $needLocalizedPermissions = true;
@@ -1695,9 +1703,12 @@ class Service extends Model\Element\Service
      * @param array $helperDefinitions
      * @param LocaleServiceInterface $localeService
      * @param bool $returnMappedFieldNames
+     * @param array $context
+     *
      * @return array
      */
-    public static function getCsvDataForObject(AbstractObject $object, $requestedLanguage, $fields,$helperDefinitions,LocaleServiceInterface $localeService,$returnMappedFieldNames = false){
+    public static function getCsvDataForObject(AbstractObject $object, $requestedLanguage, $fields, $helperDefinitions, LocaleServiceInterface $localeService, $returnMappedFieldNames = false, $context = [])
+    {
         $objectData = [];
         $mappedFieldnames = [];
         foreach ($fields as $field) {
@@ -1725,13 +1736,25 @@ class Service extends Model\Element\Service
             }
         }
 
-        if($returnMappedFieldNames){
+        if ($returnMappedFieldNames) {
             $tmp = [];
-            foreach($mappedFieldnames as $key => $value){
+            foreach ($mappedFieldnames as $key => $value) {
                 $tmp[$value] = $objectData[$key];
             }
-            return $tmp;
+            $objectData = $tmp;
         }
+
+        $event = new DataObjectEvent($object, ['objectData' => $objectData,
+            'context' => $context,
+            'requestedLanguage' => $requestedLanguage,
+            'fields' => $fields,
+            'helperDefinitions' => $helperDefinitions,
+            'localeService' => $localeService,
+            'returnMappedFieldNames' => $returnMappedFieldNames,
+        ]);
+
+        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_CSV_ITEM_EXPORT, $event);
+        $objectData = $event->getArgument('objectData');
 
         return $objectData;
     }
@@ -1742,10 +1765,11 @@ class Service extends Model\Element\Service
      * @param DataObject\Listing $list
      * @param string[] $fields
      * @param bool $addTitles
+     * @param array $context
      *
      * @return array
      */
-    public static function getCsvData($requestedLanguage, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true)
+    public static function getCsvData($requestedLanguage, LocaleServiceInterface $localeService, $list, $fields, $addTitles = true, $context = [])
     {
         $mappedFieldnames = [];
 
@@ -1756,19 +1780,19 @@ class Service extends Model\Element\Service
 
         foreach ($list->getObjects() as $object) {
             if ($fields) {
-
-                if($addTitles && empty($data)){
+                if ($addTitles && empty($data)) {
                     $tmp = [];
-                    $mapped = self::getCsvDataForObject($object,$requestedLanguage,$fields,$helperDefinitions, $localeService,true);
-                    foreach($mapped as $key => $value){
+                    $mapped = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, true, $context);
+                    foreach ($mapped as $key => $value) {
                         $tmp[] = '"' . $key . '"';
                     }
                     $data[] = $tmp;
                 }
 
-                $data[] = self::getCsvDataForObject($object,$requestedLanguage,$fields,$helperDefinitions, $localeService);
+                $data[] = self::getCsvDataForObject($object, $requestedLanguage, $fields, $helperDefinitions, $localeService, $context);
             }
         }
+
         return $data;
     }
 
@@ -1957,5 +1981,4 @@ class Service extends Model\Element\Service
 
         return null;
     }
-
 }

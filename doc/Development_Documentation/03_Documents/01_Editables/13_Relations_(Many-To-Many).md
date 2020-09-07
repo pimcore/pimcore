@@ -63,6 +63,7 @@ The code below is responsible for showing a list of elements types related to th
 </ul>
 {% endif %}
 ```
+
 </div>
 
 Picture below, presents the editmode preview:
@@ -86,11 +87,10 @@ array(6) {
 }
 ```
 
-
-
 ### Example with allowed types and subtypes
 Similar to the single relation editable, this editable also could specify allowed `types`, `subtypes` and `classes`. 
 For example:
+
 <div class="code-section">
 
 ```php
@@ -103,6 +103,7 @@ For example:
     "classes" => ["person"]
 ]); ?>
 ```
+
 ```twig
 {{ pimcore_relations("objectPaths", {
     "types": ["asset","object"],
@@ -113,6 +114,8 @@ For example:
     "classes": ["person"]
 }) }}
 ```
+
 </div>
+
 Now, a user is not able to add other elements than specified in the types configuration part.
 

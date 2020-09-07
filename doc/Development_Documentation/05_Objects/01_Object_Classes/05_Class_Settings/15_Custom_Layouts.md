@@ -4,6 +4,9 @@ visual aspects of the layout and data components. It is also possible to make a 
 marked as non-editable in the master layout. Custom layouts are available for all admin users and can be made 
 available to standard users through the workspace settings.
 
+> **Security Note**    
+> Custom layouts are not intended to restrict access to sensitive data in high-security scenarios.
+
 In order to define a custom layout, open the Custom Layout Editor through the Configure Custom Layouts button in the 
 class editor. You can define as many layouts as you want. In the left panel you will see the master definition, 
 in the middle the custom layout you are currently editing and on the right the specific settings for the selected 

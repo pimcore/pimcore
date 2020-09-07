@@ -237,7 +237,7 @@ class Hardlink extends Document
     /**
      * @inheritdoc
      */
-    public function delete(bool $isNested = false)
+    protected function doDelete()
     {
         // check for redirects pointing to this document, and delete them too
         $redirects = new Redirect\Listing();
@@ -248,7 +248,7 @@ class Hardlink extends Document
             $redirect->delete();
         }
 
-        parent::delete($isNested);
+        parent::doDelete();
     }
 
     /**

@@ -151,19 +151,19 @@ class TestHelper
             $d = [];
 
             if ($document instanceof Document\PageSnippet) {
-                $elements = $document->getElements();
+                $editables = $document->getEditables();
 
-                ksort($elements);
+                ksort($editables);
 
                 /** @var Document\Tag $value */
-                foreach ($elements as $key => $value) {
+                foreach ($editables as $key => $value) {
                     if ($value instanceof Document\Tag\Video) {
                         // with video can't use frontend(), it includes random id
-                        $d['element_' . $key] = $value->getName() . ':' . $value->type . '_' . $value->id;
+                        $d['editable_' . $key] = $value->getName() . ':' . $value->type . '_' . $value->id;
                     } elseif (!$value instanceof Document\Tag\Block) {
-                        $d['element_' . $key] = $value->getName() . ':' . $value->frontend();
+                        $d['editable_' . $key] = $value->getName() . ':' . $value->frontend();
                     } else {
-                        $d['element_' . $key] = $value->getName();
+                        $d['editable_' . $key] = $value->getName();
                     }
                 }
 
@@ -486,6 +486,7 @@ class TestHelper
         $testDataHelper->fillMultiSelect($object, 'multiselect', $seed);
         $testDataHelper->fillUser($object, 'user', $seed);
         $testDataHelper->fillCheckbox($object, 'checkbox', $seed);
+        $testDataHelper->fillBooleanSelect($object, 'booleanSelect', $seed);
         $testDataHelper->fillWysiwyg($object, 'wysiwyg', $seed);
         $testDataHelper->fillPassword($object, 'password', $seed);
         $testDataHelper->fillMultiSelect($object, 'countries', $seed);
@@ -575,16 +576,13 @@ class TestHelper
 
     /**
      * @param string $keyPrefix
+     * @param string|null $data
      * @param bool $save
      *
      * @return Asset\Image
      */
-    public static function createImageAsset($keyPrefix = '', $data, $save = true)
+    public static function createImageAsset($keyPrefix = '', $data = null, $save = true)
     {
-        if (null === $keyPrefix) {
-            $keyPrefix = '';
-        }
-
         if (!$data) {
             $path = static::resolveFilePath('assets/images/image5.jpg');
             if (!file_exists($path)) {
@@ -611,6 +609,92 @@ class TestHelper
         $asset->setProperties($properties);
 
         $asset->setFilename($keyPrefix . uniqid() . rand(10, 99) . '.jpg');
+
+        if ($save) {
+            $asset->save();
+        }
+
+        return $asset;
+    }
+
+    /**
+     * @param string $keyPrefix
+     * @param string|null $data
+     * @param bool $save
+     *
+     * @return Asset\Document
+     */
+    public static function createDocumentAsset($keyPrefix = '', $data = null, $save = true)
+    {
+        if (!$data) {
+            $path = static::resolveFilePath('assets/document/sonnenblume.pdf');
+            if (!file_exists($path)) {
+                throw new \RuntimeException(sprintf('Path %s was not found', $path));
+            }
+
+            $data = file_get_contents($path);
+        }
+
+        $asset = new Asset\Document();
+        $asset->setParentId(1);
+        $asset->setUserOwner(1);
+        $asset->setUserModification(1);
+        $asset->setCreationDate(time());
+        $asset->setData($data);
+        $asset->setType('document');
+
+        $property = new Property();
+        $property->setName('propname');
+        $property->setType('text');
+        $property->setData('bla');
+
+        $properties = [$property];
+        $asset->setProperties($properties);
+
+        $asset->setFilename($keyPrefix . uniqid() . rand(10, 99) . '.pdf');
+
+        if ($save) {
+            $asset->save();
+        }
+
+        return $asset;
+    }
+
+    /**
+     * @param string $keyPrefix
+     * @param string|null $data
+     * @param bool $save
+     *
+     * @return Asset\Video
+     */
+    public static function createVideoAsset($keyPrefix = '', $data = null, $save = true)
+    {
+        if (!$data) {
+            $path = static::resolveFilePath('assets/video/example.mp4');
+            if (!file_exists($path)) {
+                throw new \RuntimeException(sprintf('Path %s was not found', $path));
+            }
+
+            $data = file_get_contents($path);
+        }
+
+        $asset = new Asset\Video();
+        $asset->setParentId(1);
+        $asset->setUserOwner(1);
+        $asset->setUserModification(1);
+        $asset->setCreationDate(time());
+        $asset->setData($data);
+        $asset->setType('video');
+
+        $property = new Property();
+        $property->setName('propname');
+        $property->setType('text');
+        $property->setData('bla');
+
+        $properties = [$property];
+        $asset->setProperties($properties);
+
+        $asset->setFilename($keyPrefix . uniqid() . rand(10, 99) . '.mp4');
 
         if ($save) {
             $asset->save();

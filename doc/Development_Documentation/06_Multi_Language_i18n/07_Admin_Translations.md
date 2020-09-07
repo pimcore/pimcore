@@ -23,6 +23,9 @@ Admin translations use the same translator component (Symfony) but on a differen
 Admin translations underly the same case sensitivity logic as [shared translations](./04_Shared_Translations.md#page_Translations_case_sensitivity).
 
 #### Example: Translate Options of a Select Editable
+
+<div class="code-section">
+
 ```php
  <?= $this->select("select", [
      "store" => [
@@ -41,7 +44,9 @@ Admin translations underly the same case sensitivity logic as [shared translatio
 	]
 }) }}
  ```
- 
+
+</div>
+
 #### Adding your own admin languages (since v6.3.6)
 Pimcore comes with a set of translations which are managed by [POEditor](https://poeditor.com/join/project/VWmZyvFVMH). 
 However, the amount of available languages is limited, because only languages with certain translation progress are
@@ -49,4 +54,16 @@ included in the main distribution.
 If you want make additional languages available for the admin interface, you can do so by putting a symfony translation
 file for the desired language into the default path for the symfony translator 
 (e.g. use `translations/admin.af.yml` for making `Afrikaans` available, the translation file can be also empty). 
-If you haven't configured anything different this is `%kernel.project_dir%/translations` for Symfony 4 projects. 
+If you haven't configured anything different this is `%kernel.project_dir%/translations` for Symfony 4 projects.
+
+#### Override language of admin translations in editmode of documents
+In some projects you want to use a different language as admin translations, e.g. English (en) instead of Croatian (hr) or Chinese (zh_Hans) instead of Chinese (zh).
+
+```yaml
+# src/AppBundle/Resources/config/pimcore/config.yml
+pimcore:
+    translations:
+        admin_translation_mapping:
+            'hr': 'en'
+            'zh': 'zh_Hans'
+```

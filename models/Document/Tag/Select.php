@@ -17,103 +17,17 @@
 
 namespace Pimcore\Model\Document\Tag;
 
-use Pimcore\Model;
+use Pimcore\Model\Document\Editable\Select as EditableSelect;
 
-/**
- * @method \Pimcore\Model\Document\Tag\Dao getDao()
- */
-class Select extends Model\Document\Tag
-{
-    /**
-     * Contains the current selected value
-     *
-     * @var string
-     */
-    public $text;
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', Select::class, EditableSelect::class), E_USER_DEPRECATED);
 
+class_exists(EditableSelect::class);
+
+if (false) {
     /**
-     * @see TagInterface::getType
-     *
-     * @return string
+     * @deprecated use \Pimcore\Model\Document\Editable\Select instead.
      */
-    public function getType()
+    class Select extends EditableSelect
     {
-        return 'select';
-    }
-
-    /**
-     * @see TagInterface::getData
-     *
-     * @return mixed
-     */
-    public function getData()
-    {
-        return $this->text;
-    }
-
-    /**
-     * @see TagInterface::frontend
-     *
-     * @return string
-     */
-    public function frontend()
-    {
-        return $this->text;
-    }
-
-    /**
-     * @see TagInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
-     */
-    public function setDataFromResource($data)
-    {
-        $this->text = $data;
-
-        return $this;
-    }
-
-    /**
-     * @see \TagInterface::setDataFromEditmode
-     *
-     * @param mixed $data
-     *
-     * @return $this
-     */
-    public function setDataFromEditmode($data)
-    {
-        $this->text = $data;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEmpty()
-    {
-        return empty($this->text);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if ($data->text === null or is_string($data->text)) {
-            $this->text = $data->text;
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
     }
 }

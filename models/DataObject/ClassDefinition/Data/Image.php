@@ -21,10 +21,11 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 
-class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -521,5 +522,19 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @param Asset|null $oldValue
+     * @param Asset|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldValue = $oldValue instanceof Asset ? $oldValue->getId() : null;
+        $newValue = $newValue instanceof Asset ? $newValue->getId() : null;
+
+        return $oldValue === $newValue;
     }
 }
