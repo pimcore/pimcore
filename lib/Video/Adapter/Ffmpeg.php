@@ -130,7 +130,7 @@ class Ffmpeg extends Adapter
                     $bitrate = $mediaKeys[$i];
                     $transformations = [];
                     if ($medias[$bitrate]['converter'] instanceof self) {
-                        $transformations = implode(' ', $medias[$bitrate]['converter']->arguments);
+                        $transformations = $medias[$bitrate]['converter']->arguments;
                     }
                     $transformations = implode(' ', $transformations);
                     $arguments .= ' -b:v:'.$i .' '.  $bitrate . ' -c:v:' . $i . ' libx264 '. $transformations;
