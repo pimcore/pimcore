@@ -418,8 +418,11 @@ class DataObjectController extends ElementControllerBase implements EventedContr
              *  ------------------------------------------------------------- */
             $objectData['idPath'] = Element\Service::getIdPath($objectFromDatabase);
 
+            $previewGenerator = $objectFromDatabase->getClass()->getPreviewGenerator();
+            $linkGeneratorReference = $objectFromDatabase->getClass()->getLinkGeneratorReference();
+
             $objectData['hasPreview'] = false;
-            if ($objectFromDatabase->getClass()->getPreviewUrl() || $objectFromDatabase->getClass()->getLinkGeneratorReference()) {
+            if ($objectFromDatabase->getClass()->getPreviewUrl() || $linkGeneratorReference || $previewGenerator) {
                 $objectData['hasPreview'] = true;
             }
 
@@ -444,8 +447,8 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $objectData['general']['showAppLoggerTab'] = $objectFromDatabase->getClass()->getShowAppLoggerTab();
             $objectData['general']['showFieldLookup'] = $objectFromDatabase->getClass()->getShowFieldLookup();
             if ($objectFromDatabase instanceof DataObject\Concrete) {
-                $objectData['general']['linkGeneratorReference'] = $objectFromDatabase->getClass()->getLinkGeneratorReference();
-                if($previewGenerator = $objectFromDatabase->getClass()->getPreviewGenerator()) {
+                $objectData['general']['linkGeneratorReference'] = $linkGeneratorReference;
+                if($previewGenerator) {
                     $objectData['general']['previewParams'] = $previewGenerator->getParams($objectFromDatabase);
                 }
             }
