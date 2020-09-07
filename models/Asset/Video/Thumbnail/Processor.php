@@ -144,7 +144,7 @@ class Processor
                     //used just to generate arguments for medias
                     $subConverter = \Pimcore\Video::getInstance();
                     self::applyTransformations($subConverter, $transformations);
-                    $medias[$media]['arguments'] = $subConverter->getArguments();
+                    $medias[$media]['converter'] = $subConverter;
                 }
                 $converter->setMedias($medias);
             }

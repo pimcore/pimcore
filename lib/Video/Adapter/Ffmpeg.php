@@ -128,7 +128,11 @@ class Ffmpeg extends Adapter
                 $arguments = str_repeat(' -map 0', count($mediaKeys)) .' -c:a libfdk_aac -vcodec libx264 ';
                 for ($i = 0; $i < count($mediaKeys); $i++) {
                     $bitrate = $mediaKeys[$i];
-                    $transformations = implode(' ', $medias[$bitrate]['arguments']);
+                    $transformations = [];
+                    if ($medias[$bitrate]['converter'] instanceof self) {
+                        $transformations = implode(' ', $medias[$bitrate]['converter']->arguments);
+                    }
+                    $transformations = implode(' ', $transformations);
                     $arguments .= ' -b:v:'.$i .' '.  $bitrate . ' -c:v:' . $i . ' libx264 '. $transformations;
                 }
                 $arguments .= ' -use_timeline 1 -use_template 1 -window_size 5 -adaptation_sets "id=0,streams=v id=1,streams=a"';

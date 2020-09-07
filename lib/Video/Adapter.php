@@ -32,7 +32,7 @@ abstract class Adapter
     public $format;
 
     /**
-     * @var string
+     * @var array
      */
     public $medias;
 
