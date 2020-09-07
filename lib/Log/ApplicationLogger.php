@@ -157,6 +157,8 @@ class ApplicationLogger implements LoggerInterface
             } else {
                 $context['fileObject'] = str_replace(PIMCORE_PROJECT_ROOT, '', $context['fileObject']->getFilename());
             }
+
+            file_put_contents($context['fileObject'].PHP_EOL, $message, FILE_APPEND);
         }
 
         $relatedObject = null;
