@@ -166,7 +166,7 @@ class Ghostscript extends Adapter
         $command = self::getGhostscriptCli() . ' -dNODISPLAY -q';
 
         // Adding permit-file-read flag to prevent issue with Ghostscript's SAFER mode which is enabled by default as of version 9.50.
-        if (version_compare($this->getVersion(), '9.50') >= 0) {
+        if (version_compare($this->getVersion(), '9.50', '>=')) {
             $command .= " --permit-file-read='" . $this->path . "'";
         }
 
