@@ -43,6 +43,8 @@ class ProductPreviewParamProvider implements \Pimcore\Model\DataObject\ClassDefi
     }
 
     /**
+     * @param \Pimcore\Model\DataObject\Concrete $object
+     * 
      * @return array
      */
     public function getParams(\Pimcore\Model\DataObject\Concrete $object): array {
