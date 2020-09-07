@@ -27,7 +27,7 @@ class Ghostscript extends Adapter
     protected $path;
 
     /**
-     * @var float|null
+     * @var string|null
      */
     private $version = null;
 
