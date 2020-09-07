@@ -34,7 +34,7 @@ abstract class Adapter
     /**
      * @var string
      */
-    public $media;
+    public $medias;
 
     /**
      * @var string
@@ -120,19 +120,19 @@ abstract class Adapter
     abstract public function destroy();
 
     /**
-     * @return string|null
+     * @return array|null
      */
-    public function getMedia()
+    public function getMedias()
     {
-        return $this->media;
+        return $this->medias;
     }
 
     /**
-     * @param string|null $media
+     * @param array|null $medias
      */
-    public function setMedia($media)
+    public function setMedias($medias)
     {
-        $this->media = $media;
+        $this->medias = $medias;
     }
 
     /**

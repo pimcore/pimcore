@@ -122,6 +122,17 @@ class Ffmpeg extends Adapter
                 }
 
                 $arguments = '-strict experimental -f webm -vcodec ' . $webmCodec . ' -acodec libvorbis -ar 44000 -g 100 ' . $arguments;
+            } elseif ($this->getFormat() == 'mpd') {
+                $medias = $this->getMedias();
+                $mediaKeys = array_keys($medias);
+                $arguments = str_repeat(' -map 0', count($mediaKeys)) .' -c:a libfdk_aac -vcodec libx264 ';
+                for ($i = 0; $i < count($mediaKeys); $i++) {
+                    $bitrate = $mediaKeys[$i];
+                    $transformations = implode(' ', $medias[$bitrate]['arguments']);
+                    $arguments .= ' -b:v:'.$i .' '.  $bitrate . ' -c:v:' . $i . ' libx264 '. $transformations;
+                }
+                $arguments .= ' -use_timeline 1 -use_template 1 -window_size 5 -adaptation_sets "id=0,streams=v id=1,streams=a"';
+                $arguments .= ' -single_file 1 -f dash ';
             } else {
                 throw new \Exception('Unsupported video output format: ' . $this->getFormat());
             }
@@ -297,6 +308,15 @@ class Ffmpeg extends Adapter
     public function addArgument($key, $value)
     {
         $this->arguments[$key] = $value;
+    }
+
+    /**
+     *
+     * @return array
+     */
+    public function getArguments()
+    {
+        return $this->arguments;
     }
 
     /**

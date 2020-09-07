@@ -44,37 +44,27 @@ if($asset instanceof Asset\Video) {
 }
 ```
 
-##### Media Queries in Thumbnail Configuration
-```php
-// list all available medias in "myVideoThumbnail" thumbnail configuration
-p_r(array_keys(Asset\Video\Thumbnail\Config::getByName("myVideoThumbnail")->getMedias()));
+#### Adaptive bitrate video-streaming
+This feature allows you to generate a MPEG-DASH (.mpd) file for Adaptive  bitrate video-streaming.
 
-$asset = Asset::getById(123);
-if($asset instanceof Asset\Video) {
- 
-   $thumbnail = $asset->getThumbnail("myVideoThumbnail"); // returns an array
-   if($thumbnail["status"] == "finished") {
-      p_r($thumbnail["formats"]); // transcoding finished, print the paths to the different formats
-      /*
-         OUTPUTS:
-         Array(
-             "mp4" => "/website/var/tmp/video.....mp4",
-             "medias" => array:1 [
-                "mp4" => array:2 [  
-                    "(min-width: 576px)" => "/website/var/tmp/video..~-~%28min-width%3A%20576px%29.mp4"
-                    "(min-width: 800px)" => "/website/var/tmp/video..~-~%28min-width%3A%20800px%29.mp4"
-                
-         )
-      */
-      $thumbnail["formats"]["medias"]["mp4"]["(min-width: 576px)"]; //get thumbnail path for a media query
-   } else if ($thumbnail["status"] == "inprogress")  {
-      echo "transcoding in progress, please wait ...";
-   } else {
-      echo "transcoding failed :(";
-   }
-}
+As soon as you define transformations based on the bitrates in thumbnail config, the `.mpd` file will be generated with bitrate streams. 
+The `.mpd` file will be referenced in  generated `<video>` Tag.
+
+However, you have to include a polyfill for all major browsers to support Adaptive  bitrate video-streaming: https://github.com/Dash-Industry-Forum/dash.js
+```php
+{{ pimcore_video('campaignVideo', {
+        width: auto,
+        height: auto,
+        thumbnail: 'new',
+    }) }}
 ```
---- 
+generates frontend:
+```html
+<video width="100%" height="auto" controls="controls" class="pimcore_video" preload="auto" src="blob:http://xyz/01f91372-ddd8-4d3f-ac85-e420432d9704">
+    <source type="video/mp4" src="/videodata/video-thumb__955__campaignVideo/Volkswagen-Van.mp4">
+    <source type="application/dash+xml" src="/videodata/video-thumb__955__campaignVideo/Volkswagen-Van.mpd">
+</video>
+```
 
 ### Using with the Video Editable
 Please have a look at [Video Editable](../../03_Documents/01_Editables/38_Video.md). 

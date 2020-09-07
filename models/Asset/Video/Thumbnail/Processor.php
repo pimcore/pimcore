@@ -80,16 +80,10 @@ class Processor
         $instance->setAssetId($asset->getId());
         $instance->setConfig($config);
 
-        //create media query formats
+        //create dash file(.mpd), if medias exists
         $medias = $config->getMedias();
         if(count($medias) > 0) {
-            $mediaFormats = [];
-            foreach ($medias as $mediaKey => $media) {
-                foreach ($formats as $f) {
-                    $mediaFormats[] = $f . '-media-' . $mediaKey;
-                }
-            }
-            $formats = array_merge($formats, $mediaFormats);
+            $formats[] = 'mpd';
         }
 
         // check for running or already created thumbnails
@@ -103,17 +97,8 @@ class Processor
             } elseif ($customSetting[$config->getName()]['status'] == 'finished') {
                 // check if the files are there
                 $formatsToConvert = [];
-                foreach ($formats as $fkey => $f) {
-                    if (strpos($f, '-media-') !== false) {
-                        $mediaParts = explode('-media-', $f);
-                        $format = $mediaParts[0];
-                        $media = $mediaParts[1];
-                        if (!is_file($asset->getVideoThumbnailSavePath() . ($customSetting[$config->getName()]['formats']['medias'][$format][$media] ?? null))) {
-                            $formatsToConvert[] = $f;
-                        } else {
-                            $existingFormats['medias'][$format][$media] = $customSetting[$config->getName()]['formats']['medias'][$format][$media];
-                        }
-                    } else if (!is_file($asset->getVideoThumbnailSavePath() . ($customSetting[$config->getName()]['formats'][$f] ?? null))) {
+                foreach ($formats as $f) {
+                    if (!is_file($asset->getVideoThumbnailSavePath() . $customSetting[$config->getName()]['formats'][$f])) {
                         $formatsToConvert[] = $f;
                     } else {
                         $existingFormats[$f] = $customSetting[$config->getName()]['formats'][$f];
@@ -131,21 +116,8 @@ class Processor
         }
 
         foreach ($formats as $format) {
-            $media = null;
             $thumbDir = $asset->getVideoThumbnailSavePath() . '/video-thumb__' . $asset->getId() . '__' . $config->getName();
-            $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '/', '', $asset->getFilename());
-
-            // add custom suffix for media specific format
-            if (strpos($format, '-media-') !== false) {
-                $formatParts = explode('-media-', trim($format));
-                $format = $formatParts[0];
-                $media = $formatParts[1];
-                $config->selectMedia($media);
-                $filename .= '~-~' . $media . '.' . $formatParts[0];
-            } else {
-                $filename .= '.' . $format;
-            }
-
+            $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '/', '', $asset->getFilename()) . '.' . $format;
             $fsPath = $thumbDir . '/' . $filename;
             $tmpPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/video-converter-' . $filename;
 
@@ -162,36 +134,23 @@ class Processor
             $converter->setAudioBitrate($config->getAudioBitrate());
             $converter->setVideoBitrate($config->getVideoBitrate());
             $converter->setFormat($format);
-            $converter->setMedia($media);
             $converter->setDestinationFile($tmpPath);
             $converter->setStorageFile($fsPath);
 
-            $transformations = $config->getItems();
-            if (is_array($transformations) && count($transformations) > 0) {
-                foreach ($transformations as $transformation) {
-                    if (!empty($transformation)) {
-                        $arguments = [];
-                        $mapping = self::$argumentMapping[$transformation['method']];
-
-                        if (is_array($transformation['arguments'])) {
-                            foreach ($transformation['arguments'] as $key => $value) {
-                                $position = array_search($key, $mapping);
-                                if ($position !== false) {
-                                    $arguments[$position] = $value;
-                                }
-                            }
-                        }
-
-                        ksort($arguments);
-                        if (count($mapping) == count($arguments)) {
-                            call_user_func_array([$converter, $transformation['method']], $arguments);
-                        } else {
-                            $message = 'Video Transform failed: cannot call method `' . $transformation['method'] . '´ with arguments `' . implode(',', $arguments) . '´ because there are too few arguments';
-                            Logger::error($message);
-                        }
-                    }
+            //add media queries for mpd file generation
+            if ($format == 'mpd') {
+                $medias = $config->getMedias();
+                foreach ($medias as $media => $transformations) {
+                    //used just to generate arguments for medias
+                    $subConverter = \Pimcore\Video::getInstance();
+                    self::applyTransformations($subConverter, $transformations);
+                    $medias[$media]['arguments'] = $subConverter->getArguments();
                 }
+                $converter->setMedias($medias);
             }
+
+            $transformations = $config->getItems();
+            self::applyTransformations($converter, $transformations);
 
             $instance->queue[] = $converter;
         }
@@ -209,6 +168,35 @@ class Processor
         $instance->convert();
 
         return $instance;
+    }
+
+    private static function applyTransformations($converter, $transformations)
+    {
+        if (is_array($transformations) && count($transformations) > 0) {
+            foreach ($transformations as $transformation) {
+                if (!empty($transformation)) {
+                    $arguments = [];
+                    $mapping = self::$argumentMapping[$transformation['method']];
+
+                    if (is_array($transformation['arguments'])) {
+                        foreach ($transformation['arguments'] as $key => $value) {
+                            $position = array_search($key, $mapping);
+                            if ($position !== false) {
+                                $arguments[$position] = $value;
+                            }
+                        }
+                    }
+
+                    ksort($arguments);
+                    if (count($mapping) == count($arguments)) {
+                        call_user_func_array([$converter, $transformation['method']], $arguments);
+                    } else {
+                        $message = 'Video Transform failed: cannot call method `' . $transformation['method'] . '´ with arguments `' . implode(',', $arguments) . '´ because there are too few arguments';
+                        Logger::error($message);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -246,12 +234,21 @@ class Processor
                 // set proper permissions
                 @chmod($converter->getStorageFile(), File::getDefaultMode());
 
-                if ($success) {
-                    if($converter->getMedia()) {
-                        $formats['medias'][$converter->getFormat()][$converter->getMedia()] = str_replace($asset->getVideoThumbnailSavePath(), '', $converter->getStorageFile());
-                    } else {
-                        $formats[$converter->getFormat()] = str_replace($asset->getVideoThumbnailSavePath(), '', $converter->getStorageFile());
+                if ($converter->getFormat() === 'mpd') {
+                    $streamFilesPath = str_replace('.mpd', '-stream*.m4s', $converter->getDestinationFile());
+                    $streams = glob($streamFilesPath);
+                    $parentPath = dirname($converter->getStorageFile());
+
+                    foreach ($streams as $steam) {
+                        $storagePath = $parentPath . '/' . basename($steam);
+                        File::rename($steam, $storagePath);
+                        // set proper permissions
+                        @chmod($storagePath, File::getDefaultMode());
                     }
+                }
+
+                if ($success) {
+                    $formats[$converter->getFormat()] = str_replace($asset->getVideoThumbnailSavePath(), '', $converter->getStorageFile());
                 } else {
                     $conversionStatus = 'error';
                 }

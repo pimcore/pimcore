@@ -54,19 +54,19 @@ pimcore.settings.videothumbnail.item = Class.create({
             items: [{
                 xtype: 'button',
                 style: "float: right",
-                text: t("add_media_query"),
+                text: t("add_media_segment"),
                 iconCls: "pimcore_icon_add",
                 handler: function () {
-                    Ext.MessageBox.prompt("", t("enter_media_query"), function (button, value) {
+                    Ext.MessageBox.prompt("", t("enter_media_segment"), function (button, value) {
                         if (button == "ok") {
                             this.addMediaPanel(value, null, true, true);
                         }
-                    }.bind(this), null, false, '(min-width: 576px)');
+                    }.bind(this), null, false, '500K');
                 }.bind(this)
             }, {
                 xtype: 'component',
                 style: "float: right; padding: 8px 40px 0 0;",
-                html: t('you_can_drag_the_tabs_to_reorder_the_media_queries')
+                html: t('dash_media_message')
             }]
         };
 
@@ -170,11 +170,6 @@ pimcore.settings.videothumbnail.item = Class.create({
     },
 
     addMediaPanel: function (name, items, closable, activate) {
-
-        if(name.match(/^\d+w$/)) {
-            // convert legacy syntax to new syntax/name
-            name = '(max-width: ' + name.replace("w", "") + 'px)';
-        }
 
         if (this.medias[name]) {
             return;
