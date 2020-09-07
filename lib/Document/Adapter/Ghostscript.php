@@ -178,7 +178,7 @@ class Ghostscript extends Adapter
     /**
      * Get the version of the installed Ghostscript CLI.
      *
-     * @return float
+     * @return string
      *
      * @throws \Exception
      */
