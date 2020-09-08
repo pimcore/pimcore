@@ -297,7 +297,7 @@ class Imagick extends Adapter
             $success = File::put($path, $i->getImageBlob());
         } else {
 
-            if ($i->getNumberImages() > 1) {
+            if ($this->isPreserveAnimation() && $i->getNumberImages() > 1) {
                 $success = $i->writeImages($format . ':' . $path, true);
             } else {
                 $success = $i->writeImage($format . ':' . $path);
@@ -519,7 +519,7 @@ class Imagick extends Adapter
         $width = (int)$width;
         $height = (int)$height;
 
-        if ($this->resource->getNumberImages() > 1) {
+        if ($this->isPreserveAnimation() && $this->resource->getNumberImages() > 1) {
             foreach ($this->resource as $i => $frame) {
                 $frame->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
             }
@@ -586,26 +586,6 @@ class Imagick extends Adapter
         return $this;
     }
 
-    private function createCompositeImageFromResource($width, $height, $x, $y, $color = 'transparent', $composite = \Imagick::COMPOSITE_DEFAULT)
-    {
-        if ($this->resource->getNumberImages() > 1) {
-            foreach ($this->resource as $i => $frame) {
-                $imageFrame = $this->createImage($width, $height, $color);
-                $imageFrame->compositeImage($frame, $composite, $x, $y);
-                if (!$newImage) {
-                    $newImage = $imageFrame;
-                } else {
-                    $newImage->addImage($imageFrame);
-                }
-            }
-        } else {
-            $newImage = $this->createImage($width, $height, $color);
-            $newImage->compositeImage($this->resource, $composite, $x, $y);
-        }
-        return $newImage;
-    }
-
-
     /**
      * @param float $tolerance
      *
@@ -657,6 +637,34 @@ class Imagick extends Adapter
         $newImage->newimage($width, $height, $color);
         $newImage->setImageFormat($this->resource->getImageFormat());
 
+        return $newImage;
+    }
+
+    /**
+     * @param $width
+     * @param $height
+     * @param $x
+     * @param $y
+     * @param string $color
+     * @param int $composite
+     * @return \Imagick
+     */
+    protected function createCompositeImageFromResource($width, $height, $x, $y, $color = 'transparent', $composite = \Imagick::COMPOSITE_DEFAULT)
+    {
+        if ($this->isPreserveAnimation() && $this->resource->getNumberImages() > 1) {
+            foreach ($this->resource as $i => $frame) {
+                $imageFrame = $this->createImage($width, $height, $color);
+                $imageFrame->compositeImage($frame, $composite, $x, $y);
+                if (!$newImage) {
+                    $newImage = $imageFrame;
+                } else {
+                    $newImage->addImage($imageFrame);
+                }
+            }
+        } else {
+            $newImage = $this->createImage($width, $height, $color);
+            $newImage->compositeImage($this->resource, $composite, $x, $y);
+        }
         return $newImage;
     }
 
