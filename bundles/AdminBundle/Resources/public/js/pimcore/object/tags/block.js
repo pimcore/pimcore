@@ -23,7 +23,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         this.data = [];
         this.currentElements = [];
         this.layoutDefinitions = {};
-        this.dataFields = [];
+        this.dataFields = {};
 
         if (data) {
             this.data = data;
@@ -254,7 +254,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
             this.component.removeAll();
         }
 
-        this.dataFields = [];
+        this.dataFields = {};
         this.currentData = {};
 
         if(blockData) {
@@ -306,7 +306,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
             this.dirty = true;
         }
 
-        this.dataFields = [];
+        this.dataFields = {};
         this.currentData = {};
     },
 
@@ -320,7 +320,16 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
     },
 
     addToDataFields: function (field, name) {
-        this.dataFields.push(field);
+        if (this.dataFields[name]) {
+            // this is especially for localized fields which get aggregated here into one field definition
+            // in the case that there are more than one localized fields in the class definition
+            // see also Object_Class::extractDataDefinitions();
+            if(typeof this.dataFields[name]["addReferencedField"]){
+                this.dataFields[name].addReferencedField(field);
+            }
+        } else {
+            this.dataFields[name] = field;
+        }
     },
 
     getLayoutShow: function () {
@@ -342,13 +351,16 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
             if(this.currentElements[this.component.items.items[s].key]) {
                 element = this.currentElements[this.component.items.items[s].key];
 
-                for (var u=0; u<element.fields.length; u++) {
+                var elementFieldNames = Object.keys(element.fields);
+
+                for (var u=0; u<elementFieldNames.length; u++) {
+                    var elementFieldName = elementFieldNames[u];
                     try {
                         // no check for dirty, ... always send all field to the server
-                        elementData[element.fields[u].getName()] = element.fields[u].getValue();
+                        elementData[element.fields[elementFieldName].getName()] = element.fields[elementFieldName].getValue();
                     } catch (e) {
                         console.log(e);
-                        elementData[element.fields[u].getName()] = "";
+                        elementData[element.fields[elementFieldName].getName()] = "";
                     }
 
                 }
@@ -384,8 +396,11 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
             if(this.currentElements[this.component.items.items[s].key]) {
                 element = this.currentElements[this.component.items.items[s].key];
 
-                for (var u=0; u<element.fields.length; u++) {
-                    if(element.fields[u].isDirty()) {
+                var elementFieldNames = Object.keys(element.fields);
+
+                for (var u=0; u<elementFieldNames.length; u++) {
+                    var elementFieldName = elementFieldNames[u];
+                    if(element.fields[elementFieldName].isDirty()) {
                         return true;
                     }
                 }
@@ -402,8 +417,11 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
             if(this.currentElements[this.component.items.items[s].key]) {
                 element = this.currentElements[this.component.items.items[s].key];
 
-                for (var u=0; u<element.fields.length; u++) {
-                    if(element.fields[u].isMandatory()) {
+                var elementFieldNames = Object.keys(element.fields);
+
+                for (var u=0; u<elementFieldNames.length; u++) {
+                    var elementFieldName = elementFieldNames[u];
+                    if(element.fields[elementFieldName].isMandatory()) {
                         return true;
                     }
                 }

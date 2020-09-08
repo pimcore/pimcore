@@ -684,7 +684,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         }
 
         if ($def instanceof DataObject\ClassDefinition\Data) {
-            $fields[$def->getName()] = $def;
+            $existing = $fields[$def->getName()] ?? false;
+            if ($existing && method_exists($existing, 'addReferencedField')) {
+                // this is especially for localized fields which get aggregated here into one field definition
+                // in the case that there are more than one localized fields in the class definition
+                // see also pimcore.object.edit.addToDataFields();
+                $existing->addReferencedField($def);
+            } else {
+                $fields[$def->getName()] = $def;
+            }
         }
 
         return $fields;
