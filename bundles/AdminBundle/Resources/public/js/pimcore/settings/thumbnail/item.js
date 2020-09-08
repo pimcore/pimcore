@@ -173,6 +173,15 @@ pimcore.settings.thumbnail.item = Class.create({
                         style: "margin-bottom: 20px"
                     }, {
                         xtype: "checkbox",
+                        name: "keepAnimation",
+                        boxLabel: t("keep_animation") + " (Imagick)",
+                        checked: this.data.keepAnimation
+                    }, {
+                        xtype: "container",
+                        html: "<small>(" + t("keep_animation_info_text") + ")</small>",
+                        style: "margin-bottom: 20px"
+                    }, {
+                        xtype: "checkbox",
                         name: "downloadable",
                         style: "margin-bottom:0",
                         boxLabel: t("list_thumbnail_in_download_section_on_image_detail_view"),

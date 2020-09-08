@@ -43,6 +43,11 @@ class Imagick extends Adapter
     protected $imagePath;
 
     /**
+     * @var bool
+     */
+    protected $preserveAnimation;
+
+    /**
      * @param string $imagePath
      * @param array $options
      *
@@ -142,6 +147,13 @@ class Imagick extends Adapter
 
             if (!$this->isPreserveColor()) {
                 $this->setColorspaceToRGB();
+            }
+
+            if ($this->isPreserveAnimation() && $this->resource->getImageFormat() == "GIF") {
+                if (!$this->resource->readImage($imagePath) || !filesize($imagePath)) {
+                    return false;
+                }
+                $this->resource = $this->resource->coalesceImages();
             }
 
             $isClipAutoSupport = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['clip_auto_support'];
@@ -284,7 +296,12 @@ class Imagick extends Adapter
             $i->setImageFormat($format);
             $success = File::put($path, $i->getImageBlob());
         } else {
-            $success = $i->writeImage($format . ':' . $path);
+
+            if ($i->getNumberImages() > 1) {
+                $success = $i->writeImages($format . ':' . $path, true);
+            } else {
+                $success = $i->writeImage($format . ':' . $path);
+            }
         }
 
         if (!$success) {
@@ -502,8 +519,13 @@ class Imagick extends Adapter
         $width = (int)$width;
         $height = (int)$height;
 
-        $this->resource->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
-
+        if ($this->resource->getNumberImages() > 1) {
+            foreach ($this->resource as $i => $frame) {
+                $frame->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
+            }
+        } else {
+            $this->resource->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
+        }
         $this->setWidth($width);
         $this->setHeight($height);
 
@@ -551,8 +573,7 @@ class Imagick extends Adapter
         $x = ($width - $this->getWidth()) / 2;
         $y = ($height - $this->getHeight()) / 2;
 
-        $newImage = $this->createImage($width, $height);
-        $newImage->compositeImage($this->resource, \Imagick::COMPOSITE_DEFAULT, $x, $y);
+        $newImage = $this->createCompositeImageFromResource($width, $height, $x, $y);
         $this->resource = $newImage;
 
         $this->setWidth($width);
@@ -564,6 +585,26 @@ class Imagick extends Adapter
 
         return $this;
     }
+
+    private function createCompositeImageFromResource($width, $height, $x, $y, $color = 'transparent', $composite = \Imagick::COMPOSITE_DEFAULT)
+    {
+        if ($this->resource->getNumberImages() > 1) {
+            foreach ($this->resource as $i => $frame) {
+                $imageFrame = $this->createImage($width, $height, $color);
+                $imageFrame->compositeImage($frame, $composite, $x, $y);
+                if (!$newImage) {
+                    $newImage = $imageFrame;
+                } else {
+                    $newImage->addImage($imageFrame);
+                }
+            }
+        } else {
+            $newImage = $this->createImage($width, $height, $color);
+            $newImage->compositeImage($this->resource, $composite, $x, $y);
+        }
+        return $newImage;
+    }
+
 
     /**
      * @param float $tolerance
@@ -593,9 +634,7 @@ class Imagick extends Adapter
     public function setBackgroundColor($color)
     {
         $this->preModify();
-
-        $newImage = $this->createImage($this->getWidth(), $this->getHeight(), $color);
-        $newImage->compositeImage($this->resource, \Imagick::COMPOSITE_DEFAULT, 0, 0);
+        $newImage = $this->createCompositeImageFromResource($this->getWidth(), $this->getHeight(), 0, 0, $color);
         $this->resource = $newImage;
 
         $this->postModify();
