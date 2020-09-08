@@ -140,7 +140,7 @@ Pimcore documents to set up manual landing pages etc.
 Both is demonstrated at our [Demo](https://demo.pimcore.fun) and also available as 
 [source code](https://github.com/pimcore/demo). 
 
-In case that a filter contains relational objects (FilterMultiRelation`, `FilterRelation`, etc.), 
+In case that a filter contains relational objects (`FilterMultiRelation`, `FilterRelation`, etc.), 
 the `getName()` method of the object is used to render the text in pre-select lists and filters. 
 Implement the `getNameForFilterDefinition()` method in your data objects to show customized (HTML) texts, including icons. 
 
