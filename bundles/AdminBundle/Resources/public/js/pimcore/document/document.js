@@ -77,7 +77,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         tabPanel.setActiveItem(tabId);
     },
 
-    save: function (task, only, callback) {
+    save: function (task, only, callback, failureCallback) {
 
         if (this.tab.disabled || this.tab.isMasked()) {
             return;
@@ -87,34 +87,35 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         var saveData = this.getSaveData(only);
 
         if (saveData) {
-            if(this.data.missingRequiredEditable !== null) {
+            if (this.data.missingRequiredEditable !== null) {
                 saveData.missingRequiredEditable = this.data.missingRequiredEditable;
             }
 
             // check for version notification
             if (this.newerVersionNotification) {
+                var newerVersionNotificationBackup = this.newerVersionNotification.isVisible()
+
                 if (task == "publish" || task == "unpublish") {
                     this.newerVersionNotification.hide();
                 } else {
                     this.newerVersionNotification.show();
                 }
-
             }
 
             try {
                 pimcore.plugin.broker.fireEvent("preSaveDocument", this, this.getType(), task, only);
             } catch (e) {
                 if (e instanceof pimcore.error.ValidationException) {
-                        this.tab.unmask();
-                        pimcore.helpers.showPrettyError('document', t("error"), t("saving_failed"), e.message);
-                        return false;
-                    }
+                    this.tab.unmask();
+                    pimcore.helpers.showPrettyError('document', t("error"), t("saving_failed"), e.message);
+                    return false;
+                }
 
-                    if (e instanceof pimcore.error.ActionCancelledException) {
-                        this.tab.unmask();
-                        pimcore.helpers.showNotification(t("Info"), 'Document not saved: ' + e.message, 'info');
-                        return false;
-                    }
+                if (e instanceof pimcore.error.ActionCancelledException) {
+                    this.tab.unmask();
+                    pimcore.helpers.showNotification(t("Info"), 'Document not saved: ' + e.message, 'info');
+                    return false;
+                }
             }
 
             Ext.Ajax.request({
@@ -139,7 +140,6 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                         pimcore.helpers.showNotification(t("error"), t("saving_failed"), "error");
                     }
 
-
                     // reload versions
                     if (this.versions) {
                         if (typeof this.versions.reload == "function") {
@@ -155,13 +155,21 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 }.bind(this),
                 failure: function () {
                     this.tab.unmask();
+
+                    // reset version notification
+                    if (this.newerVersionNotification) {
+                        this.newerVersionNotification.setVisible(newerVersionNotificationBackup);
+                    }
+
+                    if (typeof failureCallback == "function") {
+                        failureCallback();
+                    }
                 }.bind(this),
             });
         } else {
             this.tab.unmask();
         }
     },
-
 
     isAllowed: function (key) {
         return this.data.userPermissions[key];
@@ -190,9 +198,17 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
     },
 
     publish: function (only, callback) {
+        var previous = {
+            published: this.data.published,
+            toolbarButtons: {
+                unpublish: this.toolbarButtons.unpublish.isVisible(),
+                save: this.toolbarButtons.save && this.toolbarButtons.save.isVisible()
+            }
+        };
+
         this.data.published = true;
 
-        // toogle buttons
+        // toggle buttons
         this.toolbarButtons.unpublish.show();
 
         if (this.toolbarButtons.save) {
@@ -205,13 +221,38 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             published: true
         });
 
-        this.save("publish", only, callback);
+        this.save("publish", only, callback, function () {
+            this.data.published = previous.published;
+
+            // toggle buttons
+            if (!previous.toolbarButtons.unpublish) {
+                this.toolbarButtons.unpublish.hide();
+            }
+
+            if (previous.toolbarButtons.save) {
+                this.toolbarButtons.save.show();
+            }
+
+            pimcore.elementservice.setElementPublishedState({
+                elementType: "document",
+                id: this.id,
+                published: previous.published
+            });
+        }.bind(this));
     },
 
     unpublish: function (only, callback) {
+        var previous = {
+            published: this.data.published,
+            toolbarButtons: {
+                unpublish: this.toolbarButtons.unpublish.isVisible(),
+                save: this.toolbarButtons.save && this.toolbarButtons.save.isVisible()
+            }
+        };
+
         this.data.published = false;
 
-        // toogle buttons
+        // toggle buttons
         this.toolbarButtons.unpublish.hide();
 
         if (this.toolbarButtons.save) {
@@ -224,7 +265,24 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
             published: false
         });
 
-        this.save("unpublish", only, callback);
+        this.save("unpublish", only, callback, function () {
+            this.data.published = previous.published;
+
+            // toggle buttons
+            if (!previous.toolbarButtons.unpublish) {
+                this.toolbarButtons.unpublish.hide();
+            }
+
+            if (previous.toolbarButtons.save) {
+                this.toolbarButtons.save.show();
+            }
+
+            pimcore.elementservice.setElementPublishedState({
+                elementType: "document",
+                id: this.id,
+                published: previous.published
+            });
+        }.bind(this));
     },
 
     unpublishClose: function () {
