@@ -94,7 +94,8 @@ class NewsletterController extends DocumentControllerBase
         }
 
         $email = clone $email;
-        $email = $this->getLatestVersion($email);
+        $isLatestVersion = true;
+        $email = $this->getLatestVersion($email, $isLatestVersion);
 
         $versions = Element\Service::getSafeVersionInfo($email->getVersions());
         $email->setVersions(array_splice($versions, -1, 1));
@@ -111,6 +112,8 @@ class NewsletterController extends DocumentControllerBase
         $this->minimizeProperties($email, $data);
 
         $data['url'] = $email->getUrl();
+        // this used for the "this is not a published version" hint
+        $data['documentFromVersion'] = !$isLatestVersion;
 
         $this->preSendDataActions($data, $email);
 
@@ -156,7 +159,7 @@ class NewsletterController extends DocumentControllerBase
             $page->save();
             $this->saveToSession($page);
 
-            $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_TREE, $treeData);
+            $treeData = $this->getTreeNodeConfig($page);
 
             return $this->adminJson([
                 'success' => true,

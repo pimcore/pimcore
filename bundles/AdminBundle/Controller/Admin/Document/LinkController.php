@@ -146,7 +146,7 @@ class LinkController extends DocumentControllerBase
         ) {
             $link->save();
 
-            $this->addAdminStyle($link, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+            $treeData = $this->getTreeNodeConfig($link);
 
             return $this->adminJson([
                 'success' => true,

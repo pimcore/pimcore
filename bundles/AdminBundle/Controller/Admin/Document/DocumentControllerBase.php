@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
@@ -33,12 +34,14 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 abstract class DocumentControllerBase extends AdminController implements EventedControllerInterface
 {
-    use AdminStyleTrait;
     use ApplySchedulerDataTrait;
+    use DocumentTreeConfigTrait;
 
     protected function preSendDataActions(&$data, Model\Document $document)
     {
-        $data['versionDate'] = $document->getModificationDate();
+        $documentFromDatabase = Model\Document::getById($document->getId(), true);
+
+        $data['versionDate'] = $documentFromDatabase->getModificationDate();
         $data['userPermissions'] = $document->getUserPermissions();
         $data['idPath'] = Element\Service::getIdPath($document);
 
@@ -259,15 +262,17 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
     /**
      * @param Model\Document\PageSnippet $document
+     * @param bool $isLatestVersion
      *
      * @return Model\Document\PageSnippet
      */
-    protected function getLatestVersion(Model\Document\PageSnippet $document)
+    protected function getLatestVersion(Model\Document\PageSnippet $document, &$isLatestVersion = true)
     {
         $latestVersion = $document->getLatestVersion();
         if ($latestVersion) {
             $latestDoc = $latestVersion->loadData();
             if ($latestDoc instanceof Model\Document\PageSnippet) {
+                $isLatestVersion = false;
                 return $latestDoc;
             }
         }

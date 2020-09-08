@@ -54,8 +54,9 @@ abstract class Dao extends Model\Document\Dao
             $editable->setDataFromResource($editableRaw['data']);
 
             $editables[$editableRaw['name']] = $editable;
-            $this->model->setEditable($editableRaw['name'], $editable);
         }
+
+        $this->model->setEditables($editables);
 
         return $editables;
     }

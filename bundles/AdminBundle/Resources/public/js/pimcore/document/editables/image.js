@@ -346,23 +346,23 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
 
         if (!this.options["thumbnail"]) {
             if(!this.originalDimensions["width"] && !this.originalDimensions["height"]) {
-                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig(this.datax, {
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig({
                     'width': this.element.getWidth(),
                     'aspectratio': true
                 }));
             } else if (this.originalDimensions["width"]) {
-                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig(this.datax, {
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig({
                     'width': this.originalDimensions["width"],
                     'aspectratio': true
                 }));
             } else if (this.originalDimensions["height"]) {
-                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig(this.datax, {
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig({
                     'height': this.originalDimensions["height"],
                     'aspectratio': true
                 }));
             }
         } else if (typeof this.options.thumbnail == "string" || typeof this.options.thumbnail == "object") {
-                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig(this.datax, {
+                path = Routing.generate('pimcore_admin_asset_getimagethumbnail', this.getThumbnailConfig({
                     'height': this.originalDimensions["height"],
                     'thumbnail': this.options.thumbnail,
                     'pimcore_editmode': '1'
