@@ -684,7 +684,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         }
 
         if ($def instanceof DataObject\ClassDefinition\Data) {
-            $existing = $fields[$def->getName()];
+            $existing = $fields[$def->getName()] ?? false;
             if ($existing && method_exists($existing, 'addReferencedField')) {
                 // this is especially for localized fields which get aggregated here into one field definition
                 // in the case that there are more than one localized fields in the class definition
