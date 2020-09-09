@@ -91,17 +91,6 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 saveData.missingRequiredEditable = this.data.missingRequiredEditable;
             }
 
-            // check for version notification
-            if (this.newerVersionNotification) {
-                var newerVersionNotificationBackup = this.newerVersionNotification.isVisible()
-
-                if (task == "publish" || task == "unpublish") {
-                    this.newerVersionNotification.hide();
-                } else {
-                    this.newerVersionNotification.show();
-                }
-            }
-
             try {
                 pimcore.plugin.broker.fireEvent("preSaveDocument", this, this.getType(), task, only);
             } catch (e) {
@@ -126,10 +115,19 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     try {
                         var rdata = Ext.decode(response.responseText);
                         if (typeof successCallback == 'function') {
-                            //the successCallback function retrieves response data information
+                            // the successCallback function retrieves response data information
                             successCallback(rdata);
                         }
                         if (rdata && rdata.success) {
+                            // check for version notification
+                            if (this.newerVersionNotification) {
+                                if (task == "publish" || task == "unpublish") {
+                                    this.newerVersionNotification.hide();
+                                } else {
+                                    this.newerVersionNotification.show();
+                                }
+                            }
+
                             pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                             this.resetChanges();
                             Ext.apply(this.data, rdata.data);
@@ -159,11 +157,6 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 }.bind(this),
                 failure: function () {
                     this.tab.unmask();
-
-                    // reset version notification
-                    if (this.newerVersionNotification) {
-                        this.newerVersionNotification.setVisible(newerVersionNotificationBackup);
-                    }
                 }.bind(this),
             });
         } else {

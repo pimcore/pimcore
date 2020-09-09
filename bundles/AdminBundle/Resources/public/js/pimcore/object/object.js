@@ -746,16 +746,6 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
         var saveData = this.getSaveData(only, omitMandatoryCheck);
 
         if (saveData && saveData.data != false && saveData.data != "false") {
-
-            // check for version notification
-            if (this.newerVersionNotification) {
-                if (task == "publish" || task == "unpublish") {
-                    this.newerVersionNotification.hide();
-                } else if (task != "session") {
-                    this.newerVersionNotification.show();
-                }
-            }
-
             try {
                 pimcore.plugin.broker.fireEvent('preSaveObject', this, 'object');
             } catch (e) {
@@ -785,8 +775,16 @@ pimcore.object.object = Class.create(pimcore.object.abstract, {
                                 successCallback(rdata);
                             }
                             if (rdata && rdata.success) {
-                                pimcore.helpers.showNotification(t("success"), t("saved_successfully"),
-                                    "success");
+                                // check for version notification
+                                if (this.newerVersionNotification) {
+                                    if (task == "publish" || task == "unpublish") {
+                                        this.newerVersionNotification.hide();
+                                    } else {
+                                        this.newerVersionNotification.show();
+                                    }
+                                }
+
+                                pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                                 this.resetChanges();
                                 Ext.apply(this.data.general, rdata.general);
 
