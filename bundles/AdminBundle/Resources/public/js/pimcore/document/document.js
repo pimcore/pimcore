@@ -176,17 +176,20 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         pimcore.elementservice.deleteElement(options);
     },
 
+    close: function() {
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.remove(this.tab);
+    },
+
     saveClose: function (only) {
         this.save(null, only, function () {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.remove(this.tab);
+            this.close();
         }.bind(this));
     },
 
     publishClose: function () {
         this.publish(null, function () {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.remove(this.tab);
+            this.close();
         }.bind(this));
     },
 
@@ -234,9 +237,8 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
 
     unpublishClose: function () {
         this.unpublish(null, function () {
-            var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-            tabPanel.remove(this.tab);
-        });
+            this.close();
+        }.bind(this));
     },
 
     reload: function () {
