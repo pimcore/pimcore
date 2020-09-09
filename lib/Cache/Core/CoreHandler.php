@@ -330,6 +330,10 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function save($key, $data, array $tags = [], $lifetime = null, $priority = 0, $force = false)
     {
+        if ($this->writeInProgress) {
+            return false;
+        }
+
         CacheItem::validateKey($key);
 
         if (!$this->enabled) {
@@ -379,10 +383,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     protected function addToSaveQueue(CacheQueueItem $item)
     {
-        if ($this->writeInProgress) {
-            return false;
-        }
-
         $this->saveQueue[$item->getKey()] = $item;
 
         // order by priority
@@ -549,6 +549,10 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     protected function storeCacheItem(PimcoreCacheItemInterface $item, $data, $force = false)
     {
+        if ($this->writeInProgress) {
+            return false;
+        }
+
         if (!$this->enabled) {
             // TODO return true here as the noop (not storing anything) is basically successful?
             return false;
@@ -558,6 +562,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         if ($this->cacheCleared && !$force) {
             return false;
         }
+
+        $this->writeInProgress = true;
 
         if ($data instanceof ElementInterface) {
             // fetch a fresh copy
@@ -570,6 +576,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                     'key' => $item->getKey(),
                 ]);
 
+                $this->writeInProgress = false;
                 return false;
             }
 
@@ -616,6 +623,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 ]
             );
         }
+
+        $this->writeInProgress = false;
 
         return $result;
     }
@@ -861,7 +870,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function writeSaveQueue()
     {
-        $this->writeInProgress = true;
         $totalResult = true;
 
         if ($this->writeLock->hasLock()) {
@@ -905,8 +913,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         // reset
         $this->saveQueue = [];
-
-        $this->writeInProgress = false;
 
         return $totalResult;
     }
