@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Config;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\Document;
 use Pimcore\Web2Print\Processor;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;

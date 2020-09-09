@@ -450,11 +450,11 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     {
         $value = $this->getDataFromObjectParam($object, $params);
         if ($value === null) {
-            $value = "";
-        } else if ($value) {
-            $value = "1";
+            $value = '';
+        } elseif ($value) {
+            $value = '1';
         } else {
-            $value = "0";
+            $value = '0';
         }
 
         return $value;
@@ -469,13 +469,14 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getFromCsvImport($importValue, $object = null, $params = [])
     {
-        if ($importValue === "1") {
+        if ($importValue === '1') {
             $value = true;
-        } else if ($importValue === "0") {
+        } elseif ($importValue === '0') {
             $value = false;
         } else {
             $value = null;
         }
+
         return $value;
     }
 }
