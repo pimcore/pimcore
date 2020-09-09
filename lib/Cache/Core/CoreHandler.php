@@ -379,6 +379,10 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     protected function addToSaveQueue(CacheQueueItem $item)
     {
+        if ($this->writeInProgress) {
+            return false;
+        }
+
         $this->saveQueue[$item->getKey()] = $item;
 
         // order by priority
@@ -455,18 +459,15 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 return null;
             }
 
+            // Objects implementing ElementInterface are getting serialized later in storeCacheItem()
+            // where we obtain a fresh copy of the element from the database to ensure data-consistency
             $itemData = $data;
         } else {
-            if (is_object($data) && isset($data->____pimcore_cache_item__)) {
-                unset($data->____pimcore_cache_item__);
-            }
+            // See #1005 - serialize the element now as we don't know what happens until it is actually persisted
+            // on shutdown and we could end up with corrupt objects in cache
+            // TODO symfony cache adapters serialize as well - find a way to avoid double serialization
             $itemData = serialize($data);
         }
-
-        // See #1005 - serialize the element now as we don't know what happens until it is actually persisted on shutdown and we
-        // could end up with corrupt objects in cache
-        //
-        // TODO symfony cache adapters serialize as well - find a way to avoid double serialization
 
         $item = $this->itemPool->createCacheItem($key, $itemData);
         $item->expiresAfter($lifetime);
@@ -548,10 +549,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     protected function storeCacheItem(PimcoreCacheItemInterface $item, $data, $force = false)
     {
-        if ($this->writeInProgress) {
-            return false;
-        }
-
         if (!$this->enabled) {
             // TODO return true here as the noop (not storing anything) is basically successful?
             return false;
@@ -561,9 +558,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         if ($this->cacheCleared && !$force) {
             return false;
         }
-
-
-        $this->writeInProgress = true;
 
         if ($data instanceof ElementInterface) {
             // fetch a fresh copy
@@ -576,9 +570,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                     'key' => $item->getKey(),
                 ]);
 
-                // TODO: this check needs to be done recursive, especially for Objects (like cache tags)
-                // all other entities shouldn't have references at all in the cache so it shouldn't matter
-                $this->writeInProgress = false;
                 return false;
             }
 
@@ -613,7 +604,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         $result = $this->itemPool->save($item);
-        $this->writeInProgress = false;
 
         if ($result) {
             $this->logger->debug('Added entry {key} to cache', ['key' => $item->getKey()]);
@@ -871,6 +861,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      */
     public function writeSaveQueue()
     {
+        $this->writeInProgress = true;
         $totalResult = true;
 
         if ($this->writeLock->hasLock()) {
@@ -914,6 +905,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         // reset
         $this->saveQueue = [];
+
+        $this->writeInProgress = false;
 
         return $totalResult;
     }

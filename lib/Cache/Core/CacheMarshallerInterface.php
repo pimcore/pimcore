@@ -14,7 +14,6 @@
 
 namespace Pimcore\Cache\Core;
 
-
 /**
  * @internal not for public use
  */
@@ -24,6 +23,4 @@ interface CacheMarshallerInterface
      * @return mixed
      */
     public function marshalForCache();
-
-
 }
