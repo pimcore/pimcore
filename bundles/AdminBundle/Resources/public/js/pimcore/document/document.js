@@ -77,7 +77,7 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
         tabPanel.setActiveItem(tabId);
     },
 
-    save: function (task, only, callback, failureCallback) {
+    save: function (task, only, callback, successCallback) {
 
         if (this.tab.disabled || this.tab.isMasked()) {
             return;
@@ -125,6 +125,10 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                 success: function (response) {
                     try {
                         var rdata = Ext.decode(response.responseText);
+                        if (typeof successCallback == 'function') {
+                            //the successCallback function retrieves response data information
+                            successCallback(rdata);
+                        }
                         if (rdata && rdata.success) {
                             pimcore.helpers.showNotification(t("success"), t("saved_successfully"), "success");
                             this.resetChanges();
@@ -160,10 +164,6 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
                     if (this.newerVersionNotification) {
                         this.newerVersionNotification.setVisible(newerVersionNotificationBackup);
                     }
-
-                    if (typeof failureCallback == "function") {
-                        failureCallback();
-                    }
                 }.bind(this),
             });
         } else {
@@ -198,90 +198,44 @@ pimcore.document.document = Class.create(pimcore.element.abstract, {
     },
 
     publish: function (only, callback) {
-        var previous = {
-            published: this.data.published,
-            toolbarButtons: {
-                unpublish: this.toolbarButtons.unpublish.isVisible(),
-                save: this.toolbarButtons.save && this.toolbarButtons.save.isVisible()
+        this.save("publish", only, callback, function (rdata) {
+            if (rdata && rdata.success) {
+                this.data.published = true;
+
+                // toggle buttons
+                this.toolbarButtons.unpublish.show();
+
+                if (this.toolbarButtons.save) {
+                    this.toolbarButtons.save.hide();
+                }
+
+                pimcore.elementservice.setElementPublishedState({
+                    elementType: "document",
+                    id: this.id,
+                    published: true
+                });
             }
-        };
-
-        this.data.published = true;
-
-        // toggle buttons
-        this.toolbarButtons.unpublish.show();
-
-        if (this.toolbarButtons.save) {
-            this.toolbarButtons.save.hide();
-        }
-
-        pimcore.elementservice.setElementPublishedState({
-            elementType: "document",
-            id: this.id,
-            published: true
-        });
-
-        this.save("publish", only, callback, function () {
-            this.data.published = previous.published;
-
-            // toggle buttons
-            if (!previous.toolbarButtons.unpublish) {
-                this.toolbarButtons.unpublish.hide();
-            }
-
-            if (previous.toolbarButtons.save) {
-                this.toolbarButtons.save.show();
-            }
-
-            pimcore.elementservice.setElementPublishedState({
-                elementType: "document",
-                id: this.id,
-                published: previous.published
-            });
         }.bind(this));
     },
 
     unpublish: function (only, callback) {
-        var previous = {
-            published: this.data.published,
-            toolbarButtons: {
-                unpublish: this.toolbarButtons.unpublish.isVisible(),
-                save: this.toolbarButtons.save && this.toolbarButtons.save.isVisible()
-            }
-        };
+        this.save("unpublish", only, callback, function (rdata) {
+            if (rdata && rdata.success) {
+                this.data.published = false;
 
-        this.data.published = false;
-
-        // toggle buttons
-        this.toolbarButtons.unpublish.hide();
-
-        if (this.toolbarButtons.save) {
-            this.toolbarButtons.save.show();
-        }
-
-        pimcore.elementservice.setElementPublishedState({
-            elementType: "document",
-            id: this.id,
-            published: false
-        });
-
-        this.save("unpublish", only, callback, function () {
-            this.data.published = previous.published;
-
-            // toggle buttons
-            if (!previous.toolbarButtons.unpublish) {
+                // toggle buttons
                 this.toolbarButtons.unpublish.hide();
-            }
 
-            if (previous.toolbarButtons.save) {
-                this.toolbarButtons.save.show();
-            }
+                if (this.toolbarButtons.save) {
+                    this.toolbarButtons.save.show();
+                }
 
-            pimcore.elementservice.setElementPublishedState({
-                elementType: "document",
-                id: this.id,
-                published: previous.published
-            });
+                pimcore.elementservice.setElementPublishedState({
+                    elementType: "document",
+                    id: this.id,
+                    published: false
+                });
+            }
         }.bind(this));
     },
 
