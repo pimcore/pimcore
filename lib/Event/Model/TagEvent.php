@@ -28,7 +28,7 @@ class TagEvent extends Event
     protected $tag;
 
     /**
-     * DataObjectEvent constructor.
+     * TagEvent constructor.
      *
      * @param Tag $tag
      * @param array $arguments
