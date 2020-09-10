@@ -137,10 +137,6 @@ use Pimcore\Config;
 
 class DefaultController extends FrontendController
 {
- 
-    /**
-     * @param Request $request
-     */
     public function defaultAction(Request $request, Config $config)
     {
         // option 1 - use type-hinting to inject the config service
