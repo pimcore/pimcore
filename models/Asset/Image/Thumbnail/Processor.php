@@ -152,7 +152,6 @@ class Processor
         if (self::hasWebpSupport() && $image->supportsFormat('webp')) {
             // We can use wepb - no need to optimize.
             // @TODO Why can we just adjust the format here without checking if
-            // the format  is source / original and / or if any preserving
             // option is active?
             $optimizedFormat = $optimizedContent = false;
             $format = 'webp';
