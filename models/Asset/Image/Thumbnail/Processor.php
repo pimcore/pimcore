@@ -139,7 +139,7 @@ class Processor
                 return $asset->getFullPath();
             }
         } elseif ($format == 'tiff') {
-            $optimizedFormat = $optimizedContent = false;
+            $optimizedFormat = $optimizeContent = false;
             if (\Pimcore\Tool::isFrontendRequestByAdmin()) {
                 // return a webformat in admin -> tiff cannot be displayed in browser
                 $format = 'png';
