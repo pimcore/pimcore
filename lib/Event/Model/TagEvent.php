@@ -18,7 +18,7 @@ use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Model\Element\Tag;
 use Symfony\Component\EventDispatcher\Event;
 
-class TagEvent extends Event implements ElementEventInterface
+class TagEvent extends Event
 {
     use ArgumentsAwareTrait;
 
@@ -53,13 +53,5 @@ class TagEvent extends Event implements ElementEventInterface
     public function setTag(Tag $tag): void
     {
         $this->tag = $tag;
-    }
-
-    /**
-     * @return Tag
-     */
-    public function getElement()
-    {
-        return $this->getTag();
     }
 }
