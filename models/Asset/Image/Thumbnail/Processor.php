@@ -149,7 +149,7 @@ class Processor
 
         $image = Asset\Image::getImageTransformInstance();
 
-        if (self::hasWebpSupport() && $image->supportsFormat('webp')) {
+        if ($optimizedFormat && self::hasWebpSupport() && $image->supportsFormat('webp')) {
             // @TODO Why can we just adjust the format here without checking if
             $optimizedFormat = $optimizedContent = false;
             $format = 'webp';
