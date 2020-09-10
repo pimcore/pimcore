@@ -371,7 +371,7 @@ class Processor
 
         $generated = true;
 
-        if ($optimizedContent) {
+        if ($optimizeContent) {
             $filePath = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/', '', $fsPath);
             $tmpStoreKey = 'thumb_' . $asset->getId() . '__' . md5($filePath);
             TmpStore::add($tmpStoreKey, $filePath, 'image-optimize-queue');
