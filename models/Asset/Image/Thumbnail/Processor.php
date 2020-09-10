@@ -101,7 +101,7 @@ class Processor
         $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
         $format = strtolower($config->getFormat());
         // Optimize if allowed to strip info.
-        $optimizedContent = (!$config->isPreserveColor() && !$config->isPreserveMetaData());
+        $optimizeContent = (!$config->isPreserveColor() && !$config->isPreserveMetaData());
         $optimizedFormat = false;
 
         if (self::containsTransformationType($config, '1x1_pixel')) {
