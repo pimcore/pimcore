@@ -126,7 +126,7 @@ class Processor
         if ($format == 'print') {
             // Don't optimize images for print as we assume we want images as
             // untouched as possible.
-            $optimizedFormat = $optimizedContent = false;
+            $optimizedFormat = $optimizeContent = false;
             $format = self::getAllowedFormat($fileExt, ['svg', 'jpeg', 'png', 'tiff'], 'png');
 
             if (($format == 'tiff') && \Pimcore\Tool::isFrontendRequestByAdmin()) {
