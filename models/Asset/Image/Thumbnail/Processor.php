@@ -151,7 +151,6 @@ class Processor
 
         if (self::hasWebpSupport() && $image->supportsFormat('webp')) {
             // @TODO Why can we just adjust the format here without checking if
-            // option is active?
             $optimizedFormat = $optimizedContent = false;
             $format = 'webp';
         }
