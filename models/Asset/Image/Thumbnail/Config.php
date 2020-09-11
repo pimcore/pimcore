@@ -127,7 +127,7 @@ class Config extends Model\AbstractModel
     /**
      * @var bool
      */
-    public $keepAnimation = false;
+    public $preserveAnimation = false;
 
     /**
      * @param string|array|self $config
@@ -890,17 +890,17 @@ class Config extends Model\AbstractModel
     /**
      * @return bool
      */
-    public function getKeepAnimation(): bool
+    public function getPreserveAnimation(): bool
     {
-        return $this->keepAnimation;
+        return $this->preserveAnimation;
     }
 
     /**
-     * @param bool $keepAnimation
+     * @param bool $preserveAnimation
      */
-    public function setKeepAnimation(bool $keepAnimation): void
+    public function setPreserveAnimation(bool $preserveAnimation): void
     {
-        $this->keepAnimation = $keepAnimation;
+        $this->preserveAnimation = $preserveAnimation;
     }
 
     /**

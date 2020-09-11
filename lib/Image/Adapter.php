@@ -646,7 +646,7 @@ abstract class Adapter
      */
     public function isPreserveAnimation()
     {
-        return $this->keepAnimation;
+        return $this->preserveAnimation;
     }
 
     /**
@@ -654,7 +654,7 @@ abstract class Adapter
      */
     public function setPreserveAnimation(bool $preserveAnimation): void
     {
-        $this->keepAnimation = $preserveAnimation;
+        $this->preserveAnimation = $preserveAnimation;
     }
 
     /**

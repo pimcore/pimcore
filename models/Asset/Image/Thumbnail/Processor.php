@@ -203,7 +203,7 @@ class Processor
         // transform image
         $image->setPreserveColor($config->isPreserveColor());
         $image->setPreserveMetaData($config->isPreserveMetaData());
-        $image->setPreserveAnimation($config->getKeepAnimation());
+        $image->setPreserveAnimation($config->getPreserveAnimation());
 
         if (!$image->load($fileSystemPath, ['asset' => $asset])) {
             return self::returnPath($errorImage, $returnAbsolutePath);

@@ -173,12 +173,12 @@ pimcore.settings.thumbnail.item = Class.create({
                         style: "margin-bottom: 20px"
                     }, {
                         xtype: "checkbox",
-                        name: "keepAnimation",
-                        boxLabel: t("keep_animation") + " (Imagick)",
-                        checked: this.data.keepAnimation
+                        name: "preserveAnimation",
+                        boxLabel: t("preserve_animation") + " (Imagick)",
+                        checked: this.data.preserveAnimation
                     }, {
                         xtype: "container",
-                        html: "<small>(" + t("keep_animation_info_text") + ")</small>",
+                        html: "<small>(" + t("preserve_animation_info_text") + ")</small>",
                         style: "margin-bottom: 20px"
                     }, {
                         xtype: "checkbox",

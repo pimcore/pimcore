@@ -43,11 +43,6 @@ class Imagick extends Adapter
     protected $imagePath;
 
     /**
-     * @var bool
-     */
-    protected $preserveAnimation;
-
-    /**
      * @param string $imagePath
      * @param array $options
      *
@@ -149,7 +144,7 @@ class Imagick extends Adapter
                 $this->setColorspaceToRGB();
             }
 
-            if ($this->isPreserveAnimation() && $this->resource->getImageFormat() == "GIF") {
+            if ($this->checkPreserveAnimation($i->getImageFormat(), $i, false)) {
                 if (!$this->resource->readImage($imagePath) || !filesize($imagePath)) {
                     return false;
                 }
@@ -296,8 +291,7 @@ class Imagick extends Adapter
             $i->setImageFormat($format);
             $success = File::put($path, $i->getImageBlob());
         } else {
-
-            if ($this->isPreserveAnimation() && $i->getNumberImages() > 1) {
+            if ($this->checkPreserveAnimation($format, $i)) {
                 $success = $i->writeImages($format . ':' . $path, true);
             } else {
                 $success = $i->writeImage($format . ':' . $path);
@@ -313,6 +307,32 @@ class Imagick extends Adapter
         }
 
         return $this;
+    }
+
+    /**
+     * @param string $format
+     * @param \Imagick|null $i
+     * @param bool $checkNumberOfImages
+     * @return bool
+     */
+    protected function checkPreserveAnimation(string $format = "", \Imagick $i = null, bool $checkNumberOfImages = true){
+        if (!$this->isPreserveAnimation()) {
+            return false;
+        }
+
+        if (!$i) {
+            $i = $this->resource;
+        }
+
+        if ($i && $checkNumberOfImages && $i->getNumberImages() <= 1) {
+            return false;
+        }
+
+        if ($format && !in_array($format, ["GIF", "gif", "original", "auto"])) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -489,7 +509,7 @@ class Imagick extends Adapter
     {
         $this->preModify();
 
-        // this is the check for vector formats because they need to have a resolution set
+        // this is the check for vector formats because they needkeep_animation_info_text to have a resolution set
         // this does only work if "resize" is the first step in the image-pipeline
 
         if ($this->isVectorGraphic()) {
@@ -519,7 +539,7 @@ class Imagick extends Adapter
         $width = (int)$width;
         $height = (int)$height;
 
-        if ($this->isPreserveAnimation() && $this->resource->getNumberImages() > 1) {
+        if ($this->checkPreserveAnimation()) {
             foreach ($this->resource as $i => $frame) {
                 $frame->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
             }
@@ -651,7 +671,7 @@ class Imagick extends Adapter
      */
     protected function createCompositeImageFromResource($width, $height, $x, $y, $color = 'transparent', $composite = \Imagick::COMPOSITE_DEFAULT)
     {
-        if ($this->isPreserveAnimation() && $this->resource->getNumberImages() > 1) {
+        if ($this->checkPreserveAnimation()) {
             foreach ($this->resource as $i => $frame) {
                 $imageFrame = $this->createImage($width, $height, $color);
                 $imageFrame->compositeImage($frame, $composite, $x, $y);
