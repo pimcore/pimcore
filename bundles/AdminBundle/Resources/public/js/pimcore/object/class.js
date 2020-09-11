@@ -14,7 +14,6 @@
 pimcore.registerNS("pimcore.object.klass");
 pimcore.object.klass = Class.create({
 
-    // Forbidden names must be lowercase!
     forbiddenNames: [
         "abstract", "class", "data", "folder", "list", "permissions", "resource", "concrete", "interface",
         "service", "fieldcollection", "localizedfield", "objectbrick"
@@ -279,24 +278,28 @@ pimcore.object.klass = Class.create({
 
     addClassComplete: function (className, classIdentifier, classes) {
 
-        var reservedNameRegex = /^(query|store|relations)_[^_]+$/;
+        var isReservedName = /^(query|store|relations)_[^_]+$/;
+        var isValidClassName = /^[a-zA-Z][a-zA-Z0-9_]+$/;
+        var isValidClassIdentifier = /^[a-zA-Z0-9][a-zA-Z0-9_]*$/;
 
-        var isValidClassName = /^[a-zA-Z][a-zA-Z0-9_]+$/.test(className);
-        var isForbiddenName = in_array(className.toLowerCase(), this.forbiddenNames);
-
-        if (className.length <= 2 || isValidClassName || reservedNameRegex.test(className) || isForbiddenName) {
+        if (className.length <= 2 ||
+            isReservedName.test(className) ||
+            isValidClassName.test(className) ||
+            in_arrayi(className, this.forbiddenNames)
+        ) {
             Ext.Msg.alert(' ', t('invalid_class_name'));
             return false;
         }
 
-        var isValidClassIdentifier = /^[a-zA-Z0-9][a-zA-Z0-9_]*$/.test(classIdentifier);
-
-        if (classIdentifier.length < 1 || isValidClassIdentifier || reservedNameRegex.test(classIdentifier)) {
+        if (classIdentifier.length < 1 ||
+            isReservedName.test(classIdentifier) ||
+            isValidClassIdentifier.test(classIdentifier)
+        ) {
             Ext.Msg.alert(' ', t('invalid_identifier'));
             return false;
         }
 
-        if (in_array(classIdentifier.toLowerCase(), classes["existingIds"])) {
+        if (in_arrayi(classIdentifier, classes["existingIds"])) {
             Ext.Msg.alert(' ', t('identifier_already_exists'));
             return false;
         }

@@ -15,8 +15,6 @@ pimcore.registerNS("pimcore.object.classes.data.data");
 pimcore.object.classes.data.data = Class.create({
 
     invalidFieldNames: false,
-
-    // Forbidden names must be lowercase!
     forbiddenNames: [
         "id", "key", "path", "type", "index", "classname", "creationdate", "userowner", "value", "class", "list",
         "fullpath", "childs", "values", "cachetag", "cachetags", "parent", "published", "valuefromparent",
@@ -300,10 +298,10 @@ pimcore.object.classes.data.data = Class.create({
         var data = this.getData();
         data.name = trim(data.name);
 
-        var isValidName = /^[a-zA-Z][a-zA-Z0-9_]*$/.test(data.name);
-        var isForbiddenName = in_array(data.name.toLowerCase(), this.forbiddenNames);
+        var isValidName = /^[a-zA-Z][a-zA-Z0-9_]*$/;
+        var isForbiddenName = in_arrayi(data.name, this.forbiddenNames);
 
-        if (data.name.length > 1 && isValidName && !isForbiddenName) {
+        if (data.name.length > 1 && isValidName.test(data.name) && !isForbiddenName) {
             return true;
         }
 

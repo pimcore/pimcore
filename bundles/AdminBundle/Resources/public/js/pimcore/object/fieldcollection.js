@@ -14,7 +14,6 @@
 pimcore.registerNS("pimcore.object.fieldcollection");
 pimcore.object.fieldcollection = Class.create({
 
-    // Forbidden names must be lowercase!
     forbiddenNames: [
         "abstract", "class", "data", "folder", "list", "permissions", "resource", "concrete", "interface"
     ],
@@ -190,10 +189,9 @@ pimcore.object.fieldcollection = Class.create({
 
     addFieldComplete: function (button, value, object) {
 
-        var isValidName = /^[a-zA-Z]+$/.test(value);
-        var isForbiddenName = in_array(value.toLowerCase(), this.forbiddenNames);
+        var isValidName = /^[a-zA-Z]+$/;
 
-        if (button == "ok" && value.length > 2 && isValidName && !isForbiddenName) {
+        if (button == "ok" && value.length > 2 && isValidName.test(value) && !in_arrayi(value, this.forbiddenNames)) {
             Ext.Ajax.request({
                 url: Routing.generate('pimcore_admin_dataobject_class_fieldcollectionupdate'),
                 method: 'POST',
