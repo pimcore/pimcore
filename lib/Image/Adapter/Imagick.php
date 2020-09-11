@@ -328,7 +328,7 @@ class Imagick extends Adapter
             return false;
         }
 
-        if ($format && !in_array($format, ["GIF", "gif", "original", "auto"])) {
+        if ($format && !in_array(strtolower($format), ["gif", "original", "auto"])) {
             return false;
         }
 
