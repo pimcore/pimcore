@@ -191,7 +191,7 @@ pimcore.object.fieldcollection = Class.create({
     addFieldComplete: function (button, value, object) {
 
         var isValidName = /^[a-zA-Z]+$/.test(value);
-        var isForbiddenName = in_array(value, this.forbiddenNames);
+        var isForbiddenName = in_array(value.toLowerCase(), this.forbiddenNames);
 
         if (button == "ok" && value.length > 2 && isValidName && !isForbiddenName) {
             Ext.Ajax.request({
