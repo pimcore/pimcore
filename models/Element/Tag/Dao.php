@@ -329,4 +329,16 @@ class Dao extends Model\Dao\AbstractDao
 
         return $tag;
     }
+
+    /**
+     * @return bool
+     */
+    public function exists()
+    {
+        if (is_null($this->model->getId())) {
+            return false;
+        }
+
+        return (bool) $this->db->fetchOne('SELECT COUNT(*) FROM tags WHERE id = ?', $this->model->getId());
+    }
 }
