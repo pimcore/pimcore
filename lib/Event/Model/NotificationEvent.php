@@ -57,6 +57,7 @@ class NotificationEvent extends Event implements ElementEventInterface
 
     /**
      * @deprecated use getNotification() instead - will be removed in Pimcore v7
+     *
      * @return Notification
      */
     public function getElement()
