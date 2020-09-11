@@ -14,9 +14,11 @@
 pimcore.registerNS("pimcore.object.klass");
 pimcore.object.klass = Class.create({
 
-    forbiddennames: ["abstract", "class", "data", "folder", "list", "permissions", "resource", "concrete", "interface",
-        "service", "fieldcollection", "localizedfield", "objectbrick"],
-
+    // Forbidden names must be lowercase!
+    forbiddenNames: [
+        "abstract", "class", "data", "folder", "list", "permissions", "resource", "concrete", "interface",
+        "service", "fieldcollection", "localizedfield", "objectbrick"
+    ],
 
     initialize: function () {
 
@@ -279,9 +281,9 @@ pimcore.object.klass = Class.create({
 
         var classNameRegresult = className.match(/[a-zA-Z][a-zA-Z0-9_]+/);
         var underscoresRegresult = className.match(/^(query|store|relations)_[^_]+$/);
+        var isForbiddenName = in_array(className.toLowerCase(), this.forbiddenNames)
 
-        if (className.length <= 2 || classNameRegresult != className ||underscoresRegresult
-            || in_array(className.toLowerCase(), this.forbiddennames)) {
+        if (className.length <= 2 || classNameRegresult != className || underscoresRegresult || isForbiddenName) {
             Ext.Msg.alert(' ', t('invalid_class_name'));
             return false;
         }
