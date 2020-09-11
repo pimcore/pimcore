@@ -509,7 +509,7 @@ class Imagick extends Adapter
     {
         $this->preModify();
 
-        // this is the check for vector formats because they needkeep_animation_info_text to have a resolution set
+        // this is the check for vector formats because they need to have a resolution set
         // this does only work if "resize" is the first step in the image-pipeline
 
         if ($this->isVectorGraphic()) {
