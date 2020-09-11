@@ -300,10 +300,10 @@ pimcore.object.classes.data.data = Class.create({
         var data = this.getData();
         data.name = trim(data.name);
 
-        var regresult = data.name.match(/[a-zA-Z][a-zA-Z0-9_]*/);
+        var isValidName = /^[a-zA-Z][a-zA-Z0-9_]*$/.test(data.name);
         var isForbiddenName = in_array(data.name.toLowerCase(), this.forbiddenNames);
 
-        if (data.name.length > 1 && regresult == data.name && !isForbiddenName) {
+        if (data.name.length > 1 && isValidName && !isForbiddenName) {
             return true;
         }
 

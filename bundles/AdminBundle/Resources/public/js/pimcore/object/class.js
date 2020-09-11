@@ -279,19 +279,19 @@ pimcore.object.klass = Class.create({
 
     addClassComplete: function (className, classIdentifier, classes) {
 
-        var classNameRegresult = className.match(/[a-zA-Z][a-zA-Z0-9_]+/);
-        var underscoresRegresult = className.match(/^(query|store|relations)_[^_]+$/);
-        var isForbiddenName = in_array(className.toLowerCase(), this.forbiddenNames)
+        var reservedNameRegex = /^(query|store|relations)_[^_]+$/;
 
-        if (className.length <= 2 || classNameRegresult != className || underscoresRegresult || isForbiddenName) {
+        var isValidClassName = /^[a-zA-Z][a-zA-Z0-9_]+$/.test(className);
+        var isForbiddenName = in_array(className.toLowerCase(), this.forbiddenNames);
+
+        if (className.length <= 2 || isValidClassName || reservedNameRegex.test(className) || isForbiddenName) {
             Ext.Msg.alert(' ', t('invalid_class_name'));
             return false;
         }
 
-        var classIdentifierRegresult = classIdentifier.match(/[a-zA-Z0-9][a-zA-Z0-9_]*/);
-        var underscoresRegresult = classIdentifier.match(/^(query|store|relations)_[^_]+$/);
+        var isValidClassIdentifier = /^[a-zA-Z0-9][a-zA-Z0-9_]*$/.test(classIdentifier);
 
-        if (classIdentifier.length < 1 || classIdentifierRegresult != classIdentifier || underscoresRegresult) {
+        if (classIdentifier.length < 1 || isValidClassIdentifier || reservedNameRegex.test(classIdentifier)) {
             Ext.Msg.alert(' ', t('invalid_identifier'));
             return false;
         }

@@ -146,10 +146,10 @@ pimcore.object.objectbrick = Class.create(pimcore.object.fieldcollection, {
 
     addFieldComplete: function (button, value, object) {
 
-        var regresult = value.match(/[a-zA-Z]+[a-zA-Z0-9]*/);
+        var isValidName = /^[a-zA-Z][a-zA-Z0-9]*$/.test(value);
         var isForbiddenName = in_arrayi(value, this.forbiddenNames);
 
-        if (button == "ok" && value.length > 2 && regresult == value && !isForbiddenName) {
+        if (button == "ok" && value.length > 2 && isValidName && !isForbiddenName) {
             Ext.Ajax.request({
                 url: Routing.generate('pimcore_admin_dataobject_class_objectbrickupdate'),
                 method: 'POST',
