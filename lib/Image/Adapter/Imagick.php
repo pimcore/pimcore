@@ -671,6 +671,7 @@ class Imagick extends Adapter
      */
     protected function createCompositeImageFromResource($width, $height, $x, $y, $color = 'transparent', $composite = \Imagick::COMPOSITE_DEFAULT)
     {
+        $newImage = null;
         if ($this->checkPreserveAnimation()) {
             foreach ($this->resource as $i => $frame) {
                 $imageFrame = $this->createImage($width, $height, $color);
