@@ -19,8 +19,12 @@ namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\EditableHandlerInterface;
+use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
+use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Logger;
 use Pimcore\Model;
+use Pimcore\Model\Document;
+use Pimcore\Templating\Renderer\EditableRenderer;
 use Pimcore\Tool;
 use Pimcore\Tool\HtmlUtils;
 
@@ -164,13 +168,14 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             }
 
             $this->blockStarted = false;
+            $info = $this->buildInfoObject();
 
             if (!$manual && !$disabled) {
                 $this->blockConstruct();
-                $this->blockStart();
+                $this->blockStart($info);
 
                 $this->blockStarted = true;
-                $this->content();
+                $this->content($info);
             } elseif (!$manual) {
                 $this->current++;
             }
@@ -185,7 +190,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         }
     }
 
-    public function content()
+    protected function buildInfoObject(): Area\Info
     {
         // create info object and assign it to the view
         $info = new Area\Info();
@@ -212,6 +217,15 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
         $info->setParams($params);
 
+        return $info;
+    }
+
+    public function content($info = null)
+    {
+        if(!$info) {
+            $info = $this->buildInfoObject();
+        }
+
         if ($this->editmode || !isset($this->currentIndex['hidden']) || !$this->currentIndex['hidden']) {
             $this->getEditableHandler()->renderAreaFrontend($info);
             $this->brickTypeUsageCounter += [$this->currentIndex['type'] => 0];
@@ -226,7 +240,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      */
     private function getEditableHandler()
     {
-        // TODO inject area handler via DI when tags are built through container
+        // TODO inject area handler via DI when editables are built through container
         return \Pimcore::getContainer()->get(EditableHandlerInterface::class);
     }
 
@@ -360,9 +374,10 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * Is called evertime a new iteration starts (new entry of the block while looping)
+     * Is called everytime a new iteration starts (new entry of the block while looping)
+     * @param null $info
      */
-    public function blockStart()
+    public function blockStart($info = null)
     {
         $attributes = [
             'data-name' => $this->getName(),
@@ -379,6 +394,15 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             'type' => $this->indices[$this->current]['type'],
             'data-hidden' => $hidden,
         ];
+
+        $areabrickManager = \Pimcore::getContainer()->get(AreabrickManagerInterface::class);
+
+        $dialogConfig = null;
+        $brick = $areabrickManager->getBrick($this->indices[$this->current]['type']);
+        if($this->getEditmode() && $brick instanceof EditableDialogBoxInterface) {
+            $dialogConfig = $brick->getEditableDialogBoxConfiguration($this, $info);
+            $dialogConfig->setId('dialogBox-' . $this->getName() . "-" . $this->indices[$this->current]['key']);
+        }
 
         $attr = HtmlUtils::assembleAttributeString($attributes);
         $oAttr = HtmlUtils::assembleAttributeString($outerAttributes);
@@ -398,11 +422,51 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $this->outputEditmode('<div class="pimcore_block_type" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_options" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_visibility" ' . $attr . '></div>');
+
+        if($dialogConfig) {
+            $dialogAttributes = [
+                'data-dialog-id' => $dialogConfig->getId(),
+            ];
+
+            $dialogAttributes = HtmlUtils::assembleAttributeString($dialogAttributes);
+
+            $this->outputEditmode('<div class="pimcore_block_dialog" ' . $attr . ' ' . $dialogAttributes . '></div>');
+        }
+
         $this->outputEditmode('<div class="pimcore_block_label" ' . $attr . '></div>');
         $this->outputEditmode('<div class="pimcore_block_clear" ' . $attr . '></div>');
 
         $this->outputEditmode('</div>'); // .pimcore_area_buttons_inner
         $this->outputEditmode('</div>'); // .pimcore_area_buttons
+
+        if($dialogConfig) {
+            $editableRenderer = \Pimcore::getContainer()->get(EditableRenderer::class);
+            $this->outputEditmode('<template id="dialogBoxConfig-' . $dialogConfig->getId() . '">' . \json_encode($dialogConfig) . '</template>');
+            $this->renderDialogBoxEditables($dialogConfig->getItems(), $editableRenderer, $dialogConfig->getId());
+        }
+    }
+
+    /**
+     * @param array $config
+     * @param EditableRenderer $editableRenderer
+     * @param string $dialogId
+     */
+    private function renderDialogBoxEditables(array $config, EditableRenderer $editableRenderer, string $dialogId) {
+
+        if(isset($config['items']) && is_array($config['items'])) {
+            // layout component
+            foreach($config['items'] as $child) {
+                $this->renderDialogBoxEditables($child, $editableRenderer, $dialogId);
+            }
+        } elseif (isset($config['name']) && isset($config['type'])) {
+            $editable = $editableRenderer->getEditable($this->getDocument(), $config['type'], $config['name']);
+            $editable->setInDialogBox($dialogId);
+            $this->outputEditmode($editable->admin());
+        } elseif (is_array($config) && isset($config[0])) {
+            foreach($config as $item) {
+                $this->renderDialogBoxEditables($item, $editableRenderer, $dialogId);
+            }
+        }
     }
 
     /**

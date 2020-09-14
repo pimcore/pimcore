@@ -145,6 +145,7 @@ class EditableRenderer implements LoggerAwareInterface
                     $editable->setView($view);
                     $editable->setEditmode($editmode);
                     $editable->setOptions($options);
+                    $editable->setDocument($document);
                 } else {
                     $editable = Editable::factory($type, $name, $document->getId(), $options, null, $view, $editmode);
                     $document->setEditable($name, $editable);
