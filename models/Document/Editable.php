@@ -433,10 +433,10 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @param string $name
-     * @param $value
-     * @return $this
+     * @param mixed $value
+     * @return self
      */
-    public function setOption(string $name, $value)
+    public function setOption(string $name, $value): self
     {
         if(!is_array($this->options)) {
             $this->options = [];
