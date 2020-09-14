@@ -9,7 +9,7 @@ class Version20200807105448 extends AbstractPimcoreMigration
 {
     public function doesSqlMigrations(): bool
     {
-        return false;
+        return true;
     }
 
     /**
