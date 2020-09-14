@@ -20,6 +20,9 @@ use Pimcore\Model\Document\Editable\Area\Info;
 use Pimcore\Model\Document\Tag;
 use Pimcore\Templating\Model\ViewModelInterface;
 
+/**
+ * @deprecated will be removed in v7, use EditableHandler directly instead
+ */
 class DelegatingEditableHandler implements EditableHandlerInterface
 {
     /**
