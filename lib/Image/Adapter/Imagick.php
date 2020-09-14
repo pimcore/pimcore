@@ -661,10 +661,10 @@ class Imagick extends Adapter
     }
 
     /**
-     * @param $width
-     * @param $height
-     * @param $x
-     * @param $y
+     * @param int $width
+     * @param int $height
+     * @param int $x
+     * @param int $y
      * @param string $color
      * @param int $composite
      * @return \Imagick
