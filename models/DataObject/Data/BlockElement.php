@@ -27,7 +27,6 @@ use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
-use Pimcore\Model\Version\MarshalMatcher;
 use Pimcore\Model\Version\SetDumpStateFilter;
 use Pimcore\Model\Version\UnmarshalMatcher;
 
@@ -175,7 +174,6 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         }
     }
 
-
     /**
      * @return bool
      */
@@ -206,7 +204,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
 
         $context = [
             'source' => __METHOD__,
-            'conversion' => false
+            'conversion' => false,
         ];
         $copier = Service::getDeepCopyInstance($this, $context);
         $copier->addFilter(new SetDumpStateFilter(false), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
@@ -227,8 +225,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
             new \Pimcore\Model\Element\DeepCopy\MarshalMatcher(null, null)
         );
         $data = $copier->copy($this);
+
         return $data;
     }
-
-
 }

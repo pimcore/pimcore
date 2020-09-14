@@ -7,10 +7,9 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Data\Hotspotimage;
 use Pimcore\Model\DataObject\Data\Link;
-use Pimcore\Model\DataObject\RelationTest;
 use Pimcore\Model\DataObject\Service;
-use Pimcore\Model\DataObject\unittestBlock;
 use Pimcore\Model\DataObject\Unittest;
+use Pimcore\Model\DataObject\unittestBlock;
 use Pimcore\Tests\Test\ModelTestCase;
 use Pimcore\Tests\Util\TestHelper;
 
@@ -63,6 +62,7 @@ class BlockTest extends ModelTestCase
     {
         $link = new Link();
         $link->setPath($document);
+
         return $link;
     }
 
@@ -138,7 +138,7 @@ class BlockTest extends ModelTestCase
         $loadedLink = $loadedData[0]['blocklink']->getData();
         $this->assertEquals($targetDocument->getId(), $loadedLink->getObject()->getId());
 
-        $loadedHotspotImage =  $loadedData[0]['blockhotspotimage']->getData();
+        $loadedHotspotImage = $loadedData[0]['blockhotspotimage']->getData();
         $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());
 
         if (!$cacheEnabled) {
@@ -188,7 +188,7 @@ class BlockTest extends ModelTestCase
         $loadedLink = $loadedData[0]['lblocklink']->getData();
         $this->assertEquals($targetDocument->getId(), $loadedLink->getObject()->getId());
 
-        $loadedHotspotImage =  $loadedData[0]['lblockhotspotimage']->getData();
+        $loadedHotspotImage = $loadedData[0]['lblockhotspotimage']->getData();
         $this->assertEquals($asset->getId(), $loadedHotspotImage->getImage()->getId());
 
         if (!$cacheEnabled) {
@@ -225,14 +225,14 @@ class BlockTest extends ModelTestCase
 
         //update block element - manyToManyRelations
         $referenceNew = TestHelper::createEmptyObject();
-        $source->getLtestblock('de')[0]["blockmanyToManyRelations"]->setData($referenceNew);
+        $source->getLtestblock('de')[0]['blockmanyToManyRelations']->setData($referenceNew);
         $source->save();
 
         //reload target and fetch source
         $target = AbstractObject::getById($target->getId(), true);
         $sourceFromRef = $target->getHref();
 
-        $loadedReference = $sourceFromRef->getLtestblock('de')[0]["blockmanyToManyRelations"]->getData();
+        $loadedReference = $sourceFromRef->getLtestblock('de')[0]['blockmanyToManyRelations']->getData();
 
         $this->assertEquals($referenceNew->getId(), $loadedReference->getId());
 
