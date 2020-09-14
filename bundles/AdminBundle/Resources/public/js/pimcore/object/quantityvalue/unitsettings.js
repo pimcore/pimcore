@@ -237,33 +237,36 @@ pimcore.object.quantityValue.unitsettings = Class.create({
         Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
             function (button, value, object) {
                 var regresult = value.match(/[a-zA-Z0-9_\-]+/);
-                if (button == "ok" && value.length >= 1 && regresult == value) {
-                    // this is rather a workaround, Ext doesn't sync if the id field is already filled.
-                    Ext.Ajax.request({
-                        url: Routing.generate('pimcore_admin_dataobject_quantityvalue_unitproxyget', {xaction: 'create'}),
-                        method: 'POST',
-                        params: {
-                            data: Ext.encode({
-                                id: value
-                            })
-                        },
-                        success: function() {
-                            var u = {
-                                id: value
-                            };
-                            this.cellEditing.completeEdit();
-                            let recs = this.grid.store.insert(0, [u]);
+                if (button == "ok") {
+                    if (value.length >= 1 && regresult == value) {
 
-                            this.cellEditing.startEditByPosition({
-                                row: 0,
-                                column: 0
-                            });
+                        // this is rather a workaround, Ext doesn't sync if the id field is already filled.
+                        Ext.Ajax.request({
+                            url: Routing.generate('pimcore_admin_dataobject_quantityvalue_unitproxyget', {xaction: 'create'}),
+                            method: 'POST',
+                            params: {
+                                data: Ext.encode({
+                                    id: value
+                                })
+                            },
+                            success: function () {
+                                var u = {
+                                    id: value
+                                };
+                                this.cellEditing.completeEdit();
+                                let recs = this.grid.store.insert(0, [u]);
 
-                        }.bind(this)
-                    });
+                                this.cellEditing.startEditByPosition({
+                                    row: 0,
+                                    column: 0
+                                });
 
-                } else {
-                    Ext.Msg.alert(' ', t('failed_to_create_new_item'));
+                            }.bind(this)
+                        });
+
+                    } else {
+                        Ext.Msg.alert(' ', t('failed_to_create_new_item'));
+                    }
                 }
             }.bind(this)
         );

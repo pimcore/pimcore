@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\DataObject\QuantityValue\Unit;
 
-use Pimcore\Db;
 use Pimcore\Model;
 
 /**
