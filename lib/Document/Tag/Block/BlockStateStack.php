@@ -17,69 +17,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Tag\Block;
 
-/**
- * Handles block state (current block level, current block index). This is the
- * data which previously was handled in Registry pimcore_tag_block_current and
- * pimcore_tag_block_numeration.
- */
-final class BlockStateStack implements \Countable
-{
+use Pimcore\Document\Editable\Block\BlockStateStack as EditableBlockStateStack;
+
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', BlockStateStack::class, EditableBlockStateStack::class), E_USER_DEPRECATED);
+
+class_exists(EditableBlockStateStack::class);
+
+if (false) {
     /**
-     * @var BlockState[]
+     * @deprecated use \Pimcore\Document\Editable\Block\BlockStateStack instead.
      */
-    private $states = [];
-
-    public function __construct()
+    class BlockStateStack extends EditableBlockStateStack
     {
-        // we need to make sure there's a default state on the stack
-        $this->push();
-    }
-
-    /**
-     * Adds a new state to the stack
-     *
-     * @param BlockState|null $blockState
-     */
-    public function push(BlockState $blockState = null)
-    {
-        if (null === $blockState) {
-            $blockState = new BlockState();
-        }
-
-        array_push($this->states, $blockState);
-    }
-
-    /**
-     * Removes current state from the stack
-     *
-     * @return BlockState
-     */
-    public function pop(): BlockState
-    {
-        if (count($this->states) <= 1) {
-            throw new \LogicException('Can\'t pop the last state off the stack');
-        }
-
-        return array_pop($this->states);
-    }
-
-    /**
-     * Returns current state
-     *
-     * @return BlockState
-     */
-    public function getCurrentState(): BlockState
-    {
-        if (empty($this->states)) {
-            // this should never happen
-            throw new \RuntimeException('State stack is empty');
-        }
-
-        return array_slice($this->states, -1)[0];
-    }
-
-    public function count(): int
-    {
-        return count($this->states);
     }
 }

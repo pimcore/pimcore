@@ -17,11 +17,12 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Event\Model\TagEvent;
+use Pimcore\Event\TagEvents;
 use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Element\Tag\Dao getDao()
- * @method void delete()
  */
 class Tag extends Model\AbstractModel
 {
@@ -98,7 +99,15 @@ class Tag extends Model\AbstractModel
      */
     public static function addTagToElement($cType, $cId, Tag $tag)
     {
+        $event = new TagEvent($tag, [
+            'elementType' => $cType,
+            'elementId' => $cId,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_ADD_TO_ELEMENT, $event);
+
         $tag->getDao()->addTagToElement($cType, $cId);
+
+        \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_ADD_TO_ELEMENT, $event);
     }
 
     /**
@@ -110,7 +119,15 @@ class Tag extends Model\AbstractModel
      */
     public static function removeTagFromElement($cType, $cId, Tag $tag)
     {
+        $event = new TagEvent($tag, [
+            'elementType' => $cType,
+            'elementId' => $cId,
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_REMOVE_FROM_ELEMENT, $event);
+
         $tag->getDao()->removeTagFromElement($cType, $cId);
+
+        \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_REMOVE_FROM_ELEMENT, $event);
     }
 
     /**
@@ -176,8 +193,22 @@ class Tag extends Model\AbstractModel
 
     public function save()
     {
+        $isUpdate = $this->exists();
+
+        if ($isUpdate) {
+            \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_UPDATE, new TagEvent($this));
+        } else {
+            \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_ADD, new TagEvent($this));
+        }
+
         $this->correctPath();
         $this->getDao()->save();
+
+        if ($isUpdate) {
+            \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_UPDATE, new TagEvent($this));
+        } else {
+            \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_ADD, new TagEvent($this));
+        }
     }
 
     /**
@@ -337,5 +368,27 @@ class Tag extends Model\AbstractModel
         } else {
             $this->idPath = '/';
         }
+    }
+
+    /**
+     * Deletes a tag
+     *
+     * @throws \Exception
+     */
+    public function delete()
+    {
+        \Pimcore::getEventDispatcher()->dispatch(TagEvents::PRE_DELETE, new TagEvent($this));
+
+        $this->getDao()->delete();
+
+        \Pimcore::getEventDispatcher()->dispatch(TagEvents::POST_DELETE, new TagEvent($this));
+    }
+
+    /**
+     * @return bool
+     */
+    public function exists()
+    {
+        return $this->getDao()->exists();
     }
 }

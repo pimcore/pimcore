@@ -166,13 +166,6 @@ class Asset extends Element\AbstractElement
     protected $hasMetaData = false;
 
     /**
-     * Dependencies of this asset
-     *
-     * @var Dependency|null
-     */
-    protected $dependencies;
-
-    /**
      * Contains a list of sibling documents
      *
      * @var array|null
@@ -854,7 +847,7 @@ class Asset extends Element\AbstractElement
             if (!empty($assetsConfig['versions']['steps'])
                 || !empty($assetsConfig['versions']['days'])
                 || $setModificationDate) {
-                $saveStackTrace = !$assetsConfig['versions']['disable_stack_trace'];
+                $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
             }
 
@@ -1102,18 +1095,6 @@ class Asset extends Element\AbstractElement
         } catch (\Exception $e) {
             Logger::crit($e);
         }
-    }
-
-    /**
-     * @return Dependency
-     */
-    public function getDependencies()
-    {
-        if (!$this->dependencies) {
-            $this->dependencies = Dependency::getBySourceId($this->getId(), 'asset');
-        }
-
-        return $this->dependencies;
     }
 
     /**
@@ -1954,9 +1935,8 @@ class Asset extends Element\AbstractElement
 
     public function __sleep()
     {
-        $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'hasChildren', 'versions', 'parent', 'stream'];
+        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the asset (eg. for a new version), including children for recyclebin
@@ -1966,13 +1946,7 @@ class Asset extends Element\AbstractElement
             $blockedVars = array_merge($blockedVars, ['children', 'properties']);
         }
 
-        foreach ($parentVars as $key) {
-            if (!in_array($key, $blockedVars)) {
-                $finalVars[] = $key;
-            }
-        }
-
-        return $finalVars;
+        return array_diff($parentVars, $blockedVars);
     }
 
     public function __wakeup()
@@ -2092,7 +2066,6 @@ class Asset extends Element\AbstractElement
         $this->versions = null;
         $this->hasSiblings = null;
         $this->siblings = null;
-        $this->dependencies = null;
         $this->scheduledTasks = null;
         $this->closeStream();
     }

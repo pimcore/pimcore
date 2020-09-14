@@ -26,7 +26,7 @@ Brick-specific configurations are passed using the `params` configuration (see a
 
 | Name                | Return        | Description                                                 |
 |---------------------|---------------|-------------------------------------------------------------|
-| `getElement($name)` | Document\Tag  | Retrieves an editable from within the actual area           |
+| `getElement($name)` | Document\Editable  | Retrieves an editable from within the actual area           |
 
 ## Example
 
@@ -46,6 +46,8 @@ Brick-specific configurations are passed using the `params` configuration (see a
 
 ## Example with Parameters
 
+<div class="code-section">
+
 ```php
 <div>
     <?= $this->area('myArea', [
@@ -61,6 +63,7 @@ Brick-specific configurations are passed using the `params` configuration (see a
     ]); ?>
 </div>
 ```
+
 ```twig
 <div>
     {{ pimcore_area('myArea', {
@@ -75,6 +78,8 @@ Brick-specific configurations are passed using the `params` configuration (see a
 </div>
 ```
 
+</div>
+
 Get the params in your brick:
 
 ```php
@@ -82,7 +87,6 @@ Get the params in your brick:
     <?= $this->param1; ?>
 </div>
 ```
-
 
 ### Accessing Data Within an Area Element
 
@@ -93,10 +97,10 @@ Assuming your area uses a brick `gallery-single-images` which contains a `galler
 // load document
 $document = \Pimcore\Model\Document\Page::getByPath('/en/basic-examples/galleries');
 
-/** @var \Pimcore\Model|Document\Tag\Area $area */
+/** @var \Pimcore\Model\Document\Editable\Area $area */
 $area = $document->getEditable('myArea');
 
-/** @var \Pimcore\Model|Document\Tag\Block $block */
+/** @var \Pimcore\Model\Document\Editable\Block $block */
 $block = $area->getElement('gallery');
 ?>
 ```

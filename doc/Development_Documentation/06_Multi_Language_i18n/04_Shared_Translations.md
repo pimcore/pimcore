@@ -54,8 +54,7 @@ You can also use variable interpolation in localized messages.
 </div>
 ```
 
-
-```twig 
+```twig
 <div>
     <address>&copy; {{ 'Copyright'|trans }}</address>
     <a href="/imprint">{{ 'Imprint'|trans }}</a>

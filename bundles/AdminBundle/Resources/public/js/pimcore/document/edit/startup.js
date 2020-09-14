@@ -137,18 +137,19 @@ Ext.onReady(function () {
         }
         editableNames.push(name);
 
-        var tag = new pimcore.document.tags[type](id, name, options, data, inherited);
-        tag.setRealName(config.realName);
-        tag.setInDialogBox(config.inDialogBox);
+        // @TODO: change pimcore.document.tags to pimcore.document.editables in v7
+        var editable = new pimcore.document.tags[type](id, name, options, data, inherited);
+        editable.setRealName(config.realName);
+        editable.setInDialogBox(config.inDialogBox);
 
         if(!config.inDialogBox) {
             if (typeof tag['render'] === 'function') {
-                tag.render();
+                editable.render();
             }
-            tag.setInherited(inherited);
+            editable.setInherited(inherited);
         }
 
-        return tag;
+        return editable;
     }
 
     if (typeof Ext == "object" && typeof pimcore == "object") {

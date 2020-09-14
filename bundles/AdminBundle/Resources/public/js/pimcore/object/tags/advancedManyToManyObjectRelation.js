@@ -218,12 +218,12 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
                 }
             } else if (this.fieldConfig.columns[i].type == "bool") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
-                    if (value) {
-                        return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
-                    } else {
-                        return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
+                    if (this.fieldConfig.noteditable) {
+                        metaData.tdCls += ' grid_cbx_noteditable';
                     }
-                };
+
+                    return Ext.String.format('<div style="text-align: center"><div role="button" class="x-grid-checkcolumn {0}" style=""></div></div>', value ? 'x-grid-checkcolumn-checked' : '');
+                }.bind(this);
 
                 listeners = {
                     "mousedown": this.cellMousedown.bind(this, this.fieldConfig.columns[i].key, this.fieldConfig.columns[i].type)
@@ -600,7 +600,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
 
     getCellEditValue: function () {
         return this.getValue();
-    }
+    },
 
 });
 

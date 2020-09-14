@@ -153,11 +153,6 @@ class AbstractObject extends Model\Element\AbstractElement
     protected $o_hasSiblings = [];
 
     /**
-     * @var Model\Dependency|null
-     */
-    protected $o_dependencies;
-
-    /**
      * @var array
      */
     protected $o_children = [];
@@ -366,7 +361,9 @@ class AbstractObject extends Model\Element\AbstractElement
         if (!in_array(static::class, [__CLASS__, Concrete::class, Folder::class], true)) {
             /** @var Concrete $tmpObject */
             $tmpObject = new static();
-            $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
+            if ($tmpObject instanceof Concrete) {
+                $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
+            }
         }
 
         if (is_array($config)) {
@@ -866,18 +863,6 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return Model\Dependency
-     */
-    public function getDependencies()
-    {
-        if (!$this->o_dependencies) {
-            $this->o_dependencies = Model\Dependency::getBySourceId($this->getId(), 'object');
-        }
-
-        return $this->o_dependencies;
-    }
-
-    /**
      * @return string
      */
     public function getFullPath()
@@ -1263,10 +1248,9 @@ class AbstractObject extends Model\Element\AbstractElement
 
     public function __sleep()
     {
-        $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = ['o_dependencies', 'o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
+        $blockedVars = ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -1277,13 +1261,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $blockedVars = array_merge($blockedVars, ['o_children', 'o_properties']);
         }
 
-        foreach ($parentVars as $key) {
-            if (!in_array($key, $blockedVars)) {
-                $finalVars[] = $key;
-            }
-        }
-
-        return $finalVars;
+        return array_diff($parentVars, $blockedVars);
     }
 
     public function __wakeup()
@@ -1505,7 +1483,6 @@ class AbstractObject extends Model\Element\AbstractElement
         // note that o_children is currently needed for the recycle bin
         $this->o_hasSiblings = [];
         $this->o_siblings = [];
-        $this->o_dependencies = null;
     }
 }
 

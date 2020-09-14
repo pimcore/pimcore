@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
@@ -86,7 +85,8 @@ class PageController extends DocumentControllerBase
         }
 
         $page = clone $page;
-        $page = $this->getLatestVersion($page);
+        $isLatestVersion = true;
+        $page = $this->getLatestVersion($page, $isLatestVersion);
 
         $pageVersions = Element\Service::getSafeVersionInfo($page->getVersions());
         $page->setVersions(array_splice($pageVersions, -1, 1));
@@ -108,6 +108,7 @@ class PageController extends DocumentControllerBase
         }
 
         $data['url'] = $page->getUrl();
+        $data['documentFromVersion'] = !$isLatestVersion;
 
         $this->preSendDataActions($data, $page);
 
@@ -181,7 +182,7 @@ class PageController extends DocumentControllerBase
             $page->save();
             $this->saveToSession($page);
 
-            $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+            $treeData = $this->getTreeNodeConfig($page);
 
             return $this->adminJson([
                 'success' => true,
@@ -197,7 +198,7 @@ class PageController extends DocumentControllerBase
             $page->saveVersion();
             $this->saveToSession($page);
 
-            $this->addAdminStyle($page, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+            $treeData = $this->getTreeNodeConfig($page);
 
             return $this->adminJson(['success' => true, 'treeData' => $treeData]);
         } else {

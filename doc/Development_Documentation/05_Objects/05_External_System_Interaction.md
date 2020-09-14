@@ -98,7 +98,7 @@ prevent memory issues
 
 To avoid this, you can pass an array with keys (indexes) which should stay in the registry eg. 
 
-```php 
+```php
 \Pimcore::collectGarbage(["myImportantKey", "myConfig"]);
 
 // You can also add items to the static list of globally protected keys by passing them to

@@ -17,120 +17,17 @@
 
 namespace Pimcore\Model\Document\Tag;
 
-use Pimcore\Model;
+use Pimcore\Model\Document\Editable\Table as EditableTable;
 
-/**
- * @method \Pimcore\Model\Document\Tag\Dao getDao()
- */
-class Table extends Model\Document\Tag
-{
-    /**
-     * Contains the text for this element
-     *
-     * @var array
-     */
-    public $data;
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', Table::class, EditableTable::class), E_USER_DEPRECATED);
 
+class_exists(EditableTable::class);
+
+if (false) {
     /**
-     * @see TagInterface::getType
-     *
-     * @return string
+     * @deprecated use \Pimcore\Model\Document\Editable\Table instead.
      */
-    public function getType()
+    class Table extends EditableTable
     {
-        return 'table';
-    }
-
-    /**
-     * @see TagInterface::getData
-     *
-     * @return mixed
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
-     * @see TagInterface::frontend
-     *
-     * @return string
-     */
-    public function frontend()
-    {
-        $html = '';
-
-        if (is_array($this->data) && count($this->data) > 0) {
-            $html .= '<table border="0" cellpadding="0" cellspacing="0">';
-
-            foreach ($this->data as $row) {
-                $html .= '<tr>';
-                foreach ($row as $col) {
-                    $html .= '<td>';
-                    $html .= $col;
-                    $html .= '</td>';
-                }
-                $html .= '</tr>';
-            }
-            $html .= '</table>';
-        }
-
-        return $html;
-    }
-
-    /**
-     * @see DTagInterface::setDataFromResource
-     *
-     * @param mixed $data
-     *
-     * @return $this
-     */
-    public function setDataFromResource($data)
-    {
-        $this->data = \Pimcore\Tool\Serialize::unserialize($data);
-
-        return $this;
-    }
-
-    /**
-     * @see TagInterface::setDataFromEditmode
-     *
-     * @param array $data
-     *
-     * @return $this
-     */
-    public function setDataFromEditmode($data)
-    {
-        $this->data = $data;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEmpty()
-    {
-        return empty($this->data);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $wsElement->value;
-        if ($data->data === null or is_array($data->data)) {
-            $this->data = $data->data;
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
     }
 }

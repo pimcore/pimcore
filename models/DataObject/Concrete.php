@@ -137,7 +137,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                                 AbstractObject::setGetInheritedValues($getInheritedValues);
                             } catch (\Exception $e) {
-                                if ($e instanceof Model\Element\ValidationException) {
+                                if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
                                 }
                                 $exceptionClass = get_class($e);
@@ -279,7 +279,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             if (!empty($objectsConfig['versions']['steps'])
                 || !empty($objectsConfig['versions']['days'])
                 || $setModificationDate) {
-                $saveStackTrace = !$objectsConfig['versions']['disable_stack_trace'];
+                $saveStackTrace = !($objectsConfig['versions']['disable_stack_trace'] ?? false);
                 $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
             }
 

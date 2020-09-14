@@ -12,7 +12,7 @@ The areablock is the content construction kit for documents offered by Pimcore.
 Similar to the other document editables, an areablock can be integrated in any document view template as follows:
 
 <div class="code-section">
-    
+
 ```php
 <?= $this->areablock('myAreablock'); ?>
 ```
@@ -20,12 +20,13 @@ Similar to the other document editables, an areablock can be integrated in any d
 ```twig
 {{ pimcore_areablock("myAreablock") }}
 ```
+
 </div>
 
 Advanced usage with allowed areas, below:
 
 <div class="code-section">
-    
+
 ```php
 <?= $this->areablock("myAreablock", [
     "allowed" => ["iframe","googletagcloud","spacer","rssreader"],
@@ -70,6 +71,7 @@ Advanced usage with allowed areas, below:
         })
     }}
 ```
+
 </div>
 
 ##### Accessing Parameters from the Brick File
@@ -131,6 +133,7 @@ Brick-specific configurations are passed using the `params` or `globalParams` co
     ]
 ]); ?>
 ```
+
 ## Methods
 
 | Name                | Return    | Description                                                                            |
@@ -151,7 +154,7 @@ You can limit certain bricks for the Areablock by using `limits` configurations.
 ##### Example
 
 <div class="code-section">
-    
+
 ```php
 <?= $this->areablock("myAreablock", [
         "allowed" => ["iframe","teasers","wysiwyg"],
@@ -174,6 +177,7 @@ You can limit certain bricks for the Areablock by using `limits` configurations.
     })
 }}
 ```
+
 </div>
 
 ## Using Manual Mode

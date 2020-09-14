@@ -255,7 +255,8 @@ class Dao extends Model\Dao\AbstractDao
             $select->where(
                 '(' .
                 $this->db->quoteInto('tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
-                $this->db->quoteInto('tags.idPath LIKE ?', $this->db->escapeLike($tag->getFullIdPath()) . '%' . ')')
+                $this->db->quoteInto('tags.idPath LIKE ?', $this->db->escapeLike($tag->getFullIdPath()) . '%')
+                . ')'
             );
         } else {
             $select->where('tags_assignment.tagid = ?', $tag->getId());
@@ -327,5 +328,17 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         return $tag;
+    }
+
+    /**
+     * @return bool
+     */
+    public function exists()
+    {
+        if (is_null($this->model->getId())) {
+            return false;
+        }
+
+        return (bool) $this->db->fetchOne('SELECT COUNT(*) FROM tags WHERE id = ?', $this->model->getId());
     }
 }

@@ -66,7 +66,7 @@ The Frontend Permission Toolkit Service provides two methods for working with pe
 There are several ways how to integrate the configured user permissions into the Frontend: 
 
 1) Use the Frontend Permission Toolkit Service in your application code to check if user is allowed for a certain resource: 
-```php 
+```php
     //get user object from Symfony
     $userObject = $this->get('security.token_storage')->getToken()->getUser();
 

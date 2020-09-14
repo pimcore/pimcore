@@ -10,7 +10,7 @@ in the desired format.
 
 ### Example
 
-```php 
+```php
 <?php
 
 namespace AppBundle\Controller;

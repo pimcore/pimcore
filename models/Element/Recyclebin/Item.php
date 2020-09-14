@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Element\Recyclebin;
 
-use DeepCopy\DeepCopy;
 use DeepCopy\TypeMatcher\TypeMatcher;
 use Pimcore\Cache;
 use Pimcore\File;
@@ -30,8 +29,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Pimcore\Model\Version\PimcoreClassDefinitionMatcher;
-use Pimcore\Model\Version\PimcoreClassDefinitionReplaceFilter;
+use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
+use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Tool\Serialize;
 
 /**
@@ -341,10 +340,11 @@ class Item extends Model\AbstractModel
     public function marshalData($data)
     {
         //for full dump of relation fields in container types
-        $copier = new DeepCopy();
-        $copier->skipUncloneable(true);
-
-        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Pimcore\Model\DataObject\ClassDefinition'));
+        $context = [
+            'source' => __METHOD__,
+            'default' => true,
+        ];
+        $copier = Element\Service::getDeepCopyInstance($data, $context);
 
         $copier->addTypeFilter(
             new \DeepCopy\TypeFilter\ReplaceFilter(
@@ -368,7 +368,6 @@ class Item extends Model\AbstractModel
                 }
             }
         );
-        $copier->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
 
         //filter for marshaling custom data-types which implements CustomRecyclingMarshalInterface
         if ($data instanceof Concrete) {
@@ -396,25 +395,14 @@ class Item extends Model\AbstractModel
      */
     public function unmarshalData($data)
     {
-        $copier = new DeepCopy();
-        $copier->addTypeFilter(
-            new \DeepCopy\TypeFilter\ReplaceFilter(
-                function ($currentValue) {
-                    if ($currentValue instanceof Element\ElementDescriptor) {
-                        $value = Element\Service::getElementById($currentValue->getType(), $currentValue->getId());
+        $context = [
+            'source' => __METHOD__,
+            'conversion' => 'unmarshal',
+        ];
+        $copier = Element\Service::getDeepCopyInstance($data, $context);
 
-                        return $value;
-                    }
-
-                    return $currentValue;
-                }
-            ),
-            new Model\Version\UnmarshalMatcher()
-        );
-        $copier->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
-
+        //filter for unmarshaling custom data-types which implements CustomRecyclingMarshalInterface
         if ($data instanceof Concrete) {
-            //filter for unmarshaling custom data-types which implements CustomRecyclingMarshalInterface
             $copier->addFilter(
                 new PimcoreClassDefinitionReplaceFilter(
                     function (Concrete $object, Data $fieldDefinition, $property, $currentValue) {

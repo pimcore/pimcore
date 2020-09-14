@@ -11,7 +11,7 @@ The logs are visible and searchable within the Pimcore backend GUI ![Tools menu]
 
 </div>
 
-![Application logger menu](..//img/applogger_menu.png)
+![Application logger menu](../img/applogger_menu.png)
 
 
 ![Application logger preview](../img/applogger_backend_preview.png)

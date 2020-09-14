@@ -14,62 +14,15 @@
 
 namespace Pimcore\Templating\HelperBroker;
 
-use Pimcore\Templating\PhpEngine;
-use Pimcore\Templating\Renderer\TagRenderer;
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', DocumentTag::class, DocumentEditable::class), E_USER_DEPRECATED);
 
-class DocumentTag implements HelperBrokerInterface
-{
-    /**
-     * @var TagRenderer
-     */
-    protected $tagRenderer;
+class_exists(DocumentEditable::class);
 
+if (false) {
     /**
-     * @param TagRenderer $tagRenderer
+     * @deprecated use \Pimcore\Templating\HelperBroker\DocumentEditable instead.
      */
-    public function __construct(TagRenderer $tagRenderer)
+    class DocumentTag extends DocumentEditable
     {
-        $this->tagRenderer = $tagRenderer;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function supports(PhpEngine $engine, $method)
-    {
-        if ($this->tagRenderer->tagExists($method)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function helper(PhpEngine $engine, $method, array $arguments)
-    {
-        $document = $engine->getViewParameter('document');
-
-        // if editmode is set as parameter override the editmode resolver value
-        $editmode = $engine->getViewParameter('editmode');
-        if (null !== $editmode) {
-            $editmode = (bool)$editmode;
-        }
-
-        if (null === $document) {
-            throw new \RuntimeException(sprintf('Trying to render the tag "%s", but no document was found', $method));
-        }
-
-        if (!isset($arguments[0])) {
-            throw new \Exception('You have to set a name for the called tag (editable): ' . $method);
-        }
-
-        // set default if there is no editable configuration provided
-        if (!isset($arguments[1])) {
-            $arguments[1] = [];
-        }
-
-        return $this->tagRenderer->render($document, $method, $arguments[0], $arguments[1], $editmode);
     }
 }

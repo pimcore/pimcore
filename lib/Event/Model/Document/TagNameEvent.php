@@ -17,111 +17,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Model\Document;
 
-use Pimcore\Document\Tag\Block\BlockState;
-use Pimcore\Model\Document;
-use Symfony\Component\EventDispatcher\Event;
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', TagNameEvent::class, EditableNameEvent::class), E_USER_DEPRECATED);
 
-class TagNameEvent extends Event
-{
-    /**
-     * Tag type (e.g. "input")
-     *
-     * @var string
-     */
-    private $type;
+class_exists(EditableNameEvent::class);
 
+if (false) {
     /**
-     * Tag name (e.g. "headline")
-     *
-     * @var string
+     * @deprecated use \Pimcore\Event\Model\Document\EditableNameEvent instead.
      */
-    private $inputName;
-
-    /**
-     * The current block state
-     *
-     * @var BlockState
-     */
-    private $blockState;
-
-    /**
-     * The built tag name
-     *
-     * @var string
-     */
-    private $tagName;
-
-    /**
-     * @var Document
-     */
-    private $document;
-
-    /**
-     * @param string $type
-     * @param string $inputName
-     * @param BlockState $blockState
-     * @param string $tagName
-     * @param Document $document
-     */
-    public function __construct(
-        string $type,
-        string $inputName,
-        BlockState $blockState,
-        string $tagName,
-        Document $document
-    ) {
-        $this->type = $type;
-        $this->inputName = $inputName;
-        $this->blockState = $blockState;
-        $this->tagName = $tagName;
-        $this->document = $document;
-    }
-
-    /**
-     * @return string
-     */
-    public function getType(): string
+    class TagNameEvent extends EditableNameEvent
     {
-        return $this->type;
-    }
-
-    /**
-     * @return string
-     */
-    public function getInputName(): string
-    {
-        return $this->inputName;
-    }
-
-    /**
-     * @return BlockState
-     */
-    public function getBlockState(): BlockState
-    {
-        return $this->blockState;
-    }
-
-    /**
-     * @return Document
-     */
-    public function getDocument(): Document
-    {
-        return $this->document;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTagName(): string
-    {
-        return $this->tagName;
-    }
-
-    /**
-     * @param string $tagName
-     */
-    public function setTagName(string $tagName)
-    {
-        $this->tagName = $tagName;
     }
 }

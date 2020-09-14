@@ -72,6 +72,7 @@ Also, it shows the list of chosen elements in the frontend.
     </p>
 {% endif %}
 ```
+
 </div>
 
 The editmode preview:

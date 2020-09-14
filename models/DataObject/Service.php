@@ -1401,20 +1401,20 @@ class Service extends Model\Element\Service
      * Enriches the layout definition before it is returned to the admin interface.
      *
      * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout $layout
-     * @param Concrete $object
+     * @param Concrete|null $object
      * @param array $context additional contextual data
      */
     public static function enrichLayoutDefinition(&$layout, $object = null, $context = [])
     {
         $context['object'] = $object;
 
-        if (method_exists($layout, 'enrichLayoutDefinition')) {
+        if (method_exists($layout, 'enrichLayoutDefinition') && $object) {
             $layout->enrichLayoutDefinition($object, $context);
         }
 
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
             $user = AdminTool::getCurrentUser();
-            if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig') {
+            if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig' && $object) {
                 $allowedView = self::getLanguagePermissions($object, $user, 'lView');
                 $allowedEdit = self::getLanguagePermissions($object, $user, 'lEdit');
                 self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit);

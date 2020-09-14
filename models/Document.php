@@ -143,13 +143,6 @@ class Document extends Element\AbstractElement
     protected $userModification;
 
     /**
-     * Dependencies for this document
-     *
-     * @var Dependency|null
-     */
-    protected $dependencies;
-
-    /**
      * List of Property, concerning the folder
      *
      * @var array|null
@@ -629,20 +622,6 @@ class Document extends Element\AbstractElement
         } catch (\Exception $e) {
             Logger::crit($e);
         }
-    }
-
-    /**
-     * Returns the dependencies of the document
-     *
-     * @return Dependency
-     */
-    public function getDependencies()
-    {
-        if (!$this->dependencies) {
-            $this->dependencies = Dependency::getBySourceId($this->getId(), 'document');
-        }
-
-        return $this->dependencies;
     }
 
     /**
@@ -1397,9 +1376,8 @@ class Document extends Element\AbstractElement
 
     public function __sleep()
     {
-        $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['dependencies', 'hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
+        $blockedVars = ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -1409,13 +1387,7 @@ class Document extends Element\AbstractElement
             $blockedVars = array_merge($blockedVars, ['children', 'properties']);
         }
 
-        foreach ($parentVars as $key) {
-            if (!in_array($key, $blockedVars)) {
-                $finalVars[] = $key;
-            }
-        }
-
-        return $finalVars;
+        return array_diff($parentVars, $blockedVars);
     }
 
     public function __wakeup()
@@ -1537,7 +1509,6 @@ class Document extends Element\AbstractElement
         $this->parent = null;
         $this->hasSiblings = [];
         $this->siblings = [];
-        $this->dependencies = null;
         $this->fullPathCache = null;
     }
 }
