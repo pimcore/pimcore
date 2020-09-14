@@ -959,19 +959,8 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                 height: Math.min(config["height"], Ext.getBody().getViewSize().height),
                 items: items,
                 bodyStyle: 'padding: 10px',
+                cls: 'pimcore_areablock_dialogBox',
                 scrollable: 'y',
-                listeners: {
-                    afterrender: function (el, eOpts) {
-                        // render editables in window
-                        Object.keys(editablesInBox).forEach(function (editableName) {
-                            if(typeof editablesInBox[editableName]["renderInDialogBox"] === "function") {
-                                editablesInBox[editableName].renderInDialogBox();
-                            } else {
-                                editablesInBox[editableName].render();
-                            }
-                        });
-                    }
-                },
                 buttons: ['->', {
                     text: t("close"),
                     listeners: {
@@ -1027,13 +1016,23 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                 if(typeof editablesInBox[config['name']]['renderInDialogBox'] === "function") {
                     return {
                         xtype: 'container',
-                        html: templateEl.innerHTML
+                        html: templateEl.innerHTML,
+                        listeners: {
+                            afterrender: function () {
+                                editablesInBox[config['name']].renderInDialogBox();
+                            }
+                        }
                     };
                 } else {
                     return {
                         xtype: 'fieldset',
                         title: config['label'] ?? config['name'],
-                        html: templateEl.innerHTML
+                        html: templateEl.innerHTML,
+                        listeners: {
+                            afterrender: function (el) {
+                                editablesInBox[config['name']].render();
+                            }
+                        }
                     };
                 }
             }
