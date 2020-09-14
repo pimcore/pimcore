@@ -103,21 +103,12 @@ class Dao extends Model\Dao\AbstractDao
 
     public function update()
     {
-        if ($this->model->getId()) {
-            $id = $this->model->getId();
-        } else {
+        if (!$id = $this->model->getId()) {
             // mimic autoincrement
-            $db = Db::get();
-            $id = $db->fetchOne('select CONVERT(SUBSTRING_INDEX(id,\'-\',-1),UNSIGNED INTEGER) AS num FROM quantityvalue_units ORDER BY num DESC LIMIT 1 ');
-            if ($id) {
-                $id++;
-            } else {
-                $id = "1";
-            }
+            $id = $this->db->fetchOne('select CONVERT(SUBSTRING_INDEX(id,\'-\',-1),UNSIGNED INTEGER) AS num FROM quantityvalue_units ORDER BY num DESC LIMIT 1 ');
+            $id = $id > 0 ? ($id + 1) : 1;
+            $this->model->setId($id);
         }
-
-
-        $this->model->setId($id);
 
         $class = $this->model->getObjectVars();
         $data = [];
