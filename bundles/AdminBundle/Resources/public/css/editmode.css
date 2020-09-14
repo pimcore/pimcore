@@ -553,6 +553,10 @@ input.cke_dialog_ui_input_tel {
     display: inline-block;
 }
 
+.pimcore_editable_checkbox input {
+    margin-right: 5px;
+}
+
 /* support for placeholders */
 .pimcore_tag_input[contenteditable=true][data-placeholder]:empty:before,
 .pimcore_editable_input[contenteditable=true][data-placeholder]:empty:before,

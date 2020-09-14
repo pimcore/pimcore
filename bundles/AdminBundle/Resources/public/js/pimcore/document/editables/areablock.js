@@ -964,7 +964,11 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                     afterrender: function (el, eOpts) {
                         // render editables in window
                         Object.keys(editablesInBox).forEach(function (editableName) {
-                            editablesInBox[editableName].render();
+                            if(typeof editablesInBox[editableName]["renderInDialogBox"] === "function") {
+                                editablesInBox[editableName].renderInDialogBox();
+                            } else {
+                                editablesInBox[editableName].render();
+                            }
                         });
                     }
                 },
@@ -1020,11 +1024,18 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
             let templateId = 'template__' + editablesInBox[config['name']].getId();
             var templateEl = document.getElementById(templateId);
             if(templateEl) {
-                return {
-                    xtype: 'fieldset',
-                    title: config['label'] ?? config['name'],
-                    html: templateEl.innerHTML
-                };
+                if(typeof editablesInBox[config['name']]['renderInDialogBox'] === "function") {
+                    return {
+                        xtype: 'container',
+                        html: templateEl.innerHTML
+                    };
+                } else {
+                    return {
+                        xtype: 'fieldset',
+                        title: config['label'] ?? config['name'],
+                        html: templateEl.innerHTML
+                    };
+                }
             }
         } else if(config['items']) {
             let container = {

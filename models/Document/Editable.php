@@ -432,6 +432,22 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
+     * @param string $name
+     * @param $value
+     * @return $this
+     */
+    public function setOption(string $name, $value)
+    {
+        if(!is_array($this->options)) {
+            $this->options = [];
+        }
+
+        $this->options[$name] = $value;
+
+        return $this;
+    }
+
+    /**
      * @deprecated
      *
      * @param string|null $controller

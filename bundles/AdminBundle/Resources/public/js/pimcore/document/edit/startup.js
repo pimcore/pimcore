@@ -143,7 +143,7 @@ Ext.onReady(function () {
         editable.setInDialogBox(config.inDialogBox);
 
         if(!config.inDialogBox) {
-            if (typeof tag['render'] === 'function') {
+            if (typeof editable['render'] === 'function') {
                 editable.render();
             }
             editable.setInherited(inherited);
