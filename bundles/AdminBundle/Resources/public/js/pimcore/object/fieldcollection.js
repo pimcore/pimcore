@@ -189,7 +189,7 @@ pimcore.object.fieldcollection = Class.create({
         var forbiddennames = ["abstract","class","data","folder","list","permissions","resource",
                                                         "concrete","interface"];
 
-        if (button == "ok" && value.length > 2 && regresult == value && !in_array(value, forbiddennames)) {
+        if (button == "ok" && value.length > 2 && regresult == value && !in_arrayi(value, forbiddennames)) {
             Ext.Ajax.request({
                 url: Routing.generate('pimcore_admin_dataobject_class_fieldcollectionupdate'),
                 method: 'POST',
