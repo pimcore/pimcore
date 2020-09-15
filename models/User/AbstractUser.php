@@ -257,7 +257,8 @@ class AbstractUser extends Model\AbstractModel
     {
         $userRoleListing = new Listing();
         $userRoleListing->setCondition('FIND_IN_SET(' . $this->getId() . ',roles)');
-        if ($userRoleListing->count()) {
+        $userRoleListing = $userRoleListing->load();
+        if (count($userRoleListing)) {
             /** @var Model\User $relatedUser */
             foreach ($userRoleListing as $relatedUser) {
                 $userRoles = $relatedUser->getRoles();
