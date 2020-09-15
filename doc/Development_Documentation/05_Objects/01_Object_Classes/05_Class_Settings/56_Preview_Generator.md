@@ -51,6 +51,7 @@ class ProductPreviewParamProvider implements \Pimcore\Model\DataObject\ClassDefi
         return [
             [
                 'name' => '_locale',
+                'label' => 'Locale',
                 'values' => [
                     ['abbr' => 'en', 'name' => 'en'],
                     ['abbr' => 'de', 'name' => 'de']
@@ -58,6 +59,7 @@ class ProductPreviewParamProvider implements \Pimcore\Model\DataObject\ClassDefi
             ],
             [
                 'name' => 'otherParam',
+                'label' => 'Other',
                 'values' => [
                     ['abbr' => 'aa', 'name' => 'aa'],
                     ['abbr' => 'bb', 'name' => 'bb']
