@@ -265,7 +265,7 @@ class Version extends AbstractModel
         $context = [
             'source' => __METHOD__,
             'conversion' => 'marshal',
-            'defaultFilter' => true,
+            'defaultFilters' => true,
         ];
 
         $copier = Service::getDeepCopyInstance($data, $context);
