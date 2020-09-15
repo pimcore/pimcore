@@ -11,6 +11,7 @@
 
 use Pimcore\Model\DataObject;
 
+$this->get('translate')->setDomain('admin');
 $fields = $this->object1->getClass()->getFieldDefinitions();
 ?>
 
@@ -82,7 +83,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                     $v2 = $v2Container ? $lfd->getVersionPreview($v2Container->getLocalizedValue($lfd->getName(), $language)) : "";
                     ?>
                     <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                        <td><?= $lfd->getTitle() ?> (<?= $language; ?>)</td>
+                        <td><?= $this->translate($lfd->getTitle()) ?> (<?= $language; ?>)</td>
                         <td><?= $lfd->getName() ?></td>
                         <?php if (!$this->isImportPreview || !$this->isNew) { ?>
                             <td><?= $v1 ?></td>
@@ -162,7 +163,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                         ?>
 
                         <tr class = "<?php if ($c % 2) { ?> odd<?php  } ?>">
-                            <td><?= $definition->getTitle() ?></td>
+                            <td><?= $this->translate($definition->getTitle()) ?></td>
                             <td><?= $groupDefinition->getName() ?> - <?= $keyGroupRelation->getName()?> <?= $definition->isLocalized() ? "/ " . $language : "" ?></td>
                             <?php if (!$this->isImportPreview || !$this->isNew) { ?>
                                 <td><?= $preview1 ?></td>
@@ -197,7 +198,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                         <?php foreach (\Pimcore\Tool::getValidLanguages() as $language) { ?>
                             <?php foreach ($lfd->getFieldDefinitions() as $localizedFieldDefinition) { ?>
                                 <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                                    <td><?= $localizedFieldDefinition->getTitle() ?> (<?= $language; ?>)</td>
+                                    <td><?= $this->translate($localizedFieldDefinition->getTitle()) ?> (<?= $language; ?>)</td>
                                     <td><?= $localizedFieldDefinition->getName() ?></td>
 
                                     <?php
@@ -254,7 +255,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
 
                         ?>
                         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                            <td><?= ucfirst($asAllowedType) . " - " . $lfd->getTitle() ?></td>
+                            <td><?= ucfirst($asAllowedType) . " - " . $this->translate($lfd->getTitle()) ?></td>
                             <td><?= $lfd->getName() ?></td>
                             <?php if (!$this->isImportPreview || !$this->isNew) { ?>
                                 <td><?= $v1 ?></td>
@@ -305,7 +306,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
 
                         ?>
                         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                            <td><?= ucfirst($fieldItem1->getType()) . " - " . $fieldKey1->title ?></td>
+                            <td><?= ucfirst($fieldItem1->getType()) . " - " . $this->translate($fieldKey1->title) ?></td>
                             <td><?= $fieldKey1->name ?></td>
                             <?php if (!$this->isImportPreview || !$this->isNew) { ?>
                                 <td><?= $v1 ?></td>
@@ -328,7 +329,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
 
                         ?>
                         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                            <td><?= ucfirst($fieldItem2->getType()) . " - " . $fieldKey2->title ?></td>
+                            <td><?= ucfirst($fieldItem2->getType()) . " - " . $this->translate($fieldKey2->title) ?></td>
                             <td><?= $fieldKey2->name ?></td>
                             <?php if (!$this->isImportPreview || !$this->isNew) { ?>
                                 <td><?= $v1 ?></td>
@@ -346,7 +347,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
             $v2 = $definition->getVersionPreview($this->object2->getValueForFieldName($fieldName));
             ?>
             <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                <td><?= $definition->getTitle() ?></td>
+                <td><?= $this->translate($definition->getTitle()) ?></td>
                 <td><?= $definition->getName() ?></td>
                 <?php if (!$this->isImportPreview || !$this->isNew) { ?>
                     <td><?= $v1 ?></td>
