@@ -26,12 +26,12 @@ use Pimcore\Model;
 class Lock extends Model\AbstractModel
 {
     /**
-     * @var string
+     * @var string|null
      */
     public $id;
 
     /**
-     * @var int
+     * @var int|null
      */
     public $date;
 
@@ -137,7 +137,7 @@ class Lock extends Model\AbstractModel
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getDate()
     {
@@ -153,7 +153,7 @@ class Lock extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getId()
     {
