@@ -12,6 +12,7 @@
 
 use Pimcore\Model\DataObject;
 
+$this->get('translate')->setDomain('admin');
 $fields = $this->object->getClass()->getFieldDefinitions();
 
 ?>
@@ -48,7 +49,7 @@ $fields = $this->object->getClass()->getFieldDefinitions();
             <?php foreach (\Pimcore\Tool::getValidLanguages() as $language) { ?>
                 <?php foreach ($definition->getFieldDefinitions() as $lfd) { ?>
                     <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                        <td><?= \Pimcore\Model\Translation\Admin::getByKeyLocalized($lfd->getTitle(), true, true) ?> (<?= $language; ?>)</td>
+                        <td><?= $this->translate($lfd->getTitle()) ?> (<?= $language; ?>)</td>
                         <td><?= $lfd->getName() ?></td>
                         <td>
                             <?php
@@ -82,7 +83,7 @@ $fields = $this->object->getClass()->getFieldDefinitions();
                         <?php foreach (\Pimcore\Tool::getValidLanguages() as $language) { ?>
                             <?php foreach ($lfd->getFieldDefinitions() as $localizedFieldDefinition) { ?>
                                 <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                                    <td><?= \Pimcore\Model\Translation\Admin::getByKeyLocalized($localizedFieldDefinition->getTitle(), true, true) ?> (<?= $language; ?>)</td>
+                                    <td><?= $this->translate($localizedFieldDefinition->getTitle()) ?> (<?= $language; ?>)</td>
                                     <td><?= $localizedFieldDefinition->getName() ?></td>
                                     <td>
                                         <?php
@@ -109,7 +110,7 @@ $fields = $this->object->getClass()->getFieldDefinitions();
 
                         ?>
                         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                            <td><?= ucfirst($asAllowedType) . " - " . \Pimcore\Model\Translation\Admin::getByKeyLocalized($lfd->getTitle(), true, true) ?></td>
+                            <td><?= ucfirst($asAllowedType) . " - " . $this->translate($lfd->getTitle()) ?></td>
                             <td><?= $lfd->getName() ?></td>
                             <td><?= $value ?></td>
                         </tr>
@@ -163,7 +164,7 @@ $fields = $this->object->getClass()->getFieldDefinitions();
                         ?>
 
                         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                            <td><?= \Pimcore\Model\Translation\Admin::getByKeyLocalized($definition->getTitle(), true, true) ?></td>
+                            <td><?= $this->translate($definition->getTitle()) ?></td>
                             <td><?= $groupDefinition->getName() ?> - <?= $keyGroupRelation->getName() ?>
                                 / <?= $definition->isLocalized() ? $language : "" ?></td>
                             <td><?= $preview ?></td>
@@ -189,7 +190,7 @@ $fields = $this->object->getClass()->getFieldDefinitions();
                     foreach ($fieldKeys as $fieldKey) {
                         $value = $fieldItem->{"get" . ucfirst($fieldKey->name)}();  ?>
                         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                            <td><?= ucfirst($fieldItem->getType()) . " - " . \Pimcore\Model\Translation\Admin::getByKeyLocalized($fieldKey->title, true, true) ?></td>
+                            <td><?= ucfirst($fieldItem->getType()) . " - " . $this->translate($fieldKey->title) ?></td>
                             <td><?= $fieldKey->name ?></td>
                             <td><?= $fieldKey->getVersionPreview($value) ?></td>
                         </tr>
@@ -201,7 +202,7 @@ $fields = $this->object->getClass()->getFieldDefinitions();
             ?>
         <?php } else { ?>
             <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                <td><?= \Pimcore\Model\Translation\Admin::getByKeyLocalized($definition->getTitle(), true, true) ?></td>
+                <td><?= $this->translate($definition->getTitle()) ?></td>
                 <td><?= $definition->getName() ?></td>
                 <td><?= $definition->getVersionPreview($this->object->getValueForFieldName($fieldName)) ?></td>
             </tr>
