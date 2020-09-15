@@ -17,16 +17,22 @@ pimcore.document.editables.textarea = Class.create(pimcore.document.editable, {
     initialize: function(id, name, options, data, inherited) {
         this.id = id;
         this.name = name;
-        this.setupWrapper();
-        options = this.parseOptions(options);
+        this.options = this.parseOptions(options);
 
         if (!data) {
             data = "";
         }
 
-        data = str_replace("\n","<br>", data);
+        this.data = str_replace("\n","<br>", data);
 
-        this.element = Ext.get(id);
+        if(this.options["required"]) {
+            this.required = this.options["required"];
+        }
+    },
+
+    render: function () {
+        this.setupWrapper();
+        this.element = Ext.get(this.id);
         this.element.dom.setAttribute("contenteditable", true);
 
         // set min height for IE, as he isn't able to update :after css selector
@@ -41,11 +47,7 @@ pimcore.document.editables.textarea = Class.create(pimcore.document.editable, {
             });
         }
 
-        this.element.update(data);
-
-        if(options["required"]) {
-            this.required = options["required"];
-        }
+        this.element.update(this.data);
 
         this.checkValue();
 
@@ -93,24 +95,24 @@ pimcore.document.editables.textarea = Class.create(pimcore.document.editable, {
             }
         }.bind(this));
 
-        if(options["width"] || options["height"]) {
+        if(this.options["width"] || this.options["height"]) {
             this.element.applyStyles({
                 display: "inline-block",
                 overflow: "auto"
             });
         }
-        if(options["width"]) {
+        if(this.options["width"]) {
             this.element.applyStyles({
-                width: options["width"] + "px"
+                width: this.options["width"] + "px"
             })
         }
-        if(options["height"]) {
+        if(this.options["height"]) {
             this.element.applyStyles({
-                height: options["height"] + "px"
+                height: this.options["height"] + "px"
             })
         }
-        if (options["placeholder"]) {
-            this.element.dom.setAttribute('data-placeholder', options["placeholder"]);
+        if (this.options["placeholder"]) {
+            this.element.dom.setAttribute('data-placeholder', this.options["placeholder"]);
         }
     },
 
@@ -129,9 +131,14 @@ pimcore.document.editables.textarea = Class.create(pimcore.document.editable, {
     },
 
     getValue: function () {
-        var value = this.element.dom.innerHTML;
+
+        let value = this.data;
+        if(this.element) {
+            value = this.element.dom.innerHTML;
+        }
+
         value = strip_tags(value, '<br>'); // strip out nasty HTML, eg. inserted by highlighting feature (ExtJS masks)
-        value = value.replace(/<br>/g,"\n");
+        value = value.replace(/<br>/g, "\n");
         value = trim(value);
         return value;
     },

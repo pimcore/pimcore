@@ -15,10 +15,8 @@ pimcore.registerNS("pimcore.document.editables.numeric");
 pimcore.document.editables.numeric = Class.create(pimcore.document.editable, {
 
     initialize: function(id, name, options, data, inherited) {
-
         this.id = id;
         this.name = name;
-        this.setupWrapper();
         options = this.parseOptions(options);
 
         if ('number' !== typeof data && !data) {
@@ -29,21 +27,28 @@ pimcore.document.editables.numeric = Class.create(pimcore.document.editable, {
         options.name = id + "_editable";
         options.decimalPrecision = 20;
 
-        this.element = new Ext.form.field.Number(options);
-        this.element.render(id);
-
-
         if(options["required"]) {
             this.required = options["required"];
         }
 
-        this.checkValue();
+        this.options = options;
+    },
 
+    render: function () {
+        this.setupWrapper();
+        this.element = new Ext.form.field.Number(this.options);
+        this.element.render(this.id);
+
+        this.checkValue();
         this.element.on("blur", this.checkValue.bind(this, true));
     },
 
     getValue: function () {
-        return this.element.getValue();
+        if(this.element) {
+            return this.element.getValue();
+        }
+
+        return this.options.value;
     },
 
     getType: function () {

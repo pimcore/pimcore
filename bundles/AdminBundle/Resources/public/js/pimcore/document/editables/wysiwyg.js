@@ -21,7 +21,6 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
 
         this.id = id;
         this.name = name;
-        this.setupWrapper();
         options = this.parseOptions(options);
 
         if (!data) {
@@ -31,45 +30,46 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
         this.options = options;
         this.inherited = inherited;
 
-        var textareaId = id + "_textarea";
+        if(options["required"]) {
+            this.required = options["required"];
+        }
+    },
+
+    render: function () {
+        this.setupWrapper();
+
         this.textarea = document.createElement("div");
         this.textarea.setAttribute("contenteditable","true");
 
-        Ext.get(id).appendChild(this.textarea);
+        Ext.get(this.id).appendChild(this.textarea);
+        Ext.get(this.id).insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
 
-        Ext.get(id).insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
+        this.textarea.id = this.id + "_textarea";
+        this.textarea.innerHTML = this.data;
 
-        this.textarea.id = textareaId;
-        this.textarea.innerHTML = data;
-
-        var textareaHeight = 100;
-        if (options.height) {
-            textareaHeight = options.height;
+        let textareaHeight = 100;
+        if (this.options.height) {
+            textareaHeight = this.options.height;
         }
-        if (options.placeholder) {
-            this.textarea.setAttribute('data-placeholder', options["placeholder"]);
+        if (this.options.placeholder) {
+            this.textarea.setAttribute('data-placeholder', this.options["placeholder"]);
         }
 
-        var inactiveContainerWidth = options.width + "px";
-        if (typeof options.width == "string" && options.width.indexOf("%") >= 0) {
-            inactiveContainerWidth = options.width;
+        let inactiveContainerWidth = this.options.width + "px";
+        if (typeof this.options.width == "string" && this.options.width.indexOf("%") >= 0) {
+            inactiveContainerWidth = this.options.width;
         }
 
         Ext.get(this.textarea).addCls("pimcore_wysiwyg");
         Ext.get(this.textarea).applyStyles("width: " + inactiveContainerWidth  + "; min-height: " + textareaHeight
-                                                                                                + "px;");
+            + "px;");
 
         // register at global DnD manager
         if (typeof dndManager !== 'undefined') {
-            dndManager.addDropTarget(Ext.get(id), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
+            dndManager.addDropTarget(Ext.get(this.id), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
         }
 
         this.startCKeditor();
-
-        if(options["required"]) {
-            this.required = options["required"];
-        }
-
         this.checkValue();
     },
 

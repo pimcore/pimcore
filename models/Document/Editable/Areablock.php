@@ -459,7 +459,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
                 $this->renderDialogBoxEditables($child, $editableRenderer, $dialogId);
             }
         } elseif (isset($config['name']) && isset($config['type'])) {
-            $editable = $editableRenderer->getEditable($this->getDocument(), $config['type'], $config['name']);
+            $editable = $editableRenderer->getEditable($this->getDocument(), $config['type'], $config['name'], $config['config'] ?? []);
             $editable->setInDialogBox($dialogId);
             $editable->setOption('dialogBoxConfig', $config);
             $this->outputEditmode($editable->admin());

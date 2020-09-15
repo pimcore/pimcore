@@ -18,7 +18,6 @@ pimcore.document.editables.table = Class.create(pimcore.document.editable, {
 
         this.id = id;
         this.name = name;
-        this.setupWrapper();
         options = this.parseOptions(options);
 
         if (!data) {
@@ -27,12 +26,12 @@ pimcore.document.editables.table = Class.create(pimcore.document.editable, {
             ];
             if (options.defaults) {
                 if (options.defaults.cols) {
-                    for (var i = 0; i < (options.defaults.cols - 1); i++) {
+                    for (let i = 0; i < (options.defaults.cols - 1); i++) {
                         data[0].push(" ");
                     }
                 }
                 if (options.defaults.rows) {
-                    for (var i = 0; i < (options.defaults.rows - 1); i++) {
+                    for (let i = 0; i < (options.defaults.rows - 1); i++) {
                         data.push(data[0]);
                     }
                 }
@@ -42,30 +41,15 @@ pimcore.document.editables.table = Class.create(pimcore.document.editable, {
             }
         }
 
-        options.value = data;
-        options.name = id + "_editable";
-        options.frame = true;
-        options.layout = "fit";
-        options.autoHeight = true;
-
         delete options["height"];
 
         this.options = options;
 
-        if (!this.panel) {
-            this.panel = new Ext.Panel(this.options);
-        }
-
-        this.panel.render(id);
-
         this.initStore(data);
-
-        this.initGrid();
     },
 
-    initGrid: function () {
-
-        this.panel.removeAll();
+    render: function() {
+        this.setupWrapper();
 
         var data = this.store.queryBy(function(record, id) {
             return true;
@@ -91,15 +75,15 @@ pimcore.document.editables.table = Class.create(pimcore.document.editable, {
             clicksToEdit: 1
         });
 
-        this.grid = Ext.create('Ext.grid.Panel', {
+        let gridConfig = array_merge(this.options, {
+            name: this.id + "_editable",
             store: this.store,
-            width: 700,
-            border: false,
+            border: true,
             columns:columns,
             stripeRows: true,
             columnLines: true,
             selModel: Ext.create('Ext.selection.CellModel'),
-            autoHeight: true,
+            manageHeight: false,
             plugins: [
                 this.cellEditing
             ],
@@ -128,8 +112,9 @@ pimcore.document.editables.table = Class.create(pimcore.document.editable, {
                 }
             ]
         });
-        this.panel.add(this.grid);
-        this.panel.updateLayout();
+
+        this.grid = Ext.create('Ext.grid.Panel', gridConfig);
+        this.grid.render(this.id);
     },
 
     initStore: function (data) {
@@ -147,7 +132,6 @@ pimcore.document.editables.table = Class.create(pimcore.document.editable, {
         });
 
         this.store.loadData(data);
-        this.initGrid();
     },
 
     addColumn : function  () {

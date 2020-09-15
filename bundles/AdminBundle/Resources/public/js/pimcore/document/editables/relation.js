@@ -26,16 +26,10 @@ pimcore.document.editables.relation = Class.create(pimcore.document.editable, {
             type: ""
         };
 
-        if (!this.options.width) {
-            this.options.width = Ext.get(id).getWidth() - 2;
-        }
-
         if (data) {
             this.data = data;
             this.options.value = this.data.path;
         }
-
-        this.setupWrapper();
 
         this.options.enableKeyEvents = true;
 
@@ -44,6 +38,15 @@ pimcore.document.editables.relation = Class.create(pimcore.document.editable, {
         }
 
         this.options.name = id + "_editable";
+    },
+
+    render: function () {
+        this.setupWrapper();
+
+        if (!this.options.width) {
+            this.options.width = Ext.get(this.id).getWidth() - 2;
+        }
+
         this.element = new Ext.form.TextField(this.options);
 
 
@@ -59,7 +62,7 @@ pimcore.document.editables.relation = Class.create(pimcore.document.editable, {
             element.setValue(this.data.path);
         }.bind(this));
 
-        this.element.render(id);
+        this.element.render(this.id);
     },
 
     uploadDialog: function () {

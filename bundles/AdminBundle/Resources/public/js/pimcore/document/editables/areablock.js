@@ -959,8 +959,25 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                 height: Math.min(config["height"], Ext.getBody().getViewSize().height),
                 items: items,
                 bodyStyle: 'padding: 10px',
-                cls: 'pimcore_areablock_dialogBox',
                 scrollable: 'y',
+                cls: 'pimcore_areablock_dialogBox',
+                listeners: {
+                    afterrender: function (win, eOpts) {
+                        // render editables in window
+                        // we need a bit of a timeout, since it seems the layout (especially when using tabs) isn't
+                        // completely done in terms of the right dimensions, which has bad effects on the size
+                        // of editables where the size matters, e.g. the image editable
+                        window.setTimeout(function () {
+                            Object.keys(editablesInBox).forEach(function (editableName) {
+                                if (typeof editablesInBox[editableName]["renderInDialogBox"] === "function") {
+                                    editablesInBox[editableName].renderInDialogBox();
+                                } else {
+                                    editablesInBox[editableName].render();
+                                }
+                            });
+                        }, 200);
+                    }
+                },
                 buttons: ['->', {
                     text: t("close"),
                     listeners: {
@@ -1016,23 +1033,13 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                 if(typeof editablesInBox[config['name']]['renderInDialogBox'] === "function") {
                     return {
                         xtype: 'container',
-                        html: templateEl.innerHTML,
-                        listeners: {
-                            afterrender: function () {
-                                editablesInBox[config['name']].renderInDialogBox();
-                            }
-                        }
+                        html: templateEl.innerHTML
                     };
                 } else {
                     return {
                         xtype: 'fieldset',
                         title: config['label'] ?? config['name'],
-                        html: templateEl.innerHTML,
-                        listeners: {
-                            afterrender: function (el) {
-                                editablesInBox[config['name']].render();
-                            }
-                        }
+                        html: templateEl.innerHTML
                     };
                 }
             }
@@ -1041,6 +1048,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                 xtype: config['type'],
                 bodyStyle: 'padding: 10px',
                 deferredRender: false,
+                manageHeight: false,
                 items: this.buildEditableDialogLayout(config['items'], editablesInBox, nextLevel)
             };
 

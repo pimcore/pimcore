@@ -17,14 +17,11 @@ pimcore.document.editables.multiselect = Class.create(pimcore.document.editable,
     initialize: function(id, name, options, data, inherited) {
         this.id = id;
         this.name = name;
-
-        this.setupWrapper();
+        this.data = data;
 
         options = this.parseOptions(options);
         options.name = id + "_editable";
-        if(data) {
-            options.value = data;
-        }
+        options.value = data;
         options.valueField = "id";
 
         options.listeners = {};
@@ -44,13 +41,21 @@ pimcore.document.editables.multiselect = Class.create(pimcore.document.editable,
             });
         }
 
-        this.element = Ext.create('Ext.ux.form.MultiSelect', options);
+        this.options = options;
+    },
 
-        this.element.render(id);
+    render: function () {
+        this.setupWrapper();
+        this.element = Ext.create('Ext.ux.form.MultiSelect', this.options);
+        this.element.render(this.id);
     },
 
     getValue: function () {
-        return this.element.getValue();
+        if(this.element) {
+            return this.element.getValue();
+        }
+
+        return this.data;
     },
 
     getType: function () {
