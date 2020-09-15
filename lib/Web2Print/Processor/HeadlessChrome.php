@@ -3,6 +3,7 @@
 namespace Pimcore\Web2Print\Processor;
 
 use Pimcore\Config;
+use Pimcore\Event\Model\PrintConfigEvent;
 use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Web2Print\Processor;
@@ -66,12 +67,6 @@ class HeadlessChrome extends Processor
      */
     public function getProcessingOptions()
     {
-        $event = new PrintConfigEvent($this, [
-            'options' => [],
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS, $event);
-        return (array)$event->getArgument('options');
-
         $event = new PrintConfigEvent($this, [
             'options' => [],
         ]);
