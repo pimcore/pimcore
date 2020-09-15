@@ -284,7 +284,7 @@ pimcore.object.klass = Class.create({
 
         if (className.length <= 2 ||
             isReservedName.test(className) ||
-            isValidClassName.test(className) ||
+            !isValidClassName.test(className) ||
             in_arrayi(className, this.forbiddenNames)
         ) {
             Ext.Msg.alert(' ', t('invalid_class_name'));
@@ -293,7 +293,7 @@ pimcore.object.klass = Class.create({
 
         if (classIdentifier.length < 1 ||
             isReservedName.test(classIdentifier) ||
-            isValidClassIdentifier.test(classIdentifier)
+            !isValidClassIdentifier.test(classIdentifier)
         ) {
             Ext.Msg.alert(' ', t('invalid_identifier'));
             return false;
