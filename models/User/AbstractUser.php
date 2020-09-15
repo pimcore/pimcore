@@ -227,16 +227,18 @@ class AbstractUser extends Model\AbstractModel
 
         \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::PRE_DELETE, new UserRoleEvent($this));
 
-        // delete all children
         $type = $this->getType();
-        $list = ($type === 'role' || $type === 'rolefolder') ? new Model\User\Role\Listing() : new Listing();
-        if ($type === 'role') {
-            $this->cleanupUserRoleRelations();
-        }
 
+        // delete all children
+        $list = ($type === 'role' || $type === 'rolefolder') ? new Model\User\Role\Listing() : new Listing();
         $list->setCondition('parentId = ?', $this->getId());
         foreach ($list as $user) {
             $user->delete();
+        }
+
+        // remove user-role relations
+        if ($type === 'role') {
+            $this->cleanupUserRoleRelations();
         }
 
         // now delete the current user
