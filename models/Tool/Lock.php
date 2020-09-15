@@ -133,7 +133,7 @@ class Lock extends Model\AbstractModel
      */
     public function setDate($date)
     {
-        $this->date = $date;
+        $this->date = (int)$date;
     }
 
     /**
