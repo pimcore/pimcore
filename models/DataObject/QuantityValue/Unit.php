@@ -28,7 +28,7 @@ class Unit extends Model\AbstractModel
     const CACHE_KEY = 'quantityvalue_units_table';
 
     /**
-     * @var int
+     * @var string
      */
     public $id;
 
@@ -229,14 +229,20 @@ class Unit extends Model\AbstractModel
         return $this->group;
     }
 
+    /**
+     * @param string $id
+     */
     public function setId($id)
     {
-        $this->id = $id;
+        $this->id = (string) $id;
     }
 
+    /**
+     * @return string
+     */
     public function getId()
     {
-        return $this->id;
+        return (string) $this->id;
     }
 
     public function setLongname($longname)
