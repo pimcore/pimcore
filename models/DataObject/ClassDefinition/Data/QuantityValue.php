@@ -257,7 +257,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        if (strlen($data[$this->getName() . '__value']) > 0 || $data[$this->getName() . '__unit']) {
+        if ($data[$this->getName() . '__value'] !== null || $data[$this->getName() . '__unit']) {
             $value = $data[$this->getName() . '__value'];
             $quantityValue = new Model\DataObject\Data\QuantityValue($value !== null ? (float)$value : null, $data[$this->getName() . '__unit']);
 
