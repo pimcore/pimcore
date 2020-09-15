@@ -234,7 +234,7 @@ pimcore.object.quantityValue.unitsettings = Class.create({
     },
 
     onAdd: function (btn, ev) {
-        Ext.MessageBox.prompt(' ', t('enter_the_name_of_the_new_item'),
+        Ext.MessageBox.prompt(' ', t('unique_identifier'),
             function (button, value, object) {
                 var regresult = value.match(/[a-zA-Z0-9_\-]+/);
                 if (button == "ok") {
@@ -282,4 +282,3 @@ pimcore.object.quantityValue.unitsettings = Class.create({
         this.grid.store.remove(rec);
     }
 });
-
