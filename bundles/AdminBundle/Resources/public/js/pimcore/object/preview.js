@@ -28,27 +28,20 @@ pimcore.object.preview = Class.create({
 
             this.frameId = 'object_preview_iframe_' + this.object.id;
 
-            let items = [];
+            let toolbar = [];
             if(this.object.data.general.previewParams) {
                 let paramPanel = this.getParamsPanel();
-                items.push(paramPanel);
+                toolbar.push(paramPanel);
             }
-
-
-            let iFramePanel = Ext.create('Ext.panel.Panel', {
-                html: '<iframe src="about:blank" style="width: 100%;" onload="' + iframeOnLoad
-                    + '" frameborder="0" id="' + this.frameId + '"></iframe>'
-            });
-            items.push(iFramePanel);
-
             this.layout = Ext.create('Ext.panel.Panel', {
                 title: t('preview'),
                 border: false,
-                autoScroll: true,
+                autoScroll: false,
                 closable: false,
                 iconCls: "pimcore_material_icon_devices pimcore_material_icon",
-                bodyCls: "pimcore_overflow_scrolling",
-                items: items
+                tbar: toolbar,
+                html: '<iframe src="about:blank" style="width: 100%;" onload="' + iframeOnLoad
+                    + '" frameborder="0" id="' + this.frameId + '"></iframe>'
             });
 
             this.layout.on("resize", this.setLayoutFrameDimensions.bind(this));

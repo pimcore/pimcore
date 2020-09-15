@@ -160,7 +160,7 @@ class ClassDefinition extends Model\AbstractModel
     public $linkGeneratorReference;
 
     /**
-     * @var string
+     * @var string|null
      */
     public $previewGeneratorReference;
 
@@ -1379,7 +1379,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPreviewGeneratorReference(): ?string
     {
@@ -1387,7 +1387,7 @@ class ClassDefinition extends Model\AbstractModel
     }
 
     /**
-     * @param string $previewGeneratorReference
+     * @param string|null $previewGeneratorReference
      */
     public function setPreviewGeneratorReference(?string $previewGeneratorReference): void
     {
