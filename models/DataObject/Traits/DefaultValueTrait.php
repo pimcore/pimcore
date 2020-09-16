@@ -126,13 +126,20 @@ trait DefaultValueTrait
                 if ($class && $class->getAllowInherit()) {
                     $params = [];
 
+                    $inheritanceEnabled = Concrete::getGetInheritedValues();
+
                     try {
+                        // make sure we get the inherited value of the parent
+                        Concrete::setGetInheritedValues(true);
+
                         $data = $owner->getValueFromParent($this->getName(), $params);
                         if (!$this->isEmpty($data)) {
                             return null;
                         }
                     } catch (InheritanceParentNotFoundException $e) {
                         // no data from parent available, use the default value
+                    } finally {
+                        Concrete::setGetInheritedValues($inheritanceEnabled);
                     }
                 }
             }

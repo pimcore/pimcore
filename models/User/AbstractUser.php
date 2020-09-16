@@ -216,6 +216,9 @@ class AbstractUser extends Model\AbstractModel
         return $this;
     }
 
+    /**
+     * @throws \Exception
+     */
     public function delete()
     {
         if ($this->getId() < 1) {
@@ -224,15 +227,18 @@ class AbstractUser extends Model\AbstractModel
 
         \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::PRE_DELETE, new UserRoleEvent($this));
 
+        $type = $this->getType();
+
         // delete all children
-        if ($this->getType() === 'role' || $this->getType() === 'rolefolder') {
-            $list = new Model\User\Role\Listing();
-        } else {
-            $list = new Listing();
-        }
+        $list = ($type === 'role' || $type === 'rolefolder') ? new Model\User\Role\Listing() : new Listing();
         $list->setCondition('parentId = ?', $this->getId());
         foreach ($list as $user) {
             $user->delete();
+        }
+
+        // remove user-role relations
+        if ($type === 'role') {
+            $this->cleanupUserRoleRelations();
         }
 
         // now delete the current user
@@ -240,6 +246,32 @@ class AbstractUser extends Model\AbstractModel
         \Pimcore\Cache::clearAll();
 
         \Pimcore::getEventDispatcher()->dispatch(UserRoleEvents::POST_DELETE, new UserRoleEvent($this));
+    }
+
+    /**
+     * https://github.com/pimcore/pimcore/issues/7085
+     *
+     * @throws \Exception
+     */
+    private function cleanupUserRoleRelations()
+    {
+        $userRoleListing = new Listing();
+        $userRoleListing->setCondition('FIND_IN_SET(' . $this->getId() . ',roles)');
+        $userRoleListing = $userRoleListing->load();
+        if (count($userRoleListing)) {
+            /** @var Model\User $relatedUser */
+            foreach ($userRoleListing as $relatedUser) {
+                $userRoles = $relatedUser->getRoles();
+                if (is_array($userRoles)) {
+                    $key = array_search($this->getId(), $userRoles);
+                    if (false !== $key) {
+                        unset($userRoles[$key]);
+                        $relatedUser->setRoles($userRoles);
+                        $relatedUser->save();
+                    }
+                }
+            }
+        }
     }
 
     /**
