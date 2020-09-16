@@ -20,7 +20,6 @@ use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\MessageCatalogue;
-use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Component\Translation\TranslatorInterface as LegacyTranslatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -236,7 +235,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                             $translationKey = mb_strtolower($translationKey);
                         }
 
-                        if(empty($translationTerm)) {
+                        if (empty($translationTerm)) {
                             $translationTerm = $translationKey;
                         }
 
@@ -273,7 +272,9 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
      * @param array $parameters
      * @param string $domain
      * @param string $locale
+     *
      * @return string
+     *
      * @throws \Exception
      */
     protected function checkForEmptyTranslation($id, $translated, $parameters, $domain, $locale)
@@ -284,7 +285,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
         }
 
         $comparisonId = $normalizedId;
-        if(!empty($parameters)) {
+        if (!empty($parameters)) {
             $comparisonId = strtr($normalizedId, $parameters);
         }
 

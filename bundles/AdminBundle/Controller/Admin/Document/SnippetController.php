@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\JsonResponse;

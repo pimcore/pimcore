@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
-use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;

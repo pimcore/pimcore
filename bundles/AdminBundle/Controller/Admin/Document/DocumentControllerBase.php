@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
 use Pimcore\Controller\EventedControllerInterface;
@@ -273,6 +272,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             $latestDoc = $latestVersion->loadData();
             if ($latestDoc instanceof Model\Document\PageSnippet) {
                 $isLatestVersion = false;
+
                 return $latestDoc;
             }
         }

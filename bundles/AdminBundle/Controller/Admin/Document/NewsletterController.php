@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 use Exception;
 use Pimcore;
 use Pimcore\Document\Newsletter\AddressSourceAdapterFactoryInterface;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Email;
 use Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterActive;
 use Pimcore\Model\DataObject\ClassDefinition\Data\NewsletterConfirmed;

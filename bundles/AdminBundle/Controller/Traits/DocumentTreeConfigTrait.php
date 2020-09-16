@@ -29,6 +29,7 @@ trait DocumentTreeConfigTrait
 
     /**
      * @param Document $element
+     *
      * @return array
      *
      * @throws \Exception
