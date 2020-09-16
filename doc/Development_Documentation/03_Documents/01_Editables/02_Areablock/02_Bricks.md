@@ -248,7 +248,9 @@ reasons, but a couple of methods could be useful when implementing your own bric
 | `$info->getParam($name)`| Retrieve a param passed by `globalParams` or `params` config option  |
 | `$info->getParams()`    | Retrieve all params passed by `globalParams` or `params` config option  |
 
-## Configuration in Editmode
+## Configuration in Editmode [DEPRECATED]
+
+> This feature will be removed in Pimcore v7!
 
 You can use the edit template to allow users to add data to the brick. The edit template file can include HTML and 
 editables. When this file is present an icon will appear for the user which can be clicked to display and edit the 
