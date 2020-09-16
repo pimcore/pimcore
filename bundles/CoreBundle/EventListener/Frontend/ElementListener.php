@@ -102,7 +102,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 return;
             }
 
-            if($request->attributes->get('_route') === 'fos_js_routing_js') {
+            if ($request->attributes->get('_route') === 'fos_js_routing_js') {
                 return;
             }
 
