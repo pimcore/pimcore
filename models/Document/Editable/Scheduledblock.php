@@ -157,7 +157,7 @@ class Scheduledblock extends Block implements BlockInterface
             $this->start();
         }
 
-        if ($this->current < count($elements) && $this->current < $this->options['limit']) {
+        if ($this->current < count($elements) && $this->current < $this->config['limit']) {
             $this->blockConstruct();
             $this->blockStart();
 

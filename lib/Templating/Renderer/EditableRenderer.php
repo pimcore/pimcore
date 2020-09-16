@@ -100,12 +100,13 @@ class EditableRenderer implements LoggerAwareInterface
      * @param PageSnippet $document
      * @param string $type
      * @param string $inputName
-     * @param array $options
+     * @param array $config
      * @param bool|null $editmode
      *
+     * @throws \Exception
      * @return Editable|null
      */
-    public function getEditable(PageSnippet $document, $type, $inputName, array $options = [], bool $editmode = null)
+    public function getEditable(PageSnippet $document, $type, $inputName, array $config = [], bool $editmode = null)
     {
         $type = strtolower($type);
 
@@ -144,9 +145,9 @@ class EditableRenderer implements LoggerAwareInterface
 
                     $editable->setView($view);
                     $editable->setEditmode($editmode);
-                    $editable->setOptions($options);
+                    $editable->setConfig($config);
                 } else {
-                    $editable = Editable::factory($type, $name, $document->getId(), $options, null, $view, $editmode);
+                    $editable = Editable::factory($type, $name, $document->getId(), $config, null, $view, $editmode);
                     $document->setEditable($name, $editable);
                 }
 

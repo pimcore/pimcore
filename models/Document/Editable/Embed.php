@@ -69,7 +69,7 @@ class Embed extends Model\Document\Editable
     public function frontend()
     {
         if ($this->url) {
-            $config = $this->getOptions();
+            $config = $this->getConfig();
             if (!isset($config['params'])) {
                 $config['params'] = [];
             }

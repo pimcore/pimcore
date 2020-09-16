@@ -72,10 +72,10 @@ class Date extends Model\Document\Editable
     {
         $format = null;
 
-        if (isset($this->options['outputFormat']) && $this->options['outputFormat']) {
-            $format = $this->options['outputFormat'];
-        } elseif (isset($this->options['format']) && $this->options['format']) {
-            $format = $this->options['format'];
+        if (isset($this->config['outputFormat']) && $this->config['outputFormat']) {
+            $format = $this->config['outputFormat'];
+        } elseif (isset($this->config['format']) && $this->config['format']) {
+            $format = $this->config['format'];
         } else {
             $format = \DateTime::ISO8601;
         }

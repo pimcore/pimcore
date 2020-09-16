@@ -117,11 +117,11 @@ class Renderlet extends Model\Document\Editable
             return '';
         }
 
-        if (!$this->options['controller'] && !$this->options['action']) {
-            if (is_null($this->options)) {
-                $this->options = [];
+        if (!$this->config['controller'] && !$this->config['action']) {
+            if (is_null($this->config)) {
+                $this->config = [];
             }
-            $this->options += Tool::getRoutingDefaults();
+            $this->config += Tool::getRoutingDefaults();
         }
 
         if (method_exists($this->o, 'isPublished')) {
@@ -140,14 +140,14 @@ class Renderlet extends Model\Document\Editable
             $blockparams = ['action', 'controller', 'module', 'bundle', 'template'];
 
             $params = [
-                'template' => isset($this->options['template']) ? $this->options['template'] : null,
+                'template' => isset($this->config['template']) ? $this->config['template'] : null,
                 'id' => $this->id,
                 'type' => $this->type,
                 'subtype' => $this->subtype,
                 'pimcore_request_source' => 'renderlet',
             ];
 
-            foreach ($this->options as $key => $value) {
+            foreach ($this->config as $key => $value) {
                 if (!array_key_exists($key, $params) && !in_array($key, $blockparams)) {
                     $params[$key] = $value;
                 }
@@ -155,16 +155,16 @@ class Renderlet extends Model\Document\Editable
 
             $moduleOrBundle = null;
 
-            if (isset($this->options['bundle'])) {
-                $moduleOrBundle = $this->options['bundle'];
-            } elseif (isset($this->options['module'])) {
-                $moduleOrBundle = $this->options['module'];
+            if (isset($this->config['bundle'])) {
+                $moduleOrBundle = $this->config['bundle'];
+            } elseif (isset($this->config['module'])) {
+                $moduleOrBundle = $this->config['module'];
             }
 
             return $editableHandler->renderAction(
                 $this->view,
-                $this->options['controller'],
-                $this->options['action'],
+                $this->config['controller'],
+                $this->config['action'],
                 $moduleOrBundle,
                 $params
             );

@@ -187,10 +187,10 @@ class Pdf extends Model\Document\Editable
     {
         $asset = Asset::getById($this->id);
 
-        $options = $this->getOptions();
+        $config = $this->getConfig();
         $thumbnailConfig = ['width' => 1000];
-        if (isset($options['thumbnail'])) {
-            $thumbnailConfig = $options['thumbnail'];
+        if (isset($config['thumbnail'])) {
+            $thumbnailConfig = $config['thumbnail'];
         }
 
         if ($asset instanceof Asset\Document && $asset->getPageCount()) {
