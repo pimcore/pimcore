@@ -127,7 +127,7 @@ class QuantityValueController extends AdminController
 
                 $id = $data['id'];
                 if (Unit::getById($id)) {
-                    throw new \Exception("unit with ID [" . $id . "] already exists");
+                    throw new \Exception('unit with ID [' . $id . '] already exists');
                 }
 
                 $unit = new Unit();

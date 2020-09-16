@@ -20,7 +20,6 @@ class Version20200807105448 extends AbstractPimcoreMigration
         $this->addSql('ALTER TABLE `quantityvalue_units`
 	            DROP FOREIGN KEY `fk_baseunit`;');
 
-
         $this->addSql('ALTER TABLE `quantityvalue_units`
                 DROP INDEX `fk_baseunit`;');
         $this->addSql('ALTER TABLE `quantityvalue_units`
@@ -42,7 +41,6 @@ class Version20200807105448 extends AbstractPimcoreMigration
     {
         $this->addSql('ALTER TABLE `quantityvalue_units`
 	            DROP FOREIGN KEY `fk_baseunit`;');
-
 
         $this->addSql('ALTER TABLE `quantityvalue_units`
                 DROP INDEX `fk_baseunit`;');
