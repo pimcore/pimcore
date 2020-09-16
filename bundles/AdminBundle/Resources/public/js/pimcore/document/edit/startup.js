@@ -121,7 +121,7 @@ Ext.onReady(function () {
         var id = config.id;
         var type = config.type;
         var name = config.name;
-        var options = config.options;
+        var editableConfig = config.config;
         var data = config.data;
         var inherited = false;
         if(typeof config["inherited"] != "undefined") {
@@ -134,7 +134,7 @@ Ext.onReady(function () {
         editableNames.push(name);
 
         // @TODO: change pimcore.document.tags to pimcore.document.editables in v7
-        var editable = new pimcore.document.tags[type](id, name, options, data, inherited);
+        var editable = new pimcore.document.tags[type](id, name, editableConfig, data, inherited);
         editable.setRealName(config.realName);
         editable.setInherited(inherited);
 
@@ -147,7 +147,7 @@ Ext.onReady(function () {
             try {
                 let editable = getEditable(editableConfigurations[i]);
                 editables.push(editable);
-                if (editableConfigurations[i]['options']['required']) {
+                if (editableConfigurations[i]['config']['required']) {
                     requiredEditables.push(editable)
                 }
             } catch (e) {

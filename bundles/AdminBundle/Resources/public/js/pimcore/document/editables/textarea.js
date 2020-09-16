@@ -14,11 +14,11 @@
 pimcore.registerNS("pimcore.document.editables.textarea");
 pimcore.document.editables.textarea = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
         this.setupWrapper();
-        options = this.parseOptions(options);
+        config = this.parseConfig(config);
 
         if (!data) {
             data = "";
@@ -43,8 +43,8 @@ pimcore.document.editables.textarea = Class.create(pimcore.document.editable, {
 
         this.element.update(data);
 
-        if(options["required"]) {
-            this.required = options["required"];
+        if(config["required"]) {
+            this.required = config["required"];
         }
 
         this.checkValue();
@@ -93,24 +93,24 @@ pimcore.document.editables.textarea = Class.create(pimcore.document.editable, {
             }
         }.bind(this));
 
-        if(options["width"] || options["height"]) {
+        if(config["width"] || config["height"]) {
             this.element.applyStyles({
                 display: "inline-block",
                 overflow: "auto"
             });
         }
-        if(options["width"]) {
+        if(config["width"]) {
             this.element.applyStyles({
-                width: options["width"] + "px"
+                width: config["width"] + "px"
             })
         }
-        if(options["height"]) {
+        if(config["height"]) {
             this.element.applyStyles({
-                height: options["height"] + "px"
+                height: config["height"] + "px"
             })
         }
-        if (options["placeholder"]) {
-            this.element.dom.setAttribute('data-placeholder', options["placeholder"]);
+        if (config["placeholder"]) {
+            this.element.dom.setAttribute('data-placeholder', config["placeholder"]);
         }
     },
 
