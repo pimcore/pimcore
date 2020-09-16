@@ -224,6 +224,13 @@ class Image extends Model\Asset
         if (class_exists('Imagick')) {
             // Imagick fallback
             $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
+
+            if (!stream_is_local($path)) {
+                // imagick is only able to deal with local files
+                // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
+                $path = $this->getTemporaryFile();
+            }
+
             $imagick = new \Imagick($path);
             $imagick->setImageFormat('jpg');
             $imagick->setOption('jpeg:extent', '1kb');
