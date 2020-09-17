@@ -17,7 +17,7 @@ pimcore.document.editables.numeric = Class.create(pimcore.document.editable, {
     initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
-        options = this.parseOptions(config);
+        config = this.parseConfig(config);
 
         if ('number' !== typeof data && !data) {
             data = "";
@@ -36,7 +36,7 @@ pimcore.document.editables.numeric = Class.create(pimcore.document.editable, {
 
     render: function () {
         this.setupWrapper();
-        this.element = new Ext.form.field.Number(this.options);
+        this.element = new Ext.form.field.Number(this.config);
         this.element.render(this.id);
 
         this.checkValue();
@@ -48,7 +48,7 @@ pimcore.document.editables.numeric = Class.create(pimcore.document.editable, {
             return this.element.getValue();
         }
 
-        return this.options.value;
+        return this.config.value;
     },
 
     getType: function () {

@@ -18,7 +18,7 @@ pimcore.document.editables.date = Class.create(pimcore.document.editable, {
 
         this.id = id;
         this.name = name;
-        this.config = this.parseOptions(config);
+        this.config = this.parseConfig(config);
 
         this.data = null;
         if(data) {

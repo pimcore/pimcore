@@ -48,7 +48,7 @@ pimcore.document.editables.multiselect = Class.create(pimcore.document.editable,
 
     render: function () {
         this.setupWrapper();
-        this.element = Ext.create('Ext.ux.form.MultiSelect', this.options);
+        this.element = Ext.create('Ext.ux.form.MultiSelect', this.config);
         this.element.render(this.id);
     },
 

@@ -25,8 +25,8 @@ pimcore.document.editables.textarea = Class.create(pimcore.document.editable, {
 
         this.data = str_replace("\n","<br>", data);
 
-        if(this.options["required"]) {
-            this.required = this.options["required"];
+        if(this.config["required"]) {
+            this.required = this.config["required"];
         }
     },
 
@@ -112,7 +112,7 @@ pimcore.document.editables.textarea = Class.create(pimcore.document.editable, {
             })
         }
         if (this.config["placeholder"]) {
-            this.element.dom.setAttribute('data-placeholder', this.options["placeholder"]);
+            this.element.dom.setAttribute('data-placeholder', this.config["placeholder"]);
         }
     },
 

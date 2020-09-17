@@ -18,7 +18,7 @@ pimcore.document.editables.select = Class.create(pimcore.document.editable, {
         this.id = id;
         this.name = name;
 
-        config = this.parseOptions(config);
+        config = this.parseConfig(config);
 
         config.listeners = {};
 
@@ -54,7 +54,7 @@ pimcore.document.editables.select = Class.create(pimcore.document.editable, {
             return this.element.getValue();
         }
 
-        return this.options.value;
+        return this.config.value;
     },
 
     getType: function () {

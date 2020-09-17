@@ -17,7 +17,7 @@ pimcore.document.editables.input = Class.create(pimcore.document.editable, {
     initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
-        this.config = this.parseOptions(config);
+        this.config = this.parseConfig(config);
 
         if (!data) {
             data = "";
@@ -95,7 +95,7 @@ pimcore.document.editables.input = Class.create(pimcore.document.editable, {
             });
         }
         if (this.config["placeholder"]) {
-            this.element.dom.setAttribute('data-placeholder', this.options["placeholder"]);
+            this.element.dom.setAttribute('data-placeholder', this.config["placeholder"]);
         }
 
         // @TODO validator is based on \Zend\Json\Expr and does not work with Twig templates, to be removed in v7.0

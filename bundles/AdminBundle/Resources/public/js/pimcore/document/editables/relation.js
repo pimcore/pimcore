@@ -43,8 +43,8 @@ pimcore.document.editables.relation = Class.create(pimcore.document.editable, {
     render: function () {
         this.setupWrapper();
 
-        if (!this.options.width) {
-            this.options.width = Ext.get(this.id).getWidth() - 2;
+        if (!this.config.width) {
+            this.config.width = Ext.get(this.id).getWidth() - 2;
         }
 
         this.element = new Ext.form.TextField(this.config);

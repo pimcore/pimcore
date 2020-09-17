@@ -75,7 +75,7 @@ pimcore.document.editables.table = Class.create(pimcore.document.editable, {
             clicksToEdit: 1
         });
 
-        let gridConfig = array_merge(this.options, {
+        let gridConfig = array_merge(this.config, {
             name: this.id + "_editable",
             store: this.store,
             border: true,

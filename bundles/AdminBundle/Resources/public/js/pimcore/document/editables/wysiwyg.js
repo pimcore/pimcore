@@ -30,8 +30,8 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
         this.config = config;
         this.inherited = inherited;
 
-        if(options["required"]) {
-            this.required = options["required"];
+        if(config["required"]) {
+            this.required = config["required"];
         }
     },
 
@@ -56,7 +56,7 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
         }
 
         let inactiveContainerWidth = this.config.width + "px";
-        if (typeof this.options.width == "string" && this.config.width.indexOf("%") >= 0) {
+        if (typeof this.config.width == "string" && this.config.width.indexOf("%") >= 0) {
             inactiveContainerWidth = this.config.width;
         }
 
