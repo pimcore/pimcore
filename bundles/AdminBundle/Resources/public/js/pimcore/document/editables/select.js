@@ -14,38 +14,38 @@
 pimcore.registerNS("pimcore.document.editables.select");
 pimcore.document.editables.select = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
 
-        options = this.parseOptions(options);
+        config = this.parseOptions(config);
 
-        options.listeners = {};
+        config.listeners = {};
 
         // onchange event
-        if (options.onchange) {
-            options.listeners.select = eval(options.onchange);
+        if (config.onchange) {
+            config.listeners.select = eval(config.onchange);
         }
 
-        if (options["reload"]) {
-            options.listeners.select = this.reloadDocument;
+        if (config["reload"]) {
+            config.listeners.select = this.reloadDocument;
         }
 
-        if(options["defaultValue"] && data === null) {
-            data = options["defaultValue"];
+        if(config["defaultValue"] && data === null) {
+            data = config["defaultValue"];
         }
 
-        options.name = id + "_editable";
-        options.triggerAction = 'all';
-        options.editable = false;
-        options.value = data;
+        config.name = id + "_editable";
+        config.triggerAction = 'all';
+        config.editable = false;
+        config.value = data;
 
-        this.options = options;
+        this.config = config;
     },
 
     render: function() {
         this.setupWrapper();
-        this.element = new Ext.form.ComboBox(this.options);
+        this.element = new Ext.form.ComboBox(this.config);
         this.element.render(this.id);
     },
 

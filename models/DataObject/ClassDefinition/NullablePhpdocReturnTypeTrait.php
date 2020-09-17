@@ -37,7 +37,31 @@ trait NullablePhpdocReturnTypeTrait
     /**
      * @return string|null
      */
+    public function getPhpdocInputType(): ?string
+    {
+        if ($this->phpdocType) {
+            return $this->phpdocType . '|null';
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string|null
+     */
     public function getReturnTypeDeclaration(): ?string
+    {
+        if ($this->phpdocType) {
+            return '?' . $this->phpdocType;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getParameterTypeDeclaration(): ?string
     {
         if ($this->phpdocType) {
             return '?' . $this->phpdocType;

@@ -14,7 +14,7 @@
 pimcore.registerNS("pimcore.document.editables.link");
 pimcore.document.editables.link = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
 
         if (!data) {
             data = {};
@@ -37,7 +37,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
 
         this.id = id;
         this.name = name;
-        this.options = this.parseOptions(options);
+        this.config = this.parseConfig(config);
     },
 
     render: function() {
@@ -98,7 +98,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
             text = this.data.path;
         }
         if (this.data.path) {
-            return '<a href="' + this.data.path + '" class="' + this.options["class"] + ' ' + this.data["class"] + '">' + text + '</a>';
+            return '<a href="' + this.data.path + '" class="' + this.config["class"] + ' ' + this.data["class"] + '">' + text + '</a>';
         }
         return text;
     },
@@ -121,7 +121,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
     },
 
     reload : function () {
-        if (this.options.reload) {
+        if (this.config.reload) {
             this.reloadDocument();
         }
     },

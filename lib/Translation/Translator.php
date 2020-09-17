@@ -20,7 +20,6 @@ use Pimcore\Tool;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\MessageCatalogue;
-use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorBagInterface;
 use Symfony\Component\Translation\TranslatorInterface as LegacyTranslatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -112,12 +111,16 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
 
         $this->lazyInitialize($domain, $locale);
 
-        if (isset($parameters['%count%'])) {
-            $id = $this->translator->trans($id, $parameters, $domain, $locale);
+        $originalId = $id;
+        if ($this->caseInsensitive && in_array($domain, ['messages', 'admin'])) {
+            $id = mb_strtolower($id);
         }
 
-        $term = $this->getFromCatalogue($catalogue, $id, $domain, $locale);
-        $term = strtr($term, $parameters);
+        $term = $this->translator->trans($id, $parameters, $domain, $locale);
+
+        // only check for empty translation on original ID - we don't want to create empty
+        // translations for normalized IDs when case insensitive
+        $term = $this->checkForEmptyTranslation($originalId, $term, $parameters, $domain, $locale);
 
         // check for an indexed array, that used the ZF1 vsprintf() notation for parameters
         if (isset($parameters[0])) {
@@ -141,22 +144,6 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
         );
 
         return $this->trans($id, ['%count%' => $number] + $parameters, $domain, $locale);
-    }
-
-    protected function getFromCatalogue(MessageCatalogueInterface $catalogue, $id, $domain, $locale)
-    {
-        $originalId = $id;
-        if ($this->caseInsensitive && in_array($domain, ['messages', 'admin'])) {
-            $id = mb_strtolower($id);
-        }
-
-        $term = $catalogue->get($id, $domain);
-
-        // only check for empty translation on original ID - we don't want to create empty
-        // translations for normalized IDs when case insensitive
-        $term = $this->checkForEmptyTranslation($originalId, $term, $domain, $locale);
-
-        return $term;
     }
 
     /**
@@ -248,6 +235,10 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                             $translationKey = mb_strtolower($translationKey);
                         }
 
+                        if (empty($translationTerm)) {
+                            $translationTerm = $translationKey;
+                        }
+
                         $data[$translationKey] = $translationTerm;
                     }
                 }
@@ -278,6 +269,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
     /**
      * @param string $id
      * @param string $translated
+     * @param array $parameters
      * @param string $domain
      * @param string $locale
      *
@@ -285,19 +277,24 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
      *
      * @throws \Exception
      */
-    protected function checkForEmptyTranslation($id, $translated, $domain, $locale)
+    protected function checkForEmptyTranslation($id, $translated, $parameters, $domain, $locale)
     {
         $normalizedId = $id;
         if ($this->caseInsensitive) {
             $normalizedId = mb_strtolower($id);
         }
 
-        $lookForFallback = empty($translated);
+        $comparisonId = $normalizedId;
+        if (!empty($parameters)) {
+            $comparisonId = strtr($normalizedId, $parameters);
+        }
+
+        $lookForFallback = $comparisonId == $translated;
         if (empty($id)) {
             return $translated;
-        } elseif ($normalizedId != $translated && $translated) {
+        } elseif ($comparisonId != $translated && $translated) {
             return $translated;
-        } elseif ($normalizedId == $translated && !$this->getCatalogue($locale)->has($normalizedId, $domain)) {
+        } elseif ($comparisonId == $translated && !$this->getCatalogue($locale)->has($normalizedId, $domain)) {
             $backend = $this->getBackendForDomain($domain);
             if ($backend) {
                 if (strlen($id) > 190) {
@@ -336,9 +333,6 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                 // put it into the catalogue, otherwise when there are more calls to the same key during one process
                 // the key would be inserted/updated several times, what would be redundant
                 $this->getCatalogue($locale)->set($normalizedId, $id, $domain);
-
-                $translated = $id; // use the original translation key, this is necessary if using case-insensitive configuration
-                $lookForFallback = true;
             }
         }
 
@@ -361,15 +355,9 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                     return $fallbackValue;
                 }
             }
-
-            return $id;
         }
 
-        if (empty($translated)) {
-            return $id;
-        } else {
-            return $translated;
-        }
+        return $translated;
     }
 
     /**

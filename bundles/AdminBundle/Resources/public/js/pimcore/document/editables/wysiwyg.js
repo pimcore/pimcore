@@ -17,17 +17,17 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
 
     type: "wysiwyg",
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
 
         this.id = id;
         this.name = name;
-        options = this.parseOptions(options);
+        config = this.parseConfig(config);
 
         if (!data) {
             data = "";
         }
         this.data = data;
-        this.options = options;
+        this.config = config;
         this.inherited = inherited;
 
         if(options["required"]) {
@@ -48,16 +48,16 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
         this.textarea.innerHTML = this.data;
 
         let textareaHeight = 100;
-        if (this.options.height) {
-            textareaHeight = this.options.height;
+        if (this.config.height) {
+            textareaHeight = this.config.height;
         }
-        if (this.options.placeholder) {
-            this.textarea.setAttribute('data-placeholder', this.options["placeholder"]);
+        if (this.config.placeholder) {
+            this.textarea.setAttribute('data-placeholder', this.config["placeholder"]);
         }
 
-        let inactiveContainerWidth = this.options.width + "px";
-        if (typeof this.options.width == "string" && this.options.width.indexOf("%") >= 0) {
-            inactiveContainerWidth = this.options.width;
+        let inactiveContainerWidth = this.config.width + "px";
+        if (typeof this.options.width == "string" && this.config.width.indexOf("%") >= 0) {
+            inactiveContainerWidth = this.config.width;
         }
 
         Ext.get(this.textarea).addCls("pimcore_wysiwyg");
@@ -78,11 +78,11 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
         try {
             CKEDITOR.config.language = pimcore.globalmanager.get("user").language;
             var eConfig = {};
-            var specificConfig = Object.assign({}, this.options);
+            var specificConfig = Object.assign({}, this.config);
 
             // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible
             // is also Basic
-            if(!this.options["toolbarGroups"] && this.options['toolbarGroups'] !== false){
+            if(!this.config["toolbarGroups"] && this.config['toolbarGroups'] !== false){
                 eConfig.toolbarGroups = [
                     { name: 'basicstyles', groups: [ 'undo', "find", 'basicstyles', 'list'] },
                     '/',

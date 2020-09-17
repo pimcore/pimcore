@@ -570,13 +570,13 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             $type = Service::getElementType($data);
             $data = Service::getElementById($type, $data->getId(), true);
 
-
             if (!$data->__isBasedOnLatestData()) {
                 $this->logger->warning('Not saving {key} to cache as element is not based on latest data', [
                     'key' => $item->getKey(),
                 ]);
 
                 $this->writeInProgress = false;
+
                 return false;
             }
 
@@ -585,7 +585,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
             $context = [
                 'source' => __METHOD__,
-                'conversion' => false
+                'conversion' => false,
             ];
             $copier = Service::getDeepCopyInstance($data, $context);
             $copier->addFilter(new SetDumpStateFilter(false), new \DeepCopy\Matcher\PropertyMatcher(ElementDumpStateInterface::class, ElementDumpStateInterface::DUMP_STATE_PROPERTY_NAME));
@@ -595,6 +595,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                     function ($currentValue) {
                         if ($currentValue instanceof CacheMarshallerInterface) {
                             $marshalledValue = $currentValue->marshalForCache();
+
                             return $marshalledValue;
                         }
 
@@ -899,7 +900,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
             if (null === $cacheItem) {
                 $result = false;
-                // item shouldn't go to the cache (either because it's tags are ignored or were cleared within this process) -> see $this->prepareCacheTags();
+            // item shouldn't go to the cache (either because it's tags are ignored or were cleared within this process) -> see $this->prepareCacheTags();
             } else {
                 $result = $this->storeCacheItem($queueItem->getCacheItem(), $queueItem->getData(), $queueItem->isForce());
                 if (!$result) {

@@ -14,36 +14,36 @@
 pimcore.registerNS("pimcore.document.editables.table");
 pimcore.document.editables.table = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
 
         this.id = id;
         this.name = name;
-        options = this.parseOptions(options);
+        config = this.parseConfig(config);
 
         if (!data) {
             data = [
                 [" "]
             ];
-            if (options.defaults) {
-                if (options.defaults.cols) {
-                    for (let i = 0; i < (options.defaults.cols - 1); i++) {
+            if (config.defaults) {
+                if (config.defaults.cols) {
+                    for (let i = 0; i < (config.defaults.cols - 1); i++) {
                         data[0].push(" ");
                     }
                 }
-                if (options.defaults.rows) {
-                    for (let i = 0; i < (options.defaults.rows - 1); i++) {
+                if (config.defaults.rows) {
+                    for (let i = 0; i < (config.defaults.rows - 1); i++) {
                         data.push(data[0]);
                     }
                 }
-                if (options.defaults.data) {
-                    data = options.defaults.data;
+                if (config.defaults.data) {
+                    data = config.defaults.data;
                 }
             }
         }
 
-        delete options["height"];
+        delete config["height"];
 
-        this.options = options;
+        this.config = config;
 
         this.initStore(data);
     },

@@ -27,7 +27,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
         this.data = [];
         this.currentElements = {};
         this.layoutDefinitions = {};
-        this.dataFields = [];
+        this.dataFields = {};
         this.layoutIds = [];
 
         if (data) {
@@ -236,7 +236,7 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 return;
             }
 
-            var dataFields = [];
+            var dataFields = {};
             var currentData = {};
             var currentMetaData = {};
 
@@ -257,7 +257,16 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 },
 
                 addToDataFields: function (field, name) {
-                    dataFields.push(field);
+                    if(dataFields[name]) {
+                        // this is especially for localized fields which get aggregated here into one field definition
+                        // in the case that there are more than one localized fields in the class definition
+                        // see also Object_Class::extractDataDefinitions();
+                        if(typeof dataFields[name]["addReferencedField"]){
+                            dataFields[name].addReferencedField(field);
+                        }
+                    } else {
+                        dataFields[name] = field;
+                    }
                 }
             };
 
@@ -365,9 +374,10 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                     if (element.action == "deleted") {
                         elementData = "deleted";
                     } else {
-                        for (var u = 0; u < element.fields.length; u++) {
-
-                            var field = element.fields[u];
+                        var elementFieldNames = Object.keys(element.fields);
+                        for (var u = 0; u < elementFieldNames.length; u++) {
+                            var elementFieldName = elementFieldNames[u];
+                            var field = element.fields[elementFieldName];
                             try {
                                 if (field.isDirty()) {
                                     field.unmarkInherited();
@@ -407,8 +417,10 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 if (this.currentElements[types[t]]) {
                     var element = this.currentElements[types[t]];
                     if (element.action != "deleted") {
-                        for (var u = 0; u < element.fields.length; u++) {
-                            var field = element.fields[u];
+                        var elementFieldNames = Object.keys(element.fields);
+                        for (var u = 0; u < elementFieldNames.length; u++) {
+                            var elementFieldName = elementFieldNames[u];
+                            var field = element.fields[elementFieldName];
                             if (field.isDirty()) {
 
                                 this.dirty = true;
@@ -443,8 +455,10 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 if (this.currentElements[types[t]]) {
                     var element = this.currentElements[types[t]];
                     if (element.action != "deleted") {
-                        for (var u = 0; u < element.fields.length; u++) {
-                            var field = element.fields[u];
+                        var elementFieldNames = Object.keys(element.fields);
+                        for (var u = 0; u < elementFieldNames.length; u++) {
+                            var elementFieldName = elementFieldNames[u];
+                            var field = element.fields[elementFieldName];
                             if (field.isDirty()) {
                                 if (field.fieldConfig.fieldtype == "localizedfields") {
                                     field.dataIsNotInherited(true);
@@ -467,8 +481,10 @@ pimcore.object.tags.objectbricks = Class.create(pimcore.object.tags.abstract, {
                 if (this.currentElements[types[t]]) {
                     element = this.currentElements[types[t]];
                     if (element.action != "deleted") {
-                        for (var u = 0; u < element.fields.length; u++) {
-                            if (element.fields[u].isMandatory()) {
+                        var elementFieldNames = Object.keys(element.fields);
+                        for (var u = 0; u < elementFieldNames.fields.length; u++) {
+                            var elementFieldName = elementFieldNames[u];
+                            if (element.fields[elementFieldName].isMandatory()) {
                                 return true;
                             }
                         }

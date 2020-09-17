@@ -770,8 +770,8 @@ abstract class PageSnippet extends Model\Document
                     foreach ($editableNames as $editableName) {
                         $editable = $documentCopy->getEditable($editableName);
                         if ($editable instanceof Editable && in_array($editable->getType(), $allowedTypes)) {
-                            $documentOptions = $editable->getOptions();
-                            if ($editable->isEmpty() && isset($documentOptions['required']) && $documentOptions['required'] == true) {
+                            $editableConfig = $editable->getConfig();
+                            if ($editable->isEmpty() && isset($editableConfig['required']) && $editableConfig['required'] == true) {
                                 $this->setMissingRequiredEditable(true);
                                 break;
                             }

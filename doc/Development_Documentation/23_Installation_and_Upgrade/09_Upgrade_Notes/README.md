@@ -1,6 +1,7 @@
 # Upgrade Notes
 ## 6.8.0
 - HybridAuth integration is deprecated and will be removed in Pimcore 7.
+- `Pimcore\Browser` is deprecated and will be replaced by `\Browser` in Pimcore 7. [#7084](https://github.com/pimcore/pimcore/pull/7084)
 - Javascript - All classes under namespaces `pimcore.document.tags` are deprecated and will be removed in 7. These are moved to new namespace `pimcore.document.editables`. 
 If you have custom editables or wysiwyg global config then please change namespace from `pimcore.document.tags.*` to `pimcore.document.editables.*`
 - Javascript - Class `pimcore.document.tag` is deprecated as well and will be removed in 7. Use new class `pimcore.document.editable` instead.

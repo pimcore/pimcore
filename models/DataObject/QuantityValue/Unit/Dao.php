@@ -89,8 +89,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function create()
     {
-        $this->db->insert(self::TABLE_NAME, []);
-        $this->model->setId($this->db->lastInsertId());
+        $this->update();
     }
 
     /**
@@ -98,15 +97,18 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function save()
     {
-        if (!$this->model->getId()) {
-            $this->create();
-        }
-
         $this->update();
     }
 
     public function update()
     {
+        if (!$id = $this->model->getId()) {
+            // mimic autoincrement
+            $id = $this->db->fetchOne('select CONVERT(SUBSTRING_INDEX(id,\'-\',-1),UNSIGNED INTEGER) AS num FROM quantityvalue_units ORDER BY num DESC LIMIT 1 ');
+            $id = $id > 0 ? ($id + 1) : 1;
+            $this->model->setId($id);
+        }
+
         $class = $this->model->getObjectVars();
         $data = [];
 
@@ -121,7 +123,7 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
-        $this->db->update(self::TABLE_NAME, $data, ['id' => $this->model->getId()]);
+        $this->db->insertOrUpdate(self::TABLE_NAME, $data);
     }
 
     /**

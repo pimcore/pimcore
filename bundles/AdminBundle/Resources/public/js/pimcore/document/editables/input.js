@@ -14,10 +14,10 @@
 pimcore.registerNS("pimcore.document.editables.input");
 pimcore.document.editables.input = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
-        this.options = this.parseOptions(options);
+        this.config = this.parseOptions(config);
 
         if (!data) {
             data = "";
@@ -45,8 +45,8 @@ pimcore.document.editables.input = Class.create(pimcore.document.editable, {
 
         this.element.update(this.data + "<br>");
 
-        if(this.options["required"]) {
-            this.required = this.options["required"];
+        if(this.config["required"]) {
+            this.required = this.config["required"];
         }
 
         this.checkValue();
@@ -80,27 +80,27 @@ pimcore.document.editables.input = Class.create(pimcore.document.editable, {
             }
         }.bind(this));
 
-        if(this.options["width"]) {
+        if(this.config["width"]) {
             this.element.applyStyles({
                 display: "inline-block",
-                width: this.options["width"] + "px",
+                width: this.config["width"] + "px",
                 overflow: "auto",
                 "white-space": "nowrap"
             });
         }
-        if(this.options["nowrap"]) {
+        if(this.config["nowrap"]) {
             this.element.applyStyles({
                 "white-space": "nowrap",
                 overflow: "auto"
             });
         }
-        if (this.options["placeholder"]) {
+        if (this.config["placeholder"]) {
             this.element.dom.setAttribute('data-placeholder', this.options["placeholder"]);
         }
 
         // @TODO validator is based on \Zend\Json\Expr and does not work with Twig templates, to be removed in v7.0
-        if(this.options["validator"]) {
-            this.element.isValid = this.options["validator"];
+        if(this.config["validator"]) {
+            this.element.isValid = this.config["validator"];
             this.validateElement();
         }
     },

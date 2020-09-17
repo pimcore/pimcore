@@ -14,10 +14,10 @@
 pimcore.registerNS("pimcore.document.editables.textarea");
 pimcore.document.editables.textarea = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
-        this.options = this.parseOptions(options);
+        this.config = this.parseConfig(config);
 
         if (!data) {
             data = "";
@@ -95,23 +95,23 @@ pimcore.document.editables.textarea = Class.create(pimcore.document.editable, {
             }
         }.bind(this));
 
-        if(this.options["width"] || this.options["height"]) {
+        if(this.config["width"] || this.config["height"]) {
             this.element.applyStyles({
                 display: "inline-block",
                 overflow: "auto"
             });
         }
-        if(this.options["width"]) {
+        if(this.config["width"]) {
             this.element.applyStyles({
-                width: this.options["width"] + "px"
+                width: this.config["width"] + "px"
             })
         }
-        if(this.options["height"]) {
+        if(this.config["height"]) {
             this.element.applyStyles({
-                height: this.options["height"] + "px"
+                height: this.config["height"] + "px"
             })
         }
-        if (this.options["placeholder"]) {
+        if (this.config["placeholder"]) {
             this.element.dom.setAttribute('data-placeholder', this.options["placeholder"]);
         }
     },

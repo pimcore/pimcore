@@ -14,11 +14,11 @@
 pimcore.registerNS("pimcore.document.editables.date");
 pimcore.document.editables.date = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
 
         this.id = id;
         this.name = name;
-        this.options = this.parseOptions(options);
+        this.config = this.parseOptions(config);
 
         this.data = null;
         if(data) {
@@ -29,19 +29,19 @@ pimcore.document.editables.date = Class.create(pimcore.document.editable, {
     render: function () {
         this.setupWrapper();
 
-        if (this.options.format) {
+        if (this.config.format) {
             // replace any % prefixed parts from strftime format
-            this.options.format = this.options.format.replace(/%([a-zA-Z])/g, '$1');
+            this.config.format = this.config.format.replace(/%([a-zA-Z])/g, '$1');
         }
 
         if(this.data) {
-            this.options.value = this.data;
+            this.config.value = this.data;
         }
 
-        this.options.name = id + "_editable";
+        this.config.name = id + "_editable";
 
-        this.element = new Ext.form.DateField(this.options);
-        if (this.options["reload"]) {
+        this.element = new Ext.form.DateField(this.config);
+        if (this.config["reload"]) {
             this.element.on("change", this.reloadDocument);
         }
 

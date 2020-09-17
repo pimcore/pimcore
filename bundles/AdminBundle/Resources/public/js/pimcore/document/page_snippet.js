@@ -457,11 +457,12 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
         $super(only, callback);
     },
 
-    save : function ($super, task, only, callback) {
-        if(task !== "publish") {
+    save: function ($super, task, only, callback, successCallback) {
+        if (task !== "publish") {
             this.validateRequiredEditables(true);
         }
-        $super(task, only, callback);
+
+        $super(task, only, callback, successCallback);
     },
 
     validateRequiredEditables: function (dismissAlert) {
@@ -498,6 +499,5 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
             }
         } catch(e) {
         }
-
     }
 });

@@ -31,7 +31,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -773,6 +772,18 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             return $listing;
         }
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhpdocReturnType(): ?string
+    {
+        if ($this->getPhpdocType()) {
+            return $this->getPhpdocType() . '|null';
+        }
+
+        return null;
     }
 }
 

@@ -14,12 +14,12 @@
 pimcore.registerNS("pimcore.document.editables.video");
 pimcore.document.editables.video = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
         this.inherited = inherited;
 
-        this.options = this.parseOptions(options);
+        this.config = this.parseConfig(config);
         this.data = data;
     },
 
