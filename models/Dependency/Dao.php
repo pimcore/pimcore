@@ -175,7 +175,18 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getRequiredBy($offset = null, $limit = null)
     {
-        $query = 'SELECT sourceid, sourcetype FROM dependencies WHERE targetid = ? AND targettype = ?';
+        $query = "
+            SELECT dependencies.* FROM dependencies
+            LEFT JOIN objects ON dependencies.sourceid=objects.o_id AND dependencies.targettype='object'
+            LEFT JOIN assets ON dependencies.sourceid=assets.id AND dependencies.targettype='asset' 
+            LEFT JOIN documents ON dependencies.sourceid=documents.id AND dependencies.targettype='document' 
+            WHERE dependencies.targetid = ? AND dependencies.targettype = ?
+            ORDER BY objects.o_path ASC, documents.path ASC, assets.path ASC
+        ";
+
+        if ($offset !== null & $limit !== null) {
+            $query = sprintf($query.' LIMIT %d,%d', $offset, $limit);
+        }
 
         if ($offset !== null && $limit !== null) {
             $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
