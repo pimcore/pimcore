@@ -44,7 +44,14 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // requires
-        $data = $this->db->fetchAll('SELECT `targetid`,`targettype`  FROM dependencies WHERE sourceid = ? AND sourcetype = ?', [$this->model->getSourceId(), $this->model->getSourceType()]);
+        $data = $this->db->fetchAll('SELECT `targetid`,`targettype`
+            FROM dependencies
+            LEFT JOIN objects ON dependencies.sourceid=objects.o_id AND dependencies.targettype="object"
+            LEFT JOIN assets ON dependencies.sourceid=assets.id AND dependencies.targettype="asset"
+            LEFT JOIN documents ON dependencies.sourceid=documents.id AND dependencies.targettype="document"
+            WHERE sourceid = ? AND sourcetype = ?
+            ORDER BY objects.o_path ASC, documents.path ASC, assets.path ASC',
+            [$this->model->getSourceId(), $this->model->getSourceType()]);
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $d) {
@@ -178,15 +185,11 @@ class Dao extends Model\Dao\AbstractDao
         $query = "
             SELECT dependencies.* FROM dependencies
             LEFT JOIN objects ON dependencies.sourceid=objects.o_id AND dependencies.targettype='object'
-            LEFT JOIN assets ON dependencies.sourceid=assets.id AND dependencies.targettype='asset' 
-            LEFT JOIN documents ON dependencies.sourceid=documents.id AND dependencies.targettype='document' 
+            LEFT JOIN assets ON dependencies.sourceid=assets.id AND dependencies.targettype='asset'
+            LEFT JOIN documents ON dependencies.sourceid=documents.id AND dependencies.targettype='document'
             WHERE dependencies.targetid = ? AND dependencies.targettype = ?
             ORDER BY objects.o_path ASC, documents.path ASC, assets.path ASC
         ";
-
-        if ($offset !== null & $limit !== null) {
-            $query = sprintf($query.' LIMIT %d,%d', $offset, $limit);
-        }
 
         if ($offset !== null && $limit !== null) {
             $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
