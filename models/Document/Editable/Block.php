@@ -116,8 +116,8 @@ class Block extends Model\Document\Editable implements BlockInterface
      */
     public function setDefault()
     {
-        if (empty($this->indices) && isset($this->options['default']) && $this->options['default']) {
-            for ($i = 0; $i < intval($this->options['default']); $i++) {
+        if (empty($this->indices) && isset($this->config['default']) && $this->config['default']) {
+            for ($i = 0; $i < intval($this->config['default']); $i++) {
                 $this->indices[$i] = $i + 1;
             }
         }
@@ -133,7 +133,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     public function loop()
     {
         $manual = false;
-        if (array_key_exists('manual', $this->options) && $this->options['manual'] == true) {
+        if (($this->config['manual'] ?? false) == true) {
             $manual = true;
         }
 
@@ -150,7 +150,7 @@ class Block extends Model\Document\Editable implements BlockInterface
             }
         }
 
-        if ($this->current < count($this->indices) && $this->current < $this->options['limit']) {
+        if ($this->current < count($this->indices) && $this->current < $this->config['limit']) {
             if (!$manual) {
                 $this->blockConstruct();
                 $this->blockStart();
@@ -286,17 +286,17 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @param array $options
+     * @param array $config
      *
      * @return $this
      */
-    public function setOptions($options)
+    public function setConfig($config)
     {
-        if (empty($options['limit'])) {
-            $options['limit'] = 1000000;
+        if (empty($config['limit'])) {
+            $config['limit'] = 1000000;
         }
 
-        $this->options = $options;
+        $this->config = $config;
 
         return $this;
     }

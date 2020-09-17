@@ -14,18 +14,18 @@
 pimcore.registerNS("pimcore.document.editables.block");
 pimcore.document.editables.block = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
 
         this.id = id;
         this.name = name;
         this.elements = [];
-        this.options = this.parseOptions(options);
+        this.config = this.parseConfig(config);
 
         var plusButton, minusButton, upButton, downButton, plusDiv, minusDiv, upDiv, downDiv, amountDiv, amountBox;
         this.elements = Ext.get(id).query('.pimcore_block_entry[data-name="' + name + '"][key]');
 
         var limitReached = false;
-        if(typeof options.limit != "undefined" && this.elements.length >= options.limit) {
+        if(typeof config.limit != "undefined" && this.elements.length >= config.limit) {
             limitReached = true;
         }
 
@@ -119,8 +119,8 @@ pimcore.document.editables.block = Class.create(pimcore.document.editable, {
     getAmountValues: function () {
         var amountValues = [];
 
-        if(typeof this.options.limit != "undefined") {
-            var maxAddValues = intval(this.options.limit) - this.elements.length;
+        if(typeof this.config.limit != "undefined") {
+            var maxAddValues = intval(this.config.limit) - this.elements.length;
             if(maxAddValues > 10) {
                 maxAddValues = 10;
             }

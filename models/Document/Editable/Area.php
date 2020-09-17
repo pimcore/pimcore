@@ -66,13 +66,13 @@ class Area extends Model\Document\Editable
      */
     public function frontend()
     {
-        $options = $this->getOptions();
+        $config = $this->getConfig();
 
         // TODO inject area handler via DI when tags are built through container
         $editableHandler = \Pimcore::getContainer()->get(EditableHandlerInterface::class);
 
         // don't show disabled bricks
-        if (!$editableHandler->isBrickEnabled($this, $options['type'] && $options['dontCheckEnabled'] != true)) {
+        if (!$editableHandler->isBrickEnabled($this, $config['type'] && $config['dontCheckEnabled'] != true)) {
             return;
         }
 
@@ -84,7 +84,7 @@ class Area extends Model\Document\Editable
         $info = null;
         try {
             $info = new Area\Info();
-            $info->setId($options['type']);
+            $info->setId($config['type']);
             $info->setEditable($this);
             $info->setIndex(0);
         } catch (\Exception $e) {
@@ -95,9 +95,9 @@ class Area extends Model\Document\Editable
         $blockState->pushIndex(1);
 
         $params = [];
-        if (is_array($options['params']) && array_key_exists($options['type'], $options['params'])) {
-            if (is_array($options['params'][$options['type']])) {
-                $params = $options['params'][$options['type']];
+        if (is_array($config['params']) && array_key_exists($config['type'], $config['params'])) {
+            if (is_array($config['params'][$config['type']])) {
+                $params = $config['params'][$config['type']];
             }
         }
 

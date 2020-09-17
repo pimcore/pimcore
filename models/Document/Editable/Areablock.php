@@ -125,11 +125,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     public function loop()
     {
         $disabled = false;
-        $options = $this->getOptions();
-        $manual = false;
-        if (is_array($options) && array_key_exists('manual', $options) && $options['manual'] == true) {
-            $manual = true;
-        }
+        $config = $this->getConfig();
+        $manual = (($config['manual'] ?? false) == true);
 
         if ($this->current > 0) {
             if (!$manual && $this->blockStarted) {
@@ -144,22 +141,22 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             }
         }
 
-        if ($this->current < count($this->indices) && $this->current < $this->options['limit']) {
+        if ($this->current < count($this->indices) && $this->current < $config['limit']) {
             $index = current($this->indices);
             next($this->indices);
 
             $this->currentIndex = $index;
-            if (!empty($options['allowed']) && !in_array($index['type'], $options['allowed'])) {
+            if (!empty($config['allowed']) && !in_array($index['type'], $config['allowed'])) {
                 $disabled = true;
             }
 
-            $brickTypeLimit = $this->options['limits'][$this->currentIndex['type']] ?? 100000;
+            $brickTypeLimit = $config['limits'][$this->currentIndex['type']] ?? 100000;
             $brickTypeUsageCounter = $this->brickTypeUsageCounter[$this->currentIndex['type']] ?? 0;
             if ($brickTypeUsageCounter >= $brickTypeLimit) {
                 $disabled = true;
             }
 
-            if (!$this->getEditableHandler()->isBrickEnabled($this, $index['type']) && $options['dontCheckEnabled'] != true) {
+            if (!$this->getEditableHandler()->isBrickEnabled($this, $index['type']) && $config['dontCheckEnabled'] != true) {
                 $disabled = true;
             }
 
@@ -199,15 +196,15 @@ class Areablock extends Model\Document\Editable implements BlockInterface
 
         $params = [];
 
-        $options = $this->getOptions();
-        if (isset($options['params']) && is_array($options['params']) && array_key_exists($this->currentIndex['type'], $options['params'])) {
-            if (is_array($options['params'][$this->currentIndex['type']])) {
-                $params = $options['params'][$this->currentIndex['type']];
+        $config = $this->getConfig();
+        if (isset($config['params']) && is_array($config['params']) && array_key_exists($this->currentIndex['type'], $config['params'])) {
+            if (is_array($config['params'][$this->currentIndex['type']])) {
+                $params = $config['params'][$this->currentIndex['type']];
             }
         }
 
-        if (isset($options['globalParams'])) {
-            $params = array_merge($options['globalParams'], (array)$params);
+        if (isset($config['globalParams'])) {
+            $params = array_merge($config['globalParams'], (array)$params);
         }
 
         $info->setParams($params);
@@ -298,11 +295,11 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      */
     protected function getEditmodeOptions(): array
     {
-        $configOptions = array_merge($this->getToolBarDefaultConfig(), $this->getOptions());
+        $config = array_merge($this->getToolBarDefaultConfig(), $this->getConfig());
 
         $options = parent::getEditmodeOptions();
         $options = array_merge($options, [
-            'options' => $configOptions,
+            'config' => $config,
         ]);
 
         return $options;
@@ -415,34 +412,34 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @param array $options
+     * @param array $config
      *
      * @return $this
      */
-    public function setOptions($options)
+    public function setConfig($config)
     {
         // we need to set this here otherwise custom areaDir's won't work
-        $this->options = $options;
+        $this->config = $config;
 
         if ($this->getView()) {
             $translator = \Pimcore::getContainer()->get('translator');
-            if (!isset($options['allowed']) || !is_array($options['allowed'])) {
-                $options['allowed'] = [];
+            if (!isset($config['allowed']) || !is_array($config['allowed'])) {
+                $config['allowed'] = [];
             }
 
-            $availableAreas = $this->getEditableHandler()->getAvailableAreablockAreas($this, $options);
-            $availableAreas = $this->sortAvailableAreas($availableAreas, $options);
+            $availableAreas = $this->getEditableHandler()->getAvailableAreablockAreas($this, $config);
+            $availableAreas = $this->sortAvailableAreas($availableAreas, $config);
 
-            $options['types'] = $availableAreas;
+            $config['types'] = $availableAreas;
 
-            if (isset($options['group']) && is_array($options['group'])) {
+            if (isset($config['group']) && is_array($config['group'])) {
                 $groupingareas = [];
                 foreach ($availableAreas as $area) {
                     $groupingareas[$area['type']] = $area['type'];
                 }
 
                 $groups = [];
-                foreach ($options['group'] as $name => $areas) {
+                foreach ($config['group'] as $name => $areas) {
                     $n = $name;
                     if ($this->editmode) {
                         $n = $translator->trans($name, [], 'admin');
@@ -466,14 +463,14 @@ class Areablock extends Model\Document\Editable implements BlockInterface
                     $groups[$n] = $uncatAreas;
                 }
 
-                $options['group'] = $groups;
+                $config['group'] = $groups;
             }
 
-            if (empty($options['limit'])) {
-                $options['limit'] = 1000000;
+            if (empty($config['limit'])) {
+                $config['limit'] = 1000000;
             }
 
-            $this->options = $options;
+            $this->config = $config;
         }
 
         return $this;
@@ -483,17 +480,17 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      * Sorts areas by index (sorting option) first, then by name
      *
      * @param array $areas
-     * @param array $options
+     * @param array $config
      *
      * @return array
      */
-    protected function sortAvailableAreas(array $areas, array $options)
+    protected function sortAvailableAreas(array $areas, array $config)
     {
-        if (isset($options['sorting']) && is_array($options['sorting']) && count($options['sorting'])) {
-            $sorting = $options['sorting'];
+        if (isset($config['sorting']) && is_array($config['sorting']) && count($config['sorting'])) {
+            $sorting = $config['sorting'];
         } else {
-            if (isset($options['allowed']) && is_array($options['allowed']) && count($options['allowed'])) {
-                $sorting = $options['allowed'];
+            if (isset($config['allowed']) && is_array($config['allowed']) && count($config['allowed'])) {
+                $sorting = $config['allowed'];
             } else {
                 $sorting = [];
             }

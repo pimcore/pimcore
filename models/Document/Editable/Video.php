@@ -325,12 +325,7 @@ class Video extends Model\Document\Editable
      */
     public function getWidth()
     {
-        $options = $this->getOptions();
-        if (isset($options['width']) && $options['width']) {
-            return $options['width'];
-        }
-
-        return '100%';
+        return $this->getConfig()['width'] ?? '100%';
     }
 
     /**
@@ -338,12 +333,7 @@ class Video extends Model\Document\Editable
      */
     public function getHeight()
     {
-        $options = $this->getOptions();
-        if (isset($options['height']) && $options['height']) {
-            return $options['height'];
-        }
-
-        return 300;
+        return $this->getConfig()['height'] ?? 300;
     }
 
     /**
@@ -354,11 +344,11 @@ class Video extends Model\Document\Editable
     public function getAssetCode($inAdmin = false)
     {
         $asset = Asset::getById($this->id);
-        $options = $this->getOptions();
-        $thumbnailOption = $options['thumbnail'] ?? null;
+        $config = $this->getConfig();
+        $thumbnailConfig = $config['thumbnail'] ?? null;
 
         // compatibility mode when FFMPEG is not present or no thumbnail config is given
-        if (!\Pimcore\Video::isAvailable() || !$thumbnailOption) {
+        if (!\Pimcore\Video::isAvailable() || !$thumbnailConfig) {
             if ($asset instanceof Asset && preg_match("/\.(f4v|flv|mp4)/", $asset->getFullPath())) {
                 $image = $this->getPosterThumbnailImage($asset);
 
@@ -368,13 +358,13 @@ class Video extends Model\Document\Editable
             return $this->getErrorCode('Asset is not a video, or missing thumbnail configuration');
         }
 
-        if ($asset instanceof Asset\Video && $thumbnailOption) {
-            $thumbnail = $asset->getThumbnail($thumbnailOption);
+        if ($asset instanceof Asset\Video && $thumbnailConfig) {
+            $thumbnail = $asset->getThumbnail($thumbnailConfig);
             if ($thumbnail) {
                 $image = $this->getPosterThumbnailImage($asset);
 
-                if ($inAdmin && isset($options['editmodeImagePreview']) && $options['editmodeImagePreview']) {
-                    $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '.$options['class'].'">';
+                if ($inAdmin && isset($config['editmodeImagePreview']) && $config['editmodeImagePreview']) {
+                    $code = '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '.$config['class'].'">';
                     $code .= '<img width="' . $this->getWidth() . '" src="' . $image . '" />';
                     $code .= '</div>';
 
@@ -396,7 +386,7 @@ class Video extends Model\Document\Editable
                 return $this->getErrorCode('The video conversion failed, please see the log files in /var/logs for more details.');
             }
 
-            return $this->getErrorCode("The given thumbnail doesn't exist: '" . $thumbnailOption . "'");
+            return $this->getErrorCode("The given thumbnail doesn't exist: '" . $thumbnailConfig . "'");
         }
 
         return $this->getEmptyCode();
@@ -409,9 +399,9 @@ class Video extends Model\Document\Editable
      */
     private function getPosterThumbnailImage(Asset\Video $asset)
     {
-        $options = $this->getOptions();
-        if (!array_key_exists('imagethumbnail', $options) || empty($options['imagethumbnail'])) {
-            $thumbnailConfig = $asset->getThumbnailConfig($options['thumbnail'] ?? null);
+        $config = $this->getConfig();
+        if (!array_key_exists('imagethumbnail', $config) || empty($config['imagethumbnail'])) {
+            $thumbnailConfig = $asset->getThumbnailConfig($config['thumbnail'] ?? null);
 
             if ($thumbnailConfig instanceof Asset\Video\Thumbnail\Config) {
                 // try to get the dimensions out ouf the video thumbnail
@@ -419,7 +409,7 @@ class Video extends Model\Document\Editable
                 $imageThumbnailConf['format'] = 'JPEG';
             }
         } else {
-            $imageThumbnailConf = $options['imagethumbnail'];
+            $imageThumbnailConf = $config['imagethumbnail'];
         }
 
         if (empty($imageThumbnailConf)) {
@@ -536,7 +526,7 @@ class Video extends Model\Document\Editable
             return $this->getEmptyCode();
         }
 
-        $options = $this->getOptions();
+        $config = $this->getConfig();
         $code = '';
 
         $youtubeId = $this->parseYoutubeId();
@@ -545,13 +535,13 @@ class Video extends Model\Document\Editable
         }
 
         $width = '100%';
-        if (array_key_exists('width', $options)) {
-            $width = $options['width'];
+        if (array_key_exists('width', $config)) {
+            $width = $config['width'];
         }
 
         $height = '300';
-        if (array_key_exists('height', $options)) {
-            $height = $options['height'];
+        if (array_key_exists('height', $config)) {
+            $height = $config['height'];
         }
 
         $wmode = '?wmode=transparent';
@@ -589,14 +579,14 @@ class Video extends Model\Document\Editable
         $additional_params = '';
 
         $clipConfig = [];
-        if (isset($options['config']['clip']) && is_array($options['config']['clip'])) {
-            $clipConfig = $options['config']['clip'];
+        if (isset($config['config']['clip']) && is_array($config['config']['clip'])) {
+            $clipConfig = $config['config']['clip'];
         }
 
         // this is to be backward compatible to <= v 1.4.7
         $configurations = $clipConfig;
-        if (array_key_exists('youtube', $options) && is_array($options['youtube'])) {
-            $configurations = array_merge($clipConfig, $options['youtube']);
+        if (array_key_exists('youtube', $config) && is_array($config['youtube'])) {
+            $configurations = array_merge($clipConfig, $config['youtube']);
         }
 
         if (!empty($configurations)) {
@@ -615,7 +605,7 @@ class Video extends Model\Document\Editable
             }
         }
 
-        $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '.$options['class'].'">
+        $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '.$config['class'].'">
             <iframe width="' . $width . '" height="' . $height . '" src="https://www.youtube-nocookie.com/embed/' . $seriesPrefix . $youtubeId . $wmode . $additional_params .'" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
         </div>';
 
@@ -631,7 +621,7 @@ class Video extends Model\Document\Editable
             return $this->getEmptyCode();
         }
 
-        $options = $this->getOptions();
+        $config = $this->getConfig();
         $code = '';
         $uid = 'video_' . uniqid();
 
@@ -645,13 +635,13 @@ class Video extends Model\Document\Editable
 
         if (ctype_digit($vimeoId)) {
             $width = '100%';
-            if (array_key_exists('width', $options)) {
-                $width = $options['width'];
+            if (array_key_exists('width', $config)) {
+                $width = $config['width'];
             }
 
             $height = '300';
-            if (array_key_exists('height', $options)) {
-                $height = $options['height'];
+            if (array_key_exists('height', $config)) {
+                $height = $config['height'];
             }
 
             $valid_vimeo_prams = [
@@ -664,14 +654,14 @@ class Video extends Model\Document\Editable
             $additional_params = '';
 
             $clipConfig = [];
-            if (is_array($options['config']['clip'])) {
-                $clipConfig = $options['config']['clip'];
+            if (is_array($config['config']['clip'])) {
+                $clipConfig = $config['config']['clip'];
             }
 
             // this is to be backward compatible to <= v 1.4.7
             $configurations = $clipConfig;
-            if (is_array($options['vimeo'])) {
-                $configurations = array_merge($clipConfig, $options['vimeo']);
+            if (is_array($config['vimeo'])) {
+                $configurations = array_merge($clipConfig, $config['vimeo']);
             }
 
             if (!empty($configurations)) {
@@ -690,7 +680,7 @@ class Video extends Model\Document\Editable
                 }
             }
 
-            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '.$options['class'].'">
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '.$config['class'].'">
                 <iframe src="https://player.vimeo.com/video/' . $vimeoId . '?dnt=1&title=0&amp;byline=0&amp;portrait=0'. $additional_params .'" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
             </div>';
 
@@ -710,7 +700,7 @@ class Video extends Model\Document\Editable
             return $this->getEmptyCode();
         }
 
-        $options = $this->getOptions();
+        $config = $this->getConfig();
         $code = '';
         $uid = 'video_' . uniqid();
 
@@ -723,15 +713,9 @@ class Video extends Model\Document\Editable
         }
 
         if ($dailymotionId) {
-            $width = '100%';
-            if (array_key_exists('width', $options)) {
-                $width = $options['width'];
-            }
+            $width = $config['width'] ?? '100%';
 
-            $height = '300';
-            if (array_key_exists('height', $options)) {
-                $height = $options['height'];
-            }
+            $height = $config['height'] ?? '300';
 
             $valid_dailymotion_prams = [
                 'autoplay',
@@ -740,15 +724,12 @@ class Video extends Model\Document\Editable
 
             $additional_params = '';
 
-            $clipConfig = [];
-            if (is_array($options['config']['clip'])) {
-                $clipConfig = $options['config']['clip'];
-            }
+            $clipConfig = is_array($config['config']['clip']) ? $config['config']['clip'] : [];
 
             // this is to be backward compatible to <= v 1.4.7
             $configurations = $clipConfig;
-            if (is_array($options['dailymotion'])) {
-                $configurations = array_merge($clipConfig, $options['dailymotion']);
+            if (is_array($config['dailymotion'])) {
+                $configurations = array_merge($clipConfig, $config['dailymotion']);
             }
 
             if (!empty($configurations)) {
@@ -767,7 +748,7 @@ class Video extends Model\Document\Editable
                 }
             }
 
-            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '.$options['class'].'">
+            $code .= '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_tag_video pimcore_editable_video '.$config['class'].'">
                 <iframe src="https://www.dailymotion.com/embed/video/' . $dailymotionId . '?' . $additional_params .'" width="' . $width . '" height="' . $height . '" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
             </div>';
 
@@ -853,12 +834,14 @@ class Video extends Model\Document\Editable
                 'class' => 'pimcore_video',
             ];
 
-            if (array_key_exists('attributes', $this->getOptions())) {
-                $attributes = array_merge($attributes, $this->getOptions()['attributes']);
+            $config = $this->getConfig();
+
+            if (array_key_exists('attributes', $config)) {
+                $attributes = array_merge($attributes, $config['attributes']);
             }
 
-            if (isset($this->getOptions()['removeAttributes']) && is_array($this->getOptions()['removeAttributes'])) {
-                foreach ($this->getOptions()['removeAttributes'] as $attribute) {
+            if (isset($config['removeAttributes']) && is_array($config['removeAttributes'])) {
+                foreach ($config['removeAttributes'] as $attribute) {
                     unset($attributes[$attribute]);
                 }
             }

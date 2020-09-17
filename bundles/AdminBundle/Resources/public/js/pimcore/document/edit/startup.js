@@ -117,13 +117,9 @@ Ext.onReady(function () {
     Ext.QuickTips.init();
     Ext.MessageBox.minPromptWidth = 500;
 
-    function getEditable(config) {
-        var id = config.id;
-        var type = config.type;
-        var name = config.name;
-        var options = config.options;
-        var data = config.data;
-        var inherited = false;
+    function getEditable(definition) {
+        let name = definition.name;
+        let inherited = false;
         if(typeof config["inherited"] != "undefined") {
             inherited = config["inherited"];
         }
@@ -134,8 +130,8 @@ Ext.onReady(function () {
         editableNames.push(name);
 
         // @TODO: change pimcore.document.tags to pimcore.document.editables in v7
-        var editable = new pimcore.document.tags[type](id, name, options, data, inherited);
-        editable.setRealName(config.realName);
+        var editable = new pimcore.document.tags[definition.type](definition.id, name, definition.config, definition.data, inherited);
+        editable.setRealName(definition.realName);
         editable.setInherited(inherited);
 
         return editable;
@@ -143,11 +139,11 @@ Ext.onReady(function () {
 
     if (typeof Ext == "object" && typeof pimcore == "object") {
 
-        for (var i = 0; i < editableConfigurations.length; i++) {
+        for (var i = 0; i < editableDefinitions.length; i++) {
             try {
-                let editable = getEditable(editableConfigurations[i]);
+                let editable = getEditable(editableDefinitions[i]);
                 editables.push(editable);
-                if (editableConfigurations[i]['options']['required']) {
+                if (editableDefinitions[i]['config']['required']) {
                     requiredEditables.push(editable)
                 }
             } catch (e) {

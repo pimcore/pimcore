@@ -14,12 +14,12 @@
 pimcore.registerNS("pimcore.document.editables.area");
 pimcore.document.editables.area = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
 
         this.id = id;
         this.name = name;
         this.elements = [];
-        this.options = this.parseOptions(options);
+        this.config = this.parseConfig(config);
 
         // edit button
         try {
@@ -55,13 +55,13 @@ pimcore.document.editables.area = Class.create(pimcore.document.editable, {
         var editmodeWindowWidth = 550;
         var editmodeWindowHeight = 370;
 
-        if(this.options["params"] && this.options.type) {
-            if (this.options.params[this.options.type] && this.options.params[this.options.type]["editWidth"]) {
-                editmodeWindowWidth = this.options.params[this.options.type].editWidth;
+        if(this.config["params"] && this.config.type) {
+            if (this.config.params[this.config.type] && this.config.params[this.config.type]["editWidth"]) {
+                editmodeWindowWidth = this.config.params[this.config.type].editWidth;
             }
 
-            if (this.options.params[this.options.type] && this.options.params[this.options.type]["editHeight"]) {
-                editmodeWindowHeight = this.options.params.editHeight;
+            if (this.config.params[this.config.type] && this.config.params[this.config.type]["editHeight"]) {
+                editmodeWindowHeight = this.config.params.editHeight;
             }
         }
 

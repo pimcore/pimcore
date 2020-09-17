@@ -96,27 +96,27 @@ class Link extends Model\Document\Editable
         $url = $this->getHref();
 
         if (strlen($url) > 0) {
-            if (!is_array($this->options)) {
-                $this->options = [];
+            if (!is_array($this->config)) {
+                $this->config = [];
             }
 
             $prefix = '';
             $suffix = '';
             $noText = false;
 
-            if (array_key_exists('textPrefix', $this->options)) {
-                $prefix = $this->options['textPrefix'];
-                unset($this->options['textPrefix']);
+            if (array_key_exists('textPrefix', $this->config)) {
+                $prefix = $this->config['textPrefix'];
+                unset($this->config['textPrefix']);
             }
 
-            if (array_key_exists('textSuffix', $this->options)) {
-                $suffix = $this->options['textSuffix'];
-                unset($this->options['textSuffix']);
+            if (array_key_exists('textSuffix', $this->config)) {
+                $suffix = $this->config['textSuffix'];
+                unset($this->config['textSuffix']);
             }
 
-            if (isset($this->options['noText']) && $this->options['noText'] == true) {
+            if (isset($this->config['noText']) && $this->config['noText'] == true) {
                 $noText = true;
-                unset($this->options['noText']);
+                unset($this->config['noText']);
             }
 
             // add attributes to link
@@ -165,7 +165,7 @@ class Link extends Model\Document\Editable
                 $this->data = [];
             }
 
-            $availableAttribs = array_merge($defaultAttributes, $this->data, $this->options);
+            $availableAttribs = array_merge($defaultAttributes, $this->data, $this->config);
 
             // add attributes to link
             $attribs = [];
@@ -174,8 +174,8 @@ class Link extends Model\Document\Editable
                     && (strpos($key, 'data-') === 0 ||
                         strpos($key, 'aria-') === 0 ||
                         in_array($key, $allowedAttributes))) {
-                    if (!empty($this->data[$key]) && !empty($this->options[$key])) {
-                        $attribs[] = $key.'="'. $this->data[$key] .' '. $this->options[$key] .'"';
+                    if (!empty($this->data[$key]) && !empty($this->config[$key])) {
+                        $attribs[] = $key.'="'. $this->data[$key] .' '. $this->config[$key] .'"';
                     } elseif (!empty($value)) {
                         $attribs[] = $key.'="'.$value.'"';
                     }

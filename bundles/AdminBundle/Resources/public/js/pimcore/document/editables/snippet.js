@@ -14,10 +14,10 @@
 pimcore.registerNS("pimcore.document.editables.snippet");
 pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
-        this.options = this.parseOptions(options);
+        this.config = this.parseConfig(config);
         this.data = {};
 
         if (!data) {
@@ -26,20 +26,20 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
 
         // height management                
         this.defaultHeight = 100;
-        if (this.options.defaultHeight) {
-            this.defaultHeight = this.options.defaultHeight;
+        if (this.config.defaultHeight) {
+            this.defaultHeight = this.config.defaultHeight;
         }
-        if (!this.options.height && !data.path) {
-            this.options.height = this.defaultHeight;
+        if (!this.config.height && !data.path) {
+            this.config.height = this.defaultHeight;
         }
 
         this.setupWrapper();
 
-        this.options.name = id + "_editable";
-        this.options.border = false;
-        this.options.bodyStyle = "min-height: 40px;";
+        this.config.name = id + "_editable";
+        this.config.border = false;
+        this.config.bodyStyle = "min-height: 40px;";
 
-        this.element = new Ext.Panel(this.options);
+        this.element = new Ext.Panel(this.config);
 
         this.element.on("render", function (el) {
             try {
@@ -93,7 +93,7 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
             this.data.id = data.id;
             this.data.path = uri;
 
-            if (this.options.reload) {
+            if (this.config.reload) {
                 this.reloadDocument();
             } else {
                 this.updateContent(uri);
@@ -131,7 +131,7 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
 
     updateContent: function (path) {
 
-        var params = this.options;
+        var params = this.config;
         params.pimcore_admin = true;
 
         Ext.Ajax.request({
@@ -167,7 +167,7 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
                 handler: function (item) {
                     item.parentMenu.destroy();
 
-                    var height = this.options.height;
+                    var height = this.config.height;
                     if (!height) {
                         height = this.defaultHeight;
                     }
@@ -181,7 +181,7 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
                     body.addCls("pimcore_tag_snippet_empty pimcore_editable_snippet_empty");
                     body.setStyle(height + "px");
 
-                    if (this.options.reload) {
+                    if (this.config.reload) {
                         this.reloadDocument();
                     }
 
@@ -248,7 +248,7 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
             this.data.id = item.id;
             this.data.path = uri;
 
-            if (this.options.reload) {
+            if (this.config.reload) {
                 this.reloadDocument();
             } else {
                 this.updateContent(uri);

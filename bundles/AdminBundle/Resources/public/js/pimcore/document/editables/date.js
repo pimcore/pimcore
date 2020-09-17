@@ -14,29 +14,29 @@
 pimcore.registerNS("pimcore.document.editables.date");
 pimcore.document.editables.date = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
 
         this.id = id;
         this.name = name;
         this.setupWrapper();
-        options = this.parseOptions(options);
+        config = this.parseConfig(config);
 
-        if (options.format) {
+        if (config.format) {
             // replace any % prefixed parts from strftime format
-            options.format = options.format.replace(/%([a-zA-Z])/g, '$1');
+            config.format = config.format.replace(/%([a-zA-Z])/g, '$1');
         }
 
         if (data) {
             var tmpDate = new Date(intval(data) * 1000);
-            options.value = tmpDate;
+            config.value = tmpDate;
         }
 
-        options.name = id + "_editable";
+        config.name = id + "_editable";
 
 
 
-        this.element = new Ext.form.DateField(options);
-        if (options["reload"]) {
+        this.element = new Ext.form.DateField(config);
+        if (config["reload"]) {
             this.element.on("change", this.reloadDocument);
         }
 

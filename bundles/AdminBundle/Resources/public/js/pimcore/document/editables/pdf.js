@@ -14,25 +14,25 @@
 pimcore.registerNS("pimcore.document.editables.pdf");
 pimcore.document.editables.pdf = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
         this.data = {};
 
-        this.options = this.parseOptions(options);
+        this.config = this.parseConfig(config);
 
 
         // set width
-        if (!this.options["height"]) {
-            this.options.height = 100;
+        if (!this.config["height"]) {
+            this.config.height = 100;
         }
 
         if (data) {
             this.data = data;
         }
         this.setupWrapper();
-        this.options.name = id + "_editable";
-        this.element = new Ext.Panel(this.options);
+        this.config.name = id + "_editable";
+        this.element = new Ext.Panel(this.config);
 
         this.element.on("render", function (el) {
 
@@ -54,7 +54,7 @@ pimcore.document.editables.pdf = Class.create(pimcore.document.editable, {
         this.element.render(id);
 
 
-        pimcore.helpers.registerAssetDnDSingleUpload(this.element.getEl().dom, this.options["uploadPath"], 'path', function (e) {
+        pimcore.helpers.registerAssetDnDSingleUpload(this.element.getEl().dom, this.config["uploadPath"], 'path', function (e) {
             if (e['asset']['type'] === "document" && !this.inherited) {
                 this.resetData();
                 this.data.id = e['asset']['id'];
@@ -133,7 +133,7 @@ pimcore.document.editables.pdf = Class.create(pimcore.document.editable, {
     },
 
     uploadDialog: function () {
-        pimcore.helpers.assetSingleUploadDialog(this.options["uploadPath"], "path", function (res) {
+        pimcore.helpers.assetSingleUploadDialog(this.config["uploadPath"], "path", function (res) {
             try {
                 var data = Ext.decode(res.response.responseText);
                 if(data["id"] && data["type"] == "document") {

@@ -58,14 +58,14 @@ class Textarea extends Model\Document\Editable
      */
     public function frontend()
     {
-        $options = $this->getOptions();
+        $config = $this->getConfig();
 
         $text = $this->text;
-        if (!isset($options['htmlspecialchars']) || $options['htmlspecialchars'] !== false) {
+        if (!isset($config['htmlspecialchars']) || $config['htmlspecialchars'] !== false) {
             $text = htmlspecialchars($this->text);
         }
 
-        if (isset($options['nl2br']) && $options['nl2br']) {
+        if (isset($config['nl2br']) && $config['nl2br']) {
             $text = nl2br($text);
         }
 

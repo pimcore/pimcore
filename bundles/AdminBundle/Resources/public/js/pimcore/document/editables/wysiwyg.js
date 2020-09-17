@@ -17,18 +17,18 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
 
     type: "wysiwyg",
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
 
         this.id = id;
         this.name = name;
         this.setupWrapper();
-        options = this.parseOptions(options);
+        config = this.parseConfig(config);
 
         if (!data) {
             data = "";
         }
         this.data = data;
-        this.options = options;
+        this.config = config;
         this.inherited = inherited;
 
         var textareaId = id + "_textarea";
@@ -43,16 +43,16 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
         this.textarea.innerHTML = data;
 
         var textareaHeight = 100;
-        if (options.height) {
-            textareaHeight = options.height;
+        if (config.height) {
+            textareaHeight = config.height;
         }
-        if (options.placeholder) {
-            this.textarea.setAttribute('data-placeholder', options["placeholder"]);
+        if (config.placeholder) {
+            this.textarea.setAttribute('data-placeholder', config["placeholder"]);
         }
 
-        var inactiveContainerWidth = options.width + "px";
-        if (typeof options.width == "string" && options.width.indexOf("%") >= 0) {
-            inactiveContainerWidth = options.width;
+        var inactiveContainerWidth = config.width + "px";
+        if (typeof config.width == "string" && config.width.indexOf("%") >= 0) {
+            inactiveContainerWidth = config.width;
         }
 
         Ext.get(this.textarea).addCls("pimcore_wysiwyg");
@@ -66,8 +66,8 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
 
         this.startCKeditor();
 
-        if(options["required"]) {
-            this.required = options["required"];
+        if(config["required"]) {
+            this.required = config["required"];
         }
 
         this.checkValue();
@@ -78,11 +78,11 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
         try {
             CKEDITOR.config.language = pimcore.globalmanager.get("user").language;
             var eConfig = {};
-            var specificConfig = Object.assign({}, this.options);
+            var specificConfig = Object.assign({}, this.config);
 
             // if there is no toolbar defined use Full which is defined in CKEDITOR.config.toolbar_Full, possible
             // is also Basic
-            if(!this.options["toolbarGroups"] && this.options['toolbarGroups'] !== false){
+            if(!this.config["toolbarGroups"] && this.config['toolbarGroups'] !== false){
                 eConfig.toolbarGroups = [
                     { name: 'basicstyles', groups: [ 'undo', "find", 'basicstyles', 'list'] },
                     '/',
