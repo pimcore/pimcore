@@ -20,6 +20,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Tool\RestClient\Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
@@ -184,6 +185,108 @@ class PricingController extends AdminController implements EventedControllerInte
             $rule->delete();
             $return['success'] = true;
         } catch (\Exception $e) {
+            $return['message'] = $e->getMessage();
+        }
+
+        // send respone
+        return $this->adminJson($return);
+    }
+
+    /**
+     * @Route("/copy", name="pimcore_ecommerceframework_pricing_copy", methods={"POST"})
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * copy existing rule
+     */
+    public function copyAction(Request $request)
+    {
+        // send json respone
+        $return = [
+            'success' => false,
+            'message' => ''
+        ];
+
+        // copy rule
+        try {
+            /** @var Rule $ruleSource */
+            $ruleSource = Rule::getById((int) $request->get('id'));
+            $rules = (new Rule\Listing())->load();
+
+            $name = $ruleSource->getName() . '_copy';
+
+            // Get new unique name.
+            do {
+                $uniqueName = true;
+
+                foreach ($rules as $rule) {
+                    if ($rule->getName() == $name) {
+                        $uniqueName = false;
+                        $name .= '_copy';
+
+                        break;
+                    }
+                }
+
+            } while (!$uniqueName);
+
+            // Clone and save new rule.
+            $newRule = clone $ruleSource;
+            $newRule->setId(null);
+            $newRule->setName($name);
+            $newRule->save();
+
+            $return['success'] = true;
+        } catch (\Exception $e) {
+            $return['message'] = $e->getMessage();
+        }
+
+        // send respone
+        return $this->adminJson($return);
+    }
+
+    /**
+     * @Route("/rename", name="pimcore_ecommerceframework_pricing_rename", methods={"PUT"})
+     *
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * rename exiting rule
+     */
+    public function renameAction(Request $request)
+    {
+        // send json respone
+        $return = [
+            'success' => false,
+            'message' => ''
+        ];
+
+        $ruleId = $request->get('id');
+        $ruleNewName = $request->get('name');
+
+        try {
+            if ($ruleId && $ruleNewName) {
+
+                $renameRule = Rule::getById($ruleId);
+
+                if ($renameRule->getName() != $ruleNewName) {
+
+                    $rules = (new Rule\Listing())->load();
+
+                    // Check if rulename is available.
+                    foreach ($rules as $rule) {
+                        if ($rule->getName() == $ruleNewName) {
+                            throw new Exception('Rulename already exists.');
+                        }
+                    }
+
+                    $renameRule->setName($ruleNewName);
+                    $renameRule->save();
+                }
+
+                $return['success'] = true;
+            }
+        } catch (Exception $e) {
             $return['message'] = $e->getMessage();
         }
 
