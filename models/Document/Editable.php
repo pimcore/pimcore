@@ -307,7 +307,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
         $code = '
             <script>
-                editableConfigurations.push(' . json_encode($options, JSON_PRETTY_PRINT) . ');
+                editableDefinitions.push(' . json_encode($options, JSON_PRETTY_PRINT) . ');
             </script>
         ';
 

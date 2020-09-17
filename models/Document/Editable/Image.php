@@ -185,16 +185,6 @@ class Image extends Model\Document\Editable
 
     /**
      * @return array
-     *
-     * @deprecated will be removed in Pimcore 7. use getConfig() instead.
-     */
-    public function getOptions()
-    {
-        return $this->getconfig();
-    }
-
-    /**
-     * @return array
      */
     public function getConfig()
     {

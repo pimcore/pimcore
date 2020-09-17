@@ -412,18 +412,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @param array $options
-     *
-     * @return $this
-     *
-     * @deprecated will be removed in Pimcore 7. use setConfig() instead.
-     */
-    public function setOptions($options)
-    {
-        return $this->setConfig($options);
-    }
-
-    /**
      * @param array $config
      *
      * @return $this
