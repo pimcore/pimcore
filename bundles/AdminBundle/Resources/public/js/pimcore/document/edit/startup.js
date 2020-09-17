@@ -120,11 +120,11 @@ Ext.onReady(function () {
     function getEditable(definition) {
         let name = definition.name;
         let inherited = false;
-        if(typeof config["inherited"] != "undefined") {
-            inherited = config["inherited"];
+        if(typeof definition["inherited"] != "undefined") {
+            inherited = definition["inherited"];
         }
 
-        if (config.inDialogBox && typeof pimcore.document.tags[type].prototype['render'] !== 'function') {
+        if (definition.inDialogBox && typeof pimcore.document.tags[definition.type].prototype['render'] !== 'function') {
             throw 'Editable of type `' + type + '` with name `' + name + '` does not support the use in the dialog box.';
         }
 
@@ -136,9 +136,9 @@ Ext.onReady(function () {
         // @TODO: change pimcore.document.tags to pimcore.document.editables in v7
         var editable = new pimcore.document.tags[definition.type](definition.id, name, definition.config, definition.data, inherited);
         editable.setRealName(definition.realName);
-        editable.setInDialogBox(config.inDialogBox);
+        editable.setInDialogBox(definition.inDialogBox);
 
-        if(!config.inDialogBox) {
+        if(!definition.inDialogBox) {
             if (typeof editable['render'] === 'function') {
                 editable.render();
             }
