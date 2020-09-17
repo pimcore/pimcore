@@ -292,7 +292,7 @@ class Imagick extends Adapter
             $success = File::put($path, $i->getImageBlob());
         } else {
             if ($this->checkPreserveAnimation($format, $i)) {
-                $success = $i->writeImages($format . ':' . $path, true);
+                $success = $i->writeImages('GIF:' . $path, true);
             } else {
                 $success = $i->writeImage($format . ':' . $path);
             }
