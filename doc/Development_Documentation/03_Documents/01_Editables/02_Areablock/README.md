@@ -207,7 +207,7 @@ The manual mode offers you the possibility to use areablocks with custom HTML, t
 ```twig
 {% set areaBlock = pimcore_areablock("myArea", {"manual":"true"}) %}
 
-{% do block.start %}
+{% do areaBlock.start %}
 <table>
     {% for i in pimcore_iterate_block(areaBlock) %}
         {% do areaBlock.blockConstruct %}
