@@ -50,7 +50,7 @@ class Dao extends Model\Dao\AbstractDao
             LEFT JOIN assets ON dependencies.sourceid=assets.id AND dependencies.targettype="asset"
             LEFT JOIN documents ON dependencies.sourceid=documents.id AND dependencies.targettype="document"
             WHERE sourceid = ? AND sourcetype = ?
-            ORDER BY objects.o_path ASC, documents.path ASC, assets.path ASC',
+            ORDER BY objects.o_path, documents.path, assets.path',
             [$this->model->getSourceId(), $this->model->getSourceType()]);
 
         if (is_array($data) && count($data) > 0) {
@@ -188,7 +188,7 @@ class Dao extends Model\Dao\AbstractDao
             LEFT JOIN assets ON dependencies.sourceid=assets.id AND dependencies.targettype='asset'
             LEFT JOIN documents ON dependencies.sourceid=documents.id AND dependencies.targettype='document'
             WHERE dependencies.targetid = ? AND dependencies.targettype = ?
-            ORDER BY objects.o_path ASC, documents.path ASC, assets.path ASC
+            ORDER BY objects.o_path, documents.path, assets.path
         ";
 
         if ($offset !== null && $limit !== null) {
