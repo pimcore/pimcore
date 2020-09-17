@@ -183,7 +183,7 @@ class Dao extends Model\Dao\AbstractDao
     public function getRequiredBy($offset = null, $limit = null)
     {
         $query = '
-            SELECT dependencies.* FROM dependencies
+            SELECT dependencies.sourceid, dependencies.sourcetype FROM dependencies
             LEFT JOIN objects ON dependencies.sourceid=objects.o_id AND dependencies.sourcetype="object"
             LEFT JOIN assets ON dependencies.sourceid=assets.id AND dependencies.sourcetype="asset"
             LEFT JOIN documents ON dependencies.sourceid=documents.id AND dependencies.sourcetype="document"
