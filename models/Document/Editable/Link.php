@@ -296,12 +296,17 @@ class Link extends Model\Document\Editable
                                 if ($realPath) {
                                     $this->data['path'] = $object->getFullPath();
                                 } else {
+                                    $parameters = [];
+                                    parse_str($this->getParameters(), $parameters);
                                     $this->data['path'] = $linkGenerator->generate(
                                         $object,
-                                        [
-                                            'document' => $this->getDocument(),
-                                            'context' => $this,
-                                        ]
+                                        array_merge(
+                                            $parameters,
+                                            [
+                                                'document' => $this->getDocument(),
+                                                'context' => $this,
+                                            ]
+                                        )
                                     );
                                 }
                             }
