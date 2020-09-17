@@ -82,6 +82,11 @@ abstract class PageSnippet extends Model\Document
     protected $contentMasterDocumentId;
 
     /**
+     * @var bool
+     */
+    protected $supportsContentMaster = true;
+
+    /**
      * @var null|bool
      */
     protected $missingRequiredEditable = null;
@@ -749,6 +754,15 @@ abstract class PageSnippet extends Model\Document
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function supportsContentMaster(): bool
+    {
+        return $this->supportsContentMaster;
+    }
+
 
     /**
      * Validates if there is a missing value for required editable

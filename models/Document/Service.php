@@ -223,7 +223,7 @@ class Service extends Model\Element\Service
             $new->setPrettyUrl(null);
         }
 
-        if ($enableInheritance && ($new instanceof Document\PageSnippet)) {
+        if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMaster()) {
             $new->setEditables([]);
             $new->setContentMasterDocumentId($source->getId());
         }
