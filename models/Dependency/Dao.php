@@ -44,12 +44,12 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // requires
-        $data = $this->db->fetchAll('SELECT `targetid`,`targettype`
+        $data = $this->db->fetchAll('SELECT dependencies.targetid,dependencies.targettype
             FROM dependencies
-            LEFT JOIN objects ON dependencies.sourceid=objects.o_id AND dependencies.targettype="object"
-            LEFT JOIN assets ON dependencies.sourceid=assets.id AND dependencies.targettype="asset"
-            LEFT JOIN documents ON dependencies.sourceid=documents.id AND dependencies.targettype="document"
-            WHERE sourceid = ? AND sourcetype = ?
+            LEFT JOIN objects ON dependencies.targetid=objects.o_id AND dependencies.targettype="object"
+            LEFT JOIN assets ON dependencies.targetid=assets.id AND dependencies.targettype="asset"
+            LEFT JOIN documents ON dependencies.targetid=documents.id AND dependencies.targettype="document"
+            WHERE dependencies.sourceid = ? AND dependencies.sourcetype = ?
             ORDER BY objects.o_path, documents.path, assets.path',
             [$this->model->getSourceId(), $this->model->getSourceType()]);
 
@@ -184,9 +184,9 @@ class Dao extends Model\Dao\AbstractDao
     {
         $query = "
             SELECT dependencies.* FROM dependencies
-            LEFT JOIN objects ON dependencies.sourceid=objects.o_id AND dependencies.targettype='object'
-            LEFT JOIN assets ON dependencies.sourceid=assets.id AND dependencies.targettype='asset'
-            LEFT JOIN documents ON dependencies.sourceid=documents.id AND dependencies.targettype='document'
+            LEFT JOIN objects ON dependencies.sourceid=objects.o_id AND dependencies.sourcetype='object'
+            LEFT JOIN assets ON dependencies.sourceid=assets.id AND dependencies.sourcetype='asset'
+            LEFT JOIN documents ON dependencies.sourceid=documents.id AND dependencies.sourcetype='document'
             WHERE dependencies.targetid = ? AND dependencies.targettype = ?
             ORDER BY objects.o_path, documents.path, assets.path
         ";
