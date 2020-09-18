@@ -21,6 +21,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Document;
+use Pimcore\Tool\Frontend;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -277,7 +278,17 @@ class Link extends Model\Document\Editable
             if ($this->data['internalType'] == 'document') {
                 if ($doc = Document::getById($this->data['internalId'])) {
                     if ($editmode || (!Document::doHideUnpublished() || $doc->isPublished())) {
-                        $this->data['path'] = $doc->$method();
+                        //check if document exist in sub site, if so, then set absolute path
+                        /** @var Model\Site $site */
+                        if ($site = Frontend::getSiteForDocument($doc)) {
+                            if ($site->getMainDomain()) {
+                                $scheme = \Pimcore\Tool::getRequestScheme() . '://';
+                                $this->data['path'] = $scheme . $site->getMainDomain() .
+                                    preg_replace('@^' . $site->getRootPath() . '/@', '/', $doc->getRealFullPath());
+                            }
+                        } else {
+                            $this->data['path'] = $doc->$method();
+                        }
                     } else {
                         $this->data['path'] = '';
                     }
