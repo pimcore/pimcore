@@ -635,7 +635,7 @@ pimcore.object.tree = Class.create({
                     }
                 }
 
-                if (lockMenu.length > 0) {
+                if (lockMenu.length > 0 && perspectiveCfg.inTreeContextMenu("object.unlock")) {
                     advancedMenuItems.push({
                         text: t('lock'),
                         iconCls: "pimcore_icon_lock",
