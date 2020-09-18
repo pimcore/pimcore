@@ -120,8 +120,8 @@ Ext.onReady(function () {
     function getEditable(definition) {
         let name = definition.name;
         let inherited = false;
-        if(typeof config["inherited"] != "undefined") {
-            inherited = config["inherited"];
+        if(typeof definition["inherited"] != "undefined") {
+            inherited = definition["inherited"];
         }
 
         if(in_array(name,editableNames)) {
