@@ -348,9 +348,15 @@ pimcore.object.tree = Class.create({
 
             object_types.each(function (classRecord) {
 
-                if ($this.config.allowedClasses && !in_array(classRecord.get("id"), $this.config.allowedClasses)) {
+                if ($this.config.allowedClasses && !in_array(classRecord.get("id"), Object.keys($this.config.allowedClasses))) {
                     return;
                 }
+                
+                if ($this.config.allowedClasses && $this.config.allowedClasses[classRecord.get("id")] !== null) {
+                    if(record.data.depth >= $this.config.allowedClasses[classRecord.get("id")]) {
+                        return;
+                    }
+                };
 
                 tmpMenuEntry = {
                     text: classRecord.get("translatedText"),
