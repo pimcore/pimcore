@@ -479,6 +479,10 @@ input.cke_dialog_ui_input_tel {
     overflow: visible;
 }
 
+.pimcore_areablock_dialogBox legend {
+    width: auto;
+}
+
 .pimcore_areablock_toolbar {
     opacity: .9;
     border-color: #000;
@@ -603,6 +607,12 @@ input.cke_dialog_ui_input_tel {
 .pimcore_editable_input:hover, .pimcore_wysiwyg:hover, .pimcore_editable_textarea:hover, .pimcore_editable_snippet:hover, .pimcore_editable_renderlet:hover, .pimcore_editable_inc:hover {
     outline: 2px dashed #BABABA;
     outline-offset: 5px;
+}
+
+.pimcore_areablock_dialogBox .pimcore_tag_input,
+.pimcore_areablock_dialogBox .pimcore_tag_wysiwyg,
+.pimcore_areablock_dialogBox .pimcore_tag_textarea {
+    background-color: #fff;
 }
 
 .pimcore_areablock_dialogBox .pimcore_tag_input:hover,

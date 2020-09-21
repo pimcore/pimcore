@@ -64,8 +64,9 @@ pimcore.document.editables.checkbox = Class.create(pimcore.document.editable, {
 
     renderInDialogBox: function (config) {
 
-        if(this.config['dialogBoxConfig']['label']) {
-            this.config["label"] = this.config['dialogBoxConfig']['label'];
+        if(this.config['dialogBoxConfig'] &&
+            (this.config['dialogBoxConfig']['label'] || this.config['dialogBoxConfig']['name'])) {
+            this.config["label"] = this.config['dialogBoxConfig']['label'] ?? this.config['dialogBoxConfig']['name'];
         }
 
         this.render();

@@ -48,7 +48,15 @@ pimcore.document.editables.table = Class.create(pimcore.document.editable, {
         this.initStore(data);
     },
 
+    refreshStoreGrid: function (data) {
+        this.initStore(data);
+        this.render();
+    },
+
     render: function() {
+        if (this.grid) {
+            this.grid.destroy();
+        }
         this.setupWrapper();
 
         var data = this.store.queryBy(function(record, id) {
@@ -106,7 +114,7 @@ pimcore.document.editables.table = Class.create(pimcore.document.editable, {
                 },
                 {
                     iconCls: "pimcore_icon_empty",
-                    handler: this.initStore.bind(this, [
+                    handler: this.refreshStoreGrid.bind(this, [
                         [" "]
                     ])
                 }
@@ -142,7 +150,7 @@ pimcore.document.editables.table = Class.create(pimcore.document.editable, {
             currentData[i].push(" ");
         }
 
-        this.initStore(currentData);
+        this.refreshStoreGrid(currentData);
     },
 
     addRow: function  () {
@@ -178,7 +186,7 @@ pimcore.document.editables.table = Class.create(pimcore.document.editable, {
                 currentData[i].splice(column, 1);
             }
 
-            this.initStore(currentData);
+            this.refreshStoreGrid(currentData);
         }
     },
 
