@@ -721,11 +721,5 @@
     "1x1_pixel_placeholder": "1x1 Pixel Platzhalter",
     "1x1_pixel_placeholder_description": "Gibt nur ein 1x1 Pixel base64-codiertes GIF zurück, falls Sie für eine bestimmte Bedingung kein Bild anzeigen möchten",
     "you_can_drag_the_tabs_to_reorder_the_media_queries": "Sie können die Registerkarten ziehen, um die Priorität der Medienabfragen neu zu ordnen",
-    "classificationstore_group_limitation": "Max. Gruppenelemente",
-    "web2print_headlesschrome_puppeteer_documentation": "Puppeteer",
-    "web2print_headlesschrome_documentation": "Dokumentation für Optionen",
-    "web2print_headlesschrome_documentation_additions": "Zusätzliche Optionen",
-    "web2print_headlesschrome_documentation_additions_text": "Es gib zwei zusätzliche Optionen: \"header\" and \"footer\". Diese Optionen benötigen eine URL, welche das Template für den Header und Footer zurückgibt.",
-    "web2print_headlesschrome_json_converter": "Formatierung der Optionen",
-    "web2print_headlesschrome_json_converter_link": "JSON Formatter"
+    "classificationstore_group_limitation": "Max. Gruppenelemente"
 }
