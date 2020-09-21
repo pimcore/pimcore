@@ -72,6 +72,6 @@ Navigate to the Settings *Settings* -> *Data Objects* -> *Classes* -> *Customer 
 
 Click on *General Settings* and paste your interface and trait path into `Implements interface(s)` and `Use (traits)`
 
-![]() Add screenshot here
+<img width="1152" alt="Bildschirmfoto 2020-09-21 um 13 14 16" src="https://user-images.githubusercontent.com/15780280/93762303-9273e800-fc0f-11ea-9b2b-675f6a518057.png">
 
 Save your changes
