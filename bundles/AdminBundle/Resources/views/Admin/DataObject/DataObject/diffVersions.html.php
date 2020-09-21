@@ -167,7 +167,7 @@ $fields = $this->object1->getClass()->getFieldDefinitions();
                             <?php if (!$this->isImportPreview || !$this->isNew) { ?>
                                 <td><?= $preview1 ?></td>
                             <?php } ?>
-                            <td><?= $preview2 ?></td>
+                            <td <?php if (!$keyDef->isEqual($keyData1, $keyData2)) { ?> class="modified"<?php } ?>><?= $preview2 ?></td>
                         </tr>
                         <?php
                         $c++;
