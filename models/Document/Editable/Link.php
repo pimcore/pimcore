@@ -280,7 +280,8 @@ class Link extends Model\Document\Editable
                     if ($editmode || (!Document::doHideUnpublished() || $doc->isPublished())) {
                         //check if document exist in sub site, if so, then set absolute path
                         /** @var Model\Site|null $site */
-                        if ($site = Frontend::getSiteForDocument($doc)) {
+                        $site = Frontend::getSiteForDocument($doc);
+                        if ($site) {
                             if ($site->getMainDomain()) {
                                 $scheme = \Pimcore\Tool::getRequestScheme() . '://';
                                 $this->data['path'] = $scheme . $site->getMainDomain() .
