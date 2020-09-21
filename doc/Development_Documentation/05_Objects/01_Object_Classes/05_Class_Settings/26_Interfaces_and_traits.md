@@ -2,10 +2,7 @@
 In some cases you need to implement interfaces and overwrite some provided functions.
 
 ##### Example
-```
-Extending the customer management framework by implementing Symfony's UserInterface and overwritting the `getRoles` method to provide a default role for each user or
-use a different value as username
-```
+Extending the customer management framework by implementing Symfony's UserInterface and overwriting the `getRoles` method to provide a default role for each user or use a different value as username.
 
 ## Create the trait
 Returns default roles and use `UID` as username
