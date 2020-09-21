@@ -21,12 +21,12 @@ backend permissions this is necessary anyway).
 
 ![Protected Folder](../img/asset-access-restriction.png)
 
+**Apache**
+
 In the `.htaccess` of the project, the access to this folder has to be restricted with an additional rewrite rule. It is
 important, that this rule is placed **in front of** the rewrite rule for asset delivery. 
 
-**Apache**
-```.htaccess
-
+```apache
 ...
 RewriteRule ^protected/.* - [F,L]
 RewriteRule ^var/.*/protected(.*) - [F,L]
@@ -37,8 +37,10 @@ RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 ```
 
 **Nginx**
+
 Add the following parts to your Nginx configuration directly after the index directive. 
-```
+
+```nginx
 location ~ ^/protected/.* {
   return 403;
 }
@@ -51,6 +53,7 @@ location ~ ^/cache-buster\-[\d]+/protected(.*) {
   return 403;
 }
 ```
+
 A full configuration example can be found [on this page](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
 
 
@@ -68,12 +71,12 @@ Again all confidential assets need to be stored within one (or a few) folders, e
 
 ![Protected Folder](../img/asset-access-restriction.png)
 
+**Apache**
+
 In the `.htaccess` of the project, requests to assets of this folder need to be routed to `app.php`. Again, it is
 important, that this rule is placed **in front of** the rewrite rule for asset delivery.
 
-**Apache**
-```.htaccess
- 
+```apache
 ...
 RewriteRule ^protected/(.*) %{ENV:BASE}/app.php [L]
 RewriteRule ^var/.*/protected(.*) - [F,L]
@@ -84,9 +87,10 @@ RewriteRule ^cache-buster\-[\d]+/protected(.*) - [F,L]
 ```
 
 **Nginx**
+
 Add the following parts to your Nginx configuration directly after the index directive. 
 
-```
+```nginx
 rewrite ^(/protected/.*) /app.php$is_args$args last;
 
 location ~ ^/var/.*/protected(.*) {
@@ -97,22 +101,22 @@ location ~ ^/cache-buster\-[\d]+/protected(.*) {
   return 403;
 }
 ```
+
 A full configuration example can be found [on this page](../23_Installation_and_Upgrade/03_System_Setup_and_Hosting/02_Nginx_Configuration.md).
 
 
 In the application, there has to be a route in (app/config/routing.yml) and a controller action that handles the request, e.g. like the following:
 
 ```yaml
-// app/config/routing.yml
+# app/config/routing.yml
 
-// important this has to be the first route in the file!
+# important this has to be the first route in the file!
 asset_protect:
     path: /protected/{path}
     defaults: { _controller: MyAssetController:protectedAsset }
     requirements:
         path: '.*'
 ```
-
 
 ```php
 <?php
