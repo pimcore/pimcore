@@ -507,7 +507,7 @@ class Data extends \Pimcore\Model\AbstractModel
      */
     protected function cleanupData($data)
     {
-        $data = strip_tags($data);
+        $data = preg_replace('/(<\?.*?(\?>|$)|<.*?>)/', '', $data);
 
         $data = html_entity_decode($data, ENT_QUOTES, 'UTF-8');
 
