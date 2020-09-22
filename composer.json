@@ -121,7 +121,8 @@
     "klarna/checkout": "Required for Klarna payment",
     "elasticsearch/elasticsearch": "Required for Elastic Search service",
     "paypal/paypal-checkout-sdk": "Required for Paypal payment",
-    "mpay24/mpay24-php": "Required for MPay24 payment"
+    "mpay24/mpay24-php": "Required for MPay24 payment",
+    "spiritix/php-chrome-html2pdf": "^1.5"
   },
   "autoload": {
     "files": [
