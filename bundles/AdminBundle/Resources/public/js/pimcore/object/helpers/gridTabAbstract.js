@@ -175,7 +175,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             iconCls: "pimcore_icon_sql",
             enableToggle: true,
             tooltip: t("direct_sql_query"),
-            hidden: !pimcore.currentuser.admin,
+            hidden: pimcore.currentuser.permissions.indexOf("direct_sql_query") < 0,
             handler: function (button) {
 
                 this.sqlEditor.setValue("");
