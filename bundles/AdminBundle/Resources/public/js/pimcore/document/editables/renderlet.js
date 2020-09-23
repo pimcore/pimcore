@@ -27,9 +27,8 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
         delete(config.controller);
 
         this.data = {};
-
-        if (!data) {
-            data = {};
+        if (data) {
+            this.data = data;
         }
 
         // height management
@@ -37,18 +36,19 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
         if (this.config.defaultHeight) {
             this.defaultHeight = this.config.defaultHeight;
         }
-        if (!this.config.height && !data.path) {
+        if (!this.config.height) {
             this.config.height = this.defaultHeight;
         }
-
-        this.setupWrapper();
 
         this.config.name = id + "_editable";
         this.config.border = false;
         this.config.bodyStyle = "min-height: 40px;";
+    },
+
+    render: function() {
+        this.setupWrapper();
 
         this.element = new Ext.Panel(this.config);
-
         this.element.on("render", function (el) {
 
             // register at global DnD manager
@@ -65,14 +65,10 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
 
         }.bind(this));
 
-        this.element.render(id);
+        this.element.render(this.id);
 
-        // insert snippet content
-        if (data) {
-            this.data = data;
-            if (this.data.id) {
-                this.updateContent();
-            }
+        if (this.data.id) {
+            this.updateContent();
         }
     },
 
@@ -85,7 +81,6 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
         var record = data.records[0];
         data = record.data;
 
-        // get path from nodes data
         this.data.id = data.id;
         this.data.type = data.elementType;
         this.data.subtype = data.type;
@@ -151,7 +146,7 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
         return Ext.get(bodyId);
     },
 
-    updateContent: function (path) {
+    updateContent: function () {
         var self = this;
 
         this.getBody().removeCls("pimcore_tag_snippet_empty pimcore_editable_snippet_empty");
@@ -295,7 +290,6 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
 
     addDataFromSelector: function (item) {
         if(item) {
-            // get path from nodes data
             this.data.id = item.id;
             this.data.type = item.type;
             this.data.subtype = item.subtype;

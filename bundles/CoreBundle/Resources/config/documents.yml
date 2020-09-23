@@ -87,11 +87,14 @@ services:
         public: false
         tags: ['container.service_locator']
 
-    Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface: '@Pimcore\Extension\Document\Areabrick\AreabrickManager'
+
     Pimcore\Extension\Document\Areabrick\AreabrickManager:
         arguments:
             $container: '@pimcore.document.areabrick.brick_locator'
 
+    Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface:
+        alias: Pimcore\Extension\Document\Areabrick\AreabrickManager
+        public: true
 
     #
     # DOCUMENT RELATED SERVICES

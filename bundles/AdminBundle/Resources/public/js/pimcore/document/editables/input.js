@@ -17,14 +17,18 @@ pimcore.document.editables.input = Class.create(pimcore.document.editable, {
     initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
-        this.setupWrapper();
-        config = this.parseConfig(config);
+        this.config = this.parseConfig(config);
 
         if (!data) {
             data = "";
         }
 
-        this.element = Ext.get(id);
+        this.data = data;
+    },
+
+    render: function() {
+        this.setupWrapper();
+        this.element = Ext.get(this.id);
         this.element.dom.setAttribute("contenteditable", true);
 
         // set min height for IE, as he isn't able to update :after css selector
@@ -39,10 +43,10 @@ pimcore.document.editables.input = Class.create(pimcore.document.editable, {
             });
         }
 
-        this.element.update(data + "<br>");
+        this.element.update(this.data + "<br>");
 
-        if(config["required"]) {
-            this.required = config["required"];
+        if(this.config["required"]) {
+            this.required = this.config["required"];
         }
 
         this.checkValue();
@@ -76,27 +80,27 @@ pimcore.document.editables.input = Class.create(pimcore.document.editable, {
             }
         }.bind(this));
 
-        if(config["width"]) {
+        if(this.config["width"]) {
             this.element.applyStyles({
                 display: "inline-block",
-                width: config["width"] + "px",
+                width: this.config["width"] + "px",
                 overflow: "auto",
                 "white-space": "nowrap"
             });
         }
-        if(config["nowrap"]) {
+        if(this.config["nowrap"]) {
             this.element.applyStyles({
                 "white-space": "nowrap",
                 overflow: "auto"
             });
         }
-        if (config["placeholder"]) {
-            this.element.dom.setAttribute('data-placeholder', config["placeholder"]);
+        if (this.config["placeholder"]) {
+            this.element.dom.setAttribute('data-placeholder', this.config["placeholder"]);
         }
 
         // @TODO validator is based on \Zend\Json\Expr and does not work with Twig templates, to be removed in v7.0
-        if(config["validator"]) {
-            this.element.isValid = config["validator"];
+        if(this.config["validator"]) {
+            this.element.isValid = this.config["validator"];
             this.validateElement();
         }
     },
@@ -126,6 +130,11 @@ pimcore.document.editables.input = Class.create(pimcore.document.editable, {
     },
 
     getValue: function () {
+
+        if(!this.element) {
+            return this.data;
+        }
+
         var text = "";
         if(typeof this.element.dom.textContent != "undefined") {
             text = this.element.dom.textContent;

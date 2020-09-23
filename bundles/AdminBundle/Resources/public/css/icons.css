@@ -818,6 +818,10 @@
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/edit.svg) center center no-repeat !important;
 }
 
+.pimcore_icon_white_edit {
+    background: url(/bundles/pimcoreadmin/img/flat-white-icons/edit.svg) center center no-repeat !important;
+}
+
 .pimcore_icon_preview {
     background: url(/bundles/pimcoreadmin/img/flat-color-icons/multiple_devices.svg) center center no-repeat !important;
 }

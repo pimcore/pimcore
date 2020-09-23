@@ -16,6 +16,7 @@ namespace Pimcore\Document\Editable;
 
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
+use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Pimcore\Extension\Document\Areabrick\TemplateAreabrickInterface;
 use Pimcore\Http\RequestHelper;
@@ -161,6 +162,8 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
             $icon = $brick->getIcon();
             $limit = $options['limits'][$brick->getId()] ?? null;
 
+            $hasDialogBoxConfiguration = $brick instanceof EditableDialogBoxInterface;
+
             // autoresolve icon as <bundleName>/Resources/public/areas/<id>/icon.png
             if (null === $icon) {
                 $bundle = null;
@@ -174,7 +177,6 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
                         $icon = $this->webPathResolver->getPath($bundle, 'areas/' . $brick->getId(), 'icon.png');
                     }
                 } catch (\Exception $e) {
-                    $iconPath = '';
                     $icon = '';
                 }
             }
@@ -190,6 +192,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
                 'type' => $brick->getId(),
                 'icon' => $icon,
                 'limit' => $limit,
+                'hasDialogBoxConfiguration' => $hasDialogBoxConfiguration
             ];
         }
 
@@ -258,7 +261,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
         $editTemplate = null;
         $editParameters = [];
 
-        if ($brick->hasEditTemplate() && $editmode) {
+        if ($brick->hasEditTemplate() && $editmode && !($brick instanceof EditableDialogBoxInterface)) {
             $editTemplate = $this->resolveBrickTemplate($brick, 'edit');
             $editParameters = array_merge($view->getParameters()->all(), [
                 'editmode' => true,

@@ -300,7 +300,7 @@ class Video extends Model\Document\Editable
         }
 
         // this is to be backward compatible to <= v 1.4.7
-        if ($data['id']) {
+        if (isset($data['id']) && $data['id']) {
             $data['path'] = $data['id'];
         }
 

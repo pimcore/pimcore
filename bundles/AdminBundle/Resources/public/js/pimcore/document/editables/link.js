@@ -37,14 +37,16 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
 
         this.id = id;
         this.name = name;
-        this.setupWrapper();
         this.config = this.parseConfig(config);
+    },
 
+    render: function() {
+        this.setupWrapper();
 
-        Ext.get(id).setStyle({
+        Ext.get(this.id).setStyle({
             display:"inline"
         });
-        Ext.get(id).insertHtml("beforeEnd",'<span class="pimcore_tag_link_text pimcore_editable_link_text">' + this.getLinkContent() + '</span>');
+        Ext.get(this.id).insertHtml("beforeEnd",'<span class="pimcore_tag_link_text pimcore_editable_link_text">' + this.getLinkContent() + '</span>');
 
         var editButton = new Ext.Button({
             iconCls: "pimcore_icon_link pimcore_icon_overlay_edit",
@@ -70,8 +72,8 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
             }
         });
 
-        openButton.render(id);
-        editButton.render(id);
+        openButton.render(this.id);
+        editButton.render(this.id);
     },
 
     openEditor: function () {

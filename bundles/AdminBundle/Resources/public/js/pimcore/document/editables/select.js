@@ -18,7 +18,6 @@ pimcore.document.editables.select = Class.create(pimcore.document.editable, {
         this.id = id;
         this.name = name;
 
-        this.setupWrapper();
         config = this.parseConfig(config);
 
         config.listeners = {};
@@ -41,12 +40,21 @@ pimcore.document.editables.select = Class.create(pimcore.document.editable, {
         config.editable = false;
         config.value = data;
 
-        this.element = new Ext.form.ComboBox(config);
-        this.element.render(id);
+        this.config = config;
+    },
+
+    render: function() {
+        this.setupWrapper();
+        this.element = new Ext.form.ComboBox(this.config);
+        this.element.render(this.id);
     },
 
     getValue: function () {
-        return this.element.getValue();
+        if(this.element) {
+            return this.element.getValue();
+        }
+
+        return this.config.value;
     },
 
     getType: function () {
