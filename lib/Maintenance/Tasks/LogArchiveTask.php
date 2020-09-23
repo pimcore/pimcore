@@ -65,10 +65,10 @@ final class LogArchiveTask implements TaskInterface
             $tablename = $db->quoteIdentifier($this->config['applicationlog']['archive_alternative_database']).'.'.$tablename;
         }
 
-        $archive_treshold = (int) ($this->config['applicationlog']['archive_treshold'] ?? 30);
+        $archive_threshold = (int) ($this->config['applicationlog']['archive_treshold'] ?? 30);
 
         $timestamp = time();
-        $sql = 'SELECT %s FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_treshold.' DAY)';
+        $sql = 'SELECT %s FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY)';
 
         if ($db->fetchOne(sprintf($sql, 'COUNT(*)')) > 0) {
             $db->query('CREATE TABLE IF NOT EXISTS '.$tablename." (
@@ -87,19 +87,21 @@ final class LogArchiveTask implements TaskInterface
                     ) ENGINE = ARCHIVE ROW_FORMAT = DEFAULT;");
 
             $db->query('INSERT INTO '.$tablename.' '.sprintf($sql, '*'));
-            $db->query('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_treshold.' DAY);');
+            $db->query('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
         }
 
         $lockId = self::class;
         if (!Lock::isLocked($lockId, 86400) && date('H') <= 4) {
             // execution should be only sometime between 0:00 and 4:59 -> less load expected
             Lock::lock($lockId);
-            $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '. $archive_treshold.' days');
+            $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '. $archive_threshold.' days');
             $fileIterator = new \DirectoryIterator(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
+
+            $oldestAllowedTimestamp = time() - $archive_threshold * 86400;
             $fileIterator = new \CallbackFilterIterator(
                 $fileIterator,
-                static function (\SplFileInfo $fileInfo) use ($archive_treshold) {
-                    return time() - $archive_treshold * 86400 > $fileInfo->getMTime();
+                static function (\SplFileInfo $fileInfo) use ($oldestAllowedTimestamp) {
+                    return $fileInfo->getMTime() < $oldestAllowedTimestamp;
                 }
             );
 
