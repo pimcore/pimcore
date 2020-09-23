@@ -191,6 +191,18 @@ pimcore.bundle.EcommerceFramework.pricing.config.panel = Class.create({
                             handler: this.deleteRule.bind(this, tree, record)
                         }));
 
+                        menu.add(new Ext.menu.Item({
+                            text: t('copy'),
+                            iconCls: "pimcore_icon_copy",
+                            handler: this.copyRule.bind(this, tree, record)
+                        }));
+
+                        menu.add(new Ext.menu.Item({
+                            text: t('rename'),
+                            iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
+                            handler: this.renameRule.bind(this, tree, record)
+                        }));
+
                         e.stopEvent();
                         menu.showAt(e.pageX, e.pageY);
                     }.bind(this),
@@ -295,6 +307,72 @@ pimcore.bundle.EcommerceFramework.pricing.config.panel = Class.create({
         });
     },
 
+    /**
+     * copy pricing rule
+     * @param tree
+     * @param record
+     */
+    copyRule: function (tree, record) {
+        Ext.Ajax.request({
+            url: Routing.generate('pimcore_ecommerceframework_pricing_copy'),
+            method: 'POST',
+            params: {
+                id: record.id
+            },
+            success: function () {
+                this.refresh(this.tree.getRootNode());
+            }.bind(this)
+        });
+    },
+
+    /**
+     * rename pricing rule popup
+     * @param tree
+     * @param record
+     */
+    renameRule: function (tree, record) {
+
+        let options = {
+            tree: tree,
+            id: record.id,
+        };
+
+        Ext.MessageBox.prompt(t('rename'), t('enter_the_name_of_the_new_item'),
+            this.renameRuleComplete.bind(this, options), null, null, record.data.text);
+    },
+
+    /**
+     * rename pricing rule
+     * @param button
+     * @param value
+     * @param object
+     */
+    renameRuleComplete: function (options, button, value, object) {
+
+        if (button == 'ok') {
+
+            let tree = options.tree;
+
+            Ext.Ajax.request({
+                url: Routing.generate('pimcore_ecommerceframework_pricing_rename'),
+                method: 'PUT',
+                params: {
+                    id: options.id,
+                    name: value
+                },
+                success: function (response, opts) {
+
+                    let responseData = Ext.decode(response.responseText);
+
+                    if (responseData.success) {
+                        this.refresh(this.tree.getRootNode());
+                    } else {
+                        Ext.MessageBox.alert(t('rename'), t('name_already_in_use'));
+                    }
+                }.bind(this)
+            });
+        }
+    },
 
     /**
      * open pricing rule

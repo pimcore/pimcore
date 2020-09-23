@@ -14,12 +14,12 @@
 pimcore.registerNS("pimcore.document.editables.embed");
 pimcore.document.editables.embed = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
         this.data = {};
 
-        this.options = this.parseOptions(options);
+        this.config = this.parseConfig(config);
         this.data = data;
 
         this.setupWrapper();

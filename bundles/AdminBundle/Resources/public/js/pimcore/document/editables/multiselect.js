@@ -14,37 +14,37 @@
 pimcore.registerNS("pimcore.document.editables.multiselect");
 pimcore.document.editables.multiselect = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
 
         this.setupWrapper();
 
-        options = this.parseOptions(options);
-        options.name = id + "_editable";
+        config = this.parseConfig(config);
+        config.name = id + "_editable";
         if(data) {
-            options.value = data;
+            config.value = data;
         }
-        options.valueField = "id";
+        config.valueField = "id";
 
-        options.listeners = {};
+        config.listeners = {};
         // onchange event
-        if (options.onchange) {
-            options.listeners.change = eval(options.onchange);
+        if (config.onchange) {
+            config.listeners.change = eval(config.onchange);
         }
 
-        if (options["reload"]) {
-            options.listeners.change = this.reloadDocument;
+        if (config["reload"]) {
+            config.listeners.change = this.reloadDocument;
         }
 
-        if (typeof options.store !== "undefined") {
-            options.store = Ext.create('Ext.data.ArrayStore', {
+        if (typeof config.store !== "undefined") {
+            config.store = Ext.create('Ext.data.ArrayStore', {
                 fields: ['id', 'text'],
-                data: options.store
+                data: config.store
             });
         }
 
-        this.element = Ext.create('Ext.ux.form.MultiSelect', options);
+        this.element = Ext.create('Ext.ux.form.MultiSelect', config);
 
         this.element.render(id);
     },

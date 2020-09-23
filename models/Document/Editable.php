@@ -42,8 +42,17 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * Options of the current tag, can contain some configurations for the editmode, or the thumbnail name, ...
      *
      * @var array
+     *
+     * @deprecated will be removed in Pimcore 7. use $config instead
      */
     protected $options;
+
+    /**
+     * Contains some configurations for the editmode, or the thumbnail name, ...
+     *
+     * @var array
+     */
+    protected $config;
 
     /**
      * @var string
@@ -103,6 +112,11 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     protected $inherited = false;
 
+    public function __construct()
+    {
+        $this->options = & $this->config;
+    }
+
     /**
      * @param string $type
      * @param string $name
@@ -129,7 +143,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         }
         $editable->setView($view);
         $editable->setEditmode($editmode);
-        $editable->setOptions($config);
+        $editable->setConfig($config);
 
         return $editable;
     }
@@ -165,7 +179,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             'id' => 'pimcore_editable_' . str_replace([':', '.'], '_', $this->getName()),
             'name' => $this->getName(),
             'realName' => $this->getRealName(),
-            'options' => $this->getOptions(),
+            'config' => $this->getConfig(),
             'data' => $this->getEditmodeData(),
             'type' => $this->getType(),
             'inherited' => $this->getInherited(),
@@ -243,12 +257,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             'pimcore_editable_' . $this->getType(),
         ];
 
-        $editableOptions = $this->getOptions();
-        if (isset($editableOptions['class'])) {
-            if (is_array($editableOptions['class'])) {
-                $classes = array_merge($classes, $editableOptions['class']);
+        $editableConfig = $this->getConfig();
+        if (isset($editableConfig['class'])) {
+            if (is_array($editableConfig['class'])) {
+                $classes = array_merge($classes, $editableConfig['class']);
             } else {
-                $classes[] = (string)$editableOptions['class'];
+                $classes[] = (string)$editableConfig['class'];
             }
         }
 
@@ -293,7 +307,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
         $code = '
             <script>
-                editableConfigurations.push(' . json_encode($options, JSON_PRETTY_PRINT) . ');
+                editableDefinitions.push(' . json_encode($options, JSON_PRETTY_PRINT) . ');
             </script>
         ';
 
@@ -389,20 +403,42 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @return array
+     *
+     * @deprecated will be removed in Pimcore 7. Use getConfig() instead.
      */
     public function getOptions()
     {
-        return is_array($this->options) ? $this->options : [];
+        return $this->getConfig();
     }
 
     /**
      * @param array $options
      *
      * @return $this
+     *
+     * @deprecated will be removed in Pimcore 7. Use setConfig() instead.
      */
     public function setOptions($options)
     {
-        $this->options = $options;
+        return $this->setConfig($options);
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfig()
+    {
+        return is_array($this->config) ? $this->config : [];
+    }
+
+    /**
+     * @param array $config
+     *
+     * @return $this
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
 
         return $this;
     }

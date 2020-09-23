@@ -17,13 +17,13 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
     namingStrategies: {},
     namingStrategy: null,
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
 
         this.id = id;
         this.name = name;
         this.elements = [];
         this.brickTypeUsageCounter = [];
-        this.options = this.parseOptions(options);
+        this.config = this.parseConfig(config);
 
         this.initNamingStrategies();
         var namingStrategy = this.getNamingStrategy();
@@ -32,7 +32,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
 
         this.applyFallbackIcons();
 
-        if(typeof this.options["toolbar"] == "undefined" || this.options["toolbar"] != false) {
+        if(typeof this.config["toolbar"] == "undefined" || this.config["toolbar"] != false) {
             this.createToolBar();
         }
 
@@ -44,12 +44,12 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
         this.elements = Ext.get(id).query('.pimcore_block_entry[data-name="' + name + '"][key]');
 
         // reload or not => default not
-        if(typeof this.options["reload"] == "undefined") {
-            this.options.reload = false;
+        if(typeof this.config["reload"] == "undefined") {
+            this.config.reload = false;
         }
 
-        if(!this.options['controlsTrigger']) {
-            this.options['controlsTrigger'] = 'hover';
+        if(!this.config['controlsTrigger']) {
+            this.config['controlsTrigger'] = 'hover';
         }
 
         for (var i=0; i<data.length; i++) {
@@ -59,18 +59,18 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
         // type mapping
         var typeNameMappings = {};
         this.allowedTypes = []; // this is for the toolbar to check if an brick can be dropped to this areablock
-        for (var i=0; i<this.options.types.length; i++) {
-            typeNameMappings[this.options.types[i].type] = {
-                name: this.options.types[i].name,
-                description: this.options.types[i].description,
-                icon: this.options.types[i].icon
+        for (var i=0; i<this.config.types.length; i++) {
+            typeNameMappings[this.config.types[i].type] = {
+                name: this.config.types[i].name,
+                description: this.config.types[i].description,
+                icon: this.config.types[i].icon
             };
 
-            this.allowedTypes.push(this.options.types[i].type);
+            this.allowedTypes.push(this.config.types[i].type);
         }
 
         var limitReached = false;
-        if(typeof options["limit"] != "undefined" && this.elements.length >= options.limit) {
+        if(typeof config["limit"] != "undefined" && this.elements.length >= config.limit) {
             limitReached = true;
         }
 
@@ -239,16 +239,16 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
 
 
                 var buttonContainer = Ext.get(this.elements[i]).selectNode('.pimcore_area_buttons', false);
-                if (this.options['controlsAlign']) {
-                    buttonContainer.addCls(this.options['controlsAlign']);
+                if (this.config['controlsAlign']) {
+                    buttonContainer.addCls(this.config['controlsAlign']);
                 } else {
                     // top is default
                     buttonContainer.addCls('top');
                 }
 
-                buttonContainer.addCls(this.options['controlsTrigger']);
+                buttonContainer.addCls(this.config['controlsTrigger']);
 
-                if(this.options['controlsTrigger'] === 'hover') {
+                if(this.config['controlsTrigger'] === 'hover') {
                     Ext.get(this.elements[i]).on('mouseenter', function (event) {
 
                         if (Ext.dd.DragDropMgr.dragCurrent) {
@@ -285,7 +285,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
         }
 
         // click outside, hide all block buttons
-        if(this.options['controlsTrigger'] === 'hover') {
+        if(this.config['controlsTrigger'] === 'hover') {
             Ext.getBody().on('click', function (event) {
                 if (Ext.get(id) && !Ext.get(id).isAncestor(event.target)) {
                     Ext.get(id).query('.pimcore_area_buttons', false).forEach(function (el) {
@@ -441,10 +441,10 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
             "light_at_the_end_of_tunnel","like","icons8_cup","sports_mode","landscape","selfie","cable_release",
             "bookmark","briefcase","graduation_cap","in_transit","diploma_2"];
 
-        if (this.options.types) {
-            for (var i = 0; i < this.options.types.length; i++) {
+        if (this.config.types) {
+            for (var i = 0; i < this.config.types.length; i++) {
 
-                var brick = this.options.types[i];
+                var brick = this.config.types[i];
 
                 if (!brick.icon) {
                     brick.icon = "/bundles/pimcoreadmin/img/flat-color-icons/" + iconStore[i + 1] + ".svg";
@@ -717,10 +717,10 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
     getTypeMenu: function (scope, element, insertPosition) {
         var menu = [];
         var groupMenu;
-        var limits = this.options["limits"] || {};
+        var limits = this.config["limits"] || {};
 
-        if(typeof this.options.group != "undefined") {
-            var groups = Object.keys(this.options.group);
+        if(typeof this.config.group != "undefined") {
+            var groups = Object.keys(this.config.group);
             for (var g=0; g<groups.length; g++) {
                 if(groups[g].length > 0) {
                     groupMenu = {
@@ -730,12 +730,12 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                         menu: []
                     };
 
-                    for (var i=0; i<this.options.types.length; i++) {
-                        if(in_array(this.options.types[i].type,this.options.group[groups[g]])) {
-                            let type = this.options.types[i].type;
+                    for (var i=0; i<this.config.types.length; i++) {
+                        if(in_array(this.config.types[i].type,this.config.group[groups[g]])) {
+                            let type = this.config.types[i].type;
                             if (typeof limits[type] == "undefined" ||
                                 typeof this.brickTypeUsageCounter[type] == "undefined" || this.brickTypeUsageCounter[type] < limits[type]) {
-                                    groupMenu.menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element, insertPosition));
+                                    groupMenu.menu.push(this.getMenuConfigForBrick(this.config.types[i], scope, element, insertPosition));
                             }
                         }
                     }
@@ -743,11 +743,11 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                 }
             }
         } else {
-            for (var i=0; i<this.options.types.length; i++) {
-                let type = this.options.types[i].type;
+            for (var i=0; i<this.config.types.length; i++) {
+                let type = this.config.types[i].type;
                 if (typeof limits[type] == "undefined" ||
                     typeof this.brickTypeUsageCounter[type] == "undefined" || this.brickTypeUsageCounter[type] < limits[type]) {
-                    menu.push(this.getMenuConfigForBrick(this.options.types[i], scope, element, insertPosition));
+                    menu.push(this.getMenuConfigForBrick(this.config.types[i], scope, element, insertPosition));
                 }
             }
         }
@@ -809,9 +809,9 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
     },
 
     addBlockAt: function (type, index) {
-        var limits = this.options["limits"] || {};
+        var limits = this.config["limits"] || {};
 
-        if(typeof this.options["limit"] != "undefined" && this.elements.length >= this.options.limit) {
+        if(typeof this.config["limit"] != "undefined" && this.elements.length >= this.config.limit) {
             Ext.MessageBox.alert(t("error"), t("limit_reached"));
             return;
         }
@@ -819,8 +819,8 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
         if(typeof limits[type] != "undefined" && this.brickTypeUsageCounter[type] >= limits[type]) {
             let brickName = type;
             let brickIndex = this.allowedTypes.indexOf(brickName);
-            if (brickIndex >= 0 && typeof this.options.types[brickIndex].name != "undefined") {
-                brickName = this.options.types[brickIndex].name;
+            if (brickIndex >= 0 && typeof this.config.types[brickIndex].name != "undefined") {
+                brickName = this.config.types[brickIndex].name;
             }
             Ext.MessageBox.alert(t("error"), t("brick_limit_reached", null ,{bricklimit: limits[type], brickname: brickName}));
             return;
@@ -885,7 +885,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
 
         this.elements = tmpElements;
 
-        if(this.options.reload) {
+        if(this.config.reload) {
             this.reloadDocument();
         }
     },
@@ -938,13 +938,13 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
         var editmodeWindowWidth = 550;
         var editmodeWindowHeight = 370;
 
-        if(this.options["params"]) {
-            if (this.options.params[element.type] && this.options.params[element.type]["editWidth"]) {
-                editmodeWindowWidth = this.options.params[element.type].editWidth;
+        if(this.config["params"]) {
+            if (this.config.params[element.type] && this.config.params[element.type]["editWidth"]) {
+                editmodeWindowWidth = this.config.params[element.type].editWidth;
             }
 
-            if (this.options.params[element.type] && this.options.params[element.type]["editHeight"]) {
-                editmodeWindowHeight = this.options.params[element.type].editHeight;
+            if (this.config.params[element.type] && this.config.params[element.type]["editHeight"]) {
+                editmodeWindowHeight = this.config.params[element.type].editHeight;
             }
         }
 
@@ -1010,7 +1010,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
         var button;
         var bricksInThisArea = [];
         var groupsInThisArea = {};
-        var areaBlockToolbarSettings = this.options["areablock_toolbar"];
+        var areaBlockToolbarSettings = this.config["areablock_toolbar"];
         var itemCount = 0;
 
         if(pimcore.document.editables[this.toolbarGlobalVar] != false
@@ -1018,12 +1018,12 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
             itemCount = pimcore.document.editables[this.toolbarGlobalVar].itemCount;
         }
 
-        if(typeof this.options.group != "undefined") {
+        if(typeof this.config.group != "undefined") {
             var groupMenu;
             var groupItemCount = 0;
             var isExistingGroup;
             var brickKey;
-            var groups = Object.keys(this.options.group);
+            var groups = Object.keys(this.config.group);
 
             for (var g=0; g<groups.length; g++) {
                 groupMenu = null;
@@ -1052,11 +1052,11 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
 
                     groupsInThisArea[groups[g]] = groupMenu;
 
-                    for (var i=0; i<this.options.types.length; i++) {
-                        if(in_array(this.options.types[i].type,this.options.group[groups[g]])) {
+                    for (var i=0; i<this.config.types.length; i++) {
+                        if(in_array(this.config.types[i].type,this.config.group[groups[g]])) {
                             itemCount++;
-                            brickKey = groups[g] + " - " + this.options.types[i].type;
-                            button = this.getToolBarButton(this.options.types[i], brickKey, itemCount, "menu");
+                            brickKey = groups[g] + " - " + this.config.types[i].type;
+                            button = this.getToolBarButton(this.config.types[i], brickKey, itemCount, "menu");
                             if(button) {
                                 bricksInThisArea.push(brickKey);
                                 groupMenu.menu.add(button);
@@ -1071,8 +1071,8 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
                 }
             }
         } else {
-            for (var i=0; i<this.options.types.length; i++) {
-                var brick = this.options.types[i];
+            for (var i=0; i<this.config.types.length; i++) {
+                var brick = this.config.types[i];
                 itemCount++;
 
                 brickKey = brick.type;
@@ -1146,7 +1146,7 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
             }
         }
 
-        var areaBlockToolbarSettings = this.options["areablock_toolbar"];
+        var areaBlockToolbarSettings = this.config["areablock_toolbar"];
         var maxButtonCharacters = areaBlockToolbarSettings.buttonMaxCharacters;
 
         var button = {

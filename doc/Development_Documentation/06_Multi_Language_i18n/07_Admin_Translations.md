@@ -10,7 +10,7 @@ There are several components in the Pimcore backend UI which are configured diff
 * custom views
 * document editables
 
-All these elements (except document editables) can be translated in *Extras* > *Translations Admin* similar to the
+All these elements (except document editables) can be translated in *Settings* > *Admin Translations* similar to the
 Shared Translations. All installed system languages are available for translation. It's even possible to override
 the system translations shipped with Pimcore, so basically you can translate anything within the backend UI. 
 

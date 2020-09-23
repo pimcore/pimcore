@@ -126,7 +126,7 @@ class Snippet extends Model\Document\Editable
         // apply best matching target group (if any)
         $targetingConfigurator->configureTargetGroup($this->snippet);
 
-        $params = $this->options;
+        $params = $this->config;
         $params['document'] = $this->snippet;
 
         // check if output-cache is enabled, if so, we're also using the cache here

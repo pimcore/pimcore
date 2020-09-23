@@ -15,11 +15,11 @@ pimcore.registerNS("pimcore.document.editables.checkbox");
 pimcore.document.editables.checkbox = Class.create(pimcore.document.editable, {
 
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
         this.setupWrapper();
-        options = this.parseOptions(options);
+        config = this.parseConfig(config);
 
         if (!data) {
             data = false;
@@ -40,20 +40,20 @@ pimcore.document.editables.checkbox = Class.create(pimcore.document.editable, {
 
         elContainer.appendChild(inputCheckbox);
 
-        if(options["label"]) {
+        if(config["label"]) {
             var labelCheckbox = document.createElement("label");
             labelCheckbox.setAttribute('for', this.htmlId);
-            labelCheckbox.innerText = options["label"];
+            labelCheckbox.innerText = config["label"];
             elContainer.appendChild(labelCheckbox);
         }
 
         this.elComponent = Ext.get(this.htmlId);
 
         // onchange event
-        if (options.onchange) {
-            this.elComponent.on('change', eval(options.onchange));
+        if (config.onchange) {
+            this.elComponent.on('change', eval(config.onchange));
         }
-        if (options.reload) {
+        if (config.reload) {
             this.elComponent.on('change', this.reloadDocument);
         }
     },

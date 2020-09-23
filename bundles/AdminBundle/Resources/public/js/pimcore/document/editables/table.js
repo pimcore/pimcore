@@ -14,46 +14,46 @@
 pimcore.registerNS("pimcore.document.editables.table");
 pimcore.document.editables.table = Class.create(pimcore.document.editable, {
 
-    initialize: function(id, name, options, data, inherited) {
+    initialize: function(id, name, config, data, inherited) {
 
         this.id = id;
         this.name = name;
         this.setupWrapper();
-        options = this.parseOptions(options);
+        config = this.parseConfig(config);
 
         if (!data) {
             data = [
                 [" "]
             ];
-            if (options.defaults) {
-                if (options.defaults.cols) {
-                    for (var i = 0; i < (options.defaults.cols - 1); i++) {
+            if (config.defaults) {
+                if (config.defaults.cols) {
+                    for (var i = 0; i < (config.defaults.cols - 1); i++) {
                         data[0].push(" ");
                     }
                 }
-                if (options.defaults.rows) {
-                    for (var i = 0; i < (options.defaults.rows - 1); i++) {
+                if (config.defaults.rows) {
+                    for (var i = 0; i < (config.defaults.rows - 1); i++) {
                         data.push(data[0]);
                     }
                 }
-                if (options.defaults.data) {
-                    data = options.defaults.data;
+                if (config.defaults.data) {
+                    data = config.defaults.data;
                 }
             }
         }
 
-        options.value = data;
-        options.name = id + "_editable";
-        options.frame = true;
-        options.layout = "fit";
-        options.autoHeight = true;
+        config.value = data;
+        config.name = id + "_editable";
+        config.frame = true;
+        config.layout = "fit";
+        config.autoHeight = true;
 
-        delete options["height"];
+        delete config["height"];
 
-        this.options = options;
+        this.config = config;
 
         if (!this.panel) {
-            this.panel = new Ext.Panel(this.options);
+            this.panel = new Ext.Panel(this.config);
         }
 
         this.panel.render(id);

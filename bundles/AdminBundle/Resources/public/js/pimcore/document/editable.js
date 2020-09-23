@@ -100,12 +100,25 @@ pimcore.document.editable = Class.create({
         return this.id;
     },
 
+    /**
+     * @deprecated use parseConfig()
+     */
     parseOptions: function (options) {
-        if(!options || options instanceof Array || typeof options != "object") {
-            options = {};
+        return this.parseConfig(options);
+    },
+
+    parseConfig: function (config) {
+        if(!config || config instanceof Array || typeof config != "object") {
+            config = {};
         }
 
-        return options;
+        /**
+         * @TODO remove in Pimcore 7
+         * @deprecated use this.config()
+         */
+        this.options = config;
+
+        return config;
     },
 
     /**

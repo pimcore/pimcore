@@ -14,11 +14,11 @@
 pimcore.registerNS("pimcore.document.editables.relations");
 pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
 
-    initialize: function (id, name, options, data, inherited) {
+    initialize: function (id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
 
-        this.options = this.parseOptions(options);
+        this.config = this.parseConfig(config);
         this.data = data;
 
         this.setupWrapper();
@@ -49,7 +49,7 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
                 cls: "pimcore_icon_droptarget"
             }),
             Ext.create('Ext.toolbar.TextItem', {
-                text: "<b>" + (this.options.title ? this.options.title : "") + "</b>"
+                text: "<b>" + (this.config.title ? this.config.title : "") + "</b>"
             }),
             "->",
             {
@@ -101,7 +101,7 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
                                         grid.getStore().removeAt(rowIndex);
                                         grid.getStore().insert(rowIndex - 1, [rec]);
 
-                                        if (this.options.reload) {
+                                        if (this.config.reload) {
                                             this.reloadDocument();
                                         }
                                     }
@@ -123,7 +123,7 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
                                         grid.getStore().removeAt(rowIndex);
                                         grid.getStore().insert(rowIndex + 1, [rec]);
 
-                                        if (this.options.reload) {
+                                        if (this.config.reload) {
                                             this.reloadDocument();
                                         }
                                     }
@@ -158,7 +158,7 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
                             handler: function (grid, rowIndex) {
                                 grid.getStore().removeAt(rowIndex);
 
-                                if (this.options.reload) {
+                                if (this.config.reload) {
                                     this.reloadDocument();
                                 }
                             }.bind(this)
@@ -172,15 +172,15 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
         };
 
         // height specifics
-        if (typeof this.options.height != "undefined") {
-            elementConfig.height = this.options.height;
+        if (typeof this.config.height != "undefined") {
+            elementConfig.height = this.config.height;
         } else {
             elementConfig.autoHeight = true;
         }
 
         // width specifics
-        if (typeof this.options.width != "undefined") {
-            elementConfig.width = this.options.width;
+        if (typeof this.config.width != "undefined") {
+            elementConfig.width = this.config.width;
         }
 
         this.element = new Ext.grid.GridPanel(elementConfig);
@@ -200,12 +200,12 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
     },
 
     canInlineUpload: function() {
-        if(this.options["disableInlineUpload"] === true) {
+        if(this.config["disableInlineUpload"] === true) {
             return false;
         }
 
         // no assets allowed, disable inline upload
-        if(this.options["types"] && this.options["types"].length && this.options["types"].indexOf("asset") === -1) {
+        if(this.config["types"] && this.config["types"].length && this.config["types"].indexOf("asset") === -1) {
             return false;
         }
 
@@ -213,7 +213,7 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
     },
 
     uploadDialog: function () {
-        pimcore.helpers.assetSingleUploadDialog(this.options["uploadPath"], "path", function (res) {
+        pimcore.helpers.assetSingleUploadDialog(this.config["uploadPath"], "path", function (res) {
             try {
                 var data = Ext.decode(res.response.responseText);
                 if (data["id"]) {
@@ -224,7 +224,7 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
                         subtype: data["type"]
                     });
 
-                    if (this.options.reload) {
+                    if (this.config.reload) {
                         this.reloadDocument();
                     }
                 }
@@ -285,7 +285,7 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
         if(elementsToAdd.length) {
             this.store.add(elementsToAdd);
 
-            if (this.options.reload) {
+            if (this.config.reload) {
                 this.reloadDocument();
             }
 
@@ -306,22 +306,22 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
         var type;
 
         //only is legacy
-        if (this.options.only && !this.options.types) {
-            this.options.types = [this.options.only];
+        if (this.config.only && !this.config.types) {
+            this.config.types = [this.config.only];
         }
 
         //type check   (asset,document,object)
-        if (this.options.types) {
+        if (this.config.types) {
             found = false;
-            for (i = 0; i < this.options.types.length; i++) {
-                type = this.options.types[i];
+            for (i = 0; i < this.config.types.length; i++) {
+                type = this.config.types[i];
                 if (type == data.data.elementType) {
                     found = true;
 
-                    if (this.options.subtypes && this.options.subtypes[type] && this.options.subtypes[type].length) {
+                    if (this.config.subtypes && this.config.subtypes[type] && this.config.subtypes[type].length) {
                         checkSubType = true;
                     }
-                    if (data.data.elementType == "object" && this.options.classes) {
+                    if (data.data.elementType == "object" && this.config.classes) {
                         checkClass = true;
                     }
                     break;
@@ -336,7 +336,7 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
         if (checkSubType) {
 
             found = false;
-            var subTypes = this.options.subtypes[type];
+            var subTypes = this.config.subtypes[type];
             for (i = 0; i < subTypes.length; i++) {
                 if (subTypes[i] == data.data.type) {
                     found = true;
@@ -355,8 +355,8 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
         //object class check
         if (checkClass) {
             found = false;
-            for (i = 0; i < this.options.classes.length; i++) {
-                if (this.options.classes[i] == data.data.className) {
+            for (i = 0; i < this.config.classes.length; i++) {
+                if (this.config.classes[i] == data.data.className) {
                     found = true;
                     break;
                 }
@@ -421,10 +421,10 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
     openSearchEditor: function () {
 
         pimcore.helpers.itemselector(true, this.addDataFromSelector.bind(this), {
-                type: this.options.types,
-                subtype: this.options.subtypes,
+                type: this.config.types,
+                subtype: this.config.subtypes,
                 specific: {
-                    classes: this.options["classes"]
+                    classes: this.config["classes"]
                 }
             },
             {
@@ -470,7 +470,7 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
                         subtype: subtype
                     });
 
-                    if (this.options.reload) {
+                    if (this.config.reload) {
                         this.reloadDocument();
                     }
                 }
@@ -481,7 +481,7 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
     empty: function () {
         this.store.removeAll();
 
-        if (this.options.reload) {
+        if (this.config.reload) {
             this.reloadDocument();
         }
     },
@@ -490,7 +490,7 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
         this.store.removeAt(index);
         item.parentMenu.destroy();
 
-        if (this.options.reload) {
+        if (this.config.reload) {
             this.reloadDocument();
         }
     },
