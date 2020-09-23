@@ -98,8 +98,8 @@ final class LogArchiveTask implements TaskInterface
             $fileIterator = new \DirectoryIterator(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
             $fileIterator = new \CallbackFilterIterator(
                 $fileIterator,
-                static function (\SplFileInfo $current) use ($archive_treshold) {
-                    return time() - $archive_treshold * 86400 > $current->getMTime();
+                static function (\SplFileInfo $fileInfo) use ($archive_treshold) {
+                    return time() - $archive_treshold * 86400 > $fileInfo->getMTime();
                 }
             );
 
