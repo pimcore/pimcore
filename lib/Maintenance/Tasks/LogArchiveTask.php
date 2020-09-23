@@ -68,9 +68,9 @@ final class LogArchiveTask implements TaskInterface
         $archive_treshold = (int) ($this->config['applicationlog']['archive_treshold'] ?? 30);
 
         $timestamp = time();
-        $sql = ' SELECT %s FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_treshold.' DAY)';
+        $sql = 'SELECT %s FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_treshold.' DAY)';
 
-        if ($db->query(sprintf($sql, 'COUNT(*)'))->fetchColumn() > 0) {
+        if ($db->fetchOne(sprintf($sql, 'COUNT(*)')) > 0) {
             $db->query('CREATE TABLE IF NOT EXISTS '.$tablename." (
                        id BIGINT(20) NOT NULL,
                        `pid` INT(11) NULL DEFAULT NULL,
