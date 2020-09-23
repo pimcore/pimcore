@@ -104,6 +104,7 @@ class EditableRenderer implements LoggerAwareInterface
      * @param bool|null $editmode
      *
      * @throws \Exception
+     *
      * @return Editable|null
      */
     public function getEditable(PageSnippet $document, $type, $inputName, array $config = [], bool $editmode = null)
