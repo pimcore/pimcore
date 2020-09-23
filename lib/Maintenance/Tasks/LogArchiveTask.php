@@ -95,7 +95,7 @@ final class LogArchiveTask implements TaskInterface
             // execution should be only sometime between 0:00 and 4:59 -> less load expected
             Lock::lock($lockId);
             $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '. $archive_treshold.' days');
-            $fileIterator = new \DirectoryIterator(PIMCORE_LOG_FILEOBJECT_DIRECTORY, \RecursiveDirectoryIterator::SKIP_DOTS);
+            $fileIterator = new \DirectoryIterator(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
             $fileIterator = new \CallbackFilterIterator(
                 $fileIterator,
                 static function (\SplFileInfo $current) use ($archive_treshold) {
