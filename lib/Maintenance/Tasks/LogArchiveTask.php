@@ -42,6 +42,7 @@ final class LogArchiveTask implements TaskInterface
     /**
      * @param Db\ConnectionInterface $db
      * @param Config $config
+     * @param LoggerInterface $logger
      */
     public function __construct(Db\ConnectionInterface $db, Config $config, LoggerInterface $logger)
     {
