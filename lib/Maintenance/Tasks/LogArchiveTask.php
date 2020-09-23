@@ -18,6 +18,9 @@ use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
+use Pimcore\Model\Tool\Lock;
+use Psr\Log\LoggerInterface;
+use SplFileInfo;
 
 final class LogArchiveTask implements TaskInterface
 {
@@ -32,13 +35,19 @@ final class LogArchiveTask implements TaskInterface
     private $config;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param Db\ConnectionInterface $db
      * @param Config $config
      */
-    public function __construct(Db\ConnectionInterface $db, Config $config)
+    public function __construct(Db\ConnectionInterface $db, Config $config, LoggerInterface $logger)
     {
         $this->db = $db;
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     /**
@@ -78,6 +87,29 @@ final class LogArchiveTask implements TaskInterface
 
             $db->query('INSERT INTO '.$tablename.' '.sprintf($sql, '*'));
             $db->query('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_treshold.' DAY);');
+        }
+
+        $lockId = self::class;
+        if (!Lock::isLocked($lockId, 86400) && date('H') <= 4) {
+            // execution should be only sometime between 0:00 and 4:59 -> less load expected
+            Lock::lock($lockId);
+            $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '. $archive_treshold.' days');
+            $fileIterator = new \RecursiveDirectoryIterator(PIMCORE_LOG_FILEOBJECT_DIRECTORY, \RecursiveDirectoryIterator::SKIP_DOTS);
+            $fileIterator = new \RecursiveCallbackFilterIterator(
+                $fileIterator,
+                static function (\SplFileInfo $current) use ($archive_treshold) {
+                    return time() - $archive_treshold * 86400 > $current->getMTime();
+                }
+            );
+
+            /** @var SplFileInfo $fileInfo */
+            foreach ($fileIterator as $fileInfo) {
+                if ($fileInfo->isFile()) {
+                    @unlink($fileInfo->getPathname());
+                }
+            }
+        } else {
+            $this->logger->debug('Skip cleaning up referenced FileObjects of application_logs, was done within the last 24 hours');
         }
     }
 }
