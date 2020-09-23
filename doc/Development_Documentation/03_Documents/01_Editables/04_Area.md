@@ -17,9 +17,9 @@ Brick-specific configurations are passed using the `params` configuration (see a
 
 | Name              | Type | Description                                                                                                                                                     |
 |-------------------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `forceEditInView` | bool | If a brick contains an edit.php there's no editmode for the `view.php` file, if you want to have the editmode enabled in both templates, enable this option |
-| `editWidth`       | int  | Width of editing popup (if dedicated `edit.php` is used).                                                                                               |
-| `editHeight`      | int  | Height of editing popup (if dedicated `edit.php` is used).                                                                                              |
+| `forceEditInView` | bool | [DEPRECATED] If a brick contains an edit.php there's no editmode for the `view.php` file, if you want to have the editmode enabled in both templates, enable this option |
+| `editWidth`       | int  | [DEPRECATED] Width of editing popup (if dedicated `edit.php` is used).                                                                                               |
+| `editHeight`      | int  | [DEPRECATED] Height of editing popup (if dedicated `edit.php` is used).                                                                                              |
 
 
 ## Methods

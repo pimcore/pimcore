@@ -266,6 +266,8 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
             $editParameters = array_merge($view->getParameters()->all(), [
                 'editmode' => true,
             ]);
+
+            @trigger_error("Using edit.html.(php|twig) in document areablocks/bricks is marked as deprecated and will be removed in Pimcore v7" , E_USER_DEPRECATED);
         }
 
         // render complete areabrick
