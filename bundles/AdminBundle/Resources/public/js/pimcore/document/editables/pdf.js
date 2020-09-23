@@ -21,19 +21,20 @@ pimcore.document.editables.pdf = Class.create(pimcore.document.editable, {
 
         this.config = this.parseConfig(config);
 
-
-        // set width
         if (!this.config["height"]) {
             this.config.height = 100;
         }
 
+        this.config.name = id + "_editable";
+
         if (data) {
             this.data = data;
         }
-        this.setupWrapper();
-        this.config.name = id + "_editable";
-        this.element = new Ext.Panel(this.config);
+    },
 
+    render: function () {
+        this.setupWrapper();
+        this.element = new Ext.Panel(this.config);
         this.element.on("render", function (el) {
 
             // contextmenu
@@ -51,8 +52,7 @@ pimcore.document.editables.pdf = Class.create(pimcore.document.editable, {
             body.addCls("pimcore_tag_image_empty pimcore_editable_image_empty");
         }.bind(this));
 
-        this.element.render(id);
-
+        this.element.render(this.id);
 
         pimcore.helpers.registerAssetDnDSingleUpload(this.element.getEl().dom, this.config["uploadPath"], 'path', function (e) {
             if (e['asset']['type'] === "document" && !this.inherited) {

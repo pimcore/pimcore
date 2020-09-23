@@ -124,6 +124,10 @@ Ext.onReady(function () {
             inherited = definition["inherited"];
         }
 
+        if (definition.inDialogBox && typeof pimcore.document.tags[definition.type].prototype['render'] !== 'function') {
+            throw 'Editable of type `' + type + '` with name `' + name + '` does not support the use in the dialog box.';
+        }
+
         if(in_array(name,editableNames)) {
             pimcore.helpers.showNotification("ERROR", "Duplicate editable name: " + name, "error");
         }
@@ -132,7 +136,14 @@ Ext.onReady(function () {
         // @TODO: change pimcore.document.tags to pimcore.document.editables in v7
         var editable = new pimcore.document.tags[definition.type](definition.id, name, definition.config, definition.data, inherited);
         editable.setRealName(definition.realName);
-        editable.setInherited(inherited);
+        editable.setInDialogBox(definition.inDialogBox);
+
+        if(!definition.inDialogBox) {
+            if (typeof editable['render'] === 'function') {
+                editable.render();
+            }
+            editable.setInherited(inherited);
+        }
 
         return editable;
     }

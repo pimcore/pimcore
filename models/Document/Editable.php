@@ -20,6 +20,7 @@ namespace Pimcore\Model\Document;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\Block\BlockState;
 use Pimcore\Document\Editable\Block\BlockStateStack;
+use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\Document\EditableNameEvent;
 use Pimcore\Logger;
@@ -118,6 +119,11 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
+     * @var string
+     */
+    protected $inDialogBox = null;
+
+    /**
      * @param string $type
      * @param string $name
      * @param int $documentId
@@ -161,8 +167,25 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $attributes = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
-        $code .= ('<div ' . $attributeString . '></div>');
+        $htmlContainerCode = ('<div ' . $attributeString . '></div>');
 
+        if($this->isInDialogBox()) {
+            $htmlContainerCode = $this->wrapEditmodeContainerCodeForDialogBox($attributes['id'], $htmlContainerCode);
+        }
+
+        $code .= $htmlContainerCode;
+
+        return $code;
+    }
+
+    /**
+     * @param string $id
+     * @param string $code
+     * @return string
+     */
+    protected function wrapEditmodeContainerCodeForDialogBox(string $id, string $code): string
+    {
+        $code = '<template id="template__' . $id . '">' . $code . '</template>';
         return $code;
     }
 
@@ -183,6 +206,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             'data' => $this->getEditmodeData(),
             'type' => $this->getType(),
             'inherited' => $this->getInherited(),
+            'inDialogBox' => $this->getInDialogBox(),
         ];
 
         return $options;
@@ -439,6 +463,22 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     public function setConfig($config)
     {
         $this->config = $config;
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return self
+     */
+    public function setOption(string $name, $value): self
+    {
+        if(!is_array($this->options)) {
+            $this->options = [];
+        }
+
+        $this->options[$name] = $value;
 
         return $this;
     }
@@ -778,6 +818,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
         $container = \Pimcore::getContainer();
         $blockState = $container->get(BlockStateStack::class)->getCurrentState();
+        /**
+         * @var NamingStrategyInterface
+         */
         $namingStrategy = $container->get('pimcore.document.tag.naming.strategy');
 
         // if element not nested inside a hierarchical element (e.g. block), add the
@@ -857,6 +900,33 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         }
 
         return $data;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInDialogBox(): bool
+    {
+        return (bool) $this->inDialogBox;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getInDialogBox(): ?string
+    {
+        return $this->inDialogBox;
+    }
+
+    /**
+     * @param string|null $inDialogBox
+     * @return $this
+     */
+    public function setInDialogBox(?string $inDialogBox): self
+    {
+        $this->inDialogBox = $inDialogBox;
+
+        return $this;
     }
 }
 

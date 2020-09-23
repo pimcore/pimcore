@@ -29,10 +29,12 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         if (data) {
             this.datax = data;
         }
+    },
 
+    render: function () {
         this.setupWrapper();
 
-        this.element = Ext.get(id);
+        this.element = Ext.get(this.id);
 
         if (this.config["width"]) {
             this.element.setStyle("width", this.config["width"] + "px");
@@ -86,7 +88,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
             this.altInput.setValue(this.datax.alt);
         }
 
-        if (this.config.hidetext == true) {
+        if (this.config.hidetext === true) {
             this.altBar.setStyle({
                 display: "none",
                 visibility: "hidden"
@@ -506,7 +508,9 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
     getValue: function () {
 
         // alt alt value
-        this.datax.alt = this.altInput.getValue();
+        if(this.altInput) {
+            this.datax.alt = this.altInput.getValue();
+        }
 
         return this.datax;
     },

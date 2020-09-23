@@ -475,6 +475,14 @@ input.cke_dialog_ui_input_tel {
     top:5px;
 }
 
+.pimcore_areablock_dialogBox .x-fieldset-body {
+    overflow: visible;
+}
+
+.pimcore_areablock_dialogBox legend {
+    width: auto;
+}
+
 .pimcore_areablock_toolbar {
     opacity: .9;
     border-color: #000;
@@ -553,6 +561,10 @@ input.cke_dialog_ui_input_tel {
     display: inline-block;
 }
 
+.pimcore_editable_checkbox input {
+    margin-right: 5px;
+}
+
 /* support for placeholders */
 .pimcore_tag_input[contenteditable=true][data-placeholder]:empty:before,
 .pimcore_editable_input[contenteditable=true][data-placeholder]:empty:before,
@@ -595,6 +607,27 @@ input.cke_dialog_ui_input_tel {
 .pimcore_editable_input:hover, .pimcore_wysiwyg:hover, .pimcore_editable_textarea:hover, .pimcore_editable_snippet:hover, .pimcore_editable_renderlet:hover, .pimcore_editable_inc:hover {
     outline: 2px dashed #BABABA;
     outline-offset: 5px;
+}
+
+.pimcore_areablock_dialogBox .pimcore_tag_input,
+.pimcore_areablock_dialogBox .pimcore_tag_wysiwyg,
+.pimcore_areablock_dialogBox .pimcore_tag_textarea {
+    background-color: #fff;
+}
+
+.pimcore_areablock_dialogBox .pimcore_tag_input:hover,
+.pimcore_areablock_dialogBox .pimcore_wysiwyg:hover,
+.pimcore_areablock_dialogBox .pimcore_tag_textarea:hover,
+.pimcore_areablock_dialogBox .pimcore_tag_snippet:hover,
+.pimcore_areablock_dialogBox .pimcore_tag_renderlet:hover,
+.pimcore_areablock_dialogBox .pimcore_tag_inc:hover,
+.pimcore_areablock_dialogBox .pimcore_editable_input:hover,
+.pimcore_areablock_dialogBox .pimcore_wysiwyg:hover,
+.pimcore_areablock_dialogBox .pimcore_editable_textarea:hover,
+.pimcore_areablock_dialogBox .pimcore_editable_snippet:hover,
+.pimcore_areablock_dialogBox .pimcore_editable_renderlet:hover,
+.pimcore_areablock_dialogBox .pimcore_editable_inc:hover {
+    outline: none;
 }
 
 .pimcore_tag_input:focus, .pimcore_wysiwyg:focus, .pimcore_tag_textarea:focus,
