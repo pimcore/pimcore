@@ -169,7 +169,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
         $htmlContainerCode = ('<div ' . $attributeString . '></div>');
 
-        if($this->isInDialogBox()) {
+        if ($this->isInDialogBox()) {
             $htmlContainerCode = $this->wrapEditmodeContainerCodeForDialogBox($attributes['id'], $htmlContainerCode);
         }
 
@@ -181,11 +181,13 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * @param string $id
      * @param string $code
+     *
      * @return string
      */
     protected function wrapEditmodeContainerCodeForDialogBox(string $id, string $code): string
     {
         $code = '<template id="template__' . $id . '">' . $code . '</template>';
+
         return $code;
     }
 
@@ -470,11 +472,12 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * @param string $name
      * @param mixed $value
+     *
      * @return self
      */
     public function setOption(string $name, $value): self
     {
-        if(!is_array($this->options)) {
+        if (!is_array($this->options)) {
             $this->options = [];
         }
 
@@ -920,6 +923,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @param string|null $inDialogBox
+     *
      * @return $this
      */
     public function setInDialogBox(?string $inDialogBox): self

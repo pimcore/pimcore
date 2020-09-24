@@ -17,11 +17,12 @@ namespace Pimcore\Extension\Document\Areabrick;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable\Area\Info;
 
-Interface EditableDialogBoxInterface
+interface EditableDialogBoxInterface
 {
     /**
      * @param Document\Editable $area
      * @param Info|null $info
+     *
      * @return EditableDialogBoxConfiguration
      */
     public function getEditableDialogBoxConfiguration(Document\Editable $area, ?Info $info): EditableDialogBoxConfiguration;

@@ -192,7 +192,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
                 'type' => $brick->getId(),
                 'icon' => $icon,
                 'limit' => $limit,
-                'hasDialogBoxConfiguration' => $hasDialogBoxConfiguration
+                'hasDialogBoxConfiguration' => $hasDialogBoxConfiguration,
             ];
         }
 
@@ -267,7 +267,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
                 'editmode' => true,
             ]);
 
-            @trigger_error("Using edit.html.(php|twig) in document areablocks/bricks is marked as deprecated and will be removed in Pimcore v7" , E_USER_DEPRECATED);
+            @trigger_error('Using edit.html.(php|twig) in document areablocks/bricks is marked as deprecated and will be removed in Pimcore v7', E_USER_DEPRECATED);
         }
 
         // render complete areabrick

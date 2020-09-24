@@ -114,7 +114,8 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
      */
     public function hasViewTemplate()
     {
-        @trigger_error(sprintf("%s is deprecated, use hasTemplate() instead", __METHOD__) , E_USER_DEPRECATED);
+        @trigger_error(sprintf('%s is deprecated, use hasTemplate() instead', __METHOD__), E_USER_DEPRECATED);
+
         return $this->hasTemplate();
     }
 

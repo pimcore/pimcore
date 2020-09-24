@@ -202,7 +202,7 @@ class Renderlet extends Model\Document\Editable
      */
     public function setDataFromEditmode($data)
     {
-        if(is_array($data) && isset($data['id'])) {
+        if (is_array($data) && isset($data['id'])) {
             $this->id = $data['id'];
             $this->type = $data['type'];
             $this->subtype = $data['subtype'];
