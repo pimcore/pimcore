@@ -32,13 +32,16 @@ class PimcoreObjectExtension extends AbstractExtension
         // simple object access functions in case documents/assets/objects need to be loaded directly in the template
         return [
             new TwigFunction('pimcore_document', [Document::class, 'getById']),
+            new TwigFunction('pimcore_document_by_path', [Document::class, 'getByPath']),
             new TwigFunction('pimcore_site', [Site::class, 'getById']),
             new TwigFunction('pimcore_site_by_root_id', [Site::class, 'getByRootId']),
             new TwigFunction('pimcore_site_by_domain', [Site::class, 'getByDomain']),
             new TwigFunction('pimcore_site_is_request', [Site::class, 'isSiteRequest']),
             new TwigFunction('pimcore_site_current', [Site::class, 'getCurrentSite']),
             new TwigFunction('pimcore_asset', [Asset::class, 'getById']),
+            new TwigFunction('pimcore_asset_by_path', [Asset::class, 'getByPath']),
             new TwigFunction('pimcore_object', [DataObject\AbstractObject::class, 'getById']),
+            new TwigFunction('pimcore_object_by_path', [DataObject\AbstractObject::class, 'getByPath']),
             new TwigFunction('pimcore_document_wrap_hardlink', [Document\Hardlink\Service::class, 'wrap']),
             new TwigFunction('pimcore_user', [User::class, 'getById']),
             new TwigFunction('pimcore_object_classificationstore_group', [DataObject\Classificationstore\GroupConfig::class, 'getById']),

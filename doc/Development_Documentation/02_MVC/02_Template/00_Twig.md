@@ -95,16 +95,24 @@ generates HTML as otherwise the HTML will be escaped by twig.
 
 #### Loading Objects
 
-The following functions can be used to load Pimcore objects in a template (use `<type>`::getById()`):
+The following functions can be used to load Pimcore elements from within a template:
 
 * `pimcore_document`
+* `pimcore_document_by_path`
 * `pimcore_site`
 * `pimcore_asset`
+* `pimcore_asset_by_path`
 * `pimcore_object`
+* `pimcore_object_by_path`
 
 ```twig
 {% set myObject = pimcore_object(123) %}
 {{ myObject.getTitle() }}
+```
+or
+```twig
+{% set myObject = pimcore_object_by_path("/path/to/my/object") %}
+{{ myObject.title }}
 ```
 
 For documents, Pimcore also provides a function to handle hardlinks through the `pimcore_document_wrap_hardlink` method.
