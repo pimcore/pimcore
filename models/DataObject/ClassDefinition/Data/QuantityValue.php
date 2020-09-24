@@ -537,7 +537,10 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             if (array_key_exists('value', $value) && array_key_exists('unit', $value) && array_key_exists('unitAbbreviation', $value)) {
                 $unitId = $value['unit'];
                 if ($idMapper) {
-                    $unitId = $idMapper->getMappedId('unit', $unitId);
+                    $mappedId = $idMapper->getMappedId('unit', $unitId);
+                    if($mappedId) {
+                        $unitId = $mappedId;
+                    }
                 }
 
                 $unit = Model\DataObject\QuantityValue\Unit::getById($unitId);
