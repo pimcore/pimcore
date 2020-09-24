@@ -128,6 +128,45 @@ $allValues = $store->getItems();
    
 ```
 
+### Retrieving group and key data
+
+The `ClassificationStore::getGroups()` method returns an array of `Group` objects. In turn, the `Group::getKeys()` method returns an array of `Key` objects for that group.
+
+```php
+/* @var $classificationStore \Pimcore\Model\DataObject\Classificationstore */
+$classificationStore = $dataObject->getClassificationStoreFieldName();
+
+foreach ($classificationStore->getGroups() as $group) {
+    var_dump($group->getConfiguration()->getName());
+
+    foreach ($group->getKeys() as $key) {
+        $keyConfiguration = $key->getConfiguration();
+
+        $value = $key->getValue();
+        if ($value instanceof \Pimcore\Model\DataObject\Data\QuantityValue) {
+            $value = (string)$value;
+        }
+
+        var_dump([
+            $keyConfiguration->getId(),
+            $keyConfiguration->getType(),
+            $keyConfiguration->getName(),
+            $keyConfiguration->getTitle(),
+            $value,
+            ($key->getFieldDefinition() instanceof QuantityValue),
+        ]);
+    }
+}
+```
+
+The `Key::getValue()` method supports the `language`, `ignoreFallbackLanguage` and `ignoreDefaultLanguage` arguments.
+
+```php
+/* @var $key \Pimcore\Model\DataObject\Classificationstore\Key */
+$key->getValue('en_GB', true, true);
+```
+
+
 ### Adding new items to Classification Store through code
 
 ```php
