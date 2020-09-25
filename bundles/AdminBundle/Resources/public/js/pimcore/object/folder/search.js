@@ -220,7 +220,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
         });
 
         var eventData =  {requestParams: {classId: this.classId, folderId: this.object.id}};
-        pimcore.plugin.broker.fireEvent("preCreateGrid", eventData);
+        pimcore.plugin.broker.fireEvent("preCreateObjectGrid", eventData);
 
         var gridHelper = new pimcore.object.helpers.grid(
             klass.data.text,
