@@ -66,7 +66,7 @@ corresponding method to the javascript plugin class.
 | prepareOnRowContextmenu        | before context menu is opened object folder grid, menu, folder class and object record are passed as parameters |
 | prepareOnObjectTreeNodeClick   | before the data object is opened, after a tree node has been clicked. The node item is passed as parameter.     |
 | preGetObjectFolder             | before the data object grid folder configuration is loaded from the server. request configuration is passed.      |
-| preCreateGrid                  | before the data object grid items are loaded from the server. request configuration are passed.      |
+| preCreateObjectGrid            | before the data object grid items are loaded from the server. request configuration are passed.      |
 
 Uninstall is called after plugin has been uninstalled - this hook can be used to remove plugin features from the UI 
 after uninstall.
