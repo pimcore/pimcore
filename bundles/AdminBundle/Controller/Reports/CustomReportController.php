@@ -436,7 +436,7 @@ class CustomReportController extends ReportsControllerBase
             'exportFile' => $exportFile,
             'offset' => $offset,
             'progress' => $progress,
-            'finished' => empty($result['data']) || sizeof($result['data']) < $limit,
+            'finished' => empty($result['data']) || count($result['data']) < $limit,
         ]);
     }
 

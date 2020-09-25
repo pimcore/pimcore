@@ -15,8 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
-use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
-use Pimcore\Config;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
@@ -47,7 +46,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class DocumentController extends ElementControllerBase implements EventedControllerInterface
 {
-    use AdminStyleTrait;
+    use DocumentTreeConfigTrait;
 
     /**
      * @var Document\Service
@@ -162,12 +161,12 @@ class DocumentController extends ElementControllerBase implements EventedControl
             } else {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
-                $condition = 'parentId = ' . $db->quote($document->getId()) . ' and
-                                        (
-                                        (select list from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                        or
-                                        (select list from users_workspaces_document where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,`key`))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                                        )';
+                $condition = 'parentId = ' . $db->quote($document->getId()) . ' AND
+                (
+                    (SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(path,`key`),cpath)=1  ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
+                    or
+                    (SELECT list FROM users_workspaces_document WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(path,`key`))=1  ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
+                )';
             }
 
             if ($filter) {
@@ -383,7 +382,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             $parentDocument = Document::getById($request->get('id'));
 
             $list = new Document\Listing();
-            $list->setCondition('path LIKE ?', [$parentDocument->getRealFullPath() . '/%']);
+            $list->setCondition('path LIKE ?', [$list->escapeLike($parentDocument->getRealFullPath()) . '/%']);
             $list->setLimit(intval($request->get('amount')));
             $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
@@ -552,7 +551,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     if ($document->hasChildren()) {
                         $list = new Document\Listing();
                         $list->setCondition('path LIKE :path', [
-                            'path' => $document->getRealFullPath() . '/%',
+                            'path' => $list->escapeLike($document->getRealFullPath()) . '/%',
                         ]);
 
                         $childrenList = $list->loadIdPathList();
@@ -869,7 +868,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             if ($document->hasChildren()) {
                 // get amount of childs
                 $list = new Document\Listing();
-                $list->setCondition('path LIKE ?', [$document->getRealFullPath() . '/%']);
+                $list->setCondition('path LIKE ?', [$list->escapeLike($document->getRealFullPath()) . '/%']);
                 $list->setOrderKey('LENGTH(path)', false);
                 $list->setOrder('ASC');
                 $childIds = $list->loadIdList();
@@ -1135,106 +1134,6 @@ class DocumentController extends ElementControllerBase implements EventedControl
     }
 
     /**
-     * @param Document $element
-     *
-     * @return array
-     */
-    protected function getTreeNodeConfig($element)
-    {
-        $site = null;
-        $childDocument = $element;
-        $config = $this->get(Config::class);
-
-        $tmpDocument = [
-            'id' => $childDocument->getId(),
-            'idx' => intval($childDocument->getIndex()),
-            'text' => $childDocument->getKey(),
-            'type' => $childDocument->getType(),
-            'path' => $childDocument->getRealFullPath(),
-            'basePath' => $childDocument->getRealPath(),
-            'locked' => $childDocument->isLocked(),
-            'lockOwner' => $childDocument->getLocked() ? true : false,
-            'published' => $childDocument->isPublished(),
-            'elementType' => 'document',
-            'leaf' => true,
-            'permissions' => [
-                'view' => $childDocument->isAllowed('view'),
-                'remove' => $childDocument->isAllowed('delete'),
-                'settings' => $childDocument->isAllowed('settings'),
-                'rename' => $childDocument->isAllowed('rename'),
-                'publish' => $childDocument->isAllowed('publish'),
-                'unpublish' => $childDocument->isAllowed('unpublish'),
-                'create' => $childDocument->isAllowed('create'),
-            ],
-        ];
-
-        // add icon
-        $tmpDocument['expandable'] = $childDocument->hasChildren();
-        $tmpDocument['loaded'] = !$childDocument->hasChildren();
-
-        // set type specific settings
-        if ($childDocument->getType() == 'page') {
-            $tmpDocument['leaf'] = false;
-            $tmpDocument['expanded'] = !$childDocument->hasChildren();
-
-            // test for a site
-            if ($site = Site::getByRootId($childDocument->getId())) {
-                unset($site->rootDocument);
-                $tmpDocument['site'] = $site;
-            }
-        } elseif ($childDocument->getType() == 'folder' || $childDocument->getType() == 'link' || $childDocument->getType() == 'hardlink') {
-            $tmpDocument['leaf'] = false;
-            $tmpDocument['expanded'] = !$childDocument->hasChildren();
-        } elseif (method_exists($childDocument, 'getTreeNodeConfig')) {
-            $tmp = $childDocument->getTreeNodeConfig();
-            $tmpDocument = array_merge($tmpDocument, $tmp);
-        }
-
-        $this->addAdminStyle($childDocument, ElementAdminStyleEvent::CONTEXT_TREE, $tmpDocument);
-
-        // PREVIEWS temporary disabled, need's to be optimized some time
-        if ($childDocument instanceof Document\Page && isset($config['documents']['generate_preview'])) {
-            $thumbnailFile = $childDocument->getPreviewImageFilesystemPath();
-            // only if the thumbnail exists and isn't out of time
-            if (file_exists($thumbnailFile) && filemtime($thumbnailFile) > ($childDocument->getModificationDate() - 20)) {
-                $tmpDocument['thumbnail'] = $this->generateUrl('pimcore_admin_page_display_preview_image', ['id' => $childDocument->getId()]);
-                $thumbnailFileHdpi = $childDocument->getPreviewImageFilesystemPath(true);
-                if (file_exists($thumbnailFileHdpi)) {
-                    $tmpDocument['thumbnailHdpi'] = $this->generateUrl('pimcore_admin_page_display_preview_image',
-                        ['id' => $childDocument->getId(), 'hdpi' => true]);
-                }
-            }
-        }
-
-        $tmpDocument['cls'] = '';
-
-        if ($childDocument instanceof Document\Page) {
-            $tmpDocument['url'] = $childDocument->getFullPath();
-            $site = Tool\Frontend::getSiteForDocument($childDocument);
-            if ($site instanceof Site) {
-                $tmpDocument['url'] = 'http://' . $site->getMainDomain() . preg_replace('@^' . $site->getRootPath() . '/?@', '/', $childDocument->getRealFullPath());
-            }
-        }
-
-        if ($childDocument->getProperty('navigation_exclude')) {
-            $tmpDocument['cls'] .= 'pimcore_navigation_exclude ';
-        }
-
-        if (!$childDocument->isPublished()) {
-            $tmpDocument['cls'] .= 'pimcore_unpublished ';
-        }
-
-        if ($childDocument->isLocked()) {
-            $tmpDocument['cls'] .= 'pimcore_treenode_locked ';
-        }
-        if ($childDocument->getLocked()) {
-            $tmpDocument['cls'] .= 'pimcore_treenode_lockOwner ';
-        }
-
-        return $tmpDocument;
-    }
-
-    /**
      * @Route("/get-id-for-path", name="pimcore_admin_document_document_getidforpath", methods={"GET"})
      *
      * @param Request $request
@@ -1333,7 +1232,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 // only display document if listing is allowed for the current user
                 if ($childDocument->isAllowed('list')) {
                     $list = new Document\Listing();
-                    $list->setCondition('path LIKE ? and type = ?', [$childDocument->getRealFullPath() . '/%', 'page']);
+                    $list->setCondition('path LIKE ? and type = ?', [$list->escapeLike($childDocument->getRealFullPath()). '/%', 'page']);
 
                     if ($childDocument instanceof Document\Page || $list->getTotalCount() > 0) {
                         $documents[] = $this->getSeoNodeConfig($childDocument);

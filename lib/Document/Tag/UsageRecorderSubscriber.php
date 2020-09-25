@@ -17,49 +17,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Tag;
 
-use Pimcore\Event\DocumentEvents;
-use Pimcore\Event\Model\Document\TagNameEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Pimcore\Document\Editable\UsageRecorderSubscriber as EditableUsageRecorderSubscriber;
 
-class UsageRecorderSubscriber implements EventSubscriberInterface
-{
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', UsageRecorderSubscriber::class, EditableUsageRecorderSubscriber::class), E_USER_DEPRECATED);
+
+class_exists(EditableUsageRecorderSubscriber::class);
+
+if (false) {
     /**
-     * @var array
+     * @deprecated use \Pimcore\Document\Editable\UsageRecorderSubscriber instead.
      */
-    protected $recordedTagNames = [];
-
-    /**
-     * @inheritDoc
-     */
-    public static function getSubscribedEvents(): array
+    class UsageRecorderSubscriber extends EditableUsageRecorderSubscriber
     {
-        return [
-            DocumentEvents::TAG_NAME => 'onBuildTagName',
-        ];
-    }
-
-    public function onBuildTagName(TagNameEvent $event)
-    {
-        if (null === $document = $event->getDocument()) {
-            throw new \RuntimeException('Need a document to migrate tag naming strategy.');
-        }
-
-        $this->recordedTagNames[] = $event->getTagName();
-    }
-
-    /**
-     * @return array
-     */
-    public function getRecordedTagNames(): array
-    {
-        return $this->recordedTagNames;
-    }
-
-    /**
-     * @param array $recordedTagNames
-     */
-    public function setRecordedTagNames(array $recordedTagNames): void
-    {
-        $this->recordedTagNames = $recordedTagNames;
     }
 }

@@ -17,97 +17,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Tag\Block;
 
-/**
- * Keeps track of the current block nesting level and index (will be used from
- * editables to build their hierarchical tag name).
- *
- * On sub requests, a new BlockState is added to the state stack which is valid
- * for the sub request.
- */
-final class BlockState implements \JsonSerializable
-{
+use Pimcore\Document\Editable\Block\BlockState as EditableBlockState;
+
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', BlockState::class, EditableBlockState::class), E_USER_DEPRECATED);
+
+class_exists(EditableBlockState::class);
+
+if (false) {
     /**
-     * @var BlockName[]
+     * @deprecated use \Pimcore\Document\Editable\Block\BlockState instead.
      */
-    private $blocks = [];
-
-    /**
-     * @var int[]
-     */
-    private $indexes = [];
-
-    /**
-     * @return BlockName[]
-     */
-    public function getBlocks(): array
+    class BlockState extends EditableBlockState
     {
-        return $this->blocks;
-    }
-
-    public function hasBlocks(): bool
-    {
-        return !empty($this->blocks);
-    }
-
-    public function pushBlock(BlockName $block)
-    {
-        array_push($this->blocks, $block);
-    }
-
-    public function popBlock(): BlockName
-    {
-        if (empty($this->blocks)) {
-            throw new \UnderflowException('There are no blocks to pop from as blocks list is empty');
-        }
-
-        return array_pop($this->blocks);
-    }
-
-    public function clearBlocks()
-    {
-        $this->blocks = [];
-    }
-
-    /**
-     * @return int[]
-     */
-    public function getIndexes(): array
-    {
-        return $this->indexes;
-    }
-
-    public function hasIndexes(): bool
-    {
-        return !empty($this->indexes);
-    }
-
-    public function pushIndex(int $index)
-    {
-        array_push($this->indexes, $index);
-    }
-
-    public function popIndex(): int
-    {
-        if (empty($this->indexes)) {
-            throw new \UnderflowException('There are no indexes to pop from as index list is empty');
-        }
-
-        return array_pop($this->indexes);
-    }
-
-    public function clearIndexes()
-    {
-        $this->indexes = [];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function jsonSerialize()
-    {
-        return [
-            'blocks' => $this->blocks,
-            'indexes' => $this->indexes,
-        ];
     }
 }

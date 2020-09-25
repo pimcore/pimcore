@@ -40,7 +40,7 @@ $config = [
 ```
 
 ## The cart items 
-The Klarna provider implementation has currently no fallback to the default checkout manager to extract the cart items. So you have to pass them in the config array ```$config['cart']['items'] ```. 
+The Klarna provider implementation has currently no fallback to the default checkout manager to extract the cart items. So you have to pass them in the config array `$config['cart']['items'] `. 
 See under __"1. Add the cart items"__ https://developers.klarna.com/en/at/kco-v2/checkout/2-embed-the-checkout 
 
 Example implementation:
@@ -66,7 +66,7 @@ Example implementation:
      $config['cart']['items'] = $items;
 ```
 
-Most important is the formatting of the prices, they have to be integers. For example: ``` 20.00 € ``` has to become ``` 2000```. Klarna only accepts integers because of avoiding rounding mistakes. 
+Most important is the formatting of the prices, they have to be integers. For example: `20.00 €` has to become `2000`. Klarna only accepts integers because of avoiding rounding mistakes. 
 
 Here is a list for all accepted item fields: https://developers.klarna.com/en/at/kco-v2/checkout-api#cart-item-object-properties 
 

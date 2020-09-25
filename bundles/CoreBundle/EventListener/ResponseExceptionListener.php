@@ -143,6 +143,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
         try {
             $response = $this->documentRenderer->render($document, [
                 'exception' => $exception,
+                PimcoreContextListener::ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING => true,
             ]);
         } catch (\Exception $e) {
             // we are even not able to render the error page, so we send the client a unicorn

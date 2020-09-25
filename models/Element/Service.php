@@ -18,8 +18,10 @@
 namespace Pimcore\Model\Element;
 
 use DeepCopy\DeepCopy;
+use DeepCopy\Filter\Doctrine\DoctrineCollectionFilter;
 use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyNameMatcher;
+use DeepCopy\Matcher\PropertyTypeMatcher;
 use Doctrine\Common\Collections\Collection;
 use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
@@ -36,9 +38,11 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element\DeepCopy\MarshalMatcher;
+use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher;
+use Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionReplaceFilter;
+use Pimcore\Model\Element\DeepCopy\UnmarshalMatcher;
 use Pimcore\Model\Tool\TmpStore;
-use Pimcore\Model\Version\PimcoreClassDefinitionMatcher;
-use Pimcore\Model\Version\PimcoreClassDefinitionReplaceFilter;
 use Pimcore\Tool;
 use Pimcore\Tool\Serialize;
 use Pimcore\Tool\Session;
@@ -126,7 +130,7 @@ class Service extends Model\AbstractModel
      *
      * @internal
      *
-     * @param DataObject|Document $element
+     * @param AbstractObject|Document $element
      *
      * @return string
      *
@@ -257,7 +261,7 @@ class Service extends Model\AbstractModel
     public static function getDependedElement($config)
     {
         if ($config['type'] == 'object') {
-            return DataObject::getById($config['id']);
+            return AbstractObject::getById($config['id']);
         } elseif ($config['type'] == 'asset') {
             return Asset::getById($config['id']);
         } elseif ($config['type'] == 'document') {
@@ -265,6 +269,17 @@ class Service extends Model\AbstractModel
         }
 
         return null;
+    }
+
+    /**
+     * @static
+     *
+     * @return bool
+     */
+    public static function doHideUnpublished($element)
+    {
+        return ($element instanceof AbstractObject && AbstractObject::doHideUnpublished())
+            || ($element instanceof Document && Document::doHideUnpublished());
     }
 
     /**
@@ -298,7 +313,7 @@ class Service extends Model\AbstractModel
      */
     public static function filterUnpublishedAdvancedElements($data)
     {
-        if (DataObject\AbstractObject::doHideUnpublished() and is_array($data)) {
+        if (DataObject\AbstractObject::doHideUnpublished() && is_array($data)) {
             $publishedList = [];
             $mapping = [];
             foreach ($data as $advancedElement) {
@@ -389,7 +404,7 @@ class Service extends Model\AbstractModel
         if ($type == 'asset') {
             $element = Asset::getByPath($path);
         } elseif ($type == 'object') {
-            $element = DataObject::getByPath($path);
+            $element = AbstractObject::getByPath($path);
         } elseif ($type == 'document') {
             $element = Document::getByPath($path);
         }
@@ -487,7 +502,7 @@ class Service extends Model\AbstractModel
      * @param  int $id
      * @param  bool $force
      *
-     * @return Asset|DataObject|Document|null
+     * @return Asset|AbstractObject|Document|null
      */
     public static function getElementById($type, $id, $force = false)
     {
@@ -495,7 +510,7 @@ class Service extends Model\AbstractModel
         if ($type === 'asset') {
             $element = Asset::getById($id, $force);
         } elseif ($type === 'object') {
-            $element = DataObject::getById($id, $force);
+            $element = AbstractObject::getById($id, $force);
         } elseif ($type === 'document') {
             $element = Document::getById($id, $force);
         }
@@ -1212,6 +1227,21 @@ class Service extends Model\AbstractModel
             }
         });
 
+        if ($element instanceof Concrete) {
+            $deepCopy->addFilter(
+                new PimcoreClassDefinitionReplaceFilter(
+                    function (Concrete $object, Data $fieldDefinition, $property, $currentValue) {
+                        if ($fieldDefinition instanceof Data\CustomDataCopyInterface) {
+                            return $fieldDefinition->createDataCopy($object, $currentValue);
+                        }
+
+                        return $currentValue;
+                    }
+                ),
+                new PimcoreClassDefinitionMatcher(Data\CustomDataCopyInterface::class)
+            );
+        }
+
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('dao'));
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('resource'));
         $deepCopy->addFilter(new SetNullFilter(), new PropertyNameMatcher('writeResource'));
@@ -1337,21 +1367,12 @@ class Service extends Model\AbstractModel
             if ($data) {
                 $element = Serialize::unserialize($data);
 
-                $copier = new DeepCopy();
-                $copier->addTypeFilter(
-                    new \DeepCopy\TypeFilter\ReplaceFilter(
-                        function ($currentValue) {
-                            if ($currentValue instanceof ElementDescriptor) {
-                                $value = Service::getElementById($currentValue->getType(), $currentValue->getId());
+                $context = [
+                    'source' => __METHOD__,
+                    'conversion' => 'unmarshal',
+                ];
 
-                                return $value;
-                            }
-
-                            return $currentValue;
-                        }
-                    ),
-                    new Model\Version\UnmarshalMatcher()
-                );
+                $copier = Self::getDeepCopyInstance($data, $context);
 
                 if ($element instanceof Concrete) {
                     $copier->addFilter(
@@ -1383,25 +1404,11 @@ class Service extends Model\AbstractModel
     public static function saveElementToSession($element, $postfix = '', $clone = true)
     {
         if ($clone) {
-            $sourceType = Service::getType($element);
-            $sourceId = $element->getId();
-
-            $copier = new DeepCopy();
-            $copier->addTypeFilter(
-                new \DeepCopy\TypeFilter\ReplaceFilter(
-                    function ($currentValue) {
-                        if ($currentValue instanceof ElementInterface) {
-                            $elementType = Service::getType($currentValue);
-                            $descriptor = new ElementDescriptor($elementType, $currentValue->getId());
-
-                            return $descriptor;
-                        }
-
-                        return $currentValue;
-                    }
-                ),
-                new Model\Version\MarshalMatcher($sourceType, $sourceId)
-            );
+            $context = [
+                'source' => __METHOD__,
+                'conversion' => 'marshal',
+            ];
+            $copier = self::getDeepCopyInstance($element, $context);
 
             if ($element instanceof Concrete) {
                 $copier->addFilter(
@@ -1466,5 +1473,73 @@ class Service extends Model\AbstractModel
         $adminStyle = $event->getAdminStyle();
 
         return $adminStyle;
+    }
+
+    /**
+     *
+     * @param mixed|null $element
+     * @param array|null $context
+     *
+     * @return DeepCopy
+     */
+    public static function getDeepCopyInstance($element, ?array $context = []): DeepCopy
+    {
+        $copier = new DeepCopy();
+        $copier->skipUncloneable(true);
+
+        if ($element instanceof ElementInterface) {
+            if (($context['conversion'] ?? false) === 'marshal') {
+                $sourceType = Service::getType($element);
+                $sourceId = $element->getId();
+
+                $copier->addTypeFilter(
+                    new \DeepCopy\TypeFilter\ReplaceFilter(
+                        function ($currentValue) {
+                            if ($currentValue instanceof ElementInterface) {
+                                $elementType = Service::getType($currentValue);
+                                $descriptor = new ElementDescriptor($elementType, $currentValue->getId());
+
+                                return $descriptor;
+                            }
+
+                            return $currentValue;
+                        }
+                    ),
+                    new MarshalMatcher($sourceType, $sourceId)
+                );
+            } elseif (($context['conversion'] ?? false) === 'unmarshal') {
+                $copier->addTypeFilter(
+                    new \DeepCopy\TypeFilter\ReplaceFilter(
+                        function ($currentValue) {
+                            if ($currentValue instanceof ElementDescriptor) {
+                                $value = Service::getElementById($currentValue->getType(), $currentValue->getId());
+
+                                return $value;
+                            }
+
+                            return $currentValue;
+                        }
+                    ),
+                    new UnmarshalMatcher()
+                );
+            }
+        }
+
+        if ($context['defaultFilters'] ?? false) {
+            $copier->addFilter(new DoctrineCollectionFilter(), new PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
+            $copier->addFilter(new SetNullFilter(), new PropertyTypeMatcher('Pimcore\Templating\Model\ViewModelInterface'));
+            $copier->addFilter(new SetNullFilter(), new PropertyTypeMatcher('Psr\Container\ContainerInterface'));
+            $copier->addFilter(new SetNullFilter(), new PropertyTypeMatcher('Pimcore\Model\DataObject\ClassDefinition'));
+        }
+
+        $event = new GenericEvent(null, [
+            'copier' => $copier,
+            'element' => $element,
+            'context' => $context,
+        ]);
+
+        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SERVICE_PRE_GET_DEEP_COPY, $event);
+
+        return $event->getArgument('copier');
     }
 }

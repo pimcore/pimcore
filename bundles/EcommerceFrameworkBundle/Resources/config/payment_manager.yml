@@ -52,3 +52,7 @@ services:
     Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\Heidelpay:
         arguments:
             $options: []
+
+    Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\Hobex:
+        arguments:
+            $options: []

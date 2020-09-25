@@ -24,12 +24,12 @@ interface TargetingDocumentDaoInterface
      *
      * @return bool
      */
-    public function hasTargetGroupSpecificElements(): bool;
+    public function hasTargetGroupSpecificEditables(): bool;
 
     /**
      * Returns targeting specific element names
      *
      * @return array
      */
-    public function getTargetGroupSpecificElementNames(): array;
+    public function getTargetGroupSpecificEditableNames(): array;
 }

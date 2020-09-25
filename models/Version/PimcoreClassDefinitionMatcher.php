@@ -17,43 +17,19 @@
 
 namespace Pimcore\Model\Version;
 
-use DeepCopy\Matcher\Matcher;
-use Pimcore\Model\DataObject\ClassDefinition;
-use Pimcore\Model\DataObject\Concrete;
+@trigger_error(
+    'Pimcore\Model\Version\PimcoreClassDefinitionMatcher is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    ' Use ' . \Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher::class . ' instead.',
+    E_USER_DEPRECATED
+);
 
-class PimcoreClassDefinitionMatcher implements Matcher
-{
-    /** @var string $matchType */
-    private $matchType;
+class_exists(\Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher::class);
 
+if (false) {
     /**
-     * PimcoreClassDefinitionMatcher constructor.
-     *
-     * @param string $matchType
+     * @deprecated use \Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher instead.
      */
-    public function __construct($matchType)
+    class PimcoreClassDefinitionMatcher extends \Pimcore\Model\Element\DeepCopy\PimcoreClassDefinitionMatcher
     {
-        $this->matchType = $matchType;
-    }
-
-    /**
-     * @param object $object
-     * @param string $property
-     *
-     * @return bool
-     */
-    public function matches($object, $property)
-    {
-        // TODO check if matcher only works for container type object (but not for localized fields, bricks, etc...)
-
-        if ($object instanceof Concrete) {
-            // do not call getClass on the object as this will set the class again
-            $def = ClassDefinition::getById($object->getClassId());
-            if ($def) {
-                return $def->getFieldDefinition($property) instanceof $this->matchType;
-            }
-        }
-
-        return false;
     }
 }

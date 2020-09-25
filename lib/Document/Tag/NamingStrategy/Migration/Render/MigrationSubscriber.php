@@ -25,6 +25,7 @@ use Pimcore\Event\Model\Document\TagNameEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
+ * @deprecated
  * This listener is not intended to be always registered on the dispatcher, but instead
  * is added manually when needed in the MigrateTagNamingStrategy CLI command. The listener
  * collects all rendered tag names and creates a matching new tag name mapping which can

@@ -17,70 +17,17 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Tag;
 
-interface BlockInterface
-{
-    /**
-     * Loops through the block
-     *
-     * @return bool
-     */
-    public function loop();
+use Pimcore\Model\Document\Editable\BlockInterface as EditableBlockInterface;
 
-    /**
-     * Is executed at the beginning of the loop and setup some general settings
-     *
-     * @return $this
-     */
-    public function start();
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', BlockInterface::class, EditableBlockInterface::class), E_USER_DEPRECATED);
 
-    /**
-     * Is executed at the end of the loop and removes the settings set in start()
-     */
-    public function end();
+class_exists(EditableBlockInterface::class);
 
+if (false) {
     /**
-     * Called before the block is rendered
+     * @deprecated use \Pimcore\Model\Document\Editable\BlockInterface instead.
      */
-    public function blockConstruct();
-
-    /**
-     * Called when the block was rendered
-     */
-    public function blockDestruct();
-
-    /**
-     * Is called evertime a new iteration starts (new entry of the block while looping)
-     */
-    public function blockStart();
-
-    /**
-     * Is called evertime a new iteration ends (new entry of the block while looping)
-     */
-    public function blockEnd();
-
-    /**
-     * Return the amount of block elements
-     *
-     * @return int
-     */
-    public function getCount();
-
-    /**
-     * Return current iteration step
-     *
-     * @return int
-     */
-    public function getCurrent();
-
-    /**
-     * Return current index
-     *
-     * @return int
-     */
-    public function getCurrentIndex();
-
-    /**
-     * @return bool
-     */
-    public function isEmpty();
+    interface BlockInterface extends EditableBlockInterface
+    {
+    }
 }

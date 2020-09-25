@@ -79,7 +79,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
                 iconCls: "pimcore_icon_delete",
                 handler: this.empty.bind(this)
             }],
-            componentCls: "object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             bodyCls: "pimcore_video_container"
         };
 
@@ -110,7 +110,7 @@ pimcore.object.tags.video = Class.create(pimcore.object.tags.abstract, {
             title: this.fieldConfig.title,
             border: true,
             style: "padding-bottom: 10px",
-            cls: "object_field",
+            cls: "object_field object_field_type_" + this.type,
             bodyCls: "pimcore_video_container"
         };
 

@@ -143,13 +143,6 @@ class Document extends Element\AbstractElement
     protected $userModification;
 
     /**
-     * Dependencies for this document
-     *
-     * @var Dependency|null
-     */
-    protected $dependencies;
-
-    /**
      * List of Property, concerning the folder
      *
      * @var array|null
@@ -632,20 +625,6 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Returns the dependencies of the document
-     *
-     * @return Dependency
-     */
-    public function getDependencies()
-    {
-        if (!$this->dependencies) {
-            $this->dependencies = Dependency::getBySourceId($this->getId(), 'document');
-        }
-
-        return $this->dependencies;
-    }
-
-    /**
      * set the children of the document
      *
      * @param self[] $children
@@ -782,44 +761,53 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * @param bool $isNested
-     *
      * @throws \Exception
      */
-    public function delete(bool $isNested = false)
+    protected function doDelete()
+    {
+        // remove children
+        if ($this->hasChildren()) {
+            // delete also unpublished children
+            $unpublishedStatus = self::doHideUnpublished();
+            self::setHideUnpublished(false);
+            foreach ($this->getChildren(true) as $child) {
+                if (!$child instanceof WrapperInterface) {
+                    $child->delete();
+                }
+            }
+            self::setHideUnpublished($unpublishedStatus);
+        }
+
+        // remove all properties
+        $this->getDao()->deleteAllProperties();
+
+        // remove permissions
+        $this->getDao()->deleteAllPermissions();
+
+        // remove dependencies
+        $d = $this->getDependencies();
+        $d->cleanAllForElement($this);
+
+        // remove translations
+        $service = new Document\Service;
+        $service->removeTranslation($this);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function delete()
     {
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRE_DELETE, new DocumentEvent($this));
 
         $this->beginTransaction();
 
         try {
-            // remove children
-            if ($this->hasChildren()) {
-                // delete also unpublished children
-                $unpublishedStatus = self::doHideUnpublished();
-                self::setHideUnpublished(false);
-                foreach ($this->getChildren(true) as $child) {
-                    if (!$child instanceof WrapperInterface) {
-                        $child->delete(true);
-                    }
-                }
-                self::setHideUnpublished($unpublishedStatus);
+            if ($this->getId() == 1) {
+                throw new \Exception('root-node cannot be deleted');
             }
 
-            // remove all properties
-            $this->getDao()->deleteAllProperties();
-
-            // remove permissions
-            $this->getDao()->deleteAllPermissions();
-
-            // remove dependencies
-            $d = $this->getDependencies();
-            $d->cleanAllForElement($this);
-
-            // remove translations
-            $service = new Document\Service;
-            $service->removeTranslation($this);
-
+            $this->doDelete();
             $this->getDao()->delete();
 
             $this->commit();
@@ -1388,9 +1376,8 @@ class Document extends Element\AbstractElement
 
     public function __sleep()
     {
-        $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['dependencies', 'hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
+        $blockedVars = ['hasChildren', 'versions', 'scheduledTasks', 'parent', 'fullPathCache'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -1400,13 +1387,7 @@ class Document extends Element\AbstractElement
             $blockedVars = array_merge($blockedVars, ['children', 'properties']);
         }
 
-        foreach ($parentVars as $key) {
-            if (!in_array($key, $blockedVars)) {
-                $finalVars[] = $key;
-            }
-        }
-
-        return $finalVars;
+        return array_diff($parentVars, $blockedVars);
     }
 
     public function __wakeup()
@@ -1528,7 +1509,6 @@ class Document extends Element\AbstractElement
         $this->parent = null;
         $this->hasSiblings = [];
         $this->siblings = [];
-        $this->dependencies = null;
         $this->fullPathCache = null;
     }
 }

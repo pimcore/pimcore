@@ -137,7 +137,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                                 AbstractObject::setGetInheritedValues($getInheritedValues);
                             } catch (\Exception $e) {
-                                if ($e instanceof Model\Element\ValidationException) {
+                                if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
                                 }
                                 $exceptionClass = get_class($e);
@@ -232,27 +232,16 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * @inheritdoc
      */
-    public function delete(bool $isNested = false)
+    protected function doDelete()
     {
-        $this->beginTransaction();
-
-        try {
-            // delete all versions
-            foreach ($this->getVersions() as $v) {
-                $v->delete();
-            }
-
-            $this->getDao()->deleteAllTasks();
-
-            parent::delete(true);
-
-            $this->commit();
-        } catch (\Exception $e) {
-            $this->rollBack();
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));
-            Logger::crit($e);
-            throw $e;
+        // delete all versions
+        foreach ($this->getVersions() as $v) {
+            $v->delete();
         }
+
+        $this->getDao()->deleteAllTasks();
+
+        parent::doDelete();
     }
 
     /**
@@ -290,7 +279,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             if (!empty($objectsConfig['versions']['steps'])
                 || !empty($objectsConfig['versions']['days'])
                 || $setModificationDate) {
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
+                $saveStackTrace = !($objectsConfig['versions']['disable_stack_trace'] ?? false);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
             }
 
             // hook should be also called if "save only new version" is selected

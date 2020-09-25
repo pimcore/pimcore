@@ -16,7 +16,7 @@ namespace Pimcore\Templating;
 
 use Pimcore\Config\Config;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\Tag;
+use Pimcore\Model\Document\Editable;
 use Pimcore\Templating\Helper\Cache;
 use Pimcore\Templating\Helper\Glossary;
 use Pimcore\Templating\Helper\HeadLink;
@@ -98,28 +98,28 @@ use Symfony\Component\Templating\Storage\Storage;
  * @method string translate($key, $parameters = [], $domain = null, $locale = null)
  *
  * Pimcore editables
- * @method Tag\Area area($name, $options = [])
- * @method Tag\Areablock areablock($name, $options = [])
- * @method Tag\Block block($name, $options = [])
- * @method Tag\Checkbox checkbox($name, $options = [])
- * @method Tag\Date date($name, $options = [])
- * @method Tag\Embed embed($name, $options = [])
- * @method Tag\Relation relation($name, $options = [])
- * @method Tag\Image image($name, $options = [])
- * @method Tag\Input input($name, $options = [])
- * @method Tag\Link link($name, $options = [])
- * @method Tag\Relations relations($name, $options = [])
- * @method Tag\Multiselect multiselect($name, $options = [])
- * @method Tag\Numeric numeric($name, $options = [])
- * @method Tag\Pdf pdf($name, $options = [])
- * @method Tag\Renderlet renderlet($name, $options = [])
- * @method Tag\Select select($name, $options = [])
- * @method Tag\Snippet snippet($name, $options = [])
- * @method Tag\Table table($name, $options = [])
- * @method Tag\Textarea textarea($name, $options = [])
- * @method Tag\Video video($name, $options = [])
- * @method Tag\Wysiwyg wysiwyg($name, $options = [])
- * @method Tag\Scheduledblock scheduledblock($name, $options = [])
+ * @method Editable\Area area($name, $options = [])
+ * @method Editable\Areablock areablock($name, $options = [])
+ * @method Editable\Block block($name, $options = [])
+ * @method Editable\Checkbox checkbox($name, $options = [])
+ * @method Editable\Date date($name, $options = [])
+ * @method Editable\Embed embed($name, $options = [])
+ * @method Editable\Relation relation($name, $options = [])
+ * @method Editable\Image image($name, $options = [])
+ * @method Editable\Input input($name, $options = [])
+ * @method Editable\Link link($name, $options = [])
+ * @method Editable\Relations relations($name, $options = [])
+ * @method Editable\Multiselect multiselect($name, $options = [])
+ * @method Editable\Numeric numeric($name, $options = [])
+ * @method Editable\Pdf pdf($name, $options = [])
+ * @method Editable\Renderlet renderlet($name, $options = [])
+ * @method Editable\Select select($name, $options = [])
+ * @method Editable\Snippet snippet($name, $options = [])
+ * @method Editable\Table table($name, $options = [])
+ * @method Editable\Textarea textarea($name, $options = [])
+ * @method Editable\Video video($name, $options = [])
+ * @method Editable\Wysiwyg wysiwyg($name, $options = [])
+ * @method Editable\Scheduledblock scheduledblock($name, $options = [])
  *
  * @property Document $document
  * @property bool $editmode

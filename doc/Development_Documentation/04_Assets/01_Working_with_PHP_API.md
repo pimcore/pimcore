@@ -52,7 +52,7 @@ and [document listings](../03_Documents/09_Working_with_PHP_API.md#documentsList
 Custom Settings/Properties can be added programmatically to every asset. This is mostly used for plugins or something 
 similar.
 
-```php 
+```php
 $asset = Asset::getById(2345);
 $settings = $asset->getCustomSettings();
 $settings["mySetting"] = "this is my value this can be everythin also an array or an object not only a string";

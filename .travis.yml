@@ -48,6 +48,10 @@ jobs:
         - TASK_TESTS=0
         - TASK_STAN=1
         - PHPSTAN_BASELINE=0
+    - os: linux
+      php: nightly
+      env:
+          - DATABASE_SERVER="mariadb-10.3"
 
   include:
     # Symfony 3.4 all tests
@@ -96,6 +100,13 @@ jobs:
       php: 7.4
       env:
           - DATABASE_SERVER="percona-server-5.6"
+
+    - name: "All Tests - PHP 8 | Symfony 4 | MariaDB 10.3"
+      os: linux
+      sudo: required
+      php: nightly
+      env:
+          - DATABASE_SERVER="mariadb-10.3"
 
     # Other Tests
     - name: "REST Tests - PHP 7.2 | Symfony 3.4 | MySQL 8.0"

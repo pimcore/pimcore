@@ -37,12 +37,16 @@ class TagsController extends AdminController
      */
     public function addAction(Request $request)
     {
-        $tag = new Tag();
-        $tag->setName(strip_tags($request->get('text')));
-        $tag->setParentId(intval($request->get('parentId')));
-        $tag->save();
+        try {
+            $tag = new Tag();
+            $tag->setName(strip_tags($request->get('text')));
+            $tag->setParentId(intval($request->get('parentId')));
+            $tag->save();
 
-        return $this->adminJson(['success' => true, 'id' => $tag->getId()]);
+            return $this->adminJson(['success' => true, 'id' => $tag->getId()]);
+        } catch (\Exception $e) {
+            return $this->adminJson(['success' => false, 'message' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -327,7 +331,7 @@ class TagsController extends AdminController
              )';
         }
 
-        $childsList->setCondition($condition, $object->getRealFullPath() . '/%');
+        $childsList->setCondition($condition, $childsList->escapeLike($object->getRealFullPath()) . '/%');
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $childsList,
@@ -359,7 +363,7 @@ class TagsController extends AdminController
             )';
         }
 
-        $childsList->setCondition($condition, $asset->getRealFullPath() . '/%');
+        $childsList->setCondition($condition, $childsList->escapeLike($asset->getRealFullPath()) . '/%');
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $childsList,
@@ -391,7 +395,7 @@ class TagsController extends AdminController
             )';
         }
 
-        $childsList->setCondition($condition, $document->getRealFullPath() . '/%');
+        $childsList->setCondition($condition, $childsList->escapeLike($document->getRealFullPath()) . '/%');
 
         $beforeListLoadEvent = new GenericEvent($this, [
             'list' => $childsList,

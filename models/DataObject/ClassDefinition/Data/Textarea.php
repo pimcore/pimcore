@@ -25,6 +25,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element

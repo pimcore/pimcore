@@ -350,7 +350,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function getVersionPreview($data, $object = null, $params = [])
     {
         if ($data instanceof Element\AbstractElement) {
-            return $data->getRealFullPath();
+            return Element\Service::getElementType($data).' '.$data->getRealFullPath();
         }
 
         return '';
@@ -772,6 +772,18 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             return $listing;
         }
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhpdocReturnType(): ?string
+    {
+        if ($this->getPhpdocType()) {
+            return $this->getPhpdocType() . '|null';
+        }
+
+        return null;
     }
 }
 

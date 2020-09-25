@@ -83,7 +83,7 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         var input = {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
-            componentCls: "object_field"
+            componentCls: "object_field object_field_type_" + this.type
         };
 
         if (!isNaN(this.data)) {
@@ -131,7 +131,7 @@ pimcore.object.tags.numeric = Class.create(pimcore.object.tags.abstract, {
         var input = {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
-            componentCls: "object_field"
+            componentCls: "object_field object_field_type_" + this.type,
         };
 
         if (!isNaN(this.data)) {

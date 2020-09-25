@@ -33,20 +33,19 @@ The default route is also responsible to assemble the URL's for documents.
 #### Example 
 
 ###### Simple Link to Different Document
-```php 
+```php
 <a href="<?= Document::getById(2) ?>">Test-Link</a>
-  
+
 // OR
-  
+
 <?php $document = Document::getById(2); ?>
 <a href="<?= $document->getFullPath() ?>">Test-Link</a>
-   
 ```
 
 Links to `/about`
 
 ######  Link to Same Document (The Request Came From) Adding Parameters
-```php 
+```php
 <a href="<?= $this->pimcoreUrl(["key" => "value"]); ?>">Test-Link</a>
 ```
 

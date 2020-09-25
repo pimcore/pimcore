@@ -27,6 +27,9 @@ use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 
+/**
+ * @deprecated
+ */
 class AnalyzeMigrationStrategy extends AbstractMigrationStrategy
 {
     /**

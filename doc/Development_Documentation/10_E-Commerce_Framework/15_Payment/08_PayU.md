@@ -3,7 +3,7 @@
 * [Documentation](http://developers.payu.com/en/restapi.html)
 
 *Configuration* 
-```yaml 
+```yaml
 pimcore_ecommerce_framework:
     payment_manager:
         providers:
@@ -19,7 +19,7 @@ pimcore_ecommerce_framework:
 ```
 
 *usage sample* 
-```php 
+```php
 <?php
 $config = [
     'extOrderId'  => $paymentId,

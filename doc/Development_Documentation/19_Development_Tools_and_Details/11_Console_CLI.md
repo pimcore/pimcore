@@ -72,7 +72,7 @@ a command, use `bin/console <subcommand>`.
 > Be sure to run the console with the PHP user to prevent writing permissions issues later, either by calling `php bin/console` or by switching to the appropriate user, for instance on Debian system `su -l www-data -s /bin/bash`.
 
 ##### Examples:
-```php 
+```php
 # get a list of all registered commands
 $ ./bin/console list
  

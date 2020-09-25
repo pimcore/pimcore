@@ -722,7 +722,7 @@
     "2fa_disable": "Disable 2FA",
     "renew_2fa_secret": "Renew Two Factor Secret",
     "two_factor_authentication": "autentificación en dos pasos",
-    "2fa_alert_text": "Please scan the QR-Code and add it to your Google Authenticator. <br>If you don't have the Google Authenticator app installed on your mobile phone, please download it from the App Store/Play Store.<br><br> You will need to reload Pimcore and enter the code shown within the App afterwards!",
+    "2fa_alert_text": "Por favor, escanea el Código QR y añádelo a tu Google Authenticator. <br>Si no tienes la aplicación Google Authenticator instalada en tu teléfono móvil, por favor descárgala de la App Store/Play Store.<br><br> ¡Necesitarás recargar Pimcore e introducir el código que aparece en la App después!",
     "2fa_alert_submit": "recargar Pimcore e insertar el código",
     "setup_two_factor": "Configurar la verificación en dos pasos",
     "2fa_setup_message": "¡Tu cuenta requiere autentificación en dos pasos! Tienes que activarla en los ajustes de tu perfil. Si no lo haces, no podrás autentificarte de nuevo.",
@@ -951,5 +951,11 @@
     "default_value_generator": "Default value generator service / class",
     "no_value_set": "no value set",
     "delete_class_message": "Do you really want to delete class '%s' ?",
-    "replace_assignments_in_all_elements": "Replace assignments in all elements"
+    "replace_assignments_in_all_elements": "Replace assignments in all elements",
+    "fieldlookup": "Field Lookup",
+    "show_fieldlookup": "Show Field Lookup",
+    "different_number_of_columns": "Different number of columns",
+    "brick_limit_reached": "Limit ({bricklimit}) reached for brick: {brickname}",
+    "generate_type_declarations": "Generate Type Declarations",
+    "batch_change_language": "Batch update language"
 }

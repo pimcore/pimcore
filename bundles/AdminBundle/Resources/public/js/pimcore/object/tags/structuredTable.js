@@ -177,7 +177,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
             border: true,
             style: "margin-bottom: 10px",
             columns: columns,
-            componentCls: 'object_field',
+            componentCls: 'object_field object_field_type_' + this.type,
             bodyCls: "pimcore_editable_grid",
             width: this.fieldConfig.width,
             height: this.fieldConfig.height,
@@ -218,7 +218,7 @@ pimcore.object.tags.structuredTable = Class.create(pimcore.object.tags.abstract,
             autoHeight = true;
         }
 
-        var cls = 'object_field';
+        var cls = 'object_field object_field_type_' + this.type;
 
         var columns = [
             {text: "", width: 80, sortable: false, dataIndex: '__row_label', editor: null,

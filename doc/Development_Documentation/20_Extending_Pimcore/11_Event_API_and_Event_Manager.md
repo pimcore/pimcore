@@ -38,6 +38,7 @@ All Pimcore events are defined and documented as a constant on component specifi
 - [Full-Page Cache](https://github.com/pimcore/pimcore/blob/master/lib/Event/FullPageCacheEvents.php)
 - [Search](https://github.com/pimcore/pimcore/blob/master/lib/Event/SearchBackendEvents.php)
 - [System](https://github.com/pimcore/pimcore/blob/master/lib/Event/SystemEvents.php)
+- [Tags](https://github.com/pimcore/pimcore/blob/master/lib/Event/TagEvents.php)
 - [Target Group](https://github.com/pimcore/pimcore/blob/master/lib/Event/TargetGroupEvents.php)
 - [Targeting](https://github.com/pimcore/pimcore/blob/master/lib/Event/TargetingEvents.php)
 - [Tests](https://github.com/pimcore/pimcore/blob/master/lib/Event/TestEvents.php)

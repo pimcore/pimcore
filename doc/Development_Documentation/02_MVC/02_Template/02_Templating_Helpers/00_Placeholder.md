@@ -12,7 +12,7 @@ echo out.
 
 <div class="code-section">
 
-```php 
+```php
 <?php $this->placeholder('foo')->set("Some text for later") ?>
 
 <?php
@@ -21,7 +21,7 @@ echo out.
 ?>
 ```
 
-```twig 
+```twig
 {% do pimcore_placeholder('foo').set("Some text for later") %}
 
 {% outputs "Some text for later" %}
@@ -48,7 +48,7 @@ determine what the current setting is.
 spaces will be used. If a string is passed, the string will be used. Use `getIndent()` at any time to determine what 
 the current setting is.
 
-```php 
+```php
 <?php
 $this->placeholder('foo')->setPrefix("<ul>\n    <li>")
                          ->setSeparator("</li><li>\n")

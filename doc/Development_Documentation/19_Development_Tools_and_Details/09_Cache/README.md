@@ -109,7 +109,7 @@ If you don't need the transactional tagging functionality as used in the core yo
 integrated with Pimcore's cache clearing functionality.
  
 #### Example of custom usage in an action
-```php 
+```php
 $lifetime = 99999;
 $cacheKey = md5($uri);
 if(!$data = \Pimcore\Cache::load($cacheKey)) {
@@ -123,7 +123,7 @@ if(!$data = \Pimcore\Cache::load($cacheKey)) {
 ```
 
 #### Overview of functionalities
-```php 
+```php
 // disable the cache globally
 \Pimcore\Cache::disable();
  

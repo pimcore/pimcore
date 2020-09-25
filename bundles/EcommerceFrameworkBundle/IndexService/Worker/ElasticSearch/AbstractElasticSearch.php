@@ -455,7 +455,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      */
     public function commitBatchToIndex(): void
     {
-        if (sizeof($this->bulkIndexData)) {
+        if (count($this->bulkIndexData)) {
             $esClient = $this->getElasticSearchClient();
             $responses = $esClient->bulk([
                 'body' => $this->bulkIndexData,

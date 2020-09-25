@@ -24,6 +24,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element

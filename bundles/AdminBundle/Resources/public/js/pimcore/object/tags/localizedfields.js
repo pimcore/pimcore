@@ -20,7 +20,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
     tabPanelDefaultConfig: {
         monitorResize: true,
-        cls: "object_field",
+        cls: "object_field object_field_type_localizedfields",
         activeTab: 0,
         height: "auto",
         items: [],
