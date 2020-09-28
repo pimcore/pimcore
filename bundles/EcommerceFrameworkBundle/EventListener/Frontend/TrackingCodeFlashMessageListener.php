@@ -19,8 +19,10 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingCodeAwareInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -50,6 +52,7 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
     {
         return [
             KernelEvents::REQUEST => 'onKernelRequest',
+            KernelEvents::RESPONSE => 'onKernelResponse',
         ];
     }
 
@@ -65,16 +68,40 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
             return;
         }
 
-        $trackedCodes = $this->session->getFlashBag()->get(self::FLASH_MESSAGE_BAG_KEY);
+        // Check FlashBag cookie exists to avoid autostart session by accessing the FlashBag.
+        $flashBagCookie = (bool)$request->cookies->get(self::FLASH_MESSAGE_BAG_KEY, false);
+        if ($flashBagCookie) {
+            $trackedCodes = $this->session->getFlashBag()->get(self::FLASH_MESSAGE_BAG_KEY);
 
-        if (is_array($trackedCodes) && count($trackedCodes)) {
-            foreach ($this->trackingManger->getTrackers() as $tracker) {
-                if ($tracker instanceof TrackingCodeAwareInterface && isset($trackedCodes[get_class($tracker)])) {
-                    foreach ($trackedCodes[get_class($tracker)] as $trackedCode) {
-                        $tracker->trackCode($trackedCode);
+            if (is_array($trackedCodes) && count($trackedCodes)) {
+                foreach ($this->trackingManger->getTrackers() as $tracker) {
+                    if ($tracker instanceof TrackingCodeAwareInterface && isset($trackedCodes[get_class($tracker)])) {
+                        foreach ($trackedCodes[get_class($tracker)] as $trackedCode) {
+                            $tracker->trackCode($trackedCode);
+                        }
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        $response = $event->getResponse();
+        $request = $event->getRequest();
+
+        /**
+         * If tracking codes are forwarded as FlashMessage, then set a cookie which is checked in subsequent request for successful handshake
+         * else clear cookie, if set and FlashBag is already processed.
+         */
+        if ($this->session->isStarted() && $this->session->getFlashBag()->has(self::FLASH_MESSAGE_BAG_KEY)) {
+            $response->headers->setCookie(new Cookie(self::FLASH_MESSAGE_BAG_KEY, true));
+            $response->headers->set('X-Pimcore-Output-Cache-Disable-Reason', 'Tracking Codes Passed', true);
+        } else if ($request->cookies->has(self::FLASH_MESSAGE_BAG_KEY)) {
+            $response->headers->clearCookie(self::FLASH_MESSAGE_BAG_KEY);
         }
     }
 }
