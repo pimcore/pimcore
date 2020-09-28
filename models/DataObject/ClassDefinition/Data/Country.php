@@ -18,6 +18,7 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 
 class Country extends Model\DataObject\ClassDefinition\Data\Select
 {
@@ -93,5 +94,17 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
     public function isFilterable(): bool
     {
         return true;
+    }
+
+    /**
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        if (Service::doRemoveDynamicOptions()) {
+            $this->options = null;
+        }
+
+        return $this;
     }
 }

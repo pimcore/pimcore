@@ -36,6 +36,7 @@
     "ext-gd": "*",
     "ext-intl": "*",
     "ext-iconv": "*",
+    "ext-json": "*",
     "ext-mbstring": "*",
     "ext-mysqli": "*",
     "ext-pdo_mysql": "*",
