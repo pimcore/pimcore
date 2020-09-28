@@ -14,23 +14,18 @@
 
 namespace Pimcore\Event\HttpKernel;
 
-use Symfony\Component\HttpKernel\Event\ControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-
-class_exists(ControllerEvent::class);
-
-if (true) {
+if (class_exists('\Symfony\Component\HttpKernel\Event\ControllerEvent')) {
     /**
      * @inheritdoc
      */
-    class ControllerEventProxy extends ControllerEvent
+    class ControllerEventProxy extends \Symfony\Component\HttpKernel\Event\ControllerEvent
     {
     }
 } else {
     /**
      * @inheritdoc
      */
-    class ControllerEventProxy extends FilterControllerEvent
+    class ControllerEventProxy extends \Symfony\Component\HttpKernel\Event\FilterControllerEvent
     {
     }
 }

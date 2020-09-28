@@ -14,23 +14,18 @@
 
 namespace Pimcore\Event\HttpKernel;
 
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-
-class_exists(ResponseEvent::class);
-
-if (true) {
+if (class_exists('\Symfony\Component\HttpKernel\Event\ResponseEvent')) {
     /**
      * @inheritdoc
      */
-    class ResponseEventProxy extends ResponseEvent
+    class ResponseEventProxy extends \Symfony\Component\HttpKernel\Event\ResponseEvent
     {
     }
 } else {
     /**
      * @inheritdoc
      */
-    class ResponseEventProxy extends FilterResponseEvent
+    class ResponseEventProxy extends \Symfony\Component\HttpKernel\Event\FilterResponseEvent
     {
     }
 }
