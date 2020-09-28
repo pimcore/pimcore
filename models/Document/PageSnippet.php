@@ -82,6 +82,7 @@ abstract class PageSnippet extends Model\Document
     protected $contentMasterDocumentId;
 
     /**
+     * @internal
      * @var bool
      */
     protected $supportsContentMaster = true;
@@ -756,6 +757,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
+     * @internal
      * @return bool
      */
     public function supportsContentMaster(): bool
