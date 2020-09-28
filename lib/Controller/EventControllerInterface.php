@@ -14,21 +14,18 @@
 
 namespace Pimcore\Controller;
 
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Pimcore\Event\HttpKernel\ControllerEventProxy;
+use Pimcore\Event\HttpKernel\ResponseEventProxy;
 
-/**
- * @deprecated since v6.8.0 and will be removed in 7. Use EventControllerInterface instead
- */
-interface EventedControllerInterface
+interface EventControllerInterface
 {
     /**
-     * @param FilterControllerEvent $event
+     * @param ControllerEventProxy $event
      */
-    public function onKernelController(FilterControllerEvent $event);
+    public function onKernelController(ControllerEventProxy $event);
 
     /**
-     * @param FilterResponseEvent $event
+     * @param ResponseEventProxy $event
      */
-    public function onKernelResponse(FilterResponseEvent $event);
+    public function onKernelResponse(ResponseEventProxy $event);
 }

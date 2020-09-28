@@ -12,23 +12,25 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Controller;
+namespace Pimcore\Event\HttpKernel;
 
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
-/**
- * @deprecated since v6.8.0 and will be removed in 7. Use EventControllerInterface instead
- */
-interface EventedControllerInterface
-{
-    /**
-     * @param FilterControllerEvent $event
-     */
-    public function onKernelController(FilterControllerEvent $event);
+class_exists(ControllerEvent::class);
 
+if (true) {
     /**
-     * @param FilterResponseEvent $event
+     * @inheritdoc
      */
-    public function onKernelResponse(FilterResponseEvent $event);
+    class ControllerEventProxy extends ControllerEvent
+    {
+    }
+} else {
+    /**
+     * @inheritdoc
+     */
+    class ControllerEventProxy extends FilterControllerEvent
+    {
+    }
 }
