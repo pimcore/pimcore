@@ -542,6 +542,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
      */
     public function prepend(ContainerBuilder $container)
     {
+        // @TODO: to be removed in Pimcore 7 -> move security config to skeleton & demo package
         $securityConfigs = $container->getExtensionConfig('security');
 
         if (count($securityConfigs) > 1) {
