@@ -94,7 +94,9 @@ final class LogArchiveTask implements TaskInterface
                     $applicationLogArchiveTable
                 ]);
 
-            $db->exec('DROP TABLE IF EXISTS ' . ($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()) .'.' . $applicationLogArchiveTable);
+            if($archiveTableExists) {
+                $db->exec('DROP TABLE IF EXISTS ' . ($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()) . '.' . $applicationLogArchiveTable);
+            }
 
             $deleteArchiveLogDate = $deleteArchiveLogDate->sub(new DateInterval('P1M'));
         } while($archiveTableExists);
