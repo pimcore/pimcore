@@ -14,18 +14,18 @@
 
 namespace Pimcore\Controller;
 
-use Pimcore\Event\HttpKernel\ControllerEventProxy;
-use Pimcore\Event\HttpKernel\ResponseEventProxy;
+use Pimcore\Event\HttpKernel\ControllerEventAlias;
+use Pimcore\Event\HttpKernel\ResponseEventAlias;
 
 interface EventControllerInterface
 {
     /**
-     * @param ControllerEventProxy $event
+     * @param ControllerEventAlias $event
      */
-    public function onKernelController(ControllerEventProxy $event);
+    public function onKernelController(ControllerEventAlias $event);
 
     /**
-     * @param ResponseEventProxy $event
+     * @param ResponseEventAlias $event
      */
-    public function onKernelResponse(ResponseEventProxy $event);
+    public function onKernelResponse(ResponseEventAlias $event);
 }

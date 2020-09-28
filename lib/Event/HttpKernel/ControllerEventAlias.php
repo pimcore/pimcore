@@ -18,14 +18,14 @@ if (class_exists('\Symfony\Component\HttpKernel\Event\ControllerEvent')) {
     /**
      * @inheritdoc
      */
-    class ControllerEventProxy extends \Symfony\Component\HttpKernel\Event\ControllerEvent
+    class ControllerEventAlias extends \Symfony\Component\HttpKernel\Event\ControllerEvent
     {
     }
 } else {
     /**
      * @inheritdoc
      */
-    class ControllerEventProxy extends \Symfony\Component\HttpKernel\Event\FilterControllerEvent
+    class ControllerEventAlias extends \Symfony\Component\HttpKernel\Event\FilterControllerEvent
     {
     }
 }

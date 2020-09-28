@@ -23,8 +23,8 @@ use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventControllerInterface;
 use Pimcore\Event\Admin\Login\LostPasswordEvent;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Event\HttpKernel\ControllerEventProxy;
-use Pimcore\Event\HttpKernel\ResponseEventProxy;
+use Pimcore\Event\HttpKernel\ControllerEventAlias;
+use Pimcore\Event\HttpKernel\ResponseEventAlias;
 use Pimcore\Http\ResponseHelper;
 use Pimcore\Logger;
 use Pimcore\Model\User;
@@ -52,7 +52,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $this->reponseHelper = $responseHelper;
     }
 
-    public function onKernelController(ControllerEventProxy $event)
+    public function onKernelController(ControllerEventAlias $event)
     {
         // use browser language for login page if possible
         $locale = 'en';
@@ -68,7 +68,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $this->get('translator')->setLocale($locale);
     }
 
-    public function onKernelResponse(ResponseEventProxy $event)
+    public function onKernelResponse(ResponseEventAlias $event)
     {
         $response = $event->getResponse();
         $response->headers->set('X-Frame-Options', 'deny', true);
