@@ -295,8 +295,8 @@ class InstallCommand extends Command
             return false;
         }
 
-        if ('install_options' === ($config['group'] ?? null)) {
-            return InputOption::VALUE_REQUIRED === ($config['mode'] ?? null);
+        if ('install_options' === ($config['group'] ?? null) && InputOption::VALUE_NONE !== ($config['mode'] ?? null)) {
+            return false;
         }
 
         return true;
