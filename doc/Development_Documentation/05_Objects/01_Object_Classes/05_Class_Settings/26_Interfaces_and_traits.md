@@ -54,7 +54,7 @@ Navigate to the Settings *Settings* -> *Data Objects* -> *Classes* -> *Product D
 
 Click on *General Settings* and paste your interface and trait path into `Implements interface(s)` and `Use (traits)`
 
-![Example Screenshot](https://user-images.githubusercontent.com/15780280/94515658-5995cd80-0224-11eb-9992-243036ab3158.png)
+![Example Screenshot](../../../img/interfaces-traits.png)
 
 Save your changes
 
