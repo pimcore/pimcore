@@ -18,8 +18,8 @@ use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Controller\KernelResponseEventInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\ControllerEvent;
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class EventedControllerListener implements EventSubscriberInterface
@@ -36,9 +36,9 @@ class EventedControllerListener implements EventSubscriberInterface
     }
 
     /**
-     * @param ControllerEvent $event
+     * @param FilterControllerEvent $event
      */
-    public function onKernelController(ControllerEvent $event)
+    public function onKernelController(FilterControllerEvent $event)
     {
         $callable = $event->getController();
         if (!is_array($callable)) {
@@ -61,9 +61,9 @@ class EventedControllerListener implements EventSubscriberInterface
     }
 
     /**
-     * @param ResponseEvent $event
+     * @param FilterResponseEvent $event
      */
-    public function onKernelResponse(ResponseEvent $event)
+    public function onKernelResponse(FilterResponseEvent $event)
     {
         $request = $event->getRequest();
         $eventedController = $request->attributes->get('_evented_controller');
