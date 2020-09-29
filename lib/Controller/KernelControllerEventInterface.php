@@ -14,18 +14,12 @@
 
 namespace Pimcore\Controller;
 
-use Pimcore\Event\HttpKernel\ControllerEventAlias;
-use Pimcore\Event\HttpKernel\ResponseEventAlias;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 
-interface EventControllerInterface
+interface KernelControllerEventInterface
 {
     /**
-     * @param ControllerEventAlias $event
+     * @param ControllerEvent $event
      */
-    public function onKernelController(ControllerEventAlias $event);
-
-    /**
-     * @param ResponseEventAlias $event
-     */
-    public function onKernelResponse(ResponseEventAlias $event);
+    public function onKernelControllerEvent(ControllerEvent $event);
 }
