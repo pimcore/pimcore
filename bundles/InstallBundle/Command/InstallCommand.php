@@ -295,8 +295,8 @@ class InstallCommand extends Command
             return false;
         }
 
-        if ('install_options' === ($config['group'] ?? null) && InputOption::VALUE_REQUIRED === ($config['mode'] ?? null)) {
-            return false;
+        if ('install_options' === ($config['group'] ?? null)) {
+            return InputOption::VALUE_REQUIRED === ($config['mode'] ?? null);
         }
 
         return true;
@@ -322,7 +322,7 @@ class InstallCommand extends Command
             $value = $input->getOption($name);
 
             // Empty MySQL password allowed, empty ssl cert path means it is not used
-            if ($value || $name === 'mysql-password' || $name === 'mysql-ssl-cert-path' || $config['group'] === 'install_options') {
+            if ($value || $name === 'mysql-password' || $name === 'mysql-ssl-cert-path' || ($config['mode'] === InputOption::VALUE_NONE && $input->hasOption($name))) {
                 $param = str_replace('-', '_', $name);
                 $params[$param] = $value;
             } else {
