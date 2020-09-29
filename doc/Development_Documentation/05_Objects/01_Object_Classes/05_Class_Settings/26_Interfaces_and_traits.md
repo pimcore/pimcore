@@ -2,73 +2,72 @@
 In some cases you need to implement interfaces and overwrite some provided functions.
 
 ##### Example
-Extending the customer management framework by implementing Symfony's UserInterface and overwriting the `getRoles` method to provide a default role for each user or use a different value as username.
+I used the demo project to show the usage of this feature.
+Extending cars to have a gearbox function to indidcate which type of shifting is used. This will be done with an interface and a trait to implement the functions.
 
-## Create the trait
-Returns default roles and use `UID` as username
+##### Create the interface
 ```php
 <?php
-# src/AppBundle/Traits/SymfonyRolesTrait.php
+// src/AppBundle/Model/Product/TransmissionInterface.php
 
-namespace AppBundle\Traits;
+namespace AppBundle\Model\Product;
 
-trait SymfonyRolesTrait
+interface TransmissionInterface
 {
     /**
-     * Returns the roles granted to the user.
-     *
-     *     public function getRoles()
-     *     {
-     *         return ['ROLE_USER'];
-     *     }
-     *
-     * Alternatively, the roles might be stored on a ``roles`` property,
-     * and populated in any number of different ways when the user object
-     * is created.
-     *
-     * @return (Role|string)[] The user roles
+     * @return string|null
      */
-    public function getRoles(){
-        return ['ROLE_USER'];
-    }
+    public function getGearboxType(): ?string;
 
     /**
-     * Returns the salt that was originally used to encode the password.
-     *
-     * This can return null if the password was not encoded using a salt.
-     *
-     * @return string|null The salt
+     * @return int|null
      */
-    public function getSalt(){
-        return 'yourSaltGoesHere';
-    }
-
-    /**
-     * Returns the username used to authenticate the user.
-     *
-     * @return string The username
-     */
-    public function getUsername(){
-        return $this->getUID();
-    }
-
-    /**
-     * Removes sensitive data from the user.
-     *
-     * This is important if, at any given point, sensitive information like
-     * the plain-text password is stored on this object.
-     */
-    public function eraseCredentials(){
-
-    }
+    public function getNumberOfGears(): ?int;
 }
 ```
 
-## Use it in the Customer DataObject
-Navigate to the Settings *Settings* -> *Data Objects* -> *Classes* -> *Customer Management* -> *Customer*
+##### Create the trait
+Returns a GearboxType and a number of gears.
+```php
+<?php
+// src/AppBundle/Traits/TransmissionTrait.php
+
+namespace AppBundle\Traits;
+
+trait TransmissionTrait
+{
+    public function getGearboxType(): ?string
+    {
+        return "manual";
+    }
+
+    public function getNumberOfGears(): ?int
+    {
+        return 5;
+    }
+}
+
+```
+
+## Use it with Cars product data
+Navigate to the Settings *Settings* -> *Data Objects* -> *Classes* -> *Product Data* -> *Car*
 
 Click on *General Settings* and paste your interface and trait path into `Implements interface(s)` and `Use (traits)`
 
-<img width="1152" alt="Bildschirmfoto 2020-09-21 um 13 14 16" src="https://user-images.githubusercontent.com/15780280/93762303-9273e800-fc0f-11ea-9b2b-675f6a518057.png">
+![Example Screenshot](https://user-images.githubusercontent.com/15780280/94515658-5995cd80-0224-11eb-9992-243036ab3158.png)
 
 Save your changes
+
+It will generate the `implements \AppBundle\Model\Product\TransmissionInterface` and the `
+use \AppBundle\Traits\TransmissionTrait;` lines within the DataObject Class. 
+```php
+// var/classes/DataObject/Car.php
+...
+class Car extends \AppBundle\Model\Product\AbstractProduct implements \AppBundle\Model\Product\TransmissionInterface {
+
+use \AppBundle\Traits\TransmissionTrait;
+
+protected $o_classId = "CAR";
+protected $o_className = "Car";
+...
+```
