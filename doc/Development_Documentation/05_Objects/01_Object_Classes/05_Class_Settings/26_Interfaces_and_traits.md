@@ -58,8 +58,9 @@ Click on *General Settings* and paste your interface and trait path into `Implem
 
 Save your changes
 
-It will generate the `implements \AppBundle\Model\Product\TransmissionInterface` and the `
-use \AppBundle\Traits\TransmissionTrait;` lines within the DataObject Class. 
+It will generate the `implements \AppBundle\Model\Product\TransmissionInterface` and the
+`use \AppBundle\Traits\TransmissionTrait;` lines within the DataObject Class.
+
 ```php
 // var/classes/DataObject/Car.php
 ...
