@@ -1,9 +1,9 @@
-# Using interfaces and traits
-In some cases you need to implement interfaces and overwrite some provided functions.
+# Using Interfaces and Traits
+In some cases it could be helpful to let the generated PHP class for data objects implement interfaces or add some additional functions using traits.
 
 ##### Example
-I used the demo project to show the usage of this feature.
-Extending cars to have a gearbox function to indidcate which type of shifting is used. This will be done with an interface and a trait to implement the functions.
+This example uses the demo project to show the usage of this features.
+We're extending the `Cars` class with methods to retrieve the transmission type as well as the amount of gears. This will be done by implementing an interface and a trait that adds the required methods.
 
 ##### Create the interface
 ```php
