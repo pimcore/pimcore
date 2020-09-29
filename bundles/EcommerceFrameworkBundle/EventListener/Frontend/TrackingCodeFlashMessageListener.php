@@ -100,7 +100,7 @@ class TrackingCodeFlashMessageListener implements EventSubscriberInterface
         if ($this->session->isStarted() && $this->session->getFlashBag()->has(self::FLASH_MESSAGE_BAG_KEY)) {
             $response->headers->setCookie(new Cookie(self::FLASH_MESSAGE_BAG_KEY, true));
             $response->headers->set('X-Pimcore-Output-Cache-Disable-Reason', 'Tracking Codes Passed', true);
-        } else if ($request->cookies->has(self::FLASH_MESSAGE_BAG_KEY)) {
+        } elseif ($request->cookies->has(self::FLASH_MESSAGE_BAG_KEY)) {
             $response->headers->clearCookie(self::FLASH_MESSAGE_BAG_KEY);
         }
     }
