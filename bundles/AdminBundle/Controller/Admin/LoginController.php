@@ -20,11 +20,9 @@ use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
-use Pimcore\Controller\EventControllerInterface;
+use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Event\Admin\Login\LostPasswordEvent;
 use Pimcore\Event\AdminEvents;
-use Pimcore\Event\HttpKernel\ControllerEventAlias;
-use Pimcore\Event\HttpKernel\ResponseEventAlias;
 use Pimcore\Http\ResponseHelper;
 use Pimcore\Logger;
 use Pimcore\Model\User;
@@ -34,13 +32,15 @@ use Pimcore\Tool\Authentication;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class LoginController extends AdminController implements BruteforceProtectedControllerInterface, EventControllerInterface
+class LoginController extends AdminController implements BruteforceProtectedControllerInterface, EventedControllerInterface
 {
     /**
      * @var ResponseHelper
@@ -52,7 +52,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $this->reponseHelper = $responseHelper;
     }
 
-    public function onKernelController(ControllerEventAlias $event)
+    public function onKernelController(FilterControllerEvent $event)
     {
         // use browser language for login page if possible
         $locale = 'en';
@@ -68,7 +68,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $this->get('translator')->setLocale($locale);
     }
 
-    public function onKernelResponse(ResponseEventAlias $event)
+    public function onKernelResponse(FilterResponseEvent $event)
     {
         $response = $event->getResponse();
         $response->headers->set('X-Frame-Options', 'deny', true);
