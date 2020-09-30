@@ -69,7 +69,7 @@ class EventedControllerListener implements EventSubscriberInterface
         $eventedController = $request->attributes->get('_evented_controller');
         $eventController = $request->attributes->get('_event_controller');
 
-        if (!$eventedController && !($eventController)) {
+        if (!$eventedController && !$eventController) {
             return;
         }
 
