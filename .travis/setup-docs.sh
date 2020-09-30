@@ -15,4 +15,4 @@ git checkout ${LATEST_VERSION}
 composer install  --no-interaction --optimize-autoloader
 
 # prepare docs
-bin/console prepare ../../doc
+bin/console prepare --config-file=./config/pimcore6.json --repository-version=master --repository-version-label=master --repository-version-maintained=true --version-map-file=./versionmap-pimcore.json --version-switch-path-prefix=./ ../../doc
