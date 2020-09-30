@@ -12,14 +12,28 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Controller;
+/**
+ * Alias to support Symfony 3.4 where ControllerEvent is not available and required for this interface
+ * @TODO remove in Pimcore 7
+ */
+namespace {
 
-use Symfony\Component\HttpKernel\Event\ControllerEvent;
+    use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
-interface KernelControllerEventInterface
-{
-    /**
-     * @param ControllerEvent $event
-     */
-    public function onKernelControllerEvent(ControllerEvent $event);
+    if (!class_exists('Symfony\Component\HttpKernel\Event\ControllerEvent')) {
+        class_alias(FilterControllerEvent::class, 'Symfony\Component\HttpKernel\Event\ControllerEvent');
+    }
+}
+
+namespace Pimcore\Controller {
+
+    use Symfony\Component\HttpKernel\Event\ControllerEvent;
+
+    interface KernelControllerEventInterface
+    {
+        /**
+         * @param ControllerEvent $event
+         */
+        public function onKernelControllerEvent(ControllerEvent $event);
+    }
 }
