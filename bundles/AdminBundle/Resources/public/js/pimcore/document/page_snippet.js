@@ -473,6 +473,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
              */
             var settingsForm = Ext.getCmp("pimcore_document_settings_" + this.id);
             if(settingsForm.dirty) {
+                this.data.missingRequiredEditable = null;
                 return;
             }
 
