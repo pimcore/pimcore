@@ -98,9 +98,10 @@ class Dao extends Model\Dao\AbstractDao
         // if inside a field collection a delete is not necessary as the fieldcollection deletes all entries anyway
         // see Pimcore\Model\DataObject\Fieldcollection\Dao::delete
 
+        $forceUpdate = false;
         if ((isset($params['newParent']) && $params['newParent']) || DataObject\AbstractObject::isDirtyDetectionDisabled() || $this->model->hasDirtyLanguages(
             ) || $context['containerType'] == 'fieldcollection') {
-            $this->delete(false, true);
+            $forceUpdate = $this->delete(false, true);
         }
 
         $object = $this->model->getObject();
@@ -171,6 +172,9 @@ class Dao extends Model\Dao\AbstractDao
                             || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
                                     && $this->model->isLanguageDirty($language))
                                 || $saveLocalizedRelations)) {
+                            if ($forceUpdate) {
+                                $childParams['forceSave'] = true;
+                            }
                             $fd->save($this->model, $childParams);
                         }
                     } else {
