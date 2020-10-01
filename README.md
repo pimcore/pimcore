@@ -1,4 +1,4 @@
-![Pimcore - Own the digital World](./doc/Development_Documentation/img/logo-readme.svg)
+[![Pimcore - Own the digital World](https://pimcore.com/events/pcx/phase2-register-now/GITHUB-banner-02.jpg)](https://hopin.to/events/pimcore-inspire)
   
   
 Pimcore - Open Source Digital Experience Platform: MDM/PIM, CDP, DAM, CMS/UX & eCommerce
