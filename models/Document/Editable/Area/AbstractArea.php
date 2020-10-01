@@ -23,6 +23,8 @@ abstract class AbstractArea
 {
     /**
      * @var ViewModelInterface
+     *
+     * @deprecated
      */
     protected $view;
 
@@ -45,6 +47,8 @@ abstract class AbstractArea
      * @param ViewModelInterface $view
      *
      * @return $this
+     *
+     * @deprecated
      */
     public function setView($view)
     {
@@ -55,6 +59,8 @@ abstract class AbstractArea
 
     /**
      * @return ViewModelInterface
+     *
+     * @deprecated
      */
     public function getView()
     {

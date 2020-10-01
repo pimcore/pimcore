@@ -19,6 +19,9 @@ namespace Pimcore\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @deprecated
+ */
 interface TemplateControllerInterface
 {
     const ATTRIBUTE_TEMPLATE_CONTROLLER = '_template_controller';

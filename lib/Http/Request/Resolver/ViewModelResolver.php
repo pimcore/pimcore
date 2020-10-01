@@ -19,6 +19,9 @@ use Pimcore\Templating\Model\ViewModelInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * @deprecated
+ */
 class ViewModelResolver extends AbstractRequestResolver
 {
     const ATTRIBUTE_VIEW_MODEL = '_view_model';
