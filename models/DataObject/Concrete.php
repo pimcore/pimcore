@@ -144,6 +144,9 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                                 throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
                             }
                         } else {
+                            if ($e instanceof Model\Element\ValidationException) {
+                                throw $e;
+                            }
                             $exceptionClass = get_class($e);
                             throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
                         }
@@ -168,10 +171,14 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                         $subItemParts = [];
                         /** @var \Exception $subItem */
                         foreach ($subItems as $subItem) {
-                            $subItemParts[] = $subItem->getMessage();
+                            $subItemMessage = $subItem->getMessage();
+                            if ($subItem instanceof Model\Element\ValidationException) {
+                                $subItemMessage .= '[ ' . $subItem->getContextStack()[0] . ' ]';
+                            }
+                            $subItemParts[] = $subItemMessage;
                         }
-                        $msg .= implode(',', $subItems);
-                        $msg .= ' (';
+                        $msg .= implode(', ', $subItemParts);
+                        $msg .= ')';
                     }
                 }
                 $errors[] = $msg;
