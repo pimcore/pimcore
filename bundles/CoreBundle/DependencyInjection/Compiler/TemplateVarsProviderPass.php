@@ -27,6 +27,8 @@ class TemplateVarsProviderPass implements CompilerPassInterface
      * Hooks template vars providers tagged with "pimcore.templating.vars_provider" into the template vars resolver.
      *
      * @param ContainerBuilder $container
+     *
+     * @deprecated
      */
     public function process(ContainerBuilder $container)
     {

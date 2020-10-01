@@ -11,6 +11,7 @@ services:
     pimcore.templating.engine.php:
         alias: templating.engine.php
         public: true
+        deprecated: 'The "%alias_id%" service is deprecated. Use Twig instead.'
 
     #
     # HELPER BROKERS
