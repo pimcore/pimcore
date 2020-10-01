@@ -125,7 +125,7 @@ class Helper
                     }
                 }
 
-                $viewModel->currentOrderBy = implode('#', reset($orderByList));
+                $viewModel->currentOrderBy = implode('#', reset($orderByList) ?: []);
             }
             if ($orderByList) {
                 $productList->setOrderKey($orderByList);
