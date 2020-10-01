@@ -162,6 +162,9 @@ class PageController extends DocumentControllerBase
         $settings = [];
         if ($request->get('settings')) {
             $settings = $this->decodeJson($request->get('settings'));
+            if ($settings["published"] ?? false) {
+                $page->setMissingRequiredEditable(null);
+            }
         }
 
         // check if settings exist, before saving meta data
