@@ -1820,4 +1820,14 @@ parameters:
 			count: 1
 			path: lib/Templating/Renderer/EditableRenderer.php
 
+		-
+			message: "#^Parameter \\$event of method Pimcore\\\\Controller\\\\KernelControllerEventInterface\\:\\:onKernelControllerEvent\\(\\) has invalid typehint type Symfony\\\\Component\\\\HttpKernel\\\\Event\\\\ControllerEvent$#"
+			count: 2
+			path: lib/Controller/KernelControllerEventInterface.php
+
+		-
+			message: "#^Parameter \\$event of method Pimcore\\\\Controller\\\\KernelResponseEventInterface\\:\\:onKernelResponseEvent\\(\\) has invalid typehint type Symfony\\\\Component\\\\HttpKernel\\\\Event\\\\ResponseEvent#"
+			count: 2
+			path: lib/Controller/KernelResponseEventInterface.php
+
 
