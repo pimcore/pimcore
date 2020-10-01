@@ -21,6 +21,7 @@ use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Event\MailEvents;
 use Pimcore\Event\Model\MailEvent;
 use Pimcore\Helper\Mail as MailHelper;
+use Twig\TemplateWrapper;
 
 class Mail extends \Swift_Message
 {
@@ -57,7 +58,7 @@ class Mail extends \Swift_Message
     protected $document;
 
     /**
-     * Contains the dynamic Params for the Placeholders
+     * Contains the dynamic Params for the Twig engine and the Placeholders
      *
      * @var array
      */
@@ -693,6 +694,17 @@ class Mail extends \Swift_Message
         return $validator->isValid($emailAddress, new RFCValidation());
     }
 
+    protected function renderParams(string $string): string
+    {
+        $rendered = $this->placeholderObject->replacePlaceholders($string, $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
+
+        $twig = \Pimcore::getContainer()->get('twig');
+        $template = $twig->createTemplate((string) $rendered);
+        $rendered = $twig->render($template, $this->getParams());
+
+        return $rendered;
+    }
+
     /**
      * Replaces the placeholders with the content and returns the rendered Subject
      *
@@ -706,7 +718,7 @@ class Mail extends \Swift_Message
             $subject = $this->getDocument()->getSubject();
         }
 
-        return $this->placeholderObject->replacePlaceholders($subject, $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
+        return $this->renderParams($subject);
     }
 
     /**
@@ -732,7 +744,7 @@ class Mail extends \Swift_Message
 
         $content = null;
         if ($html) {
-            $content = $this->placeholderObject->replacePlaceholders($html, $this->getParams(), $this->getDocument());
+            $content = $this->renderParams($html);
 
             // modifying the content e.g set absolute urls...
             $content = MailHelper::embedAndModifyCss($content, $this->getDocument());
@@ -754,7 +766,7 @@ class Mail extends \Swift_Message
 
         //if the content was manually set with $obj->setBodyText(); this content will be used
         if ($text) {
-            $content = $this->placeholderObject->replacePlaceholders($text, $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
+            $content = $this->renderParams($text);
         } else {
             //creating text version from html email
             try {
