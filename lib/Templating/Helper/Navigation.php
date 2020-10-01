@@ -33,6 +33,8 @@ use Symfony\Component\Templating\Helper\Helper;
 /**
  * @method MenuRenderer menu()
  * @method Breadcrumbs breadcrumbs()
+ *
+ * @deprecated
  */
 class Navigation extends Helper
 {

@@ -16,6 +16,9 @@ namespace Pimcore\Templating\Helper;
 
 use Symfony\Component\Templating\Helper\Helper;
 
+/**
+ * @deprecated
+ */
 class BreachAttackRandomContent extends Helper
 {
     /**

@@ -39,6 +39,9 @@ namespace Pimcore\Templating\Helper\Placeholder;
 
 use Pimcore\Templating\Helper\Exception;
 
+/**
+ * @deprecated
+ */
 class Container extends \ArrayObject
 {
     /**

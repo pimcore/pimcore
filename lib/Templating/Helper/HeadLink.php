@@ -57,6 +57,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @method $this prependStylesheet($href, $media = 'screen', $conditionalStylesheet = false, array $extras = array())
  * @method $this setAlternate($href, $type, $title, $extras)
  * @method $this setStylesheet($href, $media = 'screen', $conditionalStylesheet = false, array $extras = array())
+ *
+ * @deprecated
  */
 class HeadLink extends CacheBusterAware
 {

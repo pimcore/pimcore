@@ -17,6 +17,9 @@ namespace Pimcore\Templating\Helper;
 use Pimcore\Tool\DeviceDetector;
 use Symfony\Component\Templating\Helper\Helper;
 
+/**
+ * @deprecated
+ */
 class Device extends Helper
 {
     /**
