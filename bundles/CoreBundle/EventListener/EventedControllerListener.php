@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
-use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\KernelResponseEventInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
@@ -81,6 +81,5 @@ class EventedControllerListener implements EventSubscriberInterface
         if ($eventController instanceof KernelResponseEventInterface) {
             $eventController->onKernelResponseEvent($event);
         }
-
     }
 }
