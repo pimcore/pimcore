@@ -23,7 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\StatusInterface;
 use Pimcore\Log\ApplicationLogger;
 use Pimcore\Log\FileObject;
 use Pimcore\Logger;
-use Pimcore\Model\Tool\Lock;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CommitOrderProcessor implements CommitOrderProcessorInterface
@@ -178,7 +178,8 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
     public function commitOrderPayment(StatusInterface $paymentStatus, PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null)
     {
         // acquire lock to make sure only one process is committing order payment
-        Lock::acquire(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
+        $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
+        $lock->acquire(true);
 
         // check if order is already committed and payment information with same internal payment id has same state
         // if so, do nothing and return order
@@ -213,7 +214,8 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
                     'relatedObject' => $order,
                 ]
             );
-            Lock::release(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
+
+            $lock->release();
 
             throw new UnsupportedException($message);
         }
@@ -226,7 +228,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
             $order->save(['versionNote' => 'CommitOrderProcessor::commitOrderPayment - set order state to null.']);
         }
 
-        Lock::release(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
+        $lock->release();
 
         return $order;
     }

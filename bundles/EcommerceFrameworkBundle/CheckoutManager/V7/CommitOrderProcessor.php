@@ -13,10 +13,10 @@ use Pimcore\Event\Model\Ecommerce\CommitOrderProcessorEvent;
 use Pimcore\Event\Model\Ecommerce\SendConfirmationMailEvent;
 use Pimcore\Log\ApplicationLogger;
 use Pimcore\Log\FileObject;
-use Pimcore\Model\Tool\Lock;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor implements LoggerAwareInterface
@@ -67,7 +67,8 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
     public function commitOrderPayment(StatusInterface $paymentStatus, PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null)
     {
         // acquire lock to make sure only one process is committing order payment
-        Lock::acquire(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
+        $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
+        $lock->acquire(true);
 
         $event = new CommitOrderProcessorEvent($this, null, ['paymentStatus' => $paymentStatus]);
         $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::PRE_COMMIT_ORDER_PAYMENT, $event);
@@ -103,7 +104,8 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
                     'component' => self::LOGGER_NAME,
                 ]
             );
-            Lock::release(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
+
+            $lock->release();
 
             throw new UnsupportedException($message);
         }
@@ -124,7 +126,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
         $event = new CommitOrderProcessorEvent($this, $order, ['paymentStatus' => $paymentStatus]);
         $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::POST_COMMIT_ORDER_PAYMENT, $event);
 
-        Lock::release(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
+        $lock->release();
 
         return $order;
     }

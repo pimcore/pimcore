@@ -21,6 +21,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 
 /**
+ * @deprecated use Symfony Lock component instead
  * @property \Pimcore\Model\Tool\Lock $model
  */
 class Dao extends Model\Dao\AbstractDao
