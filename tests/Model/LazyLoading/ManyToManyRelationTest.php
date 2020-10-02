@@ -253,7 +253,6 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
 
         $object = LazyLoading::getById($object->getId(), true);
 
-
         //load relation and check if relation loads correctly
         $collection = $object->getFieldcollection();
         /** @var Fieldcollection\Data\LazyLoadingLocalizedTest $firstItem */
@@ -262,6 +261,19 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
 
         $this->assertEquals(count($lRelations1), count($lRelations2), "expected that original relations count is the same as the new one");
 
+        $firstItem->setNormalInput(uniqid());
+        $collection->setItems([$firstItem]);
+
+        $object->save();
+
+        $object = LazyLoading::getById($object->getId(), true);
+
+
+        //load relation and check if relation loads correctly
+        $collection = $object->getFieldcollection();
+        /** @var Fieldcollection\Data\LazyLoadingLocalizedTest $firstItem */
+        $firstItem = $collection->get(0);
+        $lRelations2 = $firstItem->getLRelations();
 
         foreach (['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
             $messagePrefix = "Testing object-type $objectType: ";
