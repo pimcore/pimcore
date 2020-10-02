@@ -27,6 +27,8 @@ trait TemplateControllerTrait
 {
     /**
      * @inheritDoc
+     *
+     * @deprecated
      */
     public function setViewAutoRender(Request $request, bool $autoRender, string $engine = null)
     {
