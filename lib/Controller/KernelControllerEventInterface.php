@@ -14,8 +14,10 @@
 
 /**
  * Alias to support Symfony 3.4 where ControllerEvent is not available and required for this interface
+ *
  * @TODO remove in Pimcore 7
  */
+
 namespace {
 
     use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
