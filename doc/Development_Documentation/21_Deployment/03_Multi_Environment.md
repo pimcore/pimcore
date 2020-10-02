@@ -166,6 +166,6 @@ $environmentConfig->setDefaultDebugModeEnvironment('prod');
 
 For examples, please see:
 
-* <https://github.com/pimcore/pimcore/tree/master/app/config> 
-* <https://github.com/pimcore/pimcore/tree/master/app/config/pimcore>
-* <https://github.com/pimcore/pimcore/tree/master/var/config>
+* <https://github.com/pimcore/demo/tree/master/app/config> 
+* <https://github.com/pimcore/demo/tree/master/app/config/pimcore>
+* <https://github.com/pimcore/demo/tree/master/var/config>
