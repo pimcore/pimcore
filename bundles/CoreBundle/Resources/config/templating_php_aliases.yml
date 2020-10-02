@@ -24,7 +24,7 @@ services:
         deprecated: 'The "%alias_id%" service is deprecated.'
 
     pimcore.templating.view_helper.inc:
-        alias: Pimcore\Templating\Helper\Inc'
+        alias: Pimcore\Templating\Helper\Inc
         deprecated: 'The "%alias_id%" service is deprecated.'
 
     pimcore.templating.view_helper.pimcore_url:
@@ -52,7 +52,7 @@ services:
         deprecated: 'The "%alias_id%" service is deprecated.'
 
     pimcore.templating.view_helper.head_style:
-        alias: Pimcore\Templating\Helper\HeadStyle'
+        alias: Pimcore\Templating\Helper\HeadStyle
         deprecated: 'The "%alias_id%" service is deprecated.'
 
     pimcore.templating.view_helper.head_meta:
@@ -64,12 +64,13 @@ services:
         deprecated: 'The "%alias_id%" service is deprecated.'
 
     pimcore.templating.view_helper.cache:
-        alias: Pimcore\Templating\Helper\Cache'
+        alias: Pimcore\Templating\Helper\Cache
         deprecated: 'The "%alias_id%" service is deprecated.'
 
     pimcore.templating.view_helper.navigation:
         alias: Pimcore\Templating\Helper\Navigation
         deprecated: 'The "%alias_id%" service is deprecated.'
+
     pimcore.templating.view_helper.placeholder.container_service:
         alias: Pimcore\Templating\Helper\Placeholder\ContainerService
         deprecated: 'The "%alias_id%" service is deprecated.'
