@@ -12,6 +12,10 @@
  */
 
 pimcore.registerNS("pimcore.settings.tagmanagement.item");
+
+/**
+ * @deprecated
+ */
 pimcore.settings.tagmanagement.item = Class.create({
 
 
