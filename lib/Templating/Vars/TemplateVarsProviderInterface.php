@@ -16,6 +16,9 @@ namespace Pimcore\Templating\Vars;
 
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @deprecated
+ */
 interface TemplateVarsProviderInterface
 {
     /**

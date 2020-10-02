@@ -21,14 +21,15 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * @deprecated
+ */
 class TemplateVarsProviderPass implements CompilerPassInterface
 {
     /**
      * Hooks template vars providers tagged with "pimcore.templating.vars_provider" into the template vars resolver.
      *
      * @param ContainerBuilder $container
-     *
-     * @deprecated
      */
     public function process(ContainerBuilder $container)
     {

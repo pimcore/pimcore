@@ -19,9 +19,6 @@ use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-/**
- * @deprecated
- */
 class TemplateResolver extends AbstractRequestResolver
 {
     /**
