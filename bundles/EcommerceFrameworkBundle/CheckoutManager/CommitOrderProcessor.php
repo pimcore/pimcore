@@ -37,11 +37,16 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
     protected $orderManagers;
 
     /**
+     * @var LockFactory
+     */
+    private $lockFactory;
+
+    /**
      * @var string
      */
     protected $confirmationMail = '/emails/order-confirmation';
 
-    public function __construct(OrderManagerLocatorInterface $orderManagers, array $options = [])
+    public function __construct(LockFactory $lockFactory, OrderManagerLocatorInterface $orderManagers, array $options = [])
     {
         @trigger_error(
             'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in 7.0.0. ' .
@@ -55,6 +60,8 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
         $this->configureOptions($resolver);
 
         $this->processOptions($resolver->resolve($options));
+
+        $this->lockFactory = $lockFactory;
     }
 
     protected function processOptions(array $options)
@@ -178,7 +185,7 @@ class CommitOrderProcessor implements CommitOrderProcessorInterface
     public function commitOrderPayment(StatusInterface $paymentStatus, PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null)
     {
         // acquire lock to make sure only one process is committing order payment
-        $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
+        $lock = $this->lockFactory->createLock(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
         $lock->acquire(true);
 
         // check if order is already committed and payment information with same internal payment id has same state

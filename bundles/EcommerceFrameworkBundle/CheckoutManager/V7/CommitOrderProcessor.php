@@ -33,7 +33,12 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
      */
     protected $applicationLogger;
 
-    public function __construct(OrderManagerLocatorInterface $orderManagers, EventDispatcherInterface $eventDispatcher, ApplicationLogger $applicationLogger, array $options = [])
+    /**
+     * @var LockFactory
+     */
+    private $lockFactory;
+
+    public function __construct(LockFactory $lockFactory, OrderManagerLocatorInterface $orderManagers, EventDispatcherInterface $eventDispatcher, ApplicationLogger $applicationLogger, array $options = [])
     {
         $this->orderManagers = $orderManagers;
 
@@ -44,6 +49,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
 
         $this->eventDispatcher = $eventDispatcher;
         $this->applicationLogger = $applicationLogger;
+        $this->lockFactory = $lockFactory;
     }
 
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, PaymentInterface $paymentProvider)
@@ -67,7 +73,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
     public function commitOrderPayment(StatusInterface $paymentStatus, PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null)
     {
         // acquire lock to make sure only one process is committing order payment
-        $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
+        $lock = $this->lockFactory->createLock(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
         $lock->acquire(true);
 
         $event = new CommitOrderProcessorEvent($this, null, ['paymentStatus' => $paymentStatus]);
