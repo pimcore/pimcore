@@ -20,6 +20,7 @@ namespace Pimcore\Model\Tool\Tracking;
 use Pimcore\Model;
 
 /**
+ * @deprecated
  * @method \Pimcore\Model\Tool\Tracking\Event\Dao getDao()
  */
 class Event extends Model\AbstractModel
