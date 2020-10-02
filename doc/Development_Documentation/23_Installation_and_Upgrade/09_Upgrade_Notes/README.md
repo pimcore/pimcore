@@ -10,6 +10,7 @@ If you have custom editables or wysiwyg global config then please change namespa
 - Method signature `AbstractObject::setChildren($children)` has been updated to `AbstractObject::setChildren($children, array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)`.
 - Edit Template for Area Bricks `edit.html.(php|twig)` has been deprecated and will be removed in Pimcore 7. Use new feature [editable dialog box](https://github.com/pimcore/pimcore/pull/6923#issuecomment-671257112) instead.
 - `EventedControllerInterface` is marked as deprecated and will be removed in v7. Please use new interfaces for kernel events `KernelControllerEventInterface::onKernelControllerEvent()` or `KernelResponseEventInterface::onKernelResponseEvent()` instead.
+- The Tag Manager has been deprecated and will be removed in Pimcore 7. 
 
 ## 6.7.0
 - [Ecommerce][IndexService] Elastic Search worker does not use mockup cache anymore. Now mockup objects are build directly based on information in response of ES response (_source flag). Therefore `AbstractElasticSearch` Worker does not extend `AbstractMockupCacheWorker` anymore. 

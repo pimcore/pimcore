@@ -23,6 +23,9 @@ use Pimcore\Model\Site;
 use Pimcore\Model\Tool\Tag;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
+/**
+ * @deprecated
+ */
 class TagManagerListener
 {
     use PimcoreContextAwareTrait;

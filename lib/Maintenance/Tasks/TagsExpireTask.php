@@ -18,6 +18,9 @@ use Pimcore\Maintenance\TaskInterface;
 use Pimcore\Model\Tool\Tag\Config;
 use Psr\Log\LoggerInterface;
 
+/**
+ * @deprecated
+ */
 final class TagsExpireTask implements TaskInterface
 {
     /**
