@@ -18,7 +18,7 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Console;
-use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\Factory as LockFactory;
 
 class LibreOffice extends Ghostscript
 {

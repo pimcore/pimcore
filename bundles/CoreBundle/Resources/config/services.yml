@@ -214,6 +214,9 @@ services:
 
     Symfony\Component\Lock\LockFactory:
         public: true
-        class: Symfony\Component\Lock\LockFactory
+        class: Symfony\Component\Lock\Factory
         arguments:
             - '@Symfony\Component\Lock\Store\RetryTillSaveStore'
+
+    Symfony\Component\Lock\Factory:
+        alias: Symfony\Component\Lock\LockFactory
