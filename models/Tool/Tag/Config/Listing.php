@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @deprecated
+ *
  * @method \Pimcore\Model\Tool\Tag\Config\Listing\Dao getDao()
  * @method  \Pimcore\Model\Tool\Tag\Config[] load()
  * @method int getTotalCount()

@@ -21,7 +21,6 @@ use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Event\MailEvents;
 use Pimcore\Event\Model\MailEvent;
 use Pimcore\Helper\Mail as MailHelper;
-use Twig\TemplateWrapper;
 
 class Mail extends \Swift_Message
 {
