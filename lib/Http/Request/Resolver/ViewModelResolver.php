@@ -19,6 +19,9 @@ use Pimcore\Templating\Model\ViewModelInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * @deprecated
+ */
 class ViewModelResolver extends AbstractRequestResolver
 {
     const ATTRIBUTE_VIEW_MODEL = '_view_model';
@@ -76,6 +79,8 @@ class ViewModelResolver extends AbstractRequestResolver
      */
     public function createViewModel(Request $request = null)
     {
+        @trigger_error(sprintf('Class "%s" is deprecated since v6.8.0 and will be removed in Pimcore 7.', ViewModel::class), E_USER_DEPRECATED);
+
         if (null === $request) {
             $request = $this->getCurrentRequest();
         }

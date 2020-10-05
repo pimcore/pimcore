@@ -20,6 +20,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+/**
+ * @deprecated
+ */
 class ControllerViewModelListener implements EventSubscriberInterface
 {
     /**

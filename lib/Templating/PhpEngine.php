@@ -201,6 +201,8 @@ class PhpEngine extends BasePhpEngine
      * Get the current view model
      *
      * @return ViewModelInterface|null
+     *
+     * @deprecated
      */
     public function getViewModel()
     {
@@ -219,6 +221,8 @@ class PhpEngine extends BasePhpEngine
      * @param mixed|null $default
      *
      * @return mixed|null
+     *
+     * @deprecated
      */
     public function getViewParameter($name, $default = null)
     {

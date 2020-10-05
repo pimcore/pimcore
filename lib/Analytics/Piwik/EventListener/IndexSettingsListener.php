@@ -20,6 +20,7 @@ namespace Pimcore\Analytics\Piwik\EventListener;
 use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Piwik\ReportBroker;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
+use Pimcore\Event\Admin\IndexActionSettingsEvent;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -54,16 +55,16 @@ class IndexSettingsListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            AdminEvents::INDEX_SETTINGS => 'addIndexSettings',
+            AdminEvents::INDEX_ACTION_SETTINGS => 'addIndexSettings',
         ];
     }
 
     /**
-     * Handles INDEX_SETTINGS event and adds piwik reports to settings
+     * Handles INDEX_ACTION_SETTINGS event and adds piwik reports to settings
      *
-     * @param IndexSettingsEvent $event
+     * @param IndexActionSettingsEvent $event
      */
-    public function addIndexSettings(IndexSettingsEvent $event)
+    public function addIndexSettings(IndexActionSettingsEvent $event)
     {
         $user = $this->userResolver->getUser();
         if (!$user || !$user->isAllowed('piwik_reports')) {
@@ -81,7 +82,7 @@ class IndexSettingsListener implements EventSubscriberInterface
 
         $settings = $this->addReportSettings($settings);
 
-        $event->getSettings()->piwik = $settings;
+        $event->addSetting('piwik', $settings);
     }
 
     private function addReportSettings(array $settings): array
