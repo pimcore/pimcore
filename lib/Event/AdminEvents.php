@@ -41,6 +41,17 @@ final class AdminEvents
     const LOGIN_FAILED = 'pimcore.admin.login.failed';
 
     /**
+     * The LOGIN_SUCCESS event is triggered when credentials were accepted.
+     *
+     * This event allows you to act on the user resolved on a successful login event.
+     *
+     * @Event("Pimcore\Event\Admin\Login\LoginSuccessEvent")
+     *
+     * @var string
+     */
+    const LOGIN_SUCCESS = 'pimcore.admin.login.success';
+
+    /**
      * The LOGIN_LOSTPASSWORD event is triggered before the lost password email
      * is sent.
      *

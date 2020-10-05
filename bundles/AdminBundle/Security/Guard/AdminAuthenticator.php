@@ -20,6 +20,7 @@ use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Pimcore\Cache\Runtime;
 use Pimcore\Event\Admin\Login\LoginCredentialsEvent;
 use Pimcore\Event\Admin\Login\LoginFailedEvent;
+use Pimcore\Event\Admin\Login\LoginSuccessEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Model\User as UserModel;
 use Pimcore\Tool\Admin;
@@ -251,6 +252,9 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 });
             }
         }
+
+        // trigger LOGIN_SUCCESS event if user has been fully authenicated
+        $this->dispatcher->dispatch(AdminEvents::LOGIN_SUCCESS, new LoginSuccessEvent($user));
 
         return $user;
     }
