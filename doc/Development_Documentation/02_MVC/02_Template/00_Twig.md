@@ -53,7 +53,6 @@ Alternatively, just use annotations or render the view directly to use twig:
 namespace AppBundle\Controller;
 
 use Pimcore\Controller\FrontendController;
-use Pimcore\Templating\Model\ViewModel;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 class MyController extends FrontendController
@@ -67,9 +66,9 @@ class MyController extends FrontendController
     {   
     }
     
-    public function directRenderAction(ViewModel $view)
+    public function directRenderAction()
     {
-        return $this->render('my/custom/action.html.twig', $view->getAllParameters());
+        return $this->render('my/custom/action.html.twig', ['param1' => 'value1']);
     }
 }
 ```

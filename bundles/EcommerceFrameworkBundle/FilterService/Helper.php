@@ -25,6 +25,7 @@ use Pimcore\Templating\Model\ViewModel;
 class Helper
 {
     /**
+     * @deprecated will be removed in Pimcore 7, use initProductList() instead
      * @param \Pimcore\Model\DataObject\FilterDefinition $filterDefinition
      * @param ProductListInterface $productList
      * @param array $params
@@ -138,6 +139,120 @@ class Helper
         }
 
         $viewModel->orderByOptions = $orderByOptions;
+    }
+
+    /**
+     * @param \Pimcore\Model\DataObject\FilterDefinition $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $params
+     * @param FilterService $filterService
+     * @param bool $loadFullPage
+     * @param bool $excludeLimitOfFirstpage
+     */
+    public static function initProductList(
+        \Pimcore\Model\DataObject\FilterDefinition $filterDefinition,
+        ProductListInterface $productList,
+        &$params,
+        FilterService $filterService,
+        $loadFullPage,
+        $excludeLimitOfFirstpage = false
+    ) {
+        $orderByOptions = [];
+        $orderKeysAsc = explode(',', $filterDefinition->getOrderByAsc());
+        if (!empty($orderKeysAsc)) {
+            foreach ($orderKeysAsc as $orderByEntry) {
+                if (!empty($orderByEntry)) {
+                    $orderByOptions[$orderByEntry]['asc'] = true;
+                }
+            }
+        }
+
+        $orderKeysDesc = explode(',', $filterDefinition->getOrderByDesc());
+        if (!empty($orderKeysDesc)) {
+            foreach ($orderKeysDesc as $orderByEntry) {
+                if (!empty($orderByEntry)) {
+                    $orderByOptions[$orderByEntry]['desc'] = true;
+                }
+            }
+        }
+
+        $offset = 0;
+
+        $pageLimit = isset($params['perPage']) ? intval($params['perPage']) : null;
+        if (!$pageLimit) {
+            $pageLimit = $filterDefinition->getPageLimit();
+        }
+        if (!$pageLimit) {
+            $pageLimit = 50;
+        }
+        $limitOnFirstLoad = $filterDefinition->getLimitOnFirstLoad();
+        if (!$limitOnFirstLoad) {
+            $limitOnFirstLoad = 6;
+        }
+
+        if (isset($params['page'])) {
+            $params['currentPage'] = intval($params['page']);
+            $offset = $pageLimit * ($params['page'] - 1);
+        }
+        if ($filterDefinition->getAjaxReload()) {
+            if ($loadFullPage && !$excludeLimitOfFirstpage) {
+                $productList->setLimit($pageLimit);
+            } elseif ($loadFullPage && $excludeLimitOfFirstpage) {
+                $offset += $limitOnFirstLoad;
+                $productList->setLimit($pageLimit - $limitOnFirstLoad);
+            } else {
+                $productList->setLimit($limitOnFirstLoad);
+            }
+        } else {
+            $productList->setLimit($pageLimit);
+        }
+        $productList->setOffset($offset);
+
+        $params['pageLimit'] = $pageLimit;
+
+        $orderByField = null;
+        $orderByDirection = null;
+
+        if (isset($params['orderBy'])) {
+            $orderBy = explode('#', $params['orderBy']);
+            $orderByField = $orderBy[0];
+
+            if (count($orderBy) > 1) {
+                $orderByDirection = $orderBy[1];
+            }
+        }
+
+        if (array_key_exists($orderByField, $orderByOptions)) {
+            $params['currentOrderBy'] = htmlentities($params['orderBy']);
+
+            $productList->setOrderKey($orderByField);
+
+            if ($orderByDirection) {
+                $productList->setOrder($orderByDirection);
+            }
+        } else {
+            $orderByCollection = $filterDefinition->getDefaultOrderBy();
+            $orderByList = [];
+            if ($orderByCollection) {
+                foreach ($orderByCollection as $orderBy) {
+                    if ($orderBy->getField()) {
+                        $orderByList[] = [$orderBy->getField(), $orderBy->getDirection()];
+                    }
+                }
+
+                $params['currentOrderBy'] = implode('#', reset($orderByList));
+            }
+            if ($orderByList) {
+                $productList->setOrderKey($orderByList);
+                $productList->setOrder('ASC');
+            }
+        }
+
+        if ($filterService) {
+            $params['currentFilter'] = $filterService->initFilterService($filterDefinition, $productList, $params);
+        }
+
+        $params['orderByOptions'] = $orderByOptions;
     }
 
     /**
