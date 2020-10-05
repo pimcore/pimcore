@@ -23,7 +23,7 @@ In controllers, for every action there exists a separate method ending with the 
 The `DefaultController` comes with Pimcore. When you create an empty page in Pimcore it will call 
 the `defaultAction` in the `DefaultController` which uses the view `/app/Resources/views/Default/default.html.php`. 
 
-Views are tied to actions implicitly using the filename. 
+[Deprecated since v6.8.0] Views are tied to actions implicitly using the filename. 
 You can override this by using `return $this->render(":Bar:foo.html.php", ["param" => "value"]);`
  like in the example below or you can of course just return a `Response` object, just the way how Symfony works.
 
@@ -101,5 +101,5 @@ class DefaultController extends FrontendController
 |-------------------|-------------|----------------------------------------------------------|
 | `$this->document` | Document    | Reference to the current document, if any is available.  |
 | `$this->editmode` | boolean     | True if you are in editmode (admin)                      |
-| `$this->view`     | `ViewModel` | Used to assign variables to your view (`$this->view->foo = "bar"`) |
+| `$this->view`     | `ViewModel` (deprecated) | Used to assign variables to your view (`$this->view->foo = "bar"`) |
    

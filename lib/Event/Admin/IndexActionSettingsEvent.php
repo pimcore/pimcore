@@ -17,26 +17,36 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Admin;
 
-use Pimcore\Templating\Model\ViewModel;
 use Symfony\Component\EventDispatcher\Event;
 
-/**
- * @deprecated will be removed in Pimcore 7, use IndexActionSettingsEvent instead
- */
-class IndexSettingsEvent extends Event
+class IndexActionSettingsEvent extends Event
 {
     /**
-     * @var ViewModel
+     * @var array
      */
     private $settings;
 
-    public function __construct(ViewModel $settings)
+    public function __construct(array $settings)
     {
         $this->settings = $settings;
     }
 
-    public function getSettings(): ViewModel
+    public function getSettings(): array
     {
         return $this->settings;
+    }
+
+    public function setSettings(array $settings)
+    {
+        $this->settings = $settings;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     */
+    public function addSetting(string $key, $value)
+    {
+        $this->settings[$key] = $value;
     }
 }

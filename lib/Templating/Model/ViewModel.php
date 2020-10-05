@@ -16,6 +16,9 @@ namespace Pimcore\Templating\Model;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+/**
+ * @deprecated
+ */
 class ViewModel implements ViewModelInterface
 {
     /**
