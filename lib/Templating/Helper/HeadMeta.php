@@ -55,6 +55,8 @@ use Pimcore\Templating\Helper\Traits\TextUtilsTrait;
  * @method $this setHttpEquiv($keyValue, $content, $modifiers=[])
  * @method $this setName($keyValue, $content, $modifiers=[])
  * @method $this setProperty($property, $content, $modifiers=[])
+ *
+ * @deprecated
  */
 class HeadMeta extends AbstractHelper
 {

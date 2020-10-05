@@ -124,6 +124,8 @@ use Symfony\Component\Templating\Storage\Storage;
  * @property Document $document
  * @property bool $editmode
  * @property GlobalVariables $app
+ *
+ * @deprecated since 6.8.0 and will be removed in Pimcore 7.
  */
 class PhpEngine extends BasePhpEngine
 {

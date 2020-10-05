@@ -10,6 +10,7 @@ If you have custom editables or wysiwyg global config then please change namespa
 - Method signature `AbstractObject::setChildren($children)` has been updated to `AbstractObject::setChildren($children, array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)`.
 - Edit Template for Area Bricks `edit.html.(php|twig)` has been deprecated and will be removed in Pimcore 7. Use new feature [editable dialog box](https://github.com/pimcore/pimcore/pull/6923#issuecomment-671257112) instead.
 - `EventedControllerInterface` is marked as deprecated and will be removed in v7. Please use new interfaces for kernel events `KernelControllerEventInterface::onKernelControllerEvent()` or `KernelResponseEventInterface::onKernelResponseEvent()` instead.
+- PHP templating engine (including templating helpers & vars) has been deprecated and will be removed in Pimcore 7. Use Twig Instead.
 - The Tag Manager has been deprecated and will be removed in Pimcore 7. 
 - Class `\Pimcore\Model\Tool\Tracking\Event` has been deprecated and will be removed in Pimcore 7. 
 - Auto view rendering has been deprecated and will be removed in Pimcore 7, which means views will not be tied to action implicitly using the filename and `$this->view` (`ViewModel`) in actions stops working. Use Symfony way of [Rendering Templates](https://symfony.com/doc/current/templates.html#rendering-templates) instead.

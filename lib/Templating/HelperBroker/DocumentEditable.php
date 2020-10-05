@@ -17,6 +17,9 @@ namespace Pimcore\Templating\HelperBroker;
 use Pimcore\Templating\PhpEngine;
 use Pimcore\Templating\Renderer\EditableRenderer;
 
+/**
+ * @deprecated
+ */
 class DocumentEditable implements HelperBrokerInterface
 {
     /**

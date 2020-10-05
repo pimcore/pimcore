@@ -14,6 +14,9 @@
 
 namespace Pimcore\Templating\Helper;
 
+/**
+ * @deprecated
+ */
 class Exception extends \RuntimeException
 {
 }

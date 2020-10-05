@@ -11,6 +11,7 @@ services:
     pimcore.templating.engine.php:
         alias: templating.engine.php
         public: true
+        deprecated: 'The "%alias_id%" service is deprecated. Use Twig instead.'
 
     #
     # HELPER BROKERS
@@ -20,16 +21,19 @@ services:
         public: false
         tags:
             - { name: pimcore.templating.helper_broker, priority: 25 }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\HelperBroker\TemplatingHelper:
         public: false
         tags:
             - { name: pimcore.templating.helper_broker, priority: 20 }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\HelperBroker\DocumentEditable:
         public: false
         tags:
             - { name: pimcore.templating.helper_broker, priority: 10 }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\HelperBroker\DocumentTag:
         alias: Pimcore\Templating\HelperBroker\DocumentEditable
@@ -39,6 +43,7 @@ services:
         public: false
         tags:
             - { name: pimcore.templating.helper_broker, priority: 5 }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     #
     # VIEW HELPERS
@@ -49,26 +54,32 @@ services:
             - [setRoutingDefaults, ['%pimcore.routing.defaults%']]
         tags:
             - { name: templating.helper, alias: action }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\GetParam:
         tags:
             - { name: templating.helper, alias: getParam }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\GetAllParams:
         tags:
             - { name: templating.helper, alias: getAllParams }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\BreachAttackRandomContent:
         tags:
             - { name: templating.helper, alias: breachAttackRandomContent }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\Glossary:
         tags:
             - { name: templating.helper, alias: glossary }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\Inc:
         tags:
             - { name: templating.helper, alias: inc }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\PimcoreUrl:
         class: Pimcore\Templating\Helper\PimcoreUrl
@@ -76,46 +87,57 @@ services:
             $generator: '@router'
         tags:
             - { name: templating.helper, alias: pimcoreUrl }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\Placeholder:
         tags:
             - { name: templating.helper, alias: placeholder }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\HeadTitle:
         tags:
             - { name: templating.helper, alias: headTitle }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\HeadLink:
         tags:
             - { name: templating.helper, alias: headLink }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\HeadScript:
         tags:
             - { name: templating.helper, alias: headScript }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\InlineScript:
         tags:
             - { name: templating.helper, alias: inlineScript }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\HeadStyle:
         tags:
             - { name: templating.helper, alias: headStyle }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\HeadMeta:
         tags:
             - { name: templating.helper, alias: headMeta }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\WebLink:
         tags:
             - { name: templating.helper, alias: webLink }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\Device:
         tags:
             - { name: templating.helper, alias: device }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\Cache:
         tags:
             - { name: templating.helper, alias: cache }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\Navigation:
         lazy: true
@@ -123,10 +145,12 @@ services:
             $rendererLocator: '@pimcore.templating.navigation.renderer_locator'
         tags:
             - { name: templating.helper, alias: navigation }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Templating\Helper\WebsiteConfig:
         tags:
             - { name: templating.helper, alias: websiteConfig }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     pimcore.templating.view_helper.translate:
         class: Pimcore\Templating\Helper\Translate
@@ -134,6 +158,7 @@ services:
             - { name: templating.helper, alias: translate }
         calls:
             - [setDomain, ['messages']]
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     pimcore.templating.view_helper.translate_admin:
         class: Pimcore\Templating\Helper\Translate
@@ -141,6 +166,7 @@ services:
             - [setDomain, ['admin']]
         tags:
             - { name: templating.helper, alias: translateAdmin }
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     #
     # TOOLS
@@ -149,3 +175,4 @@ services:
     # container service for placeholder view helpers > creates placeholder container for every view helper type
     Pimcore\Templating\Helper\Placeholder\ContainerService:
         public: false
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'

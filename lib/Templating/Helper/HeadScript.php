@@ -53,6 +53,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * @method $this prependScript($script, $type = 'text/javascript', array $attrs = array())
  * @method $this setFile($src, $type = 'text/javascript', array $attrs = array())
  * @method $this setScript($script, $type = 'text/javascript', array $attrs = array())
+ *
+ * @deprecated
  */
 class HeadScript extends CacheBusterAware
 {

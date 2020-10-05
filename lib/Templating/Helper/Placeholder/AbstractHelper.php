@@ -55,6 +55,8 @@ use Symfony\Component\Templating\Helper\Helper;
  * @method string getWhitespace(string|int $indent)
  * @method void captureStart($type = Container::APPEND, $key = null)
  * @method void captureEnd()
+ *
+ * @deprecated
  */
 abstract class AbstractHelper extends Helper implements \IteratorAggregate, \Countable, \ArrayAccess
 {
