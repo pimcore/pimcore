@@ -96,6 +96,8 @@ abstract class FrontendController extends Controller implements EventedControlle
      *
      * @param Request $request
      * @param string $engine
+     *
+     * @deprecated
      */
     protected function enableViewAutoRender(Request $request = null, $engine = 'php')
     {
@@ -110,6 +112,8 @@ abstract class FrontendController extends Controller implements EventedControlle
      * Disable view autorendering for the current request
      *
      * @param Request $request
+     *
+     * @deprecated
      */
     protected function disableViewAutoRender(Request $request = null)
     {

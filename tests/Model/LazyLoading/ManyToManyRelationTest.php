@@ -229,6 +229,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
     public function testFieldCollectionLocalizedAttributes()
     {
         //prepare data object
+        /** @var LazyLoading $object */
         $object = $this->createDataObject();
 
         $items = new Fieldcollection();
@@ -240,6 +241,43 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
 
+        $lRelations1 = $item->getLRelations();
+
+        $object = LazyLoading::getById($object->getId(), true);
+        $collection = $object->getFieldcollection();
+        /** @var Fieldcollection\Data\LazyLoadingLocalizedTest $firstItem */
+        $firstItem = $collection->get(0);
+        $firstItem->setLInput(uniqid());        // make it dirty but do not touch the relation
+        $object->save();
+
+        $this->assertTrue(count($lRelations1) > 0);
+
+        $object = LazyLoading::getById($object->getId(), true);
+
+        //load relation and check if relation loads correctly
+        $collection = $object->getFieldcollection();
+        /** @var Fieldcollection\Data\LazyLoadingLocalizedTest $firstItem */
+        $firstItem = $collection->get(0);
+        $loadedRelations = $firstItem->getLRelations();
+
+        $this->assertEquals(self::RELATION_COUNT, count($loadedRelations), 'expected that original relations count is the same as the new one');
+
+        //save only non localized field and check if relation loads correctly
+        $firstItem->setNormalInput(uniqid());
+        $collection->setItems([$firstItem]);
+
+        $object->save();
+
+        $object = LazyLoading::getById($object->getId(), true);
+
+        //load relation and check if relation loads correctly
+        $collection = $object->getFieldcollection();
+        /** @var Fieldcollection\Data\LazyLoadingLocalizedTest $firstItem */
+        $firstItem = $collection->get(0);
+        $loadedRelations = $firstItem->getLRelations();
+
+        $this->assertEquals(self::RELATION_COUNT, count($loadedRelations), 'expected that original relations count is the same as the new one');
+
         foreach (['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
             $messagePrefix = "Testing object-type $objectType: ";
 
@@ -248,13 +286,12 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
             \Pimcore::collectGarbage();
 
             //reload data object from database
+
             $object = LazyLoading::getById($id, true);
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
 
-            //load relation and check if relation loads correctly
-            $collection = $object->getFieldcollection();
             if ($objectType == 'parent') {
                 $item = $collection->get(0);
                 $relationObjects = $item->getLrelations();
@@ -306,8 +343,15 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         $object = $this->createDataObject();
         $brick = new LazyLoadingLocalizedTest($object);
         $brick->getLocalizedfields()->setLocalizedValue('lrelations', $this->loadRelations()->load());
+
         $object->getBricks()->setLazyLoadingLocalizedTest($brick);
         $object->save();
+
+        $brick->setLInput(uniqid());
+        $object->save();
+        $object = Concrete::getById($object->getId(), true);
+        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelations()) > 0);
+
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
 

@@ -23,6 +23,7 @@ use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db\ConnectionInterface;
+use Pimcore\Event\Admin\IndexActionSettingsEvent;
 use Pimcore\Event\Admin\IndexSettingsEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Google;
@@ -109,6 +110,10 @@ class IndexController extends AdminController implements EventedControllerInterf
         }
 
         // allow to alter settings via an event
+        $settingsEvent = new IndexActionSettingsEvent($settings->getAllParameters());
+        $this->eventDispatcher->dispatch(AdminEvents::INDEX_ACTION_SETTINGS, $settingsEvent);
+        $settings->initialize($settingsEvent->getSettings());
+
         $this->eventDispatcher->dispatch(AdminEvents::INDEX_SETTINGS, new IndexSettingsEvent($settings));
 
         $view->settings = $settings;

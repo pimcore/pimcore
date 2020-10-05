@@ -16,6 +16,9 @@ namespace Pimcore\Templating\HelperBroker;
 
 use Pimcore\Templating\PhpEngine;
 
+/**
+ * @deprecated
+ */
 class DocumentMethod implements HelperBrokerInterface
 {
     /**

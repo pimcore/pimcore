@@ -98,6 +98,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @var ViewModelInterface|null
+     *
+     * @deprecated
      */
     protected $view;
 
@@ -514,6 +516,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * @param ViewModelInterface $view
      *
      * @return $this
+     *
+     * @deprecated
      */
     public function setView($view)
     {
@@ -524,6 +528,8 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @return ViewModelInterface
+     *
+     * @deprecated
      */
     public function getView()
     {

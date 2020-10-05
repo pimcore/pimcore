@@ -32,15 +32,18 @@ Brick-specific configurations are passed using the `params` configuration (see a
 
 <div class="code-section">
 
+```twig
+<div>
+{{ pimcore_area('myArea', { 'type' : 'gallery-single-images' }) }}
+</div>
+```
+
 ```php
 <div>
     <?= $this->area('myArea', ['type' => 'gallery-single-images']); ?>
 </div>
 ```
 
-```twig
-{{ pimcore_area('myArea', { 'type' : 'gallery-single-images' }) }}
-```
 </div>
 
 

@@ -415,7 +415,7 @@ class Layout
     /**
      * Override point for Enriching the layout definition before the layout is returned to the admin interface.
      *
-     * @param Model\DataObject\Concrete $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $context additional contextual data
      */
     public function enrichLayoutDefinition($object, $context = [])

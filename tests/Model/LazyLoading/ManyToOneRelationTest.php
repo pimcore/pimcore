@@ -212,6 +212,26 @@ class ManyToOneRelationTest extends AbstractLazyLoadingTest
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
 
+        //save only non localized field and check if relation loads correctly
+        $object = LazyLoading::getById($object->getId(), true);
+        $collection = $object->getFieldcollection();
+        /** @var Fieldcollection\Data\LazyLoadingLocalizedTest $firstItem */
+        $firstItem = $collection->get(0);
+        $firstItem->setNormalInput(uniqid());
+        $collection->setItems([$firstItem]);
+
+        $object->save();
+
+        $object = LazyLoading::getById($object->getId(), true);
+
+        //load relation and check if relation loads correctly
+        $collection = $object->getFieldcollection();
+        /** @var Fieldcollection\Data\LazyLoadingLocalizedTest $firstItem */
+        $firstItem = $collection->get(0);
+        $loadedUntouchedRelation = $firstItem->getLRelation();
+
+        $this->assertEquals($relationObject->getId(), $loadedUntouchedRelation->getId(), 'relations not loaded properly');
+
         foreach (['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
             $messagePrefix = "Testing object-type $objectType: ";
 

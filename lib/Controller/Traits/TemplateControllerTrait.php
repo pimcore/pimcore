@@ -20,10 +20,15 @@ namespace Pimcore\Controller\Traits;
 use Pimcore\Controller\TemplateControllerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @deprecated
+ */
 trait TemplateControllerTrait
 {
     /**
      * @inheritDoc
+     *
+     * @deprecated
      */
     public function setViewAutoRender(Request $request, bool $autoRender, string $engine = null)
     {

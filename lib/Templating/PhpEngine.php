@@ -124,6 +124,8 @@ use Symfony\Component\Templating\Storage\Storage;
  * @property Document $document
  * @property bool $editmode
  * @property GlobalVariables $app
+ *
+ * @deprecated since 6.8.0 and will be removed in Pimcore 7.
  */
 class PhpEngine extends BasePhpEngine
 {
@@ -201,6 +203,8 @@ class PhpEngine extends BasePhpEngine
      * Get the current view model
      *
      * @return ViewModelInterface|null
+     *
+     * @deprecated
      */
     public function getViewModel()
     {
@@ -219,6 +223,8 @@ class PhpEngine extends BasePhpEngine
      * @param mixed|null $default
      *
      * @return mixed|null
+     *
+     * @deprecated
      */
     public function getViewParameter($name, $default = null)
     {

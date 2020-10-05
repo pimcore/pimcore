@@ -14,24 +14,29 @@
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
-use Pimcore\Templating\GlobalVariables;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Lock\Store\FlockStore;
 
 /**
  * @deprecated
  */
-class PimcoreGlobalTemplatingVariablesPass implements CompilerPassInterface
+class LockStoragePass implements CompilerPassInterface
 {
     /**
-     * @param ContainerBuilder $container
+     * @inheritDoc
      */
     public function process(ContainerBuilder $container)
     {
-        // set templating globals to our implementation
-        if ($container->hasDefinition('templating.globals')) {
-            $definition = $container->getDefinition('templating.globals');
-            $definition->setClass(GlobalVariables::class);
+        $pdoStoreClassName = 'Symfony\Component\Lock\Store\PdoStore';
+        if(!class_exists($pdoStoreClassName)) {
+            // Symfony 3.4 compatibility: use Flock instead of PdoStore
+            $definition = $container->getDefinition('Symfony\Component\Lock\PersistingStoreInterface');
+            if($definition->getClass() === $pdoStoreClassName) {
+                // ensure it wasn't already overridden
+                $definition->setArguments([]);
+                $definition->setClass(FlockStore::class);
+            }
         }
     }
 }

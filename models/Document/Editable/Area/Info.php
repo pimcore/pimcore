@@ -202,6 +202,8 @@ class Info
 
     /**
      * @return ViewModelInterface
+     *
+     * @deprecated
      */
     public function getView()
     {
@@ -212,6 +214,8 @@ class Info
      * @param ViewModelInterface $view
      *
      * @return $this
+     *
+     * @deprecated
      */
     public function setView(ViewModelInterface $view)
     {
