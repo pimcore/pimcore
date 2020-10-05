@@ -157,8 +157,6 @@ class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFramewor
 
     public function __construct(array $options, FormFactoryInterface $formFactory)
     {
-        @trigger_error(sprintf('The "%s" class is deprecated since v6.8.0 and will be removed in 7. Use "%s" instead. The OGone Payment integration will be moved to package "pimcore/payment-ogone" in Pimcore 7.', OGone::class, "Pimcore\EcommerceFramework\Payment\OGone"), E_USER_DEPRECATED);
-
         $this->formFactory = $formFactory;
         $this->authorizedData = [];
         $options['encryptionType'] = isset($options['encryptionType']) ? $options['encryptionType'] : 'SHA256';
