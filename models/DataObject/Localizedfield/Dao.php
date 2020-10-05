@@ -172,7 +172,7 @@ class Dao extends Model\Dao\AbstractDao
                             || (((!$container instanceof DataObject\Fieldcollection\Definition || $container instanceof DataObject\Objectbrick\Definition)
                                     && $this->model->isLanguageDirty($language))
                                 || $saveLocalizedRelations)) {
-                            if ($forceUpdate) {
+                            if ($saveLocalizedRelations) {
                                 $childParams['forceSave'] = true;
                             }
                             $fd->save($this->model, $childParams);
