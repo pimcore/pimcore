@@ -373,8 +373,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
         if (count($subObjectIds) > 0) {
             $this->commitBatchToIndex();
-            $this->fillupPreparationQueue($object);
         }
+
+        $this->fillupPreparationQueue($object);
     }
 
     protected function doUpdateIndex($objectId, $data = null, $metadata = null)

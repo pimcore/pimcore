@@ -20,7 +20,7 @@ class Version20180924111736 extends AbstractPimcoreMigration
     {
         $db = Db::get();
         try {
-            $db->query("INSERT INTO users_permission_definitions VALUES('qr_codes');");
+            $db->query("INSERT INTO users_permission_definitions (`key`) VALUES('qr_codes');");
         } catch (\Exception $e) {
         }
     }

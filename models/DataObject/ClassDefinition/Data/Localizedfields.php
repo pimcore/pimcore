@@ -1161,6 +1161,9 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                                     throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
                                 }
                             } else {
+                                if ($e instanceof Model\Element\ValidationException) {
+                                    throw $e;
+                                }
                                 $exceptionClass = get_class($e);
                                 throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
                             }
@@ -1461,7 +1464,12 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                             continue;
                         }
 
-                        $dataForResource = $fd->marshal($elementData, $object, ['raw' => true]);
+                        $childParams = ['raw' => true];
+                        if ($params['blockmode'] ?? false) {
+                            $childParams['blockmode'] = true;
+                        }
+
+                        $dataForResource = $fd->marshal($elementData, $object, $childParams);
 
                         $languageResult[$elementName] = $dataForResource;
                     }
@@ -1499,7 +1507,11 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
                         continue;
                     }
 
-                    $dataFromResource = $fd->unmarshal($elementData, $object, ['raw' => true]);
+                    $childParams = ['raw' => true];
+                    if ($params['blockmode'] ?? false) {
+                        $childParams['blockmode'] = true;
+                    }
+                    $dataFromResource = $fd->unmarshal($elementData, $object, $childParams);
 
                     $languageResult[$elementName] = $dataFromResource;
                 }
