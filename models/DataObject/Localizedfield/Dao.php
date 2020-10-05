@@ -409,6 +409,7 @@ class Dao extends Model\Dao\AbstractDao
     /**
      * @param bool $deleteQuery
      * @param bool $isUpdate
+     *
      * @return bool force update
      */
     public function delete($deleteQuery = true, $isUpdate = true)
@@ -518,12 +519,12 @@ class Dao extends Model\Dao\AbstractDao
             if ($container instanceof DataObject\Fieldcollection\Definition) {
                 return true;
             }
-
         } else {
             $sql = 'ownertype = "localizedfield" AND ownername = "localizedfield" and src_id = '.$this->model->getObject(
                 )->getId().$dirtyLanguageCondition;
             $this->db->deleteWhere('object_relations_'.$this->model->getObject()->getClassId(), $sql);
         }
+
         return false;
     }
 

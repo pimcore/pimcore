@@ -83,6 +83,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @internal
+     *
      * @var bool
      */
     protected $supportsContentMaster = true;
@@ -758,13 +759,13 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @internal
+     *
      * @return bool
      */
     public function supportsContentMaster(): bool
     {
         return $this->supportsContentMaster;
     }
-
 
     /**
      * Validates if there is a missing value for required editable

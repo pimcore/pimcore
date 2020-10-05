@@ -259,7 +259,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         $firstItem = $collection->get(0);
         $loadedRelations = $firstItem->getLRelations();
 
-        $this->assertEquals(self::RELATION_COUNT, count($loadedRelations), "expected that original relations count is the same as the new one");
+        $this->assertEquals(self::RELATION_COUNT, count($loadedRelations), 'expected that original relations count is the same as the new one');
 
         //save only non localized field and check if relation loads correctly
         $firstItem->setNormalInput(uniqid());
@@ -275,7 +275,7 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         $firstItem = $collection->get(0);
         $loadedRelations = $firstItem->getLRelations();
 
-        $this->assertEquals(self::RELATION_COUNT, count($loadedRelations), "expected that original relations count is the same as the new one");
+        $this->assertEquals(self::RELATION_COUNT, count($loadedRelations), 'expected that original relations count is the same as the new one');
 
         foreach (['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
             $messagePrefix = "Testing object-type $objectType: ";
@@ -290,7 +290,6 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
 
             //serialize data object and check for (not) wanted content in serialized string
             $this->checkSerialization($object, $messagePrefix, false);
-
 
             if ($objectType == 'parent') {
                 $item = $collection->get(0);
@@ -346,7 +345,6 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
 
         $object->getBricks()->setLazyLoadingLocalizedTest($brick);
         $object->save();
-
 
         $brick->setLInput(uniqid());
         $object->save();
