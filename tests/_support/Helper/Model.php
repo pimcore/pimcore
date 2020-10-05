@@ -658,6 +658,8 @@ class Model extends AbstractDefinitionHelper
             $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
             $rootPanel->addChild($panel);
 
+            $panel->addChild($this->createDataChild('input', 'normalInput'));
+
             $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
             $lFields->setName('localizedfields');
 

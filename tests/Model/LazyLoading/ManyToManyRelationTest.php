@@ -275,6 +275,8 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         $firstItem = $collection->get(0);
         $lRelations2 = $firstItem->getLRelations();
 
+        $this->assertEquals(count($lRelations1), count($lRelations2), "expected that original relations count is the same as the new one");
+
         foreach (['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
             $messagePrefix = "Testing object-type $objectType: ";
 
