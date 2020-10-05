@@ -24,6 +24,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\Image;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Lock\Factory as LockFactory;
 
 class ImageThumbnail
 {
@@ -126,7 +127,8 @@ class ImageThumbnail
 
                 if (!is_file($path)) {
                     $lockKey = 'video_image_thumbnail_' . $this->asset->getId() . '_' . $timeOffset;
-                    Model\Tool\Lock::acquire($lockKey);
+                    $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($lockKey);
+                    $lock->acquire(true);
 
                     // after we got the lock, check again if the image exists in the meantime - if not - generate it
                     if (!is_file($path)) {
@@ -134,7 +136,7 @@ class ImageThumbnail
                         $generated = true;
                     }
 
-                    Model\Tool\Lock::release($lockKey);
+                    $lock->release();
                 }
 
                 if ($this->getConfig()) {

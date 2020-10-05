@@ -21,7 +21,6 @@ use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Redirect;
 use Pimcore\Model\Site;
-use Pimcore\Model\Tool\Lock;
 use Pimcore\Routing\Redirect\RedirectUrlPartResolver;
 use Pimcore\Tool;
 use Psr\Log\LoggerAwareInterface;
@@ -29,6 +28,8 @@ use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Lock\Factory as LockFactory;
+use Symfony\Component\Lock\LockInterface;
 
 class RedirectHandler implements LoggerAwareInterface
 {
@@ -57,15 +58,21 @@ class RedirectHandler implements LoggerAwareInterface
     private $config;
 
     /**
+     * @var null|LockInterface
+     */
+    private $lock = null;
+
+    /**
      * @param RequestHelper $requestHelper
      * @param SiteResolver $siteResolver
      * @param Config $config
      */
-    public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver, Config $config)
+    public function __construct(RequestHelper $requestHelper, SiteResolver $siteResolver, Config $config, LockFactory $lockFactory)
     {
         $this->requestHelper = $requestHelper;
         $this->siteResolver = $siteResolver;
         $this->config = $config;
+        $this->lock = $lockFactory->createLock(self::class);
     }
 
     /**
@@ -241,7 +248,7 @@ class RedirectHandler implements LoggerAwareInterface
         $cacheKey = 'system_route_redirect';
         if (($this->redirects = Cache::load($cacheKey)) === false) {
             // acquire lock to avoid concurrent redirect cache warm-up
-            Lock::acquire($cacheKey);
+            $this->lock->acquire(true);
 
             //check again if redirects are cached to avoid re-warming cache
             if (($this->redirects = Cache::load($cacheKey)) === false) {
@@ -259,7 +266,7 @@ class RedirectHandler implements LoggerAwareInterface
                 }
             }
 
-            Lock::release($cacheKey);
+            $this->lock->release();
         }
 
         if (!is_array($this->redirects)) {

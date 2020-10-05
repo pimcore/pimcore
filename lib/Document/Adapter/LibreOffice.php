@@ -18,6 +18,7 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Console;
+use Symfony\Component\Lock\Factory as LockFactory;
 
 class LibreOffice extends Ghostscript
 {
@@ -139,17 +140,16 @@ class LibreOffice extends Ghostscript
             File::mkdir(dirname($pdfFile));
         }
 
-        $lockKey = 'soffice';
-
+        $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock('soffice');
         if (!file_exists($pdfFile)) {
 
             // a list of all available filters is here:
             // http://cgit.freedesktop.org/libreoffice/core/tree/filter/source/config/fragments/filters
             $cmd = self::getLibreOfficeCli() . ' --headless --nologo --nofirststartwizard --norestore --convert-to pdf:writer_web_pdf_Export --outdir ' . escapeshellarg(PIMCORE_SYSTEM_TEMP_DIRECTORY) . ' ' . escapeshellarg($path);
 
-            Model\Tool\Lock::acquire($lockKey); // avoid parallel conversions
+            $lock->acquire(true);
             $out = Console::exec($cmd, PIMCORE_LOG_DIRECTORY . '/libreoffice-pdf-convert.log', 240);
-            Model\Tool\Lock::release($lockKey);
+            $lock->release();
 
             Logger::debug('LibreOffice Output was: ' . $out);
 

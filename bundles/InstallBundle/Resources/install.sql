@@ -333,6 +333,14 @@ CREATE TABLE `locks` (
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `lock_keys`;
+CREATE TABLE `lock_keys` (
+  `key_id` varchar(64) NOT NULL,
+  `key_token` varchar(44) NOT NULL,
+  `key_expiration` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`key_id`)
+) DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `notes`;
 CREATE TABLE `notes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,

@@ -23,6 +23,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset\Image;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Lock\Factory as LockFactory;
 
 class ImageThumbnail
 {
@@ -92,14 +93,14 @@ class ImageThumbnail
                         \Pimcore\File::mkdir(dirname($path));
                     }
 
-                    $lockKey = 'document-thumbnail-' . $this->asset->getId() . '-' . $this->page;
+                    $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock('document-thumbnail-' . $this->asset->getId() . '-' . $this->page);
 
-                    if (!is_file($path) && !Model\Tool\Lock::isLocked($lockKey)) {
-                        Model\Tool\Lock::lock($lockKey);
+                    if (!is_file($path) && !$lock->isAcquired()) {
+                        $lock->acquire();
                         $converter->saveImage($path, $this->page);
                         $generated = true;
-                        Model\Tool\Lock::release($lockKey);
-                    } elseif (Model\Tool\Lock::isLocked($lockKey)) {
+                        $lock->release();
+                    } elseif ($lock->isAcquired()) {
                         $this->filesystemPath = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/please-wait.png';
 
                         return;

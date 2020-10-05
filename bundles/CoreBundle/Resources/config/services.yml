@@ -202,3 +202,22 @@ services:
     Pimcore\Bundle\CoreBundle\Request\ParamConverter\DataObjectParamConverter:
         tags:
             - { name: request.param_converter, priority: -2, converter: data_object_converter }
+
+    Symfony\Component\Lock\PersistingStoreInterface:
+        class: Symfony\Component\Lock\Store\PdoStore
+        arguments:
+            - '@database_connection'
+
+    Symfony\Component\Lock\Store\RetryTillSaveStore:
+        arguments:
+            - '@Symfony\Component\Lock\PersistingStoreInterface'
+            - 1000
+
+    Symfony\Component\Lock\LockFactory:
+        public: true
+        class: Symfony\Component\Lock\Factory
+        arguments:
+            - '@Symfony\Component\Lock\Store\RetryTillSaveStore'
+
+    Symfony\Component\Lock\Factory:
+        alias: Symfony\Component\Lock\LockFactory

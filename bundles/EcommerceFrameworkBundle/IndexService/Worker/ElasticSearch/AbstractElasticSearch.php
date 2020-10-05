@@ -25,8 +25,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
-use Pimcore\Model\Tool\Lock;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Lock\Factory as LockFactory;
+use Symfony\Component\Lock\LockInterface;
 
 /**
  * @property ElasticSearch $tenantConfig
@@ -77,16 +78,28 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     protected $indexStoreMetaData = [];
 
     /**
+     * @var LockInterface|null
+     */
+    protected $lock = null;
+
+    /**
+     * @var LockFactory|null
+     */
+    protected $lockFactory = null;
+
+    /**
+     * @param LockFactory $lockFactory
      * @param ElasticSearchConfigInterface $tenantConfig
      * @param ConnectionInterface $db
      * @param EventDispatcherInterface $eventDispatcher
      * @param string|null $workerMode
      */
-    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
+    public function __construct(LockFactory $lockFactory, ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
 
         $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
+        $this->lockFactory = $lockFactory;
     }
 
     /**
@@ -1040,6 +1053,15 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      */
     protected $lastLockLogTimestamp = 0;
 
+    protected function getLock(): LockInterface
+    {
+        if(!$this->lock) {
+            $this->lock = $this->lockFactory->createLock(self::REINDEXING_LOCK_KEY, 60 * 10);
+        }
+
+        return $this->lock;
+    }
+
     /**
      * Verify if the index is currently locked.
      *
@@ -1051,8 +1073,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      */
     protected function checkIndexLock(bool $throwException = true): bool
     {
-        if (Lock::isLocked(self::REINDEXING_LOCK_KEY, 60 * 10)) {  //lock expires after 10 minutes.
-
+        if ($this->getLock()->isAcquired()) {
             $errorMessage = sprintf('Index is currently locked by "%s" as reindex is in progress.', self::REINDEXING_LOCK_KEY);
             if ($throwException) {
                 throw new \Exception($errorMessage);
@@ -1072,12 +1093,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
     protected function activateIndexLock()
     {
-        Lock::lock(self::REINDEXING_LOCK_KEY);
+        $this->getLock()->acquire();
     }
 
     protected function releaseIndexLock()
     {
-        Lock::release(self::REINDEXING_LOCK_KEY);
+        $this->getLock()->release();
         $this->lastLockLogTimestamp = 0;
     }
 }

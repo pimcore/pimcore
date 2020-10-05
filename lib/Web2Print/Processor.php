@@ -23,9 +23,16 @@ use Pimcore\Model\Document;
 use Pimcore\Tool;
 use Pimcore\Web2Print\Processor\PdfReactor8;
 use Pimcore\Web2Print\Processor\WkHtmlToPdf;
+use Symfony\Component\Lock\Factory as LockFactory;
+use Symfony\Component\Lock\LockInterface;
 
 abstract class Processor
 {
+    /**
+     * @var LockInterface|null
+     */
+    private static $lock = null;
+
     /**
      * @return PdfReactor8|WkHtmlToPdf
      *
@@ -99,8 +106,9 @@ abstract class Processor
 
         $document = $this->getPrintDocument($documentId);
 
+        $lock = self::getLock($document);
         // check if there is already a generating process running, wait if so ...
-        Model\Tool\Lock::acquire($document->getLockKey(), 0);
+        $lock->acquire(true);
 
         $pdf = null;
 
@@ -127,7 +135,7 @@ abstract class Processor
             $document->save();
         }
 
-        Model\Tool\Lock::release($document->getLockKey());
+        $lock->release();
         Model\Tool\TmpStore::delete($document->getLockKey());
 
         @unlink($this->getJobConfigFile($documentId));
@@ -241,7 +249,8 @@ abstract class Processor
         if (empty($document)) {
             throw new \Exception('Document with id ' . $documentId . ' not found.');
         }
-        Model\Tool\Lock::release($document->getLockKey());
+
+        self::getLock($document)->release();
         Model\Tool\TmpStore::delete($document->getLockKey());
     }
 
@@ -265,6 +274,15 @@ abstract class Processor
         $html = \Pimcore\Helper\Mail::setAbsolutePaths($html, $document, $hostUrl);
 
         return $html;
+    }
+
+    protected function getLock(Document\PrintAbstract $document): LockInterface
+    {
+        if(!self::$lock) {
+            self::$lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($document->getLockKey());
+        }
+
+        return self::$lock;
     }
 
     /**
