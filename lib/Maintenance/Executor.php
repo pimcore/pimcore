@@ -131,7 +131,7 @@ final class Executor implements ExecutorInterface
     {
         $item = TmpStore::get($this->pidFileName);
 
-        if ($date = $item->getData()) {
+        if ($item instanceof TmpStore && $date = $item->getData()) {
             return (int) $date;
         }
 
