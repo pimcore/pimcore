@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @deprecated
+ * @deprecated since v6.8.0 and will be removed in Pimcore 7.
  */
 class PayPal extends AbstractPayment
 {
@@ -56,6 +56,8 @@ class PayPal extends AbstractPayment
 
     public function __construct(array $options)
     {
+        @trigger_error(sprintf('The "%s" class is deprecated since v6.8.0 and will be removed in 7.', PayPal::class), E_USER_DEPRECATED);
+
         $this->processOptions(
             $this->configureOptions(new OptionsResolver())->resolve($options)
         );
