@@ -26,6 +26,7 @@ services:
     pimcore.controller.config.controller_data_provider: '@Pimcore\Controller\Config\ControllerDataProvider'
     Symfony\Bridge\Twig\Extension\WebLinkExtension: '@twig.extension.weblink'
     Doctrine\Common\Persistence\ConnectionRegistry: '@doctrine'
+    Doctrine\Persistence\ConnectionRegistry: '@doctrine'
 
     # this block is probably not needed as services are only used internally
     pimcore.service.context.pimcore_context_guesser: '@Pimcore\Http\Context\PimcoreContextGuesser'
