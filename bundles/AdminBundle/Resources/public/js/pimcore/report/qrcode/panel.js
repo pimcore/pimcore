@@ -12,6 +12,10 @@
  */
 
 pimcore.registerNS("pimcore.report.qrcode.panel");
+
+/**
+ * @deprecated
+ */
 pimcore.report.qrcode.panel = Class.create({
 
     initialize: function () {
@@ -88,6 +92,9 @@ pimcore.report.qrcode.panel = Class.create({
                             text: t("add"),
                             iconCls: "pimcore_icon_add",
                             handler: this.addField.bind(this)
+                        }, '->', {
+                            xtype: 'tbtext',
+                            text: '<b>(' + t('deprecated') + ')</b>'
                         }
                     ]
                 },

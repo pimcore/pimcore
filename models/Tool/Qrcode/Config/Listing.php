@@ -20,6 +20,7 @@ namespace Pimcore\Model\Tool\Qrcode\Config;
 use Pimcore\Model;
 
 /**
+ * @deprecated
  * @method \Pimcore\Model\Tool\Qrcode\Config\Listing\Dao getDao()
  * @method \Pimcore\Model\Tool\Qrcode\Config[] load()
  */
