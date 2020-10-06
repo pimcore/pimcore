@@ -17,6 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\GeneratorBundle\Model;
 
+/**
+ * @deprecated
+ */
 class Bundle extends BaseBundle
 {
     public function shouldGenerateDependencyInjectionDirectory()
