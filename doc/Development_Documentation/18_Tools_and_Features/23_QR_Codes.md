@@ -1,4 +1,6 @@
-# QR codes
+# QR codes (deprecated)
+
+> QR Codes have been deprecated and will be removed in Pimcore 7.
 
 ## General 
 

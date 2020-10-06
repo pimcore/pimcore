@@ -12,6 +12,10 @@
  */
 
 pimcore.registerNS("pimcore.report.qrcode.item");
+
+/**
+ * @deprecated
+ */
 pimcore.report.qrcode.item = Class.create({
 
 

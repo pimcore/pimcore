@@ -21,6 +21,7 @@ use Pimcore\Model;
 use Pimcore\Model\Tool\Qrcode\Config;
 
 /**
+ * @deprecated
  * @property \Pimcore\Model\Tool\Qrcode\Config\Listing $model
  */
 class Dao extends Model\Dao\PhpArrayTable
