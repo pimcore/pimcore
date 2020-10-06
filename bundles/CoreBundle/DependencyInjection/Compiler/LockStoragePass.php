@@ -29,10 +29,10 @@ class LockStoragePass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $pdoStoreClassName = 'Symfony\Component\Lock\Store\PdoStore';
-        if(!class_exists($pdoStoreClassName)) {
+        if (!class_exists($pdoStoreClassName)) {
             // Symfony 3.4 compatibility: use Flock instead of PdoStore
             $definition = $container->getDefinition('Symfony\Component\Lock\PersistingStoreInterface');
-            if($definition->getClass() === $pdoStoreClassName) {
+            if ($definition->getClass() === $pdoStoreClassName) {
                 // ensure it wasn't already overridden
                 $definition->setArguments([]);
                 $definition->setClass(FlockStore::class);

@@ -278,7 +278,7 @@ abstract class Processor
 
     protected function getLock(Document\PrintAbstract $document): LockInterface
     {
-        if(!self::$lock) {
+        if (!self::$lock) {
             self::$lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock($document->getLockKey());
         }
 

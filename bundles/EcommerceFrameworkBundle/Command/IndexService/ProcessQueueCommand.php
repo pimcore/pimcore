@@ -128,7 +128,7 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
 
     protected function getLock(InputInterface $input): LockInterface
     {
-        if(!$this->lock) {
+        if (!$this->lock) {
             $lockTimeoutInSeconds = null;
             if ($lockTimeoutInMinutes = (int) $input->getOption('lock-timeout')) {
                 $lockTimeoutInSeconds = $lockTimeoutInMinutes * 60;

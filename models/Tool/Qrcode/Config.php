@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @deprecated
+ *
  * @method \Pimcore\Model\Tool\Qrcode\Config\Dao getDao()
  * @method void delete()
  * @method void save()

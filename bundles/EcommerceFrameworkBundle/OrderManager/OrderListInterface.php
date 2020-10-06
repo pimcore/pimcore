@@ -33,6 +33,7 @@ interface OrderListInterface extends SeekableIterator, Countable, ArrayAccess, A
 
     /**
      * @deprecated
+     *
      * @return QueryBuilder
      */
     public function getQuery();

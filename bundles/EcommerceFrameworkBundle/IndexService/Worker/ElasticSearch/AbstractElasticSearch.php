@@ -1056,7 +1056,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
     protected function getLock(): LockInterface
     {
-        if(!$this->lock) {
+        if (!$this->lock) {
             $this->lock = $this->lockFactory->createLock(self::REINDEXING_LOCK_KEY, 60 * 10);
         }
 

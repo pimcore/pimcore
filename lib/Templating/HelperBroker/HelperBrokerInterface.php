@@ -17,7 +17,7 @@ namespace Pimcore\Templating\HelperBroker;
 use Pimcore\Templating\PhpEngine;
 
 /**
- * @deprecated 
+ * @deprecated
  */
 interface HelperBrokerInterface
 {

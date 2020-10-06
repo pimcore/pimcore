@@ -165,6 +165,7 @@ interface ConnectionInterface extends Connection
 
     /**
      * @deprecated
+     *
      * @return ZendDbCompatibleQueryBuilder
      */
     public function select();

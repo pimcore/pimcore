@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @deprecated use Symfony Lock component instead
+ *
  * @method \Pimcore\Model\Tool\Lock\Dao getById(string $key)
  * @method \Pimcore\Model\Tool\Lock\Dao getDao()
  */
