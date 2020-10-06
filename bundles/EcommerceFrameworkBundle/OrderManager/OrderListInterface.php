@@ -32,6 +32,7 @@ interface OrderListInterface extends SeekableIterator, Countable, ArrayAccess, A
     const LIST_TYPE_ORDER_ITEM = 'item';
 
     /**
+     * @deprecated
      * @return QueryBuilder
      */
     public function getQuery();

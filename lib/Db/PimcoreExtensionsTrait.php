@@ -504,6 +504,7 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
      * Returns a ZF1 compatible query builder
      * To use the standard Doctrine QueryBuilder, please use $dbal->createQueryBuilder() instead
      *

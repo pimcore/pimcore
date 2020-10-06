@@ -41,6 +41,9 @@ use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Zend\Paginator\Adapter\AdapterInterface;
 
+/**
+ * @deprecated
+ */
 class PaginationAdapter implements AdapterInterface
 {
     /**
