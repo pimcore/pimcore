@@ -27,6 +27,7 @@ use Symfony\Component\Templating\EngineInterface;
  *
  * @see https://payment-services.ingenico.com/int/en/ogone/support/guides/integration%20guides/e-commerce/introduction
  *
+ * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-mpay24-seamless" in Pimcore 7.
  */
 class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
