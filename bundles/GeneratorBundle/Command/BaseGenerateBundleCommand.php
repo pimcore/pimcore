@@ -15,6 +15,7 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
+ * @deprecated
  * Generates bundles.
  *
  * The following class is copied from \Sensio\Bundle\GeneratorBundle\Command\GenerateBundleCommand

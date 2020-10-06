@@ -21,6 +21,9 @@ use Symfony\Component\Console\Helper\FormatterHelper;
 use Symfony\Component\Console\Helper\QuestionHelper as BaseQuestionHelper;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @deprecated
+ */
 class QuestionHelper extends BaseQuestionHelper
 {
     public function writeGeneratorSummary(OutputInterface $output, $errors)

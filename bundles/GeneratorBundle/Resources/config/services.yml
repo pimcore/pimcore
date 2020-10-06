@@ -16,6 +16,8 @@ services:
 
     Pimcore\Bundle\GeneratorBundle\Command\GenerateBundleCommand:
         public: true
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
     Pimcore\Bundle\GeneratorBundle\Command\Helper\QuestionHelper:
         public: true
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
