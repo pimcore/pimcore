@@ -17,7 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Controller\Config;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
@@ -37,6 +38,11 @@ class ConfigNormalizer
     private $kernel;
 
     /**
+     * @var Inflector
+     */
+    private $inflector;
+
+    /**
      * @var array
      */
     private $routingDefaults = [];
@@ -52,6 +58,7 @@ class ConfigNormalizer
     public function __construct(KernelInterface $kernel)
     {
         $this->kernel = $kernel;
+        $this->inflector = InflectorFactory::create()->build();
     }
 
     public function setRoutingDefaults(array $routingDefaults)
@@ -165,7 +172,7 @@ class ConfigNormalizer
             return $this->routingDefaults['action'];
         }
 
-        return Inflector::camelize($action);
+        return $this->inflector->camelize($action);
     }
 
     /**

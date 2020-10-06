@@ -14,7 +14,8 @@
 
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler;
 
-use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManager;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
@@ -30,6 +31,16 @@ use Symfony\Component\Finder\Finder;
 
 class AreabrickPass implements CompilerPassInterface
 {
+    /**
+     * @var Inflector
+     */
+    private $inflector;
+
+    public function __construct()
+    {
+        $this->inflector = InflectorFactory::create()->build();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -256,7 +267,7 @@ class AreabrickPass implements CompilerPassInterface
      */
     protected function generateBrickId(\ReflectionClass $reflector)
     {
-        $id = Inflector::tableize($reflector->getShortName());
+        $id = $this->inflector->tableize($reflector->getShortName());
         $id = str_replace('_', '-', $id);
 
         return $id;
@@ -277,12 +288,12 @@ class AreabrickPass implements CompilerPassInterface
     protected function generateServiceId($bundleName, $subNamespace, $className)
     {
         $bundleName = str_replace('Bundle', '', $bundleName);
-        $bundleName = Inflector::tableize($bundleName);
+        $bundleName = $this->inflector->tableize($bundleName);
 
         if (!empty($subNamespace)) {
             $subNamespaceParts = [];
             foreach (explode('\\', $subNamespace) as $subNamespacePart) {
-                $subNamespaceParts[] = Inflector::tableize($subNamespacePart);
+                $subNamespaceParts[] = $this->inflector->tableize($subNamespacePart);
             }
 
             $subNamespace = implode('.', $subNamespaceParts) . '.';
@@ -290,7 +301,7 @@ class AreabrickPass implements CompilerPassInterface
             $subNamespace = '';
         }
 
-        $brickName = Inflector::tableize($className);
+        $brickName = $this->inflector->tableize($className);
 
         return sprintf('%s.area.brick.%s%s', $bundleName, $subNamespace, $brickName);
     }
