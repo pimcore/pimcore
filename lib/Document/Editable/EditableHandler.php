@@ -205,7 +205,6 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
     public function renderAreaFrontend(Info $info)
     {
         $editable = $info->getEditable();
-        $params = $info->getParams();
 
         /** @var ViewModelInterface $view */
         $view = $editable->getView();
@@ -218,16 +217,17 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
 
         $info->setRequest($request);
 
+        // call action
+        $this->handleBrickActionResult($brick->action($info));
+
         // assign parameters to view
+        $params = $info->getParams();
         $view->getParameters()->add($params);
         $view->getParameters()->add([
             'brick' => $info, // alias of `info` for compatibility reasons
             'info' => $info,
             'instance' => $brick,
         ]);
-
-        // call action
-        $this->handleBrickActionResult($brick->action($info));
 
         if (!$brick->hasViewTemplate()) {
             return;
