@@ -220,4 +220,5 @@ services:
             - '@Symfony\Component\Lock\Store\RetryTillSaveStore'
 
     Symfony\Component\Lock\Factory:
+        public: true
         alias: Symfony\Component\Lock\LockFactory
