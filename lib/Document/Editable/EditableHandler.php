@@ -208,13 +208,13 @@ class EditableHandler implements LoggerAwareInterface
 
         $info->setRequest($request);
 
+        // call action
+        $this->handleBrickActionResult($brick->action($info));
+
         $params = $info->getParams();
         $params['brick'] = $info;
         $params['info'] = $info;
         $params['instance'] = $brick;
-
-        // call action
-        $this->handleBrickActionResult($brick->action($info));
 
         if (!$brick->hasViewTemplate()) {
             return;

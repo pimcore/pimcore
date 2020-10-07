@@ -30,6 +30,7 @@ use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -55,6 +56,11 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
      */
     protected $twig;
 
+    /**
+     * @var array
+     */
+    protected $globalsStack = [];
+
     public function __construct(
         DocumentResolver $documentResolver,
         EditmodeResolver $editmodeResolver,
@@ -72,6 +78,7 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
     {
         return [
             KernelEvents::CONTROLLER => ['onKernelController', 90], // has to be after DocumentFallbackListener
+            KernelEvents::RESPONSE => 'onKernelResponse',
         ];
     }
 
@@ -82,10 +89,25 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
             return;
         }
 
+        $globals = $this->twig->getGlobals();
+        array_push($this->globalsStack, $globals);
+
         $document = $this->documentResolver->getDocument($request);
         $editmode = $this->editmodeResolver->isEditmode($request);
 
         $this->twig->addGlobal('document', $document);
         $this->twig->addGlobal('editmode', $editmode);
+    }
+
+    /**
+     * @param FilterResponseEvent $event
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        if(count($this->globalsStack)) {
+            $globals = array_pop($this->globalsStack);
+            $this->twig->addGlobal('document', $globals['document'] ?? null);
+            $this->twig->addGlobal('editmode', $globals['editmode'] ?? null);
+        }
     }
 }
