@@ -28,8 +28,6 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Webservice;
-use Pimcore\Templating\Model\ViewModel;
-use Pimcore\Templating\Model\ViewModelInterface;
 use Pimcore\Tool\HtmlUtils;
 
 /**
@@ -97,13 +95,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     protected $controller;
 
     /**
-     * @var ViewModelInterface|null
-     *
-     * @deprecated
-     */
-    protected $view;
-
-    /**
      * In Editmode or not
      *
      * @var bool
@@ -131,7 +122,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * @param int $documentId
      * @param array|null $config
      * @param string|null $controller
-     * @param ViewModel|null $view
+     * @param null $view
      * @param bool|null $editmode
      *
      * @return Editable
@@ -145,11 +136,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $editable->setName($name);
         $editable->setDocumentId($documentId);
         $editable->setController($controller);
-        if (!$view) {
-            // needed for the RESTImporter. For areabricks define a default implementation. Otherwise cannot find a tag handler.
-            $view = new ViewModel();
-        }
-        $editable->setView($view);
         $editable->setEditmode($editmode);
         $editable->setConfig($config);
 
@@ -513,30 +499,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * @param ViewModelInterface $view
-     *
-     * @return $this
-     *
-     * @deprecated
-     */
-    public function setView($view)
-    {
-        $this->view = $view;
-
-        return $this;
-    }
-
-    /**
-     * @return ViewModelInterface
-     *
-     * @deprecated
-     */
-    public function getView()
-    {
-        return $this->view;
-    }
-
-    /**
      * @return string
      */
     public function getRealName()
@@ -576,7 +538,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['controller', 'view', 'editmode', 'options', 'parentBlockNames', 'document'];
+        $blockedVars = ['controller', 'editmode', 'options', 'parentBlockNames', 'document'];
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
@@ -590,7 +552,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     public function __clone()
     {
         parent::__clone();
-        $this->view = null;
         $this->document = null;
     }
 
@@ -735,7 +696,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         unset($el['documentId']);
         unset($el['document']);
         unset($el['controller']);
-        unset($el['view']);
         unset($el['editmode']);
 
         $el = Webservice\Data\Mapper::toObject($el);

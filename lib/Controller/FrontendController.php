@@ -14,13 +14,10 @@
 
 namespace Pimcore\Controller;
 
-use Pimcore\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Http\Request\Resolver\DocumentResolver;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\Request\Resolver\ResponseHeaderResolver;
-use Pimcore\Http\Request\Resolver\ViewModelResolver;
 use Pimcore\Model\Document;
-use Pimcore\Templating\Model\ViewModel;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,26 +25,19 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 /**
- * @property ViewModel $view
  * @property Document|Document\PageSnippet $document
  * @property bool $editmode
  */
-abstract class FrontendController extends Controller implements EventedControllerInterface, TemplateControllerInterface
+abstract class FrontendController extends Controller implements EventedControllerInterface
 {
-    use TemplateControllerTrait;
-
     /**
-     * Expose view, document and editmode as properties and proxy them to request attributes through
+     * document and editmode as properties and proxy them to request attributes through
      * their resolvers.
      *
      * @inheritDoc
      */
     public function __get($name)
     {
-        if ('view' === $name) {
-            return $this->get(ViewModelResolver::class)->getViewModel();
-        }
-
         if ('document' === $name) {
             return $this->get(DocumentResolver::class)->getDocument();
         }
@@ -64,7 +54,7 @@ abstract class FrontendController extends Controller implements EventedControlle
      */
     public function __set($name, $value)
     {
-        $requestAttributes = ['view', 'document', 'editmode'];
+        $requestAttributes = ['document', 'editmode'];
         if (in_array($name, $requestAttributes)) {
             throw new \RuntimeException(sprintf(
                 'Property "%s" is a request attribute and can\'t be set on the controller instance',
@@ -80,8 +70,7 @@ abstract class FrontendController extends Controller implements EventedControlle
      */
     public function onKernelController(FilterControllerEvent $event)
     {
-        // enable view auto-rendering
-        $this->setViewAutoRender($event->getRequest(), true, 'php');
+
     }
 
     /**
@@ -91,38 +80,6 @@ abstract class FrontendController extends Controller implements EventedControlle
     {
     }
 
-    /**
-     * Enable view autorendering for the current request
-     *
-     * @param Request $request
-     * @param string $engine
-     *
-     * @deprecated
-     */
-    protected function enableViewAutoRender(Request $request = null, $engine = 'php')
-    {
-        if (null === $request) {
-            $request = $this->get('request_stack')->getCurrentRequest();
-        }
-
-        $this->setViewAutoRender($request, true, $engine);
-    }
-
-    /**
-     * Disable view autorendering for the current request
-     *
-     * @param Request $request
-     *
-     * @deprecated
-     */
-    protected function disableViewAutoRender(Request $request = null)
-    {
-        if (null === $request) {
-            $request = $this->get('request_stack')->getCurrentRequest();
-        }
-
-        $this->setViewAutoRender($request, false);
-    }
 
     /**
      * We don't have a response object at this point, but we can add headers here which will be
@@ -193,9 +150,6 @@ abstract class FrontendController extends Controller implements EventedControlle
      */
     public function renderTemplate($view, array $parameters = [], Response $response = null)
     {
-        $viewModel = $this->get(ViewModelResolver::class)->getViewModel();
-        $parameters = array_merge($viewModel->getAllParameters(), $parameters);
-
         return $this->render($view, $parameters, $response);
     }
 }

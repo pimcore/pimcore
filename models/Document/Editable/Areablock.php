@@ -18,7 +18,7 @@
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Document\Editable\Block\BlockName;
-use Pimcore\Document\Editable\EditableHandlerInterface;
+use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Logger;
@@ -233,12 +233,12 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @return EditableHandlerInterface
+     * @return EditableHandler
      */
     private function getEditableHandler()
     {
         // TODO inject area handler via DI when editables are built through container
-        return \Pimcore::getContainer()->get(EditableHandlerInterface::class);
+        return \Pimcore::getContainer()->get(EditableHandler::class);
     }
 
     /**
@@ -491,57 +491,55 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         // we need to set this here otherwise custom areaDir's won't work
         $this->config = $config;
 
-        if ($this->getView()) {
-            $translator = \Pimcore::getContainer()->get('translator');
-            if (!isset($config['allowed']) || !is_array($config['allowed'])) {
-                $config['allowed'] = [];
-            }
-
-            $availableAreas = $this->getEditableHandler()->getAvailableAreablockAreas($this, $config);
-            $availableAreas = $this->sortAvailableAreas($availableAreas, $config);
-
-            $config['types'] = $availableAreas;
-
-            if (isset($config['group']) && is_array($config['group'])) {
-                $groupingareas = [];
-                foreach ($availableAreas as $area) {
-                    $groupingareas[$area['type']] = $area['type'];
-                }
-
-                $groups = [];
-                foreach ($config['group'] as $name => $areas) {
-                    $n = $name;
-                    if ($this->editmode) {
-                        $n = $translator->trans($name, [], 'admin');
-                    }
-                    $groups[$n] = $areas;
-
-                    foreach ($areas as $area) {
-                        unset($groupingareas[$area]);
-                    }
-                }
-
-                if (count($groupingareas) > 0) {
-                    $uncatAreas = [];
-                    foreach ($groupingareas as $area) {
-                        $uncatAreas[] = $area;
-                    }
-                    $n = 'Uncategorized';
-                    if ($this->editmode) {
-                        $n = $translator->trans($n, [], 'admin');
-                    }
-                    $groups[$n] = $uncatAreas;
-                }
-
-                $config['group'] = $groups;
-            }
-
-            if (empty($config['limit'])) {
-                $config['limit'] = 1000000;
-            }
-
-            $this->config = $config;
+        $translator = \Pimcore::getContainer()->get('translator');
+        if (!isset($config['allowed']) || !is_array($config['allowed'])) {
+            $config['allowed'] = [];
         }
+
+        $availableAreas = $this->getEditableHandler()->getAvailableAreablockAreas($this, $config);
+        $availableAreas = $this->sortAvailableAreas($availableAreas, $config);
+
+        $config['types'] = $availableAreas;
+
+        if (isset($config['group']) && is_array($config['group'])) {
+            $groupingareas = [];
+            foreach ($availableAreas as $area) {
+                $groupingareas[$area['type']] = $area['type'];
+            }
+
+            $groups = [];
+            foreach ($config['group'] as $name => $areas) {
+                $n = $name;
+                if ($this->editmode) {
+                    $n = $translator->trans($name, [], 'admin');
+                }
+                $groups[$n] = $areas;
+
+                foreach ($areas as $area) {
+                    unset($groupingareas[$area]);
+                }
+            }
+
+            if (count($groupingareas) > 0) {
+                $uncatAreas = [];
+                foreach ($groupingareas as $area) {
+                    $uncatAreas[] = $area;
+                }
+                $n = 'Uncategorized';
+                if ($this->editmode) {
+                    $n = $translator->trans($n, [], 'admin');
+                }
+                $groups[$n] = $uncatAreas;
+            }
+
+            $config['group'] = $groups;
+        }
+
+        if (empty($config['limit'])) {
+            $config['limit'] = 1000000;
+        }
+
+        $this->config = $config;
 
         return $this;
     }

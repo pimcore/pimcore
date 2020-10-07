@@ -18,7 +18,6 @@ use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document\Editable;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Templating\Model\ViewModel;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
@@ -122,11 +121,6 @@ class EditableRenderer implements LoggerAwareInterface
             $editable = null;
 
             if ($document instanceof PageSnippet) {
-                $view = new ViewModel([
-                    'editmode' => $editmode,
-                    'document' => $document,
-                ]);
-
                 $editable = $document->getEditable($name);
 
                 // @TODO: BC layer, to be removed in v7.0
@@ -144,12 +138,11 @@ class EditableRenderer implements LoggerAwareInterface
                         $editable->load();
                     }
 
-                    $editable->setView($view);
                     $editable->setEditmode($editmode);
                     $editable->setConfig($config);
                     $editable->setDocument($document);
                 } else {
-                    $editable = Editable::factory($type, $name, $document->getId(), $config, null, $view, $editmode);
+                    $editable = Editable::factory($type, $name, $document->getId(), $config, null, null, $editmode);
                     $document->setEditable($name, $editable);
                 }
 

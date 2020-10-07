@@ -69,16 +69,6 @@ final class AdminEvents
     /**
      * The INDEX_SETTINGS event is triggered when the settings object is built for the index page.
      *
-     * @deprecated will be removed in Pimcore 7, use INDEX_ACTION_SETTINGS instead
-     * @Event("Pimcore\Event\Admin\IndexSettingsEvent")
-     *
-     * @var string
-     */
-    const INDEX_SETTINGS = 'pimcore.admin.index.settings';
-
-    /**
-     * The INDEX_SETTINGS event is triggered when the settings object is built for the index page.
-     *
      * @Event("Pimcore\Event\Admin\IndexActionSettingsEvent")
      *
      * @var string
