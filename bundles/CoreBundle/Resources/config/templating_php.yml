@@ -29,22 +29,6 @@ services:
             - { name: pimcore.templating.helper_broker, priority: 20 }
         deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
 
-    Pimcore\Templating\HelperBroker\DocumentEditable:
-        public: false
-        tags:
-            - { name: pimcore.templating.helper_broker, priority: 10 }
-        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
-
-    Pimcore\Templating\HelperBroker\DocumentTag:
-        alias: Pimcore\Templating\HelperBroker\DocumentEditable
-        deprecated: 'The "%alias_id%" service is deprecated. Use "Pimcore\Templating\HelperBroker\DocumentEditable" instead'
-
-    Pimcore\Templating\HelperBroker\DocumentMethod:
-        public: false
-        tags:
-            - { name: pimcore.templating.helper_broker, priority: 5 }
-        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
-
     #
     # VIEW HELPERS
     #
