@@ -48,9 +48,6 @@ class VoucherController extends FrontendController
         // enable inherited values
         AbstractObject::setGetInheritedValues(true);
         Localizedfield::setGetFallbackValues(true);
-
-        // enable view auto-rendering
-        $this->setViewAutoRender($event->getRequest(), true, 'twig');
     }
 
     /**

@@ -47,6 +47,4 @@ services:
 
     Pimcore\Http\Request\Resolver\TemplateVarsResolver: ~
 
-    Pimcore\Http\Request\Resolver\ViewModelResolver: ~
-
     Pimcore\Http\Request\Resolver\ResponseHeaderResolver: ~

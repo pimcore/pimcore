@@ -17,7 +17,7 @@
 
 namespace Pimcore\Model\Document\Editable;
 
-use Pimcore\Document\Editable\EditableHandlerInterface;
+use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -111,11 +111,7 @@ class Renderlet extends Model\Document\Editable
     {
         // TODO inject services via DI when tags are built through container
         $container = \Pimcore::getContainer();
-        $editableHandler = $container->get(EditableHandlerInterface::class);
-
-        if (!$editableHandler->supports($this->view)) {
-            return '';
-        }
+        $editableHandler = $container->get(EditableHandler::class);
 
         if (!$this->config['controller'] && !$this->config['action']) {
             if (is_null($this->config)) {
@@ -162,7 +158,6 @@ class Renderlet extends Model\Document\Editable
             }
 
             return $editableHandler->renderAction(
-                $this->view,
                 $this->config['controller'],
                 $this->config['action'],
                 $moduleOrBundle,
