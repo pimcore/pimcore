@@ -35,13 +35,13 @@ jobs:
   allow_failures:
     # Run PHPStan level 3 without baseline, but allow them to fail
     -
-      os: linux
-      php: 7.4
-      env:
-        - SYMFONY_VERSION="^3.4"
-        - TASK_TESTS=0
-        - TASK_STAN=1
-        - PHPSTAN_BASELINE=0
+#      os: linux
+#      php: 7.4
+#      env:
+#        - SYMFONY_VERSION="^3.4"
+#        - TASK_TESTS=0
+#        - TASK_STAN=1
+#        - PHPSTAN_BASELINE=0
     - os: linux
       php: 7.4
       env:
@@ -55,29 +55,29 @@ jobs:
 
   include:
     # Symfony 3.4 all tests
-    - name: "All Tests - PHP 7.2 | Symfony 3.4 | MariaDB 10.1"
-      os: linux
-      sudo: required
-      php: 7.2
-      env:
-        - SYMFONY_VERSION="^3.4"
-        - DATABASE_SERVER="mariadb-10.1"
+#    - name: "All Tests - PHP 7.2 | Symfony 3.4 | MariaDB 10.1"
+#      os: linux
+#      sudo: required
+#      php: 7.2
+#      env:
+#        - SYMFONY_VERSION="^3.4"
+#        - DATABASE_SERVER="mariadb-10.1"
 
-    - name: "All Tests - PHP 7.3 | Symfony 3.4 | MariaDB 10.2"
-      os: linux
-      sudo: required
-      php: 7.3
-      env:
-        - SYMFONY_VERSION="^3.4"
-        - DATABASE_SERVER="mariadb-10.2"
+#    - name: "All Tests - PHP 7.3 | Symfony 3.4 | MariaDB 10.2"
+#      os: linux
+#      sudo: required
+#      php: 7.3
+#      env:
+#        - SYMFONY_VERSION="^3.4"
+#        - DATABASE_SERVER="mariadb-10.2"
 
-    - name: "All Tests - PHP 7.4 | Symfony 3.4 | MySQL 5.7"
-      os: linux
-      sudo: required
-      php: 7.4
-      env:
-        - SYMFONY_VERSION="^3.4"
-        - DATABASE_SERVER="mysql-5.7"
+#    - name: "All Tests - PHP 7.4 | Symfony 3.4 | MySQL 5.7"
+#      os: linux
+#      sudo: required
+#      php: 7.4
+#      env:
+#        - SYMFONY_VERSION="^3.4"
+#        - DATABASE_SERVER="mysql-5.7"
 
     # Symfony 4.* all tests
     - name: "All Tests - PHP 7.2 | Symfony 4 | MariaDB 10.3"
@@ -109,42 +109,42 @@ jobs:
           - DATABASE_SERVER="mariadb-10.3"
 
     # Other Tests
-    - name: "REST Tests - PHP 7.2 | Symfony 3.4 | MySQL 8.0"
-      os: linux
-      sudo: required
-      php: 7.2
-      env:
-        - SYMFONY_VERSION="^3.4"
-        - PIMCORE_TEST_SUITE=Rest
-        - PIMCORE_TEST_ENV=http
-        - DATABASE_SERVER="mysql-8.0"
+#    - name: "REST Tests - PHP 7.2 | Symfony 3.4 | MySQL 8.0"
+#      os: linux
+#      sudo: required
+#      php: 7.2
+#      env:
+#        - SYMFONY_VERSION="^3.4"
+#        - PIMCORE_TEST_SUITE=Rest
+#        - PIMCORE_TEST_ENV=http
+#        - DATABASE_SERVER="mysql-8.0"
 
-    - name: "REST Tests - PHP 7.3 | Symfony 3.4"
-      os: linux
-      sudo: required
-      php: 7.3
-      env:
-        - SYMFONY_VERSION="^3.4"
-        - PIMCORE_TEST_SUITE=Rest
-        - PIMCORE_TEST_ENV=http
+#    - name: "REST Tests - PHP 7.3 | Symfony 3.4"
+#      os: linux
+#      sudo: required
+#      php: 7.3
+#      env:
+#        - SYMFONY_VERSION="^3.4"
+#        - PIMCORE_TEST_SUITE=Rest
+#        - PIMCORE_TEST_ENV=http
 
     # Test Stan - see https://github.com/phpstan/phpstan
-    - name: "PHPStan Level 3 - PHP 7.4 Symfony 3.4 baseline"
-      os: linux
-      php: 7.4
-      env:
-        - SYMFONY_VERSION="^3.4"
-        - TASK_TESTS=0
-        - TASK_STAN=1
+#    - name: "PHPStan Level 3 - PHP 7.4 Symfony 3.4 baseline"
+#      os: linux
+#      php: 7.4
+#      env:
+#        - SYMFONY_VERSION="^3.4"
+#        - TASK_TESTS=0
+#        - TASK_STAN=1
 
-    - name: "PHPStan Level 3 - PHP 7.4 Symfony 3.4"
-      os: linux
-      php: 7.4
-      env:
-        - SYMFONY_VERSION="^3.4"
-        - TASK_TESTS=0
-        - TASK_STAN=1
-        - PHPSTAN_BASELINE=0
+#    - name: "PHPStan Level 3 - PHP 7.4 Symfony 3.4"
+#      os: linux
+#      php: 7.4
+#      env:
+#        - SYMFONY_VERSION="^3.4"
+#        - TASK_TESTS=0
+#        - TASK_STAN=1
+#        - PHPSTAN_BASELINE=0
 
     # Test Stan Symfony ^4.0
     - name: "PHPStan Level 3 - PHP 7.4 Symfony 4 baseline"
