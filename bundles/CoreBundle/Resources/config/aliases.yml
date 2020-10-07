@@ -49,7 +49,6 @@ services:
     pimcore.service.request.document_resolver: '@Pimcore\Http\Request\Resolver\DocumentResolver'
     pimcore.service.request.template_resolver: '@Pimcore\Http\Request\Resolver\TemplateResolver'
     pimcore.service.request.template_vars_resolver: '@Pimcore\Http\Request\Resolver\TemplateVarsResolver'
-    pimcore.service.request.view_model_resolver: '@Pimcore\Http\Request\Resolver\ViewModelResolver'
     pimcore.service.request.response_header_resolver: '@Pimcore\Http\Request\Resolver\ResponseHeaderResolver'
     pimcore.service.request.output_timestamp_resolver: '@Pimcore\Http\Request\Resolver\OutputTimestampResolver'
 

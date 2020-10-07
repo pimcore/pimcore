@@ -18,7 +18,7 @@
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Document\Editable\Block\BlockName;
-use Pimcore\Document\Editable\EditableHandlerInterface;
+use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Model;
 use Pimcore\Tool\HtmlUtils;
 
@@ -69,7 +69,7 @@ class Area extends Model\Document\Editable
         $config = $this->getConfig();
 
         // TODO inject area handler via DI when tags are built through container
-        $editableHandler = \Pimcore::getContainer()->get(EditableHandlerInterface::class);
+        $editableHandler = \Pimcore::getContainer()->get(EditableHandler::class);
 
         // don't show disabled bricks
         if (!$editableHandler->isBrickEnabled($this, $config['type'] && $config['dontCheckEnabled'] != true)) {
