@@ -38,6 +38,8 @@ services:
         tags:
             - { name: monolog.logger, channel: init }
 
+    Pimcore\Bundle\CoreBundle\EventListener\Frontend\GlobalTemplateVariablesListener: ~
+
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\HardlinkCanonicalListener:
         tags:
             - { name: kernel.event_subscriber }
@@ -61,14 +63,9 @@ services:
     # CONTROLLER HANDLING
     #
 
-    Pimcore\Bundle\CoreBundle\EventListener\ControllerViewModelListener: ~
-
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\ContentTemplateListener: ~
 
     Pimcore\Bundle\CoreBundle\EventListener\EventedControllerListener: ~
-
-    Pimcore\Bundle\CoreBundle\EventListener\TemplateControllerListener: ~
-
 
     #
     # VARIOUS MODEL SPECIFIC LISTENERS

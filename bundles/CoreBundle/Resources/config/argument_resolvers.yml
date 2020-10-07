@@ -8,8 +8,6 @@ services:
 
     Pimcore\Controller\ArgumentValueResolver\DocumentValueResolver: ~
 
-    Pimcore\Controller\ArgumentValueResolver\ViewModelValueResolver: ~
-
     Pimcore\Controller\ArgumentValueResolver\EditmodeValueResolver: ~
 
     Pimcore\Controller\ArgumentValueResolver\TemplateVarsValueResolver: ~

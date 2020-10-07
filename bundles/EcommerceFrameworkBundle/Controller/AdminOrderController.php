@@ -26,8 +26,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Pr
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
 use Pimcore\Cache;
 use Pimcore\Controller\EventedControllerInterface;
-use Pimcore\Controller\TemplateControllerInterface;
-use Pimcore\Controller\Traits\TemplateControllerTrait;
 use Pimcore\Localization\IntlFormatter;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -49,10 +47,8 @@ use Zend\Paginator\Paginator;
  *
  * @Route("/admin-order")
  */
-class AdminOrderController extends AdminController implements EventedControllerInterface, TemplateControllerInterface
+class AdminOrderController extends AdminController implements EventedControllerInterface
 {
-    use TemplateControllerTrait;
-
     /**
      * @var OrderManagerInterface
      */
@@ -76,9 +72,6 @@ class AdminOrderController extends AdminController implements EventedControllerI
         Localizedfield::setGetFallbackValues(true);
 
         $this->orderManager = Factory::getInstance()->getOrderManager();
-
-        // enable view auto-rendering
-        $this->setViewAutoRender($event->getRequest(), true, 'twig');
     }
 
     /**
@@ -94,7 +87,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
      * @param Request $request
      * @param IntlFormatter $formatter
      *
-     * @return array
+     * @return Response
      */
     public function listAction(Request $request, IntlFormatter $formatter)
     {
@@ -181,13 +174,13 @@ class AdminOrderController extends AdminController implements EventedControllerI
         $paginator->setItemCountPerPage(10);
         $paginator->setCurrentPageNumber($request->get('page', 1));
 
-        return [
+        return $this->render('@PimcoreEcommerceFramework/admin_order/list.html.twig', [
             'paginator' => $paginator,
             'pimcoreUser' => \Pimcore\Tool\Admin::getCurrentUser(),
             'listPricingRule' => new \Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Listing(),
             'defaultCurrency' => Factory::getInstance()->getEnvironment()->getDefaultCurrency(),
             'formatter' => $formatter,
-        ];
+        ]);
     }
 
     /**
@@ -198,7 +191,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
      * @param IntlFormatter $formatter
      * @param LocaleServiceInterface $localeService
      *
-     * @return array
+     * @return Response
      */
     public function detailAction(
         Request $request,
@@ -360,7 +353,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
             ];
         }
 
-        return [
+        return $this->render('@PimcoreEcommerceFramework/admin_order/detail.html.twig', [
             'pimcoreUser' => \Pimcore\Tool\Admin::getCurrentUser(),
             'orderAgent' => $orderAgent,
             'timeLine' => $arrTimeline,
@@ -370,13 +363,13 @@ class AdminOrderController extends AdminController implements EventedControllerI
             'pimcoreSymfonyConfig' => $pimcoreSymfonyConfig,
             'formatter' => $formatter,
             'locale' => $localeService,
-        ];
+        ]);
     }
 
     /**
      * @Route("/item-cancel", name="pimcore_ecommerce_backend_admin-order_item-cancel", methods={"GET", "POST"})
      *
-     * @return array|Response
+     * @return Response
      */
     public function itemCancelAction(Request $request)
     {
@@ -403,13 +396,15 @@ class AdminOrderController extends AdminController implements EventedControllerI
             return $this->redirect($url);
         }
 
-        return ['orderItem' => $orderItem];
+        return $this->render('@PimcoreEcommerceFramework/admin_order/item_cancel.html.twig', [
+            'orderItem' => $orderItem
+        ]);
     }
 
     /**
      * @Route("/item-edit", name="pimcore_ecommerce_backend_admin-order_item-edit", methods={"GET", "POST"})
      *
-     * @return array|Response
+     * @return Response
      */
     public function itemEditAction(Request $request)
     {
@@ -435,13 +430,15 @@ class AdminOrderController extends AdminController implements EventedControllerI
             return $this->redirect($url);
         }
 
-        return ['orderItem' => $orderItem];
+        return $this->render('@PimcoreEcommerceFramework/admin_order/item_edit.html.twig', [
+            'orderItem' => $orderItem
+        ]);
     }
 
     /**
      * @Route("/item-complaint", name="pimcore_ecommerce_backend_admin-order_item-complaint", methods={"GET", "POST"})
      *
-     * @return array|Response
+     * @return Response
      */
     public function itemComplaintAction(Request $request)
     {
@@ -467,6 +464,8 @@ class AdminOrderController extends AdminController implements EventedControllerI
             return $this->redirect($url);
         }
 
-        return ['orderItem' => $orderItem];
+        return $this->render('@PimcoreEcommerceFramework/admin_order/item_complaint.html.twig', [
+            'orderItem' => $orderItem
+        ]);
     }
 }

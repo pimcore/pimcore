@@ -23,9 +23,10 @@ In controllers, for every action there exists a separate method ending with the 
 The `DefaultController` comes with Pimcore. When you create an empty page in Pimcore it will call 
 the `defaultAction` in the `DefaultController` which uses the view `/app/Resources/views/Default/default.html.php`. 
 
-[Deprecated since v6.8.0] Views are tied to actions implicitly using the filename. 
-You can override this by using `return $this->render(":Bar:foo.html.php", ["param" => "value"]);`
- like in the example below or you can of course just return a `Response` object, just the way how Symfony works.
+You can render templates just the [standard Symfony way](https://symfony.com/doc/current/templates.html#rendering-a-template-in-emails), by either using `$this->render('foo.html.twig')` or using the `@Template()` [annotation](https://symfony.com/doc/current/bundles/SensioFrameworkExtraBundle/annotations/view.html). 
+
+
+### Examples
 
 ```php
 <?php
@@ -38,43 +39,29 @@ use Symfony\Component\HttpFoundation\Response;
 use Pimcore\Controller\Configuration\ResponseHeader;
 
 class DefaultController extends FrontendController
-{ 
+{   
     /**
-     * Home page action. Will use the template /app/Resources/views/Default/home.html.php
+    * Very simple example using $this->>render() and passing the parameter 'foo'
     */
-    public function homeAction(Request $request)
+    public function myAction()
     {
-        //Set a view variable with the name "foo" and the value "bar"
-        $this->view->foo = 'bar';
+        return $this->render('content/default.html.twig', ["foo" => "bar"]);
     }
-     
+
     /**
-    * Default page action. Will use the template /app/Resources/views/Default/default.html.php
-    */
-    public function defaultAction(Request $request)
-    {
-        //it is perfectly fine for an action to be empty.
-    }
-    
-    /**
-     * The frontend controller provides methods to add response headers via annotation without having
+     * Example using the @Template annotation and auto-resolving the template using the controller/action name. 
+     * The frontend controller also provides methods to add response headers via annotation without having
      * access to the final response object (as it is automatically created when rendering the view).
      *
+     * @Template
      * @ResponseHeader("X-Foo", values={"123456", "98765"})
      */
     public function headerAction(Request $request)
     {
         // schedule a response header via code
         $this->addResponseHeader('X-Foo', 'bar', false, $request);
-    }
-
-    /**
-    * Example using a different template than the name of the action.
-    * Will use the template /app/Resources/views/Default/somethingelse.html.php as view.
-    */
-    public function differentAction()
-    {
-        return $this->render(":Default:somethingelse.html.php", ["foo" => "bar"]);
+        
+        return ["foo" => "bar"];
     }
     
     /**
@@ -101,5 +88,4 @@ class DefaultController extends FrontendController
 |-------------------|-------------|----------------------------------------------------------|
 | `$this->document` | Document    | Reference to the current document, if any is available.  |
 | `$this->editmode` | boolean     | True if you are in editmode (admin)                      |
-| `$this->view`     | `ViewModel` (deprecated) | Used to assign variables to your view (`$this->view->foo = "bar"`) |
    

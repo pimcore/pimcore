@@ -29,8 +29,6 @@ use Pimcore\Templating\Helper\Navigation;
 use Pimcore\Templating\Helper\Placeholder\Container;
 use Pimcore\Templating\Helper\WebLink;
 use Pimcore\Templating\HelperBroker\HelperBrokerInterface;
-use Pimcore\Templating\Model\ViewModel;
-use Pimcore\Templating\Model\ViewModelInterface;
 use Pimcore\Tool\DeviceDetector;
 use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
 use Symfony\Bundle\FrameworkBundle\Templating\Helper\AssetsHelper;
@@ -137,9 +135,9 @@ class PhpEngine extends BasePhpEngine
     protected $helperBrokers = [];
 
     /**
-     * @var ViewModelInterface[]
+     * @var array
      */
-    protected $viewModels = [];
+    protected $params = [];
 
     /**
      * @param HelperBrokerInterface $helperBroker
@@ -150,13 +148,13 @@ class PhpEngine extends BasePhpEngine
     }
 
     /**
-     * In addition to the core method, this keeps parameters in a ViewModel instance which is accessible from
-     * view helpers and via $this->$variable.
-     *
      * {@inheritdoc}
      */
     protected function evaluate(Storage $template, array $parameters = [])
     {
+
+        $this->params = $parameters;
+
         // disable parent with "magic" _no_parent parameter
         $disableParent = false;
         if (isset($parameters[static::PARAM_NO_PARENT])) {
@@ -164,15 +162,8 @@ class PhpEngine extends BasePhpEngine
             unset($parameters[static::PARAM_NO_PARENT]);
         }
 
-        // create view model and push it onto the model stack
-        $this->viewModels[] = new ViewModel($parameters);
-
         // render the template
         $result = parent::evaluate($template, $parameters);
-
-        // remove current view model from stack and destroy it
-        $viewModel = array_pop($this->viewModels);
-        unset($viewModel);
 
         if ($disableParent) {
             $this->parents[$this->current] = null;
@@ -191,70 +182,23 @@ class PhpEngine extends BasePhpEngine
      */
     public function template($name, array $parameters = [])
     {
-        if ($viewModel = $this->getViewModel()) {
-            // attach current variables
-            $parameters = array_replace($viewModel->getParameters()->all(), $parameters);
-        }
-
         return $this->render($name, $parameters);
     }
 
     /**
-     * Get the current view model
-     *
-     * @return ViewModelInterface|null
-     *
-     * @deprecated
-     */
-    public function getViewModel()
-    {
-        $count = count($this->viewModels);
-        if ($count > 0) {
-            return $this->viewModels[$count - 1];
-        }
-
-        return null;
-    }
-
-    /**
-     * Get a view model parameter
-     *
-     * @param string $name
-     * @param mixed|null $default
-     *
-     * @return mixed|null
-     *
-     * @deprecated
-     */
-    public function getViewParameter($name, $default = null)
-    {
-        $viewModel = $this->getViewModel();
-
-        if (null !== $viewModel) {
-            return $viewModel->getParameters()->get($name, $default);
-        }
-
-        return $default;
-    }
-
-    /**
-     * Magic getter reads variable from ViewModel
-     *
      * @inheritDoc
      */
     public function __get($name)
     {
-        return $this->getViewParameter($name);
+        return $this->params[$name] ?? null;
     }
 
     /**
-     * Magic isset checks variable from ViewModel
-     *
      * @inheritDoc
      */
     public function __isset($name)
     {
-        return $this->getViewParameter($name) !== null;
+        return ($this->params[$name] ?? null) ? true : false;
     }
 
     /**
@@ -263,12 +207,7 @@ class PhpEngine extends BasePhpEngine
      */
     public function __set($name, $value)
     {
-        $viewModel = $this->getViewModel();
-        if ($viewModel) {
-            $viewModel->getParameters()->set($name, $value);
-        } else {
-            throw new \RuntimeException(sprintf('Can\'t set variable %s as there is no active view model', $name));
-        }
+        $this->params[$name] = $value;
     }
 
     /**

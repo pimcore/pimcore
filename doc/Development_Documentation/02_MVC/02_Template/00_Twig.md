@@ -1,51 +1,19 @@
 # Twig
 
-Pimcore fully supports the Twig templating engine which is favored in many Symfony projects
-and third party bundles. You can use Twig exactly as documented in:
+Pimcore fully supports the Twig templating engine, you can use Twig exactly as documented in:
 
 * [Twig Documentation](https://twig.symfony.com/doc/2.x/)
 * [Symfony Templating Documentation](https://symfony.com/doc/3.4/templating.html)
 
-For historical reasons, Pimcore's default implementations default to the PHP templating engine, but you
-can easily change the default behaviour when you use template auto-discovery from your controllers. If
-you use `@Template` annotations or directly create a response via `$this->render()`, you can already just
-reference a Twig template to use twig.
 
 If you use the Pimcore's default [FrontendController](https://github.com/pimcore/pimcore/blob/master/lib/Controller/FrontendController.php),
 it will set a special attribute on the request which mimics the [@Template](https://symfony.com/doc/3.0/bundles/SensioFrameworkExtraBundle/annotations/view.html)
 annotation and tries to auto-render a view with the same name as the controller action if the controller does not return
 a response (see [TemplateControllerInterface](https://github.com/pimcore/pimcore/blob/master/lib/Controller/TemplateControllerInterface.php)
-for details). As this call defaults to PHP, you need to change this to Twig in order to automatically use Twig in your 
-controllers:
+for details). 
 
-```php
-<?php
 
-namespace AppBundle\Controller;
-
-use Pimcore\Controller\FrontendController;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-
-class MyController extends FrontendController
-{
-    public function onKernelController(FilterControllerEvent $event)
-    {
-        // set auto-rendering to twig
-        $this->setViewAutoRender($event->getRequest(), true, 'twig');
-    }
-    
-    /**
-     * This action will automatically render MyController/myAction.html.twig as
-     * auto-rendering was enabled above.
-     */
-    public function myAction()
-    {
-        $this->view->foo = 'bar';
-    }
-}
-```
-
-Alternatively, just use annotations or render the view directly to use twig:
+Just use annotations or render the view directly to use Twig:
 
 ```php
 <?php
