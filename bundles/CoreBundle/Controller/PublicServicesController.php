@@ -227,16 +227,6 @@ class PublicServicesController extends Controller
     /**
      * @param Request $request
      *
-     * @deprecated
-     */
-    public function hybridauthAction(Request $request)
-    {
-        \Pimcore\Tool\HybridAuth::process();
-    }
-
-    /**
-     * @param Request $request
-     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function customAdminEntryPointAction(Request $request)
