@@ -195,6 +195,7 @@ class IndexController extends AdminController implements EventedControllerInterf
 
     /**
      * @param array $templateParams
+     *
      * @return $this
      */
     protected function addPluginAssets(array &$templateParams)
@@ -215,9 +216,10 @@ class IndexController extends AdminController implements EventedControllerInterf
      * @param ExecutorInterface $maintenanceExecutor
      * @param CsrfProtectionListener $csrfProtectionListener
      * @param SiteConfigProvider $siteConfigProvider
+     *
      * @return $this
      */
-    protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionListener $csrfProtectionListener,SiteConfigProvider $siteConfigProvider)
+    protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionListener $csrfProtectionListener, SiteConfigProvider $siteConfigProvider)
     {
         $namingStrategy = $this->get('pimcore.document.tag.naming.strategy');
         $config = $templateParams['config'];
@@ -270,7 +272,6 @@ class IndexController extends AdminController implements EventedControllerInterf
             'google_analytics_enabled' => (bool) $siteConfigProvider->isSiteReportingConfigured(),
             'google_webmastertools_enabled' => (bool)Google\Webmastertools::isConfigured(),
         ];
-
 
         $this
             ->addSystemVarSettings($settings)

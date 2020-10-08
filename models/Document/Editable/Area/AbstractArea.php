@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Document\Editable\Area;
 
-
 abstract class AbstractArea
 {
     /**

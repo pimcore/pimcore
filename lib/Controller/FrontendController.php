@@ -70,7 +70,6 @@ abstract class FrontendController extends Controller implements EventedControlle
      */
     public function onKernelController(FilterControllerEvent $event)
     {
-
     }
 
     /**
@@ -79,7 +78,6 @@ abstract class FrontendController extends Controller implements EventedControlle
     public function onKernelResponse(FilterResponseEvent $event)
     {
     }
-
 
     /**
      * We don't have a response object at this point, but we can add headers here which will be

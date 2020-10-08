@@ -397,7 +397,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         }
 
         return $this->render('@PimcoreEcommerceFramework/admin_order/item_cancel.html.twig', [
-            'orderItem' => $orderItem
+            'orderItem' => $orderItem,
         ]);
     }
 
@@ -431,7 +431,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         }
 
         return $this->render('@PimcoreEcommerceFramework/admin_order/item_edit.html.twig', [
-            'orderItem' => $orderItem
+            'orderItem' => $orderItem,
         ]);
     }
 
@@ -465,7 +465,7 @@ class AdminOrderController extends AdminController implements EventedControllerI
         }
 
         return $this->render('@PimcoreEcommerceFramework/admin_order/item_complaint.html.twig', [
-            'orderItem' => $orderItem
+            'orderItem' => $orderItem,
         ]);
     }
 }
