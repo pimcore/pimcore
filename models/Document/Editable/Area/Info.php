@@ -171,11 +171,13 @@ class Info
     /**
      * @param string $name
      * @param mixed $value
+     *
      * @return $this
      */
     public function setParam(string $name, $value)
     {
         $this->params[$name] = $value;
+
         return $this;
     }
 
