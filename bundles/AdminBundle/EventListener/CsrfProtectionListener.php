@@ -82,7 +82,6 @@ class CsrfProtectionListener implements EventSubscriberInterface
 
             // external applications
             'pimcore_admin_external_opcache_index',
-            'pimcore_admin_external_linfo_index', 'pimcore_admin_external_linfo_layout',
             'pimcore_admin_external_adminer_adminer', 'pimcore_admin_external_adminer_proxy',
             'pimcore_admin_external_adminer_proxy_1', 'pimcore_admin_external_adminer_proxy_2',
         ];
