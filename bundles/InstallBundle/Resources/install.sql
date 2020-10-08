@@ -129,8 +129,8 @@ CREATE TABLE `documents` (
   KEY `modificationDate` (`modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
-DROP TABLE IF EXISTS `documents_elements`;
-CREATE TABLE `documents_elements` (
+DROP TABLE IF EXISTS `documents_editables`;
+CREATE TABLE `documents_editables` (
   `documentId` int(11) unsigned NOT NULL DEFAULT '0',
   `name` varchar(750) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` varchar(50) DEFAULT NULL,
