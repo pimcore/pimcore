@@ -152,7 +152,6 @@ class PhpEngine extends BasePhpEngine
      */
     protected function evaluate(Storage $template, array $parameters = [])
     {
-
         $this->params = $parameters;
 
         // disable parent with "magic" _no_parent parameter
