@@ -262,11 +262,9 @@ abstract class Processor
      */
     protected function processHtml($html, $params)
     {
-        $placeholder = new \Pimcore\Placeholder();
         $document = $params['document'] ?? null;
         $hostUrl = $params['hostUrl'] ?? null;
 
-        $html = $placeholder->replacePlaceholders($html, $params, $document);
         $twig = \Pimcore::getContainer()->get('twig');
         $template = $twig->createTemplate((string) $html);
         $html = $twig->render($template, $params);

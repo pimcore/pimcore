@@ -38,11 +38,6 @@ class Mail extends \Swift_Message
     protected static $debugEmailAddresses = [];
 
     /**
-     * @var Placeholder
-     */
-    protected $placeholderObject;
-
-    /**
      * If true - emails are logged in the database and on the file-system
      *
      * @var bool
@@ -57,7 +52,7 @@ class Mail extends \Swift_Message
     protected $document;
 
     /**
-     * Contains the dynamic Params for the Twig engine and the Placeholders
+     * Contains the dynamic Params for the Twig engine
      *
      * @var array
      */
@@ -89,7 +84,7 @@ class Mail extends \Swift_Message
      *
      * @var bool
      */
-    protected $enableLayoutOnPlaceholderRendering = true;
+    protected $enableLayoutOnRendering = true;
 
     /**
      * forces the mail class to always us the "Pimcore Mode",
@@ -215,8 +210,6 @@ class Mail extends \Swift_Message
                 $this->setReplyTo($config['return']['email'], $config['return']['name']);
             }
         }
-
-        $this->placeholderObject = new \Pimcore\Placeholder();
     }
 
     /**
@@ -260,9 +253,9 @@ class Mail extends \Swift_Message
      *
      * @return $this
      */
-    public function setEnableLayoutOnPlaceholderRendering($value)
+    public function setEnableLayoutOnRendering($value)
     {
-        $this->enableLayoutOnPlaceholderRendering = (bool)$value;
+        $this->enableLayoutOnRendering = (bool)$value;
 
         return $this;
     }
@@ -270,9 +263,9 @@ class Mail extends \Swift_Message
     /**
      * @return bool
      */
-    public function getEnableLayoutOnPlaceholderRendering()
+    public function getEnableLayoutOnRendering()
     {
-        return $this->enableLayoutOnPlaceholderRendering;
+        return $this->enableLayoutOnRendering;
     }
 
     /**
@@ -371,7 +364,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * Sets the parameters to the request object and the Placeholders
+     * Sets the parameters to the request object
      *
      * @param array $params
      *
@@ -387,7 +380,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * Sets a single parameter to the request object and the Placeholders
+     * Sets a single parameter to the request object
      *
      * @param string | int $key
      * @param mixed $value
@@ -695,17 +688,15 @@ class Mail extends \Swift_Message
 
     protected function renderParams(string $string): string
     {
-        $rendered = $this->placeholderObject->replacePlaceholders($string, $this->getParams(), $this->getDocument(), $this->getEnableLayoutOnPlaceholderRendering());
-
         $twig = \Pimcore::getContainer()->get('twig');
-        $template = $twig->createTemplate((string) $rendered);
+        $template = $twig->createTemplate($string);
         $rendered = $twig->render($template, $this->getParams());
 
         return $rendered;
     }
 
     /**
-     * Replaces the placeholders with the content and returns the rendered Subject
+     * Renders the content (Twig) and returns the rendered subject
      *
      * @return string
      */
@@ -721,7 +712,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * Replaces the placeholders with the content and returns the rendered Html
+     * Renders the content (Twig) and returns the rendered HTML
      *
      * @return string|null
      */
@@ -737,7 +728,7 @@ class Mail extends \Swift_Message
                 $attributes = $this->getParams();
                 $attributes[ElementListener::FORCE_ALLOW_PROCESSING_UNPUBLISHED_ELEMENTS] = true;
 
-                $html = Model\Document\Service::render($this->getDocument(), $attributes, $this->getEnableLayoutOnPlaceholderRendering());
+                $html = Model\Document\Service::render($this->getDocument(), $attributes, $this->getEnableLayoutOnRendering());
             }
         }
 
@@ -754,7 +745,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * Replaces the placeholders with the content and returns
+     * Renders the content (Twig) and returns
      * the rendered text if a text was set with "$mail->setBodyText()"
      *
      * @return string

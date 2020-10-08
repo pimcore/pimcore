@@ -301,21 +301,14 @@ $this->extend('layout.html.php');
 
 The confirmation e-mail (See: `\Pimcore\Tool\Newsletter::sendConfirmationMail`) is a simple e-mail document.
 
-In this document the following [placeholders](../19_Development_Tools_and_Details/23_Placeholders/02_Text_Placeholder.md) are available:
+In this document the following Twig parameters are available:
 
-* %Text(firstname);
-* %Text(lastname);
-* %Text(token);
-* %Text(email);
-* %Text(gender);
-
-and:
-
-```
-%Object(object,{"method" : "someMethod"});
-```
-
-(See the [Object placeholder section](../19_Development_Tools_and_Details/23_Placeholders/01_Object_Placeholder.md))
+* `{{ firstname }}`
+* `{{ lastname }}`
+* `{{ token }}`
+* `{{ email }}`
+* `{{ gender }}`
+* `{{ object.someMethod }}`
 
 In the document editmode you can create the confirmation email by choosing **Add email -> Standard-Mail**:
 
@@ -327,7 +320,7 @@ The editmode is of course quite similar to other document types:
 
 
 To define the confirmation URL in editmode. You have to add controller / action and token information.
-In the picture, you can see how you would add a token placeholder to the URL. 
+In the picture, you can see how you would add a token  to the URL. 
 
 ![The email document - a variable placeholder](../img/newsletter_token_url.png)
 
@@ -338,16 +331,15 @@ In the picture, you can see how you would add a token placeholder to the URL.
 
 To send a newsletter you need an email document, which is used as content for the newsletter (nothing special to consider).
  
-In this document the following placeholders are available:
- 
-* %Text(firstname);
-* %Text(lastname);
-* %Text(token);
-* %Text(email);
-* %Text(gender);
-* %Object(object,{"method" : "someMethod"});
+In this document the following Twig parameters are available:
 
-(See the [Object placeholder section](../19_Development_Tools_and_Details/23_Placeholders/01_Object_Placeholder.md))
+* `{{ firstname }}`
+* `{{ lastname }}`
+* `{{ token }}`
+* `{{ email }}`
+* `{{ gender }}`
+* `{{ object.someMethod }}`
+
 
 ![Create newsletter document](../img/newsletter_create_newsletter_document.png)
 

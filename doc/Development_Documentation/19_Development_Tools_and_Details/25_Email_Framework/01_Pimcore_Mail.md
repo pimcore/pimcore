@@ -13,7 +13,7 @@ and the Subject contains the prefix "Debug email:".
 This is done via an extension of the swift mailer `RedirectingPlugin`.   
 
 The `Pimcore\Mail` Class automatically takes care of the nasty stuff (embedding CSS, 
-normalizing URLs, replacement of dynamic [Placeholders](../23_Placeholders/README.md) and Twig expressions ...). Note that all CSS files are embedded 
+normalizing URLs and Twig expressions ...). Note that all CSS files are embedded 
 to the html with a `<style>` tag because the image paths are also normalised.
 
 ## Useful Methods
@@ -21,14 +21,14 @@ to the html with a `<style>` tag because the image paths are also normalised.
 | Method                            | Description                                                                                                                                                                                                |
 |-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | disableLogging()                  | Disables email logging - by default it is enabled                                                                                                                                                          |
-| setParams(array)                  | Sets the parameters to the request object and the Placeholders                                                                                                                                             |
-| setParam($key, $value)            | Sets a single parameter to the request object and the Placeholders                                                                                                                                         |
+| setParams(array)                  | Sets the parameters to the request object and the Twig engine                                                                                                                                             |
+| setParam($key, $value)            | Sets a single parameter to the request object and the Twig engine                                                                                                                                         |
 | isValidEmailAddress(emailAddress) | Static helper to validate a email address                                                                                                                                                                  |
 | setDocument(Document_Email)       | Sets the email document                                                                                                                                                                                    |
 | getDocument()                     | Returns the Document                                                                                                                                                                                       |
-| getSubjectRendered()              | Replaces the placeholders and renders as a Twig template with the provided params and returns the resulting Subject                                                                                                                                |
-| getBodyHtmlRendered()             | Replaces the placeholders and renders as a Twig template with the content and returns the resulting HTML                                                                                                                                   |
-| getBodyTextRendered()             | Replaces the placeholders and renders as a Twig template with the content and returns the resulting text if a text was set with `$mail->setBodyText()`. If no text was set, a text version on the html email will be automatically created |
+| getSubjectRendered()              | Renders the content as a Twig template with the provided params and returns the resulting Subject                                                                                                                                |
+| getBodyHtmlRendered()             | Renders the content as a Twig template with the content and returns the resulting HTML                                                                                                                                   |
+| getBodyTextRendered()             | Renders the content as a Twig template with the content and returns the resulting text if a text was set with `$mail->setBodyText()`. If no text was set, a text version on the html email will be automatically created |
 | enableHtml2textBinary()           | `html2text` from Martin Bayer (http://www.mbayer.de/html2text/index.shtml) - throws an Exception if html2text is not installed!     (deprecated since 6.6.0 and will be removed in 7.0)                                                                       |
 | setHtml2TextOptions($options)     | set options for html2text (only for binary version)                                                                                                                                                        |
 
