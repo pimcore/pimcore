@@ -161,8 +161,6 @@ return [
     'Pimcore\\Model\\Tool\\Targeting\\Persona\\Listing' => 'Pimcore\\Model\\Tool\\Targeting\\Persona\\Listing\\Dao',
     'Pimcore\\Model\\Tool\\Targeting\\TargetGroup\\Listing' => 'Pimcore\\Model\\Tool\\Targeting\\TargetGroup\\Listing\\Dao',
     'Pimcore\\Model\\Tool\\Targeting\\Rule\\Listing' => 'Pimcore\\Model\\Tool\\Targeting\\Rule\\Listing\\Dao',
-    'Pimcore\\Model\\Tool\\Qrcode\\Config' => 'Pimcore\\Model\\Tool\\Qrcode\\Config\\Dao',
-    'Pimcore\\Model\\Tool\\Qrcode\\Config\\Listing' => 'Pimcore\\Model\\Tool\\Qrcode\\Config\\Listing\\Dao',
     'Pimcore\\Model\\Tool\\Lock' => 'Pimcore\\Model\\Tool\\Lock\\Dao',
     'Pimcore\\Model\\Tool\\UUID\\Listing' => 'Pimcore\\Model\\Tool\\UUID\\Listing\\Dao',
     'Pimcore\\Model\\Tool\\TmpStore' => 'Pimcore\\Model\\Tool\\TmpStore\\Dao',

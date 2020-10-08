@@ -508,14 +508,6 @@ pimcore.layout.toolbar = Class.create({
                 });
             }
 
-            if (user.isAllowed("qr_codes")) {
-                marketingItems.push({
-                    text: t("qr_codes"),
-                    iconCls: "pimcore_nav_icon_qrcode",
-                    handler: this.showQRCode
-                });
-            }
-
             if (user.isAllowed("targeting") && perspectiveCfg.inToolbar("marketing.targeting")) {
                 marketingItems.push({
                     text: t("personalization") + " / " + t("targeting"),
@@ -1449,15 +1441,6 @@ pimcore.layout.toolbar = Class.create({
         }
         catch (e) {
             pimcore.globalmanager.add("tagmanagement", new pimcore.settings.tagmanagement.panel());
-        }
-    },
-
-    showQRCode: function () {
-        try {
-            pimcore.globalmanager.get("qrcode").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("qrcode", new pimcore.report.qrcode.panel());
         }
     },
 
