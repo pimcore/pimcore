@@ -16,7 +16,7 @@ addresses given in *Settings* > *System* > *Email Settings* > *Debug Email Addre
 information (to whom the email would have been sent) is automatically appended.
 
 Pimcore provides a `Document Email` type where you can define the recipients ... (more information 
-[here](../../03_Documents/README.md)) and `Dynamic Placeholders` (more information [here](../23_Placeholders/README.md)). 
+[here](../../03_Documents/README.md)) and Twig variables. 
 
 To send a email you just create a `Email Document` in the Pimcore Backend UI, define the subject, 
 recipients, add Dynamic Placeholders... and pass this document to the `Pimcore\Mail` object. All 
