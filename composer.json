@@ -82,7 +82,7 @@
     "sensiolabs/ansi-to-html": "^1.1",
     "symfony-cmf/routing-bundle": "^2.0",
     "symfony/contracts": "^1.1",
-    "symfony/monolog-bundle": "3.5.0",
+    "symfony/monolog-bundle": "^3.1.0",
     "symfony/swiftmailer-bundle": "^3.2.2",
     "symfony/symfony": "^4.1.12",
     "tijsverkoyen/css-to-inline-styles": "^2.2.1",
