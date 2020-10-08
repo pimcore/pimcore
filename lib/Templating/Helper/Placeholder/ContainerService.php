@@ -39,6 +39,8 @@ namespace Pimcore\Templating\Helper\Placeholder;
 
 /**
  * Registry for placeholder containers
+ *
+ * @deprecated
  */
 class ContainerService
 {

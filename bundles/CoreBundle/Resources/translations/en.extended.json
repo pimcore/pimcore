@@ -266,7 +266,7 @@
   "verification_filename_text": "Verification Filename<br \/><small>required for verification<\/small>",
   "analytics_notice": "Please read the documentation about the Google Analytics integration first, for the advanced mode you have to modify the Google Analytics settings.",
   "outputcache_lifetime_description": "Optional output-cache lifetime (in seconds) after the cache expires, if not defined the cache will be cleaned on every action inside the CMS, otherwise not (for high traffic sites)",
-  "exclude_patterns_description": "Regular Expressions like \/^\\\/dir\\\/toexplude\/",
+  "exclude_patterns_description": "Regular Expressions like: \/^\\\/dir\\\/toexclude\/",
   "analytics_trackid_code": "Track-ID (eg. UA-XXXXX-X)<br \/><small>required for code integration<\/small>",
   "multiselect": "Multiselection",
   "handler": "Handler",

@@ -166,13 +166,6 @@ class Asset extends Element\AbstractElement
     protected $hasMetaData = false;
 
     /**
-     * Dependencies of this asset
-     *
-     * @var Dependency|null
-     */
-    protected $dependencies;
-
-    /**
      * Contains a list of sibling documents
      *
      * @var array|null
@@ -854,7 +847,8 @@ class Asset extends Element\AbstractElement
             if (!empty($assetsConfig['versions']['steps'])
                 || !empty($assetsConfig['versions']['days'])
                 || $setModificationDate) {
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
+                $saveStackTrace = !($assetsConfig['versions']['disable_stack_trace'] ?? false);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
             }
 
             // hook should be also called if "save only new version" is selected
@@ -1101,18 +1095,6 @@ class Asset extends Element\AbstractElement
         } catch (\Exception $e) {
             Logger::crit($e);
         }
-    }
-
-    /**
-     * @return Dependency
-     */
-    public function getDependencies()
-    {
-        if (!$this->dependencies) {
-            $this->dependencies = Dependency::getBySourceId($this->getId(), 'asset');
-        }
-
-        return $this->dependencies;
     }
 
     /**
@@ -1953,9 +1935,8 @@ class Asset extends Element\AbstractElement
 
     public function __sleep()
     {
-        $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'dependencies', 'hasChildren', 'versions', 'parent', 'stream'];
+        $blockedVars = ['_temporaryFiles', 'scheduledTasks', 'hasChildren', 'versions', 'parent', 'stream'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the asset (eg. for a new version), including children for recyclebin
@@ -1965,13 +1946,7 @@ class Asset extends Element\AbstractElement
             $blockedVars = array_merge($blockedVars, ['children', 'properties']);
         }
 
-        foreach ($parentVars as $key) {
-            if (!in_array($key, $blockedVars)) {
-                $finalVars[] = $key;
-            }
-        }
-
-        return $finalVars;
+        return array_diff($parentVars, $blockedVars);
     }
 
     public function __wakeup()
@@ -2060,28 +2035,28 @@ class Asset extends Element\AbstractElement
      */
     public function resolveDependencies()
     {
-        $dependencies = parent::resolveDependencies();
+        $dependencies = [parent::resolveDependencies()];
 
         if ($this->hasMetaData) {
-            $metaData = $this->getMetadata();
+            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
-            foreach ($metaData as $md) {
-                if (isset($md['data']) && $md['data']) {
+            foreach ($this->getMetadata() as $metaData) {
+                if (!empty($metaData['data'])) {
                     /** @var ElementInterface $elementData */
-                    $elementData = $md['data'];
-                    $elementType = $md['type'];
-                    $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-                    /** @var DataDefinitionInterface $implementation */
+                    $elementData = $metaData['data'];
+                    $elementType = $metaData['type'];
+
                     try {
+                        /** @var DataDefinitionInterface $implementation */
                         $implementation = $loader->build($elementType);
-                        $dependencies = array_merge($dependencies, $implementation->resolveDependencies($elementData, $md));
+                        $dependencies[] = $implementation->resolveDependencies($elementData, $metaData);
                     } catch (UnsupportedException $e) {
                     }
                 }
             }
         }
 
-        return $dependencies;
+        return array_merge(...$dependencies);
     }
 
     public function __clone()
@@ -2091,7 +2066,6 @@ class Asset extends Element\AbstractElement
         $this->versions = null;
         $this->hasSiblings = null;
         $this->siblings = null;
-        $this->dependencies = null;
         $this->scheduledTasks = null;
         $this->closeStream();
     }

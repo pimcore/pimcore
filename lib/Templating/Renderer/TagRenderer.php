@@ -14,135 +14,15 @@
 
 namespace Pimcore\Templating\Renderer;
 
-use Pimcore\Http\Request\Resolver\EditmodeResolver;
-use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Model\Document\Tag;
-use Pimcore\Model\Document\Tag\Loader\TagLoaderInterface;
-use Pimcore\Templating\Model\ViewModel;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', TagRenderer::class, EditableRenderer::class), E_USER_DEPRECATED);
 
-class TagRenderer implements LoggerAwareInterface
-{
-    use LoggerAwareTrait;
+class_exists(EditableRenderer::class);
 
+if (false) {
     /**
-     * @var TagLoaderInterface
+     * @deprecated use \Pimcore\Templating\Renderer\EditableRenderer instead.
      */
-    protected $tagLoader;
-
-    /**
-     * @var EditmodeResolver
-     */
-    protected $editmodeResolver;
-
-    /**
-     * @param TagLoaderInterface $tagLoader
-     * @param EditmodeResolver $editmodeResolver
-     */
-    public function __construct(TagLoaderInterface $tagLoader, EditmodeResolver $editmodeResolver)
+    class TagRenderer extends EditableRenderer
     {
-        $this->tagLoader = $tagLoader;
-        $this->editmodeResolver = $editmodeResolver;
-    }
-
-    /**
-     * @param string $type
-     *
-     * @return bool
-     */
-    public function tagExists($type)
-    {
-        return $this->tagLoader->supports($type);
-    }
-
-    /**
-     * Loads a document tag
-     *
-     * @param PageSnippet $document
-     * @param string $type
-     * @param string $inputName
-     * @param array $options
-     * @param bool|null $editmode
-     *
-     * @return Tag|null
-     */
-    public function getTag(PageSnippet $document, $type, $inputName, array $options = [], bool $editmode = null)
-    {
-        $type = strtolower($type);
-
-        $name = Tag::buildTagName($type, $inputName, $document);
-        $realName = Tag::buildTagRealName($inputName, $document);
-
-        if (null === $editmode) {
-            $editmode = $this->editmodeResolver->isEditmode();
-        }
-
-        try {
-            $tag = null;
-
-            if ($document instanceof PageSnippet) {
-                $view = new ViewModel([
-                    'editmode' => $editmode,
-                    'document' => $document,
-                ]);
-
-                $tag = $document->getEditable($name);
-
-                // @TODO: BC layer, to be removed in v7.0
-                $aliases = [
-                    'href' => 'relation',
-                    'multihref' => 'relations',
-                ];
-                if (isset($aliases[$type])) {
-                    $type = $aliases[$type];
-                }
-
-                if ($tag instanceof Tag && $tag->getType() === $type) {
-                    // call the load() method if it exists to reinitialize the data (eg. from serializing, ...)
-                    if (method_exists($tag, 'load')) {
-                        $tag->load();
-                    }
-
-                    $tag->setView($view);
-                    $tag->setEditmode($editmode);
-                    $tag->setOptions($options);
-                } else {
-                    $tag = Tag::factory($type, $name, $document->getId(), $options, null, $view, $editmode);
-                    $document->setEditable($name, $tag);
-                }
-
-                // set the real name of this editable, without the prefixes and suffixes from blocks and areablocks
-                $tag->setRealName($realName);
-            }
-
-            return $tag;
-        } catch (\Exception $e) {
-            $this->logger->warning($e);
-
-            return null;
-        }
-    }
-
-    /**
-     * Renders a tag
-     *
-     * @param PageSnippet $document
-     * @param string $type
-     * @param string $inputName
-     * @param array $options
-     * @param bool|null $editmode
-     *
-     * @return Tag|string
-     */
-    public function render(PageSnippet $document, $type, $inputName, array $options = [], bool $editmode = null)
-    {
-        $tag = $this->getTag($document, $type, $inputName, $options, $editmode);
-
-        if ($tag) {
-            return $tag;
-        }
-
-        return '';
     }
 }

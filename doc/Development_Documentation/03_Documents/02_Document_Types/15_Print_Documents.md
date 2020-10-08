@@ -50,8 +50,8 @@ If you updated an existing Pimcore installation, please get the default implemen
 
 ## PDF Rendering
 
-Both web-to-print documents have an additional tab that is the place for rendering documents to print-ready PDFs. 
-When rendering, the print is first rendererd to HTML and then rendered to an PDF. PDF rendering itself is done by an
+Both web-to-print documents have an additional tab that is the place for rendering documents to print-ready PDFs.
+When rendering, the print is first rendererd to HTML, then rendered as a Twig template (yes, you can use Twig expressions in the document) and then rendered to an PDF. PDF rendering itself is done by an
 third party renderer. Currently we support [wkhtmltopdf](http://wkhtmltopdf.org/), [pdfreactor](http://www.pdfreactor.com/) 
 and [Headless Chrome](https://developers.google.com/web/tools/puppeteer). 
 Please see their documentation for details concerning template possibilities.

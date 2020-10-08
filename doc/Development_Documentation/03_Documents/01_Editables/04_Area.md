@@ -17,20 +17,26 @@ Brick-specific configurations are passed using the `params` configuration (see a
 
 | Name              | Type | Description                                                                                                                                                     |
 |-------------------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `forceEditInView` | bool | If a brick contains an edit.php there's no editmode for the `view.php` file, if you want to have the editmode enabled in both templates, enable this option |
-| `editWidth`       | int  | Width of editing popup (if dedicated `edit.php` is used).                                                                                               |
-| `editHeight`      | int  | Height of editing popup (if dedicated `edit.php` is used).                                                                                              |
+| `forceEditInView` | bool | [DEPRECATED] If a brick contains an edit.php there's no editmode for the `view.php` file, if you want to have the editmode enabled in both templates, enable this option |
+| `editWidth`       | int  | [DEPRECATED] Width of editing popup (if dedicated `edit.php` is used).                                                                                               |
+| `editHeight`      | int  | [DEPRECATED] Height of editing popup (if dedicated `edit.php` is used).                                                                                              |
 
 
 ## Methods
 
 | Name                | Return        | Description                                                 |
 |---------------------|---------------|-------------------------------------------------------------|
-| `getElement($name)` | Document\Tag  | Retrieves an editable from within the actual area           |
+| `getElement($name)` | Document\Editable  | Retrieves an editable from within the actual area           |
 
 ## Example
 
 <div class="code-section">
+
+```twig
+<div>
+{{ pimcore_area('myArea', { 'type' : 'gallery-single-images' }) }}
+</div>
+```
 
 ```php
 <div>
@@ -38,13 +44,12 @@ Brick-specific configurations are passed using the `params` configuration (see a
 </div>
 ```
 
-```twig
-{{ pimcore_area('myArea', { 'type' : 'gallery-single-images' }) }}
-```
 </div>
 
 
 ## Example with Parameters
+
+<div class="code-section">
 
 ```php
 <div>
@@ -61,6 +66,7 @@ Brick-specific configurations are passed using the `params` configuration (see a
     ]); ?>
 </div>
 ```
+
 ```twig
 <div>
     {{ pimcore_area('myArea', {
@@ -75,6 +81,8 @@ Brick-specific configurations are passed using the `params` configuration (see a
 </div>
 ```
 
+</div>
+
 Get the params in your brick:
 
 ```php
@@ -82,7 +90,6 @@ Get the params in your brick:
     <?= $this->param1; ?>
 </div>
 ```
-
 
 ### Accessing Data Within an Area Element
 
@@ -93,10 +100,10 @@ Assuming your area uses a brick `gallery-single-images` which contains a `galler
 // load document
 $document = \Pimcore\Model\Document\Page::getByPath('/en/basic-examples/galleries');
 
-/** @var \Pimcore\Model|Document\Tag\Area $area */
+/** @var \Pimcore\Model\Document\Editable\Area $area */
 $area = $document->getEditable('myArea');
 
-/** @var \Pimcore\Model|Document\Tag\Block $block */
+/** @var \Pimcore\Model\Document\Editable\Block $block */
 $block = $area->getElement('gallery');
 ?>
 ```

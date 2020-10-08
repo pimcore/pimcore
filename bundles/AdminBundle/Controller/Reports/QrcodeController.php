@@ -25,6 +25,7 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
+ * @deprecated
  * @Route("/qrcode")
  */
 class QrcodeController extends ReportsControllerBase implements EventedControllerInterface

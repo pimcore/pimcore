@@ -21,7 +21,7 @@ But you cannot override `Pimcore\Model\Asset` (or the other abstract model class
 The configuration is a simple key / value map in your `app/config/config.yml` using the key 
 `pimcore.models.class_overrides`, for example: 
 
-```yaml 
+```yaml
 pimcore:
     models:
         class_overrides:
@@ -38,7 +38,7 @@ pimcore:
 
 In your `app/config/config.yml`: 
 
-```yaml 
+```yaml
 pimcore:
     models:
         class_overrides:

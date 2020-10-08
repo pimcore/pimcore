@@ -235,6 +235,8 @@ class PublicServicesController extends Controller
     }
 
     /**
+     * @deprecated
+     *
      * @param Request $request
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse

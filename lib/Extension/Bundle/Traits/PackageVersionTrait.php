@@ -51,7 +51,7 @@ trait PackageVersionTrait
 
         foreach ($packageInfo->getInstalledPackages('pimcore-bundle') as $bundle) {
             if ($bundle['name'] === $this->getComposerPackageName()) {
-                return $bundle['description'];
+                return $bundle['description'] ?? '';
             }
         }
 

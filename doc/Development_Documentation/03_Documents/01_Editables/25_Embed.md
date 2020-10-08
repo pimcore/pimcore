@@ -36,4 +36,5 @@ Additionally you can use any configuration option of [Embera](https://github.com
 {# Advanced usage #}
 {{ pimcore_embed("socialWidgets", { "width": 540 }) }}
 ```
+
 </div>

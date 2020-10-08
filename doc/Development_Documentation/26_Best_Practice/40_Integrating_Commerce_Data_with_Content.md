@@ -33,7 +33,7 @@ class MyProductTeaser extends AbstractAreabrick
 ```
 
 **MyProductTeaser Template**
-```php 
+```php
 <?php
 /**
  * @var \Pimcore\Templating\PhpEngine $this
@@ -61,7 +61,7 @@ class MyProductTeaser extends AbstractAreabrick
 ### Create Controller and Action for Teaser Content
 
 **Controller Action** 
-```php 
+```php
     public function productCellAction(Request $request)
     {
     
@@ -81,7 +81,7 @@ class MyProductTeaser extends AbstractAreabrick
 ```
 
 **Template** 
-```php 
+```php
 <?php
 /**
  * @var \Pimcore\Templating\PhpEngine $this

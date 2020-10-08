@@ -293,6 +293,7 @@ class Service extends Model\Element\Service
     public static function gridObjectData($object, $fields = null, $requestedLanguage = null, $params = [])
     {
         $data = Element\Service::gridElementData($object);
+        $csvMode = $params['csvMode'] ?? false;
 
         if ($object instanceof Concrete) {
             $context = ['object' => $object,
@@ -388,7 +389,7 @@ class Service extends Model\Element\Service
                             $valueObject = self::getValueForObject($object, $key, $brickType, $brickKey, $def, $context, $brickDescriptor);
                             $data['inheritedFields'][$dataKey] = ['inherited' => $valueObject->objectid != $object->getId(), 'objectid' => $valueObject->objectid];
 
-                            if (method_exists($def, 'getDataForGrid')) {
+                            if ($csvMode || method_exists($def, 'getDataForGrid')) {
                                 if ($brickKey) {
                                     $context['containerType'] = 'objectbrick';
                                     $context['containerKey'] = $brickType;
@@ -400,7 +401,14 @@ class Service extends Model\Element\Service
                                     $params['purpose'] = 'gridview';
                                 }
 
-                                $tempData = $def->getDataForGrid($valueObject->value, $object, $params);
+                                if ($csvMode) {
+                                    $getterParams = ['language' => $requestedLanguage];
+                                    $tempData = $def->getForCsvExport($object, $getterParams);
+                                } elseif (method_exists($def, 'getDataForGrid')) {
+                                    $tempData = $def->getDataForGrid($valueObject->value, $object, $params);
+                                } else {
+                                    continue;
+                                }
 
                                 if ($def instanceof ClassDefinition\Data\Localizedfields) {
                                     $needLocalizedPermissions = true;
@@ -1393,7 +1401,7 @@ class Service extends Model\Element\Service
      * Enriches the layout definition before it is returned to the admin interface.
      *
      * @param Model\DataObject\ClassDefinition\Data|Model\DataObject\ClassDefinition\Layout $layout
-     * @param Concrete $object
+     * @param Concrete|null $object
      * @param array $context additional contextual data
      */
     public static function enrichLayoutDefinition(&$layout, $object = null, $context = [])
@@ -1406,7 +1414,7 @@ class Service extends Model\Element\Service
 
         if ($layout instanceof Model\DataObject\ClassDefinition\Data\Localizedfields) {
             $user = AdminTool::getCurrentUser();
-            if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig') {
+            if (!$user->isAdmin() && ($context['purpose'] ?? null) !== 'gridconfig' && $object) {
                 $allowedView = self::getLanguagePermissions($object, $user, 'lView');
                 $allowedEdit = self::getLanguagePermissions($object, $user, 'lEdit');
                 self::enrichLayoutPermissions($layout, $allowedView, $allowedEdit);

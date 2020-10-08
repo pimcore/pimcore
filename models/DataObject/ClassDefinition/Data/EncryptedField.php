@@ -32,6 +32,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
+    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * don't throw an error it encrypted field cannot be decoded (default)

@@ -55,9 +55,9 @@ $content = Document\Service::render(Document::getById(2), $optionalParams, $useL
 echo $content;
 ```
 
-## Locking
-Pimcore provides a simple tool for locking. With that tool it is possible to avoid concurrent
-execution of same code sections or functions.
+## Locking (deprecated)
+
+> This feature will be removed in Pimcore 7, please use the lock factory service  `Symfony\Component\Lock\LockFactory` instead
 
 Just have a look at `Pimcore\Model\Tool\Lock` and the static class functions 
 * `acquire()`

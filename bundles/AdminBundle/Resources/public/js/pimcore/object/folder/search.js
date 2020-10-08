@@ -147,7 +147,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
 
 
 
-    createGrid: function (fromConfig, response, settings, save) {
+    createGrid: function (fromConfig, response, settings, save, context) {
         var itemsPerPage = pimcore.helpers.grid.getDefaultPageSize(-1);
 
         var fields = [];
@@ -165,6 +165,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             this.sortinfo = response.sortinfo;
 
             this.settings = response.settings || {};
+            this.context = response.context || {};
             this.availableConfigs = response.availableConfigs;
             this.sharedConfigs = response.sharedConfigs;
 
@@ -175,6 +176,7 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             itemsPerPage = this.gridPageSize;
             fields = response;
             this.settings = settings;
+            this.context = context;
             this.buildColumnConfigMenu();
         }
 

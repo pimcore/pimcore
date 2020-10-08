@@ -41,4 +41,16 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         return $targetGroups;
     }
+
+    /**
+     * @return int
+     */
+    public function getTotalCount()
+    {
+        try {
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM targeting_target_groups ' . $this->getCondition(), $this->model->getConditionVariables());
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
 }

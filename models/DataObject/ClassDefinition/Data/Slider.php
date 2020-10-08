@@ -25,6 +25,7 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element

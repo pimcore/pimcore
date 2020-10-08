@@ -322,7 +322,7 @@ class TrackingManager implements TrackingManagerInterface
         $result = '';
         foreach ($this->getTrackers() as $tracker) {
             if ($tracker instanceof TrackingCodeAwareInterface) {
-                if (sizeof($tracker->getTrackedCodes())) {
+                if (count($tracker->getTrackedCodes())) {
                     $result .= implode(PHP_EOL, $tracker->getTrackedCodes()).PHP_EOL.PHP_EOL;
                 }
             }
@@ -337,7 +337,7 @@ class TrackingManager implements TrackingManagerInterface
 
         foreach ($this->getTrackers() as $tracker) {
             if ($tracker instanceof TrackingCodeAwareInterface) {
-                if (sizeof($tracker->getTrackedCodes())) {
+                if (count($tracker->getTrackedCodes())) {
                     $trackedCodes[get_class($tracker)] = $tracker->getTrackedCodes();
                 }
             }

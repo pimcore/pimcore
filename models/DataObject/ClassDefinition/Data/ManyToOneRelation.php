@@ -773,6 +773,18 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
+
+    /**
+     * @return string|null
+     */
+    public function getPhpdocReturnType(): ?string
+    {
+        if ($this->getPhpdocType()) {
+            return $this->getPhpdocType() . '|null';
+        }
+
+        return null;
+    }
 }
 
 class_alias(ManyToOneRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Href');

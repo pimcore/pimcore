@@ -133,7 +133,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface
     protected function checkOnlyToken(CartInterface $cart)
     {
         $cartCodes = $cart->getVoucherTokenCodes();
-        $cartVoucherCount = sizeof($cartCodes);
+        $cartVoucherCount = count($cartCodes);
         if ($cartVoucherCount && method_exists($this->configuration, 'getOnlyTokenPerCart')) {
             if ($this->configuration->getOnlyTokenPerCart()) {
                 throw new VoucherServiceException('OnlyTokenPerCart: This token is only allowed as only token in this cart.', VoucherServiceException::ERROR_CODE_ONLY_TOKEN_PER_CART_CANNOT_BE_ADDED);

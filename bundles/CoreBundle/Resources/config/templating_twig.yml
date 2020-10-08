@@ -25,6 +25,7 @@ services:
     Pimcore\Twig\Extension\TemplatingHelperExtension:
         arguments:
             $phpEngine: '@templating.engine.php'
+        deprecated: 'The "%service_id%" service is deprecated.'
 
     Pimcore\Twig\Extension\NavigationExtension: ~
 

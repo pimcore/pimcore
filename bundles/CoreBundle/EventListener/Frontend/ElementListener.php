@@ -102,6 +102,10 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
                 return;
             }
 
+            if ($request->attributes->get('_route') === 'fos_js_routing_js') {
+                return;
+            }
+
             $document = $this->documentResolver->getDocument($request);
             $adminRequest =
                 $this->requestHelper->isFrontendRequestByAdmin($request) ||

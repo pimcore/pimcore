@@ -11,7 +11,7 @@ Hobex does not require an additional PHP-SDK. You just need to get a test accoun
 
 ## Configuration
 
-```yaml 
+```yaml
 pimcore_ecommerce_framework:
     
     # ...

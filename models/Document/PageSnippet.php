@@ -17,13 +17,13 @@
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Document\Tag\TagUsageResolver;
+use Pimcore\Document\Editable\EditableUsageResolver;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\Tag\Loader\TagLoaderInterface;
+use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 
 /**
  * @method \Pimcore\Model\Document\PageSnippet\Dao getDao()
@@ -80,6 +80,13 @@ abstract class PageSnippet extends Model\Document
      * @var null|int
      */
     protected $contentMasterDocumentId;
+
+    /**
+     * @internal
+     *
+     * @var bool
+     */
+    protected $supportsContentMaster = true;
 
     /**
      * @var null|bool
@@ -180,7 +187,8 @@ abstract class PageSnippet extends Model\Document
             if (!empty($documentsConfig['versions']['steps'])
                 || !empty($documentsConfig['versions']['days'])
                 || $setModificationDate) {
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
+                $saveStackTrace = !($documentsConfig['versions']['disable_stack_trace'] ?? false);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
             }
 
             // hook should be also called if "save only new version" is selected
@@ -238,27 +246,27 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @see Document::resolveDependencies
-     *
      * @return array
      */
     public function resolveDependencies()
     {
-        $dependencies = parent::resolveDependencies();
+        $dependencies = [parent::resolveDependencies()];
 
         foreach ($this->getEditables() as $editable) {
-            $dependencies = array_merge($dependencies, $editable->resolveDependencies());
+            $dependencies[] = $editable->resolveDependencies();
         }
 
         if ($this->getContentMasterDocument() instanceof Document) {
-            $key = 'document_' . $this->getContentMasterDocument()->getId();
-            $dependencies[$key] = [
-                'id' => $this->getContentMasterDocument()->getId(),
-                'type' => 'document',
+            $masterDocumentId = $this->getContentMasterDocument()->getId();
+            $dependencies[] = [
+                'document_' . $masterDocumentId => [
+                    'id' => $masterDocumentId,
+                    'type' => 'document',
+                ],
             ];
         }
 
-        return $dependencies;
+        return array_merge(...$dependencies);
     }
 
     /**
@@ -354,7 +362,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @param string $name
      * @param string $type
-     * @param string $data
+     * @param mixed $data
      *
      * @return $this
      *
@@ -378,8 +386,8 @@ abstract class PageSnippet extends Model\Document
     {
         try {
             if ($type) {
-                /** @var TagLoaderInterface $loader */
-                $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
+                /** @var EditableLoaderInterface $loader */
+                $loader = \Pimcore::getContainer()->get(Document\Editable\Loader\EditableLoader::class);
                 $editable = $loader->build($type);
 
                 $this->editables = $this->editables ?? [];
@@ -399,7 +407,7 @@ abstract class PageSnippet extends Model\Document
      * Set an element with the given key/name
      *
      * @param string $name
-     * @param Tag $data
+     * @param Editable $data
      *
      * @return $this
      *
@@ -414,12 +422,13 @@ abstract class PageSnippet extends Model\Document
      * Set an element with the given key/name
      *
      * @param string $name
-     * @param Tag $data
+     * @param Editable $data
      *
      * @return $this
      */
-    public function setEditable(string $name, Tag $data)
+    public function setEditable(string $name, Editable $data)
     {
+        $this->getEditables();
         $this->editables[$name] = $data;
 
         return $this;
@@ -444,6 +453,7 @@ abstract class PageSnippet extends Model\Document
      */
     public function removeEditable(string $name)
     {
+        $this->getEditables();
         if (isset($this->editables[$name])) {
             unset($this->editables[$name]);
         }
@@ -456,7 +466,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @param string $name
      *
-     * @return Tag|null
+     * @return Editable|null
      *
      * @deprecated since v6.7 and will be removed in 7. Use getEditable() instead.
      */
@@ -470,7 +480,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @param string $name
      *
-     * @return Tag|null
+     * @return Editable|null
      */
     public function getEditable(string $name)
     {
@@ -589,7 +599,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return Tag[]
+     * @return Editable[]
      *
      * @deprecated since v6.7 and will be removed in 7. Use getEditables() instead.
      */
@@ -599,7 +609,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * @return Tag[]
+     * @return Editable[]
      */
     public function getEditables(): array
     {
@@ -749,6 +759,16 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
+     * @internal
+     *
+     * @return bool
+     */
+    public function supportsContentMaster(): bool
+    {
+        return $this->supportsContentMaster;
+    }
+
+    /**
      * Validates if there is a missing value for required editable
      */
     protected function checkMissingRequiredEditable()
@@ -757,18 +777,18 @@ abstract class PageSnippet extends Model\Document
         $allowedTypes = ['input', 'wysiwyg', 'textarea', 'numeric'];
 
         if ($this->getMissingRequiredEditable() === null) {
-            /** @var TagUsageResolver $tagUsageResolver */
-            $tagUsageResolver = \Pimcore::getContainer()->get(TagUsageResolver::class);
+            /** @var EditableUsageResolver $editableUsageResolver */
+            $editableUsageResolver = \Pimcore::getContainer()->get(EditableUsageResolver::class);
             try {
                 $documentCopy = Service::cloneMe($this);
                 if ($documentCopy instanceof self) {
                     // rendering could fail if the controller/action doesn't exist, in this case we can skip the required check
-                    $tagNames = $tagUsageResolver->getUsedTagnames($documentCopy);
-                    foreach ($tagNames as $tagName) {
-                        $tag = $documentCopy->getEditable($tagName);
-                        if ($tag instanceof Tag && in_array($tag->getType(), $allowedTypes)) {
-                            $documentOptions = $tag->getOptions();
-                            if ($tag->isEmpty() && isset($documentOptions['required']) && $documentOptions['required'] == true) {
+                    $editableNames = $editableUsageResolver->getUsedEditableNames($documentCopy);
+                    foreach ($editableNames as $editableName) {
+                        $editable = $documentCopy->getEditable($editableName);
+                        if ($editable instanceof Editable && in_array($editable->getType(), $allowedTypes)) {
+                            $editableConfig = $editable->getConfig();
+                            if ($editable->isEmpty() && isset($editableConfig['required']) && $editableConfig['required'] == true) {
                                 $this->setMissingRequiredEditable(true);
                                 break;
                             }

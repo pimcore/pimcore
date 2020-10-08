@@ -68,7 +68,7 @@ class Iframe extends Model\DataObject\ClassDefinition\Layout
     /**
      * Override point for Enriching the layout definition before the layout is returned to the admin interface.
      *
-     * @param Model\DataObject\Concrete $object
+     * @param Model\DataObject\Concrete|null $object
      * @param array $context additional contextual data
      *
      * @return self

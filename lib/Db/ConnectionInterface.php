@@ -164,6 +164,8 @@ interface ConnectionInterface extends Connection
     public function quoteTableAs($ident, $alias = null);
 
     /**
+     * @deprecated
+     *
      * @return ZendDbCompatibleQueryBuilder
      */
     public function select();

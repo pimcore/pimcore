@@ -39,6 +39,9 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Templating\EngineInterface;
 
+/**
+ * @deprecated since Pimcore 6.8.0 and will be removed in Pimcore 7.
+ */
 class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
     const HASH_ALGO_HMAC_SHA512 = 'hmac_sha512';

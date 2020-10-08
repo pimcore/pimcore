@@ -110,10 +110,6 @@ class AdminStyle
                     $this->elementIconClass = 'pimcore_icon_folder';
                 }
             }
-
-            if ($element->getProperty('navigation_exclude')) {
-                $this->appendElementCssClass('pimcore_navigation_exclude');
-            }
         }
     }
 

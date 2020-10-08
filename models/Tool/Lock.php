@@ -20,18 +20,20 @@ namespace Pimcore\Model\Tool;
 use Pimcore\Model;
 
 /**
+ * @deprecated use Symfony Lock component instead
+ *
  * @method \Pimcore\Model\Tool\Lock\Dao getById(string $key)
  * @method \Pimcore\Model\Tool\Lock\Dao getDao()
  */
 class Lock extends Model\AbstractModel
 {
     /**
-     * @var string
+     * @var string|null
      */
     public $id;
 
     /**
-     * @var int
+     * @var int|null
      */
     public $date;
 
@@ -133,11 +135,11 @@ class Lock extends Model\AbstractModel
      */
     public function setDate($date)
     {
-        $this->date = $date;
+        $this->date = (int)$date;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getDate()
     {
@@ -153,7 +155,7 @@ class Lock extends Model\AbstractModel
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getId()
     {

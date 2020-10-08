@@ -134,7 +134,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
      * Set an element with the given key/name
      *
      * @param string $name
-     * @param Tag $data
+     * @param Editable $data
      *
      * @return PageSnippet
      */
@@ -153,7 +153,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
      *
      * @param string $name
      *
-     * @return Tag|null
+     * @return Editable|null
      */
     public function getEditable($name)
     {

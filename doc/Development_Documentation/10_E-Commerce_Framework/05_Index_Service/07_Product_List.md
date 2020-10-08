@@ -7,7 +7,7 @@ Product Index implementation specific. Detailed method documentation is availabl
 For how to get a Product List instance suitable for the current Product Index implementation and filter for products see 
 following code sample: 
 
-```php 
+```php
 <?php 
 $list = \Pimcore\Bundle\EcommerceFrameworkBundle\Factory::getInstance()->getIndexService()->getProductListForCurrentTenant();
 $list->addCondition("name = 'testproduct'", 'name');

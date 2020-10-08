@@ -20,6 +20,9 @@ namespace Pimcore\Tests\Unit\Tool;
 use Pimcore\DependencyInjection\ConfigMerger;
 use Pimcore\Tests\Test\TestCase;
 
+/**
+ * @deprecated will be removed in Pimcore 7
+ */
 class ConfigMergerTest extends TestCase
 {
     /**

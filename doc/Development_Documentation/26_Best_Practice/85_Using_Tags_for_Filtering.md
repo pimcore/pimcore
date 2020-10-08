@@ -103,7 +103,7 @@ Important to know:
 - Tag assignment to elements is stored in the table `tags_assignment`.
 
 
-```php 
+```php
 <?php
     public function filterForTags(Asset\Listing $listing, Request $request)
     {

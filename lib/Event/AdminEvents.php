@@ -69,11 +69,11 @@ final class AdminEvents
     /**
      * The INDEX_SETTINGS event is triggered when the settings object is built for the index page.
      *
-     * @Event("Pimcore\Event\Admin\IndexSettingsEvent")
+     * @Event("Pimcore\Event\Admin\IndexActionSettingsEvent")
      *
      * @var string
      */
-    const INDEX_SETTINGS = 'pimcore.admin.index.settings';
+    const INDEX_ACTION_SETTINGS = 'pimcore.admin.indexAction.settings';
 
     /**
      * Fired before the request params are parsed.

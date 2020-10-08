@@ -73,10 +73,10 @@ class PhpArrayFileTable
     {
         $writeable = false;
 
-        if (file_exists($filePath) && is_writeable($filePath)) {
+        if (file_exists($filePath) && is_writable($filePath)) {
             $writeable = true;
         } elseif (!file_exists($filePath)) {
-            if (is_writeable(dirname($filePath))) {
+            if (is_writable(dirname($filePath))) {
                 $writeable = true;
             }
         }

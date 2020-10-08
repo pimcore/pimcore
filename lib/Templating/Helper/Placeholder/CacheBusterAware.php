@@ -18,6 +18,8 @@ namespace Pimcore\Templating\Helper\Placeholder;
  * Class CacheBusterAware
  *
  * adds cache buster functionality to placeholder helper
+ *
+ * @deprecated
  */
 abstract class CacheBusterAware extends AbstractHelper
 {

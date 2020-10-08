@@ -97,10 +97,10 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $object = LazyLoading::getById($id, true);
 
             // inherited data isn't assigned to a property, it's only returned by the getter and therefore doesn't get serialized
+            $contentShouldBeIncluded = ($objectType === 'inherited') ? false : true;
 
             //serialize data object and check for (not) wanted content in serialized string
-            // content should never be included in the serialized data
-            $this->checkSerialization($object, $messagePrefix, false);
+            $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
 
             //load relation and check if relation loads correctly
             $blockItems = $object->getTestBlock();
@@ -108,8 +108,7 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
             $this->assertEquals(self::RELATION_COUNT, count($relationObjects), $messagePrefix . 'relations not loaded properly');
 
             //serialize data object and check for (not) wanted content in serialized string
-            // content should never be included in the serialized data
-            $this->checkSerialization($object, $messagePrefix, false);
+            $this->checkSerialization($object, $messagePrefix, $contentShouldBeIncluded);
         }
     }
 
@@ -201,6 +200,26 @@ class ManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         $object->save();
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
+
+        //save only non localized field and check if relation loads correctly
+        $object = LazyLoading::getById($object->getId(), true);
+        $collection = $object->getFieldcollection();
+        /** @var Fieldcollection\Data\LazyLoadingLocalizedTest $firstItem */
+        $firstItem = $collection->get(0);
+        $firstItem->setNormalInput(uniqid());
+        $collection->setItems([$firstItem]);
+
+        $object->save();
+
+        $object = LazyLoading::getById($object->getId(), true);
+
+        //load relation and check if relation loads correctly
+        $collection = $object->getFieldcollection();
+        /** @var Fieldcollection\Data\LazyLoadingLocalizedTest $firstItem */
+        $firstItem = $collection->get(0);
+        $loadedRelations = $firstItem->getLObjects();
+
+        $this->assertEquals(self::RELATION_COUNT, count($loadedRelations), 'expected that original relations count is the same as the new one');
 
         foreach (['parent' => $parentId, 'inherited' => $childId] as $objectType => $id) {
             $messagePrefix = "Testing object-type $objectType: ";
