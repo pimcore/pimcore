@@ -326,13 +326,6 @@ CREATE TABLE `http_error_log` (
   KEY `count` (`count`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
-DROP TABLE IF EXISTS `locks`;
-CREATE TABLE `locks` (
-  `id` varchar(150) NOT NULL DEFAULT '',
-  `date` int(11) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8mb4;
-
 DROP TABLE IF EXISTS `lock_keys`;
 CREATE TABLE `lock_keys` (
   `key_id` varchar(64) NOT NULL,
