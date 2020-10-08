@@ -29,18 +29,6 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var Model\Element\Note[]|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $notes = null;
-
-    public function __construct()
-    {
-        $this->notes = & $this->data;
-    }
-
-    /**
      * @param Model\Element\Note[]|null $notes
      *
      * @return static

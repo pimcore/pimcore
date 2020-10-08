@@ -24,18 +24,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
-    /**
-     * @var array
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    public $carts;
-
     public function __construct()
     {
         $this->getDao()->setCartClass(Factory::getInstance()->getCartManager()->getCartClassName());
-
-        $this->carts = & $this->data;
     }
 
     /**

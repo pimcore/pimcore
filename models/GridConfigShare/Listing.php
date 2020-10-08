@@ -27,18 +27,6 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $gridConfigShares = null;
-
-    public function __construct()
-    {
-        $this->gridConfigShares = & $this->data;
-    }
-
-    /**
      * @return Model\GridConfigShare[]
      */
     public function getGridconfigShares()

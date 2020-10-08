@@ -29,18 +29,6 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var Model\Tool\Email\Blacklist[]|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $items = null;
-
-    public function __construct()
-    {
-        $this->items = & $this->data;
-    }
-
-    /**
      * @param Model\Tool\Email\Blacklist[]|null $items
      *
      * @return static
