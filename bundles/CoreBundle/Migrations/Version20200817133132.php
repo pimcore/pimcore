@@ -27,7 +27,7 @@ class Version20200817133132 extends AbstractPimcoreMigration
                 $relationTable = current($table);
 
                 if ($schema->getTable($relationTable)->hasPrimaryKey()) {
-                    $schema->getTable($relationTable)->dropPrimaryKey();
+                    $this->addSql('ALTER TABLE `'.$relationTable.'` DROP PRIMARY KEY;');
                 }
 
                 if (!$schema->getTable($relationTable)->hasColumn('id')) {
