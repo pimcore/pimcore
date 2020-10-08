@@ -427,16 +427,6 @@ pimcore.layout.toolbar = Class.create({
                         );
                     }
 
-                    if (perspectiveCfg.inToolbar("extras.systemtools.serverinfo")) {
-                        systemItems.push(
-                            {
-                                text: t("server_info"),
-                                iconCls: "pimcore_nav_icon_server_info",
-                                handler: this.showServerInfo
-                            }
-                        );
-                    }
-
                     if (perspectiveCfg.inToolbar("extras.systemtools.database")) {
                         systemItems.push(
                             {
@@ -1700,10 +1690,6 @@ pimcore.layout.toolbar = Class.create({
 
     showPhpInfo: function () {
         pimcore.helpers.openGenericIframeWindow("phpinfo", Routing.generate('pimcore_admin_misc_phpinfo'), "pimcore_icon_php", "PHP Info");
-    },
-
-    showServerInfo: function () {
-        pimcore.helpers.openGenericIframeWindow("serverinfo", Routing.generate('pimcore_admin_external_linfo_index'), "pimcore_icon_server_info", "Server Info");
     },
 
     showOpcacheStatus: function () {

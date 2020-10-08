@@ -14,7 +14,6 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Linfo;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
@@ -135,31 +134,16 @@ class IndexController extends AdminController implements EventedControllerInterf
             $tables = [];
         }
 
-        // System
-        try {
-            $linfo = new Linfo\Linfo([
-                'show' => [
-                    'os' => true,
-                    'ram' => true,
-                    'cpu' => true,
-                    'virtualization' => true,
-                    'distro' => true,
-                ],
-            ]);
-            $linfo->scan();
-            $systemData = $linfo->getInfo();
-            $system = [
-                'OS' => $systemData['OS'],
-                'Distro' => $systemData['Distro'],
-                'RAMTotal' => $systemData['RAM']['total'],
-                'CPUCount' => count($systemData['CPU']),
-                'CPUModel' => $systemData['CPU'][0]['Model'],
-                'CPUClock' => $systemData['CPU'][0]['MHz'],
-                'virtualization' => $systemData['virtualization'],
-            ];
-        } catch (\Exception $e) {
-            $system = [];
-        }
+        // @TODO System
+        $system = [
+            'OS' => '',
+            'Distro' => '',
+            'RAMTotal' => '',
+            'CPUCount' => '',
+            'CPUModel' => '',
+            'CPUClock' => '',
+            'virtualization' => '',
+        ];
 
         try {
             $data = [
