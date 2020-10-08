@@ -16,7 +16,7 @@ namespace Pimcore\Maintenance;
 
 use Pimcore\Model\Tool\TmpStore;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Lock\Factory as LockFactory;
+use Symfony\Component\Lock\LockFactory;
 
 final class Executor implements ExecutorInterface
 {

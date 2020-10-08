@@ -274,9 +274,6 @@ class Pimcore
         if (self::$shutdownEnabled && self::isInstalled()) {
             // write and clean up cache
             Cache::shutdown();
-
-            // release all open locks from this process
-            Model\Tool\Lock::releaseAll();
         }
     }
 

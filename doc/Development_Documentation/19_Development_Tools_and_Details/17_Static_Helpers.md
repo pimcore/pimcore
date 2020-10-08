@@ -55,14 +55,3 @@ $content = Document\Service::render(Document::getById(2), $optionalParams, $useL
 echo $content;
 ```
 
-## Locking (deprecated)
-
-> This feature will be removed in Pimcore 7, please use the lock factory service  `Symfony\Component\Lock\LockFactory` instead
-
-Just have a look at `Pimcore\Model\Tool\Lock` and the static class functions 
-* `acquire()`
-* `release()`
-* `lock()`
-* `isLocked()`
-
-Active locks are stores in the database table `locks`. 
