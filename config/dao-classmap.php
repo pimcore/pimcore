@@ -164,7 +164,6 @@ return [
     'Pimcore\\Model\\Tool\\Qrcode\\Config' => 'Pimcore\\Model\\Tool\\Qrcode\\Config\\Dao',
     'Pimcore\\Model\\Tool\\Qrcode\\Config\\Listing' => 'Pimcore\\Model\\Tool\\Qrcode\\Config\\Listing\\Dao',
     'Pimcore\\Model\\Tool\\Lock' => 'Pimcore\\Model\\Tool\\Lock\\Dao',
-    'Pimcore\\Model\\Tool\\Tracking\\Event' => 'Pimcore\\Model\\Tool\\Tracking\\Event\\Dao',
     'Pimcore\\Model\\Tool\\UUID\\Listing' => 'Pimcore\\Model\\Tool\\UUID\\Listing\\Dao',
     'Pimcore\\Model\\Tool\\TmpStore' => 'Pimcore\\Model\\Tool\\TmpStore\\Dao',
     'Pimcore\\Model\\Tool\\Tag\\Config' => 'Pimcore\\Model\\Tool\\Tag\\Config\\Dao',
