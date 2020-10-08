@@ -21,7 +21,6 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
 
         this.id = id;
         this.name = name;
-        this.setupWrapper();
         config = this.parseConfig(config);
 
         if (!data) {
@@ -31,45 +30,46 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
         this.config = config;
         this.inherited = inherited;
 
-        var textareaId = id + "_textarea";
+        if(config["required"]) {
+            this.required = config["required"];
+        }
+    },
+
+    render: function () {
+        this.setupWrapper();
+
         this.textarea = document.createElement("div");
         this.textarea.setAttribute("contenteditable","true");
 
-        Ext.get(id).appendChild(this.textarea);
+        Ext.get(this.id).appendChild(this.textarea);
+        Ext.get(this.id).insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
 
-        Ext.get(id).insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
+        this.textarea.id = this.id + "_textarea";
+        this.textarea.innerHTML = this.data;
 
-        this.textarea.id = textareaId;
-        this.textarea.innerHTML = data;
-
-        var textareaHeight = 100;
-        if (config.height) {
-            textareaHeight = config.height;
+        let textareaHeight = 100;
+        if (this.config.height) {
+            textareaHeight = this.config.height;
         }
-        if (config.placeholder) {
-            this.textarea.setAttribute('data-placeholder', config["placeholder"]);
+        if (this.config.placeholder) {
+            this.textarea.setAttribute('data-placeholder', this.config["placeholder"]);
         }
 
-        var inactiveContainerWidth = config.width + "px";
-        if (typeof config.width == "string" && config.width.indexOf("%") >= 0) {
-            inactiveContainerWidth = config.width;
+        let inactiveContainerWidth = this.config.width + "px";
+        if (typeof this.config.width == "string" && this.config.width.indexOf("%") >= 0) {
+            inactiveContainerWidth = this.config.width;
         }
 
         Ext.get(this.textarea).addCls("pimcore_wysiwyg");
         Ext.get(this.textarea).applyStyles("width: " + inactiveContainerWidth  + "; min-height: " + textareaHeight
-                                                                                                + "px;");
+            + "px;");
 
         // register at global DnD manager
         if (typeof dndManager !== 'undefined') {
-            dndManager.addDropTarget(Ext.get(id), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
+            dndManager.addDropTarget(Ext.get(this.id), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
         }
 
         this.startCKeditor();
-
-        if(config["required"]) {
-            this.required = config["required"];
-        }
-
         this.checkValue();
     },
 

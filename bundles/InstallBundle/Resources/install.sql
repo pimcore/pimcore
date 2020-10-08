@@ -129,8 +129,8 @@ CREATE TABLE `documents` (
   KEY `modificationDate` (`modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
-DROP TABLE IF EXISTS `documents_elements`;
-CREATE TABLE `documents_elements` (
+DROP TABLE IF EXISTS `documents_editables`;
+CREATE TABLE `documents_editables` (
   `documentId` int(11) unsigned NOT NULL DEFAULT '0',
   `name` varchar(750) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` varchar(50) DEFAULT NULL,
@@ -332,6 +332,14 @@ CREATE TABLE `locks` (
   `date` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `lock_keys`;
+CREATE TABLE `lock_keys` (
+  `key_id` varchar(64) NOT NULL,
+  `key_token` varchar(44) NOT NULL,
+  `key_expiration` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`key_id`)
+) DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `notes`;
 CREATE TABLE `notes` (
@@ -567,40 +575,6 @@ CREATE TABLE `tmp_store` (
   KEY `tag` (`tag`),
   KEY `date` (`date`),
   KEY `expiryDate` (`expiryDate`)
-) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `tracking_events`;
-CREATE TABLE `tracking_events` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `category` varchar(190) DEFAULT NULL,
-  `action` varchar(190) DEFAULT NULL,
-  `label` varchar(190) DEFAULT NULL,
-  `data` varchar(190) DEFAULT NULL,
-  `timestamp` int(11) unsigned DEFAULT NULL,
-  `year` int(5) unsigned DEFAULT NULL,
-  `month` int(2) unsigned DEFAULT NULL,
-  `day` int(2) unsigned DEFAULT NULL,
-  `dayOfWeek` int(1) unsigned DEFAULT NULL,
-  `dayOfYear` int(3) unsigned DEFAULT NULL,
-  `weekOfYear` int(2) unsigned DEFAULT NULL,
-  `hour` int(2) unsigned DEFAULT NULL,
-  `minute` int(2) unsigned DEFAULT NULL,
-  `second` int(2) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `timestamp` (`timestamp`),
-  KEY `year` (`year`),
-  KEY `month` (`month`),
-  KEY `day` (`day`),
-  KEY `dayOfWeek` (`dayOfWeek`),
-  KEY `dayOfYear` (`dayOfYear`),
-  KEY `weekOfYear` (`weekOfYear`),
-  KEY `hour` (`hour`),
-  KEY `minute` (`minute`),
-  KEY `second` (`second`),
-  KEY `category` (`category`),
-  KEY `action` (`action`),
-  KEY `label` (`label`),
-  KEY `data` (`data`)
 ) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `translations_admin`;

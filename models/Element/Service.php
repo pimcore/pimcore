@@ -1527,7 +1527,6 @@ class Service extends Model\AbstractModel
 
         if ($context['defaultFilters'] ?? false) {
             $copier->addFilter(new DoctrineCollectionFilter(), new PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
-            $copier->addFilter(new SetNullFilter(), new PropertyTypeMatcher('Pimcore\Templating\Model\ViewModelInterface'));
             $copier->addFilter(new SetNullFilter(), new PropertyTypeMatcher('Psr\Container\ContainerInterface'));
             $copier->addFilter(new SetNullFilter(), new PropertyTypeMatcher('Pimcore\Model\DataObject\ClassDefinition'));
         }

@@ -16,28 +16,25 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
-use Pimcore\Templating\Model\ViewModel;
 
 /**
- * Helper Class for setting up a product list utilizing the filter service
+ * Helper service class for setting up a product list utilizing the filter service
  * based on a filter definition and set filter parameters
  */
-class Helper
+class ListHelper
 {
     /**
      * @param \Pimcore\Model\DataObject\FilterDefinition $filterDefinition
      * @param ProductListInterface $productList
      * @param array $params
-     * @param ViewModel $viewModel
      * @param FilterService $filterService
      * @param bool $loadFullPage
      * @param bool $excludeLimitOfFirstpage
      */
-    public static function setupProductList(
+    public function setupProductList(
         \Pimcore\Model\DataObject\FilterDefinition $filterDefinition,
         ProductListInterface $productList,
-        $params,
-        ViewModel $viewModel,
+        &$params,
         FilterService $filterService,
         $loadFullPage,
         $excludeLimitOfFirstpage = false
@@ -76,7 +73,7 @@ class Helper
         }
 
         if (isset($params['page'])) {
-            $viewModel->currentPage = intval($params['page']);
+            $params['currentPage'] = intval($params['page']);
             $offset = $pageLimit * ($params['page'] - 1);
         }
         if ($filterDefinition->getAjaxReload()) {
@@ -93,7 +90,7 @@ class Helper
         }
         $productList->setOffset($offset);
 
-        $viewModel->pageLimit = $pageLimit;
+        $params['pageLimit'] = $pageLimit;
 
         $orderByField = null;
         $orderByDirection = null;
@@ -108,7 +105,7 @@ class Helper
         }
 
         if (array_key_exists($orderByField, $orderByOptions)) {
-            $viewModel->currentOrderBy = htmlentities($params['orderBy']);
+            $params['currentOrderBy'] = htmlentities($params['orderBy']);
 
             $productList->setOrderKey($orderByField);
 
@@ -125,7 +122,7 @@ class Helper
                     }
                 }
 
-                $viewModel->currentOrderBy = implode('#', reset($orderByList));
+                $params['currentOrderBy'] = implode('#', reset($orderByList));
             }
             if ($orderByList) {
                 $productList->setOrderKey($orderByList);
@@ -134,10 +131,10 @@ class Helper
         }
 
         if ($filterService) {
-            $viewModel->currentFilter = $filterService->initFilterService($filterDefinition, $productList, $params);
+            $params['currentFilter'] = $filterService->initFilterService($filterDefinition, $productList, $params);
         }
 
-        $viewModel->orderByOptions = $orderByOptions;
+        $params['orderByOptions'] = $orderByOptions;
     }
 
     /**
@@ -145,7 +142,7 @@ class Helper
      *
      * @return string
      */
-    public static function createPagingQuerystring($page)
+    public function createPagingQuerystring($page)
     {
         $params = $_REQUEST;
         $params['page'] = $page;
@@ -170,7 +167,7 @@ class Helper
      *
      * @return AbstractCategory|null
      */
-    public static function getFirstFilteredCategory($conditions)
+    public function getFirstFilteredCategory($conditions)
     {
         if (!empty($conditions)) {
             foreach ($conditions as $c) {

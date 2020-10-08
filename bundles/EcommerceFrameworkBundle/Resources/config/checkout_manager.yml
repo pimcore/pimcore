@@ -24,11 +24,13 @@ services:
 
     Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor:
         arguments:
+            - '@Symfony\Component\Lock\LockFactory'
             - '@pimcore_ecommerce.locator.order_manager'
             - [] # options
 
     Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CommitOrderProcessor:
         arguments:
+            - '@Symfony\Component\Lock\LockFactory'
             - '@pimcore_ecommerce.locator.order_manager'
             - '@event_dispatcher'
             - '@Pimcore\Log\ApplicationLogger'

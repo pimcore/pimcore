@@ -16,8 +16,10 @@ namespace Pimcore\Document\Editable;
 
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
+use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Pimcore\Extension\Document\Areabrick\TemplateAreabrickInterface;
+use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Http\ResponseStack;
 use Pimcore\HttpKernel\BundleLocator\BundleLocatorInterface;
@@ -25,8 +27,6 @@ use Pimcore\HttpKernel\WebPathResolver;
 use Pimcore\Model\Document\Editable;
 use Pimcore\Model\Document\Editable\Area\Info;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Templating\Model\ViewModel;
-use Pimcore\Templating\Model\ViewModelInterface;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -34,7 +34,7 @@ use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
+class EditableHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -83,6 +83,11 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
      */
     protected $brickTemplateCache = [];
 
+    /**
+     * @var EditmodeResolver
+     */
+    protected $editmodeResolver;
+
     public const ATTRIBUTE_AREABRICK_INFO = '_pimcore_areabrick_info';
 
     /**
@@ -94,6 +99,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
      * @param RequestHelper $requestHelper
      * @param TranslatorInterface $translator
      * @param ResponseStack $responseStack
+     * @param EditmodeResolver $editmodeResolver
      */
     public function __construct(
         AreabrickManagerInterface $brickManager,
@@ -103,7 +109,8 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
         ActionRenderer $actionRenderer,
         RequestHelper $requestHelper,
         TranslatorInterface $translator,
-        ResponseStack $responseStack
+        ResponseStack $responseStack,
+        EditmodeResolver $editmodeResolver
     ) {
         $this->brickManager = $brickManager;
         $this->templating = $templating;
@@ -113,14 +120,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
         $this->requestHelper = $requestHelper;
         $this->translator = $translator;
         $this->responseStack = $responseStack;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($view)
-    {
-        return $view instanceof ViewModelInterface;
+        $this->editmodeResolver = $editmodeResolver;
     }
 
     /**
@@ -140,9 +140,6 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
      */
     public function getAvailableAreablockAreas(Editable\Areablock $editable, array $options)
     {
-        /** @var ViewModel $view */
-        $view = $editable->getView();
-
         $areas = [];
         foreach ($this->brickManager->getBricks() as $brick) {
             // don't show disabled bricks
@@ -161,6 +158,8 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
             $icon = $brick->getIcon();
             $limit = $options['limits'][$brick->getId()] ?? null;
 
+            $hasDialogBoxConfiguration = $brick instanceof EditableDialogBoxInterface;
+
             // autoresolve icon as <bundleName>/Resources/public/areas/<id>/icon.png
             if (null === $icon) {
                 $bundle = null;
@@ -174,12 +173,11 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
                         $icon = $this->webPathResolver->getPath($bundle, 'areas/' . $brick->getId(), 'icon.png');
                     }
                 } catch (\Exception $e) {
-                    $iconPath = '';
                     $icon = '';
                 }
             }
 
-            if ($view->getEditmode) {
+            if ($this->editmodeResolver->isEditmode()) {
                 $name = $this->translator->trans($name);
                 $desc = $this->translator->trans($desc);
             }
@@ -190,6 +188,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
                 'type' => $brick->getId(),
                 'icon' => $icon,
                 'limit' => $limit,
+                'hasDialogBoxConfiguration' => $hasDialogBoxConfiguration,
             ];
         }
 
@@ -201,30 +200,21 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
      */
     public function renderAreaFrontend(Info $info)
     {
-        $editable = $info->getEditable();
-        $params = $info->getParams();
-
-        /** @var ViewModelInterface $view */
-        $view = $editable->getView();
         $brick = $this->brickManager->getBrick($info->getId());
 
-        $info->setView($view);
         $request = $this->requestHelper->getCurrentRequest();
         $brickInfoRestoreValue = $request->attributes->get(self::ATTRIBUTE_AREABRICK_INFO);
         $request->attributes->set(self::ATTRIBUTE_AREABRICK_INFO, $info);
 
         $info->setRequest($request);
 
-        // assign parameters to view
-        $view->getParameters()->add($params);
-        $view->getParameters()->add([
-            'brick' => $info, // alias of `info` for compatibility reasons
-            'info' => $info,
-            'instance' => $brick,
-        ]);
-
         // call action
         $this->handleBrickActionResult($brick->action($info));
+
+        $params = $info->getParams();
+        $params['brick'] = $info;
+        $params['info'] = $info;
+        $params['instance'] = $brick;
 
         if (!$brick->hasViewTemplate()) {
             return;
@@ -245,11 +235,11 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
         }
 
         // general parameters
-        $editmode = $view->get('editmode');
+        $editmode = $this->editmodeResolver->isEditmode();
         $forceEditInView = array_key_exists('forceEditInView', $params) && $params['forceEditInView'];
 
         // view parameters
-        $viewParameters = array_merge($view->getParameters()->all(), [
+        $viewParameters = array_merge($params, [
             // enable editmode if editmode is active and the brick has no edit template or edit in view is forced
             'editmode' => $editmode ? (!$brick->hasEditTemplate() || $forceEditInView) : false,
         ]);
@@ -258,11 +248,13 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
         $editTemplate = null;
         $editParameters = [];
 
-        if ($brick->hasEditTemplate() && $editmode) {
+        if ($brick->hasEditTemplate() && $editmode && !($brick instanceof EditableDialogBoxInterface)) {
             $editTemplate = $this->resolveBrickTemplate($brick, 'edit');
-            $editParameters = array_merge($view->getParameters()->all(), [
+            $editParameters = array_merge($params, [
                 'editmode' => true,
             ]);
+
+            @trigger_error('Using edit.html.(php|twig) in document areablocks/bricks is marked as deprecated and will be removed in Pimcore v7', E_USER_DEPRECATED);
         }
 
         // render complete areabrick
@@ -379,7 +371,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function renderAction($view, $controller, $action, $parent = null, array $attributes = [], array $query = [], array $options = [])
+    public function renderAction($controller, $action, $parent = null, array $attributes = [], array $query = [], array $options = [])
     {
         $document = $attributes['document'] ?? null;
         if ($document && $document instanceof PageSnippet) {

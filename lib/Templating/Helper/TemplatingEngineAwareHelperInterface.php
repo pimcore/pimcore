@@ -16,6 +16,9 @@ namespace Pimcore\Templating\Helper;
 
 use Pimcore\Templating\PhpEngine;
 
+/**
+ * @deprecated since 6.8.0 and will be removed in Pimcore 7.
+ */
 interface TemplatingEngineAwareHelperInterface
 {
     /**

@@ -18,48 +18,66 @@ pimcore.document.editables.checkbox = Class.create(pimcore.document.editable, {
     initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
-        this.setupWrapper();
-        config = this.parseConfig(config);
+        this.config = this.parseConfig(config);
 
         if (!data) {
             data = false;
         }
 
-        this.htmlId = id + "_editable";
+        this.data = data;
+    },
 
-        var elContainer = Ext.get(id);
+    render: function () {
+        this.setupWrapper();
+        this.htmlId = this.id + "_editable";
+
+        var elContainer = Ext.get(this.id);
 
         var inputCheckbox = document.createElement("input");
         inputCheckbox.setAttribute('name', this.htmlId);
         inputCheckbox.setAttribute('type', 'checkbox');
         inputCheckbox.setAttribute('value', 'true');
         inputCheckbox.setAttribute('id', this.htmlId);
-        if(data) {
+        if(this.data) {
             inputCheckbox.setAttribute('checked', 'checked');
         }
 
         elContainer.appendChild(inputCheckbox);
 
-        if(config["label"]) {
+        if(this.config["label"]) {
             var labelCheckbox = document.createElement("label");
             labelCheckbox.setAttribute('for', this.htmlId);
-            labelCheckbox.innerText = config["label"];
+            labelCheckbox.innerText = this.config["label"];
             elContainer.appendChild(labelCheckbox);
         }
 
         this.elComponent = Ext.get(this.htmlId);
 
         // onchange event
-        if (config.onchange) {
-            this.elComponent.on('change', eval(config.onchange));
+        if (this.config.onchange) {
+            this.elComponent.on('change', eval(this.config.onchange));
         }
-        if (config.reload) {
+        if (this.config.reload) {
             this.elComponent.on('change', this.reloadDocument);
         }
     },
 
+    renderInDialogBox: function (config) {
+
+        if(this.config['dialogBoxConfig'] &&
+            (this.config['dialogBoxConfig']['label'] || this.config['dialogBoxConfig']['name'])) {
+            this.config["label"] = this.config['dialogBoxConfig']['label'] ?? this.config['dialogBoxConfig']['name'];
+        }
+
+        this.render();
+    },
+
     getValue: function () {
-        return this.elComponent.dom.checked;
+        if(this.elComponent) {
+            return this.elComponent.dom.checked;
+        }
+
+        return this.data;
     },
 
     getType: function () {

@@ -17,15 +17,16 @@ pimcore.document.editables.video = Class.create(pimcore.document.editable, {
     initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
-        this.data = {};
         this.inherited = inherited;
 
         this.config = this.parseConfig(config);
         this.data = data;
+    },
 
+    render: function () {
         this.setupWrapper();
 
-        var element = Ext.get("pimcore_video_" + name);
+        var element = Ext.get("pimcore_video_" + this.name);
 
         var button = new Ext.Button({
             iconCls: "pimcore_icon_edit",
@@ -33,7 +34,7 @@ pimcore.document.editables.video = Class.create(pimcore.document.editable, {
             handler: this.openEditor.bind(this)
         });
         button.render(element.insertHtml("afterBegin", '<div class="pimcore_video_edit_button"></div>'));
-        if (inherited) {
+        if (this.inherited) {
             button.hide();
         }
         this.button = button;

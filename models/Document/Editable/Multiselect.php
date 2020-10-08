@@ -62,11 +62,11 @@ class Multiselect extends Model\Document\Editable
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getDataEditmode()
     {
-        return implode(',', $this->values);
+        return $this->values;
     }
 
     /**

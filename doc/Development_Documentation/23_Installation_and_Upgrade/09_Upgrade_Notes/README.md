@@ -7,6 +7,19 @@ If you have custom editables or wysiwyg global config then please change namespa
 - Javascript - Class `pimcore.document.tag` is deprecated as well and will be removed in 7. Use new class `pimcore.document.editable` instead.
 - All classes in namespace `Pimcore\Document\Tag` moved to new namespace `Pimcore\Document\Editable` (including their services) for better readability and marked as deprecated. Please update custom document editable classes and mappings. [#6921](https://github.com/pimcore/pimcore/pull/6921)
 - All `document_tag_` css classes are deprecated and will be removed in Pimcore 7. Use new classes `document_editable_` for custom styling of document editables.
+- Method signature `AbstractObject::setChildren($children)` has been updated to `AbstractObject::setChildren($children, array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)`.
+- Edit Template for Area Bricks `edit.html.(php|twig)` has been deprecated and will be removed in Pimcore 7. Use new feature [editable dialog box](https://github.com/pimcore/pimcore/pull/6923#issuecomment-671257112) instead.
+- `EventedControllerInterface` is marked as deprecated and will be removed in v7. Please use new interfaces for kernel events `KernelControllerEventInterface::onKernelControllerEvent()` or `KernelResponseEventInterface::onKernelResponseEvent()` instead.
+- PHP templating engine (including templating helpers & vars) has been deprecated and will be removed in Pimcore 7. Use Twig Instead.
+- The Tag Manager has been deprecated and will be removed in Pimcore 7. 
+- Class `\Pimcore\Model\Tool\Tracking\Event` has been deprecated and will be removed in Pimcore 7. 
+- Auto view rendering has been deprecated and will be removed in Pimcore 7, which means views will not be tied to action implicitly using the filename and `$this->view` (`ViewModel`) in actions stops working. Use Symfony way of [Rendering Templates](https://symfony.com/doc/current/templates.html#rendering-templates) instead.
+- Event `\Pimcore\Event\AdminEvents::INDEX_SETTINGS` has been deprecated and will be removed in Pimcore 7, use `\Pimcore\Event\AdminEvents::INDEX_ACTION_SETTINGS` instead.
+- Class `\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Helper` has been deprecated and will be removed in Pimcore 7. Use `Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\ListHelper` service instead.
+- Class `\Pimcore\Model\Tool\Lock` has been deprecated and will be removed in Pimcore 7 use the lock factory service `Symfony\Component\Lock\LockFactory` instead 
+- Payment providers `Datatrans`, `Heidelpay`, `Hobex`, `Klarna`, `Mpay24Seamless`, `OGone`, `PayPalSmartPaymentButton`, `PayU` are deprecated and will be moved to a separate bundle in Pimcore 7.
+- Payment providers `WirecardSeamless`, `Qpay`, `Paypal` are deprecated and will be removed in Pimcore 7.
+- QRCodes (`\Pimcore\Model\Tool\Qrcode\Config`) have been deprecated and will be removed in Pimcore 7. 
 
 ## 6.7.0
 - [Ecommerce][IndexService] Elastic Search worker does not use mockup cache anymore. Now mockup objects are build directly based on information in response of ES response (_source flag). Therefore `AbstractElasticSearch` Worker does not extend `AbstractMockupCacheWorker` anymore. 

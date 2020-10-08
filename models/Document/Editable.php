@@ -20,6 +20,7 @@ namespace Pimcore\Model\Document;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\Block\BlockState;
 use Pimcore\Document\Editable\Block\BlockStateStack;
+use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\Document\EditableNameEvent;
 use Pimcore\Logger;
@@ -27,8 +28,6 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
 use Pimcore\Model\Webservice;
-use Pimcore\Templating\Model\ViewModel;
-use Pimcore\Templating\Model\ViewModelInterface;
 use Pimcore\Tool\HtmlUtils;
 
 /**
@@ -96,11 +95,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     protected $controller;
 
     /**
-     * @var ViewModelInterface|null
-     */
-    protected $view;
-
-    /**
      * In Editmode or not
      *
      * @var bool
@@ -118,12 +112,17 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
+     * @var string
+     */
+    protected $inDialogBox = null;
+
+    /**
      * @param string $type
      * @param string $name
      * @param int $documentId
      * @param array|null $config
      * @param string|null $controller
-     * @param ViewModel|null $view
+     * @param null $view
      * @param bool|null $editmode
      *
      * @return Editable
@@ -137,11 +136,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $editable->setName($name);
         $editable->setDocumentId($documentId);
         $editable->setController($controller);
-        if (!$view) {
-            // needed for the RESTImporter. For areabricks define a default implementation. Otherwise cannot find a tag handler.
-            $view = new ViewModel();
-        }
-        $editable->setView($view);
         $editable->setEditmode($editmode);
         $editable->setConfig($config);
 
@@ -161,7 +155,26 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $attributes = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
-        $code .= ('<div ' . $attributeString . '></div>');
+        $htmlContainerCode = ('<div ' . $attributeString . '></div>');
+
+        if ($this->isInDialogBox()) {
+            $htmlContainerCode = $this->wrapEditmodeContainerCodeForDialogBox($attributes['id'], $htmlContainerCode);
+        }
+
+        $code .= $htmlContainerCode;
+
+        return $code;
+    }
+
+    /**
+     * @param string $id
+     * @param string $code
+     *
+     * @return string
+     */
+    protected function wrapEditmodeContainerCodeForDialogBox(string $id, string $code): string
+    {
+        $code = '<template id="template__' . $id . '">' . $code . '</template>';
 
         return $code;
     }
@@ -183,6 +196,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             'data' => $this->getEditmodeData(),
             'type' => $this->getType(),
             'inherited' => $this->getInherited(),
+            'inDialogBox' => $this->getInDialogBox(),
         ];
 
         return $options;
@@ -444,6 +458,23 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
+     * @param string $name
+     * @param mixed $value
+     *
+     * @return self
+     */
+    public function setOption(string $name, $value): self
+    {
+        if (!is_array($this->options)) {
+            $this->options = [];
+        }
+
+        $this->options[$name] = $value;
+
+        return $this;
+    }
+
+    /**
      * @deprecated
      *
      * @param string|null $controller
@@ -465,26 +496,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     public function getController()
     {
         return $this->controller;
-    }
-
-    /**
-     * @param ViewModelInterface $view
-     *
-     * @return $this
-     */
-    public function setView($view)
-    {
-        $this->view = $view;
-
-        return $this;
-    }
-
-    /**
-     * @return ViewModelInterface
-     */
-    public function getView()
-    {
-        return $this->view;
     }
 
     /**
@@ -527,7 +538,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['controller', 'view', 'editmode', 'options', 'parentBlockNames', 'document'];
+        $blockedVars = ['controller', 'editmode', 'options', 'parentBlockNames', 'document'];
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
@@ -541,7 +552,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     public function __clone()
     {
         parent::__clone();
-        $this->view = null;
         $this->document = null;
     }
 
@@ -686,7 +696,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         unset($el['documentId']);
         unset($el['document']);
         unset($el['controller']);
-        unset($el['view']);
         unset($el['editmode']);
 
         $el = Webservice\Data\Mapper::toObject($el);
@@ -778,6 +787,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
         $container = \Pimcore::getContainer();
         $blockState = $container->get(BlockStateStack::class)->getCurrentState();
+        /**
+         * @var NamingStrategyInterface
+         */
         $namingStrategy = $container->get('pimcore.document.tag.naming.strategy');
 
         // if element not nested inside a hierarchical element (e.g. block), add the
@@ -857,6 +869,34 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         }
 
         return $data;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInDialogBox(): bool
+    {
+        return (bool) $this->inDialogBox;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getInDialogBox(): ?string
+    {
+        return $this->inDialogBox;
+    }
+
+    /**
+     * @param string|null $inDialogBox
+     *
+     * @return $this
+     */
+    public function setInDialogBox(?string $inDialogBox): self
+    {
+        $this->inDialogBox = $inDialogBox;
+
+        return $this;
     }
 }
 

@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Data\OrderPriceModifications;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @deprecated
+ * @deprecated since v6.8.0 and will be removed in Pimcore 7.
  */
 class PayPal extends AbstractPayment
 {

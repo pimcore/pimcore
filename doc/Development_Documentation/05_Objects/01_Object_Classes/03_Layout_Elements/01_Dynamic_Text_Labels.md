@@ -23,16 +23,20 @@ class CustomRenderer implements DynamicTextLabelInterface
 {
     /**
      * @param string $data as provided in the class definition
-     * @param Concrete $object 
+     * @param Concrete|null $object 
      * @param mixed $params 
  * 
      * @return string
      */
     public function renderLayoutText($data, $object, $params) {
-        return "<h1 style='color: #F00;'>Last reload: " . date('c') . '</h1>'
-            . '<h2>Additional Data: ' . $data . "</h2>"
-            . '<h3>BTW, my fullpath is: ' . $object->getFullPath() . ' and my ID is ' . $object->getId() . '</h3>'
-            . $data;
+        $text = "<h1 style='color: #F00;'>Last reload: " . date('c') . '</h1>'
+            . '<h2>Additional Data: ' . $data . "</h2>";
+
+        if ($object) {
+            $text .= '<h3>BTW, my fullpath is: ' . $object->getFullPath() . ' and my ID is ' . $object->getId() . '</h3>';
+        }
+
+        return $text;
     }
 }
 ```

@@ -19,9 +19,8 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
         this.name = name;
         this.config = this.parseConfig(config);
         this.data = {};
-
-        if (!data) {
-            data = {};
+        if (data) {
+            this.data = data;
         }
 
         // height management                
@@ -29,22 +28,22 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
         if (this.config.defaultHeight) {
             this.defaultHeight = this.config.defaultHeight;
         }
-        if (!this.config.height && !data.path) {
+        if (!this.config.height && !this.data.path) {
             this.config.height = this.defaultHeight;
         }
-
-        this.setupWrapper();
 
         this.config.name = id + "_editable";
         this.config.border = false;
         this.config.bodyStyle = "min-height: 40px;";
+    },
+
+    render: function () {
+        this.setupWrapper();
 
         this.element = new Ext.Panel(this.config);
 
         this.element.on("render", function (el) {
             try {
-                // register at global DnD manager
-                //TODO EXTJS 5
                 if (typeof dndManager != "undefined") {
                     dndManager.addDropTarget(el.getEl(), this.onNodeOver.bind(this), this.onNodeDrop.bind(this));
                 }
@@ -67,15 +66,10 @@ pimcore.document.editables.snippet = Class.create(pimcore.document.editable, {
 
         }.bind(this));
 
-        this.element.render(id);
+        this.element.render(this.id);
 
-
-        // insert snippet content
-        if (data) {
-            this.data = data;
-            if (this.data.path) {
-                this.updateContent(this.data.path);
-            }
+        if (this.data.path) {
+            this.updateContent(this.data.path);
         }
     },
 

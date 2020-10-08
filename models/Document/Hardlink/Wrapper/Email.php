@@ -22,7 +22,7 @@ use Pimcore\Model;
 /**
  * @method \Pimcore\Model\Document\Hardlink\Dao getDao()
  */
-class Email extends Model\Document\Hardlink implements Model\Document\Hardlink\Wrapper\WrapperInterface
+class Email extends Model\Document\Email implements Model\Document\Hardlink\Wrapper\WrapperInterface
 {
     use Model\Document\Hardlink\Wrapper;
 }

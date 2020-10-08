@@ -18,33 +18,42 @@ pimcore.document.editables.date = Class.create(pimcore.document.editable, {
 
         this.id = id;
         this.name = name;
+        this.config = this.parseConfig(config);
+
+        this.data = null;
+        if(data) {
+            this.data = new Date(intval(data) * 1000);
+        }
+    },
+
+    render: function () {
         this.setupWrapper();
-        config = this.parseConfig(config);
 
-        if (config.format) {
+        if (this.config.format) {
             // replace any % prefixed parts from strftime format
-            config.format = config.format.replace(/%([a-zA-Z])/g, '$1');
+            this.config.format = this.config.format.replace(/%([a-zA-Z])/g, '$1');
         }
 
-        if (data) {
-            var tmpDate = new Date(intval(data) * 1000);
-            config.value = tmpDate;
+        if(this.data) {
+            this.config.value = this.data;
         }
 
-        config.name = id + "_editable";
+        this.config.name = id + "_editable";
 
-
-
-        this.element = new Ext.form.DateField(config);
-        if (config["reload"]) {
+        this.element = new Ext.form.DateField(this.config);
+        if (this.config["reload"]) {
             this.element.on("change", this.reloadDocument);
         }
 
-        this.element.render(id);
+        this.element.render(this.id);
     },
 
     getValue: function () {
-        return this.element.getValue();
+        if(this.element) {
+            return this.element.getValue();
+        } else if (this.data) {
+            return Ext.Date.format(this.data, "Y-m-d\\TH:i:s");
+        }
     },
 
     getType: function () {

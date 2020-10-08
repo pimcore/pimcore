@@ -19,7 +19,6 @@ namespace Pimcore\Model\Document\Editable\Area;
 
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable;
-use Pimcore\Templating\Model\ViewModelInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class Info
@@ -43,17 +42,12 @@ class Info
     /**
      * @var array
      */
-    public $params;
+    public $params = [];
 
     /**
      * @var Request
      */
     public $request;
-
-    /**
-     * @var ViewModelInterface
-     */
-    public $view;
 
     /**
      * @var string
@@ -169,6 +163,19 @@ class Info
     }
 
     /**
+     * @param string $name
+     * @param mixed $value
+     *
+     * @return $this
+     */
+    public function setParam(string $name, $value)
+    {
+        $this->params[$name] = $value;
+
+        return $this;
+    }
+
+    /**
      * @param array $params
      *
      * @return $this
@@ -201,26 +208,6 @@ class Info
     }
 
     /**
-     * @return ViewModelInterface
-     */
-    public function getView()
-    {
-        return $this->view;
-    }
-
-    /**
-     * @param ViewModelInterface $view
-     *
-     * @return $this
-     */
-    public function setView(ViewModelInterface $view)
-    {
-        $this->view = $view;
-
-        return $this;
-    }
-
-    /**
      * @param int $index
      *
      * @return $this
@@ -245,15 +232,7 @@ class Info
      */
     public function getDocument()
     {
-        $document = null;
-
-        if ($this->view && isset($this->view->document)) {
-            $document = $this->view->document;
-        } else {
-            $document = $this->editable->getDocument();
-        }
-
-        return $document;
+        return $this->editable->getDocument();
     }
 
     /**

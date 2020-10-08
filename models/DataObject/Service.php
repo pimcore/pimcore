@@ -1408,7 +1408,7 @@ class Service extends Model\Element\Service
     {
         $context['object'] = $object;
 
-        if (method_exists($layout, 'enrichLayoutDefinition') && $object) {
+        if (method_exists($layout, 'enrichLayoutDefinition')) {
             $layout->enrichLayoutDefinition($object, $context);
         }
 

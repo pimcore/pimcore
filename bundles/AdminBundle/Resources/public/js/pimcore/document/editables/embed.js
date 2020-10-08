@@ -17,25 +17,25 @@ pimcore.document.editables.embed = Class.create(pimcore.document.editable, {
     initialize: function(id, name, config, data, inherited) {
         this.id = id;
         this.name = name;
-        this.data = {};
-
         this.config = this.parseConfig(config);
         this.data = data;
+    },
 
+    render: function () {
         this.setupWrapper();
 
-        var element = Ext.get(id);
+        this.element = Ext.get(this.id);
 
-        var button = new Ext.Button({
+        let button = new Ext.Button({
             iconCls: "pimcore_icon_embed pimcore_icon_overlay_edit",
             cls: "pimcore_edit_link_button",
             handler: this.openEditor.bind(this)
         });
-        button.render(element.insertHtml("afterBegin", '<div class="pimcore_video_edit_button"></div>'));
+        button.render(this.element.insertHtml("afterBegin", '<div class="pimcore_video_edit_button"></div>'));
 
         if(empty(this.data["url"])) {
-            element.addCls("pimcore_tag_embed_empty pimcore_editable_embed_empty");
-            element.on("click", this.openEditor.bind(this));
+            this.element.addCls("pimcore_tag_embed_empty pimcore_editable_embed_empty");
+            this.element.on("click", this.openEditor.bind(this));
         }
     },
 

@@ -116,9 +116,9 @@ Brick-specific configurations are passed using the `params` or `globalParams` co
 
 | Name              | Type | Description                                                                                                                                                     |
 |-------------------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `forceEditInView` | bool | If a brick contains an `edit.php` there's no editmode for the `view.php` file, if you want to have the editmode enabled in both templates, enable this option |
-| `editWidth`       | int  | Width of editing popup (if dedicated `edit.php` is used).                                                                                               |
-| `editHeight`      | int  | Height of editing popup (if dedicated `edit.php` is used).                                                                                              |
+| `forceEditInView` | bool | [DEPRECATED] If a brick contains an `edit.php` there's no editmode for the `view.php` file, if you want to have the editmode enabled in both templates, enable this option |
+| `editWidth`       | int  | [DEPRECATED] Width of editing popup (if dedicated `edit.php` is used).                                                                                               |
+| `editHeight`      | int  | [DEPRECATED] Height of editing popup (if dedicated `edit.php` is used).                                                                                              |
   
 ##### Example
 
@@ -184,6 +184,8 @@ You can limit certain bricks for the Areablock by using `limits` configurations.
 
 The manual mode offers you the possibility to use areablocks with custom HTML, this is for example useful when using tables: 
 
+<div class="code-section">
+
 ```php
 <?php $areaBlock = $this->areablock("myArea", ["manual" => true])->start(); ?>
 <table>
@@ -201,6 +203,28 @@ The manual mode offers you the possibility to use areablocks with custom HTML, t
 </table>
 <?php $areaBlock->end(); ?>
 ```
+
+```twig
+{% set areaBlock = pimcore_areablock("myArea", {"manual":"true"}) %}
+
+{% do areaBlock.start() %}
+<table>
+    {% for i in pimcore_iterate_block(areaBlock) %}
+        {% do areaBlock.blockConstruct() %}
+            <tr>
+                <td>
+                    {% do areaBlock.blockStart() %}
+                    {% do areaBlock.content() %}
+                    {% do areaBlock.blockEnd() %}
+                </td>
+            </tr>
+        {% do areaBlock.blockDestruct() %}
+    {% endfor %}
+</table>
+{% do areaBlock.end() %}
+```
+
+</div>
 
 ### Accessing Data Within an Areablock Element
 

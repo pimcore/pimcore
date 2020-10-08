@@ -957,5 +957,8 @@
     "different_number_of_columns": "different_number_of_columns",
     "brick_limit_reached": "brick_limit_reached",
     "generate_type_declarations": "generate_type_declarations",
-    "batch_change_language": "batch_change_language"
+    "batch_change_language": "batch_change_language",
+    "preview_item": "Preview Item",
+    "by_key_reverse": "Key (Z to A)",
+    "deprecated": "Deprecated"
 }

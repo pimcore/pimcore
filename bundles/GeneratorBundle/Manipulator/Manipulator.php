@@ -3,6 +3,7 @@
 namespace Pimcore\Bundle\GeneratorBundle\Manipulator;
 
 /**
+ * @deprecated
  * Changes the PHP code of a Kernel.
  *
  * The following class is copied from \Sensio\Bundle\GeneratorBundle\Manipulator\Manipulator

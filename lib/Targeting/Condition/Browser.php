@@ -76,6 +76,10 @@ class Browser extends AbstractVariableCondition implements DataProviderDependent
         $type = $client['type'] ?? null;
         $name = $client['name'] ?? null;
 
+        if ($this->browser === 'ie') {
+            $this->browser = 'Internet Explorer';
+        }
+
         if ('browser' === $type && strtolower($name ?? '') === strtolower($this->browser)) {
             $this->setMatchedVariables([
                 'type' => $type,

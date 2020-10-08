@@ -19,9 +19,6 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
         this.name = name;
 
         this.config = this.parseConfig(config);
-        this.data = data;
-
-        this.setupWrapper();
 
         var modelName = 'DocumentsMultihrefEntry';
         if (!Ext.ClassManager.isCreated(modelName)) {
@@ -38,9 +35,13 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
         }
 
         this.store = new Ext.data.ArrayStore({
-            data: this.data,
+            data: data,
             model: modelName
         });
+    },
+
+    render: function () {
+        this.setupWrapper();
 
         var tbar = [
             Ext.create('Ext.toolbar.Spacer', {
@@ -196,7 +197,7 @@ pimcore.document.editables.relations = Class.create(pimcore.document.editable, {
 
         }.bind(this));
 
-        this.element.render(id);
+        this.element.render(this.id);
     },
 
     canInlineUpload: function() {

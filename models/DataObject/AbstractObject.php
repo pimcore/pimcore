@@ -1118,10 +1118,12 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param array|null $children
+     * @param array $objectTypes
+     * @param bool $includingUnpublished
      *
      * @return $this
      */
-    public function setChildren($children)
+    public function setChildren($children, array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
     {
         if ($children === null) {
             // unset all cached children
@@ -1129,7 +1131,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->o_hasChildren = [];
         } elseif (is_array($children)) {
             //default cache key
-            $cacheKey = $this->getListingCacheKey();
+            $cacheKey = $this->getListingCacheKey([$objectTypes, $includingUnpublished]);
             $this->o_children[$cacheKey] = $children;
             $this->o_hasChildren[$cacheKey] = (bool) count($children);
         }

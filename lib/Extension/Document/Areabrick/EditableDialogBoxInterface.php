@@ -12,17 +12,18 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Templating\HelperBroker;
+namespace Pimcore\Extension\Document\Areabrick;
 
-@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', DocumentTag::class, DocumentEditable::class), E_USER_DEPRECATED);
+use Pimcore\Model\Document;
+use Pimcore\Model\Document\Editable\Area\Info;
 
-class_exists(DocumentEditable::class);
-
-if (false) {
+interface EditableDialogBoxInterface
+{
     /**
-     * @deprecated use \Pimcore\Templating\HelperBroker\DocumentEditable instead.
+     * @param Document\Editable $area
+     * @param Info|null $info
+     *
+     * @return EditableDialogBoxConfiguration
      */
-    class DocumentTag extends DocumentEditable
-    {
-    }
+    public function getEditableDialogBoxConfiguration(Document\Editable $area, ?Info $info): EditableDialogBoxConfiguration;
 }

@@ -109,7 +109,7 @@ implementing the methods for templates and icon yourself (see `AreabrickInterfac
 | Type |  Location |
 |---------------------------|-------------------------------------------------------------------------------------------------|
 | view template | `<templateLocation>/view.<suffix>` |
-| edit template | `<templateLocation>/edit.<suffix>` | 
+| edit template | [DEPRECATED]  `<templateLocation>/edit.<suffix>` | 
 
 
 If the brick defines an icon in the `public` resources directory of the bundle, the icon will be automatically used 
@@ -125,7 +125,7 @@ Given our `iframe` brick defined before, the following paths will be used.
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
 | view template | `app/Resources/views/Areas/iframe/view.html.(php|twig)` |
-| edit template | `app/Resources/views/Areas/iframe/edit.html.(php|twig)` |
+| edit template | [DEPRECATED]  `app/Resources/views/Areas/iframe/edit.html.(php|twig)` |
 | icon path     | `web/bundles/app/areas/iframe/icon.png`                 |
 | icon URL      | `/bundles/app/areas/iframe/icon.png`                    |
 
@@ -136,7 +136,7 @@ The icon path and URL are the same as above, but the view scripts are expected i
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
 | view template | `src/AppBundle/Resources/views/Areas/iframe/view.html.(php|twig)` |
-| edit template | `src/AppBundle/Resources/views/Areas/iframe/edit.html.(php|twig)` |
+| edit template | [DEPRECATED]  `src/AppBundle/Resources/views/Areas/iframe/edit.html.(php|twig)` |
 
 ## How to Create a Brick
  
@@ -248,7 +248,224 @@ reasons, but a couple of methods could be useful when implementing your own bric
 | `$info->getParam($name)`| Retrieve a param passed by `globalParams` or `params` config option  |
 | `$info->getParams()`    | Retrieve all params passed by `globalParams` or `params` config option  |
 
-## Configuration in Editmode
+## Editable Dialog (since 6.8)
+Sometimes it is necessary to gather some more optional data or provide some configuration options for a brick,
+which shouldn't be visible by default. For those scenarios the editable dialog is the right tool. 
+
+
+
+The editable dialog is basically a configurable editing interface where you can use all supported editables in a 
+structured layout in the context of the current brick. 
+The editing interface is configured by implementing the `EditableDialogBoxInterface` on your brick class and by providing 
+a simple config array.
+
+### Simple Example Config
+```php
+<?php
+
+namespace AppBundle\Document\Areabrick;
+
+use Pimcore\Extension\Document\Areabrick\EditableDialogBoxConfiguration;
+use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
+use Pimcore\Model\Document;
+use Pimcore\Model\Document\Editable\Area\Info;
+
+class WysiwygWithImages extends AbstractAreabrick implements EditableDialogBoxInterface
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return 'WYSIWYG w. Images';
+    }
+
+    public function getEditableDialogBoxConfiguration(Document\Editable $area, ?Info $info): EditableDialogBoxConfiguration
+    {
+        $config = new EditableDialogBoxConfiguration();
+        $config->setWidth(600);
+        //$config->setReloadOnClose(true);
+        $config->setItems([
+            [
+                'type' => 'input',
+                'label' => 'Some additional Text', // labels are optional
+                'name' => 'myDialogInput'
+            ],
+            [
+                'type' => 'checkbox',
+                'name' => 'myDialogCheckbox',
+                'label' => 'This is the checkbox label',
+            ],
+            [
+                'type' => 'date',
+                'name' => 'myDialogDate'
+            ]
+        ]);
+
+
+        return $config;
+    }
+}
+``` 
+
+### Advaned Example Config using Layouts
+It is also possible to use tab panels in your configuration. 
+```php
+<?php
+
+namespace AppBundle\Document\Areabrick;
+
+use Pimcore\Extension\Document\Areabrick\EditableDialogBoxConfiguration;
+use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
+use Pimcore\Model\Document;
+use Pimcore\Model\Document\Editable\Area\Info;
+
+class WysiwygWithImages extends AbstractAreabrick implements EditableDialogBoxInterface
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return 'WYSIWYG w. Images';
+    }
+
+    public function getEditableDialogBoxConfiguration(Document\Editable $area, ?Info $info): EditableDialogBoxConfiguration
+    {
+        $config = new EditableDialogBoxConfiguration();
+        $config->setWidth(600);
+        $config->setItems([
+            'type' => 'tabpanel',
+            'items' => [
+                [
+                    'type' => 'panel',
+                    'title' => 'Tab 1',
+                    'items' => [
+                        [
+                            'type' => 'wysiwyg',
+                            'label' => 'Some additional Text',
+                            'name' => 'myDialogWysiwyg'
+                        ],
+                        [
+                            'type' => 'video',
+                            'name' => 'myDialogVideo'
+                        ],
+                        [
+                            'type' => 'textarea',
+                            'name' => 'myDialogTextarea'
+                        ],
+                        [
+                            'type' => 'table',
+                            'name' => 'myDialogTable'
+                        ],
+                        [
+                            'type' => 'snippet',
+                            'name' => 'myDialogSnippet'
+                        ],
+                        [
+                            'type' => 'select',
+                            'name' => 'myDialogSelect',
+                            'config' => [
+                                'store' => [
+                                    ['foo', 'Foo'],
+                                    ['bar', 'Bar'],
+                                    ['baz', 'Baz'],
+                                ]
+                            ]
+                        ],
+                        [
+                            'type' => 'numeric',
+                            'name' => 'myDialogNumber'
+                        ],
+                        [
+                            'type' => 'multiselect',
+                            'name' => 'myDialogMultiSelect',
+                            'config' => [
+                                'store' => [
+                                    ['foo', 'Foo'],
+                                    ['bar', 'Bar'],
+                                    ['baz', 'Baz'],
+                                ]
+                            ]
+                        ],
+                        [
+                            'type' => 'checkbox',
+                            'name' => 'myDialogCheckbox',
+                            'label' => 'This is the checkbox label 😸',
+                        ],
+                        [
+                            'type' => 'input',
+                            'name' => 'myDialogInput'
+                        ]
+                    ]
+                ],
+                [
+                    'type' => 'panel',
+                    'title' => 'Tab 2',
+                    'items' => [
+                        [
+                            'type' => 'input',
+                            'name' => 'myNumber3'
+                        ],
+                        [
+                            'type' => 'link',
+                            'name' => 'myDialogLink'
+                        ],
+                        [
+                            'type' => 'image',
+                            'name' => 'myDialogImage'
+                        ],
+                        [
+                            'type' => 'embed',
+                            'name' => 'myDialogEmbed'
+                        ],
+                        [
+                            'type' => 'date',
+                            'name' => 'myDialogDate'
+                        ]
+                    ]
+                ],
+                [
+                    'type' => 'panel',
+                    'title' => 'Tab 3',
+                    'items' => [
+                        [
+                            'type' => 'renderlet',
+                            'name' => 'myDialogRenderlet'
+                        ],
+                        [
+                            'type' => 'relations',
+                            'name' => 'myDialogRelations'
+                        ],
+                        [
+                            'label' => 'Just a single relation 😹',
+                            'type' => 'relation',
+                            'name' => 'myDialogRelation'
+                        ],
+                        [
+                            'type' => 'pdf',
+                            'name' => 'myDialogPdf'
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+
+        return $config;
+    }
+}
+
+```
+
+### Accessing Data of the Editable Dialog
+The editables in the dialog are just normal editables, there's not difference to editables which are defined 
+via the template. So can either use them as well in the template or access them in your custom code. 
+
+
+## Configuration in Editmode [DEPRECATED]
+
+> This feature will be removed in Pimcore v7!
 
 You can use the edit template to allow users to add data to the brick. The edit template file can include HTML and 
 editables. When this file is present an icon will appear for the user which can be clicked to display and edit the 

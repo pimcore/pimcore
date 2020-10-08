@@ -18,7 +18,7 @@ services:
     Pimcore\Templating\Renderer\IncludeRenderer: ~
 
     Pimcore\Templating\Renderer\EditableRenderer:
-        alias:
+        public: true
         arguments:
             $editableLoader: '@Pimcore\Model\Document\Editable\Loader\EditableLoader'
         calls:

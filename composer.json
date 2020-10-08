@@ -42,7 +42,7 @@
     "ext-zip": "*",
     "ext-zlib": "*",
     "psr/simple-cache": "^1.0.0",
-    "amnuts/opcache-gui": "^2.4.0",
+    "amnuts/opcache-gui": "^3.0.1",
     "cache/tag-interop": "^1",
     "cbschuld/browser.php": "^1.9.6",
     "colinmollenhour/credis": "^1.10.0",
@@ -65,7 +65,6 @@
     "hybridauth/hybridauth": "^2.12",
     "lcobucci/jwt": "^3.2",
     "league/csv": "^9.1",
-    "linfo/linfo": "^4.0.0",
     "mjaschen/phpgeo": "^2.0",
     "mpratt/embera": "^2.0.3",
     "myclabs/deep-copy": "^1.3",
@@ -84,7 +83,7 @@
     "symfony/contracts": "^1.1",
     "symfony/monolog-bundle": "^3.1.0",
     "symfony/swiftmailer-bundle": "^3.2.2",
-    "symfony/symfony": "^3.4.26 || ^4.1.12",
+    "symfony/symfony": "^4.1.12",
     "tijsverkoyen/css-to-inline-styles": "^2.2.1",
     "twig/extensions": "^1.5",
     "twig/twig": "^2.4",
@@ -174,7 +173,7 @@
     "symfony-tests-dir": "tests",
     "symfony-assets-install": "relative",
     "branch-alias": {
-      "dev-master": "6.8-dev"
+      "dev-master": "7.0-dev"
     }
   },
   "bin": ["bin/pimcore-install"]

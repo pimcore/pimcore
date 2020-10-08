@@ -46,6 +46,8 @@ use Pimcore\Templating\Helper\Placeholder\ContainerService;
  * @method $this offsetSetStyle($index, $content, array $attributes = array())
  * @method $this prependStyle($content, array $attributes = array())
  * @method $this setStyle($content, array $attributes = array())
+ *
+ * @deprecated
  */
 class HeadStyle extends AbstractHelper
 {

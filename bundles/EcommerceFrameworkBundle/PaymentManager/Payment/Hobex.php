@@ -34,6 +34,9 @@ use Symfony\Component\Intl\Exception\NotImplementedException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Templating\EngineInterface;
 
+/**
+ * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-hobex" in Pimcore 7.
+ */
 class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;

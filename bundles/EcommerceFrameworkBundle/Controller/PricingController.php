@@ -196,6 +196,7 @@ class PricingController extends AdminController implements EventedControllerInte
      * @Route("/copy", name="pimcore_ecommerceframework_pricing_copy", methods={"POST"})
      *
      * @param Request $request
+     *
      * @return JsonResponse
      * copy existing rule
      */
@@ -204,7 +205,7 @@ class PricingController extends AdminController implements EventedControllerInte
         // send json respone
         $return = [
             'success' => false,
-            'message' => ''
+            'message' => '',
         ];
 
         // copy rule
@@ -227,7 +228,6 @@ class PricingController extends AdminController implements EventedControllerInte
                         break;
                     }
                 }
-
             } while (!$uniqueName);
 
             // Clone and save new rule.
@@ -248,8 +248,8 @@ class PricingController extends AdminController implements EventedControllerInte
     /**
      * @Route("/rename", name="pimcore_ecommerceframework_pricing_rename", methods={"PUT"})
      *
-     *
      * @param Request $request
+     *
      * @return JsonResponse
      * rename exiting rule
      */
@@ -258,7 +258,7 @@ class PricingController extends AdminController implements EventedControllerInte
         // send json respone
         $return = [
             'success' => false,
-            'message' => ''
+            'message' => '',
         ];
 
         $ruleId = $request->get('id');
@@ -266,11 +266,9 @@ class PricingController extends AdminController implements EventedControllerInte
 
         try {
             if ($ruleId && $ruleNewName) {
-
                 $renameRule = Rule::getById($ruleId);
 
                 if ($renameRule->getName() != $ruleNewName) {
-
                     $rules = (new Rule\Listing())->load();
 
                     // Check if rulename is available.
