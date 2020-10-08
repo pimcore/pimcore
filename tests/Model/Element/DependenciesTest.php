@@ -79,7 +79,7 @@ class DependenciesTest extends ModelTestCase
 
         /** @var Unittest[] $targets */
         for ($i = 0; $i <= 2; $i++) {
-            $targets[] = TestHelper::createEmptyObjects($i, true, 1)[0];
+            $targets[] = TestHelper::createEmptyObject($i);
         }
         $this->saveElementDependencies($source, $targets);
 
@@ -106,7 +106,7 @@ class DependenciesTest extends ModelTestCase
         $source = TestHelper::createEmptyDocumentPage();
         /** @var Unittest[] $targets */
         for ($i = 0; $i <= 2; $i++) {
-            $targets[] = TestHelper::createEmptyObjects($i, true, 1)[0];
+            $targets[] = TestHelper::createEmptyObject($i);
         }
         $this->saveElementDependencies($source, $targets);
 
@@ -134,7 +134,7 @@ class DependenciesTest extends ModelTestCase
         /** @var Unittest[] $targets */
         $targets = [];
         for($i=0;$i<=2;$i++) {
-            $targets[] = TestHelper::createEmptyObjects($i, true, 1)[0];
+            $targets[] = TestHelper::createEmptyObject($i);
         }
 
         $this->saveElementDependencies($source, $targets);
