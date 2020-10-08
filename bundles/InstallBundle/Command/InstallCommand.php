@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Pimcore
+ * Pimcore.
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
@@ -73,7 +73,6 @@ class InstallCommand extends Command
         }
 
         $options = [
-
             'admin-username' => [
                 'description' => 'Admin username',
                 'mode' => InputOption::VALUE_REQUIRED,
@@ -88,7 +87,7 @@ class InstallCommand extends Command
             'mysql-host-socket' => [
                 'description' => 'MySQL Host or Socket',
                 'mode' => InputOption::VALUE_REQUIRED,
-                'default' => 'localhost',
+                'default' => '',
                 'group' => 'db_credentials',
             ],
             'mysql-username' => [
@@ -112,7 +111,7 @@ class InstallCommand extends Command
             'mysql-port' => [
                 'description' => 'MySQL Port (will be omitted if socket is set)',
                 'mode' => InputOption::VALUE_REQUIRED,
-                'default' => 3306,
+                'default' => '',
                 'group' => 'db_credentials',
             ],
             'mysql-ssl-cert-path' => [
@@ -142,7 +141,7 @@ class InstallCommand extends Command
         ];
 
         foreach (array_keys($options) as $name) {
-            $options[$name]['env'] = 'PIMCORE_INSTALL_' . strtoupper(str_replace('-', '_', $name));
+            $options[$name]['env'] = 'PIMCORE_INSTALL_'.strtoupper(str_replace('-', '_', $name));
         }
 
         $this->options = $options;
@@ -151,7 +150,7 @@ class InstallCommand extends Command
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function configure()
     {
@@ -163,9 +162,9 @@ class InstallCommand extends Command
 
         $description = 'Installs Pimcore with the given parameters. Every parameter will be prompted interactively or can also be set via env vars';
 
-        $help = $description . ".\nAvailable env vars are:\n";
+        $help = $description.".\nAvailable env vars are:\n";
         foreach ($envVars as $envVar) {
-            $help .= "\n" . sprintf('  <comment>*</comment> %s', $envVar);
+            $help .= "\n".sprintf('  <comment>*</comment> %s', $envVar);
         }
 
         $this
@@ -195,7 +194,7 @@ class InstallCommand extends Command
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
@@ -245,9 +244,9 @@ class InstallCommand extends Command
     }
 
     /**
-     * Prompt options which are not set interactively
+     * Prompt options which are not set interactively.
      *
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function interact(InputInterface $input, OutputInterface $output)
     {
@@ -306,7 +305,7 @@ class InstallCommand extends Command
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
