@@ -28,18 +28,6 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $items = null;
-
-    public function __construct()
-    {
-        $this->items = & $this->data;
-    }
-
-    /**
      * @return Model\Element\Recyclebin\Item[]
      */
     public function getItems()

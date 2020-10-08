@@ -27,20 +27,8 @@ use Pimcore\Model;
  */
 class Listing extends Model\Listing\AbstractListing
 {
-    /**
-     * @var Model\DataObject\Classificationstore\KeyConfig[]|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $list = null;
-
     /** @var bool */
     public $includeDisabled;
-
-    public function __construct()
-    {
-        $this->list = & $this->data;
-    }
 
     /**
      * @return Model\DataObject\Classificationstore\KeyConfig[]
