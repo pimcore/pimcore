@@ -790,7 +790,6 @@ class Installer
             ['key' => 'plugins'],
             ['key' => 'predefined_properties'],
             ['key' => 'asset_metadata'],
-            ['key' => 'qr_codes'],
             ['key' => 'recyclebin'],
             ['key' => 'redirects'],
             ['key' => 'reports'],

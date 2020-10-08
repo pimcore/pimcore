@@ -235,34 +235,6 @@ class PublicServicesController extends Controller
     }
 
     /**
-     * @deprecated
-     *
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    public function qrcodeAction(Request $request)
-    {
-        $code = Tool\Qrcode\Config::getByName($request->get('key'));
-        if ($code) {
-            $url = $code->getUrl();
-            if ($code->getGoogleAnalytics()) {
-                $glue = '?';
-                if (strpos($url, '?')) {
-                    $glue = '&';
-                }
-
-                $url .= $glue;
-                $url .= 'utm_source=Mobile&utm_medium=QR-Code&utm_campaign=' . $code->getName();
-            }
-
-            return $this->redirect($url);
-        } else {
-            Logger::error("called an QR code but '" . $request->get('key') . ' is not a code in the system.');
-        }
-    }
-
-    /**
      * @param Request $request
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
