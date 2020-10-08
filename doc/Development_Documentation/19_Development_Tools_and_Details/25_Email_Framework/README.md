@@ -6,7 +6,6 @@ The Pimcore Email Framework provides an easy way to send/create emails with Pimc
 For this you have several components:
 * Document\\Email
 * [Pimcore\Mail](./01_Pimcore_Mail.md)
-* [Placeholder Objects](../23_Placeholders/01_Object_Placeholder.md)
 
 Pimcore provides a `Pimcore\Mail` Class which extends the `\Swift_Message` Class. When you initialize a 
 `Pimcore\Mail` object, all data from *Settings* > *System* > *Email Settings* are applied 
