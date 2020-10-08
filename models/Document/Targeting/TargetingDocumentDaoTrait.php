@@ -25,7 +25,7 @@ trait TargetingDocumentDaoTrait
     {
         /** @var PageSnippet\Dao $this */
         $count = $this->db->fetchOne(
-            'SELECT count(*) FROM documents_elements WHERE documentId = ? AND name LIKE ?',
+            'SELECT count(*) FROM documents_editables WHERE documentId = ? AND name LIKE ?',
             [
                 $this->model->getId(),
                 '%' . TargetingDocumentInterface::TARGET_GROUP_EDITABLE_PREFIX . '%' . TargetingDocumentInterface::TARGET_GROUP_EDITABLE_SUFFIX . '%',
@@ -39,7 +39,7 @@ trait TargetingDocumentDaoTrait
     {
         /** @var PageSnippet\Dao $this */
         $names = $this->db->fetchCol(
-            'SELECT name FROM documents_elements WHERE documentId = ? AND name LIKE ?',
+            'SELECT name FROM documents_editables WHERE documentId = ? AND name LIKE ?',
             [
                 $this->model->getId(),
                 '%' . TargetingDocumentInterface::TARGET_GROUP_EDITABLE_PREFIX . '%' . TargetingDocumentInterface::TARGET_GROUP_EDITABLE_SUFFIX . '%',

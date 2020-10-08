@@ -31,7 +31,7 @@ abstract class Dao extends Model\Document\Dao
      */
     public function deleteAllEditables()
     {
-        $this->db->delete('documents_elements', ['documentId' => $this->model->getId()]);
+        $this->db->delete('documents_editables', ['documentId' => $this->model->getId()]);
     }
 
     /**
@@ -41,7 +41,7 @@ abstract class Dao extends Model\Document\Dao
      */
     public function getEditables()
     {
-        $editablesRaw = $this->db->fetchAll('SELECT * FROM documents_elements WHERE documentId = ?', [$this->model->getId()]);
+        $editablesRaw = $this->db->fetchAll('SELECT * FROM documents_editables WHERE documentId = ?', [$this->model->getId()]);
 
         $editables = [];
         $loader = \Pimcore::getContainer()->get(Document\Editable\Loader\EditableLoader::class);
@@ -108,6 +108,6 @@ abstract class Dao extends Model\Document\Dao
     public function delete()
     {
         parent::delete();
-        $this->db->delete('documents_elements', ['documentId' => $this->model->getId()]);
+        $this->db->delete('documents_editables', ['documentId' => $this->model->getId()]);
     }
 }
