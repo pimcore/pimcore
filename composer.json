@@ -65,7 +65,6 @@
     "hybridauth/hybridauth": "^2.12",
     "lcobucci/jwt": "^3.2",
     "league/csv": "^9.1",
-    "linfo/linfo": "^4.0.0",
     "mjaschen/phpgeo": "^2.0",
     "mpratt/embera": "^2.0.3",
     "myclabs/deep-copy": "^1.3",
