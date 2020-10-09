@@ -216,10 +216,6 @@ class EditableHandler implements LoggerAwareInterface
         $params['info'] = $info;
         $params['instance'] = $brick;
 
-        if (!$brick->hasViewTemplate()) {
-            return;
-        }
-
         // check if view template exists and throw error before open tag is rendered
         $viewTemplate = $this->resolveBrickTemplate($brick, 'view');
         if (!$this->templating->exists($viewTemplate)) {
@@ -236,26 +232,6 @@ class EditableHandler implements LoggerAwareInterface
 
         // general parameters
         $editmode = $this->editmodeResolver->isEditmode();
-        $forceEditInView = array_key_exists('forceEditInView', $params) && $params['forceEditInView'];
-
-        // view parameters
-        $viewParameters = array_merge($params, [
-            // enable editmode if editmode is active and the brick has no edit template or edit in view is forced
-            'editmode' => $editmode ? (!$brick->hasEditTemplate() || $forceEditInView) : false,
-        ]);
-
-        // edit parameters
-        $editTemplate = null;
-        $editParameters = [];
-
-        if ($brick->hasEditTemplate() && $editmode && !($brick instanceof EditableDialogBoxInterface)) {
-            $editTemplate = $this->resolveBrickTemplate($brick, 'edit');
-            $editParameters = array_merge($params, [
-                'editmode' => true,
-            ]);
-
-            @trigger_error('Using edit.html.(php|twig) in document areablocks/bricks is marked as deprecated and will be removed in Pimcore v7', E_USER_DEPRECATED);
-        }
 
         // render complete areabrick
         // passing the engine interface is necessary otherwise rendering a
@@ -267,9 +243,7 @@ class EditableHandler implements LoggerAwareInterface
             'templating' => $this->templating,
             'editmode' => $editmode,
             'viewTemplate' => $viewTemplate,
-            'viewParameters' => $viewParameters,
-            'editTemplate' => $editTemplate,
-            'editParameters' => $editParameters,
+            'viewParameters' => $params,
         ]);
 
         if ($brickInfoRestoreValue === null) {
@@ -311,9 +285,7 @@ class EditableHandler implements LoggerAwareInterface
 
         $template = null;
         if ($type === 'view') {
-            $template = $brick->getViewTemplate();
-        } elseif ($type === 'edit') {
-            $template = $brick->getEditTemplate();
+            $template = $brick->getTemplate();
         }
 
         if (null === $template) {
