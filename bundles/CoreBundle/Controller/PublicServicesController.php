@@ -20,7 +20,6 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
-use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\TmpStore;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Cookie;
