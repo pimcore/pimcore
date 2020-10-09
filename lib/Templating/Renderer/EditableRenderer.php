@@ -122,16 +122,6 @@ class EditableRenderer implements LoggerAwareInterface
 
             if ($document instanceof PageSnippet) {
                 $editable = $document->getEditable($name);
-
-                // @TODO: BC layer, to be removed in v7.0
-                $aliases = [
-                    'href' => 'relation',
-                    'multihref' => 'relations',
-                ];
-                if (isset($aliases[$type])) {
-                    $type = $aliases[$type];
-                }
-
                 if ($editable instanceof Editable && $editable->getType() === $type) {
                     // call the load() method if it exists to reinitialize the data (eg. from serializing, ...)
                     if (method_exists($editable, 'load')) {
