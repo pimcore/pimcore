@@ -121,5 +121,3 @@ class Numeric extends Model\Document\Editable
         }
     }
 }
-
-class_alias(Numeric::class, 'Pimcore\Model\Document\Tag\Numeric');

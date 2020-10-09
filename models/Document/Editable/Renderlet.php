@@ -466,5 +466,3 @@ class Renderlet extends Model\Document\Editable
         }
     }
 }
-
-class_alias(Renderlet::class, 'Pimcore\Model\Document\Tag\Renderlet');

@@ -92,5 +92,3 @@ abstract class AbstractBlockItem
         return null;
     }
 }
-
-class_alias(AbstractBlockItem::class, 'Pimcore\Model\Document\Tag\Block\AbstractBlockItem');

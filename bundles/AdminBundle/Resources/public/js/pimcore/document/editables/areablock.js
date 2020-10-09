@@ -609,8 +609,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
             return;
         }
 
-        //Ext.get(this.id).addClass("pimcore_tag_areablock_hide_buttons");
-
         if(this.elements.length > 0) {
             for (var i = 0; i < this.elements.length; i++) {
                 if (this.elements[i]) {
@@ -675,9 +673,6 @@ pimcore.document.editables.areablock = Class.create(pimcore.document.editable, {
     },
 
     removeDropZones: function () {
-
-        //Ext.get(this.id).removeClass("pimcore_tag_areablock_hide_buttons");
-
         var dropZones = Ext.get(this.id).query("div.pimcore_area_dropzone");
         for(var i=0; i<dropZones.length; i++) {
             dropZones[i].dropZone.unreg();

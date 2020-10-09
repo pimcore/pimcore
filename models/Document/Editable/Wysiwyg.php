@@ -207,5 +207,3 @@ class Wysiwyg extends Model\Document\Editable
         return;
     }
 }
-
-class_alias(Wysiwyg::class, 'Pimcore\Model\Document\Tag\Wysiwyg');

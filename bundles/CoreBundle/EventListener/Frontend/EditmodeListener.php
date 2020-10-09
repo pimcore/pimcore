@@ -350,7 +350,6 @@ class EditmodeListener implements EventSubscriberInterface
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/area.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/pdf.js',
                 '/bundles/pimcoreadmin/js/pimcore/document/editables/embed.js',
-                '/bundles/pimcoreadmin/js/pimcore/document/tags/compatibility-layer.js', //@TODO Remove deprecated tag aliases in Pimcore 7.
                 '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js',
             ],
             $this->bundleManager->getEditmodeJsPaths()

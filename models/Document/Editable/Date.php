@@ -196,5 +196,3 @@ class Date extends Model\Document\Editable
         $this->date->setTimestamp($timestamp);
     }
 }
-
-class_alias(Date::class, 'Pimcore\Model\Document\Tag\Date');

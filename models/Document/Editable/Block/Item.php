@@ -48,5 +48,3 @@ class Item extends AbstractBlockItem
         return null;
     }
 }
-
-class_alias(Item::class, 'Pimcore\Model\Document\Tag\Block\Item');

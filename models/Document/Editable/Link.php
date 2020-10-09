@@ -79,7 +79,6 @@ class Link extends Model\Document\Editable
         // the default behavior of the parent method is to include the "class" attribute
         $classes = [
             'pimcore_editable',
-            'pimcore_tag_' . $this->getType(),
             'pimcore_editable_' . $this->getType(),
         ];
 
@@ -651,5 +650,3 @@ class Link extends Model\Document\Editable
         }
     }
 }
-
-class_alias(Link::class, 'Pimcore\Model\Document\Tag\Link');
