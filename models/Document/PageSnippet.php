@@ -20,6 +20,7 @@ namespace Pimcore\Model\Document;
 use Pimcore\Document\Editable\EditableUsageResolver;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\DocumentEvent;
+use Pimcore\Http\RequestHelper;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
@@ -594,7 +595,7 @@ abstract class PageSnippet extends Model\Document
     {
         if (!$scheme) {
             $scheme = 'http://';
-            $requestHelper = \Pimcore::getContainer()->get('pimcore.http.request_helper');
+            $requestHelper = \Pimcore::getContainer()->get(RequestHelper::class);
             if ($requestHelper->hasMasterRequest()) {
                 $scheme = $requestHelper->getMasterRequest()->getScheme() . '://';
             }

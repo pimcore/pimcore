@@ -23,6 +23,7 @@ use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Admin\IndexActionSettingsEvent;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Google;
 use Pimcore\Maintenance\Executor;
 use Pimcore\Maintenance\ExecutorInterface;
@@ -184,7 +185,7 @@ class IndexController extends AdminController implements EventedControllerInterf
      */
     protected function addPluginAssets(array &$templateParams)
     {
-        $bundleManager = $this->get('pimcore.extension.bundle_manager');
+        $bundleManager = $this->get(PimcoreBundleManager::class);
 
         $templateParams['pluginJsPaths'] = $bundleManager->getJsPaths();
         $templateParams['pluginCssPaths'] = $bundleManager->getCssPaths();

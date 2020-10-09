@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
+use Pimcore\Localization\IntlFormatter;
 
 class Currency
 {
@@ -75,7 +76,7 @@ class Currency
     public function __construct($currencyShortName)
     {
         $this->currencyShortName = $currencyShortName;
-        $this->formattingService = \Pimcore::getContainer()->get('pimcore.locale.intl_formatter');
+        $this->formattingService = \Pimcore::getContainer()->get(IntlFormatter::class);
     }
 
     /**

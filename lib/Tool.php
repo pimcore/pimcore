@@ -15,6 +15,8 @@
 namespace Pimcore;
 
 use GuzzleHttp\RequestOptions;
+use Pimcore\Http\RequestHelper;
+use Pimcore\Localization\LocaleServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class Tool
@@ -187,7 +189,7 @@ class Tool
      */
     public static function getSupportedLocales()
     {
-        $localeService = \Pimcore::getContainer()->get('pimcore.locale');
+        $localeService = \Pimcore::getContainer()->get(LocaleServiceInterface::class);
         $locale = $localeService->findLocale();
 
         $cacheKey = 'system_supported_locales_' . strtolower((string) $locale);
@@ -335,7 +337,7 @@ class Tool
         }
 
         return \Pimcore::getContainer()
-            ->get('pimcore.http.request_helper')
+            ->get(RequestHelper::class)
             ->isFrontendRequest($request);
     }
 
@@ -355,7 +357,7 @@ class Tool
         }
 
         return \Pimcore::getContainer()
-            ->get('pimcore.http.request_helper')
+            ->get(RequestHelper::class)
             ->isFrontendRequestByAdmin($request);
     }
 
@@ -516,7 +518,7 @@ class Tool
         }
 
         return \Pimcore::getContainer()
-            ->get('pimcore.http.request_helper')
+            ->get(RequestHelper::class)
             ->getAnonymizedClientIp($request);
     }
 
