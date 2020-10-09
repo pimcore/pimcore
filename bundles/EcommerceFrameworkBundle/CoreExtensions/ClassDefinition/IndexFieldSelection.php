@@ -309,63 +309,6 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     }
 
     /**
-     * converts data to be exposed via webservices
-     *
-     * @param \Pimcore\Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $key = $this->getName();
-        $getter = 'get'.ucfirst($key);
-
-        if ($object->$getter() instanceof ObjectData\IndexFieldSelection) {
-            $preSelect = $object->$getter()->getPreSelect();
-            if ($preSelect) {
-                if (!is_array($preSelect)) {
-                    $preSelect = explode(',', $preSelect);
-                }
-                $preSelect = implode('%%', $preSelect);
-            }
-
-            return [
-                'tenant' => $object->$getter()->getTenant(),
-                'field' => $object->$getter()->getField(),
-                'preSelect' => $preSelect,
-            ];
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param \Pimcore\Model\DataObject\AbstractObject|null $relatedObject
-     * @param mixed $params
-     * @param \Pimcore\Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     *
-     * @return mixed
-     */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } elseif ($value['field'] !== null) {
-            return new ObjectData\IndexFieldSelection($value['tenant'], $value['field'], explode('%%', $value['preSelect']));
-        } else {
-            throw new \Exception(get_class($this).': cannot get values from web service import - invalid data');
-        }
-    }
-
-    /**
      * True if change is allowed in edit mode.
      *
      * @param Concrete $object

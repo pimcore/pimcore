@@ -432,9 +432,6 @@ class Config implements \ArrayAccess
                     'excludePatterns' => self::getArrayValue(['full_page_cache', 'exclude_patterns'], $config),
                     'excludeCookie' => self::getArrayValue(['full_page_cache', 'exclude_cookie'], $config),
                 ],
-                'webservice' => [
-                    'enabled' => self::getArrayValue(['webservice', 'enabled'], $config),
-                ],
                 'httpclient' => [
                     'adapter' => self::getArrayValue(['httpclient', 'adapter'], $config),
                     'proxy_host' => self::getArrayValue(['httpclient', 'proxy_host'], $config),

@@ -245,29 +245,6 @@ HTML;
     }
 
     /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if ($data->id) {
-            $asset = Asset::getById($data->id);
-            if (!$asset) {
-                throw new \Exception('Referencing unknown asset with id [ '.$data->id.' ] in webservice import field [ '.$data->name.' ]');
-            } else {
-                $this->id = $data->id;
-            }
-        }
-    }
-
-    /**
      * @return Asset
      */
     public function getElement()

@@ -655,32 +655,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if (($data->indices === null || is_array($data->indices)) && ($data->current == null || is_numeric($data->current))
-            && ($data->currentIndex == null || is_numeric($data->currentIndex))) {
-            $indices = $data->indices;
-            $indices = json_decode(json_encode($indices), true);
-
-            $this->indices = $indices;
-            $this->current = $data->current;
-            $this->currentIndex = $data->currentIndex;
-        } else {
-            throw new \Exception('cannot get  values from web service import - invalid data');
-        }
-    }
-
-    /**
      * @param string $name
      *
      * @return Areablock\Item[]

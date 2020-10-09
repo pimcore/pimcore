@@ -219,10 +219,6 @@ pimcore:
             routes:
                 - { path: ^/admin(/.*)?$ }
                 - { route: ^pimcore_admin_ }
-        webservice:
-            routes:
-                - { path: ^/webservice(/.*)?$ }
-                - { route: ^pimcore_webservice }
         plugin:
             routes:
                 - { path: ^/plugin(/.*)?$ }

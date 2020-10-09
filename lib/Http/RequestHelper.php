@@ -123,7 +123,6 @@ class RequestHelper
             "/^\/admin.*/",
             "/^\/install.*/",
             "/^\/plugin.*/",
-            "/^\/webservice.*/",
         ];
 
         foreach ($excludePatterns as $pattern) {

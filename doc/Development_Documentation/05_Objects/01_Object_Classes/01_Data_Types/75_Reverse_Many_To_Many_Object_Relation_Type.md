@@ -30,7 +30,7 @@ becomes visible.
 Reverse Many-To-Many Object Relation are a pure Pimcore admin feature, they don't play any role in scripting or services.
 
 Since Reverse Many-To-Many Object Relation are owned by the remote object, they can only be set through the remote owner. Also the getter 
-has been omitted because Reverse Many-To-Many Object Relation are not exposed through exporters or webservices.
+has been omitted because Reverse Many-To-Many Object Relation are not exposed through exporters.
 
 The best way to "get" non owner objects would be to use the `getRelationData()` method of objects:
 

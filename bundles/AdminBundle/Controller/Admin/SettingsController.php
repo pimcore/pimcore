@@ -515,9 +515,6 @@ class SettingsController extends AdminController
                 'exclude_patterns' => $cacheExcludePatterns,
                 'exclude_cookie' => $values['full_page_cache.excludeCookie'],
             ],
-            'webservice' => [
-                'enabled' => $values['webservice.enabled'],
-            ],
             'httpclient' => [
                 'adapter' => $values['httpclient.adapter'],
                 'proxy_host' => $values['httpclient.proxy_host'],

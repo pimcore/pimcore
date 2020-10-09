@@ -348,27 +348,6 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if (($data->indices === null or is_array($data->indices)) and ($data->current == null or is_numeric($data->current))) {
-            $this->indices = $data->indices;
-            $this->current = $data->current;
-        } else {
-            throw new \Exception('cannot get  values from web service import - invalid data');
-        }
-    }
-
-    /**
      * @return Block\Item[]
      */
     public function getElements()

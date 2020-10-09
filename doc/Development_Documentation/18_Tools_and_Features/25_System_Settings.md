@@ -51,7 +51,7 @@ creating a bundle. Please don't activate it in production systems!
 
 What exactly does the dev mode:
 * Loading the source javascript files (uncompressed & commented)
-* Disables some caches (Webservice Cache, ...)
+* Disables some caches (Cache, ...)
 * extensive logging into log files
 * ... and some more little things
 

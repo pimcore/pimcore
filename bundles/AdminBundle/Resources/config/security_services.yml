@@ -29,14 +29,6 @@ services:
         tags:
             - { name: monolog.logger, channel: security }
 
-    # guard implementation handling webservice login
-    Pimcore\Bundle\AdminBundle\Security\Guard\WebserviceAuthenticator:
-        deprecated: ~
-        public: false
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: security }
 
     Pimcore\Bundle\AdminBundle\Security\LogoutSuccessHandler:
         public: false

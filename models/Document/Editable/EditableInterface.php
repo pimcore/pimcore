@@ -69,19 +69,6 @@ interface EditableInterface
     public function setDataFromResource($data);
 
     /**
-     * Returns the current editable's data for web service export
-     *
-     * @deprecated
-     *
-     * @param PageSnippet|null $document
-     * @param array $params
-     * @abstract
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($document = null, $params = []);
-
-    /**
      * @return bool
      */
     public function isEmpty();

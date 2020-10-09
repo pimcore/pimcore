@@ -457,7 +457,6 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         return $this->adminJson([
             'success' => true,
-            'wsenabled' => $config['webservice']['enabled'],
             'user' => $userData,
             'roles' => $roles,
             'permissions' => $user->generatePermissionList(),

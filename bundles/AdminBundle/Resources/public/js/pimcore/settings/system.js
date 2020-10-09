@@ -986,35 +986,6 @@ pimcore.settings.system = Class.create({
                                 value: this.getValue("full_page_cache.excludeCookie")
                             }
                         ]
-                    },
-                    {
-                        xtype: 'fieldset',
-                        title: t('webservice'),
-                        collapsible: true,
-                        collapsed: true,
-                        autoHeight: true,
-                        labelWidth: 200,
-                        defaultType: 'textfield',
-                        defaults: {width: 300},
-                        items: [
-                            {
-                                xtype: 'container',
-                                html: "<b>DEPRECATED! Will be removed in 7.0</b>"
-                            },
-                            {
-                                fieldLabel: t("webservice_enabled"),
-                                xtype: "checkbox",
-                                name: "webservice.enabled",
-                                checked: this.getValue("webservice.enabled")
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t("webservice_description"),
-                                cls: "pimcore_extra_label_bottom"
-                            }
-                        ]
                     }, {
                         xtype: 'fieldset',
                         title: t('http_connectivity_direct_proxy'),

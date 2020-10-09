@@ -154,22 +154,4 @@ class Embed extends Model\Document\Editable
 
         return true;
     }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $wsElement->value;
-        if ($data->url) {
-            $this->url = $data->url;
-        }
-    }
 }
