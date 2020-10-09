@@ -59,7 +59,7 @@ class MigrationSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            DocumentEvents::TAG_NAME => 'onBuildTagName',
+            DocumentEvents::EDITABLE_NAME => 'onBuildTagName',
         ];
     }
 
@@ -82,8 +82,8 @@ class MigrationSubscriber implements EventSubscriberInterface
         );
 
         // only set the new name if it is not the same as the existing one
-        if ($newName !== $event->getTagName()) {
-            $documentNames[$event->getTagName()] = $newName;
+        if ($newName !== $event->getEditableName()) {
+            $documentNames[$event->getEditableName()] = $newName;
         }
 
         if (!empty($documentNames)) {
