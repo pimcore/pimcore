@@ -15,7 +15,7 @@ services:
 
     Pimcore\Twig\Extension\HelpersExtension: ~
 
-    Pimcore\Twig\Extension\DocumentTagExtension: ~
+    Pimcore\Twig\Extension\DocumentEditableExtension: ~
 
     Pimcore\Twig\Extension\SubrequestExtension:
         lazy: true

@@ -17,8 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Tag\NamingStrategy;
 
-use Pimcore\Document\Tag\Block\BlockName;
-use Pimcore\Document\Tag\Block\BlockState;
+use Pimcore\Document\Editable\Block\BlockName;
+use Pimcore\Document\Editable\Block\BlockState;
 
 /**
  * @deprecated

@@ -130,5 +130,3 @@ class Input extends Model\Document\Editable
         }
     }
 }
-
-class_alias(Input::class, 'Pimcore\Model\Document\Tag\Input');

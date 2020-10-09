@@ -51,7 +51,7 @@ abstract class Mapper
         $retVal = null;
         if ($object instanceof Model\Property) {
             $retVal = '\\Pimcore\\Model\\Webservice\\Data\\Property';
-        } elseif ($object instanceof Model\Document\Tag) {
+        } elseif ($object instanceof Model\Document\Editable) {
             $retVal = '\\Pimcore\\Model\\Webservice\\Data\\Document\\Element';
         } elseif (is_object($object)) {
             $orgclass = str_replace('Pimcore\\Model\\', '', get_class($object));

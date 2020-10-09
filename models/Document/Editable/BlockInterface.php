@@ -84,5 +84,3 @@ interface BlockInterface
      */
     public function isEmpty();
 }
-
-class_alias(BlockInterface::class, 'Pimcore\Model\Document\Tag\BlockInterface');

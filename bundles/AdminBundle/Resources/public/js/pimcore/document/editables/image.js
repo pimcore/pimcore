@@ -72,7 +72,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         this.element.appendChild(this.altBar);
 
         this.altBar = Ext.get(this.altBar);
-        this.altBar.addCls("pimcore_tag_image_alt");
+        this.altBar.addCls("pimcore_editable_image_alt");
         this.altBar.setStyle({
             opacity: 0.8,
             display: "none"
@@ -107,8 +107,8 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         }
 
         if(this.config["disableInlineUpload"] !== true) {
-            this.element.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget_upload"></div>');
-            this.element.addCls("pimcore_tag_image_empty");
+            this.element.insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget_upload"></div>');
+            this.element.addCls("pimcore_editable_image_empty");
             pimcore.helpers.registerAssetDnDSingleUpload(this.element.dom, this.config["uploadPath"], 'path', function (e) {
                 if (e['asset']['type'] === "image" && !this.inherited) {
                     this.resetData();
@@ -123,8 +123,8 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
                 }
             }.bind(this), null, this.getContext());
         } else {
-            this.element.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget"></div>');
-            this.element.addCls("pimcore_tag_image_no_upload_empty");
+            this.element.insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget"></div>');
+            this.element.addCls("pimcore_editable_image_no_upload_empty");
         }
 
         // insert image
@@ -317,7 +317,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
         this.resetData();
 
         this.updateImage();
-        this.element.addCls("pimcore_tag_image_empty");
+        this.element.addCls("pimcore_editable_image_empty");
         this.altBar.setStyle({
             display: "none"
         });
@@ -381,7 +381,7 @@ pimcore.document.editables.image = Class.create(pimcore.document.editable, {
             display: "block"
         });
 
-        this.element.removeCls("pimcore_tag_image_empty");
+        this.element.removeCls("pimcore_editable_image_empty");
 
         this.updateCounter = 0;
         this.updateDimensionsInterval = window.setInterval(this.updateDimensions.bind(this), 1000);

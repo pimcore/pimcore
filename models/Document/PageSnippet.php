@@ -53,15 +53,6 @@ abstract class PageSnippet extends Model\Document
     protected $template;
 
     /**
-     * Contains all content-elements of the document
-     *
-     * @var array
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use getter/setter methods or $this->editables
-     */
-    protected $elements = null;
-
-    /**
      * Contains all content-editables of the document
      *
      * @var array|null
@@ -95,21 +86,8 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @var array
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use getter/setter methods or $this->inheritedEditables
-     */
-    protected $inheritedElements = [];
-
-    /**
-     * @var array
      */
     protected $inheritedEditables = [];
-
-    public function __construct()
-    {
-        $this->elements = & $this->editables;
-        $this->inheritedElements = & $this->inheritedEditables;
-    }
 
     /**
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
@@ -358,22 +336,6 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
-     * Set raw data of an element (eg. for editmode)
-     *
-     * @param string $name
-     * @param string $type
-     * @param mixed $data
-     *
-     * @return $this
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use setRawEditable() instead.
-     */
-    public function setRawElement($name, $type, $data)
-    {
-        return $this->setRawEditable($name, $type, $data);
-    }
-
-    /**
      * Set raw data of an editable (eg. for editmode)
      *
      * @param string $name
@@ -410,21 +372,6 @@ abstract class PageSnippet extends Model\Document
      * @param Editable $data
      *
      * @return $this
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use setEditable() instead.
-     */
-    public function setElement($name, $data)
-    {
-        return $this->setEditable($name, $data);
-    }
-
-    /**
-     * Set an element with the given key/name
-     *
-     * @param string $name
-     * @param Editable $data
-     *
-     * @return $this
      */
     public function setEditable(string $name, Editable $data)
     {
@@ -432,18 +379,6 @@ abstract class PageSnippet extends Model\Document
         $this->editables[$name] = $data;
 
         return $this;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return $this
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use removeEditable() instead.
-     */
-    public function removeElement($name)
-    {
-        return $this->removeEditable($name);
     }
 
     /**
@@ -459,20 +394,6 @@ abstract class PageSnippet extends Model\Document
         }
 
         return $this;
-    }
-
-    /**
-     * Get an element with the given key/name
-     *
-     * @param string $name
-     *
-     * @return Editable|null
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use getEditable() instead.
-     */
-    public function getElement($name)
-    {
-        return $this->getEditable($name);
     }
 
     /**
@@ -580,32 +501,10 @@ abstract class PageSnippet extends Model\Document
      * @param string $name
      *
      * @return bool
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use hasEditable() instead.
-     */
-    public function hasElement($name)
-    {
-        return $this->hasEditable($name);
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
      */
     public function hasEditable(string $name)
     {
         return $this->getEditable($name) !== null;
-    }
-
-    /**
-     * @return Editable[]
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use getEditables() instead.
-     */
-    public function getElements()
-    {
-        return $this->getEditables();
     }
 
     /**
@@ -618,18 +517,6 @@ abstract class PageSnippet extends Model\Document
         }
 
         return $this->editables;
-    }
-
-    /**
-     * @param array $elements
-     *
-     * @return $this
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use setEditables() instead.
-     */
-    public function setElements($elements)
-    {
-        return $this->setEditables($elements);
     }
 
     /**

@@ -32,5 +32,3 @@ interface EditableLoaderInterface extends LoaderInterface
      */
     public function build(string $name, array $params = []): Editable;
 }
-
-class_alias(EditableLoaderInterface::class, 'Pimcore\Model\Document\Tag\Loader\TagLoaderInterface');

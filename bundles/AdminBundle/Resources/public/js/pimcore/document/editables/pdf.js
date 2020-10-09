@@ -48,8 +48,8 @@ pimcore.document.editables.pdf = Class.create(pimcore.document.editable, {
             });
 
             var body = this.getBody();
-            body.insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
-            body.addCls("pimcore_tag_image_empty pimcore_editable_image_empty");
+            body.insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget"></div>');
+            body.addCls("pimcore_editable_image_empty");
         }.bind(this));
 
         this.element.render(this.id);
@@ -221,7 +221,7 @@ pimcore.document.editables.pdf = Class.create(pimcore.document.editable, {
         this.resetData();
 
         this.updateImage();
-        this.getBody().addCls("pimcore_tag_image_empty pimcore_editable_image_empty");
+        this.getBody().addCls("pimcore_editable_image_empty");
         this.reload();
     },
 
@@ -252,7 +252,7 @@ pimcore.document.editables.pdf = Class.create(pimcore.document.editable, {
         image.src = path;
 
         this.getBody().appendChild(image);
-        this.getBody().removeCls("pimcore_tag_image_empty pimcore_editable_image_empty");
+        this.getBody().removeCls("pimcore_editable_image_empty");
 
         this.updateCounter = 0;
         this.updateDimensionsInterval = window.setInterval(this.updateDimensions.bind(this), 1000);

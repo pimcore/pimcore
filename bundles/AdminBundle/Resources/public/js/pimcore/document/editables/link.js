@@ -46,7 +46,7 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
         Ext.get(this.id).setStyle({
             display:"inline"
         });
-        Ext.get(this.id).insertHtml("beforeEnd",'<span class="pimcore_tag_link_text pimcore_editable_link_text">' + this.getLinkContent() + '</span>');
+        Ext.get(this.id).insertHtml("beforeEnd",'<span class="pimcore_editable_link_text">' + this.getLinkContent() + '</span>');
 
         var editButton = new Ext.Button({
             iconCls: "pimcore_icon_link pimcore_icon_overlay_edit",

@@ -126,5 +126,3 @@ class Checkbox extends Model\Document\Editable
         }
     }
 }
-
-class_alias(Checkbox::class, 'Pimcore\Model\Document\Tag\Checkbox');

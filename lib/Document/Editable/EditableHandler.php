@@ -403,5 +403,3 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
         return $this->actionRenderer->render($uri, $options);
     }
 }
-
-class_alias(EditableHandler::class, 'Pimcore\Document\Tag\TagHandler');

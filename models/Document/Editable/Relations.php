@@ -433,6 +433,3 @@ class Relations extends Model\Document\Editable implements \Iterator
         return null;
     }
 }
-
-class_alias(Relations::class, 'Pimcore\Model\Document\Tag\Multihref');
-class_alias(Relations::class, 'Pimcore\Model\Document\Tag\Relations');

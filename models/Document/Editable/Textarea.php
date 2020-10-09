@@ -134,5 +134,3 @@ class Textarea extends Model\Document\Editable
         }
     }
 }
-
-class_alias(Textarea::class, 'Pimcore\Model\Document\Tag\Textarea');

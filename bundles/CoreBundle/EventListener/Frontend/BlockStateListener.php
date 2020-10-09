@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
-use Pimcore\Document\Tag\Block\BlockStateStack;
+use Pimcore\Document\Editable\Block\BlockStateStack;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -38,7 +38,7 @@ class BlockStateListener implements EventSubscriberInterface, LoggerAwareInterfa
     protected $blockStateStack;
 
     /**
-     * @param \Pimcore\Document\Tag\Block\BlockStateStack $blockStateStack
+     * @param BlockStateStack $blockStateStack
      */
     public function __construct(BlockStateStack $blockStateStack)
     {
