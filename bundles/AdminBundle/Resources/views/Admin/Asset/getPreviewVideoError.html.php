@@ -38,14 +38,14 @@
         <td class="error" align="center" valign="center">
             <?php if ($this->thumbnail && $this->thumbnail["status"] == "inprogress") { ?>
                 <style type="text/css">
-                    .pimcore_tag_video_progress, .pimcore_editable_video_progress {
+                    .pimcore_editable_video_progress {
                         position:relative;
                         background:#555 url(<?= $this->asset->getImageThumbnail(array("width" => 640)); ?>) no-repeat center center;
                         font-family:Arial,Verdana,sans-serif;
                         color:#fff;
                         text-shadow: 0 0 3px #000, 0 0 5px #000, 0 0 1px #000;
                     }
-                    .pimcore_tag_video_progress_status, .pimcore_editable_video_progress_status {
+                    .pimcore_editable_video_progress_status {
                         font-size:16px;
                         color:#555;
                         font-family:Arial,Verdana,sans-serif;
@@ -65,14 +65,14 @@
                         text-shadow: none;
                     }
                 </style>
-                <div class="pimcore_tag_video_progress pimcore_editable_video_progress" style="width:640px; height:380px;">
+                <div class="pimcore_editable_video_progress" style="width:640px; height:380px;">
 
                     <br />
                     <?= $this->translate("video_preview_in_progress"); ?>
                     <br />
                     <?= $this->translate("please_wait"); ?>
 
-                    <div class="pimcore_tag_video_progress_status pimcore_editable_video_progress_status"></div>
+                    <div class="pimcore_editable_video_progress_status"></div>
                 </div>
 
 

@@ -357,6 +357,3 @@ class Relation extends Model\Document\Editable
         }
     }
 }
-
-class_alias(Relation::class, 'Pimcore\Model\Document\Tag\Href');
-class_alias(Relation::class, 'Pimcore\Model\Document\Tag\Relation');

@@ -111,5 +111,3 @@ class Multiselect extends Model\Document\Editable
         return empty($this->values);
     }
 }
-
-class_alias(Multiselect::class, 'Pimcore\Model\Document\Tag\Multiselect');

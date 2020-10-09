@@ -20,14 +20,6 @@ services:
     Pimcore\Document\Editable\Block\BlockStateStack:
         public: true
 
-    pimcore.document.tag.block_state_stack:
-        alias: Pimcore\Document\Editable\Block\BlockStateStack
-        public: true
-        deprecated: 'The "%alias_id%" service is deprecated. Use "Pimcore\Document\Editable\Block\BlockStateStack" instead'
-
-    Pimcore\Document\Tag\Block\BlockStateStack:
-        alias: Pimcore\Document\Editable\Block\BlockStateStack
-        deprecated: 'The "%alias_id%" service is deprecated. Use "Pimcore\Document\Editable\Block\BlockStateStack" instead'
 
     Pimcore\Document\Editable\EditableHandler:
         public: true
@@ -77,11 +69,6 @@ services:
 
     Pimcore\Document\Editable\EditableUsageResolver:
         public: true
-
-    Pimcore\Document\Tag\TagUsageResolver:
-        alias: Pimcore\Document\Editable\EditableUsageResolver
-        public: true
-        deprecated: 'The "%alias_id%" service is deprecated. Use "Pimcore\Document\Editable\EditableUsageResolver" instead'
 
     Pimcore\Document\DocumentStack:
         public: true

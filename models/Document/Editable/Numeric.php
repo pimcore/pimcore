@@ -101,5 +101,3 @@ class Numeric extends Model\Document\Editable
         return empty($this->number);
     }
 }
-
-class_alias(Numeric::class, 'Pimcore\Model\Document\Tag\Numeric');

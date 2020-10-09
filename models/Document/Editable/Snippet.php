@@ -308,5 +308,3 @@ class Snippet extends Model\Document\Editable
         return $this->snippet;
     }
 }
-
-class_alias(Snippet::class, 'Pimcore\Model\Document\Tag\Snippet');

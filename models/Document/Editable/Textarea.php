@@ -114,5 +114,3 @@ class Textarea extends Model\Document\Editable
         return empty($this->text);
     }
 }
-
-class_alias(Textarea::class, 'Pimcore\Model\Document\Tag\Textarea');

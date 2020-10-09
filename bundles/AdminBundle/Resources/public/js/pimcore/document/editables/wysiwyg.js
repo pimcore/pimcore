@@ -42,7 +42,7 @@ pimcore.document.editables.wysiwyg = Class.create(pimcore.document.editable, {
         this.textarea.setAttribute("contenteditable","true");
 
         Ext.get(this.id).appendChild(this.textarea);
-        Ext.get(this.id).insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
+        Ext.get(this.id).insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget"></div>');
 
         this.textarea.id = this.id + "_textarea";
         this.textarea.innerHTML = this.data;

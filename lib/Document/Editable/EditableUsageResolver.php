@@ -42,18 +42,6 @@ class EditableUsageResolver
      * @param Document\PageSnippet $document
      *
      * @return array
-     *
-     * @deprecated since 6.8 and will be removed in v7. Use getUsedEditableNames() instead.
-     */
-    public function getUsedTagnames(Document\PageSnippet $document)
-    {
-        return $this->getUsedEditableNames($document);
-    }
-
-    /**
-     * @param Document\PageSnippet $document
-     *
-     * @return array
      */
     public function getUsedEditableNames(Document\PageSnippet $document)
     {
@@ -86,5 +74,3 @@ class EditableUsageResolver
         }
     }
 }
-
-class_alias(EditableUsageResolver::class, 'Pimcore\Document\Tag\TagUsageResolver');

@@ -97,5 +97,3 @@ class Select extends Model\Document\Editable
         return empty($this->text);
     }
 }
-
-class_alias(Select::class, 'Pimcore\Model\Document\Tag\Select');

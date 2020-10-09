@@ -73,5 +73,3 @@ interface EditableInterface
      */
     public function isEmpty();
 }
-
-class_alias(EditableInterface::class, 'Pimcore\Model\Document\Tag\TagInterface');
