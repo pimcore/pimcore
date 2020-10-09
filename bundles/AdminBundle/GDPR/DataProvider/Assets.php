@@ -77,7 +77,9 @@ class Assets extends Elements implements DataProviderInterface
 
         foreach (array_keys($this->exportIds) as $id) {
             $theAsset = Asset::getById($id);
-            $webAsset = $theAsset;
+            // @TODO: this needs to be done independently from the REST webservices
+            $webAsset = [];
+            //$webAsset = $this->service->getAssetFileById($id);
 
             $resultItem = json_decode(json_encode($webAsset), true);
             unset($resultItem['data']);
