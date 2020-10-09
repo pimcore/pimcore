@@ -133,5 +133,3 @@ class Multiselect extends Model\Document\Editable
         }
     }
 }
-
-class_alias(Multiselect::class, 'Pimcore\Model\Document\Tag\Multiselect');

@@ -14,7 +14,7 @@
 
 namespace Pimcore\Translation\ExportDataExtractorService\DataExtractor;
 
-use Pimcore\Document\Tag\TagUsageResolver;
+use Pimcore\Document\Editable\EditableUsageResolver;
 use Pimcore\Model\Document;
 use Pimcore\Model\Property;
 use Pimcore\Translation\AttributeSet\Attribute;
@@ -26,13 +26,13 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
     const EXPORTABLE_TAGS = ['wysiwyg', 'input', 'textarea', 'image', 'link'];
 
     /**
-     * @var TagUsageResolver
+     * @var EditableUsageResolver
      */
-    private $tagUsageResolver;
+    private $EditableUsageResolver;
 
-    public function __construct(TagUsageResolver $tagUsageResolver)
+    public function __construct(EditableUsageResolver $EditableUsageResolver)
     {
-        $this->tagUsageResolver = $tagUsageResolver;
+        $this->EditableUsageResolver = $EditableUsageResolver;
     }
 
     /**
@@ -77,7 +77,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
         $translations = $service->getTranslations($document);
 
         if ($document instanceof Document\PageSnippet) {
-            $tagNames = $this->tagUsageResolver->getUsedTagnames($document);
+            $tagNames = $this->EditableUsageResolver->getUsedTagnames($document);
             foreach ($tagNames as $tagName) {
                 if ($tag = $document->getEditable($tagName)) {
                     $editables[] = $tag;
@@ -87,7 +87,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
 
         foreach ($editables as $tag) {
             if (in_array($tag->getType(), self::EXPORTABLE_TAGS)) {
-                if ($tag instanceof Document\Tag\Image || $tag instanceof Document\Tag\Link) {
+                if ($tag instanceof Document\Editable\Image || $tag instanceof Document\Editable\Link) {
                     $content = $tag->getText();
                 } else {
                     $content = $tag->getData();
@@ -100,7 +100,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
 
                         if ($targetDocument instanceof  Document\PageSnippet) {
                             $targetTag = $targetDocument->getEditable($tag->getName());
-                            if ($targetTag instanceof Document\Tag\Image || $targetTag instanceof Document\Tag\Link) {
+                            if ($targetTag instanceof Document\Editable\Image || $targetTag instanceof Document\Editable\Link) {
                                 $targetContent[$targetLanguage] = $targetTag->getText();
                             } else {
                                 $targetContent[$targetLanguage] = $targetTag->getData();

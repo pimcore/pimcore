@@ -173,5 +173,3 @@ class Embed extends Model\Document\Editable
         }
     }
 }
-
-class_alias(Embed::class, 'Pimcore\Model\Document\Tag\Embed');

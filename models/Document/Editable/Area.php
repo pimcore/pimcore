@@ -161,5 +161,3 @@ class Area extends Model\Document\Editable
         return $editable;
     }
 }
-
-class_alias(Area::class, 'Pimcore\Model\Document\Tag\Area');

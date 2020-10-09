@@ -29,12 +29,6 @@ class Info
     public $id;
 
     /**
-     *
-     * @deprecated since v6.8 and will be removed in 7.
-     */
-    public $tag;
-
-    /**
      * @var Editable|Editable\Area|Editable\Areablock
      */
     public $editable;
@@ -59,11 +53,6 @@ class Info
      */
     public $index;
 
-    public function __construct()
-    {
-        $this->tag = & $this->editable;
-    }
-
     /**
      * @return string
      */
@@ -82,26 +71,6 @@ class Info
         $this->id = $id;
 
         return $this;
-    }
-
-    /**
-     * @return Editable|Editable\Area|Editable\Areablock
-     *
-     * @deprecated since v6.8 and will be removed in 7. use getEditable() instead.
-     */
-    public function getTag()
-    {
-        return $this->getEditable();
-    }
-
-    /**
-     * @param Editable $tag
-     *
-     * @deprecated since v6.8 and will be removed in 7. use setEditable() instead.
-     */
-    public function setTag(Editable $tag)
-    {
-        $this->setEditable($tag);
     }
 
     /**
@@ -256,5 +225,3 @@ class Info
         return $editable;
     }
 }
-
-class_alias(Info::class, 'Pimcore\Model\Document\Tag\Area\Info');

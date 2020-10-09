@@ -265,5 +265,3 @@ class Scheduledblock extends Block implements BlockInterface
         $this->cachedCurrentElement = null;
     }
 }
-
-class_alias(Scheduledblock::class, 'Pimcore\Model\Document\Tag\Scheduledblock');

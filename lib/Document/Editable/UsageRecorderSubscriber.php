@@ -99,5 +99,3 @@ class UsageRecorderSubscriber implements EventSubscriberInterface
         $this->recordedEditableNames = $recordedEditableNames;
     }
 }
-
-class_alias(UsageRecorderSubscriber::class, 'Pimcore\Document\Tag\UsageRecorderSubscriber');

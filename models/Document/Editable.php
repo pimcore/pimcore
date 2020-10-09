@@ -20,7 +20,6 @@ namespace Pimcore\Model\Document;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\Block\BlockState;
 use Pimcore\Document\Editable\Block\BlockStateStack;
-use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\Document\EditableNameEvent;
 use Pimcore\Logger;
@@ -37,15 +36,6 @@ use Pimcore\Tool\HtmlUtils;
  */
 abstract class Editable extends Model\AbstractModel implements Model\Document\Editable\EditableInterface
 {
-    /**
-     * Options of the current tag, can contain some configurations for the editmode, or the thumbnail name, ...
-     *
-     * @var array
-     *
-     * @deprecated will be removed in Pimcore 7. use $config instead
-     */
-    protected $options;
-
     /**
      * Contains some configurations for the editmode, or the thumbnail name, ...
      *
@@ -88,13 +78,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     protected $document;
 
     /**
-     * @deprecated Unused - will be removed in 7.0
-     *
-     * @var string|null
-     */
-    protected $controller;
-
-    /**
      * In Editmode or not
      *
      * @var bool
@@ -105,11 +88,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * @var bool
      */
     protected $inherited = false;
-
-    public function __construct()
-    {
-        $this->options = & $this->config;
-    }
 
     /**
      * @var string
@@ -267,7 +245,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     {
         $classes = [
             'pimcore_editable',
-            'pimcore_tag_' . $this->getType(),
             'pimcore_editable_' . $this->getType(),
         ];
 
@@ -417,28 +394,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @return array
-     *
-     * @deprecated will be removed in Pimcore 7. Use getConfig() instead.
-     */
-    public function getOptions()
-    {
-        return $this->getConfig();
-    }
-
-    /**
-     * @param array $options
-     *
-     * @return $this
-     *
-     * @deprecated will be removed in Pimcore 7. Use setConfig() instead.
-     */
-    public function setOptions($options)
-    {
-        return $this->setConfig($options);
-    }
-
-    /**
-     * @return array
      */
     public function getConfig()
     {
@@ -472,30 +427,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $this->options[$name] = $value;
 
         return $this;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param string|null $controller
-     *
-     * @return $this
-     */
-    public function setController($controller)
-    {
-        $this->controller = $controller;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return string|null
-     */
-    public function getController()
-    {
-        return $this->controller;
     }
 
     /**
@@ -742,25 +673,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * Builds a tag name for an editable, taking current
-     * block state (block, index) and targeting into account.
-     *
-     * @param string $type
-     * @param string $name
-     * @param Document|null $document
-     *
-     * @return string
-     *
-     * @throws \Exception
-     *
-     * @deprecated since v6.8 and will be removed in 7. use buildEditableName() instead
-     */
-    public static function buildTagName(string $type, string $name, Document $document = null)
-    {
-        return self::buildEditableName($type, $name, $document);
-    }
-
-    /**
      * Builds an editable name for an editable, taking current
      * block state (block, index) and targeting into account.
      *
@@ -827,19 +739,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * @param Document $document
      *
      * @return string
-     *
-     * @deprecated since v6.8 and will be removed in 7. Use buildEditableRealName() instead
-     */
-    public static function buildTagRealName(string $name, Document $document): string
-    {
-        return self::buildEditableRealName($name, $document);
-    }
-
-    /**
-     * @param string $name
-     * @param Document $document
-     *
-     * @return string
      */
     public static function buildEditableRealName(string $name, Document $document): string
     {
@@ -899,5 +798,3 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 }
-
-class_alias(Editable::class, 'Pimcore\Model\Document\Tag');

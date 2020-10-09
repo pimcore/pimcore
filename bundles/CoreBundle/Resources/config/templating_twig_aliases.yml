@@ -4,7 +4,7 @@ services:
 
     # aliases to twig extensions for backwards compatibility
     pimcore.twig.extension.helpers: '@Pimcore\Twig\Extension\HelpersExtension'
-    pimcore.twig.extension.document_tag: '@Pimcore\Twig\Extension\DocumentTagExtension'
+    pimcore.twig.extension.document_tag: '@Pimcore\Twig\Extension\DocumentEditableExtension'
     pimcore.twig.extension.subrequest: '@Pimcore\Twig\Extension\SubrequestExtension'
     pimcore.twig.extension.pimcore_object: '@Pimcore\Twig\Extension\PimcoreObjectExtension'
     pimcore.twig.extension.templating_helper: '@Pimcore\Twig\Extension\TemplatingHelperExtension'

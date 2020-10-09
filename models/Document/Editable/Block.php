@@ -404,5 +404,3 @@ class Block extends Model\Document\Editable implements BlockInterface
         return HtmlUtils::assembleAttributeString($attributes);
     }
 }
-
-class_alias(Block::class, 'Pimcore\Model\Document\Tag\Block');

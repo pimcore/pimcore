@@ -702,5 +702,3 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         return $list;
     }
 }
-
-class_alias(Areablock::class, 'Pimcore\Model\Document\Tag\Areablock');

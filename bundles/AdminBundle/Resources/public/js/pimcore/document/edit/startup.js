@@ -124,7 +124,7 @@ Ext.onReady(function () {
             inherited = definition["inherited"];
         }
 
-        if (definition.inDialogBox && typeof pimcore.document.tags[definition.type].prototype['render'] !== 'function') {
+        if (definition.inDialogBox && typeof pimcore.document.editables[definition.type].prototype['render'] !== 'function') {
             throw 'Editable of type `' + type + '` with name `' + name + '` does not support the use in the dialog box.';
         }
 
@@ -133,8 +133,7 @@ Ext.onReady(function () {
         }
         editableNames.push(name);
 
-        // @TODO: change pimcore.document.tags to pimcore.document.editables in v7
-        var editable = new pimcore.document.tags[definition.type](definition.id, name, definition.config, definition.data, inherited);
+        let editable = new pimcore.document.editables[definition.type](definition.id, name, definition.config, definition.data, inherited);
         editable.setRealName(definition.realName);
         editable.setInDialogBox(definition.inDialogBox);
 
@@ -197,9 +196,9 @@ Ext.onReady(function () {
         for (var e=0; e<editablesForTooltip.length; e++) {
             tmpEl = Ext.get(editablesForTooltip[e]);
             if(tmpEl) {
-                if(tmpEl.hasCls("pimcore_tag_inc") || tmpEl.hasCls("pimcore_tag_href")
-                                    || tmpEl.hasCls("pimcore_tag_image") || tmpEl.hasCls("pimcore_tag_renderlet")
-                                    || tmpEl.hasCls("pimcore_tag_snippet")) {
+                if(tmpEl.hasCls("pimcore_editable_inc") || tmpEl.hasCls("pimcore_editable_href")
+                                    || tmpEl.hasCls("pimcore_editable_image") || tmpEl.hasCls("pimcore_editable_renderlet")
+                                    || tmpEl.hasCls("pimcore_editable_snippet")) {
                     new Ext.ToolTip({
                         target: tmpEl,
                         showDelay: 100,
@@ -212,7 +211,7 @@ Ext.onReady(function () {
         }
 
         // add contextmenu menu to elements included by $this->inc();
-        var incElements = Ext.query(".pimcore_tag_inc");
+        var incElements = Ext.query(".pimcore_editable_inc");
         var tmpIncEl;
         for (var q=0; q<incElements.length; q++) {
             tmpIncEl = Ext.get(incElements[q]);
