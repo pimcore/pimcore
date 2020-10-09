@@ -260,20 +260,6 @@ class Config extends Model\AbstractModel
     }
 
     /**
-     * Returns thumbnail config for webservice export.
-     *
-     * @deprecated
-     */
-    public function getForWebserviceExport()
-    {
-        $arrayConfig = object2array($this);
-        $items = $arrayConfig['items'];
-        $arrayConfig['items'] = $items;
-
-        return $arrayConfig;
-    }
-
-    /**
      * @param string $name
      */
     protected function createMediaIfNotExists($name)

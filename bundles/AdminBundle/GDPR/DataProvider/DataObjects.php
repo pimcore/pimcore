@@ -15,6 +15,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
+use Pimcore\Model\Asset;
+use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
@@ -25,10 +27,6 @@ use Pimcore\Model\Search\Backend\Data;
 
 class DataObjects extends Elements implements DataProviderInterface
 {
-    /**
-     * @var \Pimcore\Model\Webservice\Service
-     */
-    protected $service;
 
     /**
      * @var array
@@ -40,9 +38,8 @@ class DataObjects extends Elements implements DataProviderInterface
      */
     protected $config = [];
 
-    public function __construct(\Pimcore\Model\Webservice\Service $service, array $config)
+    public function __construct(array $config)
     {
-        $this->service = $service;
         $this->config = $config;
     }
 
@@ -78,11 +75,11 @@ class DataObjects extends Elements implements DataProviderInterface
         $exportResult = [];
 
         foreach (array_keys($this->exportIds['object']) as $id) {
-            $exportResult[] = $this->service->getObjectConcreteById($id);
+            $exportResult[] = DataObject::getById($id);
         }
         if ($this->exportIds['image']) {
             foreach (array_keys($this->exportIds['image']) as $id) {
-                $exportResult[] = $this->service->getAssetFileById($id);
+                $exportResult[] = Asset::getById($id);
             }
         }
 

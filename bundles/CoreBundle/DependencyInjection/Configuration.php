@@ -318,9 +318,6 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->end()
                 ->end()
-            ->end()
-            ->arrayNode('webservice')
-                ->canBeEnabled()
             ->end();
     }
 

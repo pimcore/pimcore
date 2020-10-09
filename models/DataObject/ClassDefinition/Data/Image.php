@@ -335,64 +335,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     }
 
     /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return int|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Asset) {
-            return $data->getId();
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return null|Asset|Asset\Archive|Asset\Audio|Asset\Document|Asset\Folder|Asset\Image|Asset\Text|Asset\Unknown|Asset\Video
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        $id = $value;
-
-        $fromMapper = false;
-        if ($idMapper && !empty($value)) {
-            $id = $idMapper->getMappedId('asset', $value);
-            $fromMapper = true;
-        }
-
-        $asset = Asset::getById($id);
-        if (empty($id) && !$fromMapper) {
-            return null;
-        } elseif (is_numeric($value) and $asset instanceof Asset) {
-            return $asset;
-        } else {
-            if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-                throw new \Exception('cannot get values from web service import - invalid data, referencing unknown asset with id [ '.$value.' ]');
-            } else {
-                $idMapper->recordMappingFailure('object', $object->getId(), 'asset', $value);
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * @param string $uploadPath
      *
      * @return $this

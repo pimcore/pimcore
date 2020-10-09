@@ -240,32 +240,6 @@ class Snippet extends Model\Document\Editable
     }
 
     /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if ($data->id !== null) {
-            $this->id = $data->id;
-            if (is_numeric($this->id)) {
-                $this->snippet = Document\Snippet::getById($this->id);
-                if (!$this->snippet instanceof Document\Snippet) {
-                    throw new \Exception('cannot get values from web service import - referenced snippet with id [ ' . $this->id . ' ] is unknown');
-                }
-            } else {
-                throw new \Exception('cannot get values from web service import - id is not valid');
-            }
-        }
-    }
-
-    /**
      * @return array
      */
     public function __sleep()

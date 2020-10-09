@@ -934,36 +934,6 @@ class Video extends Model\Document\Editable
     }
 
     /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if ($data->id) {
-            if ($data->type == 'asset') {
-                $this->id = $data->id;
-                $asset = Asset::getById($data->id);
-                if (!$asset) {
-                    throw new \Exception('Referencing unknown asset with id [ '.$data->id.' ] in webservice import field [ '.$data->name.' ]');
-                }
-                $this->type = $data->type;
-            } elseif (in_array($data->type, ['dailymotion', 'vimeo', 'youtube', 'url'])) {
-                $this->id = $data->id;
-                $this->type = $data->type;
-            } else {
-                throw new \Exception('cannot get values from web service import - type must be asset,youtube,url, vimeo or dailymotion');
-            }
-        }
-    }
-
-    /**
      * @return string
      */
     public function getVideoType()

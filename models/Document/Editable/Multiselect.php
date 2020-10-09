@@ -110,26 +110,4 @@ class Multiselect extends Model\Document\Editable
     {
         return empty($this->values);
     }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if ($data->values === null) {
-            $this->values = [];
-        } elseif ($data->values instanceof  \stdClass) {
-            $this->values = get_object_vars($data->values);
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
-    }
 }
