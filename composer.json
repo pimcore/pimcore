@@ -98,7 +98,8 @@
   },
   "conflict": {
     "monolog/monolog": ">=2",
-    "symfony/symfony": "3.4.43 || 4.4.11"
+    "symfony/symfony": "3.4.43 || 4.4.11",
+    "symfony/monolog-bundle": "3.6.0"
   },
   "require-dev": {
     "cache/integration-tests": "^0.16.0",
