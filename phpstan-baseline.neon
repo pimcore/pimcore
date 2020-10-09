@@ -1,21 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Cannot access property \\$thumbnail on array\\|string\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Rest/Element/AssetController.php
-
-		-
-			message: "#^Cannot access property \\$checksum on array\\|string\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Rest/Element/AssetController.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Webservice\\\\Data\\:\\:\\$parentId\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Controller/Rest/Element/AssetController.php
-
-		-
 			message: "#^Method Pimcore\\\\Bundle\\\\AdminBundle\\\\EventListener\\\\AdminExceptionListener\\:\\:getInnerStack\\(\\) should return Exception but returns Throwable\\|null\\.$#"
 			count: 1
 			path: bundles/AdminBundle/EventListener/AdminExceptionListener.php
@@ -1666,11 +1651,6 @@ parameters:
 			path: lib/Tool/Newsletter.php
 
 		-
-			message: "#^Argument of an invalid type stdClass supplied for foreach, only iterables are supported\\.$#"
-			count: 1
-			path: lib/Tool/RestClient/AbstractRestClient.php
-
-		-
 			message: "#^Method Pimcore\\\\Tool\\\\Session\\:\\:get\\(\\) should return Symfony\\\\Component\\\\HttpFoundation\\\\Session\\\\Attribute\\\\AttributeBagInterface but returns Symfony\\\\Component\\\\HttpFoundation\\\\Session\\\\SessionBagInterface\\.$#"
 			count: 1
 			path: lib/Tool/Session.php
@@ -1809,11 +1789,6 @@ parameters:
 			message: "#^Invalid array key type object\\.$#"
 			count: 2
 			path: models/Element/Import/Service.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Webservice\\\\Data\\\\DataObject\\\\Element\\:\\:\\$fieldcollection\\.$#"
-			count: 1
-			path: models/Webservice/Data/DataObject/Concrete.php
 
 		-
 			message: "#^Property Pimcore\\\\Templating\\\\Renderer\\\\EditableRenderer\\:\\:\\$editableLoader \\(Pimcore\\\\Model\\\\Document\\\\Editable\\\\Loader\\\\EditableLoader\\) does not accept Pimcore\\\\Model\\\\Document\\\\Editable\\\\Loader\\\\EditableLoaderInterface\\.$#"

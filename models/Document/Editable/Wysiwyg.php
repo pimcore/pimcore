@@ -119,27 +119,6 @@ class Wysiwyg extends Model\Document\Editable
     }
 
     /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-
-        if ($data->text === null or is_string($data->text)) {
-            $this->text = $data->text;
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
-    }
-
-    /**
      * @return array
      */
     public function resolveDependencies()

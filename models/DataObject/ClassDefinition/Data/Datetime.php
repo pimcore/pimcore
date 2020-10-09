@@ -281,45 +281,6 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     }
 
     /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        return $this->getForCsvExport($object, $params);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return \Carbon\Carbon|null
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        $timestamp = strtotime($value);
-        if (empty($value)) {
-            return null;
-        }
-        if ($timestamp !== false) {
-            return $this->getDateFromTimestamp($timestamp);
-        }
-        throw new \Exception('cannot get values from web service import - invalid data');
-    }
-
-    /**
      * @return int|null
      */
     public function getDefaultValue()

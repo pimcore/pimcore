@@ -259,60 +259,6 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         return '';
     }
 
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof DataObject\Data\Geobounds) {
-            return [
-                'NElongitude' => $data->getNorthEast()->getLongitude(),
-                'NElatitude' => $data->getNorthEast()->getLatitude(),
-                'SWlongitude' => $data->getSouthWest()->getLongitude(),
-                'SWlatitude' => $data->getSouthWest()->getLatitude(),
-            ];
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|void
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } else {
-            $value = (array) $value;
-            if ($value['NElongitude'] !== null && $value['NElatitude'] !== null && $value['SWlongitude'] !== null && $value['SWlatitude'] !== null) {
-                $ne = new DataObject\Data\Geopoint($value['NElongitude'], $value['NElatitude']);
-                $sw = new DataObject\Data\Geopoint($value['SWlongitude'], $value['SWlatitude']);
-
-                return new DataObject\Data\Geobounds($ne, $sw);
-            } else {
-                throw new \Exception('cannot get values from web service import - invalid data');
-            }
-        }
-    }
-
     /** True if change is allowed in edit mode.
      * @param DataObject\Concrete $object
      * @param mixed $params

@@ -221,59 +221,6 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
         return '';
     }
 
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if (!empty($data)) {
-            return $this->getDataForEditmode($data, $object, $params);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|void
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } elseif (is_array($value)) {
-            $points = [];
-            foreach ($value as $point) {
-                $point = (array) $point;
-                if ($point['longitude'] != null and $point['latitude'] != null) {
-                    $points[] = new DataObject\Data\Geopoint($point['longitude'], $point['latitude']);
-                } else {
-                    throw new \Exception('cannot get values from web service import - invalid data');
-                }
-            }
-
-            return $points;
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
-    }
-
     /** True if change is allowed in edit mode.
      * @param DataObject\Concrete $object
      * @param mixed $params

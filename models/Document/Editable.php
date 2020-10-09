@@ -27,7 +27,6 @@ use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
-use Pimcore\Model\Webservice;
 use Pimcore\Tool\HtmlUtils;
 
 /**
@@ -584,57 +583,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * Receives a standard class object from webservice import and fills the current editable's data
-     *
-     * @abstract
-     *
-     * @deprecated
-     *
-     * @param Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-    }
-
-    /**
-     * Returns the current editable's data for web service export
-     *
-     * @deprecated
-     *
-     * @param Model\Document\PageSnippet|null $document
-     * @param array $params
-     * @abstract
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($document = null, $params = [])
-    {
-        $keys = get_object_vars($this);
-
-        $el = [];
-        foreach ($keys as $key => $value) {
-            if ($value instanceof Model\Element\ElementInterface) {
-                $value = $value->getId();
-            }
-            $className = Webservice\Data\Mapper::findWebserviceClass($value, 'out');
-            $el[$key] = Webservice\Data\Mapper::map($value, $className, 'out');
-        }
-
-        unset($el['dao']);
-        unset($el['documentId']);
-        unset($el['document']);
-        unset($el['controller']);
-        unset($el['editmode']);
-
-        $el = Webservice\Data\Mapper::toObject($el);
-
-        return $el;
-    }
-
-    /**
      * @return bool
      */
     public function checkValidity()
@@ -752,22 +700,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         }
 
         return $name;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param array|object $data
-     *
-     * @return object
-     */
-    public function sanitizeWebserviceData($data)
-    {
-        if (is_array($data)) {
-            $data = (object) $data;
-        }
-
-        return $data;
     }
 
     /**

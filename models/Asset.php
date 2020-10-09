@@ -1664,7 +1664,7 @@ class Asset extends Element\AbstractElement
         $this->setHasMetaData(false);
         if (!empty($metadata)) {
             foreach ((array)$metadata as $metaItem) {
-                $metaItem = (array)$metaItem; // also allow object with appropriate keys (as it comes from Pimcore\Model\Webservice\Data\Asset\reverseMap)
+                $metaItem = (array)$metaItem; // also allow object with appropriate keys
                 $this->addMetadata($metaItem['name'], $metaItem['type'], $metaItem['data'] ?? null, $metaItem['language'] ?? null);
             }
         }
