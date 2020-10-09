@@ -75,11 +75,13 @@ class DataObjects extends Elements implements DataProviderInterface
         $exportResult = [];
 
         foreach (array_keys($this->exportIds['object']) as $id) {
-            $exportResult[] = DataObject::getById($id);
+            // @TODO: this needs to be done independently from the REST webservices
+            //$exportResult[] = $this->service->getObjectConcreteById($id);
         }
         if ($this->exportIds['image']) {
             foreach (array_keys($this->exportIds['image']) as $id) {
-                $exportResult[] = Asset::getById($id);
+                // @TODO: this needs to be done independently from the REST webservices
+                //$exportResult[] = $this->service->getAssetFileById($id);
             }
         }
 
