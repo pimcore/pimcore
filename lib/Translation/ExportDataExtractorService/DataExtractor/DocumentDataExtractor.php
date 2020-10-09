@@ -55,7 +55,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
         }
 
         $this
-            ->addDoumentTags($document, $result)
+            ->addDoumentEditables($document, $result)
             ->addSettings($document, $result);
 
         return $result;
@@ -69,7 +69,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
      *
      * @throws \Exception
      */
-    protected function addDoumentTags(Document $document, AttributeSet $result): DocumentDataExtractor
+    protected function addDoumentEditables(Document $document, AttributeSet $result): DocumentDataExtractor
     {
         $editables = [];
         $service = new Document\Service;
@@ -77,20 +77,20 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
         $translations = $service->getTranslations($document);
 
         if ($document instanceof Document\PageSnippet) {
-            $tagNames = $this->EditableUsageResolver->getUsedTagnames($document);
-            foreach ($tagNames as $tagName) {
-                if ($tag = $document->getEditable($tagName)) {
-                    $editables[] = $tag;
+            $editableNames = $this->EditableUsageResolver->getUsedEditableNames($document);
+            foreach ($editableNames as $editableName) {
+                if ($editable = $document->getEditable($editableName)) {
+                    $editables[] = $editable;
                 }
             }
         }
 
-        foreach ($editables as $tag) {
-            if (in_array($tag->getType(), self::EXPORTABLE_TAGS)) {
-                if ($tag instanceof Document\Editable\Image || $tag instanceof Document\Editable\Link) {
-                    $content = $tag->getText();
+        foreach ($editables as $editable) {
+            if (in_array($editable->getType(), self::EXPORTABLE_TAGS)) {
+                if ($editable instanceof Document\Editable\Image || $editable instanceof Document\Editable\Link) {
+                    $content = $editable->getText();
                 } else {
-                    $content = $tag->getData();
+                    $content = $editable->getData();
                 }
 
                 $targetContent = [];
@@ -99,7 +99,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
                         $targetDocument = Document::getById($translations[$targetLanguage]);
 
                         if ($targetDocument instanceof  Document\PageSnippet) {
-                            $targetTag = $targetDocument->getEditable($tag->getName());
+                            $targetTag = $targetDocument->getEditable($editable->getName());
                             if ($targetTag instanceof Document\Editable\Image || $targetTag instanceof Document\Editable\Link) {
                                 $targetContent[$targetLanguage] = $targetTag->getText();
                             } else {
@@ -112,7 +112,7 @@ class DocumentDataExtractor extends AbstractElementDataExtractor
                 if (is_string($content)) {
                     $contentCheck = trim(strip_tags($content));
                     if (!empty($contentCheck)) {
-                        $result->addAttribute(Attribute::TYPE_TAG, $tag->getName(), $content, false, $targetContent);
+                        $result->addAttribute(Attribute::TYPE_TAG, $editable->getName(), $content, false, $targetContent);
                     }
                 }
             }

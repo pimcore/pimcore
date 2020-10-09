@@ -25,20 +25,8 @@ class UsageRecorderSubscriber implements EventSubscriberInterface
 {
     /**
      * @var array
-     *
-     * @deprecated since 6.8 and will be removed in 7. use $recordedEditableNames instead.
-     */
-    protected $recordedTagNames = [];
-
-    /**
-     * @var array
      */
     protected $recordedEditableNames = [];
-
-    public function __construct()
-    {
-        $this->recordedTagNames = & $this->recordedEditableNames;
-    }
 
     /**
      * @inheritDoc
@@ -61,26 +49,6 @@ class UsageRecorderSubscriber implements EventSubscriberInterface
         }
 
         $this->recordedEditableNames[] = $event->getEditableName();
-    }
-
-    /**
-     * @return array
-     *
-     * @deprecated since 6.8 and will be removed in 7. use getRecordedEditableNames() instead.
-     */
-    public function getRecordedTagNames(): array
-    {
-        return $this->getRecordedEditableNames();
-    }
-
-    /**
-     * @param array $recordedTagNames
-     *
-     * @deprecated since 6.8 and will be removed in 7. use setRecordedEditableNames() instead.
-     */
-    public function setRecordedTagNames(array $recordedTagNames): void
-    {
-        $this->setRecordedEditableNames($recordedTagNames);
     }
 
     /**
