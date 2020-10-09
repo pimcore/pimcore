@@ -104,7 +104,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        if ($data) {
+        if (strlen(strval($data)) > 0) {
             if ($this->getColumnType() == 'date') {
                 $data = strtotime($data);
                 if ($data === false) {
