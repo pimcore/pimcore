@@ -412,30 +412,4 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
 
         return $delta;
     }
-
-    /**
-     * @deprecated
-     *
-     * @param array $data
-     */
-    public function getFromWebserviceImport($data)
-    {
-        foreach ($data as $key => $value) {
-            $setter = 'set' . ucfirst($key);
-            $this->$setter($value);
-        }
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return array
-     */
-    public function getForWebserviceExport()
-    {
-        $data = get_object_vars($this);
-        unset($data['dao']);
-
-        return $data;
-    }
 }

@@ -550,7 +550,7 @@ class Document extends Element\AbstractElement
      */
     protected function update($params = [])
     {
-        $disallowedKeysInFirstLevel = ['install', 'admin', 'webservice', 'plugin'];
+        $disallowedKeysInFirstLevel = ['install', 'admin', 'plugin'];
         if ($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
             throw new \Exception('Key: ' . $this->getKey() . ' is not allowed in first level (root-level)');
         }

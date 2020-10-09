@@ -638,7 +638,7 @@ pimcore.elementservice.refreshNode = function (node) {
 pimcore.elementservice.isDisallowedDocumentKey = function (parentNodeId, key) {
 
     if(parentNodeId == 1) {
-        var disallowedKeys = ["admin","install","webservice","plugin"];
+        var disallowedKeys = ["admin","install","plugin"];
         if(in_arrayi(key, disallowedKeys)) {
             Ext.MessageBox.alert(t('name_is_not_allowed'),
                 t('name_is_not_allowed'));

@@ -49,8 +49,6 @@ pimcore:
         lifetime: null
         exclude_patterns: ''
         exclude_cookie: ''
-    webservice:
-        enabled: true
     httpclient:
         adapter: Socket
         proxy_host: ''

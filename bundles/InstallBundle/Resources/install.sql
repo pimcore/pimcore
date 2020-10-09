@@ -624,7 +624,6 @@ CREATE TABLE `users` (
   `allowDirtyClose` tinyint(1) unsigned DEFAULT '1',
   `docTypes` varchar(255) DEFAULT NULL,
   `classes` text DEFAULT NULL,
-  `apiKey` varchar(255) DEFAULT NULL,
   `twoFactorAuthentication` varchar(255) DEFAULT NULL,
 	`activePerspective` VARCHAR(255) NULL DEFAULT NULL,
 	`perspectives` LONGTEXT NULL DEFAULT NULL,

@@ -25,11 +25,6 @@ use Symfony\Component\HttpFoundation\Response;
 class Assets extends Elements implements DataProviderInterface
 {
     /**
-     * @var \Pimcore\Model\Webservice\Service
-     */
-    protected $service;
-
-    /**
      * @var bool[]
      */
     protected $exportIds = [];
@@ -39,9 +34,8 @@ class Assets extends Elements implements DataProviderInterface
      */
     protected $config = [];
 
-    public function __construct(\Pimcore\Model\Webservice\Service $service, array $config = null)
+    public function __construct(array $config = null)
     {
-        $this->service = $service;
         $this->config = $config;
     }
 
@@ -83,7 +77,7 @@ class Assets extends Elements implements DataProviderInterface
 
         foreach (array_keys($this->exportIds) as $id) {
             $theAsset = Asset::getById($id);
-            $webAsset = $this->service->getAssetFileById($id);
+            $webAsset = $theAsset;
 
             $resultItem = json_decode(json_encode($webAsset), true);
             unset($resultItem['data']);

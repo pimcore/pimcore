@@ -43,8 +43,6 @@ class AdminExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * Return JSON error responses from webservice context
-     *
      * @param GetResponseForExceptionEvent $event
      */
     public function onKernelException(GetResponseForExceptionEvent $event)
@@ -82,27 +80,6 @@ class AdminExceptionListener implements EventSubscriberInterface
                 $code = 422;
 
                 $this->recursiveAddValidationExceptionSubItems($ex->getSubItems(), $message, $data['traceString']);
-            }
-
-            $response = new JsonResponse($data, $code, $headers);
-            $event->setResponse($response);
-
-            return;
-        } elseif ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_WEBSERVICE)) {
-            list($code, $headers, $message) = $this->getResponseData($ex);
-
-            if ($ex instanceof DBALException) {
-                $message = 'Database error, see logs for details';
-            }
-
-            $data = [
-                'success' => false,
-                'msg' => $message,
-            ];
-
-            if (\Pimcore::inDebugMode()) {
-                $data['trace'] = $ex->getTrace();
-                $data['traceString'] = $ex->getTraceAsString();
             }
 
             $response = new JsonResponse($data, $code, $headers);
