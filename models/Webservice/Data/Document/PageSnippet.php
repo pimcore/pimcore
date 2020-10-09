@@ -84,7 +84,7 @@ class PageSnippet extends Model\Webservice\Data\Document
 
         if (is_array($this->elements)) {
             foreach ($this->elements as $element) {
-                $tag = Model\Document\Tag::factory($element->type, $element->name, $this->id);
+                $tag = Model\Document\Editable::factory($element->type, $element->name, $this->id);
                 $tag->getFromWebserviceImport($element, $object, [], $idMapper);
 
                 $object->setEditable($element->name, $tag);

@@ -820,5 +820,3 @@ class Image extends Model\Document\Editable
         return $finalVars;
     }
 }
-
-class_alias(Image::class, 'Pimcore\Model\Document\Tag\Image');

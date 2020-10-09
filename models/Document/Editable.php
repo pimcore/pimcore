@@ -38,15 +38,6 @@ use Pimcore\Tool\HtmlUtils;
 abstract class Editable extends Model\AbstractModel implements Model\Document\Editable\EditableInterface
 {
     /**
-     * Options of the current tag, can contain some configurations for the editmode, or the thumbnail name, ...
-     *
-     * @var array
-     *
-     * @deprecated will be removed in Pimcore 7. use $config instead
-     */
-    protected $options;
-
-    /**
      * Contains some configurations for the editmode, or the thumbnail name, ...
      *
      * @var array
@@ -88,13 +79,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     protected $document;
 
     /**
-     * @deprecated Unused - will be removed in 7.0
-     *
-     * @var string|null
-     */
-    protected $controller;
-
-    /**
      * In Editmode or not
      *
      * @var bool
@@ -105,11 +89,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * @var bool
      */
     protected $inherited = false;
-
-    public function __construct()
-    {
-        $this->options = & $this->config;
-    }
 
     /**
      * @var string
@@ -135,7 +114,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $editable = $loader->build($type);
         $editable->setName($name);
         $editable->setDocumentId($documentId);
-        $editable->setController($controller);
         $editable->setEditmode($editmode);
         $editable->setConfig($config);
 
@@ -149,10 +127,10 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      */
     public function admin()
     {
-        $options = $this->getEditmodeOptions();
-        $code = $this->outputEditmodeOptions($options, true);
+        $config = $this->getEditmodeConfig();
+        $code = $this->outputEditmodeConfig($config, true);
 
-        $attributes = $this->getEditmodeElementAttributes($options);
+        $attributes = $this->getEditmodeElementAttributes($config);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
 
         $htmlContainerCode = ('<div ' . $attributeString . '></div>');
@@ -180,13 +158,13 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * Builds options passed to editmode frontend as JSON config
+     * Builds config passed to editmode frontend as JSON config
      *
      * @return array
      */
-    protected function getEditmodeOptions(): array
+    protected function getEditmodeConfig(): array
     {
-        $options = [
+        $config = [
             // we don't use : and . in IDs (although it's allowed in HTML spec)
             // because they are used in CSS syntax and therefore can't be used in querySelector()
             'id' => 'pimcore_editable_' . str_replace([':', '.'], '_', $this->getName()),
@@ -199,7 +177,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             'inDialogBox' => $this->getInDialogBox(),
         ];
 
-        return $options;
+        return $config;
     }
 
     /**
@@ -222,18 +200,18 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * Builds attributes used on the editmode HTML element
      *
-     * @param array $options
+     * @param array $config
      *
      * @return array
      */
-    protected function getEditmodeElementAttributes(array $options): array
+    protected function getEditmodeElementAttributes(array $config): array
     {
-        if (!isset($options['id'])) {
-            throw new \RuntimeException(sprintf('Expected an "id" option to be set on the "%s" editable options array', $this->getName()));
+        if (!isset($config['id'])) {
+            throw new \RuntimeException(sprintf('Expected an "id" option to be set on the "%s" editable config array', $this->getName()));
         }
 
         $attributes = array_merge($this->getEditmodeBlockStateAttributes(), [
-            'id' => $options['id'],
+            'id' => $config['id'],
             'class' => implode(' ', $this->getEditmodeElementClasses()),
         ]);
 
@@ -267,7 +245,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     {
         $classes = [
             'pimcore_editable',
-            'pimcore_tag_' . $this->getType(),
             'pimcore_editable_' . $this->getType(),
         ];
 
@@ -296,14 +273,14 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * Push editmode options into the JS config array
+     * Push editmode config into the JS config array
      *
-     * @param array $options
+     * @param array $config
      * @param bool $return
      *
      * @return string|void
      */
-    protected function outputEditmodeOptions(array $options, $return = false)
+    protected function outputEditmodeConfig(array $config, $return = false)
     {
         // filter all non-scalar values before we pass them to the config object (JSON)
         $clean = function ($value) use (&$clean) {
@@ -317,11 +294,11 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
             return $value;
         };
-        $options = $clean($options);
+        $config = $clean($config);
 
         $code = '
             <script>
-                editableDefinitions.push(' . json_encode($options, JSON_PRETTY_PRINT) . ');
+                editableDefinitions.push(' . json_encode($config, JSON_PRETTY_PRINT) . ');
             </script>
         ';
 
@@ -417,28 +394,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
     /**
      * @return array
-     *
-     * @deprecated will be removed in Pimcore 7. Use getConfig() instead.
-     */
-    public function getOptions()
-    {
-        return $this->getConfig();
-    }
-
-    /**
-     * @param array $options
-     *
-     * @return $this
-     *
-     * @deprecated will be removed in Pimcore 7. Use setConfig() instead.
-     */
-    public function setOptions($options)
-    {
-        return $this->setConfig($options);
-    }
-
-    /**
-     * @return array
      */
     public function getConfig()
     {
@@ -463,39 +418,15 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return self
      */
-    public function setOption(string $name, $value): self
+    public function addConfig(string $name, $value): self
     {
-        if (!is_array($this->options)) {
-            $this->options = [];
+        if (!is_array($this->config)) {
+            $this->config = [];
         }
 
-        $this->options[$name] = $value;
+        $this->config[$name] = $value;
 
         return $this;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param string|null $controller
-     *
-     * @return $this
-     */
-    public function setController($controller)
-    {
-        $this->controller = $controller;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return string|null
-     */
-    public function getController()
-    {
-        return $this->controller;
     }
 
     /**
@@ -538,7 +469,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['controller', 'editmode', 'options', 'parentBlockNames', 'document'];
+        $blockedVars = ['editmode', 'parentBlockNames', 'document'];
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
@@ -742,25 +673,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * Builds a tag name for an editable, taking current
-     * block state (block, index) and targeting into account.
-     *
-     * @param string $type
-     * @param string $name
-     * @param Document|null $document
-     *
-     * @return string
-     *
-     * @throws \Exception
-     *
-     * @deprecated since v6.8 and will be removed in 7. use buildEditableName() instead
-     */
-    public static function buildTagName(string $type, string $name, Document $document = null)
-    {
-        return self::buildEditableName($type, $name, $document);
-    }
-
-    /**
      * Builds an editable name for an editable, taking current
      * block state (block, index) and targeting into account.
      *
@@ -827,19 +739,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * @param Document $document
      *
      * @return string
-     *
-     * @deprecated since v6.8 and will be removed in 7. Use buildEditableRealName() instead
-     */
-    public static function buildTagRealName(string $name, Document $document): string
-    {
-        return self::buildEditableRealName($name, $document);
-    }
-
-    /**
-     * @param string $name
-     * @param Document $document
-     *
-     * @return string
      */
     public static function buildEditableRealName(string $name, Document $document): string
     {
@@ -899,5 +798,3 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         return $this;
     }
 }
-
-class_alias(Editable::class, 'Pimcore\Model\Document\Tag');

@@ -42,7 +42,7 @@ abstract class Data
             $blockedKeys[] = 'data';
         }
 
-        if ($object instanceof Model\Document\Tag\Relations) {
+        if ($object instanceof Model\Document\Editable\Relations) {
             $blockedKeys[] = 'value';
         }
 

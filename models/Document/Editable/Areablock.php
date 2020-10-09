@@ -307,11 +307,11 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * @inheritDoc
      */
-    protected function getEditmodeOptions(): array
+    protected function getEditmodeConfig(): array
     {
         $config = array_merge($this->getToolBarDefaultConfig(), $this->getConfig());
 
-        $options = parent::getEditmodeOptions();
+        $options = parent::getEditmodeConfig();
         $options = array_merge($options, [
             'config' => $config,
         ]);
@@ -343,8 +343,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     {
         reset($this->indices);
 
-        $options = $this->getEditmodeOptions();
-        $this->outputEditmodeOptions($options);
+        $options = $this->getEditmodeConfig();
+        $this->outputEditmodeConfig($options);
 
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
@@ -463,7 +463,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             }
 
             $editable->setInDialogBox($dialogId);
-            $editable->setOption('dialogBoxConfig', $config);
+            $editable->addConfig('dialogBoxConfig', $config);
             $this->outputEditmode($editable->admin());
         } elseif (is_array($config) && isset($config[0])) {
             foreach ($config as $item) {
@@ -702,5 +702,3 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         return $list;
     }
 }
-
-class_alias(Areablock::class, 'Pimcore\Model\Document\Tag\Areablock');

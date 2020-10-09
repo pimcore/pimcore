@@ -531,7 +531,7 @@ If you need to influence the HTML open and close tag, you can do so by customizi
 namespace AppBundle\Document\Areabrick;
 
 use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
-use Pimcore\Model\Document\Tag\Area\Info;
+use Pimcore\Model\Document\Editable\Area\Info;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class Iframe extends AbstractTemplateAreabrick

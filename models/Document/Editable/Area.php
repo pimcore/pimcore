@@ -48,8 +48,8 @@ class Area extends Model\Document\Editable
      */
     public function admin()
     {
-        $options = $this->getEditmodeOptions();
-        $this->outputEditmodeOptions($options);
+        $options = $this->getEditmodeConfig();
+        $this->outputEditmodeConfig($options);
 
         $attributes = $this->getEditmodeElementAttributes($options);
         $attributeString = HtmlUtils::assembleAttributeString($attributes);
@@ -161,5 +161,3 @@ class Area extends Model\Document\Editable
         return $editable;
     }
 }
-
-class_alias(Area::class, 'Pimcore\Model\Document\Tag\Area');

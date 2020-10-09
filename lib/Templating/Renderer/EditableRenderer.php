@@ -180,5 +180,3 @@ class EditableRenderer implements LoggerAwareInterface
         return '';
     }
 }
-
-class_alias(EditableRenderer::class, 'Pimcore\Templating\Renderer\TagRenderer');

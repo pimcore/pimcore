@@ -120,5 +120,3 @@ class DocumentEditableExtension extends AbstractExtension
         }
     }
 }
-
-class_alias(DocumentEditableExtension::class, 'Pimcore\Twig\Extension\DocumentTagExtension');

@@ -50,5 +50,3 @@ class Dao extends Model\Dao\AbstractDao
         ]);
     }
 }
-
-class_alias(Dao::class, 'Pimcore\Model\Document\Tag\Dao');

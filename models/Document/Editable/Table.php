@@ -134,5 +134,3 @@ class Table extends Model\Document\Editable
         }
     }
 }
-
-class_alias(Table::class, 'Pimcore\Model\Document\Tag\Table');

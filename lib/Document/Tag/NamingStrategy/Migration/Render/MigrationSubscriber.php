@@ -17,11 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Tag\NamingStrategy\Migration\Render;
 
-use Pimcore\Document\Tag\Block\BlockName;
-use Pimcore\Document\Tag\Block\BlockState;
+use Pimcore\Document\Editable\Block\BlockName;
+use Pimcore\Document\Editable\Block\BlockState;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Event\DocumentEvents;
-use Pimcore\Event\Model\Document\TagNameEvent;
+use Pimcore\Event\Model\Document\EditableNameEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -59,11 +59,11 @@ class MigrationSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            DocumentEvents::TAG_NAME => 'onBuildTagName',
+            DocumentEvents::EDITABLE_NAME => 'onBuildTagName',
         ];
     }
 
-    public function onBuildTagName(TagNameEvent $event)
+    public function onBuildTagName(EditableNameEvent $event)
     {
         if (null === $document = $event->getDocument()) {
             throw new \RuntimeException('Need a document to migrate tag naming strategy.');
@@ -82,8 +82,8 @@ class MigrationSubscriber implements EventSubscriberInterface
         );
 
         // only set the new name if it is not the same as the existing one
-        if ($newName !== $event->getTagName()) {
-            $documentNames[$event->getTagName()] = $newName;
+        if ($newName !== $event->getEditableName()) {
+            $documentNames[$event->getEditableName()] = $newName;
         }
 
         if (!empty($documentNames)) {
