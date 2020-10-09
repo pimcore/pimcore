@@ -32,7 +32,6 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     protected $editableRenderer;
 
     /**
-     * @deprecated will be removed in Pimcore 7
      * Called in AreabrickPass
      * @param EditableRenderer $editableRenderer
      */
