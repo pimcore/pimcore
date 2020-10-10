@@ -38,6 +38,7 @@ interface TargetingDocumentInterface
      * if a target group is set.
      *
      * @param string $name
+     *
      * @return string
      */
     public function getTargetGroupEditableName(string $name): string;
