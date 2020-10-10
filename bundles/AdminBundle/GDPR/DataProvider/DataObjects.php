@@ -15,8 +15,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\GDPR\DataProvider;
 
-use Pimcore\Model\Asset;
-use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\ElementMetadata;
@@ -27,7 +25,6 @@ use Pimcore\Model\Search\Backend\Data;
 
 class DataObjects extends Elements implements DataProviderInterface
 {
-
     /**
      * @var array
      */
