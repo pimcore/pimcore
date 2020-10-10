@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;

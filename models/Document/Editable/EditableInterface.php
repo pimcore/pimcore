@@ -17,8 +17,6 @@
 
 namespace Pimcore\Model\Document\Editable;
 
-use Pimcore\Model\Document\PageSnippet;
-
 interface EditableInterface
 {
     /**

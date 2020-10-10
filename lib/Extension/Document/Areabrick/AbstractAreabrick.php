@@ -16,8 +16,8 @@ namespace Pimcore\Extension\Document\Areabrick;
 
 use Pimcore\Extension\Document\Areabrick\Exception\ConfigurationException;
 use Pimcore\Model\Document\Editable;
-use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Model\Document\Editable\Area\Info;
+use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
