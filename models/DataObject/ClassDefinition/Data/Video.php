@@ -167,7 +167,7 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             if ($raw['data']) {
                 $video = new DataObject\Data\Video();
                 if (isset($params['owner'])) {
-                    $video->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                    $video->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
                 }
                 $video->setData($raw['data']);
                 $video->setType($raw['type']);
