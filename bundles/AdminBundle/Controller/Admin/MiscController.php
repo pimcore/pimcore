@@ -787,7 +787,7 @@ class MiscController extends AdminController
 
 
     /**
-     * @Route("/pimcoreInternalScripts", name="pimcore_admin_pimcore_internal_scripts", methods={"GET"})
+     * @Route("/pimcore-internal-scripts", name="pimcore_admin_pimcore_internal_scripts", methods={"GET"})
      *
      * @throws \Exception
      */
@@ -1479,7 +1479,7 @@ class MiscController extends AdminController
 
 
     /**
-     * @Route("/pimcoreEditmodeScripts", name="pimcore_admin_pimcore_editmode_scripts", methods={"GET"})
+     * @Route("/pimcore-editmode-scripts", name="pimcore_admin_pimcore_editmode_scripts", methods={"GET"})
      *
      * @throws \Exception
      */

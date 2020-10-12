@@ -151,7 +151,7 @@ Ext.onReady(function () {
         console.log("load pimcore core sripts ...");
 
         let internalScripts = [
-            "/admin/misc/pimcoreInternalScripts"
+            "/admin/misc/pimcore-internal-scripts"
         ];
 
         var syncwas = Ext.Loader.syncModeEnabled;
