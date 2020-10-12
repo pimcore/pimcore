@@ -73,7 +73,9 @@ class Bootstrap
         /** @var \Pimcore\Kernel $kernel */
         $kernel = self::kernel();
 
-        chdir($workingDirectory);
+        if(is_readable($workingDirectory)) {
+            chdir($workingDirectory);
+        }
 
         // activate inheritance for cli-scripts
         \Pimcore::unsetAdminMode();
