@@ -20,7 +20,7 @@ class Version20180904201947 extends AbstractPimcoreMigration
         $table->dropPrimaryKey();
         $table->setPrimaryKey(['cid', 'ctype', 'workflowId', 'workflow']);
 
-        $this->addSql("INSERT IGNORE INTO users_permission_definitions VALUES('workflow_details');");
+        $this->addSql("INSERT IGNORE INTO users_permission_definitions (`key`) VALUES('workflow_details');");
     }
 
     /**

@@ -38,7 +38,7 @@ class Version20181214145532 extends AbstractPimcoreMigration
             )
             DEFAULT CHARSET=utf8mb4;"
         );
-        $this->addSql("INSERT IGNORE INTO users_permission_definitions VALUES ('notifications'), ('notifications_send');");
+        $this->addSql("INSERT IGNORE INTO users_permission_definitions (`key`) VALUES ('notifications'), ('notifications_send');");
     }
 
     /**

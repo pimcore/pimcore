@@ -48,14 +48,6 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     /**
      * @inheritdoc
      */
-    public function getTargetGroupElementPrefix(int $targetGroupId = null): string
-    {
-        return $this->getTargetGroupEditablePrefix($targetGroupId);
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function getTargetGroupEditablePrefix(int $targetGroupId = null): string
     {
         $prefix = '';
@@ -69,14 +61,6 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
         }
 
         return $prefix;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getTargetGroupElementName(string $name): string
-    {
-        return $this->getTargetGroupEditableName($name);
     }
 
     /**
@@ -98,28 +82,10 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
 
     /**
      * @inheritDoc
-     *
-     * @deprecated since v6.7 and will be removed in 7. Use hasTargetGroupSpecificEditables() instead.
-     */
-    public function hasTargetGroupSpecificElements(): bool
-    {
-        return $this->hasTargetGroupSpecificEditables();
-    }
-
-    /**
-     * @inheritDoc
      */
     public function hasTargetGroupSpecificEditables(): bool
     {
         return $this->getDao()->hasTargetGroupSpecificEditables();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTargetGroupSpecificElementNames(): array
-    {
-        return $this->getTargetGroupSpecificEditableNames();
     }
 
     /**
@@ -131,10 +97,10 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     }
 
     /**
-     * Set an element with the given key/name
+     * Set an editable with the given key/name
      *
      * @param string $name
-     * @param Tag $data
+     * @param Editable $data
      *
      * @return PageSnippet
      */
@@ -149,15 +115,15 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     }
 
     /**
-     * Get an element with the given key/name
+     * Get an editable with the given key/name
      *
      * @param string $name
      *
-     * @return Tag|null
+     * @return Editable|null
      */
     public function getEditable($name)
     {
-        // check if a target group is requested for this page, if yes deliver a different version of the element (prefixed)
+        // check if a target group is requested for this page, if yes deliver a different version of the editable (prefixed)
         if ($this->getUseTargetGroup()) {
             $targetGroupEditableName = $this->getTargetGroupEditableName($name);
 

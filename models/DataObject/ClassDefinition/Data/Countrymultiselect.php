@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 
 class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multiselect
@@ -34,7 +35,7 @@ class Countrymultiselect extends Model\DataObject\ClassDefinition\Data\Multisele
 
     public function __construct()
     {
-        $countries = \Pimcore::getContainer()->get('pimcore.locale')->getDisplayRegions();
+        $countries = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->getDisplayRegions();
         asort($countries);
         $options = [];
 

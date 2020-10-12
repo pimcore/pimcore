@@ -2,6 +2,7 @@
 
 namespace Pimcore\Tests\Util;
 
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject as ObjectModel;
@@ -155,12 +156,12 @@ class TestHelper
 
                 ksort($editables);
 
-                /** @var Document\Tag $value */
+                /** @var Document\Editable $value */
                 foreach ($editables as $key => $value) {
-                    if ($value instanceof Document\Tag\Video) {
+                    if ($value instanceof Document\Editable\Video) {
                         // with video can't use frontend(), it includes random id
                         $d['editable_' . $key] = $value->getName() . ':' . $value->type . '_' . $value->id;
-                    } elseif (!$value instanceof Document\Tag\Block) {
+                    } elseif (!$value instanceof Document\Editable\Block) {
                         $d['editable_' . $key] = $value->getName() . ':' . $value->frontend();
                     } else {
                         $d['editable_' . $key] = $value->getName();
@@ -277,7 +278,7 @@ class TestHelper
                 return [];
             }
 
-            $localeService = \Pimcore::getContainer()->get('pimcore.locale');
+            $localeService = \Pimcore::getContainer()->get(LocaleServiceInterface::class);
             $localeBackup = $localeService->getLocale();
 
             $validLanguages = Tool::getValidLanguages();

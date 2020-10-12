@@ -1429,10 +1429,12 @@ pimcore.object.classes.klass = Class.create({
 
         this.saveCurrentNode();
 
-        var regresult = this.data["name"].match(/[a-zA-Z][a-zA-Z0-9]+/);
+        var isValidName = /^[a-zA-Z][a-zA-Z0-9]+$/;
 
-        if (this.data["name"].length > 2 && regresult == this.data["name"] && !in_array(this.data["name"].toLowerCase(),
-            this.parentPanel.forbiddennames)) {
+        if (this.data["name"].length > 2 &&
+            isValidName.test(this.data["name"]) &&
+            !in_arrayi(this.data["name"], this.parentPanel.forbiddenNames)
+        ) {
             delete this.data.layoutDefinitions;
 
             var m = Ext.encode(this.getData());

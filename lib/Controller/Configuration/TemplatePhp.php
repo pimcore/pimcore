@@ -20,6 +20,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template as BaseTemplate;
  * Same annotation as Template, but defaults to the php engine
  *
  * @Annotation
+ *
+ * @deprecated
  */
 class TemplatePhp extends BaseTemplate
 {

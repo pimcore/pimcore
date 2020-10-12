@@ -1,7 +1,7 @@
 # Add your own permissions
 
 ## Add your permission to the database
-Choose a custom unique name and add it to the ```users_permission_definitions``` table in your database.
+Choose a custom unique name and add it to the `users_permission_definitions` table in your database.
 You should now be able to select the permission in the users/roles tabs:
 ![CustomPermissionPimcore](../img/custom_permissions_pimcore.png)
 

@@ -18,6 +18,9 @@ use Pimcore\Templating\GlobalVariables;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+/**
+ * @deprecated
+ */
 class PimcoreGlobalTemplatingVariablesPass implements CompilerPassInterface
 {
     /**

@@ -520,7 +520,7 @@ class Definition extends Model\DataObject\Fieldcollection\Definition
                     $cd .= 'protected $' . $brickKey . " = null;\n\n";
 
                     $cd .= '/**' . "\n";
-                    $cd .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey) . "\n";
+                    $cd .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickKey) . "|null\n";
                     $cd .= '*/' . "\n";
                     $cd .= 'public function get' . ucfirst($brickKey) . "() { \n";
 

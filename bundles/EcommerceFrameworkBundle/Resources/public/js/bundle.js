@@ -132,7 +132,7 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
         var that = this;
 
         Ext.Ajax.request({
-            url: '/admin/ecommerceframework/reports/piwik/reports',
+            url: Routing.generate('pimcore_ecommerceframework_reports_piwik_reports'),
             ignoreErrors: true,
             success: function (response) {
                 var json;

@@ -690,9 +690,6 @@ $scripts = array(
     "pimcore/settings/tagmanagement/panel.js",
     "pimcore/settings/tagmanagement/item.js",
 
-    "pimcore/report/qrcode/panel.js",
-    "pimcore/report/qrcode/item.js",
-
     // extension manager
     "pimcore/extensionmanager/admin.js",
 

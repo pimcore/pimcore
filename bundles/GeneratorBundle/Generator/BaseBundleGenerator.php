@@ -5,6 +5,7 @@ namespace Pimcore\Bundle\GeneratorBundle\Generator;
 use Pimcore\Bundle\GeneratorBundle\Model\Bundle;
 
 /**
+ * @deprecated
  * Generates a bundle.
  *
  * The following class is copied from \Sensio\Bundle\GeneratorBundle\Generator\BundleGenerator

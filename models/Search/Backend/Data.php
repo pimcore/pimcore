@@ -396,9 +396,9 @@ class Data extends \Pimcore\Model\AbstractModel
                 $editables = $element->getEditables();
                 if (is_array($editables) && !empty($editables)) {
                     foreach ($editables as $editable) {
-                        if ($editable instanceof Document\Tag\TagInterface) {
+                        if ($editable instanceof Document\Editable\EditableInterface) {
                             // areabrick elements are handled by getElementTypes()/getElements() as they return area elements as well
-                            if ($editable instanceof Document\Tag\Area || $editable instanceof Document\Tag\Areablock) {
+                            if ($editable instanceof Document\Editable\Area || $editable instanceof Document\Editable\Areablock) {
                                 continue;
                             }
 

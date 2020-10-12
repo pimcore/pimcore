@@ -75,7 +75,7 @@ public function paymentAction(Request $request)
 
 #### payment.html.php
 
-```php 
+```php
 ?>
 <form method="post" action="<?= $this->pimcoreUrl(array('action' => 'confirm'), 'checkout', true) ?>">
 

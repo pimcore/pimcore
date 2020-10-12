@@ -68,7 +68,9 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
         });
     },
 
-    createGrid: function (fromConfig, response, settings, save) {
+    createGrid: function (fromConfig, response, settings, save, context) {
+
+        this.context = context;
         var fields = [];
         if (response.responseText) {
             response = Ext.decode(response.responseText);
@@ -77,11 +79,13 @@ pimcore.object.variantsTab = Class.create(pimcore.object.helpers.gridTabAbstract
             this.sortinfo = response.sortinfo;
 
             this.settings = response.settings || {};
+            this.context = response.context || {};
             this.availableConfigs = response.availableConfigs;
             this.sharedConfigs = response.sharedConfigs;
         } else {
             fields = response;
             this.settings = settings;
+            this.context = context;
             this.buildColumnConfigMenu();
         }
 

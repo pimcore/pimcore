@@ -41,7 +41,6 @@ class Service
         $data = json_decode(json_encode($class));
         unset($data->name);
         unset($data->creationDate);
-        unset($data->modificationDate);
         unset($data->userOwner);
         unset($data->userModification);
         unset($data->fieldDefinitions);

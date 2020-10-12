@@ -25,6 +25,8 @@ use Twig\TwigFunction;
 /**
  * Delegates calls to PHP templating helpers. Use this only with templating helpers which do not rely
  * on PHP rendering!
+ *
+ * @deprecated
  */
 class TemplatingHelperExtension extends AbstractExtension
 {

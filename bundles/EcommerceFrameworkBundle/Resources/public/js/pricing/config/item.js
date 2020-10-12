@@ -413,7 +413,7 @@ pimcore.bundle.EcommerceFramework.pricing.config.item = Class.create({
 
         // send data
         Ext.Ajax.request({
-            url: "/admin/ecommerceframework/pricing/save",
+            url: Routing.generate('pimcore_ecommerceframework_pricing_save'),
             params: {
                 id: this.data.id,
                 data: Ext.encode(saveData)
@@ -1033,7 +1033,7 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
         if(data.ip == undefined)
         {
             Ext.Ajax.request({
-                url: "/admin/settings/get-system",
+                url: Routing.generate('pimcore_admin_settings_getsystem'),
                 success: function (response) {
 
                     var settings = Ext.decode(response.responseText);
@@ -1203,7 +1203,7 @@ pimcore.bundle.EcommerceFramework.pricing.conditions = {
             autoLoad: true,
             proxy: {
                 type: 'ajax',
-                url: "/admin/targeting/target-group/list"
+                url: Routing.generate('pimcore_admin_targeting_targetgrouplist')
             },
             fields: ["id", "text"],
             listeners: {

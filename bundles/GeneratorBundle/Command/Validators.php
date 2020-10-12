@@ -3,6 +3,7 @@
 namespace Pimcore\Bundle\GeneratorBundle\Command;
 
 /**
+ * @deprecated
  * Validator functions.
  *
  * The following class is copied from \Sensio\Bundle\GeneratorBundle\Command\Validators

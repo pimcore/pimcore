@@ -7,7 +7,7 @@ use Pimcore\Model\DataObject;
  */
 $element = $this->element;
 $fields = $element->getClass()->getFieldDefinitions();
-
+$this->get('translate')->setDomain('admin');
 ?>
 
 
@@ -26,7 +26,7 @@ $fields = $element->getClass()->getFieldDefinitions();
             <?php foreach (\Pimcore\Tool::getValidLanguages() as $language) { ?>
                 <?php foreach ($definition->getFieldDefinitions() as $lfd) { ?>
                     <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                        <th><?= $lfd->getTitle() ? $lfd->getTitle() : $lfd->getName() ?> (<?= $language; ?>)</th>
+                        <th><?= $lfd->getTitle() ? $this->translate($lfd->getTitle()) : $lfd->getName() ?> (<?= $language; ?>)</th>
                         <td>
                             <div class="limit-height">
                                 <?php
@@ -99,7 +99,7 @@ $fields = $element->getClass()->getFieldDefinitions();
                         ?>
 
                         <tr class="<?php if ($c % 2) { ?>odd<?php } ?>">
-                            <td><?= $definition->getTitle() ?></td>
+                            <td><?= $this->translate($definition->getTitle()) ?></td>
                             <td><?= $groupDefinition->getName() ?>
                                 - <?= $keyGroupRelation->getName() ?> <?= $definition->isLocalized() ? "/ " . $language : "" ?></td>
                             <?php if (!$this->isImportPreview || !$this->isNew) { ?>
@@ -131,7 +131,7 @@ $fields = $element->getClass()->getFieldDefinitions();
                         <?php foreach (\Pimcore\Tool::getValidLanguages() as $language) { ?>
                             <?php foreach ($lfd->getFieldDefinitions() as $localizedFieldDefinition) { ?>
                                 <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                                    <th><?= $localizedFieldDefinition->getTitle() ? $localizedFieldDefinition->getTitle() : $localizedFieldDefinition->getName() ?> (<?= $language; ?>)</th>
+                                    <th><?= $localizedFieldDefinition->getTitle() ? $this->translate($localizedFieldDefinition->getTitle()) : $localizedFieldDefinition->getName() ?> (<?= $language; ?>)</th>
                                     <td>
                                         <div class="limit-height">
                                             <?php
@@ -161,7 +161,7 @@ $fields = $element->getClass()->getFieldDefinitions();
 
                         ?>
                         <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                            <th><?= ucfirst($asAllowedType) . " - " . ($lfd->getTitle() ? $lfd->getTitle() : $lfd->getName()) ?></th>
+                            <th><?= ucfirst($asAllowedType) . " - " . ($lfd->getTitle() ? $this->translate($lfd->getTitle()) : $lfd->getName()) ?></th>
                             <td>
                                 <div class="limit-height">
                                     <?= $value ?>
@@ -175,7 +175,7 @@ $fields = $element->getClass()->getFieldDefinitions();
             <?php } ?>
         <?php } else { ?>
             <tr<?php if ($c % 2) { ?> class="odd"<?php } ?>>
-                <th><?= $definition->getTitle() ? $definition->getTitle() : $definition->getName() ?></th>
+                <th><?= $definition->getTitle() ? $this->translate($definition->getTitle()) : $definition->getName() ?></th>
                 <td>
                     <div class="limit-height">
                         <?= $definition->getVersionPreview($element->getValueForFieldName($fieldName)) ?>

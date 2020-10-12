@@ -1,5 +1,6 @@
 {
   "validation_failed": "Validation Failed!",
+  "deprecated": "Deprecated",
   "access_denied": "Access Denied!",
   "access_denied_description": "You don't have sufficient permissions to open the element or perform the desired action.",
   "quicksearch": "Quick Search",
@@ -786,8 +787,9 @@
   "batch_remove_from": "Remove data from all",
   "batch_remove_selected_from": "Remove data from selected",
   "sort_children_by": "Sort Children By",
-  "by_key": "Key (Alphabetically)",
-  "by_index": "Index (Ordered By Manually)",
+  "by_key": "Key (A to Z)",
+  "by_key_reverse": "Key (Z to A)",
+  "by_index": "Index (Manual)",
   "successful_object_change_children_sort_to_index": "Changed object children sorting to Index",
   "successful_object_change_children_sort_to_key": "Changed object children sorting to Key",
   "error_object_change_children_sort_to_index": "Unable to change object children sorting to Index",
@@ -958,5 +960,6 @@
   "no_value_set": "no value set",
   "batch_change_language": "Batch update language",
   "generate_type_declarations" : "Generate Type Declarations",
-  "brick_limit_reached": "Limit ({bricklimit}) reached for brick: {brickname}"
+  "brick_limit_reached": "Limit ({bricklimit}) reached for brick: {brickname}",
+  "preview_item": "Preview Item"
 }

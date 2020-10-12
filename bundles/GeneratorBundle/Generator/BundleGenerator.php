@@ -20,6 +20,9 @@ namespace Pimcore\Bundle\GeneratorBundle\Generator;
 use Pimcore\Bundle\GeneratorBundle\Manipulator\RoutingManipulator;
 use Pimcore\Bundle\GeneratorBundle\Model\Bundle;
 
+/**
+ * @deprecated
+ */
 class BundleGenerator extends BaseBundleGenerator
 {
     public function generateBundle(Bundle $bundle)

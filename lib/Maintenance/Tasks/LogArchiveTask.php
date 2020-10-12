@@ -73,7 +73,7 @@ final class LogArchiveTask implements TaskInterface
                        source VARCHAR(255) NULL DEFAULT NULL,
                        relatedobject BIGINT(20),
                        relatedobjecttype ENUM('object', 'document', 'asset'),
-                       maintenanceChecked TINYINT(4)
+                       maintenanceChecked TINYINT(1)
                     ) ENGINE = ARCHIVE ROW_FORMAT = DEFAULT;");
 
             $db->query('INSERT INTO '.$tablename.' '.sprintf($sql, '*'));

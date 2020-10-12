@@ -25,4 +25,5 @@ services:
         class: Pimcore\Localization\LocaleService
 
     # formatting service for dates, times and numbers
-    Pimcore\Localization\IntlFormatter: ~
+    Pimcore\Localization\IntlFormatter:
+        public: true

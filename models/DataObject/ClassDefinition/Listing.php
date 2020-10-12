@@ -26,18 +26,6 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var Model\DataObject\ClassDefinition[]|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $classes = null;
-
-    public function __construct()
-    {
-        $this->classes = & $this->data;
-    }
-
-    /**
      * @return Model\DataObject\ClassDefinition[]
      */
     public function getClasses()

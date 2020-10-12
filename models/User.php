@@ -93,13 +93,6 @@ class User extends User\UserRole
     public $allowDirtyClose = false;
 
     /**
-     * @deprecated
-     *
-     * @var string|null
-     */
-    public $apiKey;
-
-    /**
      * @var string|null
      */
     public $contentLanguages;
@@ -510,35 +503,6 @@ class User extends User\UserRole
     public function getAllowDirtyClose()
     {
         return $this->allowDirtyClose;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param string $apiKey
-     *
-     * @throws \Exception
-     */
-    public function setApiKey($apiKey)
-    {
-        if (!empty($apiKey) && strlen($apiKey) < 32) {
-            throw new \Exception('API-Key has to be at least 32 characters long');
-        }
-        $this->apiKey = $apiKey;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return null|string
-     */
-    public function getApiKey()
-    {
-        if (empty($this->apiKey)) {
-            return null;
-        }
-
-        return $this->apiKey;
     }
 
     /**

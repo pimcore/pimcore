@@ -255,7 +255,8 @@ class Dao extends Model\Dao\AbstractDao
             $select->where(
                 '(' .
                 $this->db->quoteInto('tags_assignment.tagid = ?', $tag->getId()) . ' OR ' .
-                $this->db->quoteInto('tags.idPath LIKE ?', $this->db->escapeLike($tag->getFullIdPath()) . '%' . ')')
+                $this->db->quoteInto('tags.idPath LIKE ?', $this->db->escapeLike($tag->getFullIdPath()) . '%')
+                . ')'
             );
         } else {
             $select->where('tags_assignment.tagid = ?', $tag->getId());
@@ -291,5 +292,53 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         return $elements;
+    }
+
+    /**
+     * @param string $tagPath separated by "/"
+     *
+     * @return null|Tag
+     */
+    public function getByPath($tagPath)
+    {
+        $parentTagId = 0;
+
+        $tag = null;
+        $tagPath = ltrim($tagPath, '/');
+        foreach (explode('/', $tagPath) as $tagItem) {
+            $tags = new Tag\Listing();
+            $tags->addConditionParam('name = ?', $tagItem);
+
+            if (empty($parentTagId)) {
+                $tags->addConditionParam('parentId = 0 OR parentId IS NULL'); // NULL is allowed by database schema
+            } else {
+                $tags->addConditionParam('parentId = ?', $parentTagId);
+            }
+
+            $tags->setLimit(1);
+
+            $tags = $tags->load();
+
+            if (count($tags) === 0) {
+                return null;
+            }
+
+            $tag = $tags[0];
+            $parentTagId = $tag->getId();
+        }
+
+        return $tag;
+    }
+
+    /**
+     * @return bool
+     */
+    public function exists()
+    {
+        if (is_null($this->model->getId())) {
+            return false;
+        }
+
+        return (bool) $this->db->fetchOne('SELECT COUNT(*) FROM tags WHERE id = ?', $this->model->getId());
     }
 }

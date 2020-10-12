@@ -27,7 +27,7 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick implements Te
     /**
      * @inheritDoc
      */
-    public function getViewTemplate()
+    public function getTemplate()
     {
         // return null by default = auto-discover
         return null;

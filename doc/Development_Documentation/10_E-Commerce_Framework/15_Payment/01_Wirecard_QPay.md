@@ -29,7 +29,7 @@ If additional parameters should be allowed for initializing the payment,
  payment provider configuration. 
 
 *Configuration sample* 
-```yaml 
+```yaml
 pimcore_ecommerce_framework:
     payment_manager:
         providers:
@@ -51,7 +51,7 @@ pimcore_ecommerce_framework:
 ```
 
 *usage sample* 
-```php 
+```php
 <?php
 $payment->initPayment($price, [
     ...,
