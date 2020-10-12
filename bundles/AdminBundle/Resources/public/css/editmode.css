@@ -437,15 +437,6 @@ input.cke_dialog_ui_input_tel {
     left:-10000px;
 }
 
-.pimcore_area_entry .pimcore_area_edit_button,
-.pimcore_editable_area .pimcore_area_edit_button{
-    position:absolute;
-    width:25px;
-    height:25px;
-    right:5px;
-    top:5px;
-}
-
 .pimcore_areablock_dialogBox .x-fieldset-body {
     overflow: visible;
 }
