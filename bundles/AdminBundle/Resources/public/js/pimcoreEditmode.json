@@ -10544,7 +10544,7 @@
       "idx": 817
     },
     {
-      "path": "/bundles/pimcoreadmin/js/pimcore/appEditmode.js",
+      "path": "/bundles/pimcoreadmin/js/pimcore/document/edit/appEditmode.js",
       "requires": [
         1,
         80,
