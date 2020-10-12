@@ -42,11 +42,6 @@ class Currency
     protected $currencyName;
 
     /**
-     * @var \Pimcore\Localization\IntlFormatter
-     */
-    protected $formattingService;
-
-    /**
      * @var array
      */
     protected $patternStore = [
@@ -76,7 +71,11 @@ class Currency
     public function __construct($currencyShortName)
     {
         $this->currencyShortName = $currencyShortName;
-        $this->formattingService = \Pimcore::getContainer()->get(IntlFormatter::class);
+    }
+
+    protected function getFormatter(): IntlFormatter
+    {
+        return \Pimcore::getContainer()->get(IntlFormatter::class);
     }
 
     /**
@@ -98,7 +97,7 @@ class Currency
             $value = $value->asString();
         }
 
-        return $this->formattingService->formatCurrency($value, $this->currencyShortName, $pattern);
+        return $this->getFormatter()->formatCurrency($value, $this->currencyShortName, $pattern);
     }
 
     /**
@@ -115,7 +114,7 @@ class Currency
     public function getSymbol()
     {
         if (empty($this->currencySymbol)) {
-            $result = $this->formattingService->formatCurrency(0, $this->currencyShortName, '¤||');
+            $result = $this->getFormatter()->formatCurrency(0, $this->currencyShortName, '¤||');
             $parts = explode('||', $result);
             $this->currencySymbol = $parts[0];
         }
@@ -129,7 +128,7 @@ class Currency
     public function getName()
     {
         if (empty($this->currencyName)) {
-            $result = $this->formattingService->formatCurrency(0, $this->currencyShortName, '¤¤¤||');
+            $result = $this->getFormatter()->formatCurrency(0, $this->currencyShortName, '¤¤¤||');
             $parts = explode('||', $result);
             $this->currencyName = $parts[0];
         }
