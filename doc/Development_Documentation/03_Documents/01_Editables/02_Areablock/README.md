@@ -111,15 +111,6 @@ And you can see the effect, below:
 | `controlsTrigger`   | string | Options are: `hover`(default) and `fixed` .                                                                                                              |
 | `class`             | string | A CSS class that is added to the surrounding container of this element in editmode                                                                                                           |
 
-## Brick-specific Configuration
-Brick-specific configurations are passed using the `params` or `globalParams` configuration (see above). 
-
-| Name              | Type | Description                                                                                                                                                     |
-|-------------------|------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `forceEditInView` | bool | [DEPRECATED] If a brick contains an `edit.php` there's no editmode for the `view.php` file, if you want to have the editmode enabled in both templates, enable this option |
-| `editWidth`       | int  | [DEPRECATED] Width of editing popup (if dedicated `edit.php` is used).                                                                                               |
-| `editHeight`      | int  | [DEPRECATED] Height of editing popup (if dedicated `edit.php` is used).                                                                                              |
-  
 ##### Example
 
 ```php
@@ -127,8 +118,6 @@ Brick-specific configurations are passed using the `params` or `globalParams` co
     "params" => [
         "my_brick" => [
             "forceEditInView" => true,
-            "editWidth" => "800px",
-            "editHeight" => "500px"
         ]
     ]
 ]); ?>

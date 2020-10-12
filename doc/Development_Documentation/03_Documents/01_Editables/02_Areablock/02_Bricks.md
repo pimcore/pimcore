@@ -109,7 +109,6 @@ implementing the methods for templates and icon yourself (see `AreabrickInterfac
 | Type |  Location |
 |---------------------------|-------------------------------------------------------------------------------------------------|
 | view template | `<templateLocation>/view.<suffix>` |
-| edit template | [DEPRECATED]  `<templateLocation>/edit.<suffix>` | 
 
 
 If the brick defines an icon in the `public` resources directory of the bundle, the icon will be automatically used 
@@ -125,7 +124,6 @@ Given our `iframe` brick defined before, the following paths will be used.
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
 | view template | `app/Resources/views/Areas/iframe/view.html.(php|twig)` |
-| edit template | [DEPRECATED]  `app/Resources/views/Areas/iframe/edit.html.(php|twig)` |
 | icon path     | `web/bundles/app/areas/iframe/icon.png`                 |
 | icon URL      | `/bundles/app/areas/iframe/icon.png`                    |
 
@@ -136,7 +134,6 @@ The icon path and URL are the same as above, but the view scripts are expected i
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
 | view template | `src/AppBundle/Resources/views/Areas/iframe/view.html.(php|twig)` |
-| edit template | [DEPRECATED]  `src/AppBundle/Resources/views/Areas/iframe/edit.html.(php|twig)` |
 
 ## How to Create a Brick
  
@@ -462,54 +459,6 @@ class WysiwygWithImages extends AbstractAreabrick implements EditableDialogBoxIn
 The editables in the dialog are just normal editables, there's not difference to editables which are defined 
 via the template. So can either use them as well in the template or access them in your custom code. 
 
-
-## Configuration in Editmode [DEPRECATED]
-
-> This feature will be removed in Pimcore v7!
-
-You can use the edit template to allow users to add data to the brick. The edit template file can include HTML and 
-editables. When this file is present an icon will appear for the user which can be clicked to display and edit the 
-editable fields.
-
-To configure your brick to use an edit template, the brick must be configured to have an edit template. The edit 
-template will be resolved the same way as the view template.
-
-```php
-<?php
-
-namespace AppBundle\Document\Areabrick;
-
-use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
-
-class Iframe extends AbstractTemplateAreabrick
-{
-    // other methods defined above
-
-    public function hasEditTemplate()
-    {
-        return true;
-    }
-}
-```
-
-> Using an edit template will disable all editables in the view template in editmode (they appear like in the 
-frontend, but cannot be edited). 
-
-Example contents of an edit template (e.g. `edit.html.php`):
-```php
-Class: <?= $this->input('class'); ?>
-```
-
-Accessing the data in the view template:
-
-```php
-<?php
-    $class = '';
-    if(!$this->input('class')->isEmpty()) {
-        $class = $this->input('class')->getData();
-    }
-?>
-```
 
 ## Methods on the brick class
 
