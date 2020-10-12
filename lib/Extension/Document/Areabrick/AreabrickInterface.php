@@ -63,12 +63,14 @@ interface AreabrickInterface
 
     /**
      * Determines if the brick has a view template
+     *
      * @return bool
      */
     public function hasTemplate();
 
     /**
      * Get view template
+     *
      * @return string|null
      */
     public function getTemplate();
