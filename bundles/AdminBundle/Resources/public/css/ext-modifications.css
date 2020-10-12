@@ -685,13 +685,6 @@ body > .x-mask {
     font: 300 13px/16px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
 }
 
-/*.x-tab-bar-default {*/
-/*    background: #404040;*/
-/*    border-top: 0;*/
-/*    border-left: 0;*/
-/*    border-right: 0;*/
-/*}*/
-
 #pimcore_panel_tabs > .x-tab-bar {
     background: #0C0F12;
     background-image: url(/bundles/pimcoreadmin/img/logo-gray.svg);
@@ -699,11 +692,6 @@ body > .x-mask {
     background-position: right 5px top 4px;
     background-size: 105px;
 }
-
-
-/*.x-tab-inner-default {*/
-/*    color: #B2B4B6;*/
-/*}*/
 
 .x-btn-default-toolbar-small {
     border-color: #e4e4e4;
@@ -715,7 +703,6 @@ body > .x-mask {
     font-size: 13px;
     font-weight: 300;
     font-family: 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
-    /* font: 400 12px/16px Roboto, sans-serif; */
 }
 
 .x-grid-item {
