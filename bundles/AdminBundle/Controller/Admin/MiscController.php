@@ -1527,7 +1527,7 @@ class MiscController extends AdminController
             '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js',
 
 
-            '/bundles/pimcoreadmin/js/pimcore/launcherEditmode.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/edit/startup.js',
         ];
 
 
