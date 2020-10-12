@@ -20,6 +20,7 @@ namespace Pimcore\Model\Tool\CustomReport\Config;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Tool\CustomReport\Config $model
  */
 class Dao extends Model\Dao\PhpArrayTable

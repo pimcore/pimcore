@@ -20,6 +20,7 @@ namespace Pimcore\Model\Asset\Image\Thumbnail\Config;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Asset\Image\Thumbnail\Config $model
  */
 class Dao extends Model\Dao\PhpArrayTable

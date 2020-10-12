@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token\Listing;
 
 /**
+ * @internal
  * @property Listing $model
  */
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao

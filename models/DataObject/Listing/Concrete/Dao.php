@@ -25,6 +25,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Tool;
 
 /**
+ * @internal
  * @property \Pimcore\Model\DataObject\Listing\Concrete $model
  */
 class Dao extends Model\DataObject\Listing\Dao

@@ -14,6 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Listing;
 
+/**
+ * @internal
+ */
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 {
     protected $cartClass = '\Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart';

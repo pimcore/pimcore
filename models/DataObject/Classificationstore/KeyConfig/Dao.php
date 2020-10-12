@@ -20,6 +20,7 @@ namespace Pimcore\Model\DataObject\Classificationstore\KeyConfig;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\DataObject\Classificationstore\KeyConfig $model
  */
 class Dao extends Model\Dao\AbstractDao

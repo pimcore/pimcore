@@ -20,6 +20,7 @@ namespace Pimcore\Model\User\Role;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\User\Role $model
  */
 class Dao extends Model\User\UserRole\Dao

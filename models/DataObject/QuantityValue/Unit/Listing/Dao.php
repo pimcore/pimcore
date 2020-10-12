@@ -21,6 +21,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
 /**
+ * @internal
  * @property \Pimcore\Model\DataObject\QuantityValue\Unit\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao

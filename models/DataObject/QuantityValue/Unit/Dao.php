@@ -20,6 +20,7 @@ namespace Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\DataObject\QuantityValue\Unit $model
  */
 class Dao extends Model\Dao\AbstractDao

@@ -20,6 +20,7 @@ namespace Pimcore\Model\Document\Folder;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Document\Folder $model
  */
 class Dao extends Model\Document\Dao

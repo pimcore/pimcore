@@ -20,6 +20,7 @@ namespace Pimcore\Model\Tool\Email\Blacklist\Listing;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Tool\Email\Blacklist\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao

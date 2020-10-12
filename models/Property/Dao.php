@@ -20,6 +20,7 @@ namespace Pimcore\Model\Property;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Property $model
  */
 class Dao extends Model\Dao\AbstractDao

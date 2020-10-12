@@ -24,6 +24,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 
 /**
+ * @internal
  * @property \Pimcore\Model\DataObject\Objectbrick $model
  */
 class Dao extends Model\DataObject\Fieldcollection\Dao

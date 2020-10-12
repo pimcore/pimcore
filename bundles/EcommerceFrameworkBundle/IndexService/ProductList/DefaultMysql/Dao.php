@@ -18,6 +18,9 @@ use Monolog\Logger;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\DefaultMysql;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 
+/**
+ * @internal
+ */
 class Dao
 {
     /**
