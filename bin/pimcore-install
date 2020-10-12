@@ -45,7 +45,7 @@ define('PIMCORE_PROJECT_ROOT', $projectRoot);
 
 Bootstrap::defineConstants();
 
-Debug::enable(PIMCORE_PHP_ERROR_REPORTING);
+Debug::enable();
 
 $kernel = new InstallerKernel(PIMCORE_PROJECT_ROOT, Config::getEnvironment(), true);
 Pimcore::setKernel($kernel);
