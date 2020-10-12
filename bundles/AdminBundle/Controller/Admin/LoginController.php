@@ -39,7 +39,7 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class LoginController extends AdminController implements BruteforceProtectedControllerInterface, EventedControllerInterface, TemplateControllerInterface
+class LoginController extends AdminController implements BruteforceProtectedControllerInterface, EventedControllerInterface
 {
     /**
      * @var ResponseHelper
