@@ -20,6 +20,7 @@ namespace Pimcore\Model\Document\Email;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Document\Email $model
  */
 class Dao extends Model\Document\PageSnippet\Dao

@@ -21,6 +21,7 @@ use Pimcore\Model;
 use Pimcore\Model\Tool\CustomReport\Config;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Tool\CustomReport\Config\Listing $model
  */
 class Dao extends Model\Dao\PhpArrayTable

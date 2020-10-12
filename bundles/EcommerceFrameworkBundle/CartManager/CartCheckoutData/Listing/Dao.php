@@ -14,6 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Listing;
 
+/**
+ * @internal
+ */
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 {
     /**

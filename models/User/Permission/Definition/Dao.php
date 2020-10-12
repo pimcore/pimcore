@@ -21,6 +21,7 @@ use Pimcore\Logger;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\User\Permission\Definition $model
  */
 class Dao extends Model\Dao\AbstractDao

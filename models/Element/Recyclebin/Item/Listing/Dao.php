@@ -20,6 +20,7 @@ namespace Pimcore\Model\Element\Recyclebin\Item\Listing;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Element\Recyclebin\Item\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao

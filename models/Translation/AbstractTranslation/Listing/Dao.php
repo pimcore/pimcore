@@ -21,6 +21,7 @@ use Pimcore\Cache;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Translation\AbstractTranslation\Listing $model
  */
 abstract class Dao extends Model\Listing\Dao\AbstractDao implements Dao\DaoInterface

@@ -20,6 +20,7 @@ namespace Pimcore\Model\Element\WorkflowState;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Element\WorkflowState $model
  */
 class Dao extends Model\Dao\AbstractDao

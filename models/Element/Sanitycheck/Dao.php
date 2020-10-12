@@ -20,6 +20,7 @@ namespace Pimcore\Model\Element\Sanitycheck;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Element\Sanitycheck $model
  */
 class Dao extends Model\Dao\AbstractDao

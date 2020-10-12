@@ -21,6 +21,7 @@ use Pimcore\Model;
 use Pimcore\Model\Document\Targeting\TargetingDocumentDaoInterface;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Document\Snippet $model
  */
 class Dao extends Model\Document\PageSnippet\Dao implements TargetingDocumentDaoInterface

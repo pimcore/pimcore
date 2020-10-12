@@ -20,6 +20,7 @@ namespace Pimcore\Model\Glossary;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Glossary $model
  */
 class Dao extends Model\Dao\AbstractDao
