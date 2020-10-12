@@ -15,8 +15,8 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
+use Pimcore\Bundle\AdminBundle\Controller\Traits\DocumentTreeConfigTrait;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
@@ -33,12 +33,14 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 abstract class DocumentControllerBase extends AdminController implements EventedControllerInterface
 {
-    use AdminStyleTrait;
     use ApplySchedulerDataTrait;
+    use DocumentTreeConfigTrait;
 
     protected function preSendDataActions(&$data, Model\Document $document)
     {
-        $data['versionDate'] = $document->getModificationDate();
+        $documentFromDatabase = Model\Document::getById($document->getId(), true);
+
+        $data['versionDate'] = $documentFromDatabase->getModificationDate();
         $data['userPermissions'] = $document->getUserPermissions();
         $data['idPath'] = Element\Service::getIdPath($document);
 
@@ -130,8 +132,8 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     protected function addDataToDocument(Request $request, Model\Document\PageSnippet $document)
     {
         // if a target group variant get's saved, we have to load all other editables first, otherwise they will get deleted
-        if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificElements())) {
-            $document->getElements();
+        if ($request->get('appendEditables') || ($document instanceof TargetingDocumentInterface && $document->hasTargetGroupSpecificEditables())) {
+            $document->getEditables();
         }
 
         if ($request->get('data')) {
@@ -139,7 +141,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
             foreach ($data as $name => $value) {
                 $data = $value['data'] ?? null;
                 $type = $value['type'];
-                $document->setRawElement($name, $type, $data);
+                $document->setRawEditable($name, $type, $data);
             }
         }
     }
@@ -259,15 +261,18 @@ abstract class DocumentControllerBase extends AdminController implements Evented
 
     /**
      * @param Model\Document\PageSnippet $document
+     * @param bool $isLatestVersion
      *
      * @return Model\Document\PageSnippet
      */
-    protected function getLatestVersion(Model\Document\PageSnippet $document)
+    protected function getLatestVersion(Model\Document\PageSnippet $document, &$isLatestVersion = true)
     {
         $latestVersion = $document->getLatestVersion();
         if ($latestVersion) {
             $latestDoc = $latestVersion->loadData();
             if ($latestDoc instanceof Model\Document\PageSnippet) {
+                $isLatestVersion = false;
+
                 return $latestDoc;
             }
         }
@@ -286,7 +291,7 @@ abstract class DocumentControllerBase extends AdminController implements Evented
     {
         $doc = Model\Document::getById($request->get('id'));
         if ($doc instanceof Model\Document\PageSnippet) {
-            $doc->setElements([]);
+            $doc->setEditables([]);
             $doc->setContentMasterDocumentId($request->get('contentMasterDocumentPath'));
             $doc->saveVersion();
         }

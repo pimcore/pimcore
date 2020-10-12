@@ -16,11 +16,10 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 
-class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -259,60 +258,6 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
         return '';
     }
 
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof DataObject\Data\Geobounds) {
-            return [
-                'NElongitude' => $data->getNorthEast()->getLongitude(),
-                'NElatitude' => $data->getNorthEast()->getLatitude(),
-                'SWlongitude' => $data->getSouthWest()->getLongitude(),
-                'SWlatitude' => $data->getSouthWest()->getLatitude(),
-            ];
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|void
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } else {
-            $value = (array) $value;
-            if ($value['NElongitude'] !== null && $value['NElatitude'] !== null && $value['SWlongitude'] !== null && $value['SWlatitude'] !== null) {
-                $ne = new DataObject\Data\Geopoint($value['NElongitude'], $value['NElatitude']);
-                $sw = new DataObject\Data\Geopoint($value['SWlongitude'], $value['SWlatitude']);
-
-                return new DataObject\Data\Geobounds($ne, $sw);
-            } else {
-                throw new \Exception('cannot get values from web service import - invalid data');
-            }
-        }
-    }
-
     /** True if change is allowed in edit mode.
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -362,5 +307,46 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
 
             return $result;
         }
+    }
+
+    /**
+     *
+     * @param DataObject\Data\Geobounds|null $oldValue
+     * @param DataObject\Data\Geobounds|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!$oldValue instanceof DataObject\Data\Geobounds
+            || !$newValue instanceof DataObject\Data\Geobounds) {
+            return false;
+        }
+
+        $oldValue = [
+            'NElongitude' => $oldValue->getNorthEast()->getLongitude(),
+            'NElatitude' => $oldValue->getNorthEast()->getLatitude(),
+            'SWlongitude' => $oldValue->getSouthWest()->getLongitude(),
+            'SWlatitude' => $oldValue->getSouthWest()->getLatitude(),
+        ];
+
+        $newValue = [
+            'NElongitude' => $newValue->getNorthEast()->getLongitude(),
+            'NElatitude' => $newValue->getNorthEast()->getLatitude(),
+            'SWlongitude' => $newValue->getSouthWest()->getLongitude(),
+            'SWlatitude' => $newValue->getSouthWest()->getLatitude(),
+        ];
+
+        foreach ($oldValue as $key => $oValue) {
+            if ($oValue !== $newValue[$key]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

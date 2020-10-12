@@ -20,11 +20,12 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface
+class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /** storage value for yes */
     const YES_VALUE = 1;
@@ -422,5 +423,60 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
         }
 
         return null;
+    }
+
+    /**
+     * @param mixed $oldValue
+     * @param mixed $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        return $oldValue === $newValue;
+    }
+
+    /**
+     * converts object data to a simple string value or CSV Export
+     *
+     * @abstract
+     *
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Fieldcollection\Data\AbstractData $object
+     * @param array $params
+     *
+     * @return string
+     */
+    public function getForCsvExport($object, $params = [])
+    {
+        $value = $this->getDataFromObjectParam($object, $params);
+        if ($value === null) {
+            $value = '';
+        } elseif ($value) {
+            $value = '1';
+        } else {
+            $value = '0';
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param string $importValue
+     * @param null|DataObject\Concrete $object
+     * @param mixed $params
+     *
+     * @return mixed
+     */
+    public function getFromCsvImport($importValue, $object = null, $params = [])
+    {
+        if ($importValue === '1') {
+            $value = true;
+        } elseif ($importValue === '0') {
+            $value = false;
+        } else {
+            $value = null;
+        }
+
+        return $value;
     }
 }

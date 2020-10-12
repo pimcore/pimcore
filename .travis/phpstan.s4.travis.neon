@@ -3,6 +3,7 @@ includes:
     - ../phpstan.neon
 
 parameters:
-    bootstrap: phpstan-bootstrap.php
+    bootstrapFiles:
+        - phpstan-bootstrap.php
     symfony:
         container_xml_path: ../var/cache/test/appAppKernelTestDebugContainer.xml

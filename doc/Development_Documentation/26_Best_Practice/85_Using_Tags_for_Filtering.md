@@ -103,7 +103,7 @@ Important to know:
 - Tag assignment to elements is stored in the table `tags_assignment`.
 
 
-```php 
+```php
 <?php
     public function filterForTags(Asset\Listing $listing, Request $request)
     {
@@ -127,7 +127,7 @@ Important to know:
                             SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid 
                             WHERE 
                                 ctype = 'asset' AND 
-                                (id = " . intval($tagId) . " OR idPath LIKE " . $listing->quote($tagPath . "%") . ")
+                                (id = " . intval($tagId) . " OR idPath LIKE " . $listing->quote(Db::get()->escapeLike($tagPath) . "%") . ")
                         )";
                     }
                 } else {

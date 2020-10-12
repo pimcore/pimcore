@@ -137,13 +137,16 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
                                 AbstractObject::setGetInheritedValues($getInheritedValues);
                             } catch (\Exception $e) {
-                                if ($e instanceof Model\Element\ValidationException) {
+                                if (!$e instanceof Model\Element\ValidationException) {
                                     throw $e;
                                 }
                                 $exceptionClass = get_class($e);
                                 throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e->getPrevious());
                             }
                         } else {
+                            if ($e instanceof Model\Element\ValidationException) {
+                                throw $e;
+                            }
                             $exceptionClass = get_class($e);
                             throw new $exceptionClass($e->getMessage() . ' fieldname=' . $fd->getName(), $e->getCode(), $e);
                         }
@@ -168,10 +171,14 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                         $subItemParts = [];
                         /** @var \Exception $subItem */
                         foreach ($subItems as $subItem) {
-                            $subItemParts[] = $subItem->getMessage();
+                            $subItemMessage = $subItem->getMessage();
+                            if ($subItem instanceof Model\Element\ValidationException) {
+                                $subItemMessage .= '[ ' . $subItem->getContextStack()[0] . ' ]';
+                            }
+                            $subItemParts[] = $subItemMessage;
                         }
-                        $msg .= implode(',', $subItems);
-                        $msg .= ' (';
+                        $msg .= implode(', ', $subItemParts);
+                        $msg .= ')';
                     }
                 }
                 $errors[] = $msg;
@@ -232,27 +239,16 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
     /**
      * @inheritdoc
      */
-    public function delete(bool $isNested = false)
+    protected function doDelete()
     {
-        $this->beginTransaction();
-
-        try {
-            // delete all versions
-            foreach ($this->getVersions() as $v) {
-                $v->delete();
-            }
-
-            $this->getDao()->deleteAllTasks();
-
-            parent::delete(true);
-
-            $this->commit();
-        } catch (\Exception $e) {
-            $this->rollBack();
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_DELETE_FAILURE, new DataObjectEvent($this));
-            Logger::crit($e);
-            throw $e;
+        // delete all versions
+        foreach ($this->getVersions() as $v) {
+            $v->delete();
         }
+
+        $this->getDao()->deleteAllTasks();
+
+        parent::doDelete();
     }
 
     /**
@@ -290,7 +286,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             if (!empty($objectsConfig['versions']['steps'])
                 || !empty($objectsConfig['versions']['days'])
                 || $setModificationDate) {
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion);
+                $saveStackTrace = !($objectsConfig['versions']['disable_stack_trace'] ?? false);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
             }
 
             // hook should be also called if "save only new version" is selected
@@ -389,15 +386,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         if ($this->getClass() instanceof ClassDefinition) {
             foreach ($this->getClass()->getFieldDefinitions() as $field) {
                 $key = $field->getName();
-                $dependencies[] = $field->resolveDependencies(
-                    isset($this->$key) ? $this->$key : null
-                );
+                $dependencies[] = $field->resolveDependencies($this->$key ?? null);
             }
         }
 
-        $dependencies = array_merge(...$dependencies);
-
-        return $dependencies;
+        return array_merge(...$dependencies);
     }
 
     /**

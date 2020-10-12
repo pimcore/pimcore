@@ -10,6 +10,8 @@ please have a look at [Working with Thumbnails](../../04_Assets/03_Working_with_
 
 ## Use Thumbnails in Templates
 
+<div class="code-section">
+
 ```php
 <?php 
     use Pimcore\Model\Asset;
@@ -54,7 +56,6 @@ please have a look at [Working with Thumbnails](../../04_Assets/03_Working_with_
 <?php if ($this->myObject->getMyImage() instanceof Asset\Image) { ?>
     <img src="<?= $this->myObject->getMyImage()->getThumbnail(["width" => 220, "format" => "jpeg"]); ?>" />
 <?php } ?>
-
 ```
 
 ```twig
@@ -101,3 +102,5 @@ please have a look at [Working with Thumbnails](../../04_Assets/03_Working_with_
     <img src="{{ myObject.myImage.getThumbnail({width: 220, format: 'jpeg'}).getHref() }}" />
 {% endif %}
 ```
+
+</div>

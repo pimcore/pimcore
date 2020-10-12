@@ -26,7 +26,7 @@ Usage in a template:
 
 <div class="code-section">
 
-```php 
+```php
 <?php
 // access the whole configuration
 $this->websiteConfig();

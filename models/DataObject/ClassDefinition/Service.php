@@ -41,7 +41,6 @@ class Service
         $data = json_decode(json_encode($class));
         unset($data->name);
         unset($data->creationDate);
-        unset($data->modificationDate);
         unset($data->userOwner);
         unset($data->userModification);
         unset($data->fieldDefinitions);
@@ -347,8 +346,9 @@ class Service
                     $default = null;
                 }
 
-                if ($colDefinition['Type'] == $type && strtolower($colDefinition['Null']) == strtolower($null)
-                    && $colDefinition['Default'] == $default) {
+                if (str_replace(' ', '', strtolower($colDefinition['Type'])) === str_replace(' ', '', strtolower($type)) &&
+                        strtolower($colDefinition['Null']) == strtolower($null) &&
+                        $colDefinition['Default'] == $default) {
                     return true;
                 }
             }

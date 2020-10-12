@@ -43,12 +43,14 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*
     <?= $this->link("blogLink"); ?>
 </p>
 ```
+
 ```twig
 <p>
     {{ "Visit our" | trans }}
     {{ pimcore_link('blogLink') }}
 </p>
 ```
+
 </div>
 You could see the backend preview in the picture, below.
 
@@ -76,6 +78,7 @@ Let's see how to make a list of links with [Block](./06_Block.md).
     <?php endwhile; ?>
 </ul>
 ```
+
 ```twig
 <h3>{{ "Useful links" | trans }}</h3>
 <ul>
@@ -84,6 +87,7 @@ Let's see how to make a list of links with [Block](./06_Block.md).
     {% endfor %}
 </ul>
 ```
+
 </div>
 
 The above example renders a list of links: 

@@ -23,7 +23,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Redirect;
 
-class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface
+class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
 
@@ -457,7 +457,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         $oldData = [];
         $newData = [];
@@ -512,65 +512,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         }
 
         return true;
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        if (is_array($data)) {
-            $result = [];
-
-            /** @var Model\DataObject\Data\UrlSlug $slug */
-            foreach ($data as $slug) {
-                $result[] = $slug->getObjectVars();
-            }
-
-            return $result;
-        }
-
-        return null;
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if (is_array($value)) {
-            $result = [];
-            foreach ($value as $dataItem) {
-                $dataItem = (array)$dataItem;
-                $slug = new Model\DataObject\Data\UrlSlug($dataItem['slug']);
-                foreach ($dataItem as $var => $value) {
-                    $slug->setObjectVar($var, $value, true);
-                }
-                $result[] = $slug;
-            }
-
-            return $result;
-        }
-
-        return null;
     }
 
     /**

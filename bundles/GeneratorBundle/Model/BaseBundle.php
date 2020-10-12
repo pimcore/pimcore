@@ -5,6 +5,7 @@ namespace Pimcore\Bundle\GeneratorBundle\Model;
 use Symfony\Component\DependencyInjection\Container;
 
 /**
+ * @deprecated
  * Represents a bundle being built.
  *
  * The following class is copied from \Sensio\Bundle\GeneratorBundle\Model\Bundle

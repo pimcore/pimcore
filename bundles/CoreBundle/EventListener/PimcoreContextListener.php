@@ -29,6 +29,8 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
 {
     use LoggerAwareTrait;
 
+    const ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING = '_pimcore_context_force_resolving';
+
     /**
      * @var PimcoreContextResolver
      */
@@ -67,7 +69,7 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
     {
         $request = $event->getRequest();
 
-        if ($event->isMasterRequest()) {
+        if ($event->isMasterRequest() || $event->getRequest()->attributes->has(self::ATTRIBUTE_PIMCORE_CONTEXT_FORCE_RESOLVING)) {
             $context = $this->resolver->getPimcoreContext($request);
 
             if ($context) {
@@ -93,14 +95,10 @@ class PimcoreContextListener implements EventSubscriberInterface, LoggerAwareInt
      */
     protected function initializeContext($context, $request)
     {
-        if ($context == PimcoreContextResolver::CONTEXT_ADMIN || $context == PimcoreContextResolver::CONTEXT_WEBSERVICE) {
+        if ($context == PimcoreContextResolver::CONTEXT_ADMIN) {
             \Pimcore::setAdminMode();
             Document::setHideUnpublished(false);
             DataObject\AbstractObject::setHideUnpublished(false);
-
-            if ($context == PimcoreContextResolver::CONTEXT_WEBSERVICE) {
-                DataObject\AbstractObject::setGetInheritedValues(filter_var($request->get('inheritance'), FILTER_VALIDATE_BOOLEAN));
-            }
             DataObject\Localizedfield::setGetFallbackValues(false);
         } else {
             \Pimcore::unsetAdminMode();

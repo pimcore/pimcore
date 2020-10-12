@@ -21,7 +21,7 @@ class Version20190108131401 extends AbstractPimcoreMigration
     {
         $this->writeMessage('Adding new Permission...');
 
-        $this->addSql("INSERT IGNORE INTO users_permission_definitions VALUES('reports_config');");
+        $this->addSql("INSERT IGNORE INTO users_permission_definitions (`key`) VALUES('reports_config');");
 
         $this->writeMessage('Updating users and adding new permission "reports_config" if necessary ...');
 

@@ -16,7 +16,7 @@ namespace Pimcore\Templating;
 
 use Pimcore\Config\Config;
 use Pimcore\Model\Document;
-use Pimcore\Model\Document\Tag;
+use Pimcore\Model\Document\Editable;
 use Pimcore\Templating\Helper\Cache;
 use Pimcore\Templating\Helper\Glossary;
 use Pimcore\Templating\Helper\HeadLink;
@@ -29,8 +29,6 @@ use Pimcore\Templating\Helper\Navigation;
 use Pimcore\Templating\Helper\Placeholder\Container;
 use Pimcore\Templating\Helper\WebLink;
 use Pimcore\Templating\HelperBroker\HelperBrokerInterface;
-use Pimcore\Templating\Model\ViewModel;
-use Pimcore\Templating\Model\ViewModelInterface;
 use Pimcore\Tool\DeviceDetector;
 use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
 use Symfony\Bundle\FrameworkBundle\Templating\Helper\AssetsHelper;
@@ -98,32 +96,34 @@ use Symfony\Component\Templating\Storage\Storage;
  * @method string translate($key, $parameters = [], $domain = null, $locale = null)
  *
  * Pimcore editables
- * @method Tag\Area area($name, $options = [])
- * @method Tag\Areablock areablock($name, $options = [])
- * @method Tag\Block block($name, $options = [])
- * @method Tag\Checkbox checkbox($name, $options = [])
- * @method Tag\Date date($name, $options = [])
- * @method Tag\Embed embed($name, $options = [])
- * @method Tag\Relation relation($name, $options = [])
- * @method Tag\Image image($name, $options = [])
- * @method Tag\Input input($name, $options = [])
- * @method Tag\Link link($name, $options = [])
- * @method Tag\Relations relations($name, $options = [])
- * @method Tag\Multiselect multiselect($name, $options = [])
- * @method Tag\Numeric numeric($name, $options = [])
- * @method Tag\Pdf pdf($name, $options = [])
- * @method Tag\Renderlet renderlet($name, $options = [])
- * @method Tag\Select select($name, $options = [])
- * @method Tag\Snippet snippet($name, $options = [])
- * @method Tag\Table table($name, $options = [])
- * @method Tag\Textarea textarea($name, $options = [])
- * @method Tag\Video video($name, $options = [])
- * @method Tag\Wysiwyg wysiwyg($name, $options = [])
- * @method Tag\Scheduledblock scheduledblock($name, $options = [])
+ * @method Editable\Area area($name, $options = [])
+ * @method Editable\Areablock areablock($name, $options = [])
+ * @method Editable\Block block($name, $options = [])
+ * @method Editable\Checkbox checkbox($name, $options = [])
+ * @method Editable\Date date($name, $options = [])
+ * @method Editable\Embed embed($name, $options = [])
+ * @method Editable\Relation relation($name, $options = [])
+ * @method Editable\Image image($name, $options = [])
+ * @method Editable\Input input($name, $options = [])
+ * @method Editable\Link link($name, $options = [])
+ * @method Editable\Relations relations($name, $options = [])
+ * @method Editable\Multiselect multiselect($name, $options = [])
+ * @method Editable\Numeric numeric($name, $options = [])
+ * @method Editable\Pdf pdf($name, $options = [])
+ * @method Editable\Renderlet renderlet($name, $options = [])
+ * @method Editable\Select select($name, $options = [])
+ * @method Editable\Snippet snippet($name, $options = [])
+ * @method Editable\Table table($name, $options = [])
+ * @method Editable\Textarea textarea($name, $options = [])
+ * @method Editable\Video video($name, $options = [])
+ * @method Editable\Wysiwyg wysiwyg($name, $options = [])
+ * @method Editable\Scheduledblock scheduledblock($name, $options = [])
  *
  * @property Document $document
  * @property bool $editmode
  * @property GlobalVariables $app
+ *
+ * @deprecated since 6.8.0 and will be removed in Pimcore 7.
  */
 class PhpEngine extends BasePhpEngine
 {
@@ -135,9 +135,9 @@ class PhpEngine extends BasePhpEngine
     protected $helperBrokers = [];
 
     /**
-     * @var ViewModelInterface[]
+     * @var array
      */
-    protected $viewModels = [];
+    protected $params = [];
 
     /**
      * @param HelperBrokerInterface $helperBroker
@@ -148,13 +148,12 @@ class PhpEngine extends BasePhpEngine
     }
 
     /**
-     * In addition to the core method, this keeps parameters in a ViewModel instance which is accessible from
-     * view helpers and via $this->$variable.
-     *
      * {@inheritdoc}
      */
     protected function evaluate(Storage $template, array $parameters = [])
     {
+        $this->params = $parameters;
+
         // disable parent with "magic" _no_parent parameter
         $disableParent = false;
         if (isset($parameters[static::PARAM_NO_PARENT])) {
@@ -162,15 +161,8 @@ class PhpEngine extends BasePhpEngine
             unset($parameters[static::PARAM_NO_PARENT]);
         }
 
-        // create view model and push it onto the model stack
-        $this->viewModels[] = new ViewModel($parameters);
-
         // render the template
         $result = parent::evaluate($template, $parameters);
-
-        // remove current view model from stack and destroy it
-        $viewModel = array_pop($this->viewModels);
-        unset($viewModel);
 
         if ($disableParent) {
             $this->parents[$this->current] = null;
@@ -189,66 +181,23 @@ class PhpEngine extends BasePhpEngine
      */
     public function template($name, array $parameters = [])
     {
-        if ($viewModel = $this->getViewModel()) {
-            // attach current variables
-            $parameters = array_replace($viewModel->getParameters()->all(), $parameters);
-        }
-
         return $this->render($name, $parameters);
     }
 
     /**
-     * Get the current view model
-     *
-     * @return ViewModelInterface|null
-     */
-    public function getViewModel()
-    {
-        $count = count($this->viewModels);
-        if ($count > 0) {
-            return $this->viewModels[$count - 1];
-        }
-
-        return null;
-    }
-
-    /**
-     * Get a view model parameter
-     *
-     * @param string $name
-     * @param mixed|null $default
-     *
-     * @return mixed|null
-     */
-    public function getViewParameter($name, $default = null)
-    {
-        $viewModel = $this->getViewModel();
-
-        if (null !== $viewModel) {
-            return $viewModel->getParameters()->get($name, $default);
-        }
-
-        return $default;
-    }
-
-    /**
-     * Magic getter reads variable from ViewModel
-     *
      * @inheritDoc
      */
     public function __get($name)
     {
-        return $this->getViewParameter($name);
+        return $this->params[$name] ?? null;
     }
 
     /**
-     * Magic isset checks variable from ViewModel
-     *
      * @inheritDoc
      */
     public function __isset($name)
     {
-        return $this->getViewParameter($name) !== null;
+        return ($this->params[$name] ?? null) ? true : false;
     }
 
     /**
@@ -257,12 +206,7 @@ class PhpEngine extends BasePhpEngine
      */
     public function __set($name, $value)
     {
-        $viewModel = $this->getViewModel();
-        if ($viewModel) {
-            $viewModel->getParameters()->set($name, $value);
-        } else {
-            throw new \RuntimeException(sprintf('Can\'t set variable %s as there is no active view model', $name));
-        }
+        $this->params[$name] = $value;
     }
 
     /**

@@ -56,6 +56,7 @@ This one allows you to enter an external image URL which is then shown as a prev
     <img src="{{ object.getExternalImage().getUrl() }}" />
 {% endif %}
 ```
+
 </div>
 
 ## Image Gallery

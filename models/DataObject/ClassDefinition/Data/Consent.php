@@ -21,11 +21,11 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface
+class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
-    use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -337,38 +337,6 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return new DataObject\Data\Consent((bool)$importValue);
     }
 
-    /**
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return bool
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        return $data ? (bool) $data->getConsent() : false;
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return DataObject\Data\Consent
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        return new DataObject\Data\Consent((bool)$value);
-    }
-
     /** True if change is allowed in edit mode.
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -462,5 +430,19 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public function supportsInheritance()
     {
         return false;
+    }
+
+    /**
+     * @param DataObject\Data\Consent|null $oldValue
+     * @param DataObject\Data\Consent|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldValue = $oldValue instanceof DataObject\Data\Consent ? $oldValue->getConsent() : null;
+        $newValue = $newValue instanceof DataObject\Data\Consent ? $newValue->getConsent() : null;
+
+        return $oldValue === $newValue;
     }
 }

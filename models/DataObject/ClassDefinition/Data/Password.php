@@ -20,10 +20,12 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface
+class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     const HASH_FUNCTION_PASSWORD_HASH = 'password_hash';
 
@@ -378,22 +380,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getDataForSearchIndex($object, $params = [])
     {
         return '';
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        //neither hash nor password is exported via WS
-        return null;
     }
 
     /** True if change is allowed in edit mode.

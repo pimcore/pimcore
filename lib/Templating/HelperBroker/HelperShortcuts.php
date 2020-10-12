@@ -22,6 +22,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Shortcuts available as $this->method() on the engine
+ *
+ * @deprecated
  */
 class HelperShortcuts implements HelperBrokerInterface
 {

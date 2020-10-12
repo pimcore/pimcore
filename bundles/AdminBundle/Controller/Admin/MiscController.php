@@ -370,7 +370,7 @@ class MiscController extends AdminController
             if (is_readable($file)) {
                 $content = file_get_contents($file);
                 $success = true;
-                $writeable = is_writeable($file);
+                $writeable = is_writable($file);
             }
         }
 
@@ -398,7 +398,7 @@ class MiscController extends AdminController
 
         if ($request->get('content') && $request->get('path')) {
             $file = $this->getFileexplorerPath($request, 'path');
-            if (is_file($file) && is_writeable($file)) {
+            if (is_file($file) && is_writable($file)) {
                 File::put($file, $request->get('content'));
 
                 $success = true;
@@ -434,7 +434,7 @@ class MiscController extends AdminController
                 throw new \Exception('not allowed');
             }
 
-            if (is_writeable(dirname($file))) {
+            if (is_writable(dirname($file))) {
                 File::put($file, '');
 
                 $success = true;
@@ -470,7 +470,7 @@ class MiscController extends AdminController
                 throw new \Exception('not allowed');
             }
 
-            if (is_writeable(dirname($file))) {
+            if (is_writable(dirname($file))) {
                 File::mkdir($file);
 
                 $success = true;
@@ -496,7 +496,7 @@ class MiscController extends AdminController
 
         if ($request->get('path')) {
             $file = $this->getFileexplorerPath($request, 'path');
-            if (is_writeable($file)) {
+            if (is_writable($file)) {
                 unlink($file);
                 $success = true;
             }

@@ -1,7 +1,3 @@
-imports:
-    # twig aliases are only imported if this file is loaded
-    - { resource: templating_twig_aliases.yml }
-
 services:
     _defaults:
         autowire: true
@@ -15,7 +11,7 @@ services:
 
     Pimcore\Twig\Extension\HelpersExtension: ~
 
-    Pimcore\Twig\Extension\DocumentTagExtension: ~
+    Pimcore\Twig\Extension\DocumentEditableExtension: ~
 
     Pimcore\Twig\Extension\SubrequestExtension:
         lazy: true
@@ -27,6 +23,7 @@ services:
     Pimcore\Twig\Extension\TemplatingHelperExtension:
         arguments:
             $phpEngine: '@templating.engine.php'
+        deprecated: 'The "%service_id%" service is deprecated.'
 
     Pimcore\Twig\Extension\NavigationExtension: ~
 

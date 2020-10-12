@@ -14,9 +14,10 @@
 pimcore.registerNS("pimcore.object.klass");
 pimcore.object.klass = Class.create({
 
-    forbiddennames: ["abstract", "class", "data", "folder", "list", "permissions", "resource", "concrete", "interface",
-        "service", "fieldcollection", "localizedfield", "objectbrick"],
-
+    forbiddenNames: [
+        "abstract", "class", "data", "folder", "list", "permissions", "resource", "concrete", "interface",
+        "service", "fieldcollection", "localizedfield", "objectbrick"
+    ],
 
     initialize: function () {
 
@@ -277,24 +278,28 @@ pimcore.object.klass = Class.create({
 
     addClassComplete: function (className, classIdentifier, classes) {
 
-        var classNameRegresult = className.match(/[a-zA-Z][a-zA-Z0-9_]+/);
-        var underscoresRegresult = className.match(/^(query|store|relations)_[^_]+$/);
+        var isReservedName = /^(query|store|relations)_[^_]+$/;
+        var isValidClassName = /^[a-zA-Z][a-zA-Z0-9_]+$/;
+        var isValidClassIdentifier = /^[a-zA-Z0-9][a-zA-Z0-9_]*$/;
 
-        if (className.length <= 2 || classNameRegresult != className ||underscoresRegresult
-            || in_array(className.toLowerCase(), this.forbiddennames)) {
+        if (className.length <= 2 ||
+            isReservedName.test(className) ||
+            !isValidClassName.test(className) ||
+            in_arrayi(className, this.forbiddenNames)
+        ) {
             Ext.Msg.alert(' ', t('invalid_class_name'));
             return false;
         }
 
-        var classIdentifierRegresult = classIdentifier.match(/[a-zA-Z0-9][a-zA-Z0-9_]*/);
-        var underscoresRegresult = classIdentifier.match(/^(query|store|relations)_[^_]+$/);
-
-        if (classIdentifier.length < 1 || classIdentifierRegresult != classIdentifier || underscoresRegresult) {
+        if (classIdentifier.length < 1 ||
+            isReservedName.test(classIdentifier) ||
+            !isValidClassIdentifier.test(classIdentifier)
+        ) {
             Ext.Msg.alert(' ', t('invalid_identifier'));
             return false;
         }
 
-        if (in_array(classIdentifier.toLowerCase(), classes["existingIds"])) {
+        if (in_arrayi(classIdentifier, classes["existingIds"])) {
             Ext.Msg.alert(' ', t('identifier_already_exists'));
             return false;
         }

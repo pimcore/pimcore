@@ -41,4 +41,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
         return $targets;
     }
+
+    public function getTotalCount()
+    {
+        try {
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM targeting_rules ' . $this->getCondition(), $this->model->getConditionVariables());
+        } catch (\Exception $e) {
+            return 0;
+        }
+    }
 }

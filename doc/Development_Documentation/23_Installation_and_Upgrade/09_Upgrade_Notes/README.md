@@ -1,12 +1,51 @@
 # Upgrade Notes
+## 6.8.0
+- HybridAuth integration is deprecated and will be removed in Pimcore 7.
+- `Pimcore\Browser` is deprecated and will be replaced by `\Browser` in Pimcore 7. [#7084](https://github.com/pimcore/pimcore/pull/7084)
+- Javascript - All classes under namespaces `pimcore.document.tags` are deprecated and will be removed in 7. These are moved to new namespace `pimcore.document.editables`. 
+If you have custom editables or wysiwyg global config then please change namespace from `pimcore.document.tags.*` to `pimcore.document.editables.*`
+- Javascript - Class `pimcore.document.tag` is deprecated as well and will be removed in 7. Use new class `pimcore.document.editable` instead.
+- All classes in namespace `Pimcore\Document\Tag` moved to new namespace `Pimcore\Document\Editable` (including their services) for better readability and marked as deprecated. Please update custom document editable classes and mappings. [#6921](https://github.com/pimcore/pimcore/pull/6921)
+- All `document_tag_` css classes are deprecated and will be removed in Pimcore 7. Use new classes `document_editable_` for custom styling of document editables.
+- Method signature `AbstractObject::setChildren($children)` has been updated to `AbstractObject::setChildren($children, array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)`.
+- Edit Template for Area Bricks `edit.html.(php|twig)` has been deprecated and will be removed in Pimcore 7. Use new feature [editable dialog box](https://github.com/pimcore/pimcore/pull/6923#issuecomment-671257112) instead.
+- `EventedControllerInterface` is marked as deprecated and will be removed in v7. Please use new interfaces for kernel events `KernelControllerEventInterface::onKernelControllerEvent()` or `KernelResponseEventInterface::onKernelResponseEvent()` instead.
+- PHP templating engine (including templating helpers & vars) has been deprecated and will be removed in Pimcore 7. Use Twig Instead.
+- The Tag Manager has been deprecated and will be removed in Pimcore 7. 
+- Class `\Pimcore\Model\Tool\Tracking\Event` has been deprecated and will be removed in Pimcore 7. 
+- Auto view rendering has been deprecated and will be removed in Pimcore 7, which means views will not be tied to action implicitly using the filename and `$this->view` (`ViewModel`) in actions stops working. Use Symfony way of [Rendering Templates](https://symfony.com/doc/current/templates.html#rendering-templates) instead.
+- Event `\Pimcore\Event\AdminEvents::INDEX_SETTINGS` has been deprecated and will be removed in Pimcore 7, use `\Pimcore\Event\AdminEvents::INDEX_ACTION_SETTINGS` instead.
+- Class `\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Helper` has been deprecated and will be removed in Pimcore 7. Use `Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\ListHelper` service instead.
+- Class `\Pimcore\Model\Tool\Lock` has been deprecated and will be removed in Pimcore 7 use the lock factory service `Symfony\Component\Lock\LockFactory` instead 
+- Payment providers `Datatrans`, `Heidelpay`, `Hobex`, `Klarna`, `Mpay24Seamless`, `OGone`, `PayPalSmartPaymentButton`, `PayU` are deprecated and will be moved to a separate bundle in Pimcore 7.
+- Payment providers `WirecardSeamless`, `Qpay`, `Paypal` are deprecated and will be removed in Pimcore 7.
+- QRCodes (`\Pimcore\Model\Tool\Qrcode\Config`) have been deprecated and will be removed in Pimcore 7. 
 
 ## 6.7.0
 - [Ecommerce][IndexService] Elastic Search worker does not use mockup cache anymore. Now mockup objects are build directly based on information in response of ES response (_source flag). Therefore `AbstractElasticSearch` Worker does not extend `AbstractMockupCacheWorker` anymore. 
-- Rules regarding default values in combination with inheritance enabled have been clarified. Read [this](../../05_Objects/01_Object_Classes/01_Data_Types/README.md) for details.
+- Rules regarding default values in combination with inheritance enabled have been clarified. Read [this](../../05_Objects/01_Object_Classes/01_Data_Types/README.md#page_Default-values) for details.
 - [Ecommerce] Deprecated FactFinder integration and will be removed in Pimcore 7.
 - Saving unpublished data objects via API will not throw Validation exceptions anymore (just like Admin UI). Please set `omitMandatoryCheck` explicitly to `false` to force mandatory checks.
 - `\Pimcore\DataObject\GridColumnConfig\Operator\ObjectBrickGetter` operator is deprecated and will be removed in 7.0.0
-
+- Calling `Pimcore\Model\DataObject\ClassDefinition\Data::isEqual()` is deprecated since version 6.7.0 and will be removed in version 7 . Implement `\Pimcore\Model\DataObject\ClassDefinition\Data\EqualComparisonInterface` instead.
+- Following properties and methods are deprecated to unify document editables and will be removed in 7. [#6900](https://github.com/pimcore/pimcore/pull/6900):
+    - `PageSnippet::$elements`. Use `PageSnippet::$editables` instead.
+    - `PageSnippet::$inheritedElements`. Use `PageSnippet::$inheritedEditables` instead.
+    - `PageSnippet::getElements`. Use `PageSnippet::getEditables` instead.
+    - `PageSnippet::setElements`. Use `PageSnippet::setEditables` instead.
+    - `PageSnippet::setRawElement`. Use `PageSnippet::setRawEditable` instead.
+    - `PageSnippet::removeElement`. Use `PageSnippet::removeEditable` instead.
+    - `TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX`. Use `TargetingDocumentInterface::TARGET_GROUP_EDITABLE_PREFIX` instead.
+    - `TargetingDocumentInterface::TARGET_GROUP_ELEMENT_SUFFIX`. Use `TargetingDocumentInterface::TARGET_GROUP_EDITABLE_SUFFIX` instead.
+    - `TargetingDocumentInterface::getTargetGroupElementPrefix`. Use `TargetingDocumentInterface::getTargetGroupEditablePrefix` instead.
+    - `TargetingDocumentInterface::getTargetGroupElementName`. Use `TargetingDocumentInterface::getTargetGroupEditableName` instead.
+    - `TargetingDocumentInterface::hasTargetGroupSpecificElements`. Use `TargetingDocumentInterface::hasTargetGroupSpecificEditables` instead.
+    - `TargetingDocumentInterface::getTargetGroupSpecificElementNames`. Use `TargetingDocumentInterface::getTargetGroupSpecificEditableNames` instead.
+    - `TargetingDocumentInterface::getTargetGroupSpecificElementNames`. Use `TargetingDocumentInterface::getTargetGroupSpecificEditableNames` instead.
+    
+- The legacy editable naming scheme has been deprecated and will be removed in Pimcore 7. Please [migrate to the new naming scheme](../../03_Documents/13_Editable_Naming_Strategies.md). 
+- All classes in namespace `Pimcore\Document\Tag\NamingStrategy` are marked as deprecated and will be removed in v7. 
+- `TagHandlerInterface` and `DelegatingTagHandler` are marked as deprecated and will be removed in v7.
 ## 6.6.4
 - If you are using the specific settings 'max. items' option for ObjectBricks & Fieldcollections on your class definition, then API will validate the max limit on save() calls from now on.
 

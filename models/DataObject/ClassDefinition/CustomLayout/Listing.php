@@ -26,18 +26,6 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $layoutDefinitions = null;
-
-    public function __construct()
-    {
-        $this->layoutDefinitions = & $this->data;
-    }
-
-    /**
      * @param Model\DataObject\ClassDefinition\CustomLayout[]|null $layoutDefinitions
      *
      * @return self

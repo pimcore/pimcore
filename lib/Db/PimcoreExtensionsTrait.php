@@ -504,6 +504,7 @@ trait PimcoreExtensionsTrait
     }
 
     /**
+     * @deprecated
      * Returns a ZF1 compatible query builder
      * To use the standard Doctrine QueryBuilder, please use $dbal->createQueryBuilder() instead
      *
@@ -634,5 +635,15 @@ trait PimcoreExtensionsTrait
                 $this->deleteWhere($table, $idColumn . ' IN (' . $idString . ')');
             }
         }
+    }
+
+    /**
+     * @param string $like
+     *
+     * @return string
+     */
+    public function escapeLike(string $like): string
+    {
+        return str_replace(['_', '%'], ['\\_', '\\%'], $like);
     }
 }

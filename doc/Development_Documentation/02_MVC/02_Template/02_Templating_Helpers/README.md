@@ -301,11 +301,17 @@ index.html.twig
 IndexController.php (whatever controller / method is designated for /some/other/document in the document tree)
 ```php
 public function otherDocumentAction(Request $request) {
-    $this->view->add([
-        'parameterToPass' => $request->get('parameterToPass')
-    ]);
+    return ['parameterToPass' => $request->get('parameterToPass')];
 }
 ```
+
+more Convenient way
+```php
+public function otherDocumentAction(Request $request) {
+    return $this->render(":Default:someOtherDocument.html.twig", ['parameterToPass' => $request->get('parameterToPass')]);
+}
+```
+
 
 someOtherDocument.html.twig (whatever Twig template is actually for /some/other/document in the document tree)
 ```twig

@@ -29,7 +29,6 @@ in the frontend preview you will see simply the value of the chosen option.
 
 <div class="code-section">
 
-
 ```php
 <?php
 if($this->editmode):
@@ -67,6 +66,7 @@ else:
     </p>
 {% endif %}
 ```
+
 </div>
 
 Editmode:
@@ -74,4 +74,32 @@ Editmode:
 
 Frontend:
 ![Select editable in frontend](../../img/editables_select_frontend_preview.png)
+
+### Preselect the option
+You can *_preselect_* an option in your select editable by using `setDataFromResource()`
+
+<div class="code-section">
+
+```php
+if($this->editmode):
+    if($this->select("valid_for")->isEmpty()):
+        $this->select("valid_for")->setDataFromResource("unlimited");
+    endif;
+    
+    ...
+    
+endif;
+```
+
+```twig
+{% if editmode %}
+    {% if pimcore_select('valid_for').isEmpty() %}
+        {% do pimcore_select('valid_for').setDataFromResource('unlimited') %}
+    {% endif %}
+    
+    ...
+    
+{% endif %}
+```
+
 </div>

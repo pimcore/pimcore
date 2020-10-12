@@ -34,6 +34,15 @@ pimcore.asset.metadata.tags.select = Class.create(pimcore.asset.metadata.tags.ab
         };
     },
 
+    addGridOptionsFromColumnConfig: function (key, v, rec) {
+        if (v && typeof v.options !== "undefined") {
+            // split it up and store the options in a separate field
+            rec.set(key + "%options", v.options, {convert: false, dirty: false});
+            return v.value;
+        }
+        return v;
+    },
+
     getCellEditor: function (field, record) {
         var key = field.key;
 

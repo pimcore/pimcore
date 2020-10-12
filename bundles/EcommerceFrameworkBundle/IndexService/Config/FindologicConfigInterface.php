@@ -22,7 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\DefaultFindologi
 interface FindologicConfigInterface extends ConfigInterface
 {
     /**
-     * returns factfinder client parameters defined in the tenant config
+     * returns findologic client parameters defined in the tenant config
      *
      * @param string $setting
      *

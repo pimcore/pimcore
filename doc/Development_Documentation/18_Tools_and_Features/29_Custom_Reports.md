@@ -49,7 +49,7 @@ pimcore:
         adapters:
             myAdapter: app.custom_report.adapter.factory.custom
 
-````
+```
 
 ## Custom JS Class for Report Visualization
 If you need to fully customize the appearance of the report, you can specify a custom java script class that should 

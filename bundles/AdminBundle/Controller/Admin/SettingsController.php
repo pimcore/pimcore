@@ -515,9 +515,6 @@ class SettingsController extends AdminController
                 'exclude_patterns' => $cacheExcludePatterns,
                 'exclude_cookie' => $values['full_page_cache.excludeCookie'],
             ],
-            'webservice' => [
-                'enabled' => $values['webservice.enabled'],
-            ],
             'httpclient' => [
                 'adapter' => $values['httpclient.adapter'],
                 'proxy_host' => $values['httpclient.proxy_host'],
@@ -1617,6 +1614,7 @@ class SettingsController extends AdminController
     }
 
     /**
+     * @deprecated
      * @Route("/tag-management-add", name="pimcore_admin_settings_tagmanagementadd", methods={"POST"})
      *
      * @param Request $request
@@ -1643,6 +1641,7 @@ class SettingsController extends AdminController
     }
 
     /**
+     * @deprecated
      * @Route("/tag-management-delete", name="pimcore_admin_settings_tagmanagementdelete", methods={"DELETE"})
      *
      * @param Request $request
@@ -1660,6 +1659,7 @@ class SettingsController extends AdminController
     }
 
     /**
+     * @deprecated
      * @Route("/tag-management-get", name="pimcore_admin_settings_tagmanagementget", methods={"GET"})
      *
      * @param Request $request
@@ -1676,6 +1676,7 @@ class SettingsController extends AdminController
     }
 
     /**
+     * @deprecated
      * @Route("/tag-management-update", name="pimcore_admin_settings_tagmanagementupdate", methods={"PUT"})
      *
      * @param Request $request

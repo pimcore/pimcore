@@ -38,6 +38,9 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Stopwatch\Stopwatch;
 
+/**
+ * @deprecated
+ */
 class RenderMigrationStrategy extends AbstractMigrationStrategy
 {
     /**

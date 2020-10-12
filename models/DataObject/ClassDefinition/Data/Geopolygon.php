@@ -16,12 +16,11 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 use Pimcore\Tool\Serialize;
 
-class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -221,59 +220,6 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         return '';
     }
 
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if (!empty($data)) {
-            return $this->getDataForEditmode($data, $object, $params);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|void
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } elseif (is_array($value)) {
-            $points = [];
-            foreach ($value as $point) {
-                $point = (array) $point;
-                if ($point['longitude'] != null and $point['latitude'] != null) {
-                    $points[] = new DataObject\Data\Geopoint($point['longitude'], $point['latitude']);
-                } else {
-                    throw new \Exception('cannot get values from web service import - invalid data');
-                }
-            }
-
-            return $points;
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
-    }
-
     /** True if change is allowed in edit mode.
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -358,5 +304,37 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
         }
 
         return null;
+    }
+
+    /**
+     *
+     * @param DataObject\Data\Geopoint[]|null $oldValue
+     * @param DataObject\Data\Geopoint[]|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        if ($oldValue === null && $newValue === null) {
+            return true;
+        }
+
+        if (!is_array($oldValue) || !is_array($newValue)
+        || count($oldValue) != count($newValue)) {
+            return false;
+        }
+
+        $fd = new Geopoint();
+
+        $oldValue = array_values($oldValue);
+        $newValue = array_values($newValue);
+
+        foreach ($oldValue as $p => $point) {
+            if (!$fd->isEqual($point, $newValue[$p])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

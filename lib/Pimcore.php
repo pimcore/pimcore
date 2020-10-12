@@ -13,7 +13,6 @@
  */
 use Pimcore\Cache;
 use Pimcore\File;
-use Pimcore\Model;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -274,9 +273,6 @@ class Pimcore
         if (self::$shutdownEnabled && self::isInstalled()) {
             // write and clean up cache
             Cache::shutdown();
-
-            // release all open locks from this process
-            Model\Tool\Lock::releaseAll();
         }
     }
 

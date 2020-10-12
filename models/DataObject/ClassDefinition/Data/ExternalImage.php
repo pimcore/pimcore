@@ -20,10 +20,11 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class ExternalImage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface
+class ExternalImage extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
+    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -274,38 +275,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         return new Model\DataObject\Data\ExternalImage($importValue);
     }
 
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return string|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        return $this->getForCsvExport($object, $params);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param Model\Element\AbstractElement $relatedObject
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|void
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
-    {
-        return $this->getFromCsvImport($value, $relatedObject, $params);
-    }
-
     /** True if change is allowed in edit mode.
      * @param DataObject\Concrete $object
      * @param mixed $params
@@ -353,5 +322,19 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     public function isEmpty($data)
     {
         return !($data instanceof DataObject\Data\ExternalImage && $data->getUrl());
+    }
+
+    /**
+     * @param DataObject\Data\ExternalImage|null $oldValue
+     * @param DataObject\Data\ExternalImage|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldValue = $oldValue instanceof DataObject\Data\ExternalImage ? $oldValue->getUrl() : null;
+        $newValue = $newValue instanceof DataObject\Data\ExternalImage ? $newValue->getUrl() : null;
+
+        return $oldValue == $newValue;
     }
 }

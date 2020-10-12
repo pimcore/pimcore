@@ -21,6 +21,8 @@ use Pimcore\Cache;
 use Pimcore\Model;
 
 /**
+ * @deprecated
+ *
  * @method \Pimcore\Model\Tool\Tag\Config\Dao getDao()
  * @method void save()
  */

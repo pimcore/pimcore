@@ -16,12 +16,11 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 
 class Country extends Model\DataObject\ClassDefinition\Data\Select
 {
-    use Model\DataObject\Traits\SimpleComparisonTrait;
-
     /**
      * Static type of this element
      *
@@ -41,7 +40,7 @@ class Country extends Model\DataObject\ClassDefinition\Data\Select
 
     private function buildOptions()
     {
-        $countries = \Pimcore::getContainer()->get('pimcore.locale')->getDisplayRegions();
+        $countries = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->getDisplayRegions();
         asort($countries);
         $options = [];
 

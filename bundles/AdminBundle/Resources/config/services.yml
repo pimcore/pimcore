@@ -22,13 +22,6 @@ services:
             - { name: monolog.logger, channel: pimcore_admin.session }
 
     #
-    # API
-    #
-
-    Pimcore\Model\Webservice\Service:
-        deprecated: ~
-
-    #
     # Notification Services
     #
 

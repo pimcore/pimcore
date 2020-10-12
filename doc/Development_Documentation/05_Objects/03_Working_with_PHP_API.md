@@ -7,7 +7,7 @@ with these objects via a comfortable PHP API and take full advantage of a IDE (e
 ## CRUD Operations
 The following code snippet indicates how to access, create and modify an object programmatically:
 
-```php 
+```php
 <?php
 
 use \Pimcore\Model\DataObject;

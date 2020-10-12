@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -83,7 +82,8 @@ class SnippetController extends DocumentControllerBase
         }
 
         $snippet = clone $snippet;
-        $snippet = $this->getLatestVersion($snippet);
+        $isLatestVersion = true;
+        $snippet = $this->getLatestVersion($snippet, $isLatestVersion);
 
         $versions = Element\Service::getSafeVersionInfo($snippet->getVersions());
         $snippet->setVersions(array_splice($versions, -1, 1));
@@ -92,7 +92,7 @@ class SnippetController extends DocumentControllerBase
         $snippet->setParent(null);
 
         // unset useless data
-        $snippet->setElements(null);
+        $snippet->setEditables(null);
 
         $data = $snippet->getObjectVars();
 
@@ -100,6 +100,8 @@ class SnippetController extends DocumentControllerBase
         $this->minimizeProperties($snippet, $data);
 
         $data['url'] = $snippet->getUrl();
+        // this used for the "this is not a published version" hint
+        $data['documentFromVersion'] = !$isLatestVersion;
         if ($snippet->getContentMasterDocument()) {
             $data['contentMasterDocumentPath'] = $snippet->getContentMasterDocument()->getRealFullPath();
         }
@@ -154,7 +156,7 @@ class SnippetController extends DocumentControllerBase
             $snippet->save();
             $this->saveToSession($snippet);
 
-            $this->addAdminStyle($snippet, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+            $treeData = $this->getTreeNodeConfig($snippet);
 
             return $this->adminJson([
                 'success' => true,

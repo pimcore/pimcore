@@ -60,6 +60,7 @@ The table editable provides the ability to edit a table structure.
     })
 }}
 ```
+
 </div>
 
 You're now able to change columns and the predefined data in the editmode.
@@ -70,6 +71,8 @@ You're now able to change columns and the predefined data in the editmode.
 
 Sometimes you need use only the data from a filled table. 
 You would just use the `getData()` method instead of rendering the entire HTML of the table.
+
+<div class="code-section">
 
 ```php
 <?php if($this->editmode):
@@ -95,6 +98,31 @@ endif;
 ?>
 ```
 
+```twig
+{% if editmode %}
+    pimcore_table("productProperties", {
+        "width": 700,
+        "height": 400,
+        "defaults": {
+            "cols": 2,
+            "rows": 3,
+            "data": [
+                ["Attribute name", "Value"],
+                ["Color", "Black"],
+                ["Size", "Large"],
+                ["Availability", "Out of stock"]
+            ]
+        }
+    })
+{% else %}
+    {% set data = pimcore_table("productProperties").getData() %}
+    
+    {# returns the data as an array #}
+    {# do something with it ;-) #}
+{% endif %}
+```
+
+</div>
 
 The output from `getData()`:
 

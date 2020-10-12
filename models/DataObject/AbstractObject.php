@@ -44,6 +44,7 @@ class AbstractObject extends Model\Element\AbstractElement
 
     const OBJECT_CHILDREN_SORT_BY_DEFAULT = 'key';
     const OBJECT_CHILDREN_SORT_BY_INDEX = 'index';
+    const OBJECT_CHILDREN_SORT_ORDER_DEFAULT = 'ASC';
 
     /**
      * @var bool
@@ -152,11 +153,6 @@ class AbstractObject extends Model\Element\AbstractElement
     protected $o_hasSiblings = [];
 
     /**
-     * @var Model\Dependency|null
-     */
-    protected $o_dependencies;
-
-    /**
      * @var array
      */
     protected $o_children = [];
@@ -176,7 +172,14 @@ class AbstractObject extends Model\Element\AbstractElement
      */
     protected $o_childrenSortBy;
 
-    /** @var int */
+    /**
+     * @var string
+     */
+    protected $o_childrenSortOrder;
+
+    /**
+     * @var int
+     */
     protected $o_versionCount = 0;
 
     /**
@@ -355,10 +358,12 @@ class AbstractObject extends Model\Element\AbstractElement
     {
         $className = DataObject::class;
         // get classname
-        if (!in_array(static::class, [__CLASS__, Concrete::class], true)) {
+        if (!in_array(static::class, [__CLASS__, Concrete::class, Folder::class], true)) {
             /** @var Concrete $tmpObject */
             $tmpObject = new static();
-            $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
+            if ($tmpObject instanceof Concrete) {
+                $className = 'Pimcore\\Model\\DataObject\\' . ucfirst($tmpObject->getClassName());
+            }
         }
 
         if (is_array($config)) {
@@ -417,7 +422,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $list->setUnpublished($includingUnpublished);
             $list->setCondition('o_parentId = ?', $this->getId());
             $list->setOrderKey(sprintf('o_%s', $this->getChildrenSortBy()));
-            $list->setOrder('asc');
+            $list->setOrder($this->getChildrenSortOrder());
             $list->setObjectTypes($objectTypes);
             $this->o_children[$cacheKey] = $list->load();
             $this->o_hasChildren[$cacheKey] = (bool) count($this->o_children[$cacheKey]);
@@ -517,38 +522,40 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param bool $isNested
-     *
      * @throws \Exception
      */
-    public function delete(bool $isNested = false)
+    protected function doDelete()
+    {
+        // delete children
+        $children = $this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true);
+        if (count($children) > 0) {
+            foreach ($children as $child) {
+                $child->delete();
+            }
+        }
+
+        // remove dependencies
+        $d = new Model\Dependency;
+        $d->cleanAllForElement($this);
+
+        // remove all properties
+        $this->getDao()->deleteAllProperties();
+
+        // remove all permissions
+        $this->getDao()->deleteAllPermissions();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function delete()
     {
         \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_DELETE, new DataObjectEvent($this));
 
         $this->beginTransaction();
 
         try {
-            // delete children
-            if ($this->hasChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT])) {
-                // delete also unpublished children
-                $unpublishedStatus = self::doHideUnpublished();
-                self::setHideUnpublished(false);
-                foreach ($this->getChildren([self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER, self::OBJECT_TYPE_VARIANT], true) as $child) {
-                    $child->delete(true);
-                }
-                self::setHideUnpublished($unpublishedStatus);
-            }
-
-            // remove dependencies
-            $d = $this->getDependencies();
-            $d->cleanAllForElement($this);
-
-            // remove all properties
-            $this->getDao()->deleteAllProperties();
-
-            // remove all permissions
-            $this->getDao()->deleteAllPermissions();
-
+            $this->doDelete();
             $this->getDao()->delete();
 
             $this->commit();
@@ -856,18 +863,6 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @return Model\Dependency
-     */
-    public function getDependencies()
-    {
-        if (!$this->o_dependencies) {
-            $this->o_dependencies = Model\Dependency::getBySourceId($this->getId(), 'object');
-        }
-
-        return $this->o_dependencies;
-    }
-
-    /**
      * @return string
      */
     public function getFullPath()
@@ -1123,10 +1118,12 @@ class AbstractObject extends Model\Element\AbstractElement
 
     /**
      * @param array|null $children
+     * @param array $objectTypes
+     * @param bool $includingUnpublished
      *
      * @return $this
      */
-    public function setChildren($children)
+    public function setChildren($children, array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)
     {
         if ($children === null) {
             // unset all cached children
@@ -1134,7 +1131,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $this->o_hasChildren = [];
         } elseif (is_array($children)) {
             //default cache key
-            $cacheKey = $this->getListingCacheKey();
+            $cacheKey = $this->getListingCacheKey([$objectTypes, $includingUnpublished]);
             $this->o_children[$cacheKey] = $children;
             $this->o_hasChildren[$cacheKey] = (bool) count($children);
         }
@@ -1253,10 +1250,9 @@ class AbstractObject extends Model\Element\AbstractElement
 
     public function __sleep()
     {
-        $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = ['o_dependencies', 'o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
+        $blockedVars = ['o_hasChildren', 'o_versions', 'o_class', 'scheduledTasks', 'o_parent', 'omitMandatoryCheck'];
 
         if ($this->isInDumpState()) {
             // this is if we want to make a full dump of the object (eg. for a new version), including children for recyclebin
@@ -1267,13 +1263,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $blockedVars = array_merge($blockedVars, ['o_children', 'o_properties']);
         }
 
-        foreach ($parentVars as $key) {
-            if (!in_array($key, $blockedVars)) {
-                $finalVars[] = $key;
-            }
-        }
-
-        return $finalVars;
+        return array_diff($parentVars, $blockedVars);
     }
 
     public function __wakeup()
@@ -1466,6 +1456,26 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
+     * @param string | null $o_reverseSort
+     *
+     * @return AbstractObject
+     */
+    public function setChildrenSortOrder(?string $o_reverseSort): Element\ElementInterface
+    {
+        $this->o_childrenSortOrder = $o_reverseSort;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getChildrenSortOrder(): string
+    {
+        return $this->o_childrenSortOrder ?? self::OBJECT_CHILDREN_SORT_ORDER_DEFAULT;
+    }
+
+    /**
      * load lazy loaded fields before cloning
      */
     public function __clone()
@@ -1475,7 +1485,6 @@ class AbstractObject extends Model\Element\AbstractElement
         // note that o_children is currently needed for the recycle bin
         $this->o_hasSiblings = [];
         $this->o_siblings = [];
-        $this->o_dependencies = null;
     }
 }
 

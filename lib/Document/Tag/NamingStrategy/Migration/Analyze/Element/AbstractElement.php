@@ -17,13 +17,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Element;
 
-use Pimcore\Document\Tag\Block\BlockName;
-use Pimcore\Document\Tag\Block\BlockState;
+use Pimcore\Document\Editable\Block\BlockName;
+use Pimcore\Document\Editable\Block\BlockState;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\ElementTree;
 use Pimcore\Document\Tag\NamingStrategy\Migration\Analyze\Exception\LogicException;
 use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 
 /**
+ * @deprecated
  * Represents all document editables (blocks + other editables)
  */
 abstract class AbstractElement

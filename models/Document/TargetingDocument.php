@@ -48,7 +48,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     /**
      * @inheritdoc
      */
-    public function getTargetGroupElementPrefix(int $targetGroupId = null): string
+    public function getTargetGroupEditablePrefix(int $targetGroupId = null): string
     {
         $prefix = '';
 
@@ -57,7 +57,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
         }
 
         if ($targetGroupId) {
-            $prefix = self::TARGET_GROUP_ELEMENT_PREFIX . $targetGroupId . self::TARGET_GROUP_ELEMENT_SUFFIX;
+            $prefix = self::TARGET_GROUP_EDITABLE_PREFIX . $targetGroupId . self::TARGET_GROUP_EDITABLE_SUFFIX;
         }
 
         return $prefix;
@@ -66,13 +66,13 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     /**
      * @inheritdoc
      */
-    public function getTargetGroupElementName(string $name): string
+    public function getTargetGroupEditableName(string $name): string
     {
         if (!$this->getUseTargetGroup()) {
             return $name;
         }
 
-        $prefix = $this->getTargetGroupElementPrefix();
+        $prefix = $this->getTargetGroupEditablePrefix();
         if (!preg_match('/^' . preg_quote($prefix, '/') . '/', $name)) {
             $name = $prefix . $name;
         }
@@ -83,74 +83,74 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     /**
      * @inheritDoc
      */
-    public function hasTargetGroupSpecificElements(): bool
+    public function hasTargetGroupSpecificEditables(): bool
     {
-        return $this->getDao()->hasTargetGroupSpecificElements();
+        return $this->getDao()->hasTargetGroupSpecificEditables();
     }
 
     /**
      * @inheritDoc
      */
-    public function getTargetGroupSpecificElementNames(): array
+    public function getTargetGroupSpecificEditableNames(): array
     {
-        return $this->getDao()->getTargetGroupSpecificElementNames();
+        return $this->getDao()->getTargetGroupSpecificEditableNames();
     }
 
     /**
-     * Set an element with the given key/name
+     * Set an editable with the given key/name
      *
      * @param string $name
-     * @param Tag $data
+     * @param Editable $data
      *
      * @return PageSnippet
      */
-    public function setElement($name, $data)
+    public function setEditable($name, $data)
     {
         if ($this->getUseTargetGroup()) {
-            $name = $this->getTargetGroupElementName($name);
+            $name = $this->getTargetGroupEditableName($name);
             $data->setName($name);
         }
 
-        return parent::setElement($name, $data);
+        return parent::setEditable($name, $data);
     }
 
     /**
-     * Get an element with the given key/name
+     * Get an editable with the given key/name
      *
      * @param string $name
      *
-     * @return Tag|null
+     * @return Editable|null
      */
-    public function getElement($name)
+    public function getEditable($name)
     {
-        // check if a target group is requested for this page, if yes deliver a different version of the element (prefixed)
+        // check if a target group is requested for this page, if yes deliver a different version of the editable (prefixed)
         if ($this->getUseTargetGroup()) {
-            $targetGroupElementName = $this->getTargetGroupElementName($name);
+            $targetGroupEditableName = $this->getTargetGroupEditableName($name);
 
-            if ($element = parent::getElement($targetGroupElementName)) {
-                return $element;
+            if ($editable = parent::getEditable($targetGroupEditableName)) {
+                return $editable;
             } else {
                 // if there's no dedicated content for this target group, inherit from the "original" content (unprefixed)
                 // and mark it as inherited so it is clear in the ui that the content is not specific to the selected target group
                 // replace all occurrences of the target group prefix, this is needed because of block-prefixes
-                $inheritedName = str_replace($this->getTargetGroupElementPrefix(), '', $name);
-                $inheritedElement = parent::getElement($inheritedName);
+                $inheritedName = str_replace($this->getTargetGroupEditablePrefix(), '', $name);
+                $inheritedEditable = parent::getEditable($inheritedName);
 
-                if ($inheritedElement) {
-                    $inheritedElement = clone $inheritedElement;
-                    $inheritedElement->setDao(null);
-                    $inheritedElement->setName($targetGroupElementName);
-                    $inheritedElement->setInherited(true);
+                if ($inheritedEditable) {
+                    $inheritedEditable = clone $inheritedEditable;
+                    $inheritedEditable->setDao(null);
+                    $inheritedEditable->setName($targetGroupEditableName);
+                    $inheritedEditable->setInherited(true);
 
-                    $this->setElement($targetGroupElementName, $inheritedElement);
+                    $this->setEditable($targetGroupEditableName, $inheritedEditable);
 
-                    return $inheritedElement;
+                    return $inheritedEditable;
                 }
             }
         }
 
         // delegate to default
-        return parent::getElement($name);
+        return parent::getEditable($name);
     }
 
     public function __sleep()

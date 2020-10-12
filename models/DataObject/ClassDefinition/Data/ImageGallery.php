@@ -23,7 +23,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface
+class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -476,66 +476,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $result = [];
-        $data = $this->getDataFromObjectParam($object, $params);
-        $fd = new Hotspotimage();
-        $fd->setName('image');
-
-        if ($data instanceof DataObject\Data\ImageGallery) {
-            foreach ($data as $item) {
-                $dataForResource = $fd->getDataForResource($item, $object, $params);
-
-                if ($dataForResource) {
-                    if ($dataForResource['image__hotspots']) {
-                        $dataForResource['image__hotspots'] = Serialize::unserialize($dataForResource['image__hotspots']);
-                    }
-                }
-                $result[] = $dataForResource;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return null|Asset|DataObject\Data\ImageGallery
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        $resultItems = [];
-        if (is_array($value)) {
-            $fd = new Hotspotimage();
-            $fd->setName('image');
-
-            foreach ($value as $item) {
-                $resultItems[] = $fd->getFromWebserviceImport($item, $object, $params, $idMapper);
-            }
-        }
-
-        return new DataObject\Data\ImageGallery($resultItems);
-    }
-
-    /**
      * @param DataObject\Data\ImageGallery|null $data
      * @param DataObject\Concrete|null $object
      * @param array $params
@@ -662,5 +602,31 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         }
 
         return false;
+    }
+
+    /**
+     * @param DataObject\Data\ImageGallery|null $oldValue
+     * @param DataObject\Data\ImageGallery|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldValue = $oldValue instanceof DataObject\Data\ImageGallery ? $oldValue->getItems() : [];
+        $newValue = $newValue instanceof DataObject\Data\ImageGallery ? $newValue->getItems() : [];
+
+        if (count($oldValue) != count($newValue)) {
+            return false;
+        }
+
+        $fd = new Hotspotimage();
+
+        foreach ($oldValue as $i => $item) {
+            if (!$fd->isEqual($oldValue[$i], $newValue[$i])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
