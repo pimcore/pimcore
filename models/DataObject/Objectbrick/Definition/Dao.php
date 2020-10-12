@@ -21,6 +21,7 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
 /**
+ * @internal
  * @property \Pimcore\Model\DataObject\Objectbrick\Definition $model
  */
 class Dao extends Model\DataObject\Fieldcollection\Definition\Dao

@@ -20,6 +20,7 @@ namespace Pimcore\Model\GridConfigShare;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\GridConfigShare $model
  */
 class Dao extends Model\Dao\AbstractDao

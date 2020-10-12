@@ -20,6 +20,7 @@ namespace Pimcore\Model\DataObject\Classificationstore\GroupConfig;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\DataObject\Classificationstore\GroupConfig $model
  */
 class Dao extends Model\Dao\AbstractDao

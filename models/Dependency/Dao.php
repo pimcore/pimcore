@@ -24,6 +24,7 @@ use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Dependency $model
  */
 class Dao extends Model\Dao\AbstractDao

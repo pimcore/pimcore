@@ -27,6 +27,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\QueryResourcePersistenceAwareI
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 
 /**
+ * @internal
  * @property \Pimcore\Model\DataObject\Concrete $model
  */
 class Dao extends Model\DataObject\AbstractObject\Dao

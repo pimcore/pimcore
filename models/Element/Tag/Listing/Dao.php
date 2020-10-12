@@ -20,6 +20,7 @@ namespace Pimcore\Model\Element\Tag\Listing;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Element\Tag\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao

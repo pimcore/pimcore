@@ -20,6 +20,7 @@ namespace Pimcore\Model\Element\Note\Listing;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Element\Note\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
