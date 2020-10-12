@@ -442,7 +442,7 @@ pimcore.object.tags.manyToManyObjectRelation = Class.create(pimcore.object.tags.
                     }.bind(this)
                 }
             },
-            selModel: Ext.create('Ext.selection.RowModel', {}),
+            multiSelect: true,
             columns: {
                 defaults: {
                     sortable: false

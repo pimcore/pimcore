@@ -366,6 +366,7 @@ pimcore.object.tags.advancedManyToManyObjectRelation = Class.create(pimcore.obje
             selModel: {
                 selType: (this.fieldConfig.enableBatchEdit ? 'checkboxmodel': 'rowmodel')
             },
+            multiSelect: true,
             columnLines: true,
             stripeRows: true,
             columns: {
