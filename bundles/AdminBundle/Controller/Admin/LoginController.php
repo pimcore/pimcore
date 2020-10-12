@@ -22,6 +22,7 @@ use Pimcore\Config;
 use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Event\Admin\Login\LostPasswordEvent;
 use Pimcore\Event\AdminEvents;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Http\ResponseHelper;
 use Pimcore\Logger;
 use Pimcore\Model\User;
@@ -241,7 +242,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
     protected function buildLoginPageViewParams(Config $config): array
     {
-        $bundleManager = $this->get('pimcore.extension.bundle_manager');
+        $bundleManager = $this->get(PimcoreBundleManager::class);
 
         return [
             'config' => $config,

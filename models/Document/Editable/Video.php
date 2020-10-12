@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Document\Editable;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -377,7 +378,7 @@ class Video extends Model\Document\Editable
 
                 if ($thumbnail['status'] === 'inprogress') {
                     // disable the output-cache if enabled
-                    $cacheService = \Pimcore::getContainer()->get('pimcore.event_listener.frontend.full_page_cache');
+                    $cacheService = \Pimcore::getContainer()->get(FullPageCacheListener::class);
                     $cacheService->disable('Video rendering in progress');
 
                     return $this->getProgressCode($image);

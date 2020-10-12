@@ -24,6 +24,7 @@ use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
 use Pimcore\Helper\TemporaryFileHelperTrait;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
@@ -1774,7 +1775,7 @@ class Asset extends Element\AbstractElement
 
         if ($name) {
             if ($language === null) {
-                $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+                $language = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
             }
 
             $data = null;

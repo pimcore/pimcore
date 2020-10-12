@@ -17,6 +17,7 @@ namespace Pimcore\Tool;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Event\SystemEvents;
 use Pimcore\File;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\User;
 use Pimcore\Tool\Text\Csv;
 
@@ -70,7 +71,7 @@ class Admin
 
                         if (($adminLang != null && in_array($languageCode, array_values($adminLang))) || $adminLang == null) {
                             if ($parts[1] === 'json' || $parts[0] === 'admin') {
-                                if (\Pimcore::getContainer()->get('pimcore.locale')->isLocale($languageCode)) {
+                                if (\Pimcore::getContainer()->get(LocaleServiceInterface::class)->isLocale($languageCode)) {
                                     $languages[] = $languageCode;
                                 }
                             }

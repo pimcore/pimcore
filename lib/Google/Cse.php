@@ -16,6 +16,7 @@ namespace Pimcore\Google;
 
 use Pimcore\Cache;
 use Pimcore\Google\Cse\Item;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Zend\Paginator\Adapter\AdapterInterface;
 use Zend\Paginator\AdapterAggregateInterface;
@@ -58,7 +59,7 @@ class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
             $search = new \Google_Service_Customsearch($client);
 
             // determine language
-            $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+            $language = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
 
             if ($position = strpos($language, '_')) {
                 $language = substr($language, 0, $position);
