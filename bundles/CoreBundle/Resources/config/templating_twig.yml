@@ -1,7 +1,3 @@
-imports:
-    # twig aliases are only imported if this file is loaded
-    - { resource: templating_twig_aliases.yml }
-
 services:
     _defaults:
         autowire: true

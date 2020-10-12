@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject;
 
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
@@ -287,7 +288,7 @@ class Localizedfield extends Model\AbstractModel implements
 
         // try to get the language from the service container
         try {
-            $locale = \Pimcore::getContainer()->get('pimcore.locale')->getLocale();
+            $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->getLocale();
 
             if (Tool::isValidLanguage($locale)) {
                 return (string) $locale;

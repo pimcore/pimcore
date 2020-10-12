@@ -19,6 +19,7 @@ namespace Pimcore\Model\DataObject\Listing\Concrete;
 
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Tool;
@@ -145,7 +146,7 @@ class Dao extends Model\DataObject\Listing\Dao
         }
 
         if (!$language) {
-            $locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+            $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
             if (Tool::isValidLanguage((string)$locale)) {
                 $language = (string)$locale;
             }
@@ -184,7 +185,7 @@ class Dao extends Model\DataObject\Listing\Dao
                     }
 
                     if (!$language) {
-                        $locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+                        $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
                         if (Tool::isValidLanguage((string)$locale)) {
                             $language = (string)$locale;
                         }

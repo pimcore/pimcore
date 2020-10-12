@@ -14,6 +14,7 @@
 
 namespace Pimcore\Tool;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Document\DocumentStack;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
@@ -128,13 +129,11 @@ class Frontend
     public static function isOutputCacheEnabled()
     {
         $container = \Pimcore::getContainer();
-
-        $serviceId = 'pimcore.event_listener.frontend.full_page_cache';
-        if (!$container->has($serviceId)) {
+        if (!$container->has(FullPageCacheListener::class)) {
             return false;
         }
 
-        $cacheService = $container->get($serviceId);
+        $cacheService = $container->get(FullPageCacheListener::class);
         if ($cacheService && $cacheService->isEnabled()) {
             return [
                 'enabled' => true,
