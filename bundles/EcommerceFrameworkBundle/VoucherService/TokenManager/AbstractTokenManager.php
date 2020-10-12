@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
+use Pimcore\Translation\Translator;
 
 abstract class AbstractTokenManager implements TokenManagerInterface
 {
@@ -158,7 +159,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface
      */
     public function exportCsv(array $params)
     {
-        $translator = \Pimcore::getContainer()->get('pimcore.translator');
+        $translator = \Pimcore::getContainer()->get(Translator::class);
 
         $stream = fopen('php://temp', 'w+');
         fputcsv($stream, [

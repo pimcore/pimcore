@@ -26,7 +26,7 @@ services:
 
     Pimcore\Bundle\CoreBundle\EventListener\TranslationDebugListener:
         arguments:
-            $translator: '@pimcore.translator'
+            $translator: '@Pimcore\Translation\Translator'
 
     #
     # PIMCORE OBJECTS/PARAMS LOGIC

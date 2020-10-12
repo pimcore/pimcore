@@ -14,6 +14,8 @@
 
 namespace Pimcore\Tool;
 
+use Pimcore\Localization\LocaleServiceInterface;
+
 class Transliteration
 {
     /**
@@ -29,7 +31,7 @@ class Transliteration
         // the transliteration is based on the locale
         // äüö is in EN auo in DE  aeueoe
         if (!$language) {
-            $locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+            $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
             if ($locale) {
                 $language = \Locale::getPrimaryLanguage($locale);
             }

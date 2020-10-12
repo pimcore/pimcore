@@ -19,6 +19,7 @@ namespace Pimcore\Model\Element;
 
 use Pimcore\File;
 use Pimcore\Model;
+use Pimcore\Translation\Translator;
 
 class AdminStyle
 {
@@ -95,7 +96,7 @@ class AdminStyle
                 $site = Model\Site::getByRootId($element->getId());
 
                 if ($site instanceof Model\Site) {
-                    $translator = \Pimcore::getContainer()->get('pimcore.translator');
+                    $translator = \Pimcore::getContainer()->get(Translator::class);
                     $this->elementQtipConfig['text'] .= '<br>' . $translator->trans('site_id', [], 'admin') . ': ' . $site->getId();
                 }
 
