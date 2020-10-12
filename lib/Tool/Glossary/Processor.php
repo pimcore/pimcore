@@ -220,15 +220,13 @@ class Processor
 
         // prepare data
         foreach ($data as $d) {
-            if (!($d['link'] || $d['abbr'] || $d['acronym'])) {
+            if (!($d['link'] || $d['abbr'])) {
                 continue;
             }
 
             $r = $d['text'];
             if ($d['abbr']) {
                 $r = '<abbr class="pimcore_glossary" title="' . $d['abbr'] . '">' . $r . '</abbr>';
-            } elseif ($d['acronym']) {
-                $r = '<acronym class="pimcore_glossary" title="' . $d['acronym'] . '">' . $r . '</acronym>';
             }
 
             $linkType = '';
