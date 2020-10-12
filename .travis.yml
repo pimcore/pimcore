@@ -203,7 +203,6 @@ env:
     - SYMFONY_VERSION=^4.0
     - DATABASE_SERVER="mariadb-10.4"
     - PIMCORE_PROJECT_ROOT=$TRAVIS_BUILD_DIR
-    - PIMCORE_PHP_ERROR_REPORTING=32767 # E_ALL
 
 # see https://docs.travis-ci.com/user/job-lifecycle/
 before_install:

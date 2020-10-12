@@ -13,8 +13,6 @@ For details see [Symfonys monolog docs](http://symfony.com/doc/3.4/logging.html)
 By default Pimcore writes PHP-Engine Log Messages to the file `php.log`.
 You can change this using constant `PIMCORE_PHP_ERROR_LOG` that is used to set PHP's [error_log Configuration](http://php.net/manual/en/errorfunc.configuration.php#ini.error-log).
 
-You can additionally use the Constant `PIMCORE_PHP_ERROR_REPORTING` to set PHP's [error_reporting](http://php.net/manual/en/errorfunc.configuration.php#ini.error-reporting)
-
 ## usagelog.log
 In this log you can find every action done within the Pimcore Backend Interface. It can be deactivated in system settings.
 
