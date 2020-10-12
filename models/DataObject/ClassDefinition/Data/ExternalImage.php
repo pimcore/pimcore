@@ -149,7 +149,7 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
         $externalImage = new Model\DataObject\Data\ExternalImage($data);
 
         if (isset($params['owner'])) {
-            $externalImage->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            $externalImage->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
         }
 
         return $externalImage;
