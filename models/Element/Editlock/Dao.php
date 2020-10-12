@@ -20,6 +20,7 @@ namespace Pimcore\Model\Element\Editlock;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Element\Editlock $model
  */
 class Dao extends Model\Dao\AbstractDao

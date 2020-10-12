@@ -23,6 +23,7 @@ use Pimcore\Model;
 use Pimcore\Model\Document;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Document\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao

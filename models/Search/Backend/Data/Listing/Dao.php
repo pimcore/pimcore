@@ -19,6 +19,7 @@ use Pimcore\Model\Element\Service;
 use Pimcore\Model\Search;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Search\Backend\Data\Listing $model
  */
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao

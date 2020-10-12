@@ -20,6 +20,7 @@ namespace Pimcore\Model\GridConfigFavourite\Listing;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\GridConfigFavourite\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao

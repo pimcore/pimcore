@@ -28,6 +28,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
 use Pimcore\Tool;
 
 /**
+ * @internal
  * @property \Pimcore\Model\DataObject\Localizedfield $model
  */
 class Dao extends Model\Dao\AbstractDao

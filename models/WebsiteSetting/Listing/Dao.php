@@ -17,6 +17,7 @@ namespace Pimcore\Model\WebsiteSetting\Listing;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\WebsiteSetting\Listing $model
  */
 class Dao extends Model\Dao\PhpArrayTable

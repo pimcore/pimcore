@@ -20,6 +20,7 @@ namespace Pimcore\Model\Workflow;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Workflow $model
  */
 class Dao extends Model\Dao\PhpArrayTable

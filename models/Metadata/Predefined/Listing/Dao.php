@@ -20,6 +20,7 @@ namespace Pimcore\Model\Metadata\Predefined\Listing;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Metadata\Predefined\Listing $model
  */
 class Dao extends Model\Dao\PhpArrayTable

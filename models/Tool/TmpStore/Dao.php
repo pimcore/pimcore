@@ -20,6 +20,7 @@ namespace Pimcore\Model\Tool\TmpStore;
 use Pimcore\Model;
 
 /**
+ * @internal
  * @property \Pimcore\Model\Tool\TmpStore $model
  */
 class Dao extends Model\Dao\AbstractDao

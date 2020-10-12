@@ -22,6 +22,7 @@ use Pimcore\Model\Tool\Targeting\Rule;
 use Pimcore\Tool\Serialize;
 
 /**
+ * @internal
  * @property Rule|Model\Tool\Targeting\Rule\Dao $model
  */
 class Dao extends Model\Dao\AbstractDao
