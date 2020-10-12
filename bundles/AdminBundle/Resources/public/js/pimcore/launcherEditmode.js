@@ -11,21 +11,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-console.log("editmode launched");
-
-/**
- * Pimcore
- *
- * This source file is available under two different licenses:
- * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
- * Full copyright and license information is available in
- * LICENSE.md which is distributed with this source code.
- *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
- */
-
 // debug
 if (!console) {
     if (!parent.console) {
@@ -132,15 +117,15 @@ Ext.onReady(function () {
     Ext.QuickTips.init();
     Ext.MessageBox.minPromptWidth = 500;
 
-    function getEditable(config) {
-        var id = config.id;
-        var type = config.type;
-        var name = config.name;
-        var options = config.options;
-        var data = config.data;
-        var inherited = false;
-        if(typeof config["inherited"] != "undefined") {
-            inherited = config["inherited"];
+    function getEditable(definition) {
+        let name = definition.name;
+        let inherited = false;
+        if(typeof definition["inherited"] != "undefined") {
+            inherited = definition["inherited"];
+        }
+
+        if (definition.inDialogBox && typeof pimcore.document.editables[definition.type].prototype['render'] !== 'function') {
+            throw 'Editable of type `' + type + '` with name `' + name + '` does not support the use in the dialog box.';
         }
 
         if(in_array(name,editableNames)) {
@@ -148,20 +133,27 @@ Ext.onReady(function () {
         }
         editableNames.push(name);
 
-        var tag = new pimcore.document.tags[type](id, name, options, data, inherited);
-        tag.setRealName(config.realName);
-        tag.setInherited(inherited);
+        let editable = new pimcore.document.editables[definition.type](definition.id, name, definition.config, definition.data, inherited);
+        editable.setRealName(definition.realName);
+        editable.setInDialogBox(definition.inDialogBox);
 
-        return tag;
+        if(!definition.inDialogBox) {
+            if (typeof editable['render'] === 'function') {
+                editable.render();
+            }
+            editable.setInherited(inherited);
+        }
+
+        return editable;
     }
 
     if (typeof Ext == "object" && typeof pimcore == "object") {
 
-        for (var i = 0; i < editableConfigurations.length; i++) {
+        for (var i = 0; i < editableDefinitions.length; i++) {
             try {
-                let editable = getEditable(editableConfigurations[i]);
+                let editable = getEditable(editableDefinitions[i]);
                 editables.push(editable);
-                if (editableConfigurations[i]['options']['required']) {
+                if (editableDefinitions[i]['config']['required']) {
                     requiredEditables.push(editable)
                 }
             } catch (e) {
@@ -204,9 +196,9 @@ Ext.onReady(function () {
         for (var e=0; e<editablesForTooltip.length; e++) {
             tmpEl = Ext.get(editablesForTooltip[e]);
             if(tmpEl) {
-                if(tmpEl.hasCls("pimcore_tag_inc") || tmpEl.hasCls("pimcore_tag_href")
-                    || tmpEl.hasCls("pimcore_tag_image") || tmpEl.hasCls("pimcore_tag_renderlet")
-                    || tmpEl.hasCls("pimcore_tag_snippet")) {
+                if(tmpEl.hasCls("pimcore_editable_inc") || tmpEl.hasCls("pimcore_editable_href")
+                    || tmpEl.hasCls("pimcore_editable_image") || tmpEl.hasCls("pimcore_editable_renderlet")
+                    || tmpEl.hasCls("pimcore_editable_snippet")) {
                     new Ext.ToolTip({
                         target: tmpEl,
                         showDelay: 100,
@@ -219,7 +211,7 @@ Ext.onReady(function () {
         }
 
         // add contextmenu menu to elements included by $this->inc();
-        var incElements = Ext.query(".pimcore_tag_inc");
+        var incElements = Ext.query(".pimcore_editable_inc");
         var tmpIncEl;
         for (var q=0; q<incElements.length; q++) {
             tmpIncEl = Ext.get(incElements[q]);
@@ -256,6 +248,8 @@ Ext.onReady(function () {
         editWindow.loadMask.hide();
     }
 });
+
+
 
 
 
