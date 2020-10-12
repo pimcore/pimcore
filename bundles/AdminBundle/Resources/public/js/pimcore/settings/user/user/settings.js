@@ -498,6 +498,8 @@ pimcore.settings.user.user.settings = Class.create({
                 title += " " + t(key);
             }
 
+            itemsPerSection[key].sort((a, b) => a.boxLabel.localeCompare(b.boxLabel));
+
             sectionArray.push(new Ext.form.FieldSet({
                 collapsible: true,
                 title: title,
