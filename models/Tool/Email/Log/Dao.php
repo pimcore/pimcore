@@ -22,6 +22,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Tool\Email\Log $model
  */
 class Dao extends Model\Dao\AbstractDao

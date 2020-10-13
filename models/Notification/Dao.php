@@ -23,6 +23,7 @@ use Pimcore\Model\User;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Notification $model
  */
 class Dao extends AbstractDao

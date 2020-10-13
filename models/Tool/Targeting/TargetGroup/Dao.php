@@ -23,6 +23,7 @@ use Pimcore\Tool\Serialize;
 
 /**
  * @internal
+ *
  * @property TargetGroup $model
  */
 class Dao extends Model\Dao\AbstractDao

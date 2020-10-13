@@ -21,6 +21,7 @@ use Pimcore\Model\Notification;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Notification\Listing $model
  */
 class Dao extends AbstractDao

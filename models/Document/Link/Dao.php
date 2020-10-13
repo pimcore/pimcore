@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Document\Link $model
  */
 class Dao extends Model\Document\Dao

@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule\Listing;
 
 /**
  * @internal
+ *
  * @property Listing $model
  */
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao

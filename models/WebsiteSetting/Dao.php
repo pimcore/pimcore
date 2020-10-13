@@ -18,6 +18,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\WebsiteSetting $model
  */
 class Dao extends Model\Dao\PhpArrayTable

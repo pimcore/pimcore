@@ -22,6 +22,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
 /**
  * @internal
+ *
  * @property Token $model
  */
 class Dao extends \Pimcore\Model\Dao\AbstractDao

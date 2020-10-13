@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Document\DocType\Listing $model
  */
 class Dao extends Model\Dao\PhpArrayTable

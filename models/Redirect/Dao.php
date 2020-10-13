@@ -25,6 +25,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Redirect $model
  */
 class Dao extends Model\Dao\AbstractDao

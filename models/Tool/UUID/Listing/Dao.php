@@ -22,6 +22,7 @@ use Pimcore\Model\Tool\UUID;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Tool\UUID\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao

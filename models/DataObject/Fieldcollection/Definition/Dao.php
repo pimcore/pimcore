@@ -22,6 +22,7 @@ use Pimcore\Model\DataObject;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\DataObject\Fieldcollection\Definition $model
  */
 class Dao extends Model\Dao\AbstractDao

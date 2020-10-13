@@ -18,6 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItem;
 
 /**
  * @internal
+ *
  * @property CartItem $model
  */
 class Dao extends \Pimcore\Model\Dao\AbstractDao
