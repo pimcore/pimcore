@@ -90,7 +90,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::CONTROLLER => ['onKernelController', 3], // has to be after DocumentFallbackListener
+            KernelEvents::CONTROLLER => ['onKernelController', 30], // has to be after DocumentFallbackListener
         ];
     }
 
