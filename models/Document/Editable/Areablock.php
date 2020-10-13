@@ -38,19 +38,19 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      *
      * @var array
      */
-    public $indices = [];
+    protected $indices = [];
 
     /**
      * Current step of the block while iteration
      *
      * @var int
      */
-    public $current = 0;
+    protected $current = 0;
 
     /**
      * @var array
      */
-    public $currentIndex;
+    protected $currentIndex;
 
     /**
      * @var bool
@@ -635,6 +635,14 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     public function getCurrentIndex()
     {
         return $this->indices[$this->getCurrent()]['key'];
+    }
+
+    /**
+     * @return array
+     */
+    public function getIndices()
+    {
+        return $this->indices;
     }
 
     /**

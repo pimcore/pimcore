@@ -29,7 +29,7 @@ class Date extends Model\Document\Editable
      *
      * @var \Carbon\Carbon|null
      */
-    public $date;
+    protected $date;
 
     /**
      * @see EditableInterface::getType
@@ -49,6 +49,11 @@ class Date extends Model\Document\Editable
     public function getData()
     {
         return $this->date;
+    }
+
+    public function getDate()
+    {
+        return $this->getData();
     }
 
     /**

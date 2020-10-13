@@ -27,7 +27,7 @@ class Embed extends Model\Document\Editable
     /**
      * @var string
      */
-    public $url;
+    protected $url;
 
     /**
      * @see EditableInterface::getType
@@ -49,6 +49,16 @@ class Embed extends Model\Document\Editable
         return [
             'url' => $this->url,
         ];
+    }
+
+    /**
+     * @see EditableInterface::getData
+     *
+     * @return mixed
+     */
+    public function getUrl()
+    {
+        return $this->url;
     }
 
     /**

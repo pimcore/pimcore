@@ -36,14 +36,14 @@ class Snippet extends Model\Document\Editable
      *
      * @var int
      */
-    public $id;
+    protected $id;
 
     /**
      * Contains the object for the snippet
      *
      * @var Document\Snippet
      */
-    public $snippet;
+    protected $snippet;
 
     /**
      * @see EditableInterface::getType
