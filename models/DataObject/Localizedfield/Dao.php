@@ -798,7 +798,7 @@ QUERY;
         /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFieldDefinition */
         $localizedFieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
         foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
-            if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
+            if ($value instanceof ResourcePersistenceAwareInterface) {
                 /** @var DataObject\ClassDefinition\Data & ResourcePersistenceAwareInterface $value */
                 if ($value->getColumnType()) {
                     $key = $value->getName();
