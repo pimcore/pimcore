@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @property Model\Document|Model\Asset|Model\DataObject\AbstractObject $model
  */
 abstract class Dao extends Model\Dao\AbstractDao

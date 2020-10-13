@@ -22,6 +22,7 @@ use Pimcore\Model\Tool\Targeting\TargetGroup;
 
 /**
  * @internal
+ *
  * @property TargetGroup\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao

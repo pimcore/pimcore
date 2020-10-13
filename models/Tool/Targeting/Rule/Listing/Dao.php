@@ -22,6 +22,7 @@ use Pimcore\Model\Tool\Targeting\Rule;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Tool\Targeting\Rule\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao

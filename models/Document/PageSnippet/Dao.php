@@ -23,6 +23,7 @@ use Pimcore\Model\Version;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Document\PageSnippet $model
  */
 abstract class Dao extends Model\Document\Dao

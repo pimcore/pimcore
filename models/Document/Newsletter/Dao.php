@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Document\Newsletter $model
  */
 class Dao extends Model\Document\PageSnippet\Dao

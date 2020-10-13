@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\User\Permission\Definition\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao

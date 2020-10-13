@@ -21,6 +21,7 @@ use Pimcore\Tool\Serialize;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\DataObject\ClassDefinition\CustomLayout $model
  */
 class Dao extends Model\Dao\AbstractDao

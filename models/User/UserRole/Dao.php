@@ -22,6 +22,7 @@ use Pimcore\Model\Element;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\User\UserRole\Folder $model
  */
 class Dao extends Model\User\AbstractUser\Dao

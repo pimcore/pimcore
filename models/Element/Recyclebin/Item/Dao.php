@@ -22,6 +22,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Element\Recyclebin\Item $model
  */
 class Dao extends Model\Dao\AbstractDao

@@ -22,6 +22,7 @@ use Pimcore\Model\Asset\Image\Thumbnail\Config;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Asset\Image\Thumbnail\Config\Listing $model
  */
 class Dao extends Model\Dao\PhpArrayTable
