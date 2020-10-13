@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Translation\Website $model
  */
 class Dao extends Model\Translation\AbstractTranslation\Dao

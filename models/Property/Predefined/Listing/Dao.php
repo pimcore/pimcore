@@ -22,6 +22,7 @@ use Pimcore\Model\Property;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Property\Predefined\Listing $model
  */
 class Dao extends Model\Dao\PhpArrayTable

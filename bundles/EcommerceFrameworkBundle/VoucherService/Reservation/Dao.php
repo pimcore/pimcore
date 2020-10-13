@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Reservation;
 
 /**
  * @internal
+ *
  * @property Reservation $model
  */
 class Dao extends \Pimcore\Model\Dao\AbstractDao

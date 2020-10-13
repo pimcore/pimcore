@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\DataObject\Data\ElementMetadata $model
  */
 class Dao extends DataObject\Data\ObjectMetadata\Dao

@@ -21,6 +21,7 @@ use Pimcore\Model\Document;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Document\Printcontainer $model
  */
 class Dao extends Document\PrintAbstract\Dao

@@ -26,6 +26,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\DataObject\Fieldcollection $model
  */
 class Dao extends Model\Dao\AbstractDao

@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Staticroute $model
  */
 class Dao extends Model\Dao\PhpArrayTable

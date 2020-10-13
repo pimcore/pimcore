@@ -73,7 +73,7 @@ class Bootstrap
         /** @var \Pimcore\Kernel $kernel */
         $kernel = self::kernel();
 
-        if(is_readable($workingDirectory)) {
+        if (is_readable($workingDirectory)) {
             chdir($workingDirectory);
         }
 

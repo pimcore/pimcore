@@ -26,6 +26,7 @@ use Pimcore\Tool\Serialize;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\Asset $model
  */
 class Dao extends Model\Element\Dao

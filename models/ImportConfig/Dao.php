@@ -21,6 +21,7 @@ use Pimcore\Model;
 
 /**
  * @internal
+ *
  * @property \Pimcore\Model\ImportConfig $model
  */
 class Dao extends Model\Dao\AbstractDao
