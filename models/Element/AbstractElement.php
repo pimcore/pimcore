@@ -114,11 +114,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param Model\Property[] $properties
-     */
-    abstract public function setProperties($properties);
-
-    /**
      * @param string $name
      */
     public function removeProperty($name)

@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Element;
 
+use Pimcore\Model\Asset;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\ModelInterface;
 use Pimcore\Model\Property;
@@ -144,6 +145,13 @@ interface ElementInterface extends ModelInterface
     public function getProperties();
 
     /**
+     * @param Property[] $properties
+     *
+     * @return $this
+     */
+    public function setProperties(array $properties);
+
+    /**
      * Get specific property data or the property object itself ($asContainer=true) by its name, if the
      * property doesn't exists return null
      *
@@ -153,6 +161,16 @@ interface ElementInterface extends ModelInterface
      * @return mixed
      */
     public function getProperty($name, $asContainer = false);
+
+    /**
+     * @param $name
+     * @param $type
+     * @param $data
+     * @param false $inherited
+     * @param false $inheritable
+     * @return mixed
+     */
+    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false);
 
     /**
      * @param string $name

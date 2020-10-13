@@ -1420,14 +1420,11 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param Property[] $properties
-     *
-     * @return $this
+     * @inheritdoc
      */
-    public function setProperties($properties)
+    public function setProperties(array $properties)
     {
         $this->properties = $properties;
-
         return $this;
     }
 
