@@ -20,7 +20,6 @@ namespace Pimcore\Model\Document;
 use Pimcore\Document\Editable\Block\BlockName;
 use Pimcore\Document\Editable\Block\BlockState;
 use Pimcore\Document\Editable\Block\BlockStateStack;
-use Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface;
 use Pimcore\Event\DocumentEvents;
 use Pimcore\Event\Model\Document\EditableNameEvent;
 use Pimcore\Logger;
@@ -647,10 +646,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
 
         $container = \Pimcore::getContainer();
         $blockState = $container->get(BlockStateStack::class)->getCurrentState();
-        /**
-         * @var NamingStrategyInterface
-         */
-        $namingStrategy = $container->get('pimcore.document.tag.naming.strategy');
 
         // if element not nested inside a hierarchical element (e.g. block), add the
         // targeting prefix if configured on the document. hasBlocks() determines if
@@ -664,7 +659,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
             }
         }
 
-        $editableName = $namingStrategy->buildTagName($name, $type, $blockState, $targetGroupEditableName);
+        $editableName = self::buildTagName($name, $type, $blockState, $targetGroupEditableName);
 
         $event = new EditableNameEvent($type, $name, $blockState, $editableName, $document);
         \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::EDITABLE_NAME, $event);
@@ -680,6 +675,94 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         }
 
         return $editableName;
+    }
+
+    private static function buildTagName(string $name, string $type, BlockState $blockState, string $targetGroupElementName = null): string
+    {
+        if (!$blockState->hasBlocks()) {
+            return $name;
+        }
+
+        $blocks = $blockState->getBlocks();
+        $indexes = $blockState->getIndexes();
+
+        // check if the previous block is the name we're about to build
+        // TODO: can this be avoided at the block level?
+        if ($type === 'block' || $type == 'scheduledblock') {
+            $tmpBlocks = $blocks;
+            $tmpIndexes = $indexes;
+
+            array_pop($tmpBlocks);
+            array_pop($tmpIndexes);
+
+            $tmpName = $name;
+            if (is_array($tmpBlocks)) {
+                $tmpName = self::buildHierarchicalName($name, $tmpBlocks, $tmpIndexes);
+            }
+
+            $previousBlockName = $blocks[count($blocks) - 1]->getName();
+            if ($previousBlockName === $tmpName || ($targetGroupElementName && $previousBlockName === $targetGroupElementName)) {
+                array_pop($blocks);
+                array_pop($indexes);
+            }
+        }
+
+        $result = self::buildHierarchicalName($name, $blocks, $indexes);
+
+        return $result;
+    }
+
+    /**
+     * @param string $name
+     * @param BlockName[] $blocks
+     * @param int[] $indexes
+     *
+     * @return string
+     */
+    private static function buildHierarchicalName(string $name, array $blocks, array $indexes): string
+    {
+        if (count($indexes) > count($blocks)) {
+            throw new \RuntimeException(sprintf('Index count %d is greater than blocks count %d', count($indexes), count($blocks)));
+        }
+
+        $parts = [];
+        for ($i = 0; $i < count($blocks); $i++) {
+            $part = $blocks[$i]->getRealName();
+
+            if (isset($indexes[$i])) {
+                $part = sprintf('%s:%d', $part, $indexes[$i]);
+            }
+
+            $parts[] = $part;
+        }
+
+        $parts[] = $name;
+
+        return implode('.', $parts);
+    }
+
+    /**
+     * @param string $name
+     * @param string $type
+     * @param array $parentBlockNames
+     * @param int $index
+     * @return string
+     * @throws \Exception
+     */
+    public static function buildChildElementTagName(string $name, string $type, array $parentBlockNames, int $index): string
+    {
+        if (count($parentBlockNames) === 0) {
+            throw new \Exception(sprintf(
+                'Failed to build child tag name for %s %s at index %d as no parent name was passed',
+                $type,
+                $name,
+                $index
+            ));
+        }
+
+        $parentName = array_pop($parentBlockNames);
+
+        return sprintf('%s:%d.%s', $parentName, $index, $name);
     }
 
     /**

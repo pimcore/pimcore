@@ -67,7 +67,7 @@ class GlobalTemplateVariablesListener implements EventSubscriberInterface, Logge
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::CONTROLLER => ['onKernelController', 90], // has to be after DocumentFallbackListener
+            KernelEvents::CONTROLLER => ['onKernelController', 15], // has to be after DocumentFallbackListener
             KernelEvents::RESPONSE => 'onKernelResponse',
         ];
     }
