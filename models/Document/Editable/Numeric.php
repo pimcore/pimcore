@@ -29,7 +29,7 @@ class Numeric extends Model\Document\Editable
      *
      * @var string
      */
-    public $number = '';
+    protected $number = '';
 
     /**
      * @see EditableInterface::getType
@@ -49,6 +49,16 @@ class Numeric extends Model\Document\Editable
     public function getData()
     {
         return $this->number;
+    }
+
+    /**
+     * @see EditableInterface::getData
+     *
+     * @return string
+     */
+    public function getNumber()
+    {
+        return $this->getData();
     }
 
     /**

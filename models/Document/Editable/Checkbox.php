@@ -29,7 +29,7 @@ class Checkbox extends Model\Document\Editable
      *
      * @var bool
      */
-    public $value = false;
+    protected $value = false;
 
     /**
      * @see EditableInterface::getType
@@ -44,11 +44,21 @@ class Checkbox extends Model\Document\Editable
     /**
      * @see EditableInterface::getData
      *
-     * @return mixed
+     * @return bool
      */
     public function getData()
     {
         return $this->value;
+    }
+
+    /**
+     * @see EditableInterface::getData
+     *
+     * @return bool
+     */
+    public function getValue()
+    {
+        return $this->getData();
     }
 
     /**

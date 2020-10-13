@@ -29,7 +29,7 @@ class Multiselect extends Model\Document\Editable
      *
      * @var array
      */
-    public $values = [];
+    protected $values = [];
 
     /**
      * @see EditableInterface::getType
@@ -49,6 +49,14 @@ class Multiselect extends Model\Document\Editable
     public function getData()
     {
         return $this->values;
+    }
+
+    /**
+     * @return array
+     */
+    public function getValues()
+    {
+        return $this->getData();
     }
 
     /**

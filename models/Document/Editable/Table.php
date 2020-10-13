@@ -29,7 +29,7 @@ class Table extends Model\Document\Editable
      *
      * @var array
      */
-    public $data;
+    protected $data;
 
     /**
      * @see EditableInterface::getType

@@ -31,19 +31,19 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @var array
      */
-    public $indices = [];
+    protected $indices = [];
 
     /**
      * Current step of the block while iteration
      *
      * @var int
      */
-    public $current = 0;
+    protected $current = 0;
 
     /**
      * @var string[]
      */
-    public $suffixes = [];
+    protected $suffixes = [];
 
     /**
      * @see EditableInterface::getType
@@ -329,6 +329,22 @@ class Block extends Model\Document\Editable implements BlockInterface
     public function getCurrentIndex()
     {
         return $this->indices[$this->getCurrent()];
+    }
+
+    /**
+     * @return array
+     */
+    public function getIndices()
+    {
+        return $this->indices;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSuffixes()
+    {
+        return $this->suffixes;
     }
 
     /**

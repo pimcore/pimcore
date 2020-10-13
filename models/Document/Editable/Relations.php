@@ -31,12 +31,12 @@ class Relations extends Model\Document\Editable implements \Iterator
     /**
      * @var array
      */
-    public $elements = [];
+    protected $elements = [];
 
     /**
      * @var array
      */
-    public $elementIds = [];
+    protected $elementIds = [];
 
     /**
      * @see EditableInterface::getType
@@ -64,6 +64,14 @@ class Relations extends Model\Document\Editable implements \Iterator
         }
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getElementIds()
+    {
+        return $this->elementIds;
     }
 
     /**
