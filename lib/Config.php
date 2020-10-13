@@ -17,7 +17,7 @@ namespace Pimcore;
 use Pimcore\Cache\Runtime;
 use Pimcore\Config\EnvironmentConfig;
 use Pimcore\Config\EnvironmentConfigInterface;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\User\UserRole;
 use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
@@ -305,7 +305,7 @@ class Config implements \ArrayAccess
             } else {
                 $data = $config->toArray();
                 foreach ($data as $key => $setting) {
-                    if ($setting instanceof AbstractElement) {
+                    if ($setting instanceof ElementInterface) {
                         $elementCacheKey = $setting->getCacheTag();
                         if (!Runtime::isRegistered($elementCacheKey)) {
                             Runtime::set($elementCacheKey, $setting);
