@@ -50,9 +50,7 @@ abstract class AbstractBlockItem
      */
     public function getElement(string $name)
     {
-        $namingStrategy = \Pimcore::getContainer()->get('pimcore.document.tag.naming.strategy');
-
-        $id = $namingStrategy->buildChildElementTagName($name, $this->getItemType(), $this->parentBlockNames, $this->index);
+        $id = Document\Editable::buildChildElementTagName($name, $this->getItemType(), $this->parentBlockNames, $this->index);
         $editable = $this->document->getEditable($id);
 
         if ($editable) {
