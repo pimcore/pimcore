@@ -17,11 +17,11 @@ declare(strict_types=1);
 
 namespace Pimcore\Sitemap\Element;
 
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 
 interface FilterInterface
 {
-    public function canBeAdded(AbstractElement $element, GeneratorContextInterface $context): bool;
+    public function canBeAdded(ElementInterface $element, GeneratorContextInterface $context): bool;
 
-    public function handlesChildren(AbstractElement $element, GeneratorContextInterface $context): bool;
+    public function handlesChildren(ElementInterface $element, GeneratorContextInterface $context): bool;
 }

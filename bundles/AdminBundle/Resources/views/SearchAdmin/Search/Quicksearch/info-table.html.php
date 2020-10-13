@@ -1,6 +1,6 @@
 <?php
     /**
-     * @var \Pimcore\Model\Element\AbstractElement $element
+     * @var \Pimcore\Model\Element\ElementInterface $element
      */
     $element = $this->element;
     $this->get("translate")->setDomain("admin");

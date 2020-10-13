@@ -94,7 +94,7 @@ class Service
     /**
      * Creates a note for an action with a transition
      *
-     * @param Element\AbstractElement $element
+     * @param Element\ElementInterface $element
      * @param string $type
      * @param string $title
      * @param string $description
@@ -103,7 +103,7 @@ class Service
      *
      * @return Element\Note $note
      */
-    public static function createActionNote($element, $type, $title, $description, $noteData, $user = null)
+    public static function createActionNote(Element\ElementInterface $element, $type, $title, $description, $noteData, $user = null)
     {
         //prepare some vars for creating the note
         if (!$user) {

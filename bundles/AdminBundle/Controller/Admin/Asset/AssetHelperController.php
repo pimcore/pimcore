@@ -752,7 +752,7 @@ class AssetHelperController extends AdminController
                         $data = $asset->getMetadata($field, $language, true);
                     }
 
-                    if ($data instanceof Element\AbstractElement) {
+                    if ($data instanceof Element\ElementInterface) {
                         $data = $data->getFullPath();
                     }
                     $dataRows[] = $data;

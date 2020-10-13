@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete as ConcreteObject;
 use Pimcore\Model\Document;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Element\WorkflowState;
 use Pimcore\Workflow\ActionsButtonService;
@@ -248,7 +248,7 @@ class WorkflowManagementListener implements EventSubscriberInterface
     /**
      * @param GenericEvent $e
      *
-     * @return AbstractElement
+     * @return ElementInterface
      *
      * @throws \Exception
      */

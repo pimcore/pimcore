@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Asset\MetaData\ClassDefinition\Data;
 
-use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 
@@ -186,7 +185,7 @@ class Asset extends Data
     public function getDataFromListfolderGrid($data, $params = [])
     {
         $data = \Pimcore\Model\Asset::getByPath($data);
-        if ($data instanceof AbstractElement) {
+        if ($data instanceof ElementInterface) {
             return $data->getId();
         }
 

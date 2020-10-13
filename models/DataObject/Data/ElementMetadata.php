@@ -189,7 +189,7 @@ class ElementMetadata extends Model\AbstractModel implements DataObject\OwnerAwa
     }
 
     /**
-     * @return Model\Element\AbstractElement|null
+     * @return Model\Element\ElementInterface|null
      */
     public function getElement()
     {

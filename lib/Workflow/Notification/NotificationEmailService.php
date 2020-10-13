@@ -15,7 +15,7 @@
 namespace Pimcore\Workflow\Notification;
 
 use Pimcore\Model\DataObject\AbstractObject;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
@@ -62,12 +62,12 @@ class NotificationEmailService extends AbstractNotificationService
      * @param array $roles
      * @param Workflow $workflow
      * @param string $subjectType
-     * @param AbstractElement $subject
+     * @param ElementInterface $subject
      * @param string $action
      * @param string $mailType
      * @param string $mailPath
      */
-    public function sendWorkflowEmailNotification(array $users, array $roles, Workflow $workflow, string $subjectType, AbstractElement $subject, string $action, string $mailType, string $mailPath)
+    public function sendWorkflowEmailNotification(array $users, array $roles, Workflow $workflow, string $subjectType, ElementInterface $subject, string $action, string $mailType, string $mailPath)
     {
         try {
             $recipients = $this->getNotificationUsersByName($users, $roles);
@@ -136,14 +136,14 @@ class NotificationEmailService extends AbstractNotificationService
     /**
      * @param User[] $recipients
      * @param string $subjectType
-     * @param AbstractElement $subject
+     * @param ElementInterface $subject
      * @param Workflow $workflow
      * @param string $action
      * @param string $language
      * @param string $mailPath
      * @param string $deeplink
      */
-    protected function sendPimcoreDocumentMail(array $recipients, string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink)
+    protected function sendPimcoreDocumentMail(array $recipients, string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink)
     {
         $mail = new \Pimcore\Mail(['document' => $mailPath, 'params' => $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)]);
 
@@ -157,14 +157,14 @@ class NotificationEmailService extends AbstractNotificationService
     /**
      * @param User[] $recipients
      * @param string $subjectType
-     * @param AbstractElement $subject
+     * @param ElementInterface $subject
      * @param Workflow $workflow
      * @param string $action
      * @param string $language
      * @param string $mailPath
      * @param string $deeplink
      */
-    protected function sendTemplateMail(array $recipients, string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink)
+    protected function sendTemplateMail(array $recipients, string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink)
     {
         $mail = new \Pimcore\Mail();
 
@@ -183,7 +183,7 @@ class NotificationEmailService extends AbstractNotificationService
 
     /**
      * @param string $subjectType
-     * @param AbstractElement $subject
+     * @param ElementInterface $subject
      * @param Workflow $workflow
      * @param string $action
      * @param string $language
@@ -192,7 +192,7 @@ class NotificationEmailService extends AbstractNotificationService
      *
      * @return string
      */
-    protected function getHtmlBody(string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): string
+    protected function getHtmlBody(string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $language, string $mailPath, string $deeplink): string
     {
         // allow retrieval of inherited values
         $inheritanceBackup = AbstractObject::getGetInheritedValues();
@@ -216,7 +216,7 @@ class NotificationEmailService extends AbstractNotificationService
 
     /**
      * @param string $subjectType
-     * @param AbstractElement $subject
+     * @param ElementInterface $subject
      * @param Workflow $workflow
      * @param string $action
      * @param string $deeplink
@@ -224,7 +224,7 @@ class NotificationEmailService extends AbstractNotificationService
      *
      * @return array
      */
-    protected function getNotificationEmailParameters(string $subjectType, AbstractElement $subject, Workflow $workflow, string $action, string $deeplink, string $language): array
+    protected function getNotificationEmailParameters(string $subjectType, ElementInterface $subject, Workflow $workflow, string $action, string $deeplink, string $language): array
     {
         $noteDescription = $this->getNoteInfo($subject->getId());
 
