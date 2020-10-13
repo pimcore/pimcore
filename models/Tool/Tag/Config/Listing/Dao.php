@@ -23,6 +23,8 @@ use Pimcore\Model\Tool\Tag\Config;
 /**
  * @deprecated
  *
+ * @internal
+ *
  * @property \Pimcore\Model\Tool\Tag\Config\Listing $model
  */
 class Dao extends Model\Dao\PhpArrayTable

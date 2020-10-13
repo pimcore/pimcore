@@ -7,7 +7,7 @@ factory and wrapper of the [`IntlDateFormatter` component of php](http://php.net
  
 ```php
 <?php
-$service = \Pimcore::getContainer()->get(\Pimcore\Localization\IntlFormatter::class);
+$service = \Pimcore::getContainer()->get(Pimcore\Localization\IntlFormatter::class);
 
 //optionally set locale (otherwise it is resolved from the request)
 $service->setLocale("de");

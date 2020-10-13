@@ -9,7 +9,6 @@ use Pimcore\Model\DataObject as ObjectModel;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Document;
-use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Property;
 use Pimcore\Tests\Helper\DataType\TestDataHelper;
@@ -784,10 +783,10 @@ class TestHelper
     }
 
     /**
-     * @param AbstractElement $root
+     * @param ElementInterface $root
      * @param string $type
      */
-    public static function cleanUpTree(AbstractElement $root, $type)
+    public static function cleanUpTree(ElementInterface $root, $type)
     {
         if (!($root instanceof AbstractObject || $root instanceof Document || $root instanceof Asset)) {
             throw new \InvalidArgumentException(sprintf('Cleanup root type for %s needs to be one of: AbstractObject, Document, Asset', $type));
@@ -801,7 +800,7 @@ class TestHelper
             $children = $root->getChildren();
         }
 
-        /** @var AbstractElement|AbstractObject|Document|Asset $child */
+        /** @var ElementInterface $child */
         foreach ($children as $child) {
             codecept_debug(sprintf('Deleting %s %s (%d)', $type, $child->getFullPath(), $child->getId()));
             $child->delete();
