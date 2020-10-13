@@ -29,7 +29,7 @@ class Input extends Model\Document\Editable
      *
      * @var string
      */
-    public $text = '';
+    protected $text = '';
 
     /**
      * @see EditableInterface::getType
@@ -49,6 +49,14 @@ class Input extends Model\Document\Editable
     public function getData()
     {
         return $this->text;
+    }
+
+    /**
+     * @return string
+     */
+    public function getText()
+    {
+        return $this->getData();
     }
 
     /**
