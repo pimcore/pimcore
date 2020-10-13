@@ -206,7 +206,6 @@ class IndexController extends AdminController implements EventedControllerInterf
      */
     protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionListener $csrfProtectionListener, SiteConfigProvider $siteConfigProvider)
     {
-        $namingStrategy = $this->get('pimcore.document.tag.naming.strategy');
         $config = $templateParams['config'];
         $dashboardHelper = new \Pimcore\Helper\Dashboard($user);
 
@@ -233,7 +232,6 @@ class IndexController extends AdminController implements EventedControllerInterf
             'showCloseConfirmation' => true,
             'debug_admin_translations' => (bool)$config['general']['debug_admin_translations'],
             'document_generatepreviews' => (bool)$config['documents']['generate_preview'],
-            'document_naming_strategy' => $namingStrategy->getName(),
             'asset_disable_tree_preview' => (bool)$config['assets']['disable_tree_preview'],
             'htmltoimage' => \Pimcore\Image\HtmlToImage::isSupported(),
             'videoconverter' => \Pimcore\Video::isAvailable(),
