@@ -355,8 +355,8 @@ class EditmodeListener implements EventSubscriberInterface
         return array_merge(
             [
                 '/bundles/pimcoreadmin/css/icons.css',
-                "/bundles/pimcoreadmin/PimcoreApp-all_1.css",
-                "/bundles/pimcoreadmin/PimcoreApp-all_2.css",
+                "/bundles/pimcoreadmin/css/ext-js/PimcoreApp-all_1.css",
+                "/bundles/pimcoreadmin/css/ext-js/PimcoreApp-all_2.css",
                 '/bundles/pimcoreadmin/css/editmode.css?_dc=' . time(),
             ],
             $this->bundleManager->getEditmodeCssPaths()

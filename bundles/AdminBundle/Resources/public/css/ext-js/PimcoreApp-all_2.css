@@ -1469,19 +1469,19 @@
 
 .x-breadcrumb-btn .x-btn-wrap-plain-toolbar-small.x-btn-arrow:after {
     width: 20px;
-    background-image: url(images/breadcrumb/default-arrow.png);
+    background-image: url(../../images/breadcrumb/default-arrow.png);
 }
 
 .x-rtl.x-breadcrumb-btn .x-btn-wrap-plain-toolbar-small.x-btn-arrow:after {
-    background-image: url(images/breadcrumb/default-arrow-rtl.png);
+    background-image: url(../../images/breadcrumb/default-arrow-rtl.png);
 }
 
 .x-btn-menu-active.x-breadcrumb-btn .x-btn-wrap-plain-toolbar-small.x-btn-arrow:after {
-    background-image: url(images/breadcrumb/default-arrow-open.png);
+    background-image: url(../../images/breadcrumb/default-arrow-open.png);
 }
 
 .x-rtl.x-btn-menu-active.x-breadcrumb-btn .x-btn-wrap-plain-toolbar-small.x-btn-arrow:after {
-    background-image: url(images/breadcrumb/default-arrow-open-rtl.png);
+    background-image: url(../../images/breadcrumb/default-arrow-open-rtl.png);
 }
 
 .x-breadcrumb-btn .x-btn-wrap-plain-toolbar-small.x-btn-split:after {
@@ -1552,14 +1552,14 @@
     margin-left: 4px;
     margin-right: 4px;
     margin-bottom: 0;
-    background-image: url(images/breadcrumb/default-scroll-left.png);
+    background-image: url(../../images/breadcrumb/default-scroll-left.png);
 }
 
 .x-box-scroller-breadcrumb-default.x-box-scroller-right {
     margin-left: 4px;
     margin-right: 4px;
     margin-bottom: 0;
-    background-image: url(images/breadcrumb/default-scroll-right.png);
+    background-image: url(../../images/breadcrumb/default-scroll-right.png);
 }
 
 .x-tree-expander {
@@ -1715,11 +1715,11 @@
 }
 
 .x-grid-tree-loading .x-tree-icon {
-    background-image: url(images/tree/loading.gif);
+    background-image: url(../../images/tree/loading.gif);
 }
 
 .x-grid-tree-loading .x-rtl.x-tree-icon {
-    background-image: url(images/tree/loading.gif);
+    background-image: url(../../images/tree/loading.gif);
 }
 
 .x-tree-node-text {
@@ -12048,7 +12048,7 @@
 }
 
 .x-treelist-nav .x-treelist-item-loading .x-treelist-item-icon {
-    background-image: url(images/tree/loading.gif);
+    background-image: url(../../images/tree/loading.gif);
     color: transparent;
 }
 

@@ -527,7 +527,7 @@
 }
 
 .x-treelist-item-loading .x-treelist-item-icon {
-    background-image: url(images/tree/loading.gif);
+    background-image: url(../../images/tree/loading.gif);
     color: transparent;
 }
 
@@ -719,7 +719,7 @@
 }
 
 .x-treelist-nav .x-treelist-item-loading .x-treelist-item-icon {
-    background-image: url(images/tree/loading.gif);
+    background-image: url(../../images/tree/loading.gif);
     color: transparent;
 }
 
@@ -3589,7 +3589,7 @@ body > .x-mask {
 
 .x-mask-msg-text {
     padding: 25px 0 0;
-    background-image: url(images/loadmask/loading.gif);
+    background-image: url(../../images/loadmask/loading.gif);
     background-repeat: no-repeat;
     background-position: center 0;
 }
@@ -7047,7 +7047,7 @@ body > .x-mask {
 }
 
 .x-tool-img {
-    background-image: url(images/tools/tool-sprites.png);
+    background-image: url(../../images/tools/tool-sprites.png);
 }
 
 .x-tool-placeholder {
@@ -9810,7 +9810,7 @@ body > .x-mask {
 }
 
 .x-btn-group-header-default .x-tool-img {
-    background-image: url(images/tools/tool-sprites-dark.png);
+    background-image: url(../../images/tools/tool-sprites-dark.png);
     background-color: #fff;
 }
 
@@ -10058,7 +10058,7 @@ body > .x-mask {
 }
 
 .x-btn-group-header-default-framed .x-tool-img {
-    background-image: url(images/tools/tool-sprites-dark.png);
+    background-image: url(../../images/tools/tool-sprites-dark.png);
     background-color: #fff;
 }
 
@@ -11501,7 +11501,7 @@ body > .x-mask {
     width: 16px;
     height: 16px;
     margin: 0 5px;
-    background: url(images/form/exclamation.png) no-repeat;
+    background: url(../../images/form/exclamation.png) no-repeat;
 }
 
 .x-form-invalid-under-default {
@@ -11509,7 +11509,7 @@ body > .x-mask {
     color: #cf4c35;
     font: 300 13px/16px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
     background: no-repeat 0 2px;
-    background-image: url(images/form/exclamation.png);
+    background-image: url(../../images/form/exclamation.png);
 }
 
 .x-form-error-wrap-default.x-form-error-wrap-side {
@@ -12530,7 +12530,7 @@ a.x-monthpicker-yearnav-button:hover {
 }
 
 .x-tip-default .x-tool-img {
-    background-image: url(images/tools/tool-sprites-dark.png);
+    background-image: url(../../images/tools/tool-sprites-dark.png);
     background-color: #747474;
 }
 
@@ -12712,7 +12712,7 @@ a.x-monthpicker-yearnav-button:hover {
 }
 
 .x-tip-form-invalid .x-tool-img {
-    background-image: url(images/tools/tool-sprites-dark.png);
+    background-image: url(../../images/tools/tool-sprites-dark.png);
     background-color: #747474;
 }
 
@@ -12785,7 +12785,7 @@ a.x-monthpicker-yearnav-button:hover {
 
 .x-tip-body-form-invalid {
     background: 1px 1px no-repeat;
-    background-image: url(images/form/exclamation.png);
+    background-image: url(../../images/form/exclamation.png);
 }
 
 .x-tip-body-form-invalid li {
@@ -13278,7 +13278,7 @@ a.x-color-picker-item:hover {
     position: absolute;
     top: -8px;
     left: -12px;
-    background-image: url(images/grid/dd-insert-arrow-right.png);
+    background-image: url(../../images/grid/dd-insert-arrow-right.png);
     height: 16px;
     width: 16px;
 }
@@ -13287,7 +13287,7 @@ a.x-color-picker-item:hover {
     position: absolute;
     top: -8px;
     right: -11px;
-    background-image: url(images/grid/dd-insert-arrow-left.png);
+    background-image: url(../../images/grid/dd-insert-arrow-left.png);
     height: 16px;
     width: 16px;
 }
@@ -13299,11 +13299,11 @@ a.x-color-picker-item:hover {
 }
 
 .x-col-move-top {
-    background-image: url(images/grid/col-move-top.png);
+    background-image: url(../../images/grid/col-move-top.png);
 }
 
 .x-col-move-bottom {
-    background-image: url(images/grid/col-move-bottom.png);
+    background-image: url(../../images/grid/col-move-bottom.png);
 }
 
 .x-grid-header-ct {
@@ -15475,7 +15475,7 @@ a.x-color-picker-item:hover {
 }
 
 .x-accordion-hd .x-tool-img {
-    background-image: url(images/tools/tool-sprites-dark.png);
+    background-image: url(../../images/tools/tool-sprites-dark.png);
     background-image: none;
 }
 

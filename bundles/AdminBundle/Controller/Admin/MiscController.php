@@ -20,7 +20,9 @@ use Pimcore\Config;
 use Pimcore\Controller\Config\ControllerDataProvider;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Db;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\File;
+use Pimcore\Localization\LocaleService;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Tool;
@@ -789,14 +791,15 @@ class MiscController extends AdminController
     /**
      * @Route("/pimcore-internal-scripts", name="pimcore_admin_pimcore_internal_scripts", methods={"GET"})
      *
+     * @param Request $request
+     * @param PimcoreBundleManager $bundleManager
+     * @param LocaleService $localeService
+     *
      * @throws \Exception
      */
-    public function pimcoreInternalScriptsAction(Request $request) {
-
-        $bundleManager = $this->get('pimcore.extension.bundle_manager');
-
+    public function pimcoreInternalScriptsAction(Request $request, PimcoreBundleManager $bundleManager, LocaleServiceInterface $localeService) {
         $pluginJsPaths = $bundleManager->getJsPaths();
-        $locale = \Pimcore::getContainer()->get('pimcore.locale')->getLocale();
+        $locale = $localeService->getLocale();
 
         $scripts = [
 
@@ -1483,10 +1486,9 @@ class MiscController extends AdminController
      *
      * @throws \Exception
      */
-    public function pimcoreEditmodeScriptsAction(Request $request, Packages $packages, RouterInterface $router) {
+    public function pimcoreEditmodeScriptsAction(Request $request, Packages $packages, RouterInterface $router, PimcoreBundleManager $bundleManager) {
         $scriptContents = "";
 
-        $bundleManager = $this->get('pimcore.extension.bundle_manager');
         $pluginJsPaths = $bundleManager->getEditmodeJsPaths();
 
         $scripts = [
@@ -1501,31 +1503,30 @@ class MiscController extends AdminController
             '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js',
             '/bundles/pimcoreadmin/js/pimcore/elementservice.js',
             '/bundles/pimcoreadmin/js/pimcore/document/edit/dnd.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tag.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/block.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/scheduledblock.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/date.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/relation.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/relations.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/checkbox.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/image.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/input.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/link.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/select.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/snippet.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/textarea.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/numeric.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/wysiwyg.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/renderlet.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/table.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/video.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/multiselect.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/areablock.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/area.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/pdf.js',
-            '/bundles/pimcoreadmin/js/pimcore/document/tags/embed.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editable.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/block.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/scheduledblock.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/date.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/relation.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/relations.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/checkbox.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/image.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/input.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/link.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/select.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/snippet.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/textarea.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/numeric.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/wysiwyg.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/renderlet.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/table.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/video.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/multiselect.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/areablock.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/area.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/pdf.js',
+            '/bundles/pimcoreadmin/js/pimcore/document/editables/embed.js',
             '/bundles/pimcoreadmin/js/pimcore/document/edit/helper.js',
-
 
             '/bundles/pimcoreadmin/js/pimcore/document/edit/startup.js',
         ];
