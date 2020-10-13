@@ -595,7 +595,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param Element\AbstractElement[]|null $data
+     * @param Element\ElementInterface[]|null $data
      *
      * @return array
      */

@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Sitemap\Document\Filter;
 
 use Pimcore\Model\Document;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Site;
 use Pimcore\Sitemap\Document\DocumentGeneratorContext;
 use Pimcore\Sitemap\Element\FilterInterface;
@@ -35,7 +35,7 @@ class SiteRootFilter implements FilterInterface
      */
     private $siteRoots;
 
-    public function canBeAdded(AbstractElement $element, GeneratorContextInterface $context): bool
+    public function canBeAdded(ElementInterface $element, GeneratorContextInterface $context): bool
     {
         if (!$element instanceof Document) {
             return false;
@@ -53,7 +53,7 @@ class SiteRootFilter implements FilterInterface
         return true;
     }
 
-    public function handlesChildren(AbstractElement $element, GeneratorContextInterface $context): bool
+    public function handlesChildren(ElementInterface $element, GeneratorContextInterface $context): bool
     {
         return $this->canBeAdded($element, $context);
     }
