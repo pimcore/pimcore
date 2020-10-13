@@ -1312,30 +1312,6 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param string $method
-     * @param array $args
-     *
-     * @return mixed
-     *
-     * @throws \Exception
-     */
-    public function __call($method, $args)
-    {
-
-        // compatibility mode (they do not have any set_oXyz() methods anymore)
-        if (preg_match('/^(get|set)o_/i', $method)) {
-            $newMethod = preg_replace('/^(get|set)o_/i', '$1', $method);
-            if (method_exists($this, $newMethod)) {
-                $r = call_user_func_array([$this, $newMethod], $args);
-
-                return $r;
-            }
-        }
-
-        return parent::__call($method, $args);
-    }
-
-    /**
      * @return bool
      */
     public static function doNotRestoreKeyAndPath()
