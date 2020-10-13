@@ -1328,7 +1328,7 @@ class AbstractObject extends Model\Element\AbstractElement
             if (method_exists($this, $newMethod)) {
                 $r = call_user_func_array([$this, $newMethod], $args);
 
-                throw new \Exception('foo');
+                //throw new \Exception('foo');
 
                 return $r;
             }
