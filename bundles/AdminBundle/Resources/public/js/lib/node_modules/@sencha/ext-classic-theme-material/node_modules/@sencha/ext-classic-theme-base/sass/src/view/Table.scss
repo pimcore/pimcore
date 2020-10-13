@@ -1,6 +1,0 @@
-// The min-height ensures we get a horizontal scroll bar 
-// if necessary, even when the grid has no items in it.
-.#{$prefix}grid-item-container {
-    min-height: 1px;
-    position: relative;
-}

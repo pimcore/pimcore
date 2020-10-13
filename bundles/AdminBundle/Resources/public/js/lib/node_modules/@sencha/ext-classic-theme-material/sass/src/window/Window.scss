@@ -1,9 +1,0 @@
-.#{$prefix}window {
-    box-shadow: $toolbar-box-shadow;
-
-    .#{$prefix}window-header {
-        .#{$prefix}tool-close {
-            color: $window-close-glyph-color;
-        }
-    }
-}

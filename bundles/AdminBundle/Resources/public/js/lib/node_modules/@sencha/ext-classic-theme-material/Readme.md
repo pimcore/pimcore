@@ -1,2 +1,0 @@
-# theme-material - Read Me
-

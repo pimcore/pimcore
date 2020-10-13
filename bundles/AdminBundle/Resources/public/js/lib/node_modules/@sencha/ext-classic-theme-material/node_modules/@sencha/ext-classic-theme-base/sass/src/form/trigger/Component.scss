@@ -1,6 +1,0 @@
-@if $enable-font-icons {
-    // remove default trigger pseudo element
-    .#{$prefix}form-trigger.#{$prefix}form-trigger-cmp:before {
-        content: none;
-    }
-}
