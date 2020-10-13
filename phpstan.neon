@@ -20,7 +20,6 @@ parameters:
         - '**/Processor/PdfReactor8.php'
         - '**/simple_html_dom.php'
         - '**/PDFreactor.class.php'
-        - '**/Document/MigrateTagNamingStrategyCommand.php'
         - '**/bundles/AdminBundle/Security/Guard/AdminAuthenticator.php'
 
     ignoreErrors:

@@ -7,16 +7,6 @@ services:
     # DOCUMENT TAG HANDLING (EDITABLES)
     #
 
-    # the used naming strategy will be aliased to "pimcore.document.tag.naming.strategy" by the extension based on
-    # the pimcore.documents.editables.naming_strategy config value
-    Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface: '@pimcore.document.tag.naming.strategy'
-
-    pimcore.document.tag.naming.strategy.legacy:
-        class: Pimcore\Document\Tag\NamingStrategy\LegacyNamingStrategy
-
-    pimcore.document.tag.naming.strategy.nested:
-        class: Pimcore\Document\Tag\NamingStrategy\NestedNamingStrategy
-
     Pimcore\Document\Editable\Block\BlockStateStack:
         public: true
 
@@ -72,15 +62,3 @@ services:
 
     Pimcore\Document\DocumentStack:
         public: true
-
-    #
-    # DOCUMENT TAG MIGRATION
-    #
-
-    pimcore.document.tag.naming.migration.strategy.analyze:
-        class: Pimcore\Document\Tag\NamingStrategy\Migration\AnalyzeMigrationStrategy
-        arguments:
-            $db: '@database_connection'
-
-    pimcore.document.tag.naming.migration.strategy.render:
-        class: Pimcore\Document\Tag\NamingStrategy\Migration\RenderMigrationStrategy
