@@ -146,12 +146,10 @@ class Area extends Model\Document\Editable
     public function getElement(string $name)
     {
         $document = $this->getDocument();
-        $namingStrategy = \Pimcore::getContainer()->get('pimcore.document.tag.naming.strategy');
-
         $parentBlockNames = $this->getParentBlockNames();
         $parentBlockNames[] = $this->getName();
 
-        $id = $namingStrategy->buildChildElementTagName($name, 'area', $parentBlockNames, 1);
+        $id = Model\Document\Editable::buildChildElementTagName($name, 'area', $parentBlockNames, 1);
         $editable = $document->getEditable($id);
 
         if ($editable) {

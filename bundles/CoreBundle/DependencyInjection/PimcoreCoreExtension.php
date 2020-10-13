@@ -128,7 +128,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
-        $this->configureDocumentEditableNamingStrategy($container, $config);
         $this->configureRouting($container, $config['routing']);
         $this->configureCache($container, $loader, $config);
         $this->configureTranslations($container, $config['translations']);
@@ -173,22 +172,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $container->setDefinition($classMapLoaderId, $classMapLoader);
 
         $service->addMethodCall('addLoader', [new Reference($classMapLoaderId)]);
-    }
-
-    /**
-     * @param ContainerBuilder $container
-     * @param array $config
-     */
-    private function configureDocumentEditableNamingStrategy(ContainerBuilder $container, array $config)
-    {
-        $strategyName = $config['documents']['editables']['naming_strategy'];
-
-        $container
-            ->setAlias(
-                'pimcore.document.tag.naming.strategy',
-                sprintf('pimcore.document.tag.naming.strategy.%s', $strategyName)
-            )
-            ->setPublic(true);
     }
 
     /**
