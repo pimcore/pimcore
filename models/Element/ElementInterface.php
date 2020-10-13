@@ -163,12 +163,13 @@ interface ElementInterface extends ModelInterface
     public function getProperty($name, $asContainer = false);
 
     /**
-     * @param $name
-     * @param $type
-     * @param $data
-     * @param false $inherited
-     * @param false $inheritable
-     * @return mixed
+     * @param string $name
+     * @param string $type
+     * @param mixed $data
+     * @param bool $inherited
+     * @param bool $inheritable
+     *
+     * @return $this
      */
     public function setProperty($name, $type, $data, $inherited = false, $inheritable = false);
 
