@@ -247,6 +247,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             'document_tree_paging_limit' => $config['documents']['tree_paging_limit'],
             'object_tree_paging_limit' => $config['objects']['tree_paging_limit'],
             'maxmind_geoip_installed' => (bool) $this->getParameter('pimcore.geoip.db_file'),
+            'hostname' => htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8'),
 
             // perspective and portlets
             'perspective' => $templateParams['runtimePerspective'],

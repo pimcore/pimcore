@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension;
 
+use Pimcore\Document;
+use Pimcore\Video;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -37,14 +39,9 @@ class HelpersExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('callStatic', function ($class, $method, $args = array()) {
-                if (class_exists($class) && method_exists($class, $method)) {
-                    return call_user_func_array(array($class, $method), $args);
-                }
-
-                return null;
-            }),
-            new TwigFunction('fileExists', function ($file) {
+            new TwigFunction('pimcore_video_is_available', [Video::class, 'isAvailable']),
+            new TwigFunction('pimcore_document_is_available', [Document::class, 'isAvailable']),
+            new TwigFunction('pimcore_file_exists', function ($file) {
                 return file_exists($file);
             }),
         ];

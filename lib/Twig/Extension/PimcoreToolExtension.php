@@ -26,6 +26,7 @@ class PimcoreToolExtension extends AbstractExtension
     {
         return [
             new TwigFunction('pimcore_language_flag', [\Pimcore\Tool::class, 'getLanguageFlagFile']),
+            new TwigFunction('pimcore_supported_locales', [\Pimcore\Tool::class, 'getSupportedLocales']),
         ];
     }
 }

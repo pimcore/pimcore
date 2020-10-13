@@ -4,9 +4,9 @@
 
 {% if element is instanceof('\\Pimcore\\Model\\Asset\\Image') %}
     {% set previewImage = path('pimcore_admin_asset_getimagethumbnail', params) %}
-{% elseif element is instanceof('\\Pimcore\\Model\\Asset\\Video') and callStatic('\\Pimcore\\Video', 'isAvailable') %}
+{% elseif element is instanceof('\\Pimcore\\Model\\Asset\\Video') and pimcore_video_is_available() %}
     {% set previewImage = path('pimcore_admin_asset_getvideothumbnail', params) %}
-{% elseif element is instanceof('\\Pimcore\\Model\\Asset\\Document') and callStatic('\\Pimcore\\Document', 'isAvailable') %}
+{% elseif element is instanceof('\\Pimcore\\Model\\Asset\\Document') and pimcore_document_is_available() %}
     {% set previewImage = path('pimcore_admin_asset_getdocumentthumbnail', params) %}
 {% endif %}
 
