@@ -1188,14 +1188,11 @@ class AbstractObject extends Model\Element\AbstractElement
     }
 
     /**
-     * @param Model\Property[] $o_properties
-     *
-     * @return $this
+     * @inheritdoc
      */
-    public function setProperties($o_properties)
+    public function setProperties(array $properties)
     {
-        $this->o_properties = $o_properties;
-
+        $this->o_properties = $properties;
         return $this;
     }
 
