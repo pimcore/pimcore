@@ -1385,7 +1385,7 @@ class MiscController extends AdminController
             $scriptContents .= $fosResponse;
 
 
-            $manifest = PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/pimcoreEditmode.json";
+            $manifest = PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/ext-js/pimcoreEditmode.json";
             if (is_file($manifest)) {
                 $manifestContents = file_get_contents($manifest);
                 $manifestContents = json_decode($manifestContents, true);

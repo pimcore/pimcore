@@ -221,7 +221,7 @@ $styles = array(
 
 <script type="text/javascript">
     var Ext = Ext || {};
-    Ext.manifest = "/bundles/pimcoreadmin/js/pimcore.json";
+    Ext.manifest = "/bundles/pimcoreadmin/js/ext-js/pimcore.json";
     Ext.beforeLoad = function(platformTags) {
             console.log("BEFORE LOAD");
 
@@ -242,7 +242,7 @@ $scriptLibs = array(
     "lib/leaflet/leaflet.js",
     "lib/leaflet.draw/leaflet.draw.js",
     "lib/vrview/build/vrview.min.js",
-    "bootstrap.js"
+    "ext-js/bootstrap.js"
 );
 
 ?>
