@@ -273,7 +273,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @see Data::getDataForEditmode
      *
-     * @param Element\AbstractElement|null $data
+     * @param Element\ElementInterface|null $data
      * @param null|DataObject\Concrete $object
      * @param array|null $params
      *
@@ -281,7 +281,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if ($data instanceof Element\AbstractElement) {
+        if ($data instanceof Element\ElementInterface) {
             $r = [
                 'id' => $data->getId(),
                 'path' => $data->getRealFullPath(),
@@ -327,7 +327,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param Element\AbstractElement|null $data
+     * @param Element\ElementInterface|null $data
      * @param DataObject\Concrete $object
      * @param array $params
      *
@@ -341,7 +341,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @see Data::getVersionPreview
      *
-     * @param Element\AbstractElement|null $data
+     * @param Element\ElementInterface|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -349,7 +349,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof Element\AbstractElement) {
+        if ($data instanceof Element\ElementInterface) {
             return Element\Service::getElementType($data).' '.$data->getRealFullPath();
         }
 
@@ -459,7 +459,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param Element\AbstractElement|null $data
+     * @param Element\ElementInterface|null $data
      *
      * @return array
      */
