@@ -1195,6 +1195,7 @@ class AbstractObject extends Model\Element\AbstractElement
     public function setProperties(array $properties)
     {
         $this->o_properties = $properties;
+
         return $this;
     }
 

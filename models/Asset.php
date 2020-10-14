@@ -1437,6 +1437,7 @@ class Asset extends Element\AbstractElement
     public function setProperties(array $properties)
     {
         $this->properties = $properties;
+
         return $this;
     }
 
