@@ -391,7 +391,6 @@ class Config implements \ArrayAccess
                     'disableusagestatistics' => self::getArrayValue(['general', 'disable_usage_statistics'], $config),
                     'debug_admin_translations' => self::getArrayValue(['general', 'debug_admin_translations'], $config),
                     'instanceIdentifier' => self::getArrayValue(['general', 'instance_identifier'], $config),
-                    'show_cookie_notice' => self::getArrayValue(['general', 'show_cookie_notice'], $config),
                 ],
                 'documents' => [
                     'versions' => [
