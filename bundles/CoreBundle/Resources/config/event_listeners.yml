@@ -123,12 +123,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -108 }
 
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\TagManagerListener:
-        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
-        public: true
-        tags:
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -107 }
-
     Pimcore\Cache\FullPage\SessionStatus:
         arguments:
             $symfonyMetadataStorageKey: '%session.metadata.storage_key%'
