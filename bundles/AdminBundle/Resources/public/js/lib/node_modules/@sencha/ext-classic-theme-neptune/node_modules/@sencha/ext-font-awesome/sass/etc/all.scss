@@ -1,7 +1,0 @@
-$fa-font-path: get-resource-path('fonts', 'shared');
-
-@import "_mixins";
-
-// NOTE:
-//  _variables.scss is imported much earlier by ext/sass/etc/font-awesome-variables.scss
-//  all css generating pieces are imported by src/all.scss

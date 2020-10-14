@@ -21,4 +21,6 @@ namespace Pimcore;
  */
 class Browser extends \Browser
 {
+
+
 }

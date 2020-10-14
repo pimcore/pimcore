@@ -1,5 +1,0 @@
-@if $include-progress-default-ui {
-    @include extjs-progress-ui(
-        $ui: 'default'
-    );
-}

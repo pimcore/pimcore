@@ -1,6 +1,0 @@
-.#{$prefix}view-item-focused {
-    .#{$prefix}keyboard-mode & {
-        outline: 1px dashed $base-color !important;
-        outline-offset: -1px;
-    }
-}
