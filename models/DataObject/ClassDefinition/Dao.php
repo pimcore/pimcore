@@ -159,9 +159,8 @@ class Dao extends Model\Dao\AbstractDao
         // add non existing columns in the table
         if (is_array($this->model->getFieldDefinitions()) && count($this->model->getFieldDefinitions())) {
             foreach ($this->model->getFieldDefinitions() as $key => $value) {
-                if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
+                if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
                     // if a datafield requires more than one column in the datastore table => only for non-relation types
-                    /** @var Data&DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface $value */
                     if (!$value->isRelationType()) {
                         if (is_array($value->getColumnType())) {
                             foreach ($value->getColumnType() as $fkey => $fvalue) {
