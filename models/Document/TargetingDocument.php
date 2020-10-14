@@ -97,21 +97,16 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     }
 
     /**
-     * Set an editable with the given key/name
-     *
-     * @param string $name
-     * @param Editable $data
-     *
-     * @return PageSnippet
+     * @inheritdoc
      */
-    public function setEditable($name, $data)
+    public function setEditable(Editable $editable)
     {
         if ($this->getUseTargetGroup()) {
-            $name = $this->getTargetGroupEditableName($name);
-            $data->setName($name);
+            $name = $this->getTargetGroupEditableName($editable->getName());
+            $editable->setName($name);
         }
 
-        return parent::setEditable($name, $data);
+        return parent::setEditable($editable);
     }
 
     /**
