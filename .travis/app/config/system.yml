@@ -16,7 +16,6 @@ pimcore:
         debug_admin_translations: false
         devmode: false
         instance_identifier: ''
-        show_cookie_notice: false
     documents:
         versions:
             days: null
