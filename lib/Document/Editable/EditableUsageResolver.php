@@ -21,7 +21,7 @@ use Pimcore\Bundle\CoreBundle\EventListener\Frontend\ElementListener;
 use Pimcore\Document\Renderer\DocumentRenderer;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class EditableUsageResolver
 {

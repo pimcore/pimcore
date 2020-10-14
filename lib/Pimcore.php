@@ -160,7 +160,7 @@ class Pimcore
     }
 
     /**
-     * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface
+     * @return \Symfony\Contracts\EventDispatcher\EventDispatcherInterface
      */
     public static function getEventDispatcher()
     {

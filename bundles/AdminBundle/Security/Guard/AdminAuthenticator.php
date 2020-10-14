@@ -27,7 +27,7 @@ use Pimcore\Tool\Authentication;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -161,7 +161,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
             }
 
             $event = new LoginCredentialsEvent($request, $credentials);
-            $this->dispatcher->dispatch(AdminEvents::LOGIN_CREDENTIALS, $event);
+            $this->dispatcher->dispatch($event, AdminEvents::LOGIN_CREDENTIALS);
 
             return $event->getCredentials();
         } else {
@@ -206,7 +206,7 @@ class AdminAuthenticator extends AbstractGuardAuthenticator implements LoggerAwa
                 } else {
                     // trigger LOGIN_FAILED event if user could not be authenticated via username/password
                     $event = new LoginFailedEvent($credentials);
-                    $this->dispatcher->dispatch(AdminEvents::LOGIN_FAILED, $event);
+                    $this->dispatcher->dispatch($event, AdminEvents::LOGIN_FAILED);
 
                     if ($event->hasUser()) {
                         $user = new User($event->getUser());

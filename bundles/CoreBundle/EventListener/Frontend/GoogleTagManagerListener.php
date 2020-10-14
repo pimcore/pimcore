@@ -28,7 +28,7 @@ use Pimcore\Event\Analytics\Google\TagManager\CodeEvent;
 use Pimcore\Event\Analytics\GoogleTagManagerEvents;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tool;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Templating\EngineInterface;
 
@@ -174,7 +174,7 @@ class GoogleTagManagerListener
 
         $event = new CodeEvent($data, $blocks, $template);
 
-        $this->eventDispatcher->dispatch($eventName, $event);
+        $this->eventDispatcher->dispatch($event, $eventName);
 
         return $this->renderTemplate($event);
     }

@@ -23,7 +23,7 @@ use Pimcore\Tool\AssetsInstaller;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class PostStateChange

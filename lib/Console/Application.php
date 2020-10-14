@@ -53,7 +53,7 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
         // allow to register commands here (e.g. through plugins)
         $dispatcher = \Pimcore::getEventDispatcher();
         $event = new ConsoleEvent($this);
-        $dispatcher->dispatch(SystemEvents::CONSOLE_INIT, $event);
+        $dispatcher->dispatch($event, SystemEvents::CONSOLE_INIT);
 
         $this->setDispatcher($dispatcher);
 

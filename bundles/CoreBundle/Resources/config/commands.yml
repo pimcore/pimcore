@@ -23,7 +23,7 @@ services:
         arguments:
             - '@Pimcore\Cache\Symfony\CacheClearer'
             - '@Pimcore\Tool\AssetsInstaller'
-            - '@Symfony\Component\EventDispatcher\EventDispatcherInterface'
+            - '@Symfony\Contracts\EventDispatcher\EventDispatcherInterface'
 
     Pimcore\Bundle\CoreBundle\Command\OptimizeImageThumbnailsCommand:
         arguments:

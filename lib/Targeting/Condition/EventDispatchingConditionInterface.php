@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Condition;
 
 use Pimcore\Targeting\Model\VisitorInfo;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 interface EventDispatchingConditionInterface
 {

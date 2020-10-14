@@ -32,7 +32,7 @@ use Pimcore\Model\Metadata;
 use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Version;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -950,7 +950,7 @@ class AssetHelperController extends AdminController
                     'processed' => false,
                 ]);
 
-                $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_BATCH_UPDATE, $updateEvent);
+                $eventDispatcher->dispatch($updateEvent, AdminEvents::ASSET_LIST_BEFORE_BATCH_UPDATE);
 
                 $processed = $updateEvent->getArgument('processed');
 

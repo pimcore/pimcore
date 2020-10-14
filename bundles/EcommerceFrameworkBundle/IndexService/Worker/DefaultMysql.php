@@ -21,7 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\AbstractObject;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @property MysqlConfigInterface $tenantConfig

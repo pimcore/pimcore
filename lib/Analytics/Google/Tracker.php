@@ -28,7 +28,7 @@ use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Pimcore\Config\Config as ConfigObject;
 use Pimcore\Event\Analytics\GoogleAnalyticsEvents;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Templating\EngineInterface;
 
 class Tracker extends AbstractTracker
@@ -171,7 +171,7 @@ class Tracker extends AbstractTracker
         $blocks = $this->buildCodeBlocks($siteId, $siteConfig);
 
         $event = new TrackingDataEvent($config, $siteId, $data, $blocks, $template);
-        $this->eventDispatcher->dispatch(GoogleAnalyticsEvents::CODE_TRACKING_DATA, $event);
+        $this->eventDispatcher->dispatch($event, GoogleAnalyticsEvents::CODE_TRACKING_DATA);
 
         return $this->renderTemplate($event);
     }

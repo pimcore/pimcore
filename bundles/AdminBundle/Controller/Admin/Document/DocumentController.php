@@ -30,7 +30,7 @@ use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend;
 use Pimcore\Tool\Session;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -107,7 +107,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             'data' => $data,
             'document' => $document,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        $eventDispatcher->dispatch($event, AdminEvents::DOCUMENT_GET_PRE_SEND_DATA);
         $data = $event->getArgument('data');
 
         if ($document->isAllowed('view')) {
@@ -190,7 +190,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'context' => $allParams,
             ]);
 
-            $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD);
             /** @var Document\Listing $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
@@ -208,7 +208,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $event = new GenericEvent($this, [
             'documents' => $documents,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
+        $eventDispatcher->dispatch($event, AdminEvents::DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA);
         $documents = $event->getArgument('documents');
 
         if ($allParams['limit']) {
@@ -1200,7 +1200,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+        $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::DOCUMENT_LIST_BEFORE_FILTER_PREPARE);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
@@ -1222,7 +1222,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                 'list' => $list,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD);
             /** @var Document\Listing $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
@@ -1247,7 +1247,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
             'list' => $result,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+        $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::DOCUMENT_LIST_AFTER_LIST_LOAD);
         $result = $afterListLoadEvent->getArgument('list');
 
         return $this->adminJson($result['data']);

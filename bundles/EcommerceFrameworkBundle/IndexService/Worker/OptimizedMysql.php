@@ -18,7 +18,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\OptimizedMysql a
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @method OptimizedMysqlConfig getTenantConfig()

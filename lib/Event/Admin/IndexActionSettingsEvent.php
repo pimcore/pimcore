@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Admin;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class IndexActionSettingsEvent extends Event
 {

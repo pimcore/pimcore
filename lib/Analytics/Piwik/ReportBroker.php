@@ -22,7 +22,7 @@ use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Piwik\Dto\ReportConfig;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Pimcore\Event\Analytics\PiwikEvents;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -80,7 +80,7 @@ class ReportBroker
         $reports = $this->buildReports();
 
         $event = new Event\ReportConfigEvent($reports);
-        $this->eventDispatcher->dispatch(PiwikEvents::GENERATE_REPORTS, $event);
+        $this->eventDispatcher->dispatch($event, PiwikEvents::GENERATE_REPORTS);
 
         $this->reports = [];
         foreach ($event->getReports() as $report) {

@@ -17,7 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\ConfigInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 abstract class AbstractWorker implements WorkerInterface
 {

@@ -29,7 +29,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Event\Ecommerce\CheckoutManagerEvents;
 use Pimcore\Event\Model\Ecommerce\CheckoutManagerStepsEvent;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class CheckoutManager implements CheckoutManagerInterface
 {
@@ -184,7 +184,7 @@ class CheckoutManager implements CheckoutManagerInterface
         }
 
         $event = new CheckoutManagerStepsEvent($this, $this->currentStep);
-        $this->eventDispatcher->dispatch(CheckoutManagerEvents::INITIALIZE_STEP_STATE, $event);
+        $this->eventDispatcher->dispatch($event, CheckoutManagerEvents::INITIALIZE_STEP_STATE);
         $this->currentStep = $event->getCurrentStep();
     }
 
@@ -471,7 +471,7 @@ class CheckoutManager implements CheckoutManagerInterface
         $this->validateCheckoutSteps();
 
         $event = new CheckoutManagerStepsEvent($this, $step, ['data' => $data]);
-        $this->eventDispatcher->dispatch(CheckoutManagerEvents::PRE_COMMIT_STEP, $event);
+        $this->eventDispatcher->dispatch($event, CheckoutManagerEvents::PRE_COMMIT_STEP);
         $data = $event->getArgument('data');
 
         // get index of current step and index of step to commit
@@ -515,7 +515,7 @@ class CheckoutManager implements CheckoutManagerInterface
         }
 
         $event = new CheckoutManagerStepsEvent($this, $step, ['data' => $data]);
-        $this->eventDispatcher->dispatch(CheckoutManagerEvents::POST_COMMIT_STEP, $event);
+        $this->eventDispatcher->dispatch($event, CheckoutManagerEvents::POST_COMMIT_STEP);
 
         return $result;
     }

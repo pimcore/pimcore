@@ -26,7 +26,7 @@ use Pimcore\Extension\Bundle\Installer\Exception\UpdateException;
 use Pimcore\HttpKernel\BundleCollection\ItemInterface;
 use Pimcore\Kernel;
 use Pimcore\Routing\RouteReferenceInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 class PimcoreBundleManager
@@ -714,9 +714,7 @@ class PimcoreBundleManager
     protected function resolveEventPaths(array $paths, string $eventName): array
     {
         $event = new PathsEvent($paths);
-
-        $this->dispatcher->dispatch($eventName, $event);
-
+        $this->dispatcher->dispatch($event, $eventName);
         return $event->getPaths();
     }
 }

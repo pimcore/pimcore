@@ -33,7 +33,7 @@ use Pimcore\Tool\Console;
 use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -221,7 +221,7 @@ class Installer
 
         $event = new InstallerStepEvent($type, $message, $step, $this->getStepEventCount());
 
-        $this->eventDispatcher->dispatch(self::EVENT_NAME_STEP, $event);
+        $this->eventDispatcher->dispatch($event, self::EVENT_NAME_STEP);
 
         return $event;
     }

@@ -26,7 +26,7 @@ use Pimcore\Model\Staticroute;
 use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\Model\VisitorInfo;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -98,8 +98,8 @@ class DocumentTargetGroupListener implements EventSubscriberInterface
             ]);
 
             $this->eventDispatcher->dispatch(
-                TargetingEvents::ASSIGN_DOCUMENT_TARGET_GROUP,
-                new AssignDocumentTargetGroupEvent($visitorInfo, $document, $targetGroup)
+                new AssignDocumentTargetGroupEvent($visitorInfo, $document, $targetGroup),
+                TargetingEvents::ASSIGN_DOCUMENT_TARGET_GROUP
             );
         }
     }

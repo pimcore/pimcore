@@ -27,7 +27,7 @@ use Pimcore\Analytics\SiteId\SiteId;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Pimcore\Config\Config as ConfigObject;
 use Pimcore\Event\Analytics\PiwikEvents;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Templating\EngineInterface;
 
 class Tracker extends AbstractTracker
@@ -114,7 +114,7 @@ class Tracker extends AbstractTracker
         $template = '@PimcoreCore/Analytics/Tracking/Piwik/trackingCode.html.twig';
 
         $event = new TrackingDataEvent($config, $siteId, $data, $blocks, $template);
-        $this->eventDispatcher->dispatch(PiwikEvents::CODE_TRACKING_DATA, $event);
+        $this->eventDispatcher->dispatch($event, PiwikEvents::CODE_TRACKING_DATA);
 
         return $this->renderTemplate($event);
     }

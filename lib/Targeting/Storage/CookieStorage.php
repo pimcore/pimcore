@@ -20,7 +20,7 @@ namespace Pimcore\Targeting\Storage;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Storage\Cookie\CookieSaveHandlerInterface;
 use Pimcore\Targeting\Storage\Traits\TimestampsTrait;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
