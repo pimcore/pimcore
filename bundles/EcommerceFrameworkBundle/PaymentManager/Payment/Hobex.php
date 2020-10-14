@@ -273,7 +273,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
             $this->setAuthorizedData($clearedParams);
 
             //https://hobex.docs.oppwa.com/reference/resultCodes
-            if (strpos($jsonResponse['result']['code'], '000.100.') === 0) {
+            if ($this->isAuthorized($jsonResponse['result']['code'])){
                 $responseStatus = StatusInterface::STATUS_AUTHORIZED;
             }
 
@@ -367,5 +367,10 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
     public function executeCredit(PriceInterface $price, $reference, $transactionId)
     {
         throw new NotImplementedException('executeCredit is not implemented yet.');
+    }
+
+    protected  function isAuthorized($code)
+    {
+        return strpos($code, '000.100.') === 0 || strpos($code,'000.000.') === 0;
     }
 }
