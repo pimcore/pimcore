@@ -23,7 +23,7 @@ use Pimcore\Targeting\DataProviderDependentInterface;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Pimcore\Targeting\Service\VisitedPagesCounter as VisitedPagesCounterService;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class VisitedPagesBefore extends AbstractVariableCondition implements DataProviderDependentInterface, EventDispatchingConditionInterface
 {

@@ -33,7 +33,7 @@ use Pimcore\Tool;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Session;
 use Pimcore\Version;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;

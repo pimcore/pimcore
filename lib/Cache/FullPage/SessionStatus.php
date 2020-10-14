@@ -19,7 +19,7 @@ namespace Pimcore\Cache\FullPage;
 
 use Pimcore\Event\Cache\FullPage\IgnoredSessionKeysEvent;
 use Pimcore\Event\FullPageCacheEvents;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**

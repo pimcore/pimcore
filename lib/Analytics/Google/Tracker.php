@@ -28,7 +28,7 @@ use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Pimcore\Config\Config as ConfigObject;
 use Pimcore\Event\Analytics\GoogleAnalyticsEvents;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Templating\EngineInterface;
 
 class Tracker extends AbstractTracker

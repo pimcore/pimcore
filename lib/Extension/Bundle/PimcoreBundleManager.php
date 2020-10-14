@@ -26,7 +26,7 @@ use Pimcore\Extension\Bundle\Installer\Exception\UpdateException;
 use Pimcore\HttpKernel\BundleCollection\ItemInterface;
 use Pimcore\Kernel;
 use Pimcore\Routing\RouteReferenceInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 class PimcoreBundleManager

@@ -25,7 +25,7 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Logger;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Pimcore\Tool;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;

@@ -20,7 +20,7 @@ namespace Pimcore\Targeting;
 use Pimcore\Event\Targeting\BuildConditionEvent;
 use Pimcore\Event\TargetingEvents;
 use Pimcore\Targeting\Condition\ConditionInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ConditionFactory implements ConditionFactoryInterface
 {

@@ -25,7 +25,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\PaymentManagerInterfa
 use Pimcore\Event\Ecommerce\OrderAgentEvents;
 use Pimcore\Event\Model\Ecommerce\OrderAgentEvent;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class OrderAgent extends Agent
 {

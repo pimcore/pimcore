@@ -22,7 +22,7 @@ use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Piwik\Dto\ReportConfig;
 use Pimcore\Analytics\SiteId\SiteIdProvider;
 use Pimcore\Event\Analytics\PiwikEvents;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**

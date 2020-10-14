@@ -26,7 +26,7 @@ use Pimcore\Model\Staticroute;
 use Pimcore\Targeting\ActionHandler\ActionHandlerInterface;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\Model\VisitorInfo;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**

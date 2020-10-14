@@ -29,7 +29,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Type\Decimal;
 use Pimcore\Event\Ecommerce\CheckoutManagerEvents;
 use Pimcore\Event\Model\Ecommerce\CheckoutManagerStepsEvent;
 use Pimcore\Model\DataObject\Fieldcollection\Data\PaymentInfo;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CheckoutManager implements CheckoutManagerInterface
 {

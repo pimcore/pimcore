@@ -26,7 +26,7 @@ use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Templating\Helper\Placeholder\ContainerService;
 use Pimcore\Templating\Renderer\ActionRenderer;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 
 class DocumentRenderer implements DocumentRendererInterface

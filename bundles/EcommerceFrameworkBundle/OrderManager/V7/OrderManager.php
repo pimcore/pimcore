@@ -29,7 +29,7 @@ use Pimcore\Event\Model\Ecommerce\OrderManagerItemEvent;
 use Pimcore\File;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Fieldcollection;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class OrderManager extends \Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManager implements OrderManagerInterface
