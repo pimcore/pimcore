@@ -112,8 +112,8 @@ class DocumentRenderer implements DocumentRendererInterface
     public function render(Document\PageSnippet $document, array $attributes = [], array $query = [], array $options = []): string
     {
         $this->eventDispatcher->dispatch(
-            DocumentEvents::RENDERER_PRE_RENDER,
-            new DocumentEvent($document)
+            new DocumentEvent($document),
+            DocumentEvents::RENDERER_PRE_RENDER
         );
 
         // apply best matching target group (if any)
@@ -147,8 +147,8 @@ class DocumentRenderer implements DocumentRendererInterface
         $this->localeService->setLocale($tempLocale);
 
         $this->eventDispatcher->dispatch(
-            DocumentEvents::RENDERER_POST_RENDER,
-            new DocumentEvent($document)
+            new DocumentEvent($document),
+            DocumentEvents::RENDERER_POST_RENDER
         );
 
         return $response->getContent();

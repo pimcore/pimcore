@@ -20,7 +20,7 @@ namespace Pimcore\Analytics\Google\Event;
 use Pimcore\Analytics\Code\CodeBlock;
 use Pimcore\Analytics\Google\Config\Config;
 use Pimcore\Analytics\SiteId\SiteId;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class TrackingDataEvent extends Event
 {

@@ -192,7 +192,7 @@ class ToolbarListener implements EventSubscriberInterface
     {
         $event = new RenderToolbarEvent('@PimcoreCore/Targeting/toolbar/toolbar.html.twig', $data);
 
-        $this->eventDispatcher->dispatch(TargetingEvents::RENDER_TOOLBAR, $event);
+        $this->eventDispatcher->dispatch($event, TargetingEvents::RENDER_TOOLBAR);
 
         $code = $this->templatingEngine->render(
             $event->getTemplate(),

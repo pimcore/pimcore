@@ -69,7 +69,7 @@ class Thumbnail
                 'filesystemPath' => $fsPath,
                 'frontendPath' => $path,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
+            \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
             $path = $event->getArgument('frontendPath');
         }
 
@@ -134,10 +134,11 @@ class Thumbnail
         }
 
         if ($this->hasListeners(AssetEvents::IMAGE_THUMBNAIL)) {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::IMAGE_THUMBNAIL, new GenericEvent($this, [
+            $event = new GenericEvent($this, [
                 'deferred' => $deferred,
                 'generated' => $generated,
-            ]));
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::IMAGE_THUMBNAIL);
         }
     }
 

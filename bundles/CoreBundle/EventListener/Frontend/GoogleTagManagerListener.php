@@ -174,7 +174,7 @@ class GoogleTagManagerListener
 
         $event = new CodeEvent($data, $blocks, $template);
 
-        $this->eventDispatcher->dispatch($eventName, $event);
+        $this->eventDispatcher->dispatch($event, $eventName);
 
         return $this->renderTemplate($event);
     }

@@ -289,7 +289,7 @@ class Manager
             'additionalData' => $additionalData,
         ]);
 
-        $this->eventDispatcher->dispatch(WorkflowEvents::PRE_GLOBAL_ACTION, $event);
+        $this->eventDispatcher->dispatch($event, WorkflowEvents::PRE_GLOBAL_ACTION);
 
         $markingStore = $workflow->getMarkingStore();
 
@@ -302,7 +302,7 @@ class Manager
             $markingStore->setMarking($subject, new Marking($places));
         }
 
-        $this->eventDispatcher->dispatch(WorkflowEvents::POST_GLOBAL_ACTION, $event);
+        $this->eventDispatcher->dispatch($event, WorkflowEvents::POST_GLOBAL_ACTION);
         $this->notesSubscriber->setAdditionalData([]);
 
         if ($saveSubject && $subject instanceof ElementInterface) {

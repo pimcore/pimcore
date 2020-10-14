@@ -144,7 +144,7 @@ class PdfReactor8 extends Processor
         $reactorConfig['document'] = $html;
 
         $event = new PrintConfigEvent($this, ['config' => $config, 'reactorConfig' => $reactorConfig, 'document' => $document]);
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_CONFIG);
 
         $reactorConfig = $event->getArguments()['reactorConfig'];
 
@@ -222,7 +222,7 @@ class PdfReactor8 extends Processor
             'options' => $options,
         ]);
 
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::PRINT_MODIFY_PROCESSING_OPTIONS);
 
         return (array)$event->getArguments()['options'];
     }

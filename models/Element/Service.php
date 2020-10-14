@@ -1025,7 +1025,7 @@ class Service extends Model\AbstractModel
             'key' => $key,
             'type' => $type,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SERVICE_PRE_GET_VALID_KEY, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, SystemEvents::SERVICE_PRE_GET_VALID_KEY);
         $key = $event->getArgument('key');
         $key = trim($key);
 
@@ -1469,7 +1469,7 @@ class Service extends Model\AbstractModel
 
         $event = new ElementAdminStyleEvent($element, $adminStyle, $context);
 
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT_ADMIN_STYLE);
         $adminStyle = $event->getAdminStyle();
 
         return $adminStyle;
@@ -1537,7 +1537,7 @@ class Service extends Model\AbstractModel
             'context' => $context,
         ]);
 
-        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::SERVICE_PRE_GET_DEEP_COPY, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, SystemEvents::SERVICE_PRE_GET_DEEP_COPY);
 
         return $event->getArgument('copier');
     }

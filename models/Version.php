@@ -163,7 +163,7 @@ class Version extends AbstractModel
      */
     public function save()
     {
-        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::PRE_SAVE, new VersionEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::PRE_SAVE);
 
         // check if versioning is disabled for this process
         if (self::$disabled) {
@@ -252,7 +252,7 @@ class Version extends AbstractModel
                 }
             }
         }
-        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::POST_SAVE, new VersionEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::POST_SAVE);
     }
 
     /**
@@ -328,7 +328,7 @@ class Version extends AbstractModel
      */
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::PRE_DELETE, new VersionEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::PRE_DELETE);
 
         foreach ([$this->getFilePath(), $this->getLegacyFilePath()] as $path) {
             if (is_file($path)) {
@@ -346,7 +346,7 @@ class Version extends AbstractModel
         }
 
         $this->getDao()->delete();
-        \Pimcore::getEventDispatcher()->dispatch(VersionEvents::POST_DELETE, new VersionEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new VersionEvent($this), VersionEvents::POST_DELETE);
     }
 
     /**

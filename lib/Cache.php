@@ -16,7 +16,8 @@ namespace Pimcore;
 
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Event\CoreCacheEvents;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * This acts as facade for the actual cache implementation and exists primarily for BC reasons.
@@ -55,7 +56,7 @@ class Cache
         if (\Pimcore::hasKernel()) {
             \Pimcore::getContainer()
                 ->get('event_dispatcher')
-                ->dispatch(CoreCacheEvents::INIT, new Event());
+                ->dispatch(new GenericEvent(), CoreCacheEvents::INIT);
 
             if (isset($_REQUEST['pimcore_nocache']) && \Pimcore::inDebugMode()) {
                 self::getHandler()->disable();

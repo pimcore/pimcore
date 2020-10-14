@@ -14,7 +14,7 @@
 
 namespace Pimcore\Event\Traits;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

@@ -221,7 +221,7 @@ class Installer
 
         $event = new InstallerStepEvent($type, $message, $step, $this->getStepEventCount());
 
-        $this->eventDispatcher->dispatch(self::EVENT_NAME_STEP, $event);
+        $this->eventDispatcher->dispatch($event, self::EVENT_NAME_STEP);
 
         return $event;
     }

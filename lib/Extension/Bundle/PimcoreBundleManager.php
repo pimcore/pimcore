@@ -714,9 +714,7 @@ class PimcoreBundleManager
     protected function resolveEventPaths(array $paths, string $eventName): array
     {
         $event = new PathsEvent($paths);
-
-        $this->dispatcher->dispatch($eventName, $event);
-
+        $this->dispatcher->dispatch($event, $eventName);
         return $event->getPaths();
     }
 }

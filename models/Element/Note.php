@@ -133,7 +133,7 @@ class Note extends Model\AbstractModel
         $this->getDao()->save();
 
         if (!$isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(ElementEvents::POST_ADD, new ElementEvent($this));
+            \Pimcore::getEventDispatcher()->dispatch(new ElementEvent($this), ElementEvents::POST_ADD);
         }
     }
 

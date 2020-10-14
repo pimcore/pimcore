@@ -543,17 +543,17 @@ class Redirect extends AbstractModel
 
     public function save()
     {
-        \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::PRE_SAVE, new RedirectEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new RedirectEvent($this), RedirectEvents::PRE_SAVE);
         $this->getDao()->save();
-        \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::POST_SAVE, new RedirectEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new RedirectEvent($this), RedirectEvents::POST_SAVE);
         $this->clearDependentCache();
     }
 
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::PRE_DELETE, new RedirectEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new RedirectEvent($this), RedirectEvents::PRE_DELETE);
         $this->getDao()->delete();
-        \Pimcore::getEventDispatcher()->dispatch(RedirectEvents::POST_DELETE, new RedirectEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new RedirectEvent($this), RedirectEvents::POST_DELETE);
         $this->clearDependentCache();
     }
 }
