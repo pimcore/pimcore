@@ -1122,5 +1122,3 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         return $this->phpdocType;
     }
 }
-
-class_alias(AdvancedManyToManyObjectRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\ObjectsMetadata');
