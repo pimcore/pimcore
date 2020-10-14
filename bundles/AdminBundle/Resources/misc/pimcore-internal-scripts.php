@@ -7,8 +7,6 @@ return [
     "/bundles/pimcoreadmin/js/lib/ext-plugins/portlet/PortalColumn.js",
     "/bundles/pimcoreadmin/js/lib/ext-plugins/portlet/PortalPanel.js",
 
-    "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic-locale/overrides/" . $locale . "/ext-locale-" . $locale . ".js",
-
     // runtime
     "/bundles/pimcoreadmin/js/pimcore/functions.js",
     "/bundles/pimcoreadmin/js/pimcore/common.js",
