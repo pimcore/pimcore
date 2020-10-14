@@ -16,7 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Logger;
@@ -28,14 +28,13 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/class")
  */
-class ClassController extends AdminController implements EventedControllerInterface
+class ClassController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/get-document-types", name="pimcore_admin_dataobject_class_getdocumenttypes", methods={"GET"})
@@ -1684,9 +1683,9 @@ class ClassController extends AdminController implements EventedControllerInterf
     }
 
     /**
-     * @param FilterControllerEvent $event
+     * @inheritdoc
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -1700,14 +1699,6 @@ class ClassController extends AdminController implements EventedControllerInterf
         ];
 
         $this->checkActionPermission($event, 'classes', $unrestrictedActions);
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-        // nothing to do
     }
 
     /**

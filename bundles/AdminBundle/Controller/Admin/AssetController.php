@@ -19,7 +19,7 @@ use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
@@ -40,14 +40,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/asset")
  */
-class AssetController extends ElementControllerBase implements EventedControllerInterface
+class AssetController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;
@@ -2647,9 +2646,9 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @param FilterControllerEvent $event
+     * @inheridoc
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -2661,13 +2660,5 @@ class AssetController extends ElementControllerBase implements EventedController
         ]);
 
         $this->_assetService = new Asset\Service($this->getAdminUser());
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-        // nothing to do
     }
 }
