@@ -746,7 +746,9 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      * @param string $type
      * @param array $parentBlockNames
      * @param int $index
+     *
      * @return string
+     *
      * @throws \Exception
      */
     public static function buildChildElementTagName(string $name, string $type, array $parentBlockNames, int $index): string

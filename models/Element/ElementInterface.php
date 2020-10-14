@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\Element;
 
-use Pimcore\Model\Asset;
 use Pimcore\Model\Dependency;
 use Pimcore\Model\ModelInterface;
 use Pimcore\Model\Property;
