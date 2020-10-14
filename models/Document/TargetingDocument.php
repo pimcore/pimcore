@@ -137,7 +137,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
                     $inheritedEditable->setName($targetGroupEditableName);
                     $inheritedEditable->setInherited(true);
 
-                    $this->setEditable($targetGroupEditableName, $inheritedEditable);
+                    $this->setEditable($inheritedEditable);
 
                     return $inheritedEditable;
                 }
