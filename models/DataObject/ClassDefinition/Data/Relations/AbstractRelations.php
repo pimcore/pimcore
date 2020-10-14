@@ -477,11 +477,7 @@ abstract class AbstractRelations extends Data implements
                 } elseif (!isset($relationItems[$elementHash])) {
                     $relationItems[$elementHash] = $item;
                 } else {
-                    @trigger_error(
-                            'Passing relations multiple times is deprecated since version 6.5.2 and will throw exception in 7.0.0, tried to assign ' . $elementHash
-                            . ' multiple times in field' . $fieldName . ' of object id: ' . $objectId,
-                            E_USER_DEPRECATED
-                        );
+                    throw new \Exception(sprintf('Passing relations multiple times is not allowed: %s in field %s of object id: %s', $elementHash, $fieldName, $objectId));
                 }
             }
 

@@ -237,5 +237,3 @@ class ReverseManyToManyObjectRelation extends ManyToManyObjectRelation
         return true;
     }
 }
-
-class_alias(ReverseManyToManyObjectRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Nonownerobjects');

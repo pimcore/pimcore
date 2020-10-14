@@ -1144,5 +1144,3 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         $this->enableBatchEdit = $enableBatchEdit;
     }
 }
-
-class_alias(AdvancedManyToManyRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\MultihrefMetadata');

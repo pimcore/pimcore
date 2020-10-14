@@ -716,5 +716,3 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         return null;
     }
 }
-
-class_alias(ManyToOneRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Href');
