@@ -33,7 +33,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -53,6 +52,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $this->reponseHelper = $responseHelper;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
         // use browser language for login page if possible
