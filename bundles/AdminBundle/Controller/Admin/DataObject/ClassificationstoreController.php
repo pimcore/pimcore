@@ -848,7 +848,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
             foreach ($relationIds as $relationId) {
                 $keyId = $relationId['keyId'];
                 $groupId = $relationId['groupId'];
-                $relationParts[] = '(keyId = ' . $keyId . ' and groupId = ' . $groupId . ')';
+                $relationParts[] = '(keyId = ' . $list->quote($keyId) . ' AND groupId = ' . $list->quote($groupId) . ')';
             }
             $conditionParts[] = '(' . implode(' OR ', $relationParts) . ')';
         }
