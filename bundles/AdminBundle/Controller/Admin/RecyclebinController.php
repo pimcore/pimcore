@@ -185,7 +185,7 @@ class RecyclebinController extends AdminController implements KernelControllerEv
     }
 
     /**
-     * @inheridoc
+     * @param ControllerEvent $event
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

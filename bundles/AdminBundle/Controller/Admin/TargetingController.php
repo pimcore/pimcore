@@ -310,7 +310,7 @@ class TargetingController extends AdminController implements KernelControllerEve
     }
 
     /**
-     * @inheritdoc
+     * @param ControllerEvent $event
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

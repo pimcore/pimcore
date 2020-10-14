@@ -2648,7 +2648,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     }
 
     /**
-     * @inheridoc
+     * @param ControllerEvent $event
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

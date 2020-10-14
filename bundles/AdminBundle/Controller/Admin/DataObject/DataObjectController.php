@@ -2160,7 +2160,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     }
 
     /**
-     * @inheritdoc
+     * @param ControllerEvent $event
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
