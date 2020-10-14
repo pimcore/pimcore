@@ -1689,7 +1689,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     }
 
     /**
-     * @inheritdoc
+     * @param ControllerEvent $event
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
