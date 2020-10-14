@@ -28,6 +28,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterf
 use Pimcore\Tool;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\Localizedfield $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -796,8 +798,7 @@ QUERY;
         /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFieldDefinition */
         $localizedFieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
         foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
-            if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
-                /** @var DataObject\ClassDefinition\Data & ResourcePersistenceAwareInterface $value */
+            if ($value instanceof ResourcePersistenceAwareInterface) {
                 if ($value->getColumnType()) {
                     $key = $value->getName();
 

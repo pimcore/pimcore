@@ -20,7 +20,7 @@ use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
 use Pimcore\Controller\Controller;
 use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -128,11 +128,11 @@ abstract class AdminController extends Controller implements AdminControllerInte
     /**
      * Check permission against all controller actions. Can optionally exclude a list of actions.
      *
-     * @param FilterControllerEvent $event
+     * @param ControllerEvent $event
      * @param string $permission
      * @param array $unrestrictedActions
      */
-    protected function checkActionPermission(FilterControllerEvent $event, string $permission, array $unrestrictedActions = [])
+    protected function checkActionPermission(ControllerEvent $event, string $permission, array $unrestrictedActions = [])
     {
         $actionName = null;
         $controller = $event->getController();

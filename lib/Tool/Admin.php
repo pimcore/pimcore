@@ -20,6 +20,7 @@ use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\User;
 use Pimcore\Tool\Text\Csv;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Admin
 {
@@ -186,7 +187,7 @@ class Admin
 
         @chmod(self::getMaintenanceModeFile(), 0666); // so it can be removed also via FTP, ...
 
-        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_ACTIVATE);
+        \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_ACTIVATE);
     }
 
     /**
@@ -196,7 +197,7 @@ class Admin
     {
         @unlink(self::getMaintenanceModeFile());
 
-        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_DEACTIVATE);
+        \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_DEACTIVATE);
     }
 
     /**
@@ -244,14 +245,14 @@ class Admin
 
         @chmod(self::getMaintenanceModeScheduleLoginFile(), 0666); // so it can be removed also via FTP, ...
 
-        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_SCHEDULE_LOGIN);
+        \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_SCHEDULE_LOGIN);
     }
 
     public static function unscheduleMaintenanceModeOnLogin()
     {
         @unlink(self::getMaintenanceModeScheduleLoginFile());
 
-        \Pimcore::getEventDispatcher()->dispatch(SystemEvents::MAINTENANCE_MODE_UNSCHEDULE_LOGIN);
+        \Pimcore::getEventDispatcher()->dispatch(new GenericEvent(), SystemEvents::MAINTENANCE_MODE_UNSCHEDULE_LOGIN);
     }
 
     /**

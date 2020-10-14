@@ -221,7 +221,7 @@ class Installer
 
         $event = new InstallerStepEvent($type, $message, $step, $this->getStepEventCount());
 
-        $this->eventDispatcher->dispatch(self::EVENT_NAME_STEP, $event);
+        $this->eventDispatcher->dispatch($event, self::EVENT_NAME_STEP);
 
         return $event;
     }
@@ -800,7 +800,6 @@ class Installer
             ['key' => 'seo_document_editor'],
             ['key' => 'share_configurations'],
             ['key' => 'system_settings'],
-            ['key' => 'tag_snippet_management'],
             ['key' => 'tags_configuration'],
             ['key' => 'tags_assignment'],
             ['key' => 'tags_search'],

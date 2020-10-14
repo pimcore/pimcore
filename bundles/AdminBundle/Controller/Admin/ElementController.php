@@ -76,7 +76,7 @@ class ElementController extends AdminController
         $type = $request->get('type');
 
         $event = new ResolveElementEvent($type, $idOrPath);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::RESOLVE_ELEMENT, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT);
         $idOrPath = $event->getId();
         $type = $event->getType();
 
@@ -320,7 +320,7 @@ class ElementController extends AdminController
         $limit = intval($request->get('limit', 50));
         $offset = intval($request->get('start', 0));
 
-        if ($element instanceof Element\AbstractElement) {
+        if ($element instanceof Element\ElementInterface) {
             $total = $element->getDependencies()->getRequiredByTotalCount();
 
             if ($request->get('sort')) {
@@ -383,7 +383,7 @@ class ElementController extends AdminController
             $element = Element\Service::getElementByPath($request->get('type'), $request->get('path'));
         }
 
-        if ($element instanceof Element\AbstractElement) {
+        if ($element instanceof Element\ElementInterface) {
             return $this->adminJson([
                 'success' => true,
                 'jobs' => $element->getDependencies()->getRequiredBy(),

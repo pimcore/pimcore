@@ -24,17 +24,6 @@ PIMCORE_TEST=1
 
 This will switch special directories used for testing (like /var/classes) and prevent that you existing installation gets messed up. 
 
-##### Error reporting 
-
-always add 
-
-```
-PIMCORE_PHP_ERROR_REPORTING=32767
-```
-
-if not preset by your system.
-
-
 #### Run all tests
 
 This will run all tests.
@@ -74,7 +63,6 @@ PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVI
 | Env Variable                              | Example          | Comment                                                                                                                        |
 |-------------------------------------------|------------------|--------------------------------------------------------------------------------------------------------------------------------|
 | PIMCORE_ENVIRONMENT                       | test             | Test environment                                                                                                               |
-| PIMCORE_PHP_ERROR_REPORTING               | 32767            | Should be set to E_ALL because Travis uses the same setting.                                                                   |
 | PIMCORE_TEST                              | 1                | **important** this will switch several directories (like /var/classes)                                                         |
 | PIMCORE_TEST_SKIP_DB                      | 1                | Skips DB setup. This does not skip the db-related tests but it<br>reduces the setup time for tests that don't need a database. |
 | PIMCORE_TEST_CACHE_REDIS_DATABASE         | 1                | **required for REDIS tests**                                                                                                   |

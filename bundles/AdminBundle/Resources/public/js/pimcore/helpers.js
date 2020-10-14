@@ -2801,13 +2801,6 @@ pimcore.helpers.reports = function() {
     }
 };
 
-pimcore.helpers.tagManager = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("tag_snippet_management")) {
-        pimcore.layout.toolbar.prototype.showTagManagement();
-    }
-};
-
 pimcore.helpers.seoDocumentEditor = function() {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("documents") && user.isAllowed("seo_document_editor")) {

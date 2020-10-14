@@ -916,5 +916,3 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return parent::addListingFilter($listing, $data, $operator);
     }
 }
-
-class_alias(ManyToManyObjectRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Objects');

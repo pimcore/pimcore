@@ -1414,7 +1414,7 @@ class DataObjectHelperController extends AdminController
             $eventData->setAdditionalData($additionalData);
             $eventData->setContext($context);
 
-            $eventDispatcher->dispatch(DataObjectImportEvents::PREVIEW, $eventData);
+            $eventDispatcher->dispatch($eventData, DataObjectImportEvents::PREVIEW);
 
             $context = $eventData->getContext();
 
@@ -1693,7 +1693,7 @@ class DataObjectHelperController extends AdminController
         $eventData->setContext($context);
 
         if ($job == 1) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::BEFORE_START, $eventData);
+            $eventDispatcher->dispatch($eventData, DataObjectImportEvents::BEFORE_START);
 
             if (!copy($originalFile, $file)) {
                 throw new \Exception('failed to copy file');
@@ -1743,15 +1743,15 @@ class DataObjectHelperController extends AdminController
                 $eventData->setObject($object);
                 $eventData->setRowData($rowData);
 
-                $eventDispatcher->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
+                $eventDispatcher->dispatch($eventData, DataObjectImportEvents::PRE_SAVE);
 
                 $object->setUserModification($this->getAdminUser()->getId());
                 $object->save();
 
-                $eventDispatcher->dispatch(DataObjectImportEvents::POST_SAVE, $eventData);
+                $eventDispatcher->dispatch($eventData, DataObjectImportEvents::POST_SAVE);
 
                 if ($job >= $importJobTotal) {
-                    $eventDispatcher->dispatch(DataObjectImportEvents::DONE, $eventData);
+                    $eventDispatcher->dispatch($eventData, DataObjectImportEvents::DONE);
                 }
 
                 return $this->adminJson(['success' => true, 'rowId' => $rowId, 'message' => $object->getFullPath(), 'objectId' => $object->getId()]);

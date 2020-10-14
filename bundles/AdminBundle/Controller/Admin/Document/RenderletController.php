@@ -21,7 +21,6 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Document;
-use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
@@ -116,10 +115,8 @@ class RenderletController extends AdminController
             throw $this->createNotFoundException(sprintf('Element with type %s and ID %d was not found', $type ?: 'null', $id ?: 'null'));
         }
 
-        if ($element instanceof AbstractElement) {
-            if (!$element->isAllowed('view')) {
-                throw $this->createAccessDeniedException(sprintf('Access to element with type %s and ID %d is not allowed', $type, $id));
-            }
+        if (!$element->isAllowed('view')) {
+            throw $this->createAccessDeniedException(sprintf('Access to element with type %s and ID %d is not allowed', $type, $id));
         }
 
         return $element;

@@ -36,16 +36,6 @@ parameters:
 			path: bundles/AdminBundle/Resources/views/Admin/Login/twoFactorAuthentication.html.php
 
 		-
-			message: "#^Cannot call method getUser\\(\\) on string\\|Stringable\\|Symfony\\\\Component\\\\Security\\\\Core\\\\User\\\\UserInterface\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Security/Guard/AdminAuthenticator.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:setLocale\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Security/Guard/AdminAuthenticator.php
-
-		-
 			message: "#^Property Pimcore\\\\Bundle\\\\AdminBundle\\\\Security\\\\LogoutSuccessHandler\\:\\:\\$tokenStorage \\(Symfony\\\\Component\\\\Security\\\\Core\\\\Authentication\\\\Token\\\\Storage\\\\TokenStorage\\) does not accept Symfony\\\\Component\\\\Security\\\\Core\\\\Authentication\\\\Token\\\\Storage\\\\TokenStorageInterface\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Security/LogoutSuccessHandler.php
@@ -101,11 +91,6 @@ parameters:
 			path: bundles/CoreBundle/Command/ThumbnailsVideoCommand.php
 
 		-
-			message: "#^Method Pimcore\\\\Bundle\\\\CoreBundle\\\\Controller\\\\PublicServicesController\\:\\:qrcodeAction\\(\\) should return Symfony\\\\Component\\\\HttpFoundation\\\\RedirectResponse but return statement is missing\\.$#"
-			count: 1
-			path: bundles/CoreBundle/Controller/PublicServicesController.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Event\\\\Model\\\\ElementEventInterface\\:\\:getArgument\\(\\)\\.$#"
 			count: 1
 			path: bundles/CoreBundle/EventListener/ElementTagsListener.php
@@ -144,11 +129,6 @@ parameters:
 			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:\\$creationDateTimestamp \\(int\\) does not accept null\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\DefaultMysql\\:\\:load\\(\\) should return array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\IndexableInterface\\> but returns array\\<int, array\\|Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\>\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultMysql.php
 
 		-
 			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:\\$creationDate \\(DateTime\\) does not accept null\\.$#"
@@ -444,26 +424,6 @@ parameters:
 			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\ElasticSearch\\\\SelectRelation\\:\\:addCondition\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterRelation\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/ElasticSearch/SelectRelation.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getUseAndCondition\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/FactFinder/MultiSelect.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectFrom\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/FactFinder/NumberRange.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelectTo\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/FactFinder/NumberRange.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getAvailableCategories\\(\\)\\.$#"
-			count: 2
-			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/FactFinder/SelectCategory.php
 
 		-
 			message: "#^PHPDoc tag @param for parameter \\$filterDefinition with type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiSelect is not subtype of native type Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\.$#"
@@ -826,41 +786,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/Config/OptimizedMysql.php
 
 		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\DefaultFactFinder\\:\\:\\$tenantConfig \\(Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Config\\\\FactFinderConfigInterface\\) does not accept Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Config\\\\ConfigInterface\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFactFinder.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\DefaultFactFinder\\:\\:getProducts\\(\\) should return array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractProduct\\> but returns array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\IndexableInterface\\>\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFactFinder.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\DefaultFactFinder\\:\\:\\$products \\(array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\IndexableInterface\\>\\) does not accept null\\.$#"
-			count: 14
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFactFinder.php
-
-		-
-			message: "#^Cannot assign new offset to string\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFactFinder.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\DefaultFactFinder\\:\\:\\$conditionPriceFrom \\(float\\) does not accept null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFactFinder.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\DefaultFactFinder\\:\\:\\$conditionPriceTo \\(float\\) does not accept null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFactFinder.php
-
-		-
-			message: "#^Offset 'elements' does not exist on string\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFactFinder.php
-
-		-
 			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\DefaultFindologic\\:\\:\\$tenantConfig \\(Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Config\\\\FindologicConfigInterface\\) does not accept Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\Config\\\\ConfigInterface\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultFindologic.php
@@ -926,7 +851,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultMysql.php
 
 		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\DefaultMysql\\:\\:load\\(\\) should return array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\IndexableInterface\\> but returns array\\<int, \\(array\\)\\|Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\>\\.$#"
+			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\IndexService\\\\ProductList\\\\DefaultMysql\\:\\:load\\(\\) should return array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\IndexableInterface\\> but returns array\\<int, array\\|Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\>\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/IndexService/ProductList/DefaultMysql.php
 
@@ -1311,11 +1236,6 @@ parameters:
 			path: lib/Analytics/Piwik/Api/SitesManager.php
 
 		-
-			message: "#^Cannot access offset 0 on false\\.$#"
-			count: 1
-			path: lib/Browser.php
-
-		-
 			message: "#^Return type \\(Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\) of method Pimcore\\\\Cache\\\\Pool\\\\AbstractCacheItemPool\\:\\:getItem\\(\\) should be compatible with return type \\(Symfony\\\\Component\\\\Cache\\\\CacheItem\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItem\\(\\)$#"
 			count: 1
 			path: lib/Cache/Pool/AbstractCacheItemPool.php
@@ -1341,11 +1261,6 @@ parameters:
 			path: lib/Cache/Pool/PimcoreCacheItemPoolInterface.php
 
 		-
-			message: "#^Method Pimcore\\\\Cache\\\\Pool\\\\Redis\\:\\:doClear\\(\\) should return bool but returns Credis_Client\\|string\\.$#"
-			count: 1
-			path: lib/Cache/Pool/Redis.php
-
-		-
 			message: "#^Method Pimcore\\\\Config\\:\\:getConfigInstance\\(\\) should return Pimcore\\\\Config\\\\Config\\|null but returns array\\.$#"
 			count: 1
 			path: lib/Config.php
@@ -1354,11 +1269,6 @@ parameters:
 			message: "#^Property Pimcore\\\\Console\\\\AbstractCommand\\:\\:\\$output \\(Symfony\\\\Component\\\\Console\\\\Output\\\\ConsoleOutput\\) does not accept Symfony\\\\Component\\\\Console\\\\Output\\\\OutputInterface\\.$#"
 			count: 1
 			path: lib/Console/AbstractCommand.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Templating\\\\Model\\\\ViewModelInterface\\:\\:getAllParameters\\(\\)\\.$#"
-			count: 1
-			path: lib/Controller/FrontendController.php
 
 		-
 			message: "#^Method Pimcore\\\\DataObject\\\\GridColumnConfig\\\\Operator\\\\LFExpander\\:\\:getLabeledValue\\(\\) should return stdClass\\|null but returns Pimcore\\\\DataObject\\\\GridColumnConfig\\\\ResultContainer\\.$#"
@@ -1419,16 +1329,6 @@ parameters:
 			message: "#^Cannot access offset int on Pimcore\\\\Model\\\\DataObject\\\\Listing\\.$#"
 			count: 1
 			path: lib/Document/Newsletter/AddressSourceAdapter/ReportAdapter.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Templating\\\\Model\\\\ViewModelInterface\\:\\:\\$editmode\\.$#"
-			count: 3
-			path: lib/Document/Tag/TagHandler.php
-
-		-
-			message: "#^Property Pimcore\\\\Document\\\\Editable\\\\EditableUsageResolver\\:\\:\\$subscriber \\(Pimcore\\\\Document\\\\Editable\\\\UsageRecorderSubscriber\\) does not accept null\\.$#"
-			count: 1
-			path: lib/Document/Editable/EditableUsageResolver.php
 
 		-
 			message: "#^Property Pimcore\\\\Event\\\\Admin\\\\Login\\\\LoginFailedEvent\\:\\:\\$credentials \\(string\\) does not accept array\\.$#"
@@ -1501,11 +1401,6 @@ parameters:
 			path: lib/Localization/IntlFormatter.php
 
 		-
-			message: "#^Array \\(array\\<IntlDateFormatter\\>\\) does not accept Symfony\\\\Component\\\\Intl\\\\DateFormatter\\\\IntlDateFormatter\\.$#"
-			count: 1
-			path: lib/Localization/IntlFormatter.php
-
-		-
 			message: "#^Property Pimcore\\\\Log\\\\ApplicationLogger\\:\\:\\$component \\(null\\) does not accept string\\.$#"
 			count: 1
 			path: lib/Log/ApplicationLogger.php
@@ -1524,11 +1419,6 @@ parameters:
 			message: "#^Property Pimcore\\\\Log\\\\Handler\\\\Mail\\:\\:\\$address \\(null\\) does not accept int\\.$#"
 			count: 1
 			path: lib/Log/Handler/Mail.php
-
-		-
-			message: "#^Offset 0 does not exist on array\\(\\)\\.$#"
-			count: 1
-			path: lib/Mail.php
 
 		-
 			message: "#^Property Pimcore\\\\Mail\\:\\:\\$document \\(Pimcore\\\\Model\\\\Document\\\\Email\\) does not accept Pimcore\\\\Model\\\\Document\\.$#"
@@ -1581,11 +1471,6 @@ parameters:
 			path: lib/Targeting/Document/DocumentTargetingConfigurator.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document&Pimcore\\\\Model\\\\Document\\\\Targeting\\\\TargetingDocumentInterface\\:\\:getElements\\(\\)\\.$#"
-			count: 1
-			path: lib/Targeting/Document/DocumentTargetingConfigurator.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Targeting\\\\ActionHandler\\\\ActionHandlerInterface\\:\\:getActionHandler\\(\\)\\.$#"
 			count: 2
 			path: lib/Targeting/EventListener/TargetingListener.php
@@ -1599,6 +1484,11 @@ parameters:
 			message: "#^Cannot access property \\$type on string\\.$#"
 			count: 2
 			path: lib/Templating/Helper/HeadMeta.php
+
+		-
+			message: "#^Property Pimcore\\\\Templating\\\\Renderer\\\\EditableRenderer\\:\\:\\$editableLoader \\(Pimcore\\\\Model\\\\Document\\\\Editable\\\\Loader\\\\EditableLoader\\) does not accept Pimcore\\\\Model\\\\Document\\\\Editable\\\\Loader\\\\EditableLoaderInterface\\.$#"
+			count: 1
+			path: lib/Templating/Renderer/EditableRenderer.php
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\User\\:\\:setLastLoginDate\\(\\)\\.$#"
@@ -1784,25 +1674,4 @@ parameters:
 			message: "#^Access to an undefined property Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Fieldcollections\\:\\:\\$layoutId\\.$#"
 			count: 1
 			path: models/DataObject/Service.php
-
-		-
-			message: "#^Invalid array key type object\\.$#"
-			count: 2
-			path: models/Element/Import/Service.php
-
-		-
-			message: "#^Property Pimcore\\\\Templating\\\\Renderer\\\\EditableRenderer\\:\\:\\$editableLoader \\(Pimcore\\\\Model\\\\Document\\\\Editable\\\\Loader\\\\EditableLoader\\) does not accept Pimcore\\\\Model\\\\Document\\\\Editable\\\\Loader\\\\EditableLoaderInterface\\.$#"
-			count: 1
-			path: lib/Templating/Renderer/EditableRenderer.php
-
-		-
-			message: "#^Parameter \\$event of method Pimcore\\\\Controller\\\\KernelControllerEventInterface\\:\\:onKernelControllerEvent\\(\\) has invalid typehint type Symfony\\\\Component\\\\HttpKernel\\\\Event\\\\ControllerEvent#"
-			count: 2
-			path: lib/Controller/KernelControllerEventInterface.php
-
-		-
-			message: "#^Parameter \\$event of method Pimcore\\\\Controller\\\\KernelResponseEventInterface\\:\\:onKernelResponseEvent\\(\\) has invalid typehint type Symfony\\\\Component\\\\HttpKernel\\\\Event\\\\ResponseEvent#"
-			count: 2
-			path: lib/Controller/KernelResponseEventInterface.php
-
 

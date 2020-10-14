@@ -20,7 +20,7 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 use Pimcore\Tool\Authentication;
 use Pimcore\Translation\Translator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class TranslationDebugListener implements EventSubscriberInterface
@@ -53,7 +53,7 @@ class TranslationDebugListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         if (!$event->isMasterRequest()) {
             return;

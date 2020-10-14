@@ -21,6 +21,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CacheClearCommand extends AbstractCommand
@@ -76,7 +77,7 @@ class CacheClearCommand extends AbstractCommand
         } else {
             Cache::clearAll();
 
-            $this->eventDispatcher->dispatch(SystemEvents::CACHE_CLEAR);
+            $this->eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR);
 
             $io->success('Pimcore data cache cleared successfully');
         }

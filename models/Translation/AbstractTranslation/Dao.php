@@ -20,6 +20,8 @@ namespace Pimcore\Model\Translation\AbstractTranslation;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Translation\AbstractTranslation $model
  */
 abstract class Dao extends Model\Dao\AbstractDao implements Dao\DaoInterface

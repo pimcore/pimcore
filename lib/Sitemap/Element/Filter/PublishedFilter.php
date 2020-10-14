@@ -17,13 +17,13 @@ declare(strict_types=1);
 
 namespace Pimcore\Sitemap\Element\Filter;
 
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Sitemap\Element\FilterInterface;
 use Pimcore\Sitemap\Element\GeneratorContextInterface;
 
 class PublishedFilter implements FilterInterface
 {
-    public function canBeAdded(AbstractElement $element, GeneratorContextInterface $context): bool
+    public function canBeAdded(ElementInterface $element, GeneratorContextInterface $context): bool
     {
         if (method_exists($element, 'isPublished')) {
             return (bool)$element->isPublished();
@@ -32,7 +32,7 @@ class PublishedFilter implements FilterInterface
         return true;
     }
 
-    public function handlesChildren(AbstractElement $element, GeneratorContextInterface $context): bool
+    public function handlesChildren(ElementInterface $element, GeneratorContextInterface $context): bool
     {
         return $this->canBeAdded($element, $context);
     }

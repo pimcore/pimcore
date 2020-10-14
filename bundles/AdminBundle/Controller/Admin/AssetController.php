@@ -19,7 +19,7 @@ use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
@@ -40,14 +40,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/asset")
  */
-class AssetController extends ElementControllerBase implements EventedControllerInterface
+class AssetController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;
@@ -198,7 +197,7 @@ class AssetController extends ElementControllerBase implements EventedController
             'data' => $data,
             'asset' => $asset,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::ASSET_GET_PRE_SEND_DATA, $event);
+        $eventDispatcher->dispatch($event, AdminEvents::ASSET_GET_PRE_SEND_DATA);
         $data = $event->getArgument('data');
 
         if ($asset->isAllowed('view')) {
@@ -282,7 +281,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 'list' => $childsList,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
             /** @var Asset\Listing $childsList */
             $childsList = $beforeListLoadEvent->getArgument('list');
 
@@ -301,7 +300,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $event = new GenericEvent($this, [
             'assets' => $assets,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::ASSET_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
+        $eventDispatcher->dispatch($event, AdminEvents::ASSET_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA);
         $assets = $event->getArgument('assets');
 
         if ($allParams['limit']) {
@@ -462,7 +461,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $context = json_decode($context, true);
             $context = $context ? $context : [];
             $event = new \Pimcore\Event\Model\Asset\ResolveUploadTargetEvent($parentId, $filename, $context);
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::RESOLVE_UPLOAD_TARGET, $event);
+            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::RESOLVE_UPLOAD_TARGET);
             $filename = Element\Service::getValidKey($event->getFilename(), 'asset');
             $parentId = $event->getParentId();
         }
@@ -955,7 +954,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     'id' => $asset->getId(),
                     'metadata' => $metadata,
                 ]);
-                $eventDispatcher->dispatch(AdminEvents::ASSET_METADATA_PRE_SET, $metadataEvent);
+                $eventDispatcher->dispatch($metadataEvent, AdminEvents::ASSET_METADATA_PRE_SET);
 
                 $metadata = $metadataEvent->getArgument('metadata');
                 $metadataValues = $metadata['values'];
@@ -1665,7 +1664,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+        $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
@@ -1706,7 +1705,7 @@ class AssetController extends ElementControllerBase implements EventedController
             'list' => $list,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
         /** @var Asset\Listing $list */
         $list = $beforeListLoadEvent->getArgument('list');
 
@@ -1744,7 +1743,7 @@ class AssetController extends ElementControllerBase implements EventedController
             'list' => $result,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+        $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::ASSET_LIST_AFTER_LIST_LOAD);
         $result = $afterListLoadEvent->getArgument('list');
 
         // Here we revert to assets key
@@ -2407,7 +2406,7 @@ class AssetController extends ElementControllerBase implements EventedController
         ]);
         $language = $request->get('language') != 'default' ? $request->get('language') : null;
 
-        $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+        $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
@@ -2424,7 +2423,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         'processed' => false,
                     ]);
 
-                    $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_UPDATE, $updateEvent);
+                    $eventDispatcher->dispatch($updateEvent, AdminEvents::ASSET_LIST_BEFORE_UPDATE);
 
                     $processed = $updateEvent->getArgument('processed');
 
@@ -2537,7 +2536,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 'list' => $list,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
             /** @var Asset\Listing $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
@@ -2559,7 +2558,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 'list' => $result,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+            $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::ASSET_LIST_AFTER_LIST_LOAD);
             $result = $afterListLoadEvent->getArgument('list');
 
             return $this->adminJson($result);
@@ -2647,9 +2646,9 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @param FilterControllerEvent $event
+     * @param ControllerEvent $event
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -2661,13 +2660,5 @@ class AssetController extends ElementControllerBase implements EventedController
         ]);
 
         $this->_assetService = new Asset\Service($this->getAdminUser());
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-        // nothing to do
     }
 }

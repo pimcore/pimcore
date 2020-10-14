@@ -595,7 +595,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     }
 
     /**
-     * @param Element\AbstractElement[]|null $data
+     * @param Element\ElementInterface[]|null $data
      *
      * @return array
      */
@@ -1009,5 +1009,3 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
     }
 }
-
-class_alias(ManyToManyRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Multihref');

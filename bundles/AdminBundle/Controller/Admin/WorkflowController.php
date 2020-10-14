@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Concrete as ConcreteObject;
@@ -29,8 +29,7 @@ use Pimcore\Workflow\Transition;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Workflow\Registry;
@@ -39,7 +38,7 @@ use Symfony\Component\Workflow\Workflow;
 /**
  * @Route("/workflow")
  */
-class WorkflowController extends AdminController implements EventedControllerInterface
+class WorkflowController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var Document|Asset|ConcreteObject $element
@@ -347,11 +346,11 @@ class WorkflowController extends AdminController implements EventedControllerInt
     }
 
     /**
-     * @param FilterControllerEvent $event
+     * @param ControllerEvent $event
      *
      * @throws \Exception
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -375,13 +374,5 @@ class WorkflowController extends AdminController implements EventedControllerInt
         //get the latest available version of the element -
         $this->element = $this->getLatestVersion($this->element);
         $this->element->setUserModification($this->getAdminUser()->getId());
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-        // nothing to do
     }
 }

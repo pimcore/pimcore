@@ -572,8 +572,7 @@ class Localizedfield extends Model\AbstractModel implements
         // if a lazy loaded field hasn't been loaded we cannot rely on the dirty check
         // note that preSetData will just overwrite it with the new data and mark it as loaded
         $forceLanguageDirty = false;
-        $isLazyLoadedField = ($fieldDefinition instanceof LazyLoadingSupportInterface || method_exists($fieldDefinition, 'getLazyLoading'))
-                                    && $fieldDefinition->getLazyLoading();
+        $isLazyLoadedField = $fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading();
         $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
 
         if ($isLazyLoadedField) {
@@ -755,8 +754,7 @@ class Localizedfield extends Model\AbstractModel implements
 
         $fields = $this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
-                                            && $field->getLazyLoading()) {
+            if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }

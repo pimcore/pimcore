@@ -31,10 +31,10 @@ use Pimcore\Model\Glossary;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Property;
 use Pimcore\Model\Staticroute;
-use Pimcore\Model\Tool\Tag;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -472,7 +472,6 @@ class SettingsController extends AdminController
                 'disable_usage_statistics' => $values['general.disableusagestatistics'],
                 'debug_admin_translations' => $values['general.debug_admin_translations'],
                 'instance_identifier' => $values['general.instanceIdentifier'],
-                'show_cookie_notice' => $values['general.show_cookie_notice'],
             ],
             'documents' => [
                 'versions' => [
@@ -744,7 +743,7 @@ class SettingsController extends AdminController
             // PIMCORE-1854 - recreate .dummy file => should remain
             File::put(PIMCORE_CACHE_DIRECTORY . '/.gitkeep', '');
 
-            $eventDispatcher->dispatch(SystemEvents::CACHE_CLEAR);
+            $eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR);
         }
 
         if ($clearSymfonyCache) {
@@ -825,7 +824,7 @@ class SettingsController extends AdminController
         // empty document cache
         Cache::clearTags(['output', 'output_lifetime']);
 
-        $eventDispatcher->dispatch(SystemEvents::CACHE_CLEAR_FULLPAGE_CACHE);
+        $eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR_FULLPAGE_CACHE);
 
         return $this->adminJson(['success' => true]);
     }
@@ -851,7 +850,7 @@ class SettingsController extends AdminController
         File::put(PIMCORE_TEMPORARY_DIRECTORY . '/.dummy', '');
         File::put(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/.dummy', '');
 
-        $eventDispatcher->dispatch(SystemEvents::CACHE_CLEAR_TEMPORARY_FILES);
+        $eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR_TEMPORARY_FILES);
 
         return $this->adminJson(['success' => true]);
     }
@@ -1585,163 +1584,6 @@ class SettingsController extends AdminController
         return $this->adminJson([
             'success' => true,
         ]);
-    }
-
-    /**
-     * @Route("/tag-management-tree", name="pimcore_admin_settings_tagmanagementtree", methods={"GET", "POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function tagManagementTreeAction(Request $request)
-    {
-        $this->checkPermission('tag_snippet_management');
-
-        $tags = [];
-
-        $list = new Tag\Config\Listing();
-        $items = $list->load();
-
-        foreach ($items as $item) {
-            $tags[] = [
-                'id' => $item->getName(),
-                'text' => $item->getName(),
-            ];
-        }
-
-        return $this->adminJson($tags);
-    }
-
-    /**
-     * @deprecated
-     * @Route("/tag-management-add", name="pimcore_admin_settings_tagmanagementadd", methods={"POST"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function tagManagementAddAction(Request $request)
-    {
-        $this->checkPermission('tag_snippet_management');
-
-        $success = false;
-
-        $tag = Model\Tool\Tag\Config::getByName($request->get('name'));
-
-        if (!$tag) {
-            $tag = new Model\Tool\Tag\Config();
-            $tag->setName($request->get('name'));
-            $tag->save();
-
-            $success = true;
-        }
-
-        return $this->adminJson(['success' => $success, 'id' => $tag->getName()]);
-    }
-
-    /**
-     * @deprecated
-     * @Route("/tag-management-delete", name="pimcore_admin_settings_tagmanagementdelete", methods={"DELETE"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function tagManagementDeleteAction(Request $request)
-    {
-        $this->checkPermission('tag_snippet_management');
-
-        $tag = Model\Tool\Tag\Config::getByName($request->get('name'));
-        $tag->delete();
-
-        return $this->adminJson(['success' => true]);
-    }
-
-    /**
-     * @deprecated
-     * @Route("/tag-management-get", name="pimcore_admin_settings_tagmanagementget", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function tagManagementGetAction(Request $request)
-    {
-        $this->checkPermission('tag_snippet_management');
-
-        $tag = Model\Tool\Tag\Config::getByName($request->get('name'));
-
-        return $this->adminJson($tag);
-    }
-
-    /**
-     * @deprecated
-     * @Route("/tag-management-update", name="pimcore_admin_settings_tagmanagementupdate", methods={"PUT"})
-     *
-     * @param Request $request
-     *
-     * @return JsonResponse
-     */
-    public function tagManagementUpdateAction(Request $request)
-    {
-        $this->checkPermission('tag_snippet_management');
-
-        $tag = Model\Tool\Tag\Config::getByName($request->get('name'));
-        $data = $this->decodeJson($request->get('configuration'));
-
-        $items = [];
-        foreach ($data as $key => $value) {
-            $setter = 'set' . ucfirst($key);
-            if (method_exists($tag, $setter)) {
-                $tag->$setter($value);
-            }
-
-            if (strpos($key, 'item.') === 0) {
-                $cleanKeyParts = explode('.', $key);
-
-                if ($cleanKeyParts[2] == 'date') {
-                    $date = $value;
-                    $value = null;
-
-                    if (!empty($date) && !empty($data[$cleanKeyParts[0].'.'.$cleanKeyParts[1].'.time'])) {
-                        $time = $data[$cleanKeyParts[0].'.'.$cleanKeyParts[1].'.time'];
-                        $time = explode('T', $time);
-                        $date = explode('T', $date);
-                        $value = strtotime($date[0].'T'.$time[1]);
-                    }
-                } elseif ($cleanKeyParts[2] == 'time') {
-                    continue;
-                }
-
-                $items[$cleanKeyParts[1]][$cleanKeyParts[2]] = $value;
-            }
-        }
-
-        $tag->resetItems();
-        foreach ($items as $item) {
-            $tag->addItem($item);
-        }
-
-        // parameters get/post
-        $params = [];
-        for ($i = 0; $i < 5; $i++) {
-            $params[] = [
-                'name' => $data['params.name' . $i],
-                'value' => $data['params.value' . $i],
-            ];
-        }
-        $tag->setParams($params);
-
-        if ($request->get('name') != $data['name']) {
-            $tag->setName($request->get('name')); // set the old name again, so that the old file get's deleted
-            $tag->delete(); // delete the old config / file
-            $tag->setName($data['name']);
-        }
-
-        $tag->save();
-
-        return $this->adminJson(['success' => true]);
     }
 
     /**

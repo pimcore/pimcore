@@ -171,7 +171,7 @@ class Tracker extends AbstractTracker
         $blocks = $this->buildCodeBlocks($siteId, $siteConfig);
 
         $event = new TrackingDataEvent($config, $siteId, $data, $blocks, $template);
-        $this->eventDispatcher->dispatch(GoogleAnalyticsEvents::CODE_TRACKING_DATA, $event);
+        $this->eventDispatcher->dispatch($event, GoogleAnalyticsEvents::CODE_TRACKING_DATA);
 
         return $this->renderTemplate($event);
     }

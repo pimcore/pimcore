@@ -33,31 +33,31 @@ class Video extends Model\Document\Editable
      *
      * @var int|string|null
      */
-    public $id;
+    protected $id;
 
     /**
      * one of asset, youtube, vimeo, dailymotion
      *
      * @var string|null
      */
-    public $type = 'asset';
+    protected $type = 'asset';
 
     /**
      * asset ID of poster image
      *
      * @var int|null
      */
-    public $poster;
+    protected $poster;
 
     /**
      * @var string
      */
-    public $title = '';
+    protected $title = '';
 
     /**
      * @var string
      */
-    public $description = '';
+    protected $description = '';
 
     /**
      * @param string $title
@@ -107,6 +107,14 @@ class Video extends Model\Document\Editable
         }
 
         return $this->description;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getPoster()
+    {
+        return $this->poster;
     }
 
     /**

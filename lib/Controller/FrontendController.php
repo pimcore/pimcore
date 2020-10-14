@@ -21,14 +21,12 @@ use Pimcore\Model\Document;
 use Pimcore\Templating\Renderer\EditableRenderer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 /**
  * @property Document|Document\PageSnippet $document
  * @property bool $editmode
  */
-abstract class FrontendController extends Controller implements EventedControllerInterface
+abstract class FrontendController extends Controller
 {
     /**
      * document and editmode as properties and proxy them to request attributes through
@@ -63,20 +61,6 @@ abstract class FrontendController extends Controller implements EventedControlle
         }
 
         throw new \RuntimeException(sprintf('Trying to set unknown property "%s"', $name));
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function onKernelController(FilterControllerEvent $event)
-    {
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
     }
 
     /**
