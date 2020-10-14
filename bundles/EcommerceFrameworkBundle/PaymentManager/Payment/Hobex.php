@@ -146,7 +146,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
                 'taxAmount' => $price->getAmount()->sub($price->getNetAmount())->asString(2),
                 'currency' => $price->getCurrency()->getShortName(),
                 'paymentType' => static::PAYMENT_TYPE_DEBIT,
-                'merchantTransactionId' => $orderAgent->getOrder()->getLastPaymentInfo()->getInternalPaymentId(),
+                'customParameters[\'internalTransactionId\']' => $orderAgent->getOrder()->getLastPaymentInfo()->getInternalPaymentId(),
                 'transactionCategory' => static::TRANSACTION_CATEGORY_ECOMMERCE,
             ];
 
@@ -257,7 +257,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
             $this->logger->debug('Received JSON response in ' . self::class . '::handleResponse', $jsonResponse);
 
-            $internalPaymentId = $jsonResponse['merchantTransactionId'];
+            $internalPaymentId = $jsonResponse['customParameters']['internalTransactionId'];
 
             $clearedParams = [
                 'paymentType' => $jsonResponse['paymentBrand'],
