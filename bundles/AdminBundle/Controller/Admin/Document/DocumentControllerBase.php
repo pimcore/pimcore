@@ -299,7 +299,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
     }
 
     /**
-     * @inheritdoc
+     * @param ControllerEvent $event
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

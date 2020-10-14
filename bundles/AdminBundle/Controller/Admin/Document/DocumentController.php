@@ -1554,7 +1554,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     }
 
     /**
-     * @inheritdoc
+     * @param ControllerEvent $event
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

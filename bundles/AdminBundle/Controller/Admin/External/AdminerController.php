@@ -111,7 +111,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
         }
 
         /**
-         * @inheritdoc
+         * @param ControllerEvent $event
          */
         public function onKernelControllerEvent(ControllerEvent $event)
         {

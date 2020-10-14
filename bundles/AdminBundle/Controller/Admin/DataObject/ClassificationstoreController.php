@@ -1521,7 +1521,7 @@ class ClassificationstoreController extends AdminController implements KernelCon
     }
 
     /**
-     * @inheritDoc
+     * @param ControllerEvent $event
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {
