@@ -446,9 +446,6 @@ return [
     "/bundles/pimcoreadmin/js/pimcore/settings/tagmanagement/panel.js",
     "/bundles/pimcoreadmin/js/pimcore/settings/tagmanagement/item.js",
 
-    "/bundles/pimcoreadmin/js/pimcore/report/qrcode/panel.js",
-    "/bundles/pimcoreadmin/js/pimcore/report/qrcode/item.js",
-
     // extension manager
     "/bundles/pimcoreadmin/js/pimcore/extensionmanager/admin.js",
 
