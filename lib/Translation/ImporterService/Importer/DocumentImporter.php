@@ -37,7 +37,7 @@ class DocumentImporter extends AbstractElementImporter
                 }
 
                 $tag->setInherited(false);
-                $element->setEditable($tag->getName(), $tag);
+                $element->setEditable($tag);
             }
         }
 
