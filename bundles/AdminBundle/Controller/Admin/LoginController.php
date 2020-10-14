@@ -19,7 +19,8 @@ use Pimcore\Bundle\AdminBundle\Controller\BruteforceProtectedControllerInterface
 use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
 use Pimcore\Config;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
+use Pimcore\Controller\KernelResponseEventInterface;
 use Pimcore\Event\Admin\Login\LostPasswordEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
@@ -31,15 +32,15 @@ use Pimcore\Tool\Authentication;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class LoginController extends AdminController implements BruteforceProtectedControllerInterface, EventedControllerInterface
+class LoginController extends AdminController implements BruteforceProtectedControllerInterface, KernelControllerEventInterface, KernelResponseEventInterface
 {
     /**
      * @var ResponseHelper
@@ -51,7 +52,10 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $this->reponseHelper = $responseHelper;
     }
 
-    public function onKernelController(FilterControllerEvent $event)
+    /**
+     * @inheritdoc
+     */
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         // use browser language for login page if possible
         $locale = 'en';
@@ -67,7 +71,10 @@ class LoginController extends AdminController implements BruteforceProtectedCont
         $this->get('translator')->setLocale($locale);
     }
 
-    public function onKernelResponse(FilterResponseEvent $event)
+    /**
+     * @inheritdoc
+     */
+    public function onKernelResponseEvent(ResponseEvent $event)
     {
         $response = $event->getResponse();
         $response->headers->set('X-Frame-Options', 'deny', true);

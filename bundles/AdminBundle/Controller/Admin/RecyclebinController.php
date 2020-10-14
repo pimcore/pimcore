@@ -15,16 +15,15 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Model\Element;
 use Pimcore\Model\Element\Recyclebin;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
-class RecyclebinController extends AdminController implements EventedControllerInterface
+class RecyclebinController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/recyclebin/list", name="pimcore_admin_recyclebin_list", methods={"POST"})
@@ -186,9 +185,9 @@ class RecyclebinController extends AdminController implements EventedControllerI
     }
 
     /**
-     * @param FilterControllerEvent $event
+     * @inheridoc
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -202,13 +201,5 @@ class RecyclebinController extends AdminController implements EventedControllerI
 
         // check permissions
         $this->checkActionPermission($event, 'recyclebin', ['addAction']);
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-        // nothing to do
     }
 }
