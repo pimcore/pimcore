@@ -693,9 +693,6 @@ $scripts = array(
     "pimcore/report/custom/definitions/analytics.js",
     "pimcore/report/custom/toolbarenricher.js",
 
-    "pimcore/settings/tagmanagement/panel.js",
-    "pimcore/settings/tagmanagement/item.js",
-
     // extension manager
     "pimcore/extensionmanager/admin.js",
 
