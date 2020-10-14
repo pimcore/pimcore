@@ -18,10 +18,11 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Controller\GDPR;
 
 use Pimcore\Bundle\AdminBundle\GDPR\DataProvider\Manager;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Pimcore\Controller\KernelControllerEventInterface;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController
+class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/get-data-providers", name="pimcore_admin_gdpr_admin_getdataproviders", methods={"GET"})
@@ -39,7 +40,10 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         return $this->adminJson($response);
     }
 
-    public function onKernelController(FilterControllerEvent $event)
+    /**
+     * @inheritdoc
+     */
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         if (!$event->isMasterRequest()) {
             return;
