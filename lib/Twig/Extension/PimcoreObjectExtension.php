@@ -51,7 +51,7 @@ class PimcoreObjectExtension extends AbstractExtension
      * @param array|string $definition
      * @param string $type
      *
-     * @return string
+     * @return DataObject\ClassDefinition\Data|null
      */
     public function getFieldDefinitionFromJson($definition, $type)
     {

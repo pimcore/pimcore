@@ -71,7 +71,7 @@ class HelpersExtension extends AbstractExtension
     }
 
     /**
-     * @param $file
+     * @param string $file
      *
      * @return string
      * @throws \Exception
