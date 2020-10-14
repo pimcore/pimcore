@@ -14,19 +14,19 @@
 
 namespace Pimcore\Bundle\AdminBundle\EventListener\Traits;
 
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 
 trait ControllerTypeTrait
 {
     /**
      * Get controller of specified type
      *
-     * @param FilterControllerEvent $event
+     * @param ControllerEvent $event
      * @param string $type
      *
      * @return mixed
      */
-    protected function getControllerType(FilterControllerEvent $event, $type)
+    protected function getControllerType(ControllerEvent $event, $type)
     {
         $callable = $event->getController();
 
@@ -43,12 +43,12 @@ trait ControllerTypeTrait
     /**
      * Test if event controller is of the given type
      *
-     * @param FilterControllerEvent $event
+     * @param ControllerEvent $event
      * @param string $type
      *
      * @return bool
      */
-    protected function isControllerType(FilterControllerEvent $event, $type)
+    protected function isControllerType(ControllerEvent $event, $type)
     {
         $controller = $this->getControllerType($event, $type);
 
