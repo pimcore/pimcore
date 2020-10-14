@@ -53,6 +53,8 @@ class MultipleAssigmentTest extends ModelTestCase
 
     public function testMultipleAssignmentsOnSingleManyToMany()
     {
+        $this->expectException(\Exception::class);
+
         $listing = new RelationTest\Listing();
         $listing->setLimit(5);
 
@@ -76,26 +78,6 @@ class MultipleAssigmentTest extends ModelTestCase
         $object->setOnlyOneManyToMany($metaDataList);
 
         $object->save();
-
-        $metaDataList = $object->getOnlyOneManyToMany();
-        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, 'after saving');
-
-        $id = $object->getId();
-
-        //clear cache and collect garbage
-        Cache::clearAll();
-        \Pimcore::collectGarbage();
-
-        //reload data object from database
-        $object = MultipleAssignments::getById($id, true);
-
-        $metaDataList = $object->getOnlyOneManyToMany();
-        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, 'after loading');
-
-        $serializedData = serialize($object);
-        $deserializedObject = unserialize($serializedData);
-        $metaDataList = $deserializedObject->getOnlyOneManyToMany();
-        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, 'after serialize/unserialize');
     }
 
     protected function checkMultipleAssignmentsOnSingleManyToMany(array $metaDataList, $positionMessage = '')
@@ -108,6 +90,8 @@ class MultipleAssigmentTest extends ModelTestCase
 
     public function testMultipleAssignmentsOnSingleManyToManyObject()
     {
+        $this->expectException(\Exception::class);
+
         $listing = new RelationTest\Listing();
         $listing->setLimit(5);
 
@@ -131,26 +115,6 @@ class MultipleAssigmentTest extends ModelTestCase
         $object->setOnlyOneManyToManyObject($metaDataList);
 
         $object->save();
-
-        $metaDataList = $object->getOnlyOneManyToManyObject();
-        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, 'after saving');
-
-        $id = $object->getId();
-
-        //clear cache and collect garbage
-        Cache::clearAll();
-        \Pimcore::collectGarbage();
-
-        //reload data object from database
-        $object = MultipleAssignments::getById($id, true);
-
-        $metaDataList = $object->getOnlyOneManyToManyObject();
-        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, 'after loading');
-
-        $serializedData = serialize($object);
-        $deserializedObject = unserialize($serializedData);
-        $metaDataList = $deserializedObject->getOnlyOneManyToManyObject();
-        $this->checkMultipleAssignmentsOnSingleManyToMany($metaDataList, 'after serialize/unserialize');
     }
 
     protected function checkMultipleAssignmentsOnMultipleManyToMany(array $metaDataList, $positionMessage = '')

@@ -15,15 +15,14 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
 
-class OpcacheController extends AdminController implements EventedControllerInterface
+class OpcacheController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @Route("/external_opcache", name="pimcore_admin_external_opcache_index")
@@ -49,9 +48,9 @@ class OpcacheController extends AdminController implements EventedControllerInte
     }
 
     /**
-     * @param FilterControllerEvent $event
+     * @inheritdoc
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -60,13 +59,5 @@ class OpcacheController extends AdminController implements EventedControllerInte
 
         // only for admins
         $this->checkPermission('opcache');
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-        // nothing to do
     }
 }

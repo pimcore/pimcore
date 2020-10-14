@@ -25,7 +25,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\Or
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\Order\Listing\Filter\ProductType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerInterface;
 use Pimcore\Cache;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Localization\IntlFormatter;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\AbstractObject;
@@ -37,8 +37,7 @@ use Pimcore\Model\DataObject\OnlineShopOrderItem;
 use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 use Zend\Paginator\Paginator;
 
@@ -47,7 +46,7 @@ use Zend\Paginator\Paginator;
  *
  * @Route("/admin-order")
  */
-class AdminOrderController extends AdminController implements EventedControllerInterface
+class AdminOrderController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var OrderManagerInterface
@@ -55,9 +54,9 @@ class AdminOrderController extends AdminController implements EventedControllerI
     protected $orderManager;
 
     /**
-     * @param FilterControllerEvent $event
+     * @inheritdoc
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         // set language
         $user = $this->get(TokenStorageUserResolver::class)->getUser();
@@ -72,13 +71,6 @@ class AdminOrderController extends AdminController implements EventedControllerI
         Localizedfield::setGetFallbackValues(true);
 
         $this->orderManager = Factory::getInstance()->getOrderManager();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
     }
 
     /**

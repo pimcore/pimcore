@@ -6,20 +6,20 @@ $this->get("translate")->setDomain("admin");
 
 //detect browser
 $supported      = false;
-$browser        = new \Pimcore\Browser();
+$browser        = new \Browser();
 $browserVersion = (int)$browser->getVersion();
 $platform       = $browser->getPlatform();
 
-if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_FIREFOX && $browserVersion >= 52) {
+if ($browser->getBrowser() == \Browser::BROWSER_FIREFOX && $browserVersion >= 52) {
     $supported = true;
 }
-if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_CHROME && $browserVersion >= 52) { // Edge identifies currently as Chrome 52
+if ($browser->getBrowser() == \Browser::BROWSER_CHROME && $browserVersion >= 52) { // Edge identifies currently as Chrome 52
     $supported = true;
 }
-if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_SAFARI && $browserVersion >= 10) {
+if ($browser->getBrowser() == \Browser::BROWSER_SAFARI && $browserVersion >= 10) {
     $supported = true;
 }
-if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion >= 42) {
+if ($browser->getBrowser() == \Browser::BROWSER_OPERA && $browserVersion >= 42) {
     $supported = true;
 }
 

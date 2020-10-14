@@ -29,7 +29,7 @@ class Pdf extends Model\Document\Editable
     /**
      * @var int|null
      */
-    public $id;
+    protected $id;
 
     /**
      * @see EditableInterface::getType

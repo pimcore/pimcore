@@ -14,12 +14,11 @@
 
 namespace Pimcore\Bundle\CoreBundle\EventListener;
 
-use Pimcore\Controller\EventedControllerInterface;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\KernelResponseEventInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class EventedControllerListener implements EventSubscriberInterface
@@ -36,9 +35,9 @@ class EventedControllerListener implements EventSubscriberInterface
     }
 
     /**
-     * @param FilterControllerEvent $event
+     * @param ControllerEvent $event
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelController(ControllerEvent $event)
     {
         $callable = $event->getController();
         if (!is_array($callable)) {
@@ -48,12 +47,6 @@ class EventedControllerListener implements EventSubscriberInterface
         $request = $event->getRequest();
         $controller = $callable[0];
 
-        /** @TODO: Remove in Pimcore 7 */
-        if ($controller instanceof EventedControllerInterface) {
-            $request->attributes->set('_evented_controller', $controller);
-            $controller->onKernelController($event);
-        }
-
         if ($controller instanceof KernelControllerEventInterface) {
             $request->attributes->set('_event_controller', $controller);
             $controller->onKernelControllerEvent($event);
@@ -61,9 +54,9 @@ class EventedControllerListener implements EventSubscriberInterface
     }
 
     /**
-     * @param FilterResponseEvent $event
+     * @param ResponseEvent $event
      */
-    public function onKernelResponse(FilterResponseEvent $event)
+    public function onKernelResponse(ResponseEvent $event)
     {
         $request = $event->getRequest();
         $eventedController = $request->attributes->get('_evented_controller');
@@ -71,11 +64,6 @@ class EventedControllerListener implements EventSubscriberInterface
 
         if (!$eventedController && !$eventController) {
             return;
-        }
-
-        /** @TODO: Remove in Pimcore 7 */
-        if ($eventedController instanceof EventedControllerInterface) {
-            $eventedController->onKernelResponse($event);
         }
 
         if ($eventController instanceof KernelResponseEventInterface) {
