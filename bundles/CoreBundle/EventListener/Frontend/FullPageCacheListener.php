@@ -396,7 +396,7 @@ class FullPageCacheListener
                 }
 
                 $event = new PrepareResponseEvent($request, $response);
-                $this->eventDispatcher->dispatch(FullPageCacheEvents::PREPARE_RESPONSE, $event);
+                $this->eventDispatcher->dispatch($event, FullPageCacheEvents::PREPARE_RESPONSE);
 
                 $cacheItem = $event->getResponse();
 
@@ -433,7 +433,7 @@ class FullPageCacheListener
 
         // fire an event to allow full customozations
         $event = new CacheResponseEvent($response, $cache);
-        $this->eventDispatcher->dispatch(FullPageCacheEvents::CACHE_RESPONSE, $event);
+        $this->eventDispatcher->dispatch($event, FullPageCacheEvents::CACHE_RESPONSE);
 
         return $event->getCache();
     }

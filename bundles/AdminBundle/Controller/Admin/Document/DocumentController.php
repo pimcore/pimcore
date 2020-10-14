@@ -106,7 +106,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
             'data' => $data,
             'document' => $document,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        $eventDispatcher->dispatch($event, AdminEvents::DOCUMENT_GET_PRE_SEND_DATA);
         $data = $event->getArgument('data');
 
         if ($document->isAllowed('view')) {
@@ -189,7 +189,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 'context' => $allParams,
             ]);
 
-            $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD);
             /** @var Document\Listing $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
@@ -207,7 +207,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $event = new GenericEvent($this, [
             'documents' => $documents,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
+        $eventDispatcher->dispatch($event, AdminEvents::DOCUMENT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA);
         $documents = $event->getArgument('documents');
 
         if ($allParams['limit']) {
@@ -1199,7 +1199,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+        $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::DOCUMENT_LIST_BEFORE_FILTER_PREPARE);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
@@ -1221,7 +1221,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 'list' => $list,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD);
             /** @var Document\Listing $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
@@ -1246,7 +1246,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
             'list' => $result,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+        $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::DOCUMENT_LIST_AFTER_LIST_LOAD);
         $result = $afterListLoadEvent->getArgument('list');
 
         return $this->adminJson($result['data']);

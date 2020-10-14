@@ -15,7 +15,7 @@
 namespace Pimcore\Event\Model\DataObject\ClassificationStore;
 
 use Pimcore\Model\DataObject\Classificationstore\GroupConfig;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class GroupConfigEvent extends Event
 {

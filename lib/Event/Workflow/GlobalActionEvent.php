@@ -16,7 +16,7 @@ namespace Pimcore\Event\Workflow;
 
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Workflow\GlobalAction;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\Workflow\Workflow;
 
 class GlobalActionEvent extends Event

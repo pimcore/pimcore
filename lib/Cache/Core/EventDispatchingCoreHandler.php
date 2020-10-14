@@ -17,7 +17,7 @@ namespace Pimcore\Cache\Core;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Event\Cache\Core\ResultEvent;
 use Pimcore\Event\CoreCacheEvents;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class EventDispatchingCoreHandler extends CoreHandler
@@ -66,11 +66,10 @@ class EventDispatchingCoreHandler extends CoreHandler
      */
     protected function setEnabled($enabled)
     {
-        $this->dispatcher->dispatch(
+        $this->dispatcher->dispatch(new Event(),
             $this->isEnabled()
                 ? CoreCacheEvents::ENABLE
-                : CoreCacheEvents::DISABLE,
-            new Event()
+                : CoreCacheEvents::DISABLE
         );
     }
 
@@ -82,7 +81,7 @@ class EventDispatchingCoreHandler extends CoreHandler
         $result = parent::purge();
         $purgeEvent = new ResultEvent($result);
 
-        $this->dispatcher->dispatch(CoreCacheEvents::PURGE, $purgeEvent);
+        $this->dispatcher->dispatch($purgeEvent, CoreCacheEvents::PURGE);
 
         return $purgeEvent->getResult();
     }

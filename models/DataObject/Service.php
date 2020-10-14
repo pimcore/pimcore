@@ -172,9 +172,10 @@ class Service extends Model\Element\Service
         $this->updateChildren($target, $new);
 
         // triggers actions after the complete document cloning
-        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [
+        $event = new DataObjectEvent($new, [
             'base_element' => $source, // the element used to make a copy
-        ]));
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::POST_COPY);
 
         return $new;
     }
@@ -225,9 +226,10 @@ class Service extends Model\Element\Service
         $this->updateChildren($target, $new);
 
         // triggers actions after the complete object cloning
-        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_COPY, new DataObjectEvent($new, [
+        $event = new DataObjectEvent($new, [
             'base_element' => $source, // the element used to make a copy
-        ]));
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::POST_COPY);
 
         return $new;
     }
@@ -1753,7 +1755,7 @@ class Service extends Model\Element\Service
             'returnMappedFieldNames' => $returnMappedFieldNames,
         ]);
 
-        \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_CSV_ITEM_EXPORT, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, DataObjectEvents::POST_CSV_ITEM_EXPORT);
         $objectData = $event->getArgument('objectData');
 
         return $objectData;

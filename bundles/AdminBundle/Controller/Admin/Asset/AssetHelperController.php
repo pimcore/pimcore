@@ -950,7 +950,7 @@ class AssetHelperController extends AdminController
                     'processed' => false,
                 ]);
 
-                $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_BATCH_UPDATE, $updateEvent);
+                $eventDispatcher->dispatch($updateEvent, AdminEvents::ASSET_LIST_BEFORE_BATCH_UPDATE);
 
                 $processed = $updateEvent->getArgument('processed');
 

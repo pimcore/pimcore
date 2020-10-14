@@ -201,7 +201,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 'list' => $childsList,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
             /** @var DataObject\Listing $childsList */
             $childsList = $beforeListLoadEvent->getArgument('list');
 
@@ -226,7 +226,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $event = new GenericEvent($this, [
             'objects' => $objects,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
+        $eventDispatcher->dispatch($event, AdminEvents::OBJECT_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA);
 
         $objects = $event->getArgument('objects');
 
@@ -550,7 +550,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
             ]);
 
             DataObject\Service::enrichLayoutDefinition($objectData['layout'], $object);
-            $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
+            $eventDispatcher->dispatch($event, AdminEvents::OBJECT_GET_PRE_SEND_DATA);
             $data = $event->getArgument('data');
 
             DataObject\Service::removeElementFromSession('object', $object->getId());
@@ -796,7 +796,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 'data' => $objectData,
                 'object' => $object,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::OBJECT_GET_PRE_SEND_DATA, $event);
+            $eventDispatcher->dispatch($event, AdminEvents::OBJECT_GET_PRE_SEND_DATA);
             $objectData = $event->getArgument('data');
 
             return $this->adminJson($objectData);
@@ -1602,7 +1602,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+        $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::OBJECT_LIST_BEFORE_FILTER_PREPARE);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
@@ -1781,7 +1781,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 'list' => $list,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
             /** @var DataObject\Listing\Concrete $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
@@ -1808,7 +1808,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 'list' => $result,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+            $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::OBJECT_LIST_AFTER_LIST_LOAD);
             $result = $afterListLoadEvent->getArgument('list');
 
             return $this->adminJson($result);

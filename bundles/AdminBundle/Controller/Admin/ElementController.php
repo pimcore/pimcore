@@ -76,7 +76,7 @@ class ElementController extends AdminController
         $type = $request->get('type');
 
         $event = new ResolveElementEvent($type, $idOrPath);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::RESOLVE_ELEMENT, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::RESOLVE_ELEMENT);
         $idOrPath = $event->getId();
         $type = $event->getType();
 

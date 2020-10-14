@@ -662,7 +662,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
         $editableName = self::buildTagName($name, $type, $blockState, $targetGroupEditableName);
 
         $event = new EditableNameEvent($type, $name, $blockState, $editableName, $document);
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::EDITABLE_NAME, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::EDITABLE_NAME);
 
         $editableName = $event->getEditableName();
 

@@ -337,7 +337,7 @@ class TagsController extends AdminController
             'list' => $childsList,
             'context' => [],
         ]);
-        $eventDispatcher->dispatch(AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::OBJECT_LIST_BEFORE_LIST_LOAD);
         /** @var \Pimcore\Model\DataObject\Listing $childsList */
         $childsList = $beforeListLoadEvent->getArgument('list');
 
@@ -369,7 +369,7 @@ class TagsController extends AdminController
             'list' => $childsList,
             'context' => [],
         ]);
-        $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
         /** @var \Pimcore\Model\Asset\Listing $childsList */
         $childsList = $beforeListLoadEvent->getArgument('list');
 
@@ -401,7 +401,7 @@ class TagsController extends AdminController
             'list' => $childsList,
             'context' => [],
         ]);
-        $eventDispatcher->dispatch(AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::DOCUMENT_LIST_BEFORE_LIST_LOAD);
         /** @var \Pimcore\Model\Document\Listing $childsList */
         $childsList = $beforeListLoadEvent->getArgument('list');
 
