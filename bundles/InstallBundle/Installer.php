@@ -800,7 +800,6 @@ class Installer
             ['key' => 'seo_document_editor'],
             ['key' => 'share_configurations'],
             ['key' => 'system_settings'],
-            ['key' => 'tag_snippet_management'],
             ['key' => 'tags_configuration'],
             ['key' => 'tags_assignment'],
             ['key' => 'tags_search'],

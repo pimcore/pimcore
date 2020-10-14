@@ -490,14 +490,6 @@ pimcore.layout.toolbar = Class.create({
                 });
             }
 
-            if (user.isAllowed("tag_snippet_management") && perspectiveCfg.inToolbar("marketing.tagmanagement")) {
-                marketingItems.push({
-                    text: t("tag_snippet_management"),
-                    iconCls: "pimcore_nav_icon_tag",
-                    handler: this.showTagManagement
-                });
-            }
-
             if (user.isAllowed("targeting") && perspectiveCfg.inToolbar("marketing.targeting")) {
                 marketingItems.push({
                     text: t("personalization") + " / " + t("targeting"),
@@ -1422,15 +1414,6 @@ pimcore.layout.toolbar = Class.create({
             }
         } catch (e) {
             console.log(e);
-        }
-    },
-
-    showTagManagement: function () {
-        try {
-            pimcore.globalmanager.get("tagmanagement").activate();
-        }
-        catch (e) {
-            pimcore.globalmanager.add("tagmanagement", new pimcore.settings.tagmanagement.panel());
         }
     },
 

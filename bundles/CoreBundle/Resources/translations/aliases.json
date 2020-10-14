@@ -122,7 +122,6 @@
   "keybinding_showElementHistory": "element_history",
   "keybinding_quickSearch": "quicksearch",
   "keybinding_httpErrorLog": "http_errors",
-  "keybinding_tagManager": "tag_snippet_management",
   "keybinding_notesEvents": "notes_events",
   "keybinding_searchAsset": "asset_search",
   "keybinding_searchDocument": "document_search",
