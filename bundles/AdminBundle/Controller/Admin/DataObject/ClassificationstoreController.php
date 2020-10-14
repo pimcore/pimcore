@@ -15,20 +15,19 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Classificationstore;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/classificationstore")
  */
-class ClassificationstoreController extends AdminController implements EventedControllerInterface
+class ClassificationstoreController extends AdminController implements KernelControllerEventInterface
 {
     /**
      * Delete collection with the group-relations
@@ -1524,7 +1523,7 @@ class ClassificationstoreController extends AdminController implements EventedCo
     /**
      * @inheritDoc
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -1533,12 +1532,5 @@ class ClassificationstoreController extends AdminController implements EventedCo
 
         $unrestrictedActions = ['collectionsActionGet', 'groupsActionGet', 'relationsActionGet', 'addGroupsAction', 'addCollectionsAction', 'searchRelationsAction'];
         $this->checkActionPermission($event, 'classes', $unrestrictedActions);
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
     }
 }

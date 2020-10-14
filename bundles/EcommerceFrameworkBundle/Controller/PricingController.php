@@ -20,9 +20,9 @@ use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Rule;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,12 +32,12 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("/pricing")
  */
-class PricingController extends AdminController implements EventedControllerInterface
+class PricingController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * @param FilterControllerEvent $event
+     * @inheritdoc
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         // permission check
         $access = $this->getAdminUser()->isAllowed('bundle_ecommerce_pricing_rules');
@@ -428,13 +428,5 @@ class PricingController extends AdminController implements EventedControllerInte
             'condition' => array_keys($pricingManager->getConditionMapping()),
             'action' => array_keys($pricingManager->getActionMapping()),
         ]);
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-        // nothing to do
     }
 }

@@ -19,7 +19,7 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Config;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelResponseEventInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Event\Admin\IndexActionSettingsEvent;
 use Pimcore\Event\AdminEvents;
@@ -37,12 +37,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-class IndexController extends AdminController implements EventedControllerInterface
+class IndexController extends AdminController implements KernelResponseEventInterface
 {
     /**
      * @var EventDispatcherInterface
@@ -397,11 +396,10 @@ class IndexController extends AdminController implements EventedControllerInterf
         return $this;
     }
 
-    public function onKernelController(FilterControllerEvent $event)
-    {
-    }
-
-    public function onKernelResponse(FilterResponseEvent $event)
+    /**
+     * @inheritdoc
+     */
+    public function onKernelResponseEvent(ResponseEvent $event)
     {
         $event->getResponse()->headers->set('X-Frame-Options', 'deny', true);
     }
