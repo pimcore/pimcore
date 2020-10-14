@@ -1064,7 +1064,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
     {
         // return with error if prerequisites do not match
         if (!HtmlToImage::isSupported() || !class_exists('Imagick')) {
-            return $this->render('PimcoreAdminBundle:Admin/Document/Document:diff-versions-unsupported.html.php');
+            return $this->render('PimcoreAdminBundle:Admin/Document/Document:diff-versions-unsupported.html.twig');
         }
 
         $versionFrom = Version::getById($from);
@@ -1109,7 +1109,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $image2->clear();
         $image2->destroy();
 
-        return $this->render('PimcoreAdminBundle:Admin/Document/Document:diff-versions.html.php', $viewParams);
+        return $this->render('PimcoreAdminBundle:Admin/Document/Document:diff-versions.html.twig', $viewParams);
     }
 
     /**

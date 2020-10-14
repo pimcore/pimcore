@@ -18,7 +18,6 @@ use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
-use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
@@ -1506,11 +1505,10 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      * @Route("/preview-version", name="pimcore_admin_dataobject_dataobject_previewversion", methods={"GET"})
      *
      * @param Request $request
-     * @TemplatePhp()
      *
      * @throws \Exception
      *
-     * @return array
+     * @return Response
      */
     public function previewVersionAction(Request $request)
     {
@@ -1524,7 +1522,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         if ($object) {
             if ($object->isAllowed('versions')) {
-                return ['object' => $object];
+                return $this->render('PimcoreAdminBundle:Admin/DataObject/DataObject:previewVersion.html.twig',
+                    [
+                        'object' => $object,
+                        'validLanguages' => Tool::getValidLanguages(),
+                    ]);
             } else {
                 throw $this->createAccessDeniedException('Permission denied, version id [' . $id . ']');
             }
@@ -1535,13 +1537,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
     /**
      * @Route("/diff-versions/from/{from}/to/{to}", name="pimcore_admin_dataobject_dataobject_diffversions", methods={"GET"})
-     * @TemplatePhp()
      *
      * @param Request $request
      * @param int $from
      * @param int $to
      *
-     * @return array
+     * @return Response
      *
      * @throws \Exception
      */
@@ -1562,10 +1563,12 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         if ($object1 && $object2) {
             if ($object1->isAllowed('versions') && $object2->isAllowed('versions')) {
-                return [
-                    'object1' => $object1,
-                    'object2' => $object2,
-                ];
+                return $this->render('PimcoreAdminBundle:Admin/DataObject/DataObject:diffVersions.html.twig',
+                    [
+                        'object1' => $object1,
+                        'object2' => $object2,
+                        'validLanguages' => Tool::getValidLanguages(),
+                    ]);
             } else {
                 throw $this->createAccessDeniedException('Permission denied, version ids [' . $id1 . ', ' . $id2 . ']');
             }

@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension;
 
 use Pimcore\Document;
+use Pimcore\File;
 use Pimcore\Video;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -44,6 +45,8 @@ class HelpersExtension extends AbstractExtension
             new TwigFunction('pimcore_file_exists', function ($file) {
                 return file_exists($file);
             }),
+            new TwigFunction('pimcore_file_extension', [File::class, 'getFileExtension']),
+            new TwigFunction('pimcore_image_version_preview', [$this, 'getImageVersionPreview']),
         ];
     }
 
@@ -65,5 +68,26 @@ class HelpersExtension extends AbstractExtension
     public function basenameFilter($value, $suffix = '')
     {
         return basename($value, $suffix);
+    }
+
+    /**
+     * @param $file
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getImageVersionPreview($file)
+    {
+        $thumbnail = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/image-version-preview-" . uniqid() . ".png";
+        $convert = \Pimcore\Image::getInstance();
+        $convert->load($file);
+        $convert->contain(500,500);
+        $convert->save($thumbnail, "png");
+
+        $dataUri = "data:image/png;base64," . base64_encode(file_get_contents($thumbnail));
+        unlink($thumbnail);
+        unlink($file);
+
+        return $dataUri;
     }
 }

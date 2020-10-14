@@ -47,33 +47,31 @@
 
                 {% for activeGroupId, enabled in existingGroups %}
                     {% if activeGroups[activeGroupId] is not empty %}
-                        continue;
-                    {% endif %}
+                        {% set groupDefinition = pimcore_object_classificationstore_group(activeGroupId) %}
+                        {% if groupDefinition is not empty %}
+                            {% set keyGroupRelations = groupDefinition.getRelations() %}
 
-                    {% set groupDefinition = pimcore_object_classificationstore_group(activeGroupId) %}
-                    {% if groupDefinition is not empty %}
-                        {% set keyGroupRelations = groupDefinition.getRelations() %}
+                            {% for keyGroupRelation in keyGroupRelations %}
+                                {% set keyDef = pimcore_object_classificationstore_get_field_definition_from_json(keyGroupRelation.getDefinition(), keyGroupRelation.getType())  %}
 
-                        {% for keyGroupRelation in keyGroupRelations %}
-                            {% set keyDef = pimcore_object_classificationstore_get_field_definition_from_json(keyGroupRelation.getDefinition(), keyGroupRelation.getType())  %}
+                                {% if keyDef is not empty %}
+                                    {% for language in languages %}
+                                        {% set keyData = storeData ? storeData.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
 
-                            {% if keyDef is not empty %}
-                                {% for language in languages %}
-                                    {% set keyData = storeData ? storeData.getLocalizedKeyValue(activeGroupId, keyGroupRelation.getKeyId(), language, true, true) : null %}
-
-                                    {% set preview = keyDef.getVersionPreview(keyData) %}
-                                    {% set trClass2 = (c % 2) ? 'odd' : '' %}
-                                    <tr class=" {{ trClass2 }}">
-                                        <td>{{ definition.getTitle()|trans([],'admin') }}</td>
-                                        <td>{{ groupDefinition.getName() ~ "-" ~ keyGroupRelation.getName() }} {{ definition.isLocalized() ? "/ " . language : ""  }}</td>
-                                        {% if isImportPreview or isNew %}
-                                            {{ preview }}
-                                        {% endif %}
-                                    </tr>
-                                    {% set c = c + 1 %}
-                                {% endfor %}
-                            {% endif %}
-                        {% endfor %}
+                                        {% set preview = keyDef.getVersionPreview(keyData) %}
+                                        {% set trClass2 = (c % 2) ? 'odd' : '' %}
+                                        <tr class=" {{ trClass2 }}">
+                                            <td>{{ definition.getTitle()|trans([],'admin') }}</td>
+                                            <td>{{ groupDefinition.getName() ~ "-" ~ keyGroupRelation.getName() }} {{ definition.isLocalized() ? "/ " . language : ""  }}</td>
+                                            {% if isImportPreview or isNew %}
+                                                {{ preview }}
+                                            {% endif %}
+                                        </tr>
+                                        {% set c = c + 1 %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             {% endif %}

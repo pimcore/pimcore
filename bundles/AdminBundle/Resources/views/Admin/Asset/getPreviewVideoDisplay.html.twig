@@ -1,6 +1,3 @@
-<?php
-/** @var \Pimcore\Templating\PhpEngine $view */
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -40,24 +37,16 @@
 
 <body>
 
+{% set previewImage = '' %}
+{% if pimcore_video_is_available() %}
+    {% set previewImage = path('pimcore_admin_asset_getvideothumbnail', {id: asset.getId(), treepreview: 'true'}) %}
+{% endif %}
 
-<?php
-    $previewImage = "";
-    if(\Pimcore\Video::isAvailable()) {
-        $previewImage = $view->router()->path('pimcore_admin_asset_getvideothumbnail', [
-            'id' => $this->asset->getId(),
-            'treepreview' => 'true'
-        ]);
-    }
-
-    $serveVideoPreview = $view->router()->path('pimcore_admin_asset_servevideopreview', [
-        'id' => $this->asset->getId()
-    ]);
-?>
+{% set serveVideoPreview = path('pimcore_admin_asset_servevideopreview', {id: asset.getId()}) %}
 
 <div id="videoContainer">
-    <video id="video" controls="controls" height="400" poster="<?= $previewImage ?>">
-        <source src="<?=$serveVideoPreview ?>" type="video/mp4" />
+    <video id="video" controls="controls" height="400" poster="{{ previewImage }}">
+        <source src="{{ serveVideoPreview }}" type="video/mp4" />
     </video>
 </div>
 
