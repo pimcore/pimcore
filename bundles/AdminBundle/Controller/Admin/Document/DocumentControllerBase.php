@@ -54,7 +54,7 @@ abstract class DocumentControllerBase extends AdminController implements KernelC
             'data' => $data,
             'document' => $document,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::DOCUMENT_GET_PRE_SEND_DATA, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::DOCUMENT_GET_PRE_SEND_DATA);
         $data = $event->getArgument('data');
     }
 

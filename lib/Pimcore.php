@@ -11,10 +11,12 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
+
 use Pimcore\Cache;
 use Pimcore\File;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Pimcore
 {
@@ -160,7 +162,7 @@ class Pimcore
     }
 
     /**
-     * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface
+     * @return EventDispatcherInterface
      */
     public static function getEventDispatcher()
     {

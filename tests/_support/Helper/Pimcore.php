@@ -15,6 +15,7 @@ use Pimcore\Kernel;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager;
 use Pimcore\Model\Document;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 
 class Pimcore extends Module\Symfony
@@ -111,7 +112,7 @@ class Pimcore extends Module\Symfony
         }
 
         // dispatch kernel booted event - will be used from services which need to reset state between tests
-        $this->kernel->getContainer()->get('event_dispatcher')->dispatch(TestEvents::KERNEL_BOOTED);
+        $this->kernel->getContainer()->get('event_dispatcher')->dispatch(new GenericEvent(), TestEvents::KERNEL_BOOTED);
     }
 
     protected function setupPimcoreDirectories()

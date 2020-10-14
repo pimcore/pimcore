@@ -79,7 +79,7 @@ class SessionStatus
     {
         $event = new IgnoredSessionKeysEvent([$this->symfonyMetadataStorageKey]);
 
-        $this->eventDispatcher->dispatch(FullPageCacheEvents::IGNORED_SESSION_KEYS, $event);
+        $this->eventDispatcher->dispatch($event, FullPageCacheEvents::IGNORED_SESSION_KEYS);
 
         return $event->getKeys();
     }

@@ -15,7 +15,7 @@
 namespace Pimcore\Event\Model\Asset;
 
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ResolveUploadTargetEvent extends Event
 {

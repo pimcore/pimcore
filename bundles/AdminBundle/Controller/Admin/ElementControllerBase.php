@@ -119,7 +119,7 @@ class ElementControllerBase extends AdminController
                 }
 
                 if ($event instanceof ElementDeleteInfoEventInterface) {
-                    $this->get('event_dispatcher')->dispatch($eventName, $event);
+                    $this->get('event_dispatcher')->dispatch($event, $eventName);
 
                     if (!$event->getDeletionAllowed()) {
                         $itemResults[] = [

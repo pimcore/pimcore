@@ -50,7 +50,7 @@ class OrderAgent extends Agent
         $order = $this->getOrder();
 
         $event = new OrderAgentEvent($this, ['currentPaymentInformation' => $currentPaymentInformation]);
-        $this->eventDispatcher->dispatch(OrderAgentEvents::PRE_INIT_PAYMENT, $event);
+        $this->eventDispatcher->dispatch($event, OrderAgentEvents::PRE_INIT_PAYMENT);
         $currentPaymentInformation = $event->getArgument('currentPaymentInformation');
 
         if ($currentPaymentInformation) {
@@ -81,7 +81,7 @@ class OrderAgent extends Agent
             $order->save(['versionNote' => 'Agent::initPayment - save order to add new PaymentInformation.']);
         }
 
-        $this->eventDispatcher->dispatch(OrderAgentEvents::POST_INIT_PAYMENT, new OrderAgentEvent($this, ['currentPaymentInformation' => $currentPaymentInformation]));
+        $this->eventDispatcher->dispatch(new OrderAgentEvent($this, ['currentPaymentInformation' => $currentPaymentInformation]), OrderAgentEvents::POST_INIT_PAYMENT);
 
         return $currentPaymentInformation;
     }
@@ -98,7 +98,7 @@ class OrderAgent extends Agent
         $currentPaymentInformation = $this->initPayment();
 
         $event = new OrderAgentEvent($this, ['currentPaymentInformation' => $currentPaymentInformation]);
-        $this->eventDispatcher->dispatch(OrderAgentEvents::PRE_START_PAYMENT, $event);
+        $this->eventDispatcher->dispatch($event, OrderAgentEvents::PRE_START_PAYMENT);
         $currentPaymentInformation = $event->getArgument('currentPaymentInformation');
 
         $order = $this->getOrder();
@@ -107,7 +107,7 @@ class OrderAgent extends Agent
         $currentPaymentInformation->setPaymentState($order::ORDER_STATE_PAYMENT_PENDING);
         $order->save(['versionNote' => 'Agent::startPayment - save order to update PaymentInformation.']);
 
-        $this->eventDispatcher->dispatch(OrderAgentEvents::POST_START_PAYMENT, new OrderAgentEvent($this, ['currentPaymentInformation' => $currentPaymentInformation]));
+        $this->eventDispatcher->dispatch(new OrderAgentEvent($this, ['currentPaymentInformation' => $currentPaymentInformation]), OrderAgentEvents::POST_START_PAYMENT);
 
         return $currentPaymentInformation;
     }

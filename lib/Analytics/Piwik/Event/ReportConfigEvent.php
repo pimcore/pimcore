@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Analytics\Piwik\Event;
 
 use Pimcore\Analytics\Piwik\Dto\ReportConfig;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class ReportConfigEvent extends Event
 {

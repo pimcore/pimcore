@@ -77,7 +77,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
         $lock->acquire(true);
 
         $event = new CommitOrderProcessorEvent($this, null, ['paymentStatus' => $paymentStatus]);
-        $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::PRE_COMMIT_ORDER_PAYMENT, $event);
+        $this->eventDispatcher->dispatch($event, CommitOrderProcessorEvents::PRE_COMMIT_ORDER_PAYMENT);
         $paymentStatus = $event->getArgument('paymentStatus');
 
         // check if order is already committed and payment information with same internal payment id has same state
@@ -130,7 +130,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
         }
 
         $event = new CommitOrderProcessorEvent($this, $order, ['paymentStatus' => $paymentStatus]);
-        $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::POST_COMMIT_ORDER_PAYMENT, $event);
+        $this->eventDispatcher->dispatch($event, CommitOrderProcessorEvents::POST_COMMIT_ORDER_PAYMENT);
 
         $lock->release();
 
@@ -142,7 +142,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
      */
     public function commitOrder(AbstractOrder $order)
     {
-        $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::PRE_COMMIT_ORDER, new CommitOrderProcessorEvent($this, $order));
+        $this->eventDispatcher->dispatch(new CommitOrderProcessorEvent($this, $order), CommitOrderProcessorEvents::PRE_COMMIT_ORDER);
 
         $this->processOrder($order);
 
@@ -155,7 +155,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
             $this->logger->error('Error during sending confirmation e-mail: ' . $e);
         }
 
-        $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::POST_COMMIT_ORDER, new CommitOrderProcessorEvent($this, $order));
+        $this->eventDispatcher->dispatch(new CommitOrderProcessorEvent($this, $order), CommitOrderProcessorEvents::POST_COMMIT_ORDER);
 
         return $order;
     }
@@ -166,7 +166,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
     protected function sendConfirmationMail(AbstractOrder $order)
     {
         $event = new SendConfirmationMailEvent($this, $order, $this->confirmationMail);
-        $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::SEND_CONFIRMATION_MAILS, $event);
+        $this->eventDispatcher->dispatch($event, CommitOrderProcessorEvents::SEND_CONFIRMATION_MAILS);
 
         if (!$event->doSkipDefaultBehaviour()) {
             $params = [];

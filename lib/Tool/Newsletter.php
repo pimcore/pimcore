@@ -159,9 +159,9 @@ class Newsletter
                 'mailer' => $mailer,
             ]);
 
-            Pimcore::getEventDispatcher()->dispatch(DocumentEvents::NEWSLETTER_PRE_SEND, $event);
+            Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::NEWSLETTER_PRE_SEND);
             $mail->sendWithoutRendering($mailer);
-            Pimcore::getEventDispatcher()->dispatch(DocumentEvents::NEWSLETTER_POST_SEND, $event);
+            Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::NEWSLETTER_POST_SEND);
 
             Logger::info(
                 sprintf(
