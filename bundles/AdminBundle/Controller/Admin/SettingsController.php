@@ -33,7 +33,7 @@ use Pimcore\Model\Property;
 use Pimcore\Model\Staticroute;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
