@@ -118,14 +118,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -110 }
 
-    Pimcore\Bundle\CoreBundle\EventListener\Frontend\CookiePolicyNoticeListener:
-        public: true
-        calls:
-            - [loadTemplateFromResource, ['@@PimcoreCoreBundle/Resources/misc/cookie-policy-default-template.html']]
-            - [setTranslator, ['@translator']]
-        tags:
-            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse, priority: -109 }
-
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\GoogleTagManagerListener:
         public: true
         tags:
