@@ -802,6 +802,7 @@ class MiscController extends AdminController
         $locale = $localeService->getLocale();
 
         $scripts = include PIMCORE_PATH . '/bundles/AdminBundle/Resources/misc/pimcore-internal-scripts.php';
+        $scripts[] = "/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic-locale/overrides/" . $locale . "/ext-locale-" . $locale . ".js";
 
         $scriptContents = "";
         foreach ($scripts as $scriptUrl) {
