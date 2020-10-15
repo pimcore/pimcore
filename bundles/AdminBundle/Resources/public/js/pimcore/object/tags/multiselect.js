@@ -210,6 +210,13 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         if(this.isRendered()) {
             return this.component.getValue();
         }
+
+        let res = [];
+        if (this.data) {
+            res = [this.data];
+        }
+
+        return res;
     },
 
     getName: function () {
