@@ -71,9 +71,12 @@
             {% for language in validLanguages %}
                 {% for lfd in definition.getFieldDefinitions() %}
                     {% set vlContainer = object1.getValueForFieldName(fieldName) %}
-                    {% set v1 = vlContainer is not empty ? lfd.getVersionPreview(vlContainer.getLocalizedValue(lfd.getName(), language)) : "" %}
+                    {% set keyData1 = vlContainer is not empty ? vlContainer.getLocalizedValue(lfd.getName(), language) : null %}
+                    {% set v1 = lfd.getVersionPreview(keyData1) %}
+
                     {% set v2Container = object2.getValueForFieldName(fieldName) %}
-                    {% set v2 = v2Container ? lfd.getVersionPreview(v2Container.getLocalizedValue(lfd.getName(), language)) : "" %}
+                    {% set keyData2 = v2Container is not empty ? v2Container.getLocalizedValue(lfd.getName(), language) : null %}
+                    {% set v2 = v2Container ? lfd.getVersionPreview(keyData2) %}
 
                     {% set trClass = (c % 2) ? 'odd' : '' %}
 
@@ -83,7 +86,7 @@
                         {% if isImportPreview is not defined or isNew is not defined %}
                         <td>{{ v1 | raw }}</td>
                     {% endif %}
-                        {% set fieldIsEqual = lfd is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not lfd.isEqual(vlContainer.getLocalizedValue(lfd.getName(), language), v2Container.getLocalizedValue(lfd.getName(), language)) ? 'modified' : '' %}
+                        {% set fieldIsEqual = lfd is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not lfd.isEqual(keyData1, keyData2) ? 'modified' : '' %}
                         <td class="{{ fieldIsEqual }}">{{ v2 | raw }}</td>
                     </tr>
                 {% endfor %}
@@ -265,6 +268,7 @@
             {% set fields1,fields2 = object1.get(fieldName),object2.get(fieldName) %}
             {% set fieldDefinitions11,fieldItems1 = null,null %}
             {% set fieldDefinitions12,fieldItems2 = null,null %}
+            {% set skipFieldItems2 = [] %}
 
             {% if fields1 %}
                 {% set fieldDefinitions1 = fields1.getItemDefinitions() %}
@@ -283,15 +287,17 @@
                     {% if fieldItems2[fkey1] is defined and fieldItem1.getType() == fieldItems2[fkey1].getType() %}
                         {% set ffkey2 = fieldItems2[fkey1]  %}
                         {% set fieldKeys2 = fieldDefinitions2[ffkey2.getType()].getFieldDefinitions() %}
-                        {#{% do unset(fieldItems2[fkey1]) %}#}
+                        {% set skipFieldItems2 = skipFieldItems2|merge([fkey1, fkey1]) %}
                     {% endif %}
 
                     {% for fkey,fieldKey1 in fieldKeys1 %}
-                        {% set v2 = null %}
-                        {% set v1 = fieldKey1.getVersionPreview(fieldItem1.get(fieldKey1.name)) %}
+                        {% set v2,keyData2 = null,null %}
+                        {% set keyData1 = fieldItem1.get(fieldKey1.name) %}
+                        {% set v1 = fieldKey1.getVersionPreview(keyData1) %}
 
-                        {% if ffkey2 is not empty and fieldKeys2[fkey] is defined %}
-                            {% set v2 = fieldKey1.getVersionPreview(ffkey2.get(fieldKeys2[fkey].name)) %}
+                        {% if ffkey2 is defined and fieldKeys2[fkey] is defined %}
+                            {% set keyData2 = ffkey2.get(fieldKeys2[fkey].name) %}
+                            {% set v2 = fieldKey1.getVersionPreview(keyData2) %}
                         {% endif %}
 
                         {% set trClass = (c % 2) ? 'odd' : '' %}
@@ -301,7 +307,7 @@
                             {% if isImportPreview is not defined or isNew is not defined %}
                                 <td>{{ v1 | raw }}</td>
                             {% endif %}
-                            {% set fieldIsEqual = fieldKey1 is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not fieldKey1.isEqual(v1, v2) ? 'modified' : '' %}
+                            {% set fieldIsEqual = fieldKey1 is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not fieldKey1.isEqual(keyData1, keyData2) ? 'modified' : '' %}
                             <td class="{{ fieldIsEqual }}">{{ v2 | raw }}</td>
                         </tr>
                         {% set c = c + 1 %}
@@ -310,12 +316,24 @@
             {% endif %}
 
             {% if fieldItems2 is iterable and fieldItems2|length > 0 %}
-                {% for fkey2,fieldItem2  in fieldItems2 %}
+
+                {% for fkey2,fieldItem2  in fieldItems2 if fkey2 not in skipFieldItems2|keys %}
                     {% set fieldKeys2 = fieldDefinitions2[fieldItem2.getType()].getFieldDefinitions() %}
 
-                    {% for fieldKey2 in fieldKeys2 %}
-                        {% set v1 = null %}
-                        {% set v2 = fieldKey2.getVersionPreview(fieldItem2.get(fieldKey2.name)) %}
+                    {% if fieldItems1[fkey2] is defined and fieldItem2.getType() == fieldItems1[fkey2].getType() %}
+                        {% set ffkey1 = fieldItems1[fkey2]  %}
+                        {% set fieldKeys1 = fieldDefinitions1[ffkey1.getType()].getFieldDefinitions() %}
+                    {% endif %}
+
+                    {% for fkey,fieldKey2 in fieldKeys2 %}
+                        {% set v1,keyData1 = null,null %}
+                        {% set keyData2 = fieldItem2.get(fieldKey2.name) %}
+                        {% set v2 = fieldKey2.getVersionPreview(keyData2) %}
+
+                        {% if ffkey1 is defined and fieldKeys1[fkey] is defined %}
+                            {% set keyData1 = ffkey1.get(fieldKeys1[fkey].name) %}
+                            {% set v1 = fieldKey2.getVersionPreview(keyData1) %}
+                        {% endif %}
 
                         {% set trClass = (c % 2) ? 'odd' : '' %}
                         <tr class="{{ trClass }}">
@@ -324,7 +342,7 @@
                             {% if isImportPreview is not defined or isNew is not defined %}
                                 <td>{{ v1 | raw }}</td>
                             {% endif %}
-                            {% set fieldIsEqual = fieldKey2 is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not fieldKey2.isEqual(v1, v2) ? 'modified' : '' %}
+                            {% set fieldIsEqual = fieldKey2 is instanceof('\\Pimcore\\Model\\DataObject\\ClassDefinition\\Data\\EqualComparisonInterface') and not fieldKey2.isEqual(v1, keyData2) ? 'modified' : '' %}
                             <td class="{{ fieldIsEqual }}">{{ v2 | raw }}</td>
                         </tr>
                         {% set c = c + 1 %}
