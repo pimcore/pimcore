@@ -870,10 +870,6 @@ class MiscController extends AdminController
 
             $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $fosUrl) . "\n\n\n";
 
-
-            $bundleManager = $this->get('pimcore.extension.bundle_manager');
-            $pluginJsPaths = $bundleManager->getEditmodeJsPaths();
-
             $kernel = $this->container->get('http_kernel');
             $subRequest = Request::create('/js/routing?callback=fos.Router.setData');
             $response = $kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
