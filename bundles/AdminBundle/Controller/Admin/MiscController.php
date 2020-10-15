@@ -810,16 +810,6 @@ class MiscController extends AdminController
             if (is_file($fullPath)) {
                 $scriptContents .= "\r\n\r\n// " . $fullPath . "\r\n";
                 $scriptContents .= file_get_contents($fullPath) . "\n\n\n";
-            } else {
-                try {
-                    $kernel = $this->container->get('http_kernel');
-                    $subRequest = Request::create( $scriptUrl);
-                    $response = $kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
-                    $subResponse = $response->getContent();
-                    $scriptContents .= $subResponse;
-                } catch (\Exception $e) {
-                    Logger::error("could not find file " . $fullPath);
-                }
             }
         }
 
