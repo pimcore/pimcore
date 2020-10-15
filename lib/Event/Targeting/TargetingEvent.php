@@ -18,8 +18,8 @@ declare(strict_types=1);
 namespace Pimcore\Event\Targeting;
 
 use Pimcore\Targeting\Model\VisitorInfo;
-use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class TargetingEvent extends Event
 {

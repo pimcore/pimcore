@@ -35,8 +35,8 @@ use Pimcore\Targeting\VisitorInfoResolver;
 use Pimcore\Targeting\VisitorInfoStorageInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class TargetingListener implements EventSubscriberInterface
