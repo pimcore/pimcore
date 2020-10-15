@@ -1,10 +1,11 @@
 var Ext = Ext || {};
-Ext.manifest = Ext.manifest || "desktop.json";
+Ext.manifest = "/bundles/pimcoreadmin/js/ext-js/pimcore.json";
+Ext.beforeLoad = function() {
+    Ext._customCachingParam = "?" + pimcore.settings.build;
+};
+
 // @tag core
 // @define Ext.Boot
-
-var Ext = Ext || {};
-
 //<editor-fold desc="Boot">
 /**
  * @class Ext.Boot
@@ -2698,8 +2699,4 @@ Ext.Microloader = Ext.Microloader || (function () {
 /**
  * @type {String/Object}
  */
-Ext.manifest = Ext.manifest || "bootstrap";
-
-console.log("Start Microloader");
 Ext.Microloader.run();
-console.log("Microloading...");

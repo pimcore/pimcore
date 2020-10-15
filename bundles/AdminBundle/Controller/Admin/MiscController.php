@@ -189,53 +189,6 @@ class MiscController extends AdminController
     }
 
     /**
-     * @Route("/script-proxy", name="pimcore_admin_misc_scriptproxy", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function scriptProxyAction(Request $request)
-    {
-        $allowedFileTypes = ['js', 'css'];
-        $scripts = explode(',', $request->get('scripts'));
-
-        if ($request->get('scriptPath')) {
-            $scriptPath = PIMCORE_WEB_ROOT . $request->get('scriptPath');
-        } else {
-            $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/';
-        }
-
-        $scriptsContent = '';
-        foreach ($scripts as $script) {
-            $filePath = $scriptPath . $script;
-            if (is_file($filePath) && is_readable($filePath) && in_array(\Pimcore\File::getFileExtension($script), $allowedFileTypes)) {
-                $scriptsContent .= file_get_contents($filePath);
-            }
-        }
-
-        if (!empty($scriptsContent)) {
-            $fileExtension = \Pimcore\File::getFileExtension($scripts[0]);
-            $contentType = 'text/javascript';
-            if ($fileExtension == 'css') {
-                $contentType = 'text/css';
-            }
-
-            $lifetime = 86400;
-
-            $response = new Response($scriptsContent);
-            $response->headers->set('Cache-Control', 'max-age=' . $lifetime);
-            $response->headers->set('Pragma', '');
-            $response->headers->set('Content-Type', $contentType);
-            $response->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + $lifetime) . ' GMT');
-
-            return $response;
-        } else {
-            throw $this->createNotFoundException('Scripts not found');
-        }
-    }
-
-    /**
      * @Route("/admin-css", name="pimcore_admin_misc_admincss", methods={"GET"})
      *
      * @param Request $request

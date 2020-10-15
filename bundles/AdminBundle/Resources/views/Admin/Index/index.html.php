@@ -216,43 +216,11 @@ $styles = array(
 
 <?php //****************************************************************************************** ?>
 
-
-<?php // define scripts ?>
-
-<script type="text/javascript">
-    var Ext = Ext || {};
-    Ext.manifest = "/bundles/pimcoreadmin/js/ext-js/pimcore.json";
-    Ext.beforeLoad = function(platformTags) {
-            console.log("BEFORE LOAD");
-
-            // this is used in bootstrap.js
-            Ext._customCachingParam = "?><?= \Pimcore\Version::getRevision();?>";
-    } ;
-</script>
-
-
-<?php
-
-
-$scriptLibs = array(
-
-    // library
-    "lib/class.js",
-    "lib/ckeditor/ckeditor.js",
-    "lib/leaflet/leaflet.js",
-    "lib/leaflet.draw/leaflet.draw.js",
-    "lib/vrview/build/vrview.min.js",
-    "ext-js/bootstrap.js"
-);
-
-?>
-
 <!-- some javascript -->
 <?php // pimcore constants ?>
 <script>
     pimcore.settings = <?= json_encode($this->settings, JSON_PRETTY_PRINT) ?>;
 </script>
-
 <script src="<?= $view->router()->path('pimcore_admin_misc_jsontranslationssystem', ['language' => $language, '_dc' => \Pimcore\Version::getRevision()])?>"></script>
 <script src="<?= $view->router()->path('pimcore_admin_user_getcurrentuser') ?>?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
 <script src="<?= $view->router()->path('pimcore_admin_misc_availablelanguages', ['_dc' => \Pimcore\Version::getRevision()]) ?>"></script>
@@ -266,13 +234,25 @@ if ($disableMinifyJs) {
 
 ?>
 
-
-
 <?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
     <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
 <?php endforeach; ?>
 
 <!-- library scripts -->
+<?php
+
+$scriptLibs = array(
+
+    // library
+    "lib/class.js",
+    "lib/ckeditor/ckeditor.js",
+    "lib/leaflet/leaflet.js",
+    "lib/leaflet.draw/leaflet.draw.js",
+    "lib/vrview/build/vrview.min.js",
+    "ext-js/bootstrap.js"
+);
+
+?>
 <?php foreach ($scriptLibs as $scriptUrl) { ?>
     <script src="/bundles/pimcoreadmin/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
 <?php } ?>

@@ -11,9 +11,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-console.log("launch app");
 var xhrActive = 0;
-
 
 pimcore["intervals"] = {};
 
