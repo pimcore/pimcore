@@ -279,15 +279,6 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('instance_identifier')
                     ->defaultNull()->end()
-                ->booleanNode('show_cookie_notice')
-                    ->setDeprecated('The cookie bar will be removed in Pimcore 7')
-                    ->beforeNormalization()
-                        ->ifString()
-                        ->then(function ($v) {
-                            return (bool)$v;
-                        })
-                    ->end()
-                    ->defaultFalse()
                 ->end()
             ->end();
     }
@@ -318,9 +309,6 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->end()
                 ->end()
-            ->end()
-            ->arrayNode('webservice')
-                ->canBeEnabled()
             ->end();
     }
 
@@ -703,12 +691,6 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('prefixes')
                             ->prototype('scalar')->end()
-                        ->end()
-                        ->enumNode('naming_strategy')
-                            ->info('Sets naming strategy used to build editable names')
-                            ->values(['legacy', 'nested'])
-                            ->defaultValue('nested')
-                            ->setDeprecated('The "%node%" option is deprecated. Migrate to the new editable naming scheme!')
                         ->end()
                     ->end()
                 ->end()

@@ -20,7 +20,6 @@ pimcore.settings.user.user.settings = Class.create({
 
         this.data = this.userPanel.data;
         this.currentUser = this.data.user;
-        this.wsenabled = this.data.wsenabled;
     },
 
     getPanel: function () {
@@ -416,42 +415,6 @@ pimcore.settings.user.user.settings = Class.create({
                 value: t("user_admin_description"),
                 cls: "pimcore_extra_label_bottom"
             });
-
-            this.apiKeyField = new Ext.form.TextField({
-                xtype: "textfield",
-                fieldLabel: t("apikey"),
-                name: "apiKey",
-                style: "font-family: courier;",
-                value: this.currentUser.apiKey,
-                width: 560
-            });
-
-            this.apiKeyFieldContainer = new Ext.form.FieldSet({
-                border: false,
-                layout: 'hbox',
-                style: "padding:10px 0 0 0; ",
-                items: [this.apiKeyField,
-                    {
-                        xtype: "button",
-                        test: t("Generate"),
-                        iconCls: "pimcore_icon_clear_cache",
-                        handler: function (e) {
-                            this.apiKeyField.setValue(md5(uniqid()) + md5(uniqid()));
-                        }.bind(this)
-                    }],
-                hidden: !this.wsenabled
-            });
-
-            this.apiKeyDescription = new Ext.form.DisplayField({
-                hideLabel: true,
-                width: 600,
-                value: "<b>DEPRECATED! Will be removed in 7.0!</b>  " +  t("user_apikey_description"),
-                cls: "pimcore_extra_label_bottom",
-                hidden: !this.wsenabled
-            });
-
-            adminItems.push(this.apiKeyFieldContainer);
-            adminItems.push(this.apiKeyDescription);
         }
 
         adminItems.push({

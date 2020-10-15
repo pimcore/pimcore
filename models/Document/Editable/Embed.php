@@ -27,7 +27,7 @@ class Embed extends Model\Document\Editable
     /**
      * @var string
      */
-    public $url;
+    protected $url;
 
     /**
      * @see EditableInterface::getType
@@ -49,6 +49,16 @@ class Embed extends Model\Document\Editable
         return [
             'url' => $this->url,
         ];
+    }
+
+    /**
+     * @see EditableInterface::getData
+     *
+     * @return mixed
+     */
+    public function getUrl()
+    {
+        return $this->url;
     }
 
     /**
@@ -154,24 +164,4 @@ class Embed extends Model\Document\Editable
 
         return true;
     }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $wsElement->value;
-        if ($data->url) {
-            $this->url = $data->url;
-        }
-    }
 }
-
-class_alias(Embed::class, 'Pimcore\Model\Document\Tag\Embed');

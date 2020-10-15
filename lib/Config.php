@@ -17,7 +17,7 @@ namespace Pimcore;
 use Pimcore\Cache\Runtime;
 use Pimcore\Config\EnvironmentConfig;
 use Pimcore\Config\EnvironmentConfigInterface;
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\User\UserRole;
 use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
@@ -305,7 +305,7 @@ class Config implements \ArrayAccess
             } else {
                 $data = $config->toArray();
                 foreach ($data as $key => $setting) {
-                    if ($setting instanceof AbstractElement) {
+                    if ($setting instanceof ElementInterface) {
                         $elementCacheKey = $setting->getCacheTag();
                         if (!Runtime::isRegistered($elementCacheKey)) {
                             Runtime::set($elementCacheKey, $setting);
@@ -391,7 +391,6 @@ class Config implements \ArrayAccess
                     'disableusagestatistics' => self::getArrayValue(['general', 'disable_usage_statistics'], $config),
                     'debug_admin_translations' => self::getArrayValue(['general', 'debug_admin_translations'], $config),
                     'instanceIdentifier' => self::getArrayValue(['general', 'instance_identifier'], $config),
-                    'show_cookie_notice' => self::getArrayValue(['general', 'show_cookie_notice'], $config),
                 ],
                 'documents' => [
                     'versions' => [
@@ -431,9 +430,6 @@ class Config implements \ArrayAccess
                     'lifetime' => self::getArrayValue(['full_page_cache', 'lifetime'], $config),
                     'excludePatterns' => self::getArrayValue(['full_page_cache', 'exclude_patterns'], $config),
                     'excludeCookie' => self::getArrayValue(['full_page_cache', 'exclude_cookie'], $config),
-                ],
-                'webservice' => [
-                    'enabled' => self::getArrayValue(['webservice', 'enabled'], $config),
                 ],
                 'httpclient' => [
                     'adapter' => self::getArrayValue(['httpclient', 'adapter'], $config),

@@ -20,6 +20,8 @@ namespace Pimcore\Model\ImportConfigShare;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\ImportConfigShare $model
  */
 class Dao extends Model\Dao\AbstractDao

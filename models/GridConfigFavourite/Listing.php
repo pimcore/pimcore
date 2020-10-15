@@ -27,18 +27,6 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var array|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $gridconfigFavourites = null;
-
-    public function __construct()
-    {
-        $this->gridconfigFavourites = & $this->data;
-    }
-
-    /**
      * @return Model\GridConfigFavourite[]
      */
     public function getGridconfigFavourites()

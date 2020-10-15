@@ -31,19 +31,19 @@ class Block extends Model\Document\Editable implements BlockInterface
      *
      * @var array
      */
-    public $indices = [];
+    protected $indices = [];
 
     /**
      * Current step of the block while iteration
      *
      * @var int
      */
-    public $current = 0;
+    protected $current = 0;
 
     /**
      * @var string[]
      */
-    public $suffixes = [];
+    protected $suffixes = [];
 
     /**
      * @see EditableInterface::getType
@@ -188,8 +188,8 @@ class Block extends Model\Document\Editable implements BlockInterface
      */
     public function start()
     {
-        $options = $this->getEditmodeOptions();
-        $this->outputEditmodeOptions($options);
+        $options = $this->getEditmodeConfig();
+        $this->outputEditmodeConfig($options);
 
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
@@ -332,6 +332,22 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
+     * @return array
+     */
+    public function getIndices()
+    {
+        return $this->indices;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSuffixes()
+    {
+        return $this->suffixes;
+    }
+
+    /**
      * If object was serialized, set the counter back to 0
      */
     public function __wakeup()
@@ -345,27 +361,6 @@ class Block extends Model\Document\Editable implements BlockInterface
     public function isEmpty()
     {
         return !(bool) count($this->indices);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if (($data->indices === null or is_array($data->indices)) and ($data->current == null or is_numeric($data->current))) {
-            $this->indices = $data->indices;
-            $this->current = $data->current;
-        } else {
-            throw new \Exception('cannot get  values from web service import - invalid data');
-        }
     }
 
     /**
@@ -404,5 +399,3 @@ class Block extends Model\Document\Editable implements BlockInterface
         return HtmlUtils::assembleAttributeString($attributes);
     }
 }
-
-class_alias(Block::class, 'Pimcore\Model\Document\Tag\Block');

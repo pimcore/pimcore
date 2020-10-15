@@ -36,16 +36,6 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick implements Te
     /**
      * @inheritDoc
      */
-    public function getViewTemplate()
-    {
-        @trigger_error(sprintf('%s is deprecated, use getTemplate() instead', __METHOD__), E_USER_DEPRECATED);
-
-        return $this->getTemplate();
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getTemplateLocation()
     {
         return static::TEMPLATE_LOCATION_BUNDLE;

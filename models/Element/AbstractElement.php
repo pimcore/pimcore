@@ -114,11 +114,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param Model\Property[] $properties
-     */
-    abstract public function setProperties($properties);
-
-    /**
      * @param string $name
      */
     public function removeProperty($name)
@@ -180,15 +175,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         // check for properties
         if (method_exists($this, 'getProperties')) {
-            $properties = $this->getProperties();
-            foreach ($properties as $property) {
+            foreach ($this->getProperties() as $property) {
                 $dependencies[] = $property->resolveDependencies();
             }
         }
 
-        $dependencies = array_merge(...$dependencies);
-
-        return $dependencies;
+        return array_merge(...$dependencies);
     }
 
     /**

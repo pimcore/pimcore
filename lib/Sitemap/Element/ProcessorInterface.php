@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Sitemap\Element;
 
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Presta\SitemapBundle\Sitemap\Url\Url;
 
 interface ProcessorInterface
@@ -26,10 +26,10 @@ interface ProcessorInterface
      * Processes an URL. The processor is expected to return the same or a new URL instance or null
      *
      * @param Url $url
-     * @param AbstractElement $element
+     * @param ElementInterface $element
      * @param GeneratorContextInterface $context
      *
      * @return Url|null
      */
-    public function process(Url $url, AbstractElement $element, GeneratorContextInterface $context);
+    public function process(Url $url, ElementInterface $element, GeneratorContextInterface $context);
 }

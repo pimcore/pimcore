@@ -29,7 +29,7 @@ class Multiselect extends Model\Document\Editable
      *
      * @var array
      */
-    public $values = [];
+    protected $values = [];
 
     /**
      * @see EditableInterface::getType
@@ -49,6 +49,14 @@ class Multiselect extends Model\Document\Editable
     public function getData()
     {
         return $this->values;
+    }
+
+    /**
+     * @return array
+     */
+    public function getValues()
+    {
+        return $this->getData();
     }
 
     /**
@@ -110,28 +118,4 @@ class Multiselect extends Model\Document\Editable
     {
         return empty($this->values);
     }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if ($data->values === null) {
-            $this->values = [];
-        } elseif ($data->values instanceof  \stdClass) {
-            $this->values = get_object_vars($data->values);
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
-    }
 }
-
-class_alias(Multiselect::class, 'Pimcore\Model\Document\Tag\Multiselect');

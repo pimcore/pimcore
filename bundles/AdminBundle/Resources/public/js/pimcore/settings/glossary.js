@@ -60,7 +60,7 @@ pimcore.settings.glossary = Class.create({
             Routing.generate('pimcore_admin_settings_glossary'),
             [
                 'id', {name: 'text', allowBlank: false}, 'language', 'casesensitive', 'exactmatch',
-                'site', 'link', 'acronym', 'creationDate', 'modificationDate'
+                'site', 'link', 'abbr', 'creationDate', 'modificationDate'
             ],
             itemsPerPage
         );
@@ -100,8 +100,6 @@ pimcore.settings.glossary = Class.create({
             {text: t("link"), flex: 200, sortable: true, dataIndex: 'link', editor: new Ext.form.TextField({}),
                                 tdCls: "pimcore_droptarget_input"},
             {text: t("abbr"), flex: 200, sortable: true, dataIndex: 'abbr', editor: new Ext.form.TextField({})},
-            {text: t("acronym"), flex: 200, sortable: true, dataIndex: 'acronym',
-                                editor: new Ext.form.TextField({})},
             {text: t("language"), flex: 50, sortable: true, dataIndex: 'language', editor: new Ext.form.ComboBox({
                 store: this.languages,
                 mode: "local",

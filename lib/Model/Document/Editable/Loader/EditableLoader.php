@@ -30,5 +30,3 @@ class EditableLoader extends ImplementationLoader implements EditableLoaderInter
         return parent::build($name, $params);
     }
 }
-
-class_alias(EditableLoader::class, 'Pimcore\Model\Document\Tag\Loader\TagLoader');

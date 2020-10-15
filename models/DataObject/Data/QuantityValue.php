@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
@@ -116,7 +117,7 @@ class QuantityValue implements OwnerAwareFieldInterface
     {
         $value = $this->getValue();
         if (is_numeric($value)) {
-            $locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+            $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
 
             if ($locale) {
                 $formatter = new \NumberFormatter($locale, \NumberFormatter::DECIMAL);

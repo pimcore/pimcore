@@ -146,7 +146,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
                 'taxAmount' => $price->getAmount()->sub($price->getNetAmount())->asString(2),
                 'currency' => $price->getCurrency()->getShortName(),
                 'paymentType' => static::PAYMENT_TYPE_DEBIT,
-                'merchantTransactionId' => $orderAgent->getOrder()->getLastPaymentInfo()->getInternalPaymentId(),
+                'customParameters[\'internalTransactionId\']' => $orderAgent->getOrder()->getLastPaymentInfo()->getInternalPaymentId(),
                 'transactionCategory' => static::TRANSACTION_CATEGORY_ECOMMERCE,
             ];
 
@@ -257,7 +257,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
             $this->logger->debug('Received JSON response in ' . self::class . '::handleResponse', $jsonResponse);
 
-            $internalPaymentId = $jsonResponse['merchantTransactionId'];
+            $internalPaymentId = $jsonResponse['customParameters']['internalTransactionId'];
 
             $clearedParams = [
                 'paymentType' => $jsonResponse['paymentBrand'],
@@ -273,7 +273,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
             $this->setAuthorizedData($clearedParams);
 
             //https://hobex.docs.oppwa.com/reference/resultCodes
-            if (strpos($jsonResponse['result']['code'], '000.100.') === 0) {
+            if ($this->isAuthorized($jsonResponse['result']['code'])){
                 $responseStatus = StatusInterface::STATUS_AUTHORIZED;
             }
 
@@ -367,5 +367,10 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
     public function executeCredit(PriceInterface $price, $reference, $transactionId)
     {
         throw new NotImplementedException('executeCredit is not implemented yet.');
+    }
+
+    protected  function isAuthorized($code)
+    {
+        return strpos($code, '000.100.') === 0 || strpos($code,'000.000.') === 0;
     }
 }

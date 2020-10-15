@@ -23,6 +23,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\AbstractObject $model
  */
 class Dao extends Model\Element\Dao

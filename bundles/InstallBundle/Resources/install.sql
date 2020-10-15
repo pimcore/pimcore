@@ -129,8 +129,8 @@ CREATE TABLE `documents` (
   KEY `modificationDate` (`modificationDate`)
 ) AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
 
-DROP TABLE IF EXISTS `documents_elements`;
-CREATE TABLE `documents_elements` (
+DROP TABLE IF EXISTS `documents_editables`;
+CREATE TABLE `documents_editables` (
   `documentId` int(11) unsigned NOT NULL DEFAULT '0',
   `name` varchar(750) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `type` varchar(50) DEFAULT NULL,
@@ -299,7 +299,6 @@ CREATE TABLE `glossary` (
   `text` varchar(255) DEFAULT NULL,
   `link` varchar(255) DEFAULT NULL,
   `abbr` varchar(255) DEFAULT NULL,
-  `acronym` varchar(255) DEFAULT NULL,
   `site` int(11) unsigned DEFAULT NULL,
   `creationDate` int(11) unsigned DEFAULT '0',
   `modificationDate` int(11) unsigned DEFAULT '0',
@@ -325,13 +324,6 @@ CREATE TABLE `http_error_log` (
   KEY `date` (`date`),
   KEY `count` (`count`)
 ) DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
-
-DROP TABLE IF EXISTS `locks`;
-CREATE TABLE `locks` (
-  `id` varchar(150) NOT NULL DEFAULT '',
-  `date` int(11) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8mb4;
 
 DROP TABLE IF EXISTS `lock_keys`;
 CREATE TABLE `lock_keys` (
@@ -577,40 +569,6 @@ CREATE TABLE `tmp_store` (
   KEY `expiryDate` (`expiryDate`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `tracking_events`;
-CREATE TABLE `tracking_events` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `category` varchar(190) DEFAULT NULL,
-  `action` varchar(190) DEFAULT NULL,
-  `label` varchar(190) DEFAULT NULL,
-  `data` varchar(190) DEFAULT NULL,
-  `timestamp` int(11) unsigned DEFAULT NULL,
-  `year` int(5) unsigned DEFAULT NULL,
-  `month` int(2) unsigned DEFAULT NULL,
-  `day` int(2) unsigned DEFAULT NULL,
-  `dayOfWeek` int(1) unsigned DEFAULT NULL,
-  `dayOfYear` int(3) unsigned DEFAULT NULL,
-  `weekOfYear` int(2) unsigned DEFAULT NULL,
-  `hour` int(2) unsigned DEFAULT NULL,
-  `minute` int(2) unsigned DEFAULT NULL,
-  `second` int(2) unsigned DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `timestamp` (`timestamp`),
-  KEY `year` (`year`),
-  KEY `month` (`month`),
-  KEY `day` (`day`),
-  KEY `dayOfWeek` (`dayOfWeek`),
-  KEY `dayOfYear` (`dayOfYear`),
-  KEY `weekOfYear` (`weekOfYear`),
-  KEY `hour` (`hour`),
-  KEY `minute` (`minute`),
-  KEY `second` (`second`),
-  KEY `category` (`category`),
-  KEY `action` (`action`),
-  KEY `label` (`label`),
-  KEY `data` (`data`)
-) DEFAULT CHARSET=utf8mb4;
-
 DROP TABLE IF EXISTS `translations_admin`;
 CREATE TABLE `translations_admin` (
   `key` varchar(190) NOT NULL DEFAULT '' COLLATE 'utf8mb4_bin',
@@ -665,7 +623,6 @@ CREATE TABLE `users` (
   `allowDirtyClose` tinyint(1) unsigned DEFAULT '1',
   `docTypes` varchar(255) DEFAULT NULL,
   `classes` text DEFAULT NULL,
-  `apiKey` varchar(255) DEFAULT NULL,
   `twoFactorAuthentication` varchar(255) DEFAULT NULL,
 	`activePerspective` VARCHAR(255) NULL DEFAULT NULL,
 	`perspectives` LONGTEXT NULL DEFAULT NULL,

@@ -74,12 +74,6 @@ services:
         tags:
             - { name: console.command, command: 'pimcore:bundle:update' }
 
-    Pimcore\Bundle\CoreBundle\Command\Targeting\MigrateElementNamesCommand:
-        arguments:
-            - '@Pimcore\Document\Tag\NamingStrategy\NamingStrategyInterface'
-        tags:
-            - { name: console.command, command: 'pimcore:targeting:migrate-element-names' }
-
     Pimcore\Bundle\CoreBundle\Command\ClassesRebuildCommand:
         calls:
             - [setClassDefinitionManager, ['@Pimcore\Model\DataObject\ClassDefinition\ClassDefinitionManager']]

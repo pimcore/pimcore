@@ -23,6 +23,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
@@ -1419,11 +1420,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param Property[] $properties
-     *
-     * @return $this
+     * @inheritdoc
      */
-    public function setProperties($properties)
+    public function setProperties(array $properties)
     {
         $this->properties = $properties;
 
@@ -1664,7 +1663,7 @@ class Asset extends Element\AbstractElement
         $this->setHasMetaData(false);
         if (!empty($metadata)) {
             foreach ((array)$metadata as $metaItem) {
-                $metaItem = (array)$metaItem; // also allow object with appropriate keys (as it comes from Pimcore\Model\Webservice\Data\Asset\reverseMap)
+                $metaItem = (array)$metaItem; // also allow object with appropriate keys
                 $this->addMetadata($metaItem['name'], $metaItem['type'], $metaItem['data'] ?? null, $metaItem['language'] ?? null);
             }
         }
@@ -1772,7 +1771,7 @@ class Asset extends Element\AbstractElement
 
         if ($name) {
             if ($language === null) {
-                $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+                $language = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
             }
 
             $data = null;
@@ -2035,28 +2034,28 @@ class Asset extends Element\AbstractElement
      */
     public function resolveDependencies()
     {
-        $dependencies = parent::resolveDependencies();
+        $dependencies = [parent::resolveDependencies()];
 
         if ($this->hasMetaData) {
-            $metaData = $this->getMetadata();
+            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
-            foreach ($metaData as $md) {
-                if (isset($md['data']) && $md['data']) {
+            foreach ($this->getMetadata() as $metaData) {
+                if (!empty($metaData['data'])) {
                     /** @var ElementInterface $elementData */
-                    $elementData = $md['data'];
-                    $elementType = $md['type'];
-                    $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-                    /** @var DataDefinitionInterface $implementation */
+                    $elementData = $metaData['data'];
+                    $elementType = $metaData['type'];
+
                     try {
+                        /** @var DataDefinitionInterface $implementation */
                         $implementation = $loader->build($elementType);
-                        $dependencies = array_merge($dependencies, $implementation->resolveDependencies($elementData, $md));
+                        $dependencies[] = $implementation->resolveDependencies($elementData, $metaData);
                     } catch (UnsupportedException $e) {
                     }
                 }
             }
         }
 
-        return $dependencies;
+        return array_merge(...$dependencies);
     }
 
     public function __clone()

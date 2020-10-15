@@ -18,7 +18,6 @@ use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document\Editable;
 use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 use Pimcore\Model\Document\PageSnippet;
-use Pimcore\Templating\Model\ViewModel;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 
@@ -122,35 +121,19 @@ class EditableRenderer implements LoggerAwareInterface
             $editable = null;
 
             if ($document instanceof PageSnippet) {
-                $view = new ViewModel([
-                    'editmode' => $editmode,
-                    'document' => $document,
-                ]);
-
                 $editable = $document->getEditable($name);
-
-                // @TODO: BC layer, to be removed in v7.0
-                $aliases = [
-                    'href' => 'relation',
-                    'multihref' => 'relations',
-                ];
-                if (isset($aliases[$type])) {
-                    $type = $aliases[$type];
-                }
-
                 if ($editable instanceof Editable && $editable->getType() === $type) {
                     // call the load() method if it exists to reinitialize the data (eg. from serializing, ...)
                     if (method_exists($editable, 'load')) {
                         $editable->load();
                     }
 
-                    $editable->setView($view);
                     $editable->setEditmode($editmode);
                     $editable->setConfig($config);
                     $editable->setDocument($document);
                 } else {
-                    $editable = Editable::factory($type, $name, $document->getId(), $config, null, $view, $editmode);
-                    $document->setEditable($name, $editable);
+                    $editable = Editable::factory($type, $name, $document->getId(), $config, null, null, $editmode);
+                    $document->setEditable($editable);
                 }
 
                 // set the real name of this editable, without the prefixes and suffixes from blocks and areablocks
@@ -187,5 +170,3 @@ class EditableRenderer implements LoggerAwareInterface
         return '';
     }
 }
-
-class_alias(EditableRenderer::class, 'Pimcore\Templating\Renderer\TagRenderer');

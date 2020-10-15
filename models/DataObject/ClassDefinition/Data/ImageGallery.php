@@ -476,66 +476,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     }
 
     /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $result = [];
-        $data = $this->getDataFromObjectParam($object, $params);
-        $fd = new Hotspotimage();
-        $fd->setName('image');
-
-        if ($data instanceof DataObject\Data\ImageGallery) {
-            foreach ($data as $item) {
-                $dataForResource = $fd->getDataForResource($item, $object, $params);
-
-                if ($dataForResource) {
-                    if ($dataForResource['image__hotspots']) {
-                        $dataForResource['image__hotspots'] = Serialize::unserialize($dataForResource['image__hotspots']);
-                    }
-                }
-                $result[] = $dataForResource;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete|null $object
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return null|Asset|DataObject\Data\ImageGallery
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        $resultItems = [];
-        if (is_array($value)) {
-            $fd = new Hotspotimage();
-            $fd->setName('image');
-
-            foreach ($value as $item) {
-                $resultItems[] = $fd->getFromWebserviceImport($item, $object, $params, $idMapper);
-            }
-        }
-
-        return new DataObject\Data\ImageGallery($resultItems);
-    }
-
-    /**
      * @param DataObject\Data\ImageGallery|null $data
      * @param DataObject\Concrete|null $object
      * @param array $params

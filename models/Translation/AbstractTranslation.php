@@ -20,6 +20,7 @@ namespace Pimcore\Model\Translation;
 use Pimcore\Event\Model\TranslationEvent;
 use Pimcore\Event\TranslationEvents;
 use Pimcore\File;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Tool;
 
@@ -250,7 +251,7 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
     public static function getByKeyLocalized($id, $create = false, $returnIdIfEmpty = false, $language = null)
     {
         if (!$language) {
-            $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+            $language = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
             if (!$language) {
                 return null;
             }
@@ -411,31 +412,5 @@ abstract class AbstractTranslation extends Model\AbstractModel implements Transl
         }
 
         return $delta;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param array $data
-     */
-    public function getFromWebserviceImport($data)
-    {
-        foreach ($data as $key => $value) {
-            $setter = 'set' . ucfirst($key);
-            $this->$setter($value);
-        }
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return array
-     */
-    public function getForWebserviceExport()
-    {
-        $data = get_object_vars($this);
-        unset($data['dao']);
-
-        return $data;
     }
 }

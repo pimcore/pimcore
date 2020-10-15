@@ -237,46 +237,6 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     }
 
     /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        if ($data instanceof Model\DataObject\Data\RgbaColor) {
-            return $this->getDataForEditmode($data, $object, $params);
-        }
-
-        return null;
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return Model\DataObject\Data\RgbaColor|null
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        return $this->getDataFromEditmode($value, $object, $params);
-    }
-
-    /**
      * display the quantity value field data in the grid
      *
      * @param Model\DataObject\Data\RgbaColor|null $data

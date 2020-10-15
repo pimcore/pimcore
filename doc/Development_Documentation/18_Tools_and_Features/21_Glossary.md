@@ -5,7 +5,7 @@
 The glossary module is a powerful tool making internal linking easy and smart.
 In a special editor you can define your terms which are replaced automatically with a link to the defined page.
 
-But the glossary is not only useful for internal linking, it's also perfect for explaining abbreviations and/or acronyms.
+But the glossary is not only useful for internal linking, it's also perfect for explaining abbreviations.
 
 ## How it Works
 

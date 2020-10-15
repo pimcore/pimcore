@@ -550,7 +550,7 @@ class Document extends Element\AbstractElement
      */
     protected function update($params = [])
     {
-        $disallowedKeysInFirstLevel = ['install', 'admin', 'webservice', 'plugin'];
+        $disallowedKeysInFirstLevel = ['install', 'admin', 'plugin'];
         if ($this->getParentId() == 1 && in_array($this->getKey(), $disallowedKeysInFirstLevel)) {
             throw new \Exception('Key: ' . $this->getKey() . ' is not allowed in first level (root-level)');
         }
@@ -1301,13 +1301,9 @@ class Document extends Element\AbstractElement
     }
 
     /**
-     * Set document properties.
-     *
-     * @param Property[] $properties
-     *
-     * @return Document
+     * @inheritdoc
      */
-    public function setProperties($properties)
+    public function setProperties(array $properties)
     {
         $this->properties = $properties;
 
@@ -1325,7 +1321,7 @@ class Document extends Element\AbstractElement
      *
      * @return Document
      */
-    public function setProperty($name, $type, $data, $inherited = false, $inheritable = true)
+    public function setProperty($name, $type, $data, $inherited = false, $inheritable = false)
     {
         $this->getProperties();
 

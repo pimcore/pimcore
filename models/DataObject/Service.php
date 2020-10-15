@@ -443,7 +443,7 @@ class Service extends Model\Element\Service
 
                     if ($needLocalizedPermissions) {
                         if (!$user->isAdmin()) {
-                            $locale = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+                            $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
 
                             $permissionTypes = ['View', 'Edit'];
                             foreach ($permissionTypes as $permissionType) {

@@ -337,38 +337,6 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         return new DataObject\Data\Consent((bool)$importValue);
     }
 
-    /**
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return bool
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        return $data ? (bool) $data->getConsent() : false;
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return DataObject\Data\Consent
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        return new DataObject\Data\Consent((bool)$value);
-    }
-
     /** True if change is allowed in edit mode.
      * @param DataObject\Concrete $object
      * @param mixed $params

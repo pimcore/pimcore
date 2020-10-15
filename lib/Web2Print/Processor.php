@@ -23,7 +23,7 @@ use Pimcore\Model\Document;
 use Pimcore\Tool;
 use Pimcore\Web2Print\Processor\PdfReactor8;
 use Pimcore\Web2Print\Processor\WkHtmlToPdf;
-use Symfony\Component\Lock\Factory as LockFactory;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 
 abstract class Processor
@@ -262,11 +262,9 @@ abstract class Processor
      */
     protected function processHtml($html, $params)
     {
-        $placeholder = new \Pimcore\Placeholder();
         $document = $params['document'] ?? null;
         $hostUrl = $params['hostUrl'] ?? null;
 
-        $html = $placeholder->replacePlaceholders($html, $params, $document);
         $twig = \Pimcore::getContainer()->get('twig');
         $template = $twig->createTemplate((string) $html);
         $html = $twig->render($template, $params);

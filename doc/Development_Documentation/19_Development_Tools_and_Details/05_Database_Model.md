@@ -31,7 +31,7 @@ These tables are created during Pimcore install and are always the same.
 | custom_layouts | Definition of the `custom layouts` for object classes |
 | dependencies | Stores dependencies between elements such as objects, assets, documents |
 | documents | List of all documents, folders, links, hardlinks, emails and snippets of the document area with meta- and config-data, relations |
-| documents_elements | Editables of documents (data), in a serialized form |
+| documents_editables | Editables of documents (data), in a serialized form |
 | documents_email | Extra config data |
 | documents_hardlink | Extra config data |
 | documents_link | Extra config data |

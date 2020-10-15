@@ -674,11 +674,6 @@ pimcore.settings.system = Class.create({
                                         });
                                     }
                                 }
-                            }, {
-                                xtype: "checkbox",
-                                fieldLabel: t("show_cookie_notice") + "<br><b>DEPRECATED! Will be removed in 7.0</b>",
-                                name: "general.show_cookie_notice",
-                                checked: this.getValue("general.show_cookie_notice")
                             }
                         ]
                     },
@@ -984,35 +979,6 @@ pimcore.settings.system = Class.create({
                                 fieldLabel: t('cache_disable_cookies'),
                                 name: 'full_page_cache.excludeCookie',
                                 value: this.getValue("full_page_cache.excludeCookie")
-                            }
-                        ]
-                    },
-                    {
-                        xtype: 'fieldset',
-                        title: t('webservice'),
-                        collapsible: true,
-                        collapsed: true,
-                        autoHeight: true,
-                        labelWidth: 200,
-                        defaultType: 'textfield',
-                        defaults: {width: 300},
-                        items: [
-                            {
-                                xtype: 'container',
-                                html: "<b>DEPRECATED! Will be removed in 7.0</b>"
-                            },
-                            {
-                                fieldLabel: t("webservice_enabled"),
-                                xtype: "checkbox",
-                                name: "webservice.enabled",
-                                checked: this.getValue("webservice.enabled")
-                            },
-                            {
-                                xtype: "displayfield",
-                                hideLabel: true,
-                                width: 600,
-                                value: t("webservice_description"),
-                                cls: "pimcore_extra_label_bottom"
                             }
                         ]
                     }, {

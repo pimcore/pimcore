@@ -367,7 +367,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         $tags['class_' . $this->getClassId()] = 'class_' . $this->getClassId();
         foreach ($this->getClass()->getFieldDefinitions() as $name => $def) {
             // no need to add lazy-loading fields to the cache tags
-            if ((!method_exists($def, 'getLazyLoading') && !$def instanceof LazyLoadingSupportInterface) || !$def->getLazyLoading()) {
+            if (!$def instanceof LazyLoadingSupportInterface || !$def->getLazyLoading()) {
                 $tags = $def->getCacheTags($this->getValueForFieldName($name), $tags);
             }
         }
@@ -386,15 +386,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         if ($this->getClass() instanceof ClassDefinition) {
             foreach ($this->getClass()->getFieldDefinitions() as $field) {
                 $key = $field->getName();
-                $dependencies[] = $field->resolveDependencies(
-                    isset($this->$key) ? $this->$key : null
-                );
+                $dependencies[] = $field->resolveDependencies($this->$key ?? null);
             }
         }
 
-        $dependencies = array_merge(...$dependencies);
-
-        return $dependencies;
+        return array_merge(...$dependencies);
     }
 
     /**
@@ -763,8 +759,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         $lazyLoadedFieldNames = [];
         $fields = $this->getClass()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
-                                && $field->getLazyLoading()) {
+            if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }

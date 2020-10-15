@@ -616,32 +616,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
     }
 
-    /** converts data to be imported via webservices
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete|null $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return array|mixed
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if ($value && is_array($value)) {
-            $result = [];
-            foreach ($value as $item) {
-                $item = (array) $item;
-                $item = array_values($item);
-                $result[] = $item;
-            }
-
-            return $result;
-        }
-
-        return $value;
-    }
-
     /**
      * @param DataObject\ClassDefinition\Data\Table $masterDefinition
      */

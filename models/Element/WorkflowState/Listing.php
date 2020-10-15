@@ -27,18 +27,6 @@ use Pimcore\Model;
 class Listing extends Model\Listing\AbstractListing
 {
     /**
-     * @var Model\Element\WorkflowState[]|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $workflowStates = null;
-
-    public function __construct()
-    {
-        $this->workflowStates = & $this->data;
-    }
-
-    /**
      * @param Model\Element\WorkflowState[]|null $workflowStates
      *
      * @return static
