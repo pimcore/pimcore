@@ -30,7 +30,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class LogController extends AdminController implements KernelControllerEventInterface
 {
     /**
-     * @inheritDoc
+     * @param ControllerEvent $event
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

@@ -31,10 +31,10 @@ use Pimcore\Model\Glossary;
 use Pimcore\Model\Metadata;
 use Pimcore\Model\Property;
 use Pimcore\Model\Staticroute;
-use Pimcore\Model\Tool\Tag;
 use Pimcore\Model\WebsiteSetting;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -743,7 +743,7 @@ class SettingsController extends AdminController
             // PIMCORE-1854 - recreate .dummy file => should remain
             File::put(PIMCORE_CACHE_DIRECTORY . '/.gitkeep', '');
 
-            $eventDispatcher->dispatch(SystemEvents::CACHE_CLEAR);
+            $eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR);
         }
 
         if ($clearSymfonyCache) {
@@ -824,7 +824,7 @@ class SettingsController extends AdminController
         // empty document cache
         Cache::clearTags(['output', 'output_lifetime']);
 
-        $eventDispatcher->dispatch(SystemEvents::CACHE_CLEAR_FULLPAGE_CACHE);
+        $eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR_FULLPAGE_CACHE);
 
         return $this->adminJson(['success' => true]);
     }
@@ -850,7 +850,7 @@ class SettingsController extends AdminController
         File::put(PIMCORE_TEMPORARY_DIRECTORY . '/.dummy', '');
         File::put(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/.dummy', '');
 
-        $eventDispatcher->dispatch(SystemEvents::CACHE_CLEAR_TEMPORARY_FILES);
+        $eventDispatcher->dispatch(new GenericEvent(), SystemEvents::CACHE_CLEAR_TEMPORARY_FILES);
 
         return $this->adminJson(['success' => true]);
     }

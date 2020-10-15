@@ -26,8 +26,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -91,7 +91,7 @@ class FrontendRoutingListener implements EventSubscriberInterface
         ];
     }
 
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onKernelRequest(RequestEvent $event)
     {
         if (!$event->isMasterRequest()) {
             return;
@@ -136,10 +136,10 @@ class FrontendRoutingListener implements EventSubscriberInterface
         }
     }
 
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event)
     {
         // in case routing didn't find a matching route, check for redirects without override
-        $exception = $event->getException();
+        $exception = $event->getThrowable();
         if ($exception instanceof NotFoundHttpException) {
             $response = $this->redirectHandler->checkForRedirect($event->getRequest(), false);
             if ($response) {
@@ -178,10 +178,10 @@ class FrontendRoutingListener implements EventSubscriberInterface
     }
 
     /**
-     * @param GetResponseEvent $event
+     * @param RequestEvent $event
      * @param string $path
      */
-    protected function handleFrontControllerRedirect(GetResponseEvent $event, $path)
+    protected function handleFrontControllerRedirect(RequestEvent $event, $path)
     {
         $request = $event->getRequest();
 
@@ -199,10 +199,10 @@ class FrontendRoutingListener implements EventSubscriberInterface
     /**
      * Redirect to the main domain if specified
      *
-     * @param GetResponseEvent $event
+     * @param RequestEvent $event
      * @param bool $adminContext
      */
-    protected function handleMainDomainRedirect(GetResponseEvent $event, bool $adminContext = false)
+    protected function handleMainDomainRedirect(RequestEvent $event, bool $adminContext = false)
     {
         $request = $event->getRequest();
 

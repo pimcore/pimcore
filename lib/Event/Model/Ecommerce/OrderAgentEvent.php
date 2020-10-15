@@ -16,7 +16,7 @@ namespace Pimcore\Event\Model\Ecommerce;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderAgentInterface;
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class OrderAgentEvent extends Event
 {

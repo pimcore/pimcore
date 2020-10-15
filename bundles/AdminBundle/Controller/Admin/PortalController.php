@@ -425,7 +425,7 @@ class PortalController extends AdminController implements KernelControllerEventI
     }
 
     /**
-     * @inheritdoc
+     * @param ControllerEvent $event
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

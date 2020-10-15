@@ -48,7 +48,7 @@ class OpcacheController extends AdminController implements KernelControllerEvent
     }
 
     /**
-     * @inheritdoc
+     * @param ControllerEvent $event
      */
     public function onKernelControllerEvent(ControllerEvent $event)
     {

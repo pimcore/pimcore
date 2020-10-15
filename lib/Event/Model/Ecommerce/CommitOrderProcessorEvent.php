@@ -17,7 +17,7 @@ namespace Pimcore\Event\Model\Ecommerce;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class CommitOrderProcessorEvent extends Event
 {
