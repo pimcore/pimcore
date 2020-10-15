@@ -17,8 +17,8 @@ namespace Pimcore\Cache\Core;
 use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
 use Pimcore\Event\Cache\Core\ResultEvent;
 use Pimcore\Event\CoreCacheEvents;
-use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class EventDispatchingCoreHandler extends CoreHandler
 {

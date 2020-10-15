@@ -371,7 +371,9 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * Set an element with the given key/name
+     *
      * @param Editable $editable
+     *
      * @return $this
      */
     public function setEditable(Editable $editable)
