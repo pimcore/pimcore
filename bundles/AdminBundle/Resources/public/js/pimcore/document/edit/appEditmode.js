@@ -11,8 +11,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-console.log("start appEditmode");
-
 // debug
 if (typeof console == "undefined") {
     console = {
@@ -48,39 +46,26 @@ if (typeof console == "undefined") {
 
 Ext.onReady(function () {
 
-    var xhrActive = 0; // number of active xhr requests
-
     Ext.Loader.setConfig({
         enabled: true
     });
 
     Ext.enableAria = false;
 
-
-    console.log("EXT.onReady in EDITMODE");
-
-
     Ext.Loader.setPath('Ext.ux', '/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-ux/classic/src');
     Ext.Loader.setPath('Ext', '/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src');
-
-    console.log("Ext.require...");
 
     Ext.require([
         'Ext.form.field.Date',
         'Ext.ux.form.MultiSelect',
     ], function () {
-        console.log("REQUIRE IS DONE");
-
-        console.log("load internal scripts ...");
-
 
         let internalScripts = [
             "/admin/misc/pimcore-editmode-scripts"
         ];
 
-        var syncwas = Ext.Loader.syncModeEnabled;
-
         // hack: this friend is private
+        let syncBackup = Ext.Loader.syncModeEnabled;
         Ext.Loader.syncModeEnabled = true;
 
 
@@ -89,7 +74,6 @@ Ext.onReady(function () {
             let script = "/bundles/pimcoreadmin/js/" + internalScripts [i];
 
             script = internalScripts[i];
-
             scriptUrls.push(script);
 
             try {
@@ -104,6 +88,8 @@ Ext.onReady(function () {
                 console.log(e);
             }
         }
+
+        Ext.Loader.syncModeEnabled = syncBackup;
     });
 
 });

@@ -11,8 +11,6 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-console.log("start app");
-
 // debug
 if (typeof console == "undefined") {
     console = {
@@ -45,46 +43,7 @@ if (typeof console == "undefined") {
     };
 }
 
-function importScripts(scripts, callback) {
-    if (scripts.length === 0) {
-        if (callback !== undefined) {
-            callback(null);
-        }
-        return;
-    }
-    var i = 0, s, r, e, l;
-    e = function(event) {
-        s.parentNode.removeChild(s);
-        if (callback !== undefined) {
-            callback(event);
-        }
-    };
-    l = function() {
-        s.parentNode.removeChild(s);
-        i++;
-        if (i < scripts.length) {
-            r();
-            return;
-        }
-        if (callback !== undefined) {
-            callback(null);
-        }
-    };
-    r = function() {
-        s = document.createElement("script");
-        s.src = scripts[i];
-        s.onerror = e;
-        s.onload = l;
-        document.head.appendChild(s);
-    };
-    r();
-}
-
-
 Ext.onReady(function () {
-    console.log("Ext core version is " + Ext.versions.core.version);
-
-    var xhrActive = 0; // number of active xhr requests
 
     Ext.Loader.setConfig({
         enabled: true
@@ -94,8 +53,6 @@ Ext.onReady(function () {
     Ext.Loader.setPath('Ext.ux', '/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-ux/classic/src');
     Ext.Loader.setPath('Ext', '/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-classic/src');
     Ext.Loader.setPath('Ext.chart', '/bundles/pimcoreadmin/js/lib/node_modules/@sencha/ext-charts/src/chart');
-
-    console.log("Ext.require...");
 
     Ext.require([
         'Ext.form.field.Date',
@@ -148,15 +105,12 @@ Ext.onReady(function () {
         'Ext.chart.series.Bar',
         'Ext.chart.interactions.PanZoom'
     ], function () {
-        console.log("load pimcore core sripts ...");
-
         let internalScripts = [
             "/admin/misc/pimcore-internal-scripts"
         ];
 
-        var syncwas = Ext.Loader.syncModeEnabled;
-
         // hack: this friend is private
+        let syncBackup = Ext.Loader.syncModeEnabled;
         Ext.Loader.syncModeEnabled = true;
 
 
@@ -165,19 +119,9 @@ Ext.onReady(function () {
             let script = "/bundles/pimcoreadmin/js/" + internalScripts [i];
 
             script = internalScripts[i];
-
-
             scriptUrls.push(script);
 
             try {
-                // TODO EXTJS7 loader approach
-                // Ext.Loader.loadScript({
-                //     url: script,
-                //     onLoad: function (script) {
-                //         // console.log("successful load " + script);
-                //     }.bind(this, script)
-                // });
-
                 // //TODO EXTJS7 script approach
                 var newScript = document.createElement("script");
                 newScript.src = script;
@@ -189,9 +133,8 @@ Ext.onReady(function () {
                 console.log(e);
             }
         }
-        Ext.Loader.syncModeEnabled = syncwas;
 
-        return;
+        Ext.Loader.syncModeEnabled = syncBackup;
     });
 });
 
