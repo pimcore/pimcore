@@ -14,8 +14,8 @@
 
 namespace Pimcore\Event\Traits;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Trait for all events handling responses. Taken from GetResponseEvent.

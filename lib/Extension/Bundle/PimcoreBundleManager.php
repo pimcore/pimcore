@@ -715,6 +715,7 @@ class PimcoreBundleManager
     {
         $event = new PathsEvent($paths);
         $this->dispatcher->dispatch($event, $eventName);
+
         return $event->getPaths();
     }
 }
