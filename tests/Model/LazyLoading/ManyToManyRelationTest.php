@@ -342,8 +342,16 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         //prepare data object
         $object = $this->createDataObject();
         $brick = new LazyLoadingLocalizedTest($object);
-        $brick->getLocalizedfields()->setLocalizedValue('lrelations', $this->loadRelations()->load(), 'en');
-        $brick->getLocalizedfields()->setLocalizedValue('lrelations', $this->loadRelations()->load(), 'de');
+
+        $relations = $this->loadRelations()->load();
+        $relation = $relations[0];
+
+        $brick->getLocalizedfields()->setLocalizedValue('lrelations', $relations, 'en');
+        $brick->getLocalizedfields()->setLocalizedValue('lrelations', $relations, 'de');
+
+        $brick->getLocalizedfields()->setLocalizedValue('lrelation', $relation, 'en');
+        $brick->getLocalizedfields()->setLocalizedValue('lrelation', $relation, 'de');
+
 
         $object->getBricks()->setLazyLoadingLocalizedTest($brick);
         $object->save();
@@ -354,8 +362,13 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelations('en')) > 0);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelations('de')) > 0);
 
+        $this->assertNotNull($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelation('en'));
+        $this->assertNotNull($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelation('de'));
+
+
         $object = Concrete::getById($object->getId(), true);
         $newRelations = $this->loadRelations()->load();
+        $newRelation = $newRelations[1];
         array_pop($newRelations);
         $brick = $object->getBricks()->getLazyLoadingLocalizedTest();
 
@@ -363,12 +376,15 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
 
         // change one language and make sure that it does not affect the other one
         $lFields->setLocalizedValue('lrelations', $newRelations, 'de');
+        $lFields->setLocalizedValue('lrelation', $newRelation, 'de');
         $object->save();
 
         $object = Concrete::getById($object->getId(), true);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelations('en')) > 0);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelations('de')) > 0);
 
+        $this->assertNotNull($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelation('en'));
+        $this->assertNotNull($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelation('de'));
 
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
