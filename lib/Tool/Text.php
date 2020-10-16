@@ -18,6 +18,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
+use Onnov\DetectEncoding\EncodingDetector;
 
 class Text
 {
@@ -402,52 +403,8 @@ class Text
             return 'UTF-16LE';
         }
 
-        if (function_exists('mb_detect_encoding')) {
-            $encoding = mb_detect_encoding($text, [
-                'UTF-8',
-                'UTF-7',
-                'UTF7-IMAP',
-                'ASCII',
-                'Windows-1252',
-                'Windows-1254',
-                'ISO-8859-1',
-                'ISO-8859-2',
-                'ISO-8859-3',
-                'ISO-8859-4',
-                'ISO-8859-5',
-                'ISO-8859-6',
-                'ISO-8859-7',
-                'ISO-8859-8',
-                'ISO-8859-9',
-                'ISO-8859-10',
-                'ISO-8859-13',
-                'ISO-8859-14',
-                'ISO-8859-15',
-                'ISO-8859-16',
-                'EUC-CN',
-                'CP936',
-                'HZ',
-                'EUC-TW',
-                'BIG-5',
-                'EUC-KR',
-                'UHC',
-                'ISO-2022-KR',
-                'Windows-1251',
-                'CP866',
-                'KOI8-R',
-                'KOI8-U',
-                'ArmSCII-8',
-                'CP850',
-                'EUC-JP',
-                'SJIS',
-                'eucJP-win',
-                'SJIS-win',
-                'CP51932',
-                'JIS',
-                'ISO-2022-JP',
-                'ISO-2022-JP-MS',
-            ]);
-        }
+        $detector = new EncodingDetector();
+        $encoding = $detector->getEncoding($text);
 
         if (empty($encoding)) {
             $encoding = 'UTF-8';
