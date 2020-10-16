@@ -804,71 +804,21 @@ class MiscController extends AdminController
     public function extjsEditmodeScriptsMinifiedAction(Request $request, Packages $packages, RouterInterface $router) {
         $scriptContents = "";
 
+        $fosUrl = $packages->getUrl('bundles/fosjsrouting/js/router.js');
 
-        $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/minified_extjs.js';
+        $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $fosUrl) . "\n\n\n";
 
-        if (!is_file($scriptPath)) {
+        $editmodeScripts = file_get_contents(PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/js/ext-js/ext-editmode.js');
+        $scriptContents .= $editmodeScripts;
 
-            $fosUrl = $packages->getUrl('bundles/fosjsrouting/js/router.js');
+        $kernel = $this->container->get('http_kernel');
+        $subRequest = Request::create('/js/routing?callback=fos.Router.setData');
+        $response = $kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
+        $fosResponse = $response->getContent();
 
-            $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . $fosUrl) . "\n\n\n";
-
-            $kernel = $this->container->get('http_kernel');
-            $subRequest = Request::create('/js/routing?callback=fos.Router.setData');
-            $response = $kernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST, false);
-            $fosResponse = $response->getContent();
-
-            $scriptContents .= $fosResponse;
-
-
-            $manifest = PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/ext-js/pimcoreEditmode.json";
-            if (is_file($manifest)) {
-                $manifestContents = file_get_contents($manifest);
-                $manifestContents = json_decode($manifestContents, true);
-
-                $loadOrder = $manifestContents["loadOrder"];
-
-                $count = 0;
-
-                // build dependencies
-
-
-                $main = $loadOrder[count($loadOrder) - 1];
-                $list = [
-                    $main["idx"] => $main
-                ];
-
-                $this->populate($loadOrder, $list, $main);
-                ksort($list);
-
-                // replace this with loadOrder if we want to load the entire list
-                foreach ($loadOrder as $loadOrderIdx => $loadOrderItem) {
-                    $count++;
-                    $relativePath = $loadOrderItem["path"];
-                    $fullPath = PIMCORE_WEB_ROOT . $relativePath;
-                    if (is_file($fullPath)) {
-                        $scriptContents .= "\r\n\r\n// " . $fullPath . "\r\n";
-                        $includeContents = file_get_contents($fullPath);
-
-                        $minify = new JS($includeContents);
-                        $includeContents = $minify->minify();
-
-                        $scriptContents .= ";\r\n";
-                        $scriptContents .= $includeContents;
-
-                    }
-                }
-
-            }
-            file_put_contents($scriptPath, $scriptContents);
-
-        } else {
-            $scriptContents = file_get_contents($scriptPath);
-        }
-
+        $scriptContents .= $fosResponse;
 
         $lifetime = 86400;
-
 
         $response = new Response($scriptContents);
         $response->headers->set('Symfony-Session-NoAutoCacheControl', 'application/javascript');
@@ -878,44 +828,7 @@ class MiscController extends AdminController
         $response->headers->set('Content-Type', 'application/javascript');
 
         return $response;
-
     }
-
-    public function populate($loadOrder, &$list, $item) {
-
-        $depth  = count(debug_backtrace());;
-        if ($depth > 100) {
-            Logger::error($depth);
-        }
-
-        if (is_array($item["requires"])) {
-            foreach ($item["requires"] as $itemId) {
-                if (isset($list[$itemId])) {
-                    continue;
-                }
-                $subItem = $loadOrder[$itemId];
-                $list[$itemId] = $subItem;
-                $this->populate($loadOrder, $list, $subItem);
-            }
-        }
-
-
-        if (is_array($item["uses"])) {
-            foreach ($item["uses"] as $itemId) {
-                if (isset($list[$itemId])) {
-                    continue;
-                }
-                $subItem = $loadOrder[$itemId];
-                $list[$itemId] = $subItem;
-                $this->populate($loadOrder, $list, $subItem);
-            }
-        }
-
-
-
-    }
-
-
 
     /**
      * @Route("/pimcore-editmode-scripts", name="pimcore_admin_pimcore_editmode_scripts", methods={"GET"})

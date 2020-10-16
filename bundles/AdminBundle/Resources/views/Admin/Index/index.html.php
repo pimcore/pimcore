@@ -216,30 +216,21 @@ $styles = array(
 
 <?php //****************************************************************************************** ?>
 
-<!-- some javascript -->
-<?php // pimcore constants ?>
-<script>
-    pimcore.settings = <?= json_encode($this->settings, JSON_PRETTY_PRINT) ?>;
+
+<?php // define scripts ?>
+
+<script type="text/javascript">
+    var Ext = Ext || {};
+    Ext.manifest = "/bundles/pimcoreadmin/js/ext-js/pimcore.json";
+    Ext.beforeLoad = function(platformTags) {
+            // this is used in bootstrap.js
+            Ext._customCachingParam = "?><?= \Pimcore\Version::getRevision();?>";
+    } ;
 </script>
-<script src="<?= $view->router()->path('pimcore_admin_misc_jsontranslationssystem', ['language' => $language, '_dc' => \Pimcore\Version::getRevision()])?>"></script>
-<script src="<?= $view->router()->path('pimcore_admin_user_getcurrentuser') ?>?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
-<script src="<?= $view->router()->path('pimcore_admin_misc_availablelanguages', ['_dc' => \Pimcore\Version::getRevision()]) ?>"></script>
+
 
 <?php
 
-$pluginDcValue = time();
-if ($disableMinifyJs) {
-    $pluginDcValue = 1;
-}
-
-?>
-
-<?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
-    <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
-<?php endforeach; ?>
-
-<!-- library scripts -->
-<?php
 
 $scriptLibs = array(
 
@@ -253,6 +244,33 @@ $scriptLibs = array(
 );
 
 ?>
+
+<!-- some javascript -->
+<?php // pimcore constants ?>
+<script>
+    pimcore.settings = <?= json_encode($this->settings, JSON_PRETTY_PRINT) ?>;
+</script>
+
+<script src="<?= $view->router()->path('pimcore_admin_misc_jsontranslationssystem', ['language' => $language, '_dc' => \Pimcore\Version::getRevision()])?>"></script>
+<script src="<?= $view->router()->path('pimcore_admin_user_getcurrentuser') ?>?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
+<script src="<?= $view->router()->path('pimcore_admin_misc_availablelanguages', ['_dc' => \Pimcore\Version::getRevision()]) ?>"></script>
+
+<?php
+
+$pluginDcValue = time();
+if ($disableMinifyJs) {
+    $pluginDcValue = 1;
+}
+
+?>
+
+
+
+<?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
+    <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
+<?php endforeach; ?>
+
+<!-- library scripts -->
 <?php foreach ($scriptLibs as $scriptUrl) { ?>
     <script src="/bundles/pimcoreadmin/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
 <?php } ?>
