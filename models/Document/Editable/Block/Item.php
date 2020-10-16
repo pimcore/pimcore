@@ -34,7 +34,7 @@ class Item extends AbstractBlockItem
      */
     public function __call($func, $args)
     {
-        $element = $this->getElement($args[0]);
+        $element = $this->getEditable($args[0]);
         $class = 'Pimcore\\Model\\Document\\Editable\\' . str_replace('get', '', $func);
 
         if ($element === null) {
