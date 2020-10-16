@@ -14,11 +14,11 @@
 
 namespace Pimcore\Tool;
 
+use Onnov\DetectEncoding\EncodingDetector;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
-use Onnov\DetectEncoding\EncodingDetector;
 
 class Text
 {
