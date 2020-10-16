@@ -17,7 +17,6 @@ namespace Pimcore;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Event\CoreCacheEvents;
 use Symfony\Component\EventDispatcher\GenericEvent;
-use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * This acts as facade for the actual cache implementation and exists primarily for BC reasons.

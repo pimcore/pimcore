@@ -3,6 +3,7 @@
 namespace Pimcore\Tests\Model\LazyLoading;
 
 use Pimcore\Cache;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\BlockElement;
 use Pimcore\Model\DataObject\Data\ObjectMetadata;
 use Pimcore\Model\DataObject\Fieldcollection;
@@ -308,10 +309,33 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
     {
         //prepare data object
         $object = $this->createDataObject();
+        $relations = $this->loadMetadataRelations('ladvancedObjects');
         $brick = new LazyLoadingLocalizedTest($object);
-        $brick->getLocalizedfields()->setLocalizedValue('ladvancedObjects', $this->loadMetadataRelations('ladvancedObjects'));
+
+        $brick->getLocalizedfields()->setLocalizedValue('ladvancedObjects',$relations,'en');
+        $brick->getLocalizedfields()->setLocalizedValue('ladvancedObjects',$relations,'de');
+
         $object->getBricks()->setLazyLoadingLocalizedTest($brick);
         $object->save();
+
+        $object = Concrete::getById($object->getId(), true);
+        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedObjects('en')) > 0);
+        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedObjects('de')) > 0);
+
+        $object = Concrete::getById($object->getId(), true);
+        array_pop($relations);
+
+        $brick = $object->getBricks()->getLazyLoadingLocalizedTest();
+        $lFields = $brick->getLocalizedfields();
+        // change one language and make sure that it does not affect the other one
+        $lFields->setLocalizedValue('ladvancedObjects', $relations, 'de');
+        $object->save();
+
+        $object = Concrete::getById($object->getId(), true);
+        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedObjects('en')) > 0);
+        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedObjects('de')) > 0);
+
+
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
 

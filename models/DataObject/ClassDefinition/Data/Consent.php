@@ -112,7 +112,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
 
         if (isset($params['owner'])) {
-            $consent->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            $consent->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
         }
 
         return $consent;

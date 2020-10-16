@@ -342,7 +342,11 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         //prepare data object
         $object = $this->createDataObject();
         $brick = new LazyLoadingLocalizedTest($object);
-        $brick->getLocalizedfields()->setLocalizedValue('lrelations', $this->loadRelations()->load());
+
+        $relations = $this->loadRelations()->load();
+
+        $brick->getLocalizedfields()->setLocalizedValue('lrelations', $relations, 'en');
+        $brick->getLocalizedfields()->setLocalizedValue('lrelations', $relations, 'de');
 
         $object->getBricks()->setLazyLoadingLocalizedTest($brick);
         $object->save();
@@ -350,7 +354,23 @@ class ManyToManyRelationTest extends AbstractLazyLoadingTest
         $brick->setLInput(uniqid());
         $object->save();
         $object = Concrete::getById($object->getId(), true);
-        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelations()) > 0);
+        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelations('en')) > 0);
+        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelations('de')) > 0);
+
+        $object = Concrete::getById($object->getId(), true);
+        $newRelations = $this->loadRelations()->load();
+        array_pop($newRelations);
+        $brick = $object->getBricks()->getLazyLoadingLocalizedTest();
+
+        $lFields = $brick->getLocalizedfields();
+
+        // change one language and make sure that it does not affect the other one
+        $lFields->setLocalizedValue('lrelations', $newRelations, 'de');
+        $object->save();
+
+        $object = Concrete::getById($object->getId(), true);
+        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelations('en')) > 0);
+        $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLRelations('de')) > 0);
 
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();

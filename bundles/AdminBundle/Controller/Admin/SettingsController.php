@@ -1025,7 +1025,7 @@ class SettingsController extends AdminController
                 // save glossary
                 $glossary = new Glossary();
 
-                if ($data['link']) {
+                if (!empty($data['link'])) {
                     if ($doc = Document::getByPath($data['link'])) {
                         $data['link'] = $doc->getId();
                     }

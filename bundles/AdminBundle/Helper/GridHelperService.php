@@ -551,7 +551,7 @@ class GridHelperService
         $conditionFilters = [];
 
         if ($requestParams['specificId'] ?? false) {
-            $conditionFilters[] = 'o_id = ' . $requestParams['specificId'];
+            $conditionFilters[] = 'oo_id = ' . $requestParams['specificId'];
         }
 
         if (isset($requestParams['only_direct_children']) && $requestParams['only_direct_children'] === 'true') {

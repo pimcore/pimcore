@@ -17,9 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Cache\FullPage;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class PrepareResponseEvent extends Event
 {
