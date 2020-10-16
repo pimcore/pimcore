@@ -94,7 +94,8 @@
     "scheb/two-factor-bundle": "^3.26",
     "phpoffice/phpspreadsheet": "^1.9",
     "html2text/html2text": "^4.2.1",
-    "webmozarts/console-parallelization": "^1.1.0"
+    "webmozarts/console-parallelization": "^1.1.0",
+    "onnov/detect-encoding": "^1.2"
   },
   "conflict": {
     "monolog/monolog": ">=2",
