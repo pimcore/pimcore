@@ -389,6 +389,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
     /**
      * https://hobex.docs.oppwa.com/reference/resultCodes
+     * 
      * @param $code
      *
      * @return bool
@@ -423,7 +424,9 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
     /**
      * prefix all keys with 'hobex_' to allow pimcore to store the values in fieldcollection PaymentInfo
      *
-     * @param $jsonResponse
+     * @param        $jsonResponse
+     *
+     * @param string $prefix
      *
      * @return array
      */
