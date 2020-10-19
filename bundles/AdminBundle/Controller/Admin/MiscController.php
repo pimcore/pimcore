@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Config;
 use Pimcore\Controller\Config\ControllerDataProvider;
-use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Db;
 use Pimcore\File;
 use Pimcore\Localization\LocaleServiceInterface;
@@ -240,7 +239,16 @@ class MiscController extends AdminController
         // customviews config
         $cvData = Tool::getCustomViewConfig();
 
-        $response = $this->render('PimcoreAdminBundle:Admin/Misc:admin-css.html.php', ['customviews' => $cvData, 'config' => $config]);
+        // languages
+        $languages = \Pimcore\Tool::getValidLanguages();
+        $adminLanguages = \Pimcore\Tool\Admin::getLanguages();
+        $languages = array_unique(array_merge($languages, $adminLanguages));
+
+        $response = $this->render('PimcoreAdminBundle:Admin/Misc:admin-css.html.twig', [
+            'customviews' => $cvData,
+            'config' => $config,
+            'languages' => $languages,
+        ]);
         $response->headers->set('Content-Type', 'text/css; charset=UTF-8');
 
         return $response;
@@ -642,12 +650,18 @@ class MiscController extends AdminController
      * @Route("/http-error-log-detail", name="pimcore_admin_misc_httperrorlogdetail", methods={"GET"})
      *
      * @param Request $request
+     * @param Profiler $profiler
      *
      * @return Response
      */
-    public function httpErrorLogDetailAction(Request $request)
+    public function httpErrorLogDetailAction(Request $request, ?Profiler $profiler)
     {
+
         $this->checkPermission('http_errors');
+
+        if ($profiler) {
+            $profiler->disable();
+        }
 
         $db = Db::get();
         $data = $db->fetchRow('SELECT * FROM http_error_log WHERE uri = ?', [$request->get('uri')]);
@@ -658,7 +672,7 @@ class MiscController extends AdminController
             }
         }
 
-        $response = $this->render('PimcoreAdminBundle:Admin/Misc:http-error-log-detail.html.php', ['data' => $data]);
+        $response = $this->render('PimcoreAdminBundle:Admin/Misc:http-error-log-detail.html.twig', ['data' => $data]);
 
         return $response;
     }
@@ -755,16 +769,46 @@ class MiscController extends AdminController
 
     /**
      * @Route("/icon-list", name="pimcore_admin_misc_iconlist", methods={"GET"})
-     * @TemplatePhp()
      *
      * @param Request $request
      * @param Profiler $profiler
+     *
+     * @return Response
      */
     public function iconListAction(Request $request, ?Profiler $profiler)
     {
         if ($profiler) {
             $profiler->disable();
         }
+
+        $publicDir = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin';
+        $iconDir = $publicDir . '/img';
+        $colorIcons = rscandir($iconDir . '/flat-color-icons/');
+        $whiteIcons = rscandir($iconDir . '/flat-white-icons/');
+        $twemoji = rscandir($iconDir . '/twemoji/');
+
+        //flag icons for locales
+        $locales = Tool::getSupportedLocales();
+        $languageOptions = [];
+        foreach ($locales as $short => $translation) {
+            if (!empty($short)) {
+                $languageOptions[] = [
+                    'language' => $short,
+                    'display' => $translation . " ($short)",
+                    'flag' => \Pimcore\Tool::getLanguageFlagFile($short, false),
+                ];
+            }
+        }
+
+        $iconsCss = file_get_contents($publicDir . '/css/icons.css');
+
+        return $this->render('PimcoreAdminBundle:Admin/Misc:iconList.html.twig', [
+            'colorIcons' => $colorIcons,
+            'whiteIcons' => $whiteIcons,
+            'twemoji' => $twemoji,
+            'languageOptions' => $languageOptions,
+            'iconsCss' => $iconsCss,
+        ]);
     }
 
     /**

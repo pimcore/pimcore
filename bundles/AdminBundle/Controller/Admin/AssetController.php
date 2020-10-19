@@ -1069,7 +1069,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
     /**
      * @Route("/show-version", name="pimcore_admin_asset_showversion", methods={"GET"})
-     * @TemplatePhp()
      *
      * @param Request $request
      *
@@ -1088,9 +1087,14 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             throw $this->createAccessDeniedHttpException('Permission denied, version id [' . $id . ']');
         }
 
+        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+
         return $this->render(
-            'PimcoreAdminBundle:Admin/Asset:showVersion' . ucfirst($asset->getType()) . '.html.php',
-            ['asset' => $asset]
+            'PimcoreAdminBundle:Admin/Asset:showVersion' . ucfirst($asset->getType()) . '.html.twig',
+            [
+                'asset' => $asset,
+                'loader' => $loader,
+            ]
         );
     }
 
@@ -1470,7 +1474,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
     /**
      * @Route("/get-preview-document", name="pimcore_admin_asset_getpreviewdocument", methods={"GET"})
-     * @TemplatePhp()
      *
      * @param Request $request
      *
@@ -1526,7 +1529,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
     /**
      * @Route("/get-preview-video", name="pimcore_admin_asset_getpreviewvideo", methods={"GET"})
-     * @TemplatePhp()
      *
      * @param Request $request
      *
@@ -1554,18 +1556,18 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             if ($thumbnail['status'] == 'finished') {
                 return $this->render(
-                    'PimcoreAdminBundle:Admin/Asset:getPreviewVideoDisplay.html.php',
+                    'PimcoreAdminBundle:Admin/Asset:getPreviewVideoDisplay.html.twig',
                     $previewData
                 );
             } else {
                 return $this->render(
-                    'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php',
+                    'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.twig',
                     $previewData
                 );
             }
         } else {
             return $this->render(
-                'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php',
+                'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.twig',
                 $previewData
             );
         }
@@ -1608,9 +1610,8 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      * @Route("/image-editor", name="pimcore_admin_asset_imageeditor", methods={"GET"})
      *
      * @param Request $request
-     * @TemplatePhp()
      *
-     * @return array
+     * @return Response
      */
     public function imageEditorAction(Request $request)
     {
@@ -1620,7 +1621,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             throw new \Exception('not allowed to preview');
         }
 
-        return ['asset' => $asset];
+        return $this->render(
+            'PimcoreAdminBundle:Admin/Asset:imageEditor.html.twig',
+            ['asset' => $asset]
+        );
     }
 
     /**

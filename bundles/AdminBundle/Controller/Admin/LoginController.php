@@ -114,7 +114,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             $params['error'] = 'error_session_expired';
         }
 
-        return $this->render('PimcoreAdminBundle:Admin/Login:login.html.php', $params);
+        $params['browserSupported'] = $this->detectBrowser();
+
+        return $this->render('PimcoreAdminBundle:Admin/Login:login.html.twig', $params);
     }
 
     /**
@@ -214,7 +216,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
         $csrfProtectionListener->regenerateCsrfToken();
 
-        return $this->render('PimcoreAdminBundle:Admin/Login:lostpassword.html.php', $params);
+        return $this->render('PimcoreAdminBundle:Admin/Login:lostpassword.html.twig', $params);
     }
 
     /**
@@ -239,7 +241,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
                 return $this->redirect($url);
             } elseif ($queryString) {
-                return $this->render('PimcoreAdminBundle:Admin/Login:deeplink.html.php', [
+                return $this->render('PimcoreAdminBundle:Admin/Login:deeplink.html.twig', [
                     'tab' => $deeplink,
                     'perspective' => $perspective,
                 ]);
@@ -282,7 +284,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             $params['error'] = 'No session available, it either timed out or cookies are not enabled.';
         }
 
-        return $this->render('PimcoreAdminBundle:Admin/Login:twoFactorAuthentication.html.php', $params);
+        return $this->render('PimcoreAdminBundle:Admin/Login:twoFactorAuthentication.html.twig', $params);
     }
 
     /**
@@ -292,5 +294,30 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      */
     public function twoFactorAuthenticationVerifyAction(Request $request)
     {
+    }
+
+    /**
+     * @return bool
+     */
+    public function detectBrowser()
+    {
+        $supported      = false;
+        $browser        = new \Browser();
+        $browserVersion = (int)$browser->getVersion();
+
+        if ($browser->getBrowser() == \Browser::BROWSER_FIREFOX && $browserVersion >= 52) {
+            $supported = true;
+        }
+        if ($browser->getBrowser() == \Browser::BROWSER_CHROME && $browserVersion >= 52) { // Edge identifies currently as Chrome 52
+            $supported = true;
+        }
+        if ($browser->getBrowser() == \Browser::BROWSER_SAFARI && $browserVersion >= 10) {
+            $supported = true;
+        }
+        if ($browser->getBrowser() == \Browser::BROWSER_OPERA && $browserVersion >= 42) {
+            $supported = true;
+        }
+
+        return $supported;
     }
 }
