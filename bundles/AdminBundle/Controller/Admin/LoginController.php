@@ -301,8 +301,8 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      */
     public function detectBrowser()
     {
-        $supported      = false;
-        $browser        = new \Browser();
+        $supported = false;
+        $browser = new \Browser();
         $browserVersion = (int)$browser->getVersion();
 
         if ($browser->getBrowser() == \Browser::BROWSER_FIREFOX && $browserVersion >= 52) {
