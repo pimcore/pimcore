@@ -240,7 +240,6 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
     public function handleResponse($response)
     {
         $responseStatus = StatusInterface::STATUS_PENDING;
-        $checkoutId = $response['id'];
 
         $resourcePath = $response['resourcePath'];
 
@@ -288,7 +287,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
             $responseStatus = new Status(
                 $internalPaymentId, //internal Payment ID
-                $checkoutId, //paymentReference
+                $jsonResponse['id'], //paymentReference
                 $jsonResponse['result']['description'],
                 $responseStatus,
                 $providerData
