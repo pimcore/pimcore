@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Welcome to Pimcore!</title>
+
+        <meta charset="UTF-8">
+        <meta name="robots" content="noindex, follow"/>
+
+        <link rel="icon" type="image/png" href="/bundles/pimcoreadmin/img/favicon/favicon-32x32.png"/>
+
+        <link rel="stylesheet" href="/bundles/pimcoreadmin/css/login.css" type="text/css"/>
+
+        {% for pluginCssPath in pluginCssPaths %}
+            <link rel="stylesheet" type="text/css" href="{{ pluginCssPath }}?_dc={{ 'now'|date('U') }}"/>
+        {% endfor %}
+    </head>
+    <body class="pimcore_version_6 {{ config['branding']['login_screen_invert_colors'] ? 'inverted' : '' }}">
+        {% set backgroundImageUrl = config['branding']['login_screen_custom_image'] %}
+        {% if backgroundImageUrl is empty %}
+            {% set defaultImages = ['pimconaut-ecommerce.svg', 'pimconaut-world.svg', 'pimconaut-engineer.svg', 'pimconaut-moon.svg', 'pimconaut-rocket.svg'] %}
+            {% set backgroundImageUrl = '/bundles/pimcoreadmin/img/login/' ~ random(defaultImages) %}
+        {% endif %}
+
+        <style type="text/css">
+            #background {
+                background-image: url("{{ backgroundImageUrl }}");
+            }
+        </style>
+
+        {% set customColor = config['branding']['color_login_screen'] %}
+        {% if (customColor is not empty) %}
+        <style type="text/css">
+            #content button {
+                background: {{ customColor }};
+            }
+
+            #content a {
+                color: {{ customColor }};
+            }
+        </style>
+        {% endif %}
+
+        <div id="logo">
+            <img src="{{ path('pimcore_settings_display_custom_logo') ~ (config['branding']['login_screen_invert_colors'] ? '' : '?white=true') }}">
+        </div>
+
+        <div id="content">
+            {{ block('content') }}
+        </div>
+
+        {#
+            <div id="news">
+                <h2>News</h2>
+                <hr>
+                <p>
+                    <a href="#">Where is Master Data Management Heading in the Future?</a>
+                </p>
+                <hr>
+                <p>
+                    <a href="#">Priint and Pimcore announce technology partnership to ease publishing workflows</a>
+                </p>
+            </div>
+        #}
+
+        <div id="contentBackground"></div>
+        <div id="background"></div>
+        <div id="footer">
+            &copy; 2009-{{ "now"|date("Y") }} <a href="http://www.pimcore.org/">Pimcore GmbH</a><br>
+            BE RESPECTFUL AND HONOR OUR WORK FOR FREE & OPEN SOURCE SOFTWARE BY NOT REMOVING OUR COPYRIGHT NOTICE!
+            KEEP IN MIND THAT REMOVING THE COPYRIGHT NOTICE IS VIOLATING OUR LICENSING TERMS!
+        </div>
+
+        <script type="text/javascript" src="https://liveupdate.pimcore.org/imageservice"></script>
+
+        {% if block('below_footer') is defined %}
+            {{ block('below_footer') }}
+        {% endif %}
+
+    </body>
+</html>

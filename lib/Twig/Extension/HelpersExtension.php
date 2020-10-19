@@ -17,7 +17,12 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension;
 
+use Pimcore\Document;
+use Pimcore\File;
+use Pimcore\Video;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 use Twig\TwigTest;
 
 /**
@@ -25,6 +30,26 @@ use Twig\TwigTest;
  */
 class HelpersExtension extends AbstractExtension
 {
+    public function getFilters()
+    {
+        return [
+            new TwigFilter('basename', [$this, 'basenameFilter']),
+        ];
+    }
+
+    public function getFunctions()
+    {
+        return [
+            new TwigFunction('pimcore_video_is_available', [Video::class, 'isAvailable']),
+            new TwigFunction('pimcore_document_is_available', [Document::class, 'isAvailable']),
+            new TwigFunction('pimcore_file_exists', function ($file) {
+                return file_exists($file);
+            }),
+            new TwigFunction('pimcore_file_extension', [File::class, 'getFileExtension']),
+            new TwigFunction('pimcore_image_version_preview', [$this, 'getImageVersionPreview']),
+        ];
+    }
+
     public function getTests()
     {
         return [
@@ -32,5 +57,37 @@ class HelpersExtension extends AbstractExtension
                 return is_object($object) && $object instanceof $class;
             }),
         ];
+    }
+
+    /**
+     * @param string $value
+     * @param string $suffix
+     *
+     * @return string
+     */
+    public function basenameFilter($value, $suffix = '')
+    {
+        return basename($value, $suffix);
+    }
+
+    /**
+     * @param string $file
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getImageVersionPreview($file)
+    {
+        $thumbnail = PIMCORE_SYSTEM_TEMP_DIRECTORY . "/image-version-preview-" . uniqid() . ".png";
+        $convert = \Pimcore\Image::getInstance();
+        $convert->load($file);
+        $convert->contain(500,500);
+        $convert->save($thumbnail, "png");
+
+        $dataUri = "data:image/png;base64," . base64_encode(file_get_contents($thumbnail));
+        unlink($thumbnail);
+        unlink($file);
+
+        return $dataUri;
     }
 }

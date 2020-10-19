@@ -1804,7 +1804,7 @@ class SettingsController extends AdminController
     {
         $this->checkPermission('web2print_settings');
 
-        $response = $this->render('PimcoreAdminBundle:Admin/Settings:testWeb2print.html.php');
+        $response = $this->render('PimcoreAdminBundle:Admin/Settings:testWeb2print.html.twig');
         $html = $response->getContent();
 
         $adapter = \Pimcore\Web2Print\Processor::getInstance();

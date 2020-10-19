@@ -1,0 +1,68 @@
+{% extends 'PimcoreAdminBundle:Admin/Login:layout.html.twig' %}
+
+{% block content %}
+<div id="loginform">
+    <form method="post" action="{{ path('pimcore_admin_login_check', {'perspective' : app.request.get('perspective')|striptags}) }}">
+
+        {% if error is defined %}
+        <div class="text error">
+            {{ error|trans([],'admin')|raw }}
+        </div>
+        {% endif %}
+
+        <input type="text" name="username" autocomplete="username" placeholder="{{ 'username'|trans([], 'admin') }}" required autofocus>
+        <input type="password" name="password" autocomplete="current-password" placeholder="{{ 'password'|trans([], 'admin') }}" required>
+        <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
+
+        <button type="submit">{{ 'login'|trans([], 'admin') }}</button>
+    </form>
+
+    <a href="{{ path('pimcore_admin_login_lostpassword') }}" class="lostpassword">{{ 'Forgot your password'|trans([], 'admin') }}?</a>
+</div>
+
+{% if not browserSupported %}
+<div id="browserinfo">
+    <div class="text">
+        {{ 'Your browser is not supported. Please install the latest version of one of the following browsers.'|trans([], 'admin') }}
+    </div>
+
+    <div class="text browserinfo">
+        <a href="http://www.google.com/chrome/" target="_blank" title="Chrome"><img src="/bundles/pimcoreadmin/img/login/chrome.svg" alt="Chrome"/></a>
+        <a href="http://www.mozilla.org/" target="_blank" title="Firefox"><img src="/bundles/pimcoreadmin/img/login/firefox.svg" alt="Firefox"/></a>
+        <a href="http://www.apple.com/safari/" target="_blank" title="Safari"><img src="/bundles/pimcoreadmin/img/login/safari.svg" alt="Safari"/></a>
+        <a href="http://www.microsoft.com/" target="_blank" title="Edge"><img src="/bundles/pimcoreadmin/img/login/edge.svg" alt="Edge"/></a>
+    </div>
+
+    <a href="#" onclick="showLogin();">{{ 'Click here to proceed'|trans([], 'admin') }}</a>
+</div>
+
+<script type="text/javascript">
+    function showLogin() {
+        document.getElementById('loginform').style.display = 'block';
+        document.getElementById('browserinfo').style.display = 'none';
+    }
+</script>
+<style type="text/css">
+    #loginform {
+        display: none;
+    }
+</style>
+{% endif %}
+{% endblock %}
+
+{% block below_footer %}
+<script>
+    {% if deeplink is not defined %}
+    // clear opened tabs store
+    localStorage.removeItem("pimcore_opentabs");
+    {% endif %}
+
+    // hide symfony toolbar by default
+    var symfonyToolbarKey = 'symfony/profiler/toolbar/displayState';
+    if(!window.localStorage.getItem(symfonyToolbarKey)) {
+        window.localStorage.setItem(symfonyToolbarKey, 'none');
+    }
+</script>
+{% endblock %}
+
+{% do pimcore_breach_attack_random_content() %}
