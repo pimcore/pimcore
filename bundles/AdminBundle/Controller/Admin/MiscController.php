@@ -656,7 +656,6 @@ class MiscController extends AdminController
      */
     public function httpErrorLogDetailAction(Request $request, ?Profiler $profiler)
     {
-
         $this->checkPermission('http_errors');
 
         if ($profiler) {
