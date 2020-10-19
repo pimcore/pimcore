@@ -275,7 +275,13 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
             //https://hobex.docs.oppwa.com/reference/resultCodes
             if ($this->isSuccess($jsonResponse['result']['code'])){
-                $responseStatus = StatusInterface::STATUS_AUTHORIZED;
+                $paymentType = $jsonResponse['paymentType'];
+                switch ($paymentType){
+                    case self::PAYMENT_TYPE_DEBIT:
+                        $responseStatus = StatusInterface::STATUS_CLEARED;
+                        break;
+                    default: $responseStatus = StatusInterface::STATUS_AUTHORIZED;
+                }
             }
 
             //$jsonResponse['checkoutId'] = $checkoutId;
