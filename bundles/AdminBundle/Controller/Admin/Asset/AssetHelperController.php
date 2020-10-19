@@ -278,7 +278,7 @@ class AssetHelperController extends AdminController
         $settings['shareGlobally'] = $sharedGlobally ?? null;
         $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
-        $context = $gridConfig['context'];
+        $context = $gridConfig['context'] ?? null;
         if ($context) {
             $context = json_decode($context, true);
         }
