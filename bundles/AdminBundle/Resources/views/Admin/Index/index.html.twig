@@ -1,16 +1,8 @@
-<?php
-/** @var \Pimcore\Templating\PhpEngine $view */
-/** @var \Pimcore\Templating\PhpEngine $this */
-/** @var \Pimcore\Templating\GlobalVariables $app */
-$app = $view->app;
+{% set language = app.request.locale %}
+{# @var  \Pimcore\Bundle\AdminBundle\Security\User\User #}
+{% set userProxy = app.user %}
+{% set user = userProxy.user %}
 
-$language = $app->getRequest()->getLocale();
-$this->get("translate")->setDomain("admin");
-
-/** @var \Pimcore\Bundle\AdminBundle\Security\User\User $userProxy */
-$userProxy = $app->getUser();
-$user      = $userProxy->getUser();
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -84,14 +76,14 @@ $user      = $userProxy->getUser();
         }
 
         #pimcore_panel_tabs-body {
-            background-image: url(<?=$this->router()->path('pimcore_settings_display_custom_logo')?>);
+            background-image: url({{ path('pimcore_settings_display_custom_logo') }});
             background-repeat: no-repeat;
             background-position: center center;
             background-size: 500px auto;
         }
     </style>
 
-    <title><?= htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8') ?> :: Pimcore</title>
+    <title>{{ settings.hostname }} :: Pimcore</title>
 
     <script>
         var pimcore = {}; // namespace
@@ -103,8 +95,8 @@ $user      = $userProxy->getUser();
         }
     </script>
 
-    <script src="<?php echo $view->assets()->getUrl('bundles/fosjsrouting/js/router.js') ?>"></script>
-    <script src="<?php echo $view->router()->path('fos_js_routing_js', array('callback' => 'fos.Router.setData')) ?>"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback' : 'fos.Router.setData'}) }}"></script>
 </head>
 
 <body class="pimcore_version_6">
@@ -116,62 +108,47 @@ $user      = $userProxy->getUser();
         <div class="bounce3"></div>
     </div>
 </div>
-
-<?php
-$runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
-?>
+{% set runtimePerspective = config.getRuntimePerspective(user) %}
 
 <div id="pimcore_sidebar">
     <div id="pimcore_navigation" style="display:none;">
         <ul>
-            <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "file")) { ?>
-                <li id="pimcore_menu_file" data-menu-tooltip="<?= $this->translate("file") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
-                    <img src="/bundles/pimcoreadmin/img/material-icons/outline-file-24px.svg">
-                </li>
-            <?php } ?>
-            <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "extras")) { ?>
-                <li id="pimcore_menu_extras" data-menu-tooltip="<?= $this->translate("tools") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
-                    <img src="/bundles/pimcoreadmin/img/material-icons/outline-build-24px.svg">
-                </li>
-            <?php } ?>
-            <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "marketing")) { ?>
-                <li id="pimcore_menu_marketing" data-menu-tooltip="<?= $this->translate("marketing") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
-                    <img src="/bundles/pimcoreadmin/img/material-icons/outline-bar_chart-24px.svg">
-                </li>
-            <?php } ?>
-            <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "settings")) { ?>
-                <li id="pimcore_menu_settings" data-menu-tooltip="<?= $this->translate("settings") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
-                    <img src="/bundles/pimcoreadmin/img/material-icons/outline-settings-24px.svg">
-                </li>
-            <?php } ?>
-            <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "ecommerce")) { ?>
-                <li id="pimcore_menu_ecommerce" data-menu-tooltip="<?= $this->translate("bundle_ecommerce_mainmenu") ?>" class="pimcore_menu_item pimcore_menu_needs_children" style="display: none;">
-                    <img src="/bundles/pimcoreadmin/img/material-icons/outline-shopping_cart-24px.svg">
-                </li>
-            <?php } ?>
-            <?php if (\Pimcore\Config::inPerspective($runtimePerspective, "search")) { ?>
-                <li id="pimcore_menu_search" data-menu-tooltip="<?= $this->translate("search") ?>" class="pimcore_menu_item pimcore_menu_needs_children">
-                    <img src="/bundles/pimcoreadmin/img/material-icons/outline-search-24px.svg">
-                </li>
-            <?php } ?>
-            <li id="pimcore_menu_maintenance" data-menu-tooltip="<?= $this->translate("deactivate_maintenance") ?>" class="pimcore_menu_item " style="display:none;"></li>
+            {% set navigations = {
+                'file': {'label': 'file', 'icon': 'file'},
+                'extras': {'label': 'tools', 'icon': 'build'},
+                'marketing': {'label': 'marketing', 'icon': 'bar_chart'},
+                'settings': {'label': 'settings', 'icon': 'settings'},
+                'ecommerce': {'label': 'bundle_ecommerce_mainmenu', 'icon': 'shopping_cart', 'extraAttr': 'style="display: none;"'},
+                'search': {'label': 'search', 'icon': 'search'}
+            } %}
+
+            {% set extraAttr = {'ecommerce': 'style="display: none;"'} %}
+
+            {% for navKey,navData in navigations %}
+                {% if config.inPerspective(runtimePerspective, navKey) %}
+                    <li id="pimcore_menu_{{ navKey }}" data-menu-tooltip="{{ navData["label"]|trans([],'admin') }}" class="pimcore_menu_item pimcore_menu_needs_children" {{ navData["extraAttr"] ?? '' }}>
+                        <img src="/bundles/pimcoreadmin/img/material-icons/outline-{{ navData["icon"] }}-24px.svg">
+                    </li>
+                {% endif %}
+            {% endfor %}
+            <li id="pimcore_menu_maintenance" data-menu-tooltip="{{ "deactivate_maintenance"|trans([], 'admin') }}" class="pimcore_menu_item " style="display:none;"></li>
         </ul>
     </div>
 
     <div id="pimcore_status"></div>
 
-    <div id="pimcore_notification" data-menu-tooltip="<?= $this->translate("notifications") ?>" class="pimcore_icon_comments">
+    <div id="pimcore_notification" data-menu-tooltip="{{ "notifications"|trans([],'admin') }}" class="pimcore_icon_comments">
         <img src="/bundles/pimcoreadmin/img/material-icons/outline-sms-24px.svg">
         <span id="notification_value" style="display:none;"></span>
     </div>
 
     <div id="pimcore_avatar" style="display:none;">
-        <img src="<?=$view->router()->path('pimcore_admin_user_getimage')?>" data-menu-tooltip="<?= $user->getName() ?> | <?= $this->translate('my_profile') ?>"/>
+        <img src="{{ path('pimcore_admin_user_getimage') }}" data-menu-tooltip="{{ user.name }} | {{ 'my_profile'|trans([],'admin') }}"/>
     </div>
-    <a id="pimcore_logout" data-menu-tooltip="<?= $this->translate("logout") ?>" href="<?= $view->router()->path('pimcore_admin_logout') ?>" style="display: none">
+    <a id="pimcore_logout" data-menu-tooltip="{{ "logout"|trans([],'admin') }}" href="{{ path('pimcore_admin_logout') }}" style="display: none">
         <img src="/bundles/pimcoreadmin/img/material-icons/outline-logout-24px.svg">
     </a>
-    <div id="pimcore_signet" data-menu-tooltip="Pimcore Platform (<?= \Pimcore\Version::getVersion() ?>|<?= \Pimcore\Version::getRevision() ?>)" style="text-indent: -10000px">
+    <div id="pimcore_signet" data-menu-tooltip="Pimcore Platform ({{ settings.version }}|{{ settings.build }})" style="text-indent: -10000px">
         BE RESPECTFUL AND HONOR OUR WORK FOR FREE & OPEN SOURCE SOFTWARE BY NOT REMOVING OUR LOGO.
         WE OFFER YOU THE POSSIBILITY TO ADDITIONALLY ADD YOUR OWN LOGO IN PIMCORE'S SYSTEM SETTINGS. THANK YOU!
     </div>
@@ -180,76 +157,60 @@ $runtimePerspective = \Pimcore\Config::getRuntimePerspective($user);
 <div id="pimcore_tooltip" style="display: none;"></div>
 <div id="pimcore_quicksearch"></div>
 
-<?php // define stylesheets ?>
-<?php
+{# define stylesheets #}
 
-$disableMinifyJs = Pimcore::disableMinifyJs();
+{# SCRIPT LIBRARIES #}
+{% if settings.disableMinifyJs %}
+    {% set debugSuffix = "-debug" %}
+{% endif %}
 
-// SCRIPT LIBRARIES
-$debugSuffix = "";
-if ($disableMinifyJs) {
-    $debugSuffix = "-debug";
-}
-
-$styles = array(
-    $view->router()->path('pimcore_admin_misc_admincss'),
-    "/bundles/pimcoreadmin/css/icons.css",
-    "/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css",
-    "/bundles/pimcoreadmin/js/lib/leaflet.draw/leaflet.draw.css",
-    "/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
-    "/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/charts-all" . $debugSuffix . ".css",
-    "/bundles/pimcoreadmin/css/admin.css"
-);
-?>
+{% set styles = [
+        path('pimcore_admin_misc_admincss'),
+        "/bundles/pimcoreadmin/css/icons.css",
+        "/bundles/pimcoreadmin/js/lib/leaflet/leaflet.css",
+        "/bundles/pimcoreadmin/js/lib/leaflet.draw/leaflet.draw.css",
+        "/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/theme-triton-all.css",
+        "/bundles/pimcoreadmin/js/lib/ext/classic/theme-triton/resources/charts-all" ~ debugSuffix ~ ".css",
+        "/bundles/pimcoreadmin/css/admin.css"
+    ]
+%}
 
 <!-- stylesheets -->
 <style type="text/css">
-    <?php
-    // use @import here, because if IE9 CSS file limitations (31 files)
-    // see also: http://blogs.telerik.com/blogs/posts/10-05-03/internet-explorer-css-limits.aspx
-    // @import bypasses this problem in an elegant way
-    foreach ($styles as $style) { ?>
-    @import url(<?= $style ?>?_dc=<?= \Pimcore\Version::getRevision() ?>);
-    <?php } ?>
+    {#
+     # use @import here, because if IE9 CSS file limitations (31 files)
+     # see also: http://blogs.telerik.com/blogs/posts/10-05-03/internet-explorer-css-limits.aspx
+     # @import bypasses this problem in an elegant way
+    #}
+    {% for style in styles %}
+        @import url("{{ style }}?_dc={{ settings.build }}");
+    {% endfor %}
 </style>
 
+{# define scripts #}
 
-<?php //****************************************************************************************** ?>
-
-
-<?php // define scripts ?>
-<?php
-
-
-$scriptLibs = array(
-
-    // library
+{% set scriptLibs = [
     "lib/class.js",
-    "lib/ext/ext-all" . $debugSuffix . ".js",
-    "lib/ext/classic/theme-triton/theme-triton" . $debugSuffix . ".js",
-
-    "lib/ext/packages/charts/classic/charts" . $debugSuffix . ".js",              // TODO
-
+    "lib/ext/ext-all" ~ debugSuffix ~ ".js",
+    "lib/ext/classic/theme-triton/theme-triton" ~ debugSuffix ~ ".js",
+    "lib/ext/packages/charts/classic/charts" ~  debugSuffix ~ ".js",
     "lib/ext-plugins/portlet/PortalDropZone.js",
     "lib/ext-plugins/portlet/Portlet.js",
     "lib/ext-plugins/portlet/PortalColumn.js",
     "lib/ext-plugins/portlet/PortalPanel.js",
     "lib/ext-plugins/TabMiddleButtonClose.js",
-
     "lib/ckeditor/ckeditor.js",
-
     "lib/leaflet/leaflet.js",
     "lib/leaflet.draw/leaflet.draw.js",
     "lib/vrview/build/vrview.min.js",
+    "lib/ext/classic/locale/locale-" ~ language ~ ".js",
+] %}
 
-    // locale
-    "lib/ext/classic/locale/locale-" . $language . ".js",
-);
+{# PIMCORE SCRIPTS #}
 
-// PIMCORE SCRIPTS
-$scripts = array(
+{% set scripts = [
 
-    // runtime
+
     "pimcore/functions.js",
     "pimcore/common.js",
     "pimcore/elementservice.js",
@@ -264,11 +225,11 @@ $scripts = array(
     "pimcore/perspective.js",
     "pimcore/user.js",
 
-    // tools
+
     "pimcore/tool/paralleljobs.js",
     "pimcore/tool/genericiframewindow.js",
 
-    // settings
+
     "pimcore/settings/user/panels/abstract.js",
     "pimcore/settings/user/panel.js",
 
@@ -334,7 +295,7 @@ $scripts = array(
     "pimcore/settings/gdpr/dataproviders/sentMail.js",
     "pimcore/settings/gdpr/dataproviders/pimcoreUsers.js",
 
-    // element
+
     "pimcore/element/abstract.js",
     "pimcore/element/selector/selector.js",
     "pimcore/element/selector/abstract.js",
@@ -382,7 +343,7 @@ $scripts = array(
     "pimcore/asset/helpers/gridTabAbstract.js",
     "pimcore/asset/helpers/grid.js",
 
-    // documents
+
     "pimcore/document/properties.js",
     "pimcore/document/document.js",
     "pimcore/document/page_snippet.js",
@@ -415,7 +376,7 @@ $scripts = array(
     "pimcore/document/document_language_overview.js",
     "pimcore/document/customviews/tree.js",
 
-    // assets
+
     "pimcore/asset/metadata/data/data.js",
     "pimcore/asset/metadata/data/input.js",
     "pimcore/asset/metadata/data/textarea.js",
@@ -455,7 +416,7 @@ $scripts = array(
     "pimcore/asset/gridexport/xlsx.js",
     "pimcore/asset/gridexport/csv.js",
 
-    // object
+
     "pimcore/object/helpers/edit.js",
     "pimcore/object/helpers/layout.js",
     "pimcore/object/classes/class.js",
@@ -463,7 +424,7 @@ $scripts = array(
     "pimcore/object/bulk-base.js",
     "pimcore/object/bulk-export.js",
     "pimcore/object/bulk-import.js",
-    "pimcore/object/classes/data/data.js",          // THIS MUST BE THE FIRST FILE, DO NOT MOVE THIS DOWN !!!
+    "pimcore/object/classes/data/data.js",
     "pimcore/object/classes/data/block.js",
     "pimcore/object/classes/data/classificationstore.js",
     "pimcore/object/classes/data/rgbaColor.js",
@@ -663,13 +624,13 @@ $scripts = array(
     "pimcore/object/gridexport/xlsx.js",
     "pimcore/object/gridexport/csv.js",
 
-    //plugins
+
     "pimcore/plugin/broker.js",
     "pimcore/plugin/plugin.js",
 
     "pimcore/event-dispatcher.js",
 
-    // reports
+
     "pimcore/report/panel.js",
     "pimcore/report/broker.js",
     "pimcore/report/abstract.js",
@@ -687,14 +648,13 @@ $scripts = array(
     "pimcore/report/custom/definitions/analytics.js",
     "pimcore/report/custom/toolbarenricher.js",
 
-    // extension manager
     "pimcore/extensionmanager/admin.js",
 
-    // application logging
+
     "pimcore/log/admin.js",
     "pimcore/log/detailwindow.js",
 
-    // layout
+
     "pimcore/layout/portal.js",
     "pimcore/layout/portlets/abstract.js",
     "pimcore/layout/portlets/modifiedDocuments.js",
@@ -709,7 +669,7 @@ $scripts = array(
     "pimcore/layout/treepanelmanager.js",
     "pimcore/document/seemode.js",
 
-    // classification store
+
     "pimcore/object/classificationstore/groupsPanel.js",
     "pimcore/object/classificationstore/propertiesPanel.js",
     "pimcore/object/classificationstore/collectionsPanel.js",
@@ -720,85 +680,76 @@ $scripts = array(
     "pimcore/object/classificationstore/storeTree.js",
     "pimcore/object/classificationstore/columnConfigDialog.js",
 
-    //workflow
+
     "pimcore/workflow/transitionPanel.js",
     "pimcore/workflow/transitions.js",
 
-    // Piwik - this needs to be loaded after treepanel manager as
-    // it adds panels in pimcore ready
     "pimcore/analytics/piwik/widget_store_provider.js",
     "pimcore/report/piwik/settings.js",
     "pimcore/report/piwik/dashboard_iframe.js",
 
-    // color picker
+
     "pimcore/colorpicker-overrides.js",
 
-    //notification
+
     "pimcore/notification/helper.js",
     "pimcore/notification/panel.js",
     "pimcore/notification/modal.js",
-);
-
-?>
+]
+%}
 
 <!-- some javascript -->
-<?php // pimcore constants ?>
+{# pimcore constants #}
 <script>
-    pimcore.settings = <?= json_encode($this->settings, JSON_PRETTY_PRINT) ?>;
+    pimcore.settings = {{(settings|json_encode(constant('JSON_PRETTY_PRINT'))|raw)}};
 </script>
 
-<script src="<?= $view->router()->path('pimcore_admin_misc_jsontranslationssystem', ['language' => $language, '_dc' => \Pimcore\Version::getRevision()])?>"></script>
-<script src="<?= $view->router()->path('pimcore_admin_user_getcurrentuser') ?>?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
-<script src="<?= $view->router()->path('pimcore_admin_misc_availablelanguages', ['_dc' => \Pimcore\Version::getRevision()]) ?>"></script>
-
+<script src="{{ path('pimcore_admin_misc_jsontranslationssystem', {'language': language, '_dc': settings.build }) }}"></script>
+<script src="{{ path('pimcore_admin_user_getcurrentuser', {'_dc': settings.build }) }}"></script>
+<script src="{{ path('pimcore_admin_misc_availablelanguages', {'_dc': settings.build }) }}"></script>
 
 <!-- library scripts -->
-<?php foreach ($scriptLibs as $scriptUrl) { ?>
-    <script src="/bundles/pimcoreadmin/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
-<?php } ?>
-
+{% for scriptUrl in scriptLibs %}
+    <script src="/bundles/pimcoreadmin/js/{{ scriptUrl }}?_dc={{ settings.build }}"></script>
+{% endfor %}
 
 <!-- internal scripts -->
-<?php if ($disableMinifyJs) { ?>
-    <?php foreach ($scripts as $scriptUrl) { ?>
-    <script src="/bundles/pimcoreadmin/js/<?= $scriptUrl ?>?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
-<?php } ?>
-<?php } else { ?>
-<?php
+{% if settings.disableMinifyJs %}
+    {% for scriptUrl in scripts %}
+    <script src="/bundles/pimcoreadmin/js/{{ scriptUrl }}?_dc={{ settings.build }}"></script>
+    {% endfor %}
+{% else %}
+    {% set scriptContents = "" %}
+    {% for scriptUrl in scripts %}
+        {% set scriptContent = source(constant('PIMCORE_WEB_ROOT') ~ "/bundles/pimcoreadmin/js/" ~ scriptUrl, ignore_missing = true) %}
+        {% if scriptContent|length > 0 %}
+            {% set scriptContents = scriptContents ~ scriptContent ~ "\n\n\n" %}
+        {% endif %}
+    {% endfor %}
+    {#{% set minimizedScriptParams = \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents, false); %}#}
+    <script src="{{ path('pimcore_admin_misc_scriptproxy', minimizedScriptParams) }}"></script>
+{% endif %}
 
-    $scriptContents = "";
-    foreach ($scripts as $scriptUrl) {
-        if (is_file(PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/" . $scriptUrl)) {
-            $scriptContents .= file_get_contents(PIMCORE_WEB_ROOT . "/bundles/pimcoreadmin/js/" . $scriptUrl) . "\n\n\n";
-        }
-    }
-    $minimizedScriptParams = \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents, false);
+{# load plugin scripts #}
 
-?>
-    <script src="<?= $this->router()->path('pimcore_admin_misc_scriptproxy', $minimizedScriptParams) ?>"></script>
-<?php } ?>
+{# // only add the timestamp if the devmode is not activated, otherwise it is very hard to develop and debug plugins,
+ # // because the filename changes on every reload and therefore breakpoints, ... are resetted on every reload
+#}
 
+{% set pluginDcValue = "now"|date('U') %}
+{% if settings.disableMinifyJs %}
+    {% set pluginDcValue = 1 %}
+{% endif %}
 
-<?php // load plugin scripts ?>
-<?php
+{% for pluginJsPath in pluginJsPaths %}
+    <script src="{{ pluginJsPath }}?_dc={{ pluginDcValue }}"></script>
+{% endfor %}
 
-// only add the timestamp if the devmode is not activated, otherwise it is very hard to develop and debug plugins,
-// because the filename changes on every reload and therefore breakpoints, ... are resetted on every reload
-$pluginDcValue = time();
-if ($disableMinifyJs) {
-    $pluginDcValue = 1;
-}
-?>
+{% for pluginCssPath in pluginCssPaths %}
+    <link rel="stylesheet" type="text/css" href="{{ pluginCssPath }}?_dc={{ pluginDcValue }}"/>
+{% endfor %}
 
-<?php foreach ($this->pluginJsPaths as $pluginJsPath): ?>
-    <script src="<?= $pluginJsPath ?>?_dc=<?= $pluginDcValue; ?>"></script>
-<?php endforeach; ?>
-
-<?php foreach ($this->pluginCssPaths as $pluginCssPath): ?>
-    <link rel="stylesheet" type="text/css" href="<?= $pluginCssPath ?>?_dc=<?= $pluginDcValue; ?>"/>
-<?php endforeach; ?>
-
-<?php // MUST BE THE LAST LINE ?>
-<script src="/bundles/pimcoreadmin/js/pimcore/startup.js?_dc=<?= \Pimcore\Version::getRevision() ?>"></script>
+{#  MUST BE THE LAST LINE  #}
+<script src="/bundles/pimcoreadmin/js/pimcore/startup.js?_dc={{ settings.build }}"></script>
 </body>
 </html>

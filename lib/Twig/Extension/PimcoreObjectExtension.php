@@ -21,6 +21,7 @@ use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
+use Pimcore\Model\User;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -39,6 +40,25 @@ class PimcoreObjectExtension extends AbstractExtension
             new TwigFunction('pimcore_asset', [Asset::class, 'getById']),
             new TwigFunction('pimcore_object', [DataObject\AbstractObject::class, 'getById']),
             new TwigFunction('pimcore_document_wrap_hardlink', [Document\Hardlink\Service::class, 'wrap']),
+            new TwigFunction('pimcore_user', [User::class, 'getById']),
+            new TwigFunction('pimcore_object_classificationstore_group', [DataObject\Classificationstore\GroupConfig::class, 'getById']),
+            new TwigFunction('pimcore_object_classificationstore_get_field_definition_from_json', [$this, 'getFieldDefinitionFromJson']),
+            new TwigFunction('pimcore_object_brick_definition_key', [DataObject\Objectbrick\Definition::class, 'getByKey']),
         ];
+    }
+
+    /**
+     * @param array|string $definition
+     * @param string $type
+     *
+     * @return DataObject\ClassDefinition\Data|null
+     */
+    public function getFieldDefinitionFromJson($definition, $type)
+    {
+        if (is_json($definition)) {
+            $definition = json_decode($definition);
+        }
+
+        return DataObject\Classificationstore\Service::getFieldDefinitionFromJson($definition, $type);
     }
 }

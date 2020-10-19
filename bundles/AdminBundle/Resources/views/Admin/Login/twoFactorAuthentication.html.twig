@@ -1,0 +1,27 @@
+{% extends 'PimcoreAdminBundle:Admin/Login:layout.html.twig' %}
+
+{% block content %}
+    {% if error is defined %}
+        <div class="text error">
+            {{ error|trans([],'admin')|raw }}
+        </div>
+    {% else %}
+        <div class="text info">
+            {{ 'Enter your verification code'|trans([],'admin') }}
+        </div>
+    {% endif %}
+
+    <form method="post" action="{{ path('pimcore_admin_2fa-verify') }}">
+        <input name="_auth_code" id="_auth_code" autocomplete="one-time-code" type="password" placeholder="{{ '2fa_code'|trans([],'admin') }}" required autofocus>
+        <input type="hidden" name="csrfToken" value="{{ pimcore_csrf.getCsrfToken() }}">
+
+        <button type="submit">{{ 'Login'|trans([],'admin') }}</button>
+    </form>
+
+    <a href="{{ path('pimcore_admin_logout') }}">{{ 'Back to Login'|trans([],'admin') }}</a>
+
+    {% do pimcore_breach_attack_random_content() %}
+{% endblock %}
+
+
+

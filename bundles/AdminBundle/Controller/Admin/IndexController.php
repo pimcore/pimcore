@@ -107,7 +107,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         $this->eventDispatcher->dispatch($settingsEvent, AdminEvents::INDEX_ACTION_SETTINGS);
         $templateParams = $settingsEvent->getSettings();
 
-        return $this->render('PimcoreAdminBundle:Admin/Index:index.html.php', $templateParams);
+        return $this->render('PimcoreAdminBundle:Admin/Index:index.html.twig', $templateParams);
     }
 
     /**
@@ -244,6 +244,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             'document_tree_paging_limit' => $config['documents']['tree_paging_limit'],
             'object_tree_paging_limit' => $config['objects']['tree_paging_limit'],
             'maxmind_geoip_installed' => (bool) $this->getParameter('pimcore.geoip.db_file'),
+            'hostname' => htmlentities(\Pimcore\Tool::getHostname(), ENT_QUOTES, 'UTF-8'),
 
             // perspective and portlets
             'perspective' => $templateParams['runtimePerspective'],
