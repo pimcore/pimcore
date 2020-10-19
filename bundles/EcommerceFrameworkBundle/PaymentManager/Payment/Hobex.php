@@ -284,14 +284,14 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
                 }
             }
 
-            //$jsonResponse['checkoutId'] = $checkoutId;
+            $providerData = $this->createProviderData($jsonResponse);
 
             $responseStatus = new Status(
                 $internalPaymentId, //internal Payment ID
                 $checkoutId, //paymentReference
                 $jsonResponse['result']['description'],
                 $responseStatus,
-                $jsonResponse
+                $providerData
             );
         } catch (\Exception $e) {
             $this->logException('Could not process payment response.', 'handleResponse', $e, ['response' => $response]);
@@ -407,6 +407,29 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
             }
         }
         return 0;
+    }
+
+    /**
+     * prefix all keys with 'hobex_' to allow pimcore to store the values in fieldcollection PaymentInfo
+     *
+     * @param $jsonResponse
+     *
+     * @return array
+     */
+    protected function createProviderData($jsonResponse, $prefix = 'hobex_'){
+        $providerData = [];
+
+        // prefix keys with hobex_ to allow pimcore to store the values in Fieldcollection PaymentInfo
+        foreach ($jsonResponse as $key => $value) {
+            if (is_array($value)){
+                $data = $this->createProviderData($value, $prefix . $key . '_');
+                $providerData = $providerData + $data;
+            } else {
+                $providerData[$prefix . $key] = $value;
+            }
+
+        }
+        return $providerData;
     }
 
 }
