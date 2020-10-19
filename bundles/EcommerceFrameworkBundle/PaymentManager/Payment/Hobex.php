@@ -146,7 +146,8 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
                 'taxAmount' => $price->getAmount()->sub($price->getNetAmount())->asString(2),
                 'currency' => $price->getCurrency()->getShortName(),
                 'paymentType' => static::PAYMENT_TYPE_DEBIT,
-                'merchantTransactionId' => $orderAgent->getOrder()->getLastPaymentInfo()->getInternalPaymentId(),
+                'merchantTransactionId' => $this->createMerchantId($orderAgent->getOrder()),
+                'customParameters[\'internalTransactionId\']' => $orderAgent->getOrder()->getLastPaymentInfo()->getInternalPaymentId(),
                 'transactionCategory' => static::TRANSACTION_CATEGORY_ECOMMERCE,
             ];
 
@@ -257,7 +258,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
             $this->logger->debug('Received JSON response in ' . self::class . '::handleResponse', $jsonResponse);
 
-            $internalPaymentId = $jsonResponse['merchantTransactionId'];
+            $internalPaymentId = $jsonResponse['customParameters']['internalTransactionId'];//$jsonResponse['merchantTransactionId'];
 
             $clearedParams = [
                 'paymentType' => $jsonResponse['paymentBrand'],
@@ -378,6 +379,28 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
     protected  function isSuccess($code)
     {
         return strpos($code, '000.100.') === 0 || strpos($code,'000.000.') === 0;
+    }
+
+
+    /**
+     * unlike documented, merchantTransactionId only allows numeric values (N20)
+     * might be required and should be unique
+     * creates numeric value from internal paymentId
+     *
+     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order
+     *
+     * @return int
+     */
+    protected function createMerchantId(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order)
+    {
+        if ($order->getLastPaymentInfo()){
+            $internalPaymentId = $order->getLastPaymentInfo()->getInternalPaymentId();
+            if ($internalPaymentId){
+                $txtId = (int) preg_replace('/\D/',0,str_replace('payment_','',$internalPaymentId));
+                return $txtId;
+            }
+        }
+        return 0;
     }
 
 }
