@@ -1,7 +1,7 @@
 # REST Webservice API (deprecated)
 
 > **Important**  
-> The REST API is deprecated as of Pimcore 6.4 and will be removed in Pimcore 7. 
+> The REST API is deprecated as of Pimcore 6.4 ([see why](https://github.com/pimcore/pimcore/pull/5517)) and will be removed in Pimcore 7. 
 > If you're using this API, please consider migrating to the [Pimcore Data-Hub](https://github.com/pimcore/data-hub)
 
 Pimcore provides a REST web service interface to many entities of the system, such as assets, documents, objects, class definitions, translations, etc. 
