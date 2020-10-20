@@ -320,7 +320,8 @@ class Thumbnail
         // $this->getConfig() can be empty, the original image is returned
         if ($this->getConfig() && ($this->getConfig()->hasMedias() || $this->getConfig()->getForcePictureTag())) {
             // output the <picture> - element
-            $isWebPAutoSupport = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
+            $config = \Pimcore\Config::getSystemConfiguration();
+            $isWebPAutoSupport = $config['assets']['image']['thumbnails']['webp_auto_support'] ?? false;
             $isAutoFormat = (strtolower($this->getConfig()->getFormat()) === 'source' && $isWebPAutoSupport) ? true : false;
             $webpSupportBackup = null;
 
