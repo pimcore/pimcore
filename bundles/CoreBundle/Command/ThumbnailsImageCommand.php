@@ -188,7 +188,8 @@ class ThumbnailsImageCommand extends AbstractCommand
                         $resConfig->setHighResolution($resolution);
                         $thumbnailsToGenerate[] = $resConfig;
 
-                        if (!$input->getOption('skip-webp') && $resConfig->getFormat() === 'SOURCE') {
+                        $isWebPAutoSupport = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
+                        if ($isWebPAutoSupport && !$input->getOption('skip-webp') && $resConfig->getFormat() === 'SOURCE') {
                             $webpConfig = clone $resConfig;
                             $webpConfig->setFormat('webp');
                             $thumbnailsToGenerate[] = $webpConfig;
