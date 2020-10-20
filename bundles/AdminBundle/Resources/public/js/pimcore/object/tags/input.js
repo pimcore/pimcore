@@ -53,7 +53,7 @@ pimcore.object.tags.input = Class.create(pimcore.object.tags.abstract, {
             fieldLabel: this.fieldConfig.title,
             name: this.fieldConfig.name,
             labelWidth: 100,
-            labelAlign: "right"
+            labelAlign: "left"
         };
 
         if (!this.fieldConfig.showCharCount) {
