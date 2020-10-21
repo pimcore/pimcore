@@ -25,7 +25,6 @@ class Input extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filte
         $field = $this->getField($filterDefinition);
         $preSelect = $filterDefinition->getPreSelect($filterDefinition);
 
-
         $value = $params[$field] ?? null;
         $isReload = $params['is_reload'] ?? null;
 
