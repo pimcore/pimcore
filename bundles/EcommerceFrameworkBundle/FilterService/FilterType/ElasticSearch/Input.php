@@ -22,7 +22,7 @@ class Input extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Filte
 {
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)
     {
-        $field = $filterDefinition->getField();
+        $field = $this->getField($filterDefinition);
         $preSelect = $filterDefinition->getPreSelect($filterDefinition);
 
         $value = $params[$field] ?? null;
