@@ -424,7 +424,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
     /**
      * prefix all keys with 'hobex_' to allow pimcore to store the values in fieldcollection PaymentInfo
      *
-     * @param string $jsonResponse
+     * @param array $jsonResponse
      *
      * @param string $prefix
      *
