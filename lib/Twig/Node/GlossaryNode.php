@@ -26,11 +26,11 @@ class GlossaryNode extends Node
     {
         $compiler->addDebugInfo($this);
         $compiler
-            ->write('$this->env->getExtension(\'Pimcore\Twig\Extension\GlossaryExtension\')->getGlossaryHelper()->start();')
+            ->write('$this->env->getExtension(\'Pimcore\Twig\Extension\GlossaryExtension\')->start();')
             ->raw("\n")
             ->subcompile($this->getNode('body'))
             ->raw("\n")
-            ->write('$this->env->getExtension(\'Pimcore\Twig\Extension\GlossaryExtension\')->getGlossaryHelper()->stop();')
+            ->write('$this->env->getExtension(\'Pimcore\Twig\Extension\GlossaryExtension\')->stop();')
             ->raw("\n")
         ;
     }

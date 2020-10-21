@@ -17,16 +17,16 @@ namespace Pimcore\Templating\Renderer;
 use Pimcore\Controller\Config\ConfigNormalizer;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
+use Symfony\Bridge\Twig\Extension\HttpKernelRuntime;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\HttpKernel\Controller\ControllerReference;
 
 class ActionRenderer
 {
     /**
-     * @var ActionsHelper
+     * @var HttpKernelRuntime
      */
-    protected $actionsHelper;
+    protected $httpKernelRuntime;
 
     /**
      * @var ConfigNormalizer
@@ -34,12 +34,12 @@ class ActionRenderer
     protected $configNormalizer;
 
     /**
-     * @param ActionsHelper $actionsHelper
+     * @param HttpKernelRuntime $httpKernelRuntime
      * @param ConfigNormalizer $configNormalizer
      */
-    public function __construct(ActionsHelper $actionsHelper, ConfigNormalizer $configNormalizer)
+    public function __construct(HttpKernelRuntime $httpKernelRuntime, ConfigNormalizer $configNormalizer)
     {
-        $this->actionsHelper = $actionsHelper;
+        $this->httpKernelRuntime = $httpKernelRuntime;
         $this->configNormalizer = $configNormalizer;
     }
 
@@ -51,7 +51,7 @@ class ActionRenderer
      *
      * @return string
      *
-     * @see ActionsHelper::render()
+     * @see HttpKernelRuntime::renderFragment()
      */
     public function render($uri, array $options = [])
     {
@@ -59,7 +59,7 @@ class ActionRenderer
             $uri = $this->createDocumentReference($uri);
         }
 
-        return $this->actionsHelper->render($uri, $options);
+        return $this->httpKernelRuntime->renderFragment($uri, $options);
     }
 
     /**
@@ -81,7 +81,7 @@ class ActionRenderer
             $action
         );
 
-        return $this->actionsHelper->controller($controller, $attributes, $query);
+        return new ControllerReference($controller, $attributes, $query);
     }
 
     /**

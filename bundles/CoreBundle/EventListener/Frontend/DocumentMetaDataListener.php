@@ -18,7 +18,7 @@ use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\DocumentResolver as DocumentResolverService;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document\Page;
-use Pimcore\Templating\Helper\HeadMeta;
+use Pimcore\Twig\Extension\Templating\HeadMeta;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
