@@ -221,7 +221,7 @@ See [InlineScript Template Extension](06_InlineScript.md)
 * `pimcore_render_nav`
 * `pimcore_nav_renderer`
 
-Used to interact with navigations. See [Navigation](../../03_Documents/03_Navigation.md) for details. Simplified example:
+Used to interact with navigations. See [Navigation](../../../03_Documents/03_Navigation.md) for details. Simplified example:
 
 ```twig
 {% set navigation = pimcore_build_nav({
@@ -233,9 +233,8 @@ Used to interact with navigations. See [Navigation](../../03_Documents/03_Naviga
 {# you can also fetch the renderer instance and call custom render methods #}
 {% set renderer = pimcore_nav_renderer('menu') %}
 {{ renderer.render(navigation) }}
-### `$this->navigation()` 
-See [Navigation](../../../03_Documents/03_Navigation.md)
 ```
+
 
 ### `pimcore_url` 
 An alternative to `url()` and `path()` which used Url. 
