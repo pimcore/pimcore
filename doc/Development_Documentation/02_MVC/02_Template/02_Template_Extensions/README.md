@@ -124,7 +124,7 @@ For details also see [Adaptive Design](../../../19_Development_Tools_and_Details
 
 ### `pimcoreglossary`
 
-The `pimcoreglossary` block replaces glossary terms. See [Glossary](../../18_Tools_and_Features/21_Glossary.md) for details.
+The `pimcoreglossary` block replaces glossary terms. See [Glossary](../../../18_Tools_and_Features/21_Glossary.md) for details.
 
 ```twig
 {% pimcoreglossary %}

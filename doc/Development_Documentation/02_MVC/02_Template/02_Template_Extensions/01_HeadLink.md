@@ -35,14 +35,13 @@ You may specify a headLink at any time.
 Typically, you will specify global links in your layout script, and application specific links in your 
 application view scripts. In your layout script, in the `<head>` section, you will then echo the helper to output it.
 
-```php
-<?php // setting links in a view script:
-$this->headLink()->appendStylesheet('/styles/basic.css'); 
-$this->headLink(['rel' => 'icon', 'href' => '/img/favicon.ico'], 'PREPEND')
-     ->prependStylesheet('/styles/moz.css', 'screen', true,  ['id' => 'my_stylesheet']);
-?>
-<?php // rendering the links: ?>
-<?= $this->headLink() ?>
+```twig
+{# setting links in a view script: #}
+{% do pimcore_head_link().appendStylesheet('/styles/basic.css') %}
+{% do pimcore_head_link({rel: 'icon', href: '/img/favicon.ico'}, 'PREPEND').prependStylesheet('/styles/moz.css', 'screen', true,  {id: 'my_stylesheet'}) %}
+
+{# rendering the links: #}
+{{ pimcore_head_link() }}
 ```
 
 ## HTTP/2 Push Support
@@ -53,33 +52,24 @@ and HeadScript helpers take care of adding a cache buster aware link instead of 
 currently opt-in - to make the helpers automatically include links to the served assets either enable it globally on the 
 helper level or individually for each item.
 
-```php
-<?php
-/** @var \Pimcore\Templating\PhpEngine $this */
+```twig
 
-// enable web links for every item
-$this->headLink()->enableWebLinks();
+{# enable web links for every item #}
+{% do pimcore_head_link().enableWebLinks() %}
 
-// set web link attributes passed to every item
-$this->headLink()->setWebLinkAttributes(['as' => 'style']);
+{# set web link attributes passed to every item #}
+{% do pimcore_head_link().setWebLinkAttributes({as: 'style'}) %}
 
-// enable webLink on an item level
-// the item will be added even if enableWebLinks() was not called
-$this->headLink()->appendStylesheet('/static/css/styles.css', 'screen', false, [
-    'webLink' => ['as' => 'style']
-]);
+{# enable webLink on an item level #}
+{# the item will be added even if enableWebLinks() was not called #}
+{% do pimcore_head_link().setWebLinkAttributes({as: 'style'}) %}
 
-// disable webLink on an item level
-// the item won't be added even if enableWebLinks() was called
-$this->headLink()->appendStylesheet('/static/css/styles.css', 'screen', false, [
-    'webLink' => false
-]);
+{# disable webLink on an item level #}
+{# the item won't be added even if enableWebLinks() was called #}
+{% do pimcore_head_link().appendStylesheet('/static/css/styles.css', 'screen', false, {webLink: {as: 'style'}}) %}
 
-// override the used method (default is preload())
-$this->headLink()->appendStylesheet('/static/css/styles.css', 'screen', false, [
-    'webLink' => ['method' => 'prefetch']
-]);
-?>
+{# override the used method (default is preload()) #}
+{% do pimcore_head_link().appendStylesheet('/static/css/styles.css', 'screen', false, {'webLink': {method: 'prefetch'}}) %}
 ```
 
 Added links will be handled by the web link component and injected into the response. Make sure Symfony is properly configured

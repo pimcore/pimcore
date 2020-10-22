@@ -22,19 +22,10 @@ To add the conditional tags, pass the conditional value as part of the $attribut
 
 ### Headstyle With Conditional Comments
 
-<div class="code-section">
-
-```php
-// adding scripts
-$this->headStyle()->appendStyle($styles, array('conditional' => 'lt IE 11'));
-``` 
-
 ```twig
 {# adding scripts #}
 {% do pimcore_head_style().appendStyle(styles, {'conditional': 'lt IE 11'}) %}
 ```
-
-</div>
 
 HeadStyle also allows capturing style declarations; this can be useful if you want to create the declarations 
 programmatically, and then place them elsewhere. The usage for this will be showed in an example below.
@@ -52,39 +43,16 @@ items by simply modifying the object returned.
 
 You may specify a new style tag at any time:
 
-<div class="code-section">
-
-```php
-// adding styles
-$this->headStyle()->appendStyle($styles);
-```
-
 ```twig
 {# adding styles #}
 {% do pimcore_head_style().appendStyle(styles) %}
 ```
 
-</div>
-
 Order is very important with CSS; you may need to ensure that declarations are loaded in a specific order due to the 
 order of the cascade; use the various append, prepend, and offsetSet directives to aid in this task:
 
-<div class="code-section">
-
-```php
-// Putting styles in order
- 
-// place at a particular offset:
-$this->headStyle()->offsetSetStyle(100, $customStyles);
- 
-// place at end:
-$this->headStyle()->appendStyle($finalStyles);
- 
-// place at beginning
-$this->headStyle()->prependStyle($firstStyles);
-```
-
 ```twig
+{# Putting styles in order #}
 {# place at a particular offset: #}
 {% do pimcore_head_style().offsetSetStyle(100, customStyles) %}
 
@@ -95,37 +63,17 @@ $this->headStyle()->prependStyle($firstStyles);
 {% do pimcore_head_style().prependStyle(firstStyles) %}
 ```
 
-</div>
-
 When you're finally ready to output all style declarations in your layout script, simply echo the helper:
-
-<div class="code-section">
-
-```php
-<?= $this->headStyle() ?>
-```
 
 ```twig
 {{ pimcore_head_style() }}
 ```
 
-</div>
-
 ### Capturing Style Declarations
 
 Sometimes you need to generate CSS style declarations programmatically. While you could use string concatenation, 
-heredocs, and the like, often it's easier just to do so by creating the styles and sprinkling in PHP tags. 
+heredocs, and the like, often it's easier just to do so by creating the styles and sprinkling in Twig tags. 
 HeadStyle lets you do just that, capturing it to the stack:
-
-<div class="code-section">
-
-```php
-<?php $this->headStyle()->captureStart() ?>
-body {
-    background-color: <?php echo $this->bgColor ?>;
-}
-<?php $this->headStyle()->captureEnd() ?>
-```
 
 ```twig
 {% do pimcore_head_style().captureStart() %}
@@ -134,8 +82,6 @@ body {
     }
 {% do pimcore_head_style().captureEnd() %}
 ```
-
-</div>
 
 The following assumptions are made:
 

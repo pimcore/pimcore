@@ -26,12 +26,12 @@ To add the conditional tags, pass the conditional value as part of the `$attrs` 
 
 ### Example Headscript With Conditional Comments
 
-```php
-$this->headScript()->appendFile(
+```twig
+{% do pimcore_head_script().appendFile(
     '/js/prototype.js',
     'text/javascript',
-    array('conditional' => 'lt IE 11')
-);
+    {conditional: 'lt IE 11'}
+%}
 ```
 
 HeadScript also allows capturing scripts; this can be useful if you want to create the client-side script 
@@ -56,49 +56,48 @@ These include 'type', 'charset', 'defer', 'language', and 'src'. However, some j
  utilize custom attributes in order to modify behavior. 
 To allow such attributes, you can enable them via the setAllowArbitraryAttributes() method: 
 
-`$this->headScript()->setAllowArbitraryAttributes(true);`
+`{% do pimcore_head_script().setAllowArbitraryAttributes(true) %}`
 
 ### Basic Usage
 
 You may specify a new script tag at any time. As noted above, these may be links to outside resource files or scripts themselves.
 
-```php
-// adding scripts
-$this->headScript()->appendFile('/js/jquery.js')
-                   ->appendScript($onloadScript);
+```twig
+{# adding scripts #}
+{% do pimcore_head_script().appendFile('/js/jquery.js').appendScript(onloadScript) %}
 ```
 
 Order is often important with client-side scripting; you may need to ensure that libraries are loaded in a specific 
 order due to dependencies each have; use the various append, prepend, and offsetSet directives to aid in this task:
 
-```php
-// Putting scripts in order
- 
-// place at a particular offset to ensure loaded last
-$this->headScript()->offsetSetFile(100, '/js/myfuncs.js');
- 
-// append uses next index, 101
-$this->headScript()->appendFile('/js/jquery-plugin-xyz.js');
- 
-// but always have base prototype script load first:
-$this->headScript()->prependFile('/js/jquery.js');
+```twig
+{# Putting scripts in order #}
+
+{# place at a particular offset to ensure loaded last #}
+{% do pimcore_head_script().offsetSetFile(100, '/js/myfuncs.js') %}
+
+{# append uses next index, 101 #}
+{% do pimcore_head_script().appendFile('/js/jquery-plugin-xyz.js') %}
+
+{# but always have base prototype script load first: #}
+{% do pimcore_head_script().prependFile('/js/jquery.js') %}
 ```
 
 When you're finally ready to output all scripts in your layout script, simply echo the helper:
 
-`<?= $this->headScript() ?>`
+`{{ pimcore_head_script() }}`
 
 ### Capturing Scripts Using the HeadScript Helper
 
 Sometimes you need to generate client-side scripts programmatically. While you could use string concatenation, 
-heredocs, and the like, often it's easier just to do so by creating the script and sprinkling in PHP tags. 
+heredocs, and the like, often it's easier just to do so by creating the script and sprinkling in Twig tags. 
 HeadScript lets you do just that, capturing it to the stack:
 
-```php
-<?php $this->headScript()->captureStart() ?>
-var action = '<?php echo $this->baseUrl ?>';
+```twig
+{% do pimcore_head_script().captureStart() %}
+var action = '{{ baseUrl }}';
 $('#foo_form').attr("action", action);
-<?php $this->headScript()->captureEnd() ?>
+{% do pimcore_head_script().captureEnd() %}
 ```
 
 The following assumptions are made:
