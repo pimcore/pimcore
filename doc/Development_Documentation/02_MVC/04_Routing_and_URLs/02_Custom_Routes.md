@@ -87,15 +87,15 @@ the official documentation for [param converters](https://symfony.com/doc/curren
 
 ## Building URLs based on Custom Routes
 
-URLs are generated using the default URL helper of Symfony `$this->path()` and `$this->url()`. Additionally to the 
-standard helpers for generating URLs, Pimcore offers a special templating helper (`$this->pimcoreUrl()`) to generate URLs like you did with Pimcore 4. 
+URLs are generated using the default Twig Extensions provided by Symfony `path()` and `url()`. Additionally to the 
+standard extensions for generating URLs, Pimcore offers a special templating extension (`pimcore_url()`) to generate URLs like you did with Pimcore 4. 
 You can define a placeholder in the reverse pattern with %NAME and it is also possible to define an optional part, 
 to do so just embrace the part with curly brackets { } (see example below).
 
 
 | Name          | Pattern                                                  | Reverse                                          | Module     | Controller     | Action     | Variables                | Defaults     | Site     | Priority     |
 |---------------|----------------------------------------------------------|--------------------------------------------------|------------|----------------|------------|--------------------------|--------------|----------|--------------|
-| news category | /\\/news-category\\/([^_]+)_([0-9]+)(_category_)?([0-9]+)?/ | /news-category/%text_%id{_category_%category_id} |            | news           | list       | text,id,text2,categoryId |              |          | 1            |
+| news category | /\\/news-category\\/([^_]+)_([0-9]+)(_category_)?([0-9]+)?/ | /news-category/%text_%id{_category_%categoryId} |            | news           | list       | text,id,text2,categoryId |              |          | 1            |
   
 ![Grid with the new route](../../img/Routing_grid2.png)
 
@@ -108,13 +108,13 @@ Due to optional parameters, the above example matches for the following URL's:
 
 Source url: `/some-other-url`
 
-```php
-$this->path('news category', [
-    'text' => 'Test',
-    'id' => 67,
-    'categoryId' => 33,
-    'getExample' => 'some value'
-]);
+```twig
+path('news category', {
+    text: 'Test',
+    id: 67,
+    categoryId: 33,
+    getExample: 'some value'
+})
 ```
 
 Since there is no default parameter available out of the route pattern, you have to set every not optional parameter. 
@@ -131,14 +131,14 @@ You can use the *Defaults* column to add default values which will be used if yo
 
 | ... | Defaults               | ... |
 |-----|------------------------|-----|
-| ... | id=5\|text=random text | ... |
+| ... | text=random text | ... |
 
 ![Default values in the route](../../img/Routing_default_values.png)
 
-```php
-$this->path("news category", [
-    "category_id" => 776
-]);
+```twig
+path('news category', {
+    categoryId: 776,
+})
 ```
 
 Output will be: `/news-category/random+text_5_category_776`
@@ -193,41 +193,37 @@ It's possible to generate URL's pointing to a different Site inside Pimcore. To 
  
 #### Example: Linking to the Site with the ID 3
 
-```php
+```twig
+{# using the Site object #}
+{{ path('news', {
+    id: 4,
+    text: "some-text",
+    site: pimcore_site(3)
+}) }}
 
-// using the Site object
-echo $this->path("news", [
-    "id" => 4,
-    "text" => "some-text",
-    "site" => \Pimcore\Model\Site::getById(3)
-]);
+{# using the ID #}
+{{ path('news', {
+    id: 4,
+    text: "some-text",
+    site: 3
+}) }}
 
-
-// using the ID
-echo $this->path([
-    "id" => 4,
-    "text" => "some-text",
-    "site" => 3
-], "news");
-
-// using one of the hostname assiged to the site
-echo $this->path("news", [
-    "id" => 4,
-    "text" => "some-text",
-    "site" => "subsite.example.com"
-]);
-
+{# using one of the hostname assiged to the site #}
+{{ path('news', {
+    id: 4,
+    text: "some-text",
+    site: "subsite.example.com"
+}) }}
 ```
 
 #### Example: Linking Back to the Main-Site
 
-```php
-echo $this->path("news", [
-    "id" => 4,
-    "text" => "some-text",
-    "site" => 0
-]);
-
+```twig
+{{ path('news', {
+    id: 4,
+    text: "some-text",
+    site: 0
+}) }}
 ```
 
 ## Dynamic controller / action / module out of the Route Pattern

@@ -8,7 +8,7 @@ list of available bricks through a DI tag. The brick class is the only mandatory
 will at least implement a view template which is rendered in frontend and editmode.
 
 The templates itself are normal templates which are passed to the rendering engine. Therefore you can use all 
-existing templating helpers and [Pimcore editables](../README.md).
+existing templating extensions and [Pimcore editables](../README.md).
 
 
 ## Brick registration
