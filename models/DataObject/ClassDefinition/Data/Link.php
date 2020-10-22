@@ -218,6 +218,21 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return $data;
     }
 
+    /** @inheritDoc */
+    public function unmarshal($data, $object = null, $params = [])
+    {
+        if ($data instanceof DataObject\Data\Link) {
+            $target = Element\Service::getElementById($data->getInternalType(), $data->getInternal());
+            if (!$target) {
+                $data->setInternal(0);
+                $data->setInternalType(null);
+            }
+        }
+
+        return parent::unmarshal($data, $object, $params);
+    }
+
+
     /**
      * Checks if data is valid for current data field
      *
