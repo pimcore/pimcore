@@ -15,6 +15,7 @@ The items in the loop as well as their order can be defined by the editor with t
 | `default`   | integer   | If block is empty, this specifies the iterations at startup.                                                                 |
 | `manual`    | bool      | Forces the manual mode, which enables a complete custom HTML implementation for blocks, for example using `<table>` elements |
 | `class`     | string    | A CSS class that is added to the surrounding container of this element in editmode                                           |
+| `shuffle`   | bool      | Shuffle the output-order of the block-elements                                                                               |
 
 ## Methods
 
