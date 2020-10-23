@@ -81,15 +81,13 @@ final class Executor implements ExecutorInterface
 
             $lock = $this->lockFactory->createLock('maintenance-' . $name, 86400);
 
-            if ($lock->isAcquired() && !$force) {
+            if (!$lock->acquire() && !$force) {
                 $this->logger->info('Skipped job with ID {id} because it already being executed', [
                     'id' => $name,
                 ]);
 
                 continue;
             }
-
-            $lock->acquire();
 
             try {
                 $task->execute();
