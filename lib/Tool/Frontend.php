@@ -150,8 +150,9 @@ class Frontend
      */
     public static function hasWebpSupport()
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
-        if ($config) {
+        $config = \Pimcore\Config::getSystemConfiguration('assets');
+        $isWebPAutoSupport = $config['image']['thumbnails']['webp_auto_support'] ?? false;
+        if ($isWebPAutoSupport) {
             if (self::hasClientWebpSupport() && self::hasDocumentWebpSupport()) {
                 return true;
             }
