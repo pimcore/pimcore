@@ -111,6 +111,10 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
 
         $this->lazyInitialize($domain, $locale);
 
+        if (isset($parameters['%count%'])) {
+            $id = $this->translator->trans($id, $parameters, $domain, $locale);
+        }
+
         $originalId = $id;
         if ($this->caseInsensitive && in_array($domain, ['messages', 'admin'])) {
             $id = mb_strtolower($id);
