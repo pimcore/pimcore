@@ -137,6 +137,10 @@ class Block extends Model\Document\Editable implements BlockInterface
             $manual = true;
         }
 
+        if (($this->config['shuffle'] ?? false) == true) {
+            shuffle($this->indices);
+        }
+
         $this->setDefault();
 
         if ($this->current > 0) {
