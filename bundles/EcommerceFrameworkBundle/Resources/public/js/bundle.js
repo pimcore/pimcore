@@ -203,18 +203,16 @@ pimcore.bundle.EcommerceFramework.bundle = Class.create(pimcore.plugin.admin, {
                 object.tab.items.items[1].updateLayout();
                 pimcore.layout.refresh();
             }
+        }
+        if (pimcore.globalmanager.get("user").isAllowed("bundle_ecommerce_back-office_order")) {
 
-            if (pimcore.globalmanager.get("user").isAllowed("bundle_ecommerce_back-office_order")) {
-
-                if (type == "object" && object.data.general.o_className == "OnlineShopOrder") {
-                    var tab = new pimcore.bundle.EcommerceFramework.OrderTab(object, type);
-                    object.tab.items.items[1].insert(0, tab.getLayout());
-                    object.tab.items.items[1].updateLayout();
-                    object.tab.items.items[1].setActiveTab(0);
-                    pimcore.layout.refresh();
-                }
+            if (type == "object" && object.data.general.o_className == "OnlineShopOrder") {
+                var tab = new pimcore.bundle.EcommerceFramework.OrderTab(object, type);
+                object.tab.items.items[1].insert(0, tab.getLayout());
+                object.tab.items.items[1].updateLayout();
+                object.tab.items.items[1].setActiveTab(0);
+                pimcore.layout.refresh();
             }
-
         }
     }
 
