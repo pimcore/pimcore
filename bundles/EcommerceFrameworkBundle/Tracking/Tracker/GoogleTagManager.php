@@ -298,7 +298,7 @@ class GoogleTagManager extends Tracker implements
      */
     private function formatPrice($price = null)
     {
-        return Decimal::fromNumeric($price)->asString();
+        return is_scalar($price) ? Decimal::fromNumeric($price)->asString() : '';
     }
 
     /**
