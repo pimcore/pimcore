@@ -1265,14 +1265,14 @@ abstract class Data
         return false;
     }
 
-    /** Converts the data sent from the object merger plugin back to the internal object. Similar to
+    /** Converts the data sent from the object merger back to the internal object. Similar to
      * getDiffDataForEditMode() an array of data elements is passed in containing the following attributes:
      *  - "field" => the name of (this) field
      *  - "key" => the key of the data element
      *  - "data" => the data
      *
      * @param array $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return mixed
