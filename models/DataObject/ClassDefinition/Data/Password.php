@@ -414,7 +414,7 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return null|string
+     * @return mixed
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
