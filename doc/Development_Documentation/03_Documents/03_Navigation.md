@@ -2,40 +2,17 @@
 
 ## Basics
 
-Pimcore comes with a standard navigation implementation in the form of a templating helper (`$this->navigation()`). 
+Pimcore comes with a standard navigation implementation in the form of a Twig extension. 
 It builds a navigation container based on the existing document structure. The process of rendering is divided into 2 steps:
 
-1. Build the navigation: `$nav = $this->navigation()->build(['active' => $activeDocument, 'root' => $navigationRootDocument])`
-2. Render the navigation: `$this->navigation()->render($nav)` or `$this->navigation()->getRenderer('menu')->render($nav)`
+1. Build the navigation: `{% set nav = pimcore_build_nav({active: activeDocument, root: navigationRootDocument}) %}`
+2. Render the navigation: `pimcore_render_nav(nav)` or `pimcore_nav_renderer('menu').render(nav)`
 
 > The building step does not necessarily need to happen in the view script. In fact the view helper just forwards the
  `build()` or `buildNavigation()` call to the `Pimcore\Navigation\Builder` service. You can also build the navigation in your controller
  or a service and pass the navigation object to the view.
 
 **Only documents are included** in this structure, Folders are ignored, regardless of their navigation properties.
-
-<div class="code-section">
-
-```php
-<?php
-// get root node if there is no document defined (for pages which are routed directly through static route)
-$document = $this->document; 
-if(!$document instanceof \Pimcore\Model\Document\Page) {
-    $document = \Pimcore\Model\Document\Page::getById(1);
-}
-
-// get the document which should be used to start in navigation | default home
-$mainNavStartNode = $this->document->getProperty("navigationRoot");
-if(!$mainNavStartNode instanceof \Pimcore\Model\Document\Page) {
-    $mainNavStartNode = \Pimcore\Model\Document\Page::getById(1);
-}
-
-// this returns us the navigation container we can use to render the navigation
-$mainNavigation = $this->navigation()->build(['active' => $document, 'root' => $mainNavStartNode]);
-
-// later you can render the navigation
-echo $this->navigation()->render($mainNavigation);
-```
 
 ```twig
 {# get root node if there is no document defined (for pages which are routed directly through static route) #}
@@ -58,74 +35,30 @@ echo $this->navigation()->render($mainNavigation);
 {{ pimcore_render_nav(mainNavigation) }}
 ```
 
-</div>
-
 Having set up the navigation container as shown above, you can easily use it to render a navigation tree, menus, or breadcrumbs.
 
 ### Meta Navigation - Only the 1st Level
 
-<div class="code-section">
-
-```php
-<div class="my-menu">
-    <?php
-    // $this->navigation()->menu() is a shortcut to $this->navigation()->getRenderer('menu')
-    echo $this->navigation()->menu()->renderMenu($mainNavigation, [
-        'maxDepth' => 1,
-        'ulClass'  => 'nav navbar-nav'
-    ]);
-    ?>
-
-    <?php
-    // alternatively, you can use the render function to use the given renderer and render method
-    $this->navigation()->render($mainNavigation, 'menu', 'renderMenu', [
-        'maxDepth' => 1,
-        'ulClass'  => 'nav navbar-nav'
-    ]); ?>
-</div>
-```
-
 ```twig
+{{ pimcore_nav_renderer('menu').renderMenu(mainNavigation,{
+    maxDepth: 1,
+    ulClass: 'nav navbar-nav'
+}) | raw }}
+
+{#alternatively, you can use the render function to use the given renderer and render method#}
 <div class="my-menu">
     {# the menu() shortcut is not available in twig #}
     {{ pimcore_render_nav(mainNavigation, 'menu', 'renderMenu', {
         maxDepth: 1,
         ulClass: 'nav navbar-nav'
     }) }}
+    
 </div>
 ```
-
-</div>
 
 ### Meta Navigation - Multilevel
 
 <div class="code-section">
-
-```php
-<div class="my-menu">
-    <?php
-    // you can use array to apply different ulClass on depth levels 
-    echo $this->navigation()->menu()->renderMenu($mainNavigation, [
-        'maxDepth' => 2,
-        'ulClass'  => [
-            0 => 'nav navbar-nav', //ulClass for first level
-            1 => 'nav navbar-nav-second',
-            2 => 'nav navbar-nav-third'
-        ]
-    ]);
-    ?>
-    
-    <?php
-    // alternatively, you can use 'default' key to apply class on all depth levels
-    $this->navigation()->render($mainNavigation, 'menu', 'renderMenu', [
-        'maxDepth' => 2,
-        'ulClass'  => [
-            'default' => 'nav navbar-nav', //ulClass for all levels
-        ]
-    ]); ?>
-
-</div>
-```
 
 ```twig
 <div class="my-menu">
@@ -153,43 +86,31 @@ Having set up the navigation container as shown above, you can easily use it to 
 
 ### Breadcrumbs
 
-<div class="code-section">
-
-```php
-<div class="my-breadcrumbs">
-    <a href="/"><?= $this->translate("Home") ?></a>
-    <?= $this->navigation()->breadcrumbs()->setMinDepth(null)->render($mainNavigation); ?>
-</div>
-```
-
 ```twig
 <div class="my-breadcrumbs">
     <a href="/">{{ 'Home'|trans }}</a> >
     {{ pimcore_render_nav(mainNavigation, 'breadcrumbs') }}
 </div>
 ```
-</div>
 
 ### Sidebar Navigation
 
-```php
+```twig
 <div class="my-sidebar-menu">
-    <?= $this->navigation()->menu()->renderMenu($mainNavigation); ?>
+   {{ pimcore_nav_renderer('menu').renderMenu(mainNavigation) }}
 </div>
 ```
 
 ### Sidebar Navigation with a Different HTML Prefix
 
-```php
+```twig
 <div class="my-sidebar-menu">
-    <?php
-    $sideNav = $this->navigation()->build(['active' => $this->document, 'root' => $navStartNode, 'htmlMenuPrefix' => 'my-nav-']);
-
-    echo $this->navigation()->menu()->renderMenu($sideNav, [
-        'ulClass' => 'nav my-sidenav',
-        'expandSiblingNodesOfActiveBranch' => true
-    ]);
-    ?>
+    {% set sideNav = pimcore_build_nav({active: document, root: navStartNode, htmlMenuPrefix: 'my-nav-'}) %}
+    
+    {{ pimcore_render_nav(sideNav, 'menu', 'renderMenu', {
+        ulClass: 'nav my-sidenav',
+        expandSiblingNodesOfActiveBranch: true
+    }) }}
 </div>
 ```
 
@@ -238,8 +159,8 @@ These navigation settings include the following properties:
  
  In your view template you can use:
  
- ```php
- $this->document->getProperty('navigation_exclude')
+ ```twig
+ {% do document.getProperty('navigation_exclude') %}
  ```
  
 * **Class:** HTML class of the navigation element
@@ -254,162 +175,202 @@ If the standard HTML output of the render() method is not suitable for a project
 
 For example, inside your view:
 
-```php
-<?php
-/** @var \Pimcore\Navigation\Renderer\Menu $menuRenderer */
-$menuRenderer = $this->navigation()->menu();
 
-// either use the renderPartial method to use a partial once
-echo $menuRenderer->renderPartial($mainNavigation, 'Includes/navigation.html.php');
+```twig
+{# \Pimcore\Navigation\Renderer\Menu #}
+{% set menuRenderer = pimcore_nav_renderer('menu') %}
 
-// or set the partial on the renderer (will be valid for all subsequent render calls)
-$menuRenderer->setPartial('Includes/navigation.html.php');
-echo $menuRenderer->render($mainNavigation);
-?>
+{# either use the renderPartial method to use a partial once #}
+{{ menuRenderer.renderPartial(mainNavigation, 'includes/navigation.html.twig') | raw }}
+
+{# or set the partial on the renderer (will be valid for all subsequent render calls) #}
+{% do menuRenderer.setPartial('includes/navigation.html.twig') %}
+{{ menuRenderer.render(mainNavigation) | raw }}
 ```
 
-`app/Resources/views/Includes/navigation.html.php`
+`app/Resources/views/includes/navigation.html.twig`
 
-```php
-<?php foreach($this->pages as $page): ?>
-
+```twig
+{% for page in pages %}
     <div class="my-menu-element">
-
-        <?= $this->navigation()->menu()->htmlify($page); ?>
-
+        {{ pimcore_nav_renderer('menu').htmlify(page) | raw }}
     </div>
-
-<?php endforeach; ?>
+{% endfor %}
 ```
 
 ## Using the Navigation Helper with Sites.
 
 For example:
-```php
-<?php
-$navStartNode = $this->document->getProperty("navigationRoot");
-if(!$navStartNode instanceof Document\Page) {
-    if(Site::isSiteRequest()) {
-        $site = Site::getCurrentSite();
-        $navStartNode = $site->getRootDocument();
-    } else {
-        $navStartNode = Document::getById(1);
-    }
-}
+```twig
+{% set navStartNode = document.getProperty('navigation_root') %}
+{% if not navStartNode is instanceof('\\Pimcore\\Model\\Document\\Page')  %}
+    {% if pimcore_site_is_request() %}
+        {% set site = pimcore_site_current() %}
+        {% set navStartNode = site.getRootDocument() %}
+    {% else %}
+        {% set navStartNode = pimcore_document(1) %}
+    {% endif %}
+{% endif %}
 
-$navigation = $this->navigation()->build(['active' => $this->document, 'root' => $navStartNode]);
-echo $this->navigation()->menu()->renderMenu($navigation, [
-    "maxDepth" => 1,
-    "ulClass" => "nav navbar-nav"
-]);
-?>
+{% set navigation = pimcore_build_nav({active: document, root: navStartNode}) %} %}
+{{ pimcore_render_nav(navigation, 'menu', 'renderMenu', {
+    maxDepth: 1,
+    ulClass: {
+        'default': 'nav navbar-nav'
+    }
+}) }}
 ```
 
 ## Using Partials Generating a Customized Navigation
 
-For example, generate bootstrap 3.0 style navigation: 
+For example, generate bootstrap 4.0 style navigation: 
 
-```php
-<?php
-$navStartNode = $this->document->getProperty("navigationRoot");
-if(!$navStartNode instanceof Document\Page) {
-    if(Site::isSiteRequest()) {
-        $site = Site::getCurrentSite();
-        $navStartNode = $site->getRootDocument();
-    } else {
-        $navStartNode = Document::getById(1);
-    }
-}
+```twig
+{% set navStartNode = document.getProperty('navigation_root') %}
+{% if not navStartNode is instanceof('\\Pimcore\\Model\\Document\\Page')  %}
+    {% if pimcore_site_is_request() %}
+        {% set site = pimcore_site_current() %}
+        {% set navStartNode = site.getRootDocument() %}
+    {% else %}
+        {% set navStartNode = pimcore_document(1) %}
+    {% endif %}
+{% endif %}
 
-$mainNavigation = $this->navigation()->build(['active' => $this->document, 'root' => $navStartNode]);
+{% set mainNavigation = pimcore_build_nav({active: document, root: navStartNode}) %} %}
 
-/** @var \Pimcore\Navigation\Renderer\Menu $menuRenderer */
-$menuRenderer = $this->navigation()->menu();
-?>
-<nav class="navbar-inverse navbar-static-top" role="navigation">
-<div class="container-fluid">
-    <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-navbar-collapse-1">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-    </div>
-    <div class="collapse navbar-collapse" id="bs-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-        <?php foreach ($mainNavigation as $page) { ?>
-            <?php /* @var \Pimcore\Navigation\Page\Document $page */ ?>
-            <?php // here need to manually check for ACL conditions ?>
-            <?php if (!$page->isVisible() || !$menuRenderer->accept($page)) { continue; } ?>
-            <?php $hasChildren = $page->hasPages(); ?>
-            <?php if (!$hasChildren) { ?>
-                <li>
-                    <a href="<?= $page->getHref() ?>">
-                        <?= $this->translate($page->getLabel()) ?>
-                    </a>
-                </li>
-            <?php } else { ?>
-            <li class="dropdown">
-                <a href="<?= $page->getHref(); ?>"><?= $this->translate($page->getLabel()) ?></a>
-                <ul class="dropdown-menu">
-                    <?php foreach ($page->getPages() as $child) { ?>
-                        <?php if(!$child->isVisible() || !$menuRenderer->accept($child)) { continue; } ?>
-                        <li>
-                            <a href="<?= $child->getHref() ?>">
-                                <?= $this->translate($child->getLabel()) ?>
-                            </a>
+{% set menuRenderer = pimcore_nav_renderer('menu') %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            {% for page in mainNavigation %}
+                {# here need to manually check for ACL conditions #}
+                {% if page.isVisible() and menuRenderer.accept(page)  %}
+                    {% set hasChildren = page.hasPages() %}
+                    {% if not hasChildren %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ page.getHref() }}">{{ page.getLabel()|trans }}</a>
                         </li>
-                    <?php } ?>
-                </ul>
-            </li>
-            <?php } ?>
-        <?php } ?>
-    </ul>
+                    {% else %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="{{ page.getHref() }}" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ page.getLabel()|trans }}</a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                {% for child in page.getPages() %}
+                                    {% if child.isVisible() and menuRenderer.accept(child) %}
+                                            <a class="dropdown-item" href="{{ child.getHref() }}">{{ child.getLabel()|trans }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </ul>
     </div>
-</div>
 </nav>
 ```
 
 ## Adding Custom Items to the Navigation
 
-In the following example we're adding news items (objects) to the navigation using the callback. 
+In the following example we're adding news items (objects) to the navigation using Twig Extension. 
 
 ```php
 <?php
-$navigation = $this->navigation()->build([
-    'active' => $this->document,
-    'root' => $navStartNode, 
-    'pageCallback' => function($page, $document) {
-        /** @var \Pimcore\Model\Document $document */
-        /** @var \Pimcore\Navigation\Page\Document $page */
-        if($document->getProperty("templateType") == "news") {
-            $list = new \Pimcore\Model\DataObject\News\Listing;
-            $list->load();
-            foreach($list as $news) {
-                $detailLink = $this->url([
-                    "id" => $news->getId(),
-                    "text" => $news->getTitle(),
-                    "prefix" => $this->document->getFullPath()
-                ], "news", true);
+namespace AppBundle\Twig\Extension;
+
+
+use AppBundle\Website\LinkGenerator\NewsLinkGenerator;
+use Pimcore\Model\Document;
+use Pimcore\Twig\Extension\Templating\Navigation;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
+
+class NavigationExtension extends AbstractExtension
+{
+        /**
+         * @var Navigation
+         */
+        protected $navigationHelper;
     
-                $uri = new Pimcore\Navigation\Page\Document([
-                    "label" => $news->getTitle(),
-                    "id" => "object-" . $news->getId(),
-                    "uri" => $detailLink
-                ]);
-                $page->addPage($uri);
-            }
+        /**
+         * @var NewsLinkGenerator
+         */
+        protected $newsLinkGenerator;
+    
+        /**
+         * @param Navigation $navigationHelper
+         */
+        public function __construct(Navigation $navigationHelper, NewsLinkGenerator $newsLinkGenerator)
+        {
+            $this->navigationHelper = $navigationHelper;
+            $this->$newsLinkGenerator = $newsLinkGenerator;
         }
-    }]
-);
+        /**
+         * @return array|TwigFunction[]
+         */
+        public function getFunctions()
+        {
+            return [
+                new TwigFunction('app_navigation_news_links', [$this, 'getDataLinks'])
+            ];
+        }
+        
+            /**
+             * @param Document $document
+             * @param Document $startNode
+             *
+             * @return \Pimcore\Navigation\Container
+             * @throws \Exception
+             */
+            public function getNewsLinks(Document $document, Document $startNode)
+            {
+                $navigation = $this->navigationHelper->build([
+                    'active' => $document,
+                    'root' => $startNode,
+                    'pageCallback' => function($page, $document) {
+                        /** @var \Pimcore\Model\Document $document */
+                        /** @var \Pimcore\Navigation\Page\Document $page */
+                        if($document->getProperty("templateType") == "news") {
+                            $list = new \Pimcore\Model\DataObject\News\Listing;
+                            $list->load();
+                            foreach($list as $news) {
+                                $detailLink = $this->newsLinkGenerator->generate($news, ['document' => $document]);
+                                $uri = new \Pimcore\Navigation\Page\Document([
+                                    "label" => $news->getTitle(),
+                                    "id" => "object-" . $news->getId(),
+                                    "uri" => $detailLink,
+                                ]);
+                                $page->addPage($uri);
+                            }
+                        }
+                    }
+                ]);
+        
+                return $navigation;
+            }
+}
 
 ?>
 
+```twig
+{% set mainNav = pimcore_build_nav({
+    active: document,
+    root: mainNavStartNode,
+    
+}) %}
+{% set mainNavigation =  app_navigation_news_links(document, navStartNode) %}
+
 <div class="my-navigation">
-    <?= $this->navigation()->menu()->renderMenu($navigation, [
-        'ulClass' => 'nav my-sidenav',
-        'expandSiblingNodesOfActiveBranch' => true
-    ]); ?>
+    {{ pimcore_render_nav(navigation, 'menu', 'renderMenu', {
+        expandSiblingNodesOfActiveBranch: true,
+        ulClass: {
+            'default': 'nav my-sidenav'
+        }
+    }) }}
 </div>
 ```
 
@@ -422,39 +383,89 @@ navigation templates / partial scripts, because this would result in loading all
 bypasses the caching mechanism of the navigation container. 
 
 But sometimes it's necessary to get some properties or other data out of the documents in the navigation to build the navigation as it should be. 
-For that we've introduced a new parameter for the navigation view helper, which acts as a callback and allows to map custom data onto the navigation page item.
-
+For that we've introduced a new parameter for the navigation extension, which acts as a callback and allows to map custom data onto the navigation page item.
 ```php
 <?php
-$mainNavigation = $this->navigation()->build([
-    'active' => $this->document,
-    'root' => $mainNavStartNode, 
-    'pageCallback' => function ($page, $document) {
-        $page->setCustomSetting("myCustomProperty", $document->getProperty("myCustomProperty"));
-        $page->setCustomSetting("subListClass", $document->getProperty("subListClass"));
-        $page->setCustomSetting("title", $document->getTitle());
-        $page->setCustomSetting("headline", $document->getEditable("headline")->getData());
-    }]
-);
+namespace AppBundle\Twig\Extension;
 
-$this->navigation()->menu()->setPartial("Navigation/partials/navigation.html.php");
-echo $this->navigation()->menu()->render($mainNavigation);
+use Pimcore\Model\Document;
+use Pimcore\Twig\Extension\Templating\Navigation;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
+
+class NavigationExtension extends AbstractExtension
+{
+        /**
+         * @var Navigation
+         */
+        protected $navigationHelper;
+    
+        /**
+         * @param Navigation $navigationHelper
+         */
+        public function __construct(Navigation $navigationHelper)
+        {
+            $this->navigationHelper = $navigationHelper;
+        }
+        
+        /**
+         * @return array|TwigFunction[]
+         */
+        public function getFunctions()
+        {
+            return [
+                new TwigFunction('app_navigation_custom', [$this, 'getCustomNavigation'])
+            ];
+        }
+        
+        /**
+         * @param Document $document
+         * @param Document $startNode
+         *
+         * @return \Pimcore\Navigation\Container
+         * @throws \Exception
+         */
+        public function getCustomNavigation(Document $document, Document $startNode)
+        {
+            $navigation = $this->navigationHelper->build([
+                'active' => $document,
+                'root' => $startNode, 
+                'pageCallback' => function ($page, $document) {
+                    $page->setCustomSetting("myCustomProperty", $document->getProperty("myCustomProperty"));
+                    $page->setCustomSetting("subListClass", $document->getProperty("subListClass"));
+                    $page->setCustomSetting("title", $document->getTitle());
+                    $page->setCustomSetting("headline", $document->getEditable("headline")->getData());
+                }]
+            );
+    
+            return $navigation;
+        }
+}
+
 ?>
 ```
 
-Later in the template of the navigation (`Navigation/partials/navigation.html.php`) you can use the mapped data directly on the page item object.
+```twig
+{% set mainNavigation = app_navigation_custom(document, navStartNode) %}
+{% set menuRenderer = pimcore_nav_renderer('menu') %}
+{% do menuRenderer.setPartial("navigation/partials/navigation.html.twig") %}
+{{ menuRenderer.render(mainNavigation) | raw }}
+```
 
-```php
-<?php foreach( $this->pages as $page ){ ?>
-    <?php if($page->isVisible()){ ?>
-         <li class="<?php if( $page->getActive(true) ){ ?>active<?php } ?>">
-          <a href="<?= $page->getUri() ?>" target="<?= $page->getTarget() ?>"><?= $page->getLabel() ?></a>
-          <ul class="<?= $page->getCustomSetting("subListClass") ?>" role="menu">
-                <?= $this->template("Navigation/partials/partials/main.html.php", [ "pages" => $page->getPages() ] ); ?>
-          </ul>
-     </li>
-    <?php } ?>
-<?php } ?>
+Later in the template of the navigation (`navigation/partials/navigation.html.twig`) you can use the mapped data directly on the page item object.
+
+```twig
+{% for page in pages %}
+        {% if page.isVisible() %}
+            {% set activeClass = page.getActive(true) ? 'active' : '' %}
+            <li class="{{ activeClass }}">
+                <a href="{{ page.getUri() }}" target="{{ page.getTarget() }}">{{ page.getLabel() }}</a>
+                <ul class="{{ page.getCustomSetting("subListClass") }}" role="menu">
+                    {% include 'navigation/partials/partials/main.html.twig' with {'pages': page.getPages()} %}
+                </ul>
+            </li>
+        {% endif %}
+    {% endfor %}
 ```
 
 Using this method will dramatically improve the performance of your navigation. 
@@ -463,8 +474,8 @@ Using this method will dramatically improve the performance of your navigation.
 
 Sometimes it's necessary to manually set the key for the navigation cache. 
 
-```php
-$this->navigation()->build(['active' => $this->document, 'root' => $mainNavStartNode, 'cache' => 'yourindividualkey']);
+```twig
+pimcore_build_nav({active: document, root: navStartNode, cache: 'yourindividualkey'})
 ```
 
 ### Disabling the Navigation Cache
@@ -490,17 +501,6 @@ See the above question. If none of the documents have a navigation title set the
 
 The homepage will not appear in the navigation by default. You can add the homepage (and any other page) manually:
 
-<div class="code-section">
-
-```php
-$navigation->addPage([
-   'order' => -1, // put it in front of all the others
-   'uri' => '/', //path to homepage
-   'label' => 'home', //visible label
-   'title' => 'Homepage' //tooltip text
-]);
-```
-
 ```twig
 {% do navigation.addPage({
     'order': -1,
@@ -510,18 +510,23 @@ $navigation->addPage([
 }) %}
 ```
 
-</div>
-
 If you retrieve the **home** document (which always has the ID 1) you can also retrieve its navigation properties so that they can be edited from the Pimcore admin interface like all the other documents.
 
-```php
-$home = Document::getById(1);
+```twig
+{% set home = pimcore_document(1) %}
  
-$navigation->addPage([
-    'order' => -1, // put it in front of all the others
-    'uri' => '/', //path to homepage
-    'label' => $home->getProperty('navigation_name'), //visible label
-    'title' => $home->getProperty('navigation_title'), //tooltip text
-    'active' => $this->document->id == $home->id //active state (boolean)
-]);
+ {# 
+    order: put it in front of all the others
+    uri: path to homepage
+    label: visible label
+    title: tooltip text
+    active: active state (boolean)
+ #}
+{% do navigation.addPage({
+    order: -1,
+    uri: '/',
+    label: home.getProperty('navigation_name'),
+    title: home.getProperty('navigation_title'),
+    active: document.id == home.id
+}) %}
 ```

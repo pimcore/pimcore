@@ -129,12 +129,12 @@ The following methods use the matching PHP templating view helpers to render sub
 {{ pimcore_inc('/snippets/foo') }}
 ```
 
-See [Templating Helpers](./02_Templating_Helpers) for details.
+See [Template Extensions](./02_Template_Extensions) for details.
 
 
-#### Templating Helpers
+#### Templating Extensions
 
-The following templating helpers can directly be used from Twig. See [Templating Helpers](./02_Templating_Helpers) for a 
+The following extensions can directly be used on Twig. See [Template Extensions](./02_Template_Extensions) for a 
 detailed description of every helper:
 
 * `pimcore_head_link`
@@ -155,51 +155,10 @@ editable, we introduced a function called `pimcore_iterate_block` to allow walki
 
 ```twig
 {% for i in pimcore_iterate_block(pimcore_block('contentblock')) %}
-    <h2>{{ pimcore_input('subline' }}</h2>
+    <h2>{{ pimcore_input('subline') }}</h2>
     {{ pimcore_wysiwyg('content') }}
 {% endfor %}
 ```
-
-#### Navigation
-
-* `pimcore_build_nav`
-* `pimcore_render_nav`
-* `pimcore_nav_renderer`
-
-Used to interact with navigations. See [Navigation](../../03_Documents/03_Navigation.md) for details. Simplified example:
-
-```twig
-{% set navigation = pimcore_build_nav({
-    active: document,
-    root: navRootDocument
-}) %}
-{{ pimcore_render_nav(navigation) }}
-
-{# you can also fetch the renderer instance and call custom render methods #}
-{% set renderer = pimcore_nav_renderer('menu') %}
-{{ renderer.render(navigation) }}
-```
-
-#### Website Config
-
-The `pimcore_website_config` gives you access to the configuration values set in the admin interface. See [Website Settings](../../18_Tools_and_Features/27_Website_Settings.md)
-for details.
-
-```twig
-{{ pimcore_website_config('googleMapsKey') }}
-```
-
-### Blocks 
-
-#### Glossary
-
-The `pimcoreglossary` block replaces glossary terms. See [Glossary](../../18_Tools_and_Features/21_Glossary.md) for details.
-
-```twig
-{% pimcoreglossary %}
-My content
-{% endpimcoreglossary %}
-``` 
 
 ### Tests
 

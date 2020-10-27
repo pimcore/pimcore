@@ -14,33 +14,9 @@
 
 namespace Pimcore\Templating;
 
-use Pimcore\Config\Config;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable;
-use Pimcore\Templating\Helper\Cache;
-use Pimcore\Templating\Helper\Glossary;
-use Pimcore\Templating\Helper\HeadLink;
-use Pimcore\Templating\Helper\HeadMeta;
-use Pimcore\Templating\Helper\HeadScript;
-use Pimcore\Templating\Helper\HeadStyle;
-use Pimcore\Templating\Helper\HeadTitle;
-use Pimcore\Templating\Helper\InlineScript;
-use Pimcore\Templating\Helper\Navigation;
-use Pimcore\Templating\Helper\Placeholder\Container;
-use Pimcore\Templating\Helper\WebLink;
-use Pimcore\Templating\HelperBroker\HelperBrokerInterface;
-use Pimcore\Tool\DeviceDetector;
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\ActionsHelper;
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\AssetsHelper;
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\CodeHelper;
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\FormHelper;
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\RequestHelper;
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\RouterHelper;
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\SessionHelper;
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\StopwatchHelper;
-use Symfony\Bundle\FrameworkBundle\Templating\Helper\TranslatorHelper;
 use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine as BasePhpEngine;
-use Symfony\Bundle\SecurityBundle\Templating\Helper\SecurityHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Templating\Helper\SlotsHelper;
 use Symfony\Component\Templating\Storage\Storage;
@@ -52,48 +28,6 @@ use Symfony\Component\Templating\Storage\Storage;
  *  - helper brokers integrate other view helpers (ZF) on __call
  *  - tag integration
  *
- * Defined in \Pimcore\Templating\HelperBroker\HelperShortcuts
- *
- * @method string getLocale()
- * @method Request getRequest()
- * @method SlotsHelper slots()
- * @method string path($name, $parameters = array(), $relative = false)
- * @method string url($name, $parameters = array(), $schemeRelative = false)
- * @method string t($key, $parameters = [], $domain = null, $locale = null)
- *
- * Symfony core helpers
- * @method ActionsHelper actions()
- * @method AssetsHelper assets()
- * @method CodeHelper code()
- * @method FormHelper form()
- * @method RequestHelper request()
- * @method RouterHelper router()
- * @method SecurityHelper security()
- * @method SessionHelper session()
- * @method StopwatchHelper stopwatch()
- * @method TranslatorHelper translator()
- *
- * Pimcore helpers
- * @method string action($action, $controller, $module, array $params = [])
- * @method Cache cache($name, $lifetime = null, $force = false)
- * @method DeviceDetector device($default = null)
- * @method array getAllParams()
- * @method array breachAttackRandomContent()
- * @method mixed getParam($key, $default = null)
- * @method Glossary glossary()
- * @method Container placeholder($placeholderName)
- * @method HeadLink headLink(array $attributes = null, $placement = Container::APPEND)
- * @method HeadMeta headMeta($content = null, $keyValue = null, $keyType = 'name', $modifiers = array(), $placement = Container::APPEND)
- * @method HeadScript headScript($mode = HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = array(), $type = 'text/javascript')
- * @method HeadStyle headStyle($content = null, $placement = 'APPEND', $attributes = array())
- * @method HeadTitle headTitle($title = null, $setType = null)
- * @method string inc($include, array $params = [], $cacheEnabled = true, $editmode = null)
- * @method InlineScript inlineScript($mode = HeadScript::FILE, $spec = null, $placement = 'APPEND', array $attrs = array(), $type = 'text/javascript')
- * @method WebLink webLink()
- * @method Navigation navigation()
- * @method Config|mixed websiteConfig($key = null, $default = null)
- * @method string pimcoreUrl(array $urlOptions = [], $name = null, $reset = false, $encode = true, $relative = false)
- * @method string translate($key, $parameters = [], $domain = null, $locale = null)
  *
  * Pimcore editables
  * @method Editable\Area area($name, $options = [])
@@ -130,22 +64,9 @@ class PhpEngine extends BasePhpEngine
     const PARAM_NO_PARENT = '_no_parent';
 
     /**
-     * @var HelperBrokerInterface[]
-     */
-    protected $helperBrokers = [];
-
-    /**
      * @var array
      */
     protected $params = [];
-
-    /**
-     * @param HelperBrokerInterface $helperBroker
-     */
-    public function addHelperBroker(HelperBrokerInterface $helperBroker)
-    {
-        $this->helperBrokers[] = $helperBroker;
-    }
 
     /**
      * {@inheritdoc}
@@ -207,20 +128,5 @@ class PhpEngine extends BasePhpEngine
     public function __set($name, $value)
     {
         $this->params[$name] = $value;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function __call($method, $arguments)
-    {
-        // try to run helper from helper broker (native helper, document tag, zend view, ...)
-        foreach ($this->helperBrokers as $helperBroker) {
-            if ($helperBroker->supports($this, $method)) {
-                return $helperBroker->helper($this, $method, $arguments);
-            }
-        }
-
-        throw new \InvalidArgumentException('Call to undefined method ' . $method);
     }
 }

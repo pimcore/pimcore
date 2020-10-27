@@ -75,7 +75,6 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new NavigationRendererPass());
         $container->addCompilerPass(new CacheCollectorPass());
         $container->addCompilerPass(new PimcoreGlobalTemplatingVariablesPass());
-        $container->addCompilerPass(new TemplatingEngineAwareHelperPass());
         $container->addCompilerPass(new TemplateVarsProviderPass());
         $container->addCompilerPass(new ServiceControllersPass());
         $container->addCompilerPass(new SessionConfiguratorPass());

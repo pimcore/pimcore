@@ -19,6 +19,7 @@ namespace Pimcore\Twig\Extension;
 
 use Pimcore\Document;
 use Pimcore\File;
+use Pimcore\Twig\Extension\Templating\PimcoreUrl;
 use Pimcore\Video;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -30,6 +31,16 @@ use Twig\TwigTest;
  */
 class HelpersExtension extends AbstractExtension
 {
+    /**
+     * @var PimcoreUrl
+     */
+    private $pimcoreUrlHelper;
+
+    public function __construct(PimcoreUrl $pimcoreUrlHelper)
+    {
+        $this->pimcoreUrlHelper = $pimcoreUrlHelper;
+    }
+
     public function getFilters()
     {
         return [
@@ -47,6 +58,13 @@ class HelpersExtension extends AbstractExtension
             }),
             new TwigFunction('pimcore_file_extension', [File::class, 'getFileExtension']),
             new TwigFunction('pimcore_image_version_preview', [$this, 'getImageVersionPreview']),
+            new TwigFunction('pimcore_breach_attack_random_content', [$this, 'breachAttackRandomContent'], [
+                'is_safe' => ['html'],
+            ]),
+            new TwigFunction('pimcore_url', $this->pimcoreUrlHelper, [
+                'name' => 'pimcore_url',
+                'is_safe' => null,
+            ]),
         ];
     }
 
@@ -90,5 +108,24 @@ class HelpersExtension extends AbstractExtension
         unlink($file);
 
         return $dataUri;
+    }
+
+    /**
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public function breachAttackRandomContent()
+    {
+        $length = 50;
+        $randomData = random_bytes($length);
+
+        return '<!--'
+            . substr(
+                base64_encode($randomData),
+                0,
+                ord($randomData[$length - 1]) % 32
+            )
+            . '-->';
     }
 }

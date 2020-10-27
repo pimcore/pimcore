@@ -13,7 +13,7 @@ services:
 
     Pimcore\Templating\Renderer\ActionRenderer:
         arguments:
-            $actionsHelper: '@templating.helper.actions'
+            $httpKernelRuntime: '@twig.runtime.httpkernel'
 
     Pimcore\Templating\Renderer\IncludeRenderer: ~
 
