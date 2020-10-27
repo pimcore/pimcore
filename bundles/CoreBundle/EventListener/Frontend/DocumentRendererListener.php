@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\CoreBundle\EventListener\Frontend;
 
 use Pimcore\Event\DocumentEvents;
-use Pimcore\Templating\Helper\Placeholder\ContainerService;
+use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**

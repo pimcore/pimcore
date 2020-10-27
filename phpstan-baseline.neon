@@ -1495,7 +1495,7 @@ parameters:
 		-
 			message: "#^Cannot access property \\$type on string\\.$#"
 			count: 2
-			path: lib/Templating/Helper/HeadMeta.php
+			path: lib/Twig/Extension/Templating/HeadMeta.php
 
 		-
 			message: "#^Property Pimcore\\\\Templating\\\\Renderer\\\\EditableRenderer\\:\\:\\$editableLoader \\(Pimcore\\\\Model\\\\Document\\\\Editable\\\\Loader\\\\EditableLoader\\) does not accept Pimcore\\\\Model\\\\Document\\\\Editable\\\\Loader\\\\EditableLoaderInterface\\.$#"
