@@ -21,7 +21,6 @@ pimcore.document.editables.link = Class.create(pimcore.document.editable, {
         }
 
         this.defaultData = {
-            type: "internal",
             path: "",
             parameters: "",
             anchor: "",
