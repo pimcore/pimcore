@@ -186,7 +186,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
         $data['idPath'] = Element\Service::getIdPath($asset);
         $data['userPermissions'] = $asset->getUserPermissions();
-        $data['url'] = $asset->getFullPath(true);
+        $data['url'] = $asset->getFrontendFullPath();
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 

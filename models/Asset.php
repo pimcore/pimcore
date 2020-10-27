@@ -873,24 +873,37 @@ class Asset extends Element\AbstractElement
     /**
      * Returns the full path of the asset including the filename
      *
-     * @param bool $forceFrontendUrl
      * @return string
      */
-    public function getFullPath($forceFrontendUrl = false)
+    public function getFullPath()
     {
         $path = $this->getPath() . $this->getFilename();
 
-        if (Tool::isFrontend() || $forceFrontendUrl) {
-            $path = urlencode_ignore_slash($path);
-
-            $event = new GenericEvent($this, [
-                'frontendPath' => $path,
-            ]);
-            \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_PATH, $event);
-            $path = $event->getArgument('frontendPath');
+        if (Tool::isFrontend()) {
+            return $this->getFrontendFullPath();
         }
 
         return $path;
+    }
+
+    /**
+     * Returns the full path of the asset (listener aware)
+     *
+     * @return string
+     * @internal
+     */
+    public function getFrontendFullPath()
+    {
+        $path = $this->getPath() . $this->getFilename();
+        $path = urlencode_ignore_slash($path);
+
+        $event = new GenericEvent($this, [
+            'frontendPath' => $path,
+        ]);
+
+        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_PATH, $event);
+
+        return $event->getArgument('frontendPath');
     }
 
     /**
