@@ -186,21 +186,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
         $data['idPath'] = Element\Service::getIdPath($asset);
         $data['userPermissions'] = $asset->getUserPermissions();
-
-        // get real public url
-        $path = $asset->getPath() . $asset->getFilename();
-        $path = urlencode_ignore_slash($path);
-        $event = new GenericEvent($asset, [
-            'frontendPath' => $path,
-        ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_PATH, $event);
-        $publicUrl = $event->getArgument('frontendPath');
-
-        if (!strpos($publicUrl, 'http')) {
-            $publicUrl = Tool::getHostUrl(null, $request) . $path;
-        }
-
-        $data['url'] = $publicUrl;
+        $data['url'] = $asset->getFullPath(true);
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
