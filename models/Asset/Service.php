@@ -376,9 +376,9 @@ class Service extends Model\Element\Service
                 $instance = $loader->build($item['type']);
 
                 if ($mode == 'grid') {
-                    $transformedData = $instance->getDataFromListfolderGrid($item['data'], $item);
+                    $transformedData = $instance->getDataFromListfolderGrid($item['data'] ?? null, $item);
                 } else {
-                    $transformedData = $instance->getDataFromEditMode($item['data'], $item);
+                    $transformedData = $instance->getDataFromEditMode($item['data'] ?? null, $item);
                 }
 
                 $item['data'] = $transformedData;

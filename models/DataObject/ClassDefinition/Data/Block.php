@@ -976,10 +976,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function preGetData($object, $params = [])
     {
         $data = null;
+        $params['owner'] = $object;
+        $params["fieldname"] = $this->getName();
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object);
+                $data = $this->load($object, $params);
 
                 $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {

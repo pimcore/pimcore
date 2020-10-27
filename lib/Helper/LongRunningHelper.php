@@ -14,7 +14,7 @@
 
 namespace Pimcore\Helper;
 
-use Doctrine\Common\Persistence\ConnectionRegistry;
+use Doctrine\Persistence\ConnectionRegistry;
 use Doctrine\DBAL\Connection;
 use Monolog\Handler\HandlerInterface;
 use Psr\Log\LoggerAwareTrait;

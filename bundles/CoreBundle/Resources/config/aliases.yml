@@ -9,6 +9,7 @@ services:
 
     Symfony\Bridge\Twig\Extension\WebLinkExtension: '@twig.extension.weblink'
     Doctrine\Common\Persistence\ConnectionRegistry: '@doctrine'
+    Doctrine\Persistence\ConnectionRegistry: '@doctrine'
     Symfony\Contracts\Translation\TranslatorInterface: '@Pimcore\Translation\Translator'
     Pimcore\Localization\LocaleService: '@Pimcore\Localization\LocaleServiceInterface'
     GuzzleHttp\ClientInterface: '@pimcore.http_client'

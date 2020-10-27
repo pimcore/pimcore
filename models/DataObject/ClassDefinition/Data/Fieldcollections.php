@@ -663,18 +663,6 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @param array $data
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return mixed
-     */
-    public function getDiffDataFromEditmode($data, $object = null, $params = [])
-    {
-        return parent::getDiffDataFromEditmode($data, $object, $params);
-    }
-
-    /**
      * Rewrites id from source to target, $idMapping contains
      * array(
      *  "document" => array(

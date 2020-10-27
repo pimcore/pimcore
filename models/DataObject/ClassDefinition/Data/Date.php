@@ -347,7 +347,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return null|\Carbon\Carbon
+     * @return mixed
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {

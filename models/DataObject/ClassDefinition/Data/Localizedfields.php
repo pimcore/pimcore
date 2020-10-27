@@ -1089,7 +1089,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return DataObject\Localizedfield
+     * @return mixed
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {

@@ -390,6 +390,8 @@ class Localizedfield extends Model\AbstractModel implements
             $params['language'] = $language;
             $params['object'] = $this->getObject();
             $params['context'] = $this->getContext();
+            $params['owner'] = $this;
+            $params['fieldname'] = $name;
 
             $isDirtyDetectionDisabled = AbstractObject::isDirtyDetectionDisabled();
             AbstractObject::disableDirtyDetection();

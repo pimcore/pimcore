@@ -2,7 +2,7 @@
 
 namespace Pimcore\Bundle\CoreBundle\Templating;
 
-use Doctrine\Common\Persistence\Proxy;
+use Doctrine\Persistence\Proxy;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Sensio\Bundle\FrameworkExtraBundle\Templating\TemplateGuesser as BaseTemplateGuesser;
 use Symfony\Bundle\FrameworkBundle\Templating\DelegatingEngine;
