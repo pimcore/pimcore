@@ -687,59 +687,6 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     }
 
     /**
-     * @param Model\DataObject\ClassDefinition\Data $layout
-     * @param array $allowedView
-     * @param array $allowedEdit
-     */
-    protected function setLayoutPermission(&$layout, $allowedView, $allowedEdit)
-    {
-        if ($layout->{'fieldtype'} == 'localizedfields' || $layout->{'fieldtype'} == 'classificationstore') {
-            if (is_array($allowedView) && count($allowedView) > 0) {
-                $haveAllowedViewDefault = null;
-                if ($layout->{'fieldtype'} == 'localizedfields') {
-                    $haveAllowedViewDefault = isset($allowedView['default']);
-                    if ($haveAllowedViewDefault) {
-                        unset($allowedView['default']);
-                    }
-                }
-                if (!($haveAllowedViewDefault && count($allowedView) == 0)) {
-                    $layout->{'permissionView'} = Tool\Admin::reorderWebsiteLanguages(
-                        Tool\Admin::getCurrentUser(),
-                        array_keys($allowedView),
-                        true
-                    );
-                }
-            }
-            if (is_array($allowedEdit) && count($allowedEdit) > 0) {
-                $haveAllowedEditDefault = null;
-                if ($layout->{'fieldtype'} == 'localizedfields') {
-                    $haveAllowedEditDefault = isset($allowedEdit['default']);
-                    if ($haveAllowedEditDefault) {
-                        unset($allowedEdit['default']);
-                    }
-                }
-
-                if (!($haveAllowedEditDefault && count($allowedEdit) == 0)) {
-                    $layout->{'permissionEdit'} = Tool\Admin::reorderWebsiteLanguages(
-                        Tool\Admin::getCurrentUser(),
-                        array_keys($allowedEdit),
-                        true
-                    );
-                }
-            }
-        } else {
-            if (method_exists($layout, 'getChilds')) {
-                $children = $layout->getChilds();
-                if (is_array($children)) {
-                    foreach ($children as $child) {
-                        $this->setLayoutPermission($child, $allowedView, $allowedEdit);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * @Route("/get-folder", name="pimcore_admin_dataobject_dataobject_getfolder", methods={"GET"})
      *
      * @param Request $request

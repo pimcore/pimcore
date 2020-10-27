@@ -1,6 +1,18 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Webservice\\\\Data\\:\\:\\$notes\\.$#"
+			count: 1
+			path: models/Webservice/Data.php
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Localizedfields\\:\\:\\$permissionView\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+		-
+			message: "#^Access to an undefined property Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Localizedfields\\:\\:\\$permissionEdit\\.$#"
+			count: 1
+			path: models/DataObject/Service.php
+		-
 			message: "#^Cannot access property \\$thumbnail on array\\|string\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Controller/Rest/Element/AssetController.php
