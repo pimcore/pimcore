@@ -14,7 +14,7 @@ A typical use-case would be to render product objects within a document.
 | `action`       | string    | Specify action                                                                     | X           |
 | `className`    | string or string[] | Specify class name (if type **object** chosen) as single string or as string array |    |
 | `controller`   | string    | Specify controller                                                                 | X           |
-| `height`       | integer   | Height of the renderlet in pixel                                                   |             |
+| `height`       | integer or string   | Height of the renderlet in pixel or 'auto'                               |             |
 | `bundle`       | string    | Specify bundle (default: `AppBundle`)                                              |             |
 | `reload`       | bool      | Reload document on change                                                          |             |
 | `template`     | string    | Specify template                                                                   |             |
