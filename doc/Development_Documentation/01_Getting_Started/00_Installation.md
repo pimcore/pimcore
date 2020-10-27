@@ -70,7 +70,7 @@ have a look at the logs as a starting point when debugging installation issues.
 ## 5. Maintenance Cron Job
 
 ```bash
-*/5 * * * * /your/project/bin/console maintenance
+*/5 * * * * /your/project/bin/console pimcore:maintenance
 ```
 
 Keep in mind, that the cron job has to run as the same user as the web interface to avoid permission issues (eg. `www-data`).
