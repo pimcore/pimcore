@@ -183,8 +183,9 @@ pimcore.object.fieldcollections.field = Class.create(pimcore.object.classes.klas
                 success: function (response) {
                     this.data = Ext.decode(response.responseText);
                     this.parentPanel.getEditPanel().removeAll();
-                    this.addLayout();
+                    this.addTree();
                     this.initLayoutFields();
+                    this.addLayout();
                     pimcore.layout.refresh();
                 }.bind(this)
             });

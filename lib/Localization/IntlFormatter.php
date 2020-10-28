@@ -34,6 +34,9 @@ class IntlFormatter
      */
     protected $locale;
 
+    /** @var LocaleServiceInterface */
+    private $localeService;
+
     /**
      * @var \IntlDateFormatter[]
      */
@@ -61,7 +64,7 @@ class IntlFormatter
      */
     public function __construct(LocaleServiceInterface $locale)
     {
-        $this->locale = $locale->findLocale();
+        $this->localeService = $locale;
     }
 
     /**
@@ -69,6 +72,9 @@ class IntlFormatter
      */
     public function getLocale()
     {
+        if ($this->locale === null) {
+            $this->locale = $this->localeService->findLocale();
+        }
         return $this->locale;
     }
 
@@ -111,55 +117,55 @@ class IntlFormatter
         switch ($format) {
             case self::DATE_SHORT:
                 return \IntlDateFormatter::create(
-                    $this->locale,
+                    $this->getLocale(),
                     \IntlDateFormatter::SHORT,
                     \IntlDateFormatter::NONE
                 );
             case self::DATE_MEDIUM:
                 return \IntlDateFormatter::create(
-                    $this->locale,
+                    $this->getLocale(),
                     \IntlDateFormatter::MEDIUM,
                     \IntlDateFormatter::NONE
                 );
             case self::DATE_LONG:
                 return \IntlDateFormatter::create(
-                    $this->locale,
+                    $this->getLocale(),
                     \IntlDateFormatter::LONG,
                     \IntlDateFormatter::NONE
                 );
             case self::DATETIME_SHORT:
                 return \IntlDateFormatter::create(
-                    $this->locale,
+                    $this->getLocale(),
                     \IntlDateFormatter::SHORT,
                     \IntlDateFormatter::SHORT
                 );
             case self::DATETIME_MEDIUM:
                 return \IntlDateFormatter::create(
-                    $this->locale,
+                    $this->getLocale(),
                     \IntlDateFormatter::MEDIUM,
                     \IntlDateFormatter::MEDIUM
                 );
             case self::DATETIME_LONG:
                 return \IntlDateFormatter::create(
-                    $this->locale,
+                    $this->getLocale(),
                     \IntlDateFormatter::LONG,
                     \IntlDateFormatter::LONG
                 );
             case self::TIME_SHORT:
                 return \IntlDateFormatter::create(
-                    $this->locale,
+                    $this->getLocale(),
                     \IntlDateFormatter::NONE,
                     \IntlDateFormatter::SHORT
                 );
             case self::TIME_MEDIUM:
                 return \IntlDateFormatter::create(
-                    $this->locale,
+                    $this->getLocale(),
                     \IntlDateFormatter::NONE,
                     \IntlDateFormatter::MEDIUM
                 );
             case self::TIME_LONG:
                 return \IntlDateFormatter::create(
-                    $this->locale,
+                    $this->getLocale(),
                     \IntlDateFormatter::NONE,
                     \IntlDateFormatter::LONG
                 );
@@ -198,7 +204,7 @@ class IntlFormatter
     public function formatNumber($value)
     {
         if (empty($this->numberFormatter)) {
-            $this->numberFormatter = new \NumberFormatter($this->locale, \NumberFormatter::DECIMAL);
+            $this->numberFormatter = new \NumberFormatter($this->getLocale(), \NumberFormatter::DECIMAL);
         }
 
         return $this->numberFormatter->format($value);
@@ -216,12 +222,12 @@ class IntlFormatter
     public function formatCurrency($value, $currency, $pattern = 'default')
     {
         if (empty($this->currencyFormatters[$pattern])) {
-            $formatter = new \NumberFormatter($this->locale, \NumberFormatter::CURRENCY);
+            $formatter = new \NumberFormatter($this->getLocale(), \NumberFormatter::CURRENCY);
 
             if ($pattern !== 'default') {
                 $formatter->setPattern($pattern);
-            } elseif ($this->currencyFormats[$this->locale]) {
-                $formatter->setPattern($this->currencyFormats[$this->locale]);
+            } elseif ($this->currencyFormats[$this->getLocale()]) {
+                $formatter->setPattern($this->currencyFormats[$this->getLocale()]);
             }
 
             $this->currencyFormatters[$pattern] = $formatter;

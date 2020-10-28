@@ -119,7 +119,7 @@ final class Executor implements ExecutorInterface
      */
     public function setLastExecution()
     {
-        TmpStore::add($this->pidFileName, time());
+        TmpStore::set($this->pidFileName, time());
     }
 
     /**
