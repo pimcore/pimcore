@@ -977,7 +977,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         $data = null;
         $params['owner'] = $object;
-        $params["fieldname"] = $this->getName();
+        $params['fieldname'] = $this->getName();
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {

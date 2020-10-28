@@ -312,7 +312,7 @@ class Link extends Model\Document\Editable
 
         // deletes unnecessary attribute, which was set by mistake in earlier versions, see also
         // https://github.com/pimcore/pimcore/issues/7394
-        if(isset($this->data['type'])) {
+        if (isset($this->data['type'])) {
             unset($this->data['type']);
         }
     }

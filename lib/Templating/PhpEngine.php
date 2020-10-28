@@ -17,8 +17,6 @@ namespace Pimcore\Templating;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Editable;
 use Symfony\Bundle\FrameworkBundle\Templating\PhpEngine as BasePhpEngine;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Templating\Helper\SlotsHelper;
 use Symfony\Component\Templating\Storage\Storage;
 
 /**
@@ -30,6 +28,7 @@ use Symfony\Component\Templating\Storage\Storage;
  *
  *
  * Pimcore editables
+ *
  * @method Editable\Area area($name, $options = [])
  * @method Editable\Areablock areablock($name, $options = [])
  * @method Editable\Block block($name, $options = [])

@@ -37,7 +37,6 @@
 
 namespace Pimcore\Twig\Extension\Templating;
 
-
 use Pimcore\Twig\Extension\Templating\Placeholder\AbstractExtension;
 use Pimcore\Twig\Extension\Templating\Placeholder\Container;
 use Pimcore\Twig\Extension\Templating\Placeholder\Exception;

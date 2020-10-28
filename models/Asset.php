@@ -1299,7 +1299,7 @@ class Asset extends Element\AbstractElement
     public function getStream()
     {
         if ($this->stream) {
-            if (get_resource_type($this->stream) !== "stream") {
+            if (get_resource_type($this->stream) !== 'stream') {
                 $this->stream = null;
             } else {
                 $streamMeta = stream_get_meta_data($this->stream);

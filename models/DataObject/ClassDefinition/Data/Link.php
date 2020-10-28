@@ -231,7 +231,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         return parent::unmarshal($data, $object, $params);
     }
 
-
     /**
      * Checks if data is valid for current data field
      *

@@ -133,7 +133,7 @@ class DependenciesTest extends ModelTestCase
         $source = TestHelper::createImageAsset();
         /** @var Unittest[] $targets */
         $targets = [];
-        for($i=0;$i<=2;$i++) {
+        for ($i = 0; $i <= 2; $i++) {
             $targets[] = TestHelper::createEmptyObject($i);
         }
 
