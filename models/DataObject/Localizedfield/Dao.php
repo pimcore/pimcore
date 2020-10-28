@@ -797,24 +797,26 @@ QUERY;
 
         /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFieldDefinition */
         $localizedFieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
-        foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
-            if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
-                /** @var DataObject\ClassDefinition\Data & ResourcePersistenceAwareInterface $value */
-                if ($value->getColumnType()) {
-                    $key = $value->getName();
+        if($localizedFieldDefinition instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+            foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
+                if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
+                    /** @var DataObject\ClassDefinition\Data & ResourcePersistenceAwareInterface $value */
+                    if ($value->getColumnType()) {
+                        $key = $value->getName();
 
-                    if (is_array($value->getColumnType())) {
-                        // if a datafield requires more than one column
-                        foreach ($value->getColumnType() as $fkey => $fvalue) {
-                            $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
-                            $protectedColumns[] = $key . '__' . $fkey;
+                        if (is_array($value->getColumnType())) {
+                            // if a datafield requires more than one column
+                            foreach ($value->getColumnType() as $fkey => $fvalue) {
+                                $this->addModifyColumn($table, $key . '__' . $fkey, $fvalue, '', 'NULL');
+                                $protectedColumns[] = $key . '__' . $fkey;
+                            }
+                        } elseif ($value->getColumnType()) {
+                            $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
+                            $protectedColumns[] = $key;
                         }
-                    } elseif ($value->getColumnType()) {
-                        $this->addModifyColumn($table, $key, $value->getColumnType(), '', 'NULL');
-                        $protectedColumns[] = $key;
-                    }
 
-                    $this->addIndexToField($value, $table, 'getColumnType', true, true);
+                        $this->addIndexToField($value, $table, 'getColumnType', true, true);
+                    }
                 }
             }
         }
@@ -847,16 +849,21 @@ QUERY;
 
                 DataObject\ClassDefinition\Service::updateTableDefinitions($this->tableDefinitions, [$queryTable]);
 
+                $fieldDefinitions = [];
                 if ($container instanceof DataObject\Objectbrick\Definition) {
                     $containerKey = $context['containerKey'];
                     $container = DataObject\Objectbrick\Definition::getByKey($containerKey);
+
                     /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
                     $localizedfields = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
                     $fieldDefinitions = $localizedfields->getFieldDefinitions(['suppressEnrichment' => true]);
                 } else {
                     /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
                     $localizedfields = $this->model->getClass()->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
-                    $fieldDefinitions = $localizedfields->getFieldDefinitions(['suppressEnrichment' => true]);
+
+                    if($localizedfields instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                        $fieldDefinitions = $localizedfields->getFieldDefinitions(['suppressEnrichment' => true]);
+                    }
                 }
 
                 // add non existing columns in the table
