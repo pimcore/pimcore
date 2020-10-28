@@ -576,7 +576,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
-        $blockedVars = ['controller', 'view', 'editmode', 'options', 'parentBlockNames', 'document'];
+        $blockedVars = ['controller', 'view', 'editmode', 'options', 'config', 'parentBlockNames', 'document'];
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {
