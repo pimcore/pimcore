@@ -45,7 +45,6 @@
 
 namespace Pimcore\Twig\Extension\Templating;
 
-
 use Twig\Extension\RuntimeExtensionInterface;
 
 class InlineScript extends HeadScript implements RuntimeExtensionInterface

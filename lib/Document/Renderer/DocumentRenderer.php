@@ -24,8 +24,8 @@ use Pimcore\Localization\LocaleService;
 use Pimcore\Model\Document;
 use Pimcore\Routing\Dynamic\DocumentRouteHandler;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
-use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Pimcore\Templating\Renderer\ActionRenderer;
+use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Fragment\FragmentRendererInterface;
 

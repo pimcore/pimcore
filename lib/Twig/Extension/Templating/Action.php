@@ -19,7 +19,6 @@ use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Twig\Extension\RuntimeExtensionInterface;
 
-
 class Action implements RuntimeExtensionInterface
 {
     /**

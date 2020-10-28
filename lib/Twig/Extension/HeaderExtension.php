@@ -17,17 +17,15 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension;
 
-use Pimcore\Twig\Extension\Templating\Placeholder;
-use Pimcore\Twig\Extension\Templating\Device;
 use Pimcore\Twig\Extension\Templating\HeadLink;
 use Pimcore\Twig\Extension\Templating\HeadMeta;
 use Pimcore\Twig\Extension\Templating\HeadScript;
 use Pimcore\Twig\Extension\Templating\HeadStyle;
 use Pimcore\Twig\Extension\Templating\HeadTitle;
 use Pimcore\Twig\Extension\Templating\InlineScript;
+use Pimcore\Twig\Extension\Templating\Placeholder;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-
 
 class HeaderExtension extends AbstractExtension
 {
