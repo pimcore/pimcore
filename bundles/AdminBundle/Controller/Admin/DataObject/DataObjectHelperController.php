@@ -551,6 +551,7 @@ class DataObjectHelperController extends AdminController
 
                             $brickClass = DataObject\Objectbrick\Definition::getByKey($brick);
 
+                            $fd = null;
                             if ($brickClass instanceof DataObject\Objectbrick\Definition) {
                                 if ($brickDescriptor) {
                                     $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
@@ -562,7 +563,7 @@ class DataObjectHelperController extends AdminController
                                 }
                             }
 
-                            if (!empty($fd)) {
+                            if ($fd !== null) {
                                 $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, $keyPrefix, $class, $objectId);
                                 if (!empty($fieldConfig)) {
                                     if (isset($sc['width'])) {

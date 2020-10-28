@@ -249,6 +249,10 @@ CONDITION;
         $objectbricks = $this->model->getObjectbricks();
         if (!empty($objectbricks)) {
             foreach ($objectbricks as $ob) {
+                $brickDefinition = DataObject\Objectbrick\Definition::getByKey($ob);
+                if (!$brickDefinition instanceof DataObject\Objectbrick\Definition) {
+                    continue;
+                }
 
                 // join info
                 $table = 'object_brick_query_' . $ob . '_' . $this->model->getClassId();
@@ -265,7 +269,7 @@ CONDITION
                     ''
                 );
 
-                $brickDefinition = DataObject\Objectbrick\Definition::getByKey($ob);
+
                 if ($brickDefinition->getFieldDefinition('localizedfields')) {
                     $langugage = $this->getLocalizedBrickLanguage();
                     //TODO wrong pattern
