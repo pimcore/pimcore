@@ -569,12 +569,22 @@ abstract class PageSnippet extends Model\Document
         return $this->getFullPath();
     }
 
+    /**
+     * @TODO: remove with $this->elements
+     */
+    public function __wakeup()
+    {
+        $this->editables = & $this->elements;
+
+        parent::__wakeup();
+    }
+
     public function __sleep()
     {
         $finalVars = [];
         $parentVars = parent::__sleep();
 
-        $blockedVars = ['inheritedElements'];
+        $blockedVars = ['inheritedElements', 'inheritedEditables'];
 
         foreach ($parentVars as $key) {
             if (!in_array($key, $blockedVars)) {

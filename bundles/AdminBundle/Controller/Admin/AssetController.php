@@ -119,7 +119,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 $data['data'] = false;
             }
         } elseif ($asset instanceof Asset\Document) {
-            $data['pdfPreviewAvailable'] = (bool) $this->getDocumentPreviewPdf($asset);
+            $data['pdfPreviewAvailable'] = (bool)$this->getDocumentPreviewPdf($asset);
         } elseif ($asset instanceof Asset\Video) {
             $videoInfo = [];
 
@@ -166,7 +166,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 $imageInfo['dimensions']['height'] = $asset->getHeight();
             }
 
-            $imageInfo['exiftoolAvailable'] = (bool) \Pimcore\Tool\Console::getExecutable('exiftool');
+            $imageInfo['exiftoolAvailable'] = (bool)\Pimcore\Tool\Console::getExecutable('exiftool');
 
             if (!$asset->getEmbeddedMetaData(false)) {
                 $asset->getEmbeddedMetaData(true, false); // read Exif, IPTC and XPM like in the old days ...
@@ -180,10 +180,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $data['versionDate'] = $asset->getModificationDate();
         $data['filesizeFormatted'] = $asset->getFileSize(true);
         $data['filesize'] = $asset->getFileSize();
-        $data['url'] = Tool::getHostUrl(null, $request) . $asset->getRealFullPath();
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
         $data['idPath'] = Element\Service::getIdPath($asset);
         $data['userPermissions'] = $asset->getUserPermissions();
+        $data['url'] = $asset->getFrontendFullPath();
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
@@ -256,13 +256,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
                 $condition = 'parentId = ' . $db->quote($asset->getId()) . ' AND
                 (
-                    (SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
+                    (SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $this->getAdminUser()->getId() . ') DESC, list DESC LIMIT 1)=1
                     or
-                    (SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(path,filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, '. $this->getAdminUser()->getId() .') DESC, list DESC LIMIT 1)=1
+                    (SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(path,filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $this->getAdminUser()->getId() . ') DESC, list DESC LIMIT 1)=1
                 )';
             }
 
-            if (! is_null($filter)) {
+            if (!is_null($filter)) {
                 $db = Db::get();
 
                 $condition = '(' . $condition . ')' . ' AND  CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
@@ -562,7 +562,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $newFileExt = File::getFileExtension($newFilename);
         $currentFileExt = File::getFileExtension($asset->getFilename());
         if ($newFileExt != $currentFileExt) {
-            $newFilename = preg_replace('/\.' . $currentFileExt . '$/i', '.'.$newFileExt, $asset->getFilename());
+            $newFilename = preg_replace('/\.' . $currentFileExt . '$/i', '.' . $newFileExt, $asset->getFilename());
             $newFilename = Element\Service::getSaveCopyName('asset', $newFilename, $asset->getParent());
             $asset->setFilename($newFilename);
         }
@@ -905,7 +905,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $publicDir = new Asset\WebDAV\Folder($homeDir);
             $objectTree = new Asset\WebDAV\Tree($publicDir);
             $server = new \Sabre\DAV\Server($objectTree);
-            $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', [ 'path' => '/' ]));
+            $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', ['path' => '/']));
 
             // lock plugin
             $lockBackend = new \Sabre\DAV\Locks\Backend\File(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/webdav-locks.dat');
@@ -1212,7 +1212,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
             if ($thumbnailConfig->getFormat() == 'JPEG' && $exiftool && isset($config['dpi']) && $config['dpi']) {
-                \Pimcore\Tool\Console::exec($exiftool . ' -overwrite_original -xresolution=' . escapeshellarg((int) $config['dpi']) . ' -yresolution=' . escapeshellarg((int) $config['dpi']) . ' -resolutionunit=inches ' . escapeshellarg($thumbnailFile));
+                \Pimcore\Tool\Console::exec($exiftool . ' -overwrite_original -xresolution=' . escapeshellarg((int)$config['dpi']) . ' -yresolution=' . escapeshellarg((int)$config['dpi']) . ' -resolutionunit=inches ' . escapeshellarg($thumbnailFile));
             }
         }
         if ($thumbnail) {
@@ -1311,7 +1311,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         if ($request->get('treepreview')) {
-            $thumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
+            $thumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig((bool)$request->get('hdpi'));
         }
 
         $cropPercent = $request->get('cropPercent');
@@ -1332,7 +1332,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         if ($fileinfo) {
             return $this->adminJson([
                 'width' => $thumbnail->getWidth(),
-                'height' => $thumbnail->getHeight(), ]);
+                'height' => $thumbnail->getHeight(),]);
         }
 
         $thumbnailFile = $thumbnail->getFileSystemPath();
@@ -1374,7 +1374,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $thumbnail = array_merge($request->request->all(), $request->query->all());
 
         if ($request->get('treepreview')) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
+            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool)$request->get('hdpi'));
         }
 
         $time = null;
@@ -1437,7 +1437,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         if ($request->get('treepreview')) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
+            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool)$request->get('hdpi'));
         }
 
         $page = 1;
@@ -1685,7 +1685,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $conditionFilters = [];
         $list = new Asset\Listing();
-        $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($list->escapeLike($folder->getRealFullPath()) . '/%')) ." AND type != 'folder'";
+        $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($list->escapeLike($folder->getRealFullPath()) . '/%')) . " AND type != 'folder'";
 
         if (!$this->getAdminUser()->isAdmin()) {
             $userIds = $this->getAdminUser()->getRoles();
@@ -1937,7 +1937,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 //add a condition if id numbers are specified
                 $conditionFilters[] = 'id IN (' . implode(',', $quotedSelectedIds) . ')';
             }
-            $conditionFilters[] = 'path LIKE ' . $db->quote($db->escapeLike($parentPath) . '/%') .' AND type != ' . $db->quote('folder');
+            $conditionFilters[] = 'path LIKE ' . $db->quote($db->escapeLike($parentPath) . '/%') . ' AND type != ' . $db->quote('folder');
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
