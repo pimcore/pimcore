@@ -13,13 +13,16 @@ $platform       = $browser->getPlatform();
 if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_FIREFOX && $browserVersion >= 52) {
     $supported = true;
 }
-if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_CHROME && $browserVersion >= 52) { // Edge identifies currently as Chrome 52
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_CHROME && $browserVersion >= 84) {
     $supported = true;
 }
 if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_SAFARI && $browserVersion >= 10) {
     $supported = true;
 }
 if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion >= 42) {
+    $supported = true;
+}
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_EDGE && $browserVersion >= 84) {
     $supported = true;
 }
 
