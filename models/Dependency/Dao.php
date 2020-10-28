@@ -46,7 +46,14 @@ class Dao extends Model\Dao\AbstractDao
         }
 
         // requires
-        $data = $this->db->fetchAll('SELECT `targetid`,`targettype`  FROM dependencies WHERE sourceid = ? AND sourcetype = ?', [$this->model->getSourceId(), $this->model->getSourceType()]);
+        $data = $this->db->fetchAll('SELECT dependencies.targetid,dependencies.targettype
+            FROM dependencies
+            LEFT JOIN objects ON dependencies.targetid=objects.o_id AND dependencies.targettype="object"
+            LEFT JOIN assets ON dependencies.targetid=assets.id AND dependencies.targettype="asset"
+            LEFT JOIN documents ON dependencies.targetid=documents.id AND dependencies.targettype="document"
+            WHERE dependencies.sourceid = ? AND dependencies.sourcetype = ?
+            ORDER BY objects.o_path, objects.o_key, documents.path, documents.key, assets.path, assets.filename',
+            [$this->model->getSourceId(), $this->model->getSourceType()]);
 
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $d) {
@@ -177,7 +184,14 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getRequiredBy($offset = null, $limit = null)
     {
-        $query = 'SELECT sourceid, sourcetype FROM dependencies WHERE targetid = ? AND targettype = ?';
+        $query = '
+            SELECT dependencies.sourceid, dependencies.sourcetype FROM dependencies
+            LEFT JOIN objects ON dependencies.sourceid=objects.o_id AND dependencies.sourcetype="object"
+            LEFT JOIN assets ON dependencies.sourceid=assets.id AND dependencies.sourcetype="asset"
+            LEFT JOIN documents ON dependencies.sourceid=documents.id AND dependencies.sourcetype="document"
+            WHERE dependencies.targetid = ? AND dependencies.targettype = ?
+            ORDER BY objects.o_path, objects.o_key, documents.path, documents.key, assets.path, assets.filename
+        ';
 
         if ($offset !== null && $limit !== null) {
             $query = sprintf($query . ' LIMIT %d,%d', $offset, $limit);
