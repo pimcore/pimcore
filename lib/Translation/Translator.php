@@ -284,6 +284,10 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             $normalizedId = mb_strtolower($id);
         }
 
+        if (isset($parameters['%count%'])) {
+            $normalizedId = $translated;
+        }
+
         $comparisonId = $normalizedId;
         if (!empty($parameters)) {
             $comparisonId = strtr($normalizedId, $parameters);
@@ -294,9 +298,10 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             return $translated;
         } elseif ($comparisonId != $translated && $translated) {
             return $translated;
-        } elseif ($comparisonId == $translated && !$this->getCatalogue($locale)->has($normalizedId, $domain)) {
-            $backend = $this->getBackendForDomain($domain);
-            if ($backend) {
+        } elseif ($comparisonId == $translated) {
+            if ($this->getCatalogue($locale)->has($normalizedId, $domain)) {
+                return $this->getCatalogue($locale)->get($normalizedId, $domain);
+            } else if($backend = $this->getBackendForDomain($domain)) {
                 if (strlen($id) > 190) {
                     throw new \Exception("Message ID's longer than 190 characters are invalid!");
                 }
