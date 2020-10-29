@@ -269,7 +269,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
             $this->logger->debug('Received JSON response in ' . self::class . '::handleResponse', $jsonResponse);
 
-            $internalPaymentId = $jsonResponse['customParameters']['internalTransactionId'];//$jsonResponse['merchantTransactionId'];
+            $internalPaymentId = $jsonResponse['customParameters']['internalTransactionId'];
 
             $clearedParams = [
                 'paymentType' => $jsonResponse['paymentBrand'],
