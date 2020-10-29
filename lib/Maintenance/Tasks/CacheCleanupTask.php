@@ -17,8 +17,6 @@ namespace Pimcore\Maintenance\Tasks;
 use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Maintenance\TaskInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Lock\Factory as LockFactory;
-use Symfony\Component\Lock\LockInterface;
 
 final class CacheCleanupTask implements TaskInterface
 {
@@ -33,20 +31,13 @@ final class CacheCleanupTask implements TaskInterface
     private $logger;
 
     /**
-     * @var LockInterface
-     */
-    private $lock;
-
-    /**
      * @param CoreHandlerInterface $cacheHandler
      * @param LoggerInterface $logger
-     * @param LockFactory $lockFactory
      */
-    public function __construct(CoreHandlerInterface $cacheHandler, LoggerInterface $logger, LockFactory $lockFactory)
+    public function __construct(CoreHandlerInterface $cacheHandler)
     {
         $this->cacheHandler = $cacheHandler;
         $this->logger = $logger;
-        $this->lock = $lockFactory->createLock(self::class, 86400);
     }
 
     /**
@@ -54,9 +45,8 @@ final class CacheCleanupTask implements TaskInterface
      */
     public function execute()
     {
-        if (!$this->lock->isAcquired() && date('H') <= 4) {
+        if (date('H') <= 4) {
             // execution should be only sometime between 0:00 and 4:59 -> less load expected
-            $this->lock->acquire();
             $this->logger->debug('Execute purge() on cache handler');
             $this->cacheHandler->purge();
         } else {
