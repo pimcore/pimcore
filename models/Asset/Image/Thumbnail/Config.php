@@ -125,6 +125,11 @@ class Config extends Model\AbstractModel
     public $forcePictureTag = false;
 
     /**
+     * @var bool
+     */
+    public $preserveAnimation = false;
+
+    /**
      * @param string|array|self $config
      *
      * @return self|null
@@ -866,6 +871,22 @@ class Config extends Model\AbstractModel
     public function setForcePictureTag(bool $forcePictureTag): void
     {
         $this->forcePictureTag = $forcePictureTag;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getPreserveAnimation(): bool
+    {
+        return $this->preserveAnimation;
+    }
+
+    /**
+     * @param bool $preserveAnimation
+     */
+    public function setPreserveAnimation(bool $preserveAnimation): void
+    {
+        $this->preserveAnimation = $preserveAnimation;
     }
 
     /**
