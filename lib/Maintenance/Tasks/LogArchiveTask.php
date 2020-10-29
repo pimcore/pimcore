@@ -97,7 +97,7 @@ final class LogArchiveTask implements TaskInterface
             $db->query('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
         }
 
-        if ($this->lock->acquire() && date('H') <= 4) {
+        if (date('H') <= 4 && $this->lock->acquire()) {
             // execution should be only sometime between 0:00 and 4:59 -> less load expected
             $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '. $archive_threshold.' days');
             $fileIterator = new \DirectoryIterator(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
