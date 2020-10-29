@@ -96,4 +96,28 @@ abstract class AbstractCommand extends Command
     {
         $this->output->writeln(sprintf('<error>ERROR: %s</error>', $message));
     }
+
+    /**
+     * @param string $message
+     */
+    protected function writeInfo($message)
+    {
+        $this->output->writeln(sprintf('<info>INFO: %s</info>', $message));
+    }
+
+    /**
+     * @param string $message
+     */
+    protected function writeComment($message)
+    {
+        $this->output->writeln(sprintf('<comment>COMMENT: %s</comment>', $message));
+    }
+
+    /**
+     * @param string $message
+     */
+    protected function writeQuestion($message)
+    {
+        $this->output->writeln(sprintf('<question>QUESTION: %s</question>', $message));
+    }
 }
