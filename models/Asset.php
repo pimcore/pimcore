@@ -894,6 +894,7 @@ class Asset extends Element\AbstractElement
      * Returns the full path of the asset (listener aware)
      *
      * @return string
+     *
      * @internal
      */
     public function getFrontendFullPath()
@@ -1661,6 +1662,7 @@ class Asset extends Element\AbstractElement
      * @param array $metadata for each array item: mandatory keys: name, type - optional keys: data, language
      *
      * @return self
+     *
      * @internal
      *
      */

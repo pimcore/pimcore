@@ -1332,7 +1332,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         if ($fileinfo) {
             return $this->adminJson([
                 'width' => $thumbnail->getWidth(),
-                'height' => $thumbnail->getHeight(),]);
+                'height' => $thumbnail->getHeight(), ]);
         }
 
         $thumbnailFile = $thumbnail->getFileSystemPath();

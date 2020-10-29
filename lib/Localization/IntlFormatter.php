@@ -75,6 +75,7 @@ class IntlFormatter
         if ($this->locale === null) {
             $this->locale = $this->localeService->findLocale();
         }
+
         return $this->locale;
     }
 
