@@ -350,7 +350,7 @@ class Link extends Model\Document
             'title',
             'accesskey',
             'tabindex',
-            'rel' => 'relation'
+            'rel' => 'relation',
         ];
 
         $link = $this->getLink();
@@ -360,7 +360,7 @@ class Link extends Model\Document
         foreach ($attributes as $key => $name) {
             $key = is_numeric($key) ? $name : $key;
             $value = $this->getProperty('navigation_' . $name);
-            if($value) {
+            if ($value) {
                 $attribs[] = $key . '="' . $value . '"';
             }
         }

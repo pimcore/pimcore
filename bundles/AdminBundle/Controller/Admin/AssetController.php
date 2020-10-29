@@ -1330,7 +1330,7 @@ class AssetController extends ElementControllerBase implements EventedController
         if ($fileinfo) {
             return $this->adminJson([
                 'width' => $thumbnail->getWidth(),
-                'height' => $thumbnail->getHeight(),]);
+                'height' => $thumbnail->getHeight(), ]);
         }
 
         $thumbnailFile = $thumbnail->getFileSystemPath();
