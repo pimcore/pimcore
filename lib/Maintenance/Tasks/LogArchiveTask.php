@@ -18,6 +18,9 @@ use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
+use Pimcore\Model\Tool\Lock;
+use Psr\Log\LoggerInterface;
+use SplFileInfo;
 
 final class LogArchiveTask implements TaskInterface
 {
@@ -32,13 +35,20 @@ final class LogArchiveTask implements TaskInterface
     private $config;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param Db\ConnectionInterface $db
      * @param Config $config
+     * @param LoggerInterface $logger
      */
-    public function __construct(Db\ConnectionInterface $db, Config $config)
+    public function __construct(Db\ConnectionInterface $db, Config $config, LoggerInterface $logger)
     {
         $this->db = $db;
         $this->config = $config;
+        $this->logger = $logger;
     }
 
     /**
@@ -55,12 +65,12 @@ final class LogArchiveTask implements TaskInterface
             $tablename = $db->quoteIdentifier($this->config['applicationlog']['archive_alternative_database']).'.'.$tablename;
         }
 
-        $archive_treshold = (int) ($this->config['applicationlog']['archive_treshold'] ?? 30);
+        $archive_threshold = (int) ($this->config['applicationlog']['archive_treshold'] ?? 30);
 
         $timestamp = time();
-        $sql = ' SELECT %s FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_treshold.' DAY)';
+        $sql = 'SELECT %s FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY)';
 
-        if ($db->query(sprintf($sql, 'COUNT(*)'))->fetchColumn() > 0) {
+        if ($db->fetchOne(sprintf($sql, 'COUNT(*)')) > 0) {
             $db->query('CREATE TABLE IF NOT EXISTS '.$tablename." (
                        id BIGINT(20) NOT NULL,
                        `pid` INT(11) NULL DEFAULT NULL,
@@ -77,7 +87,32 @@ final class LogArchiveTask implements TaskInterface
                     ) ENGINE = ARCHIVE ROW_FORMAT = DEFAULT;");
 
             $db->query('INSERT INTO '.$tablename.' '.sprintf($sql, '*'));
-            $db->query('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_treshold.' DAY);');
+            $db->query('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
+        }
+
+        $lockId = self::class;
+        if (!Lock::isLocked($lockId, 86400) && date('H') <= 4) {
+            // execution should be only sometime between 0:00 and 4:59 -> less load expected
+            Lock::lock($lockId);
+            $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '. $archive_threshold.' days');
+            $fileIterator = new \DirectoryIterator(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
+
+            $oldestAllowedTimestamp = time() - $archive_threshold * 86400;
+            $fileIterator = new \CallbackFilterIterator(
+                $fileIterator,
+                static function (\SplFileInfo $fileInfo) use ($oldestAllowedTimestamp) {
+                    return $fileInfo->getMTime() < $oldestAllowedTimestamp;
+                }
+            );
+
+            /** @var SplFileInfo $fileInfo */
+            foreach ($fileIterator as $fileInfo) {
+                if ($fileInfo->isFile()) {
+                    @unlink($fileInfo->getPathname());
+                }
+            }
+        } else {
+            $this->logger->debug('Skip cleaning up referenced FileObjects of application_logs, was done within the last 24 hours');
         }
     }
 }
