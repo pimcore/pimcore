@@ -18,9 +18,10 @@ use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Maintenance\TaskInterface;
-use Pimcore\Model\Tool\Lock;
 use Psr\Log\LoggerInterface;
 use SplFileInfo;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\LockInterface;
 
 final class LogArchiveTask implements TaskInterface
 {
@@ -40,15 +41,21 @@ final class LogArchiveTask implements TaskInterface
     private $logger;
 
     /**
+     * @var LockInterface
+     */
+    private $lock;
+
+    /**
      * @param Db\ConnectionInterface $db
      * @param Config $config
      * @param LoggerInterface $logger
      */
-    public function __construct(Db\ConnectionInterface $db, Config $config, LoggerInterface $logger)
+    public function __construct(Db\ConnectionInterface $db, Config $config, LoggerInterface $logger, LockFactory $lockFactory)
     {
         $this->db = $db;
         $this->config = $config;
         $this->logger = $logger;
+        $this->lock = $lockFactory->createLock(self::class, 86400);
     }
 
     /**
@@ -90,10 +97,9 @@ final class LogArchiveTask implements TaskInterface
             $db->query('DELETE FROM '.ApplicationLoggerDb::TABLE_NAME.' WHERE `timestamp` < DATE_SUB(FROM_UNIXTIME('.$timestamp.'), INTERVAL '.$archive_threshold.' DAY);');
         }
 
-        $lockId = self::class;
-        if (!Lock::isLocked($lockId, 86400) && date('H') <= 4) {
+        if (!$this->lock->isAcquired() && date('H') <= 4) {
             // execution should be only sometime between 0:00 and 4:59 -> less load expected
-            Lock::lock($lockId);
+            $this->lock->acquire();
             $this->logger->debug('Deleting referenced FileObjects of application_logs which are older than '. $archive_threshold.' days');
             $fileIterator = new \DirectoryIterator(PIMCORE_LOG_FILEOBJECT_DIRECTORY);
 
