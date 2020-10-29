@@ -46,7 +46,7 @@ final class LowQualityImagePreviewTask implements TaskInterface
      */
     public function execute()
     {
-        if ($this->lock->acquire() && date('H') <= 4) {
+        if (date('H') <= 4 && $this->lock->acquire()) {
             // execution should be only sometime between 0:00 and 4:59 -> less load expected
             $this->logger->debug('Execute low quality image preview generation');
 
