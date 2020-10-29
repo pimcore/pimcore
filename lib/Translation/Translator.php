@@ -301,7 +301,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
         } elseif ($comparisonId == $translated) {
             if ($this->getCatalogue($locale)->has($normalizedId, $domain)) {
                 return $this->getCatalogue($locale)->get($normalizedId, $domain);
-            } else if($backend = $this->getBackendForDomain($domain)) {
+            } elseif ($backend = $this->getBackendForDomain($domain)) {
                 if (strlen($id) > 190) {
                     throw new \Exception("Message ID's longer than 190 characters are invalid!");
                 }

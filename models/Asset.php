@@ -890,6 +890,7 @@ class Asset extends Element\AbstractElement
      * Returns the full path of the asset (listener aware)
      *
      * @return string
+     *
      * @internal
      */
     public function getFrontendFullPath()
@@ -1310,7 +1311,7 @@ class Asset extends Element\AbstractElement
     public function getStream()
     {
         if ($this->stream) {
-            if (get_resource_type($this->stream) !== "stream") {
+            if (get_resource_type($this->stream) !== 'stream') {
                 $this->stream = null;
             } else {
                 $streamMeta = stream_get_meta_data($this->stream);
@@ -1659,6 +1660,7 @@ class Asset extends Element\AbstractElement
      * @param array $metadata for each array item: mandatory keys: name, type - optional keys: data, language
      *
      * @return self
+     *
      * @internal
      *
      */
