@@ -59,7 +59,9 @@ into a block element, and the editor cannot choose which area is used, this has 
     {{ pimcore_area('myArea', {
         type: 'gallery-single-images',
         params: {
-            'param1': 123,
+            'gallery-single-images': {
+                'param1': 123,
+            }
         }
     }) }}
 </div>
