@@ -54,9 +54,8 @@ final class CacheCleanupTask implements TaskInterface
      */
     public function execute()
     {
-        if (!$this->lock->isAcquired() && date('H') <= 4) {
+        if ($this->lock->acquire() && date('H') <= 4) {
             // execution should be only sometime between 0:00 and 4:59 -> less load expected
-            $this->lock->acquire();
             $this->logger->debug('Execute purge() on cache handler');
             $this->cacheHandler->purge();
         } else {
