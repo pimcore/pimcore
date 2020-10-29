@@ -1,4 +1,7 @@
 # Upgrade Notes
+## 6.9.0
+- [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 7. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 7. 
+
 ## 6.8.0
 - HybridAuth integration is deprecated and will be removed in Pimcore 7.
 - `Pimcore\Browser` is deprecated and will be replaced by `\Browser` in Pimcore 7. [#7084](https://github.com/pimcore/pimcore/pull/7084)
