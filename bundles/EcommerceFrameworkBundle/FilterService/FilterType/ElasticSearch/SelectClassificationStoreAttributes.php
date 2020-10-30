@@ -85,7 +85,7 @@ class SelectClassificationStoreAttributes extends AbstractFilterType
         }
     }
 
-    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);
         $keysField = $field . '.keys';

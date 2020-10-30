@@ -29,7 +29,7 @@ class NumberRange extends AbstractFilterType
      *
      * @throws \Exception
      */
-    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         return [
               'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),

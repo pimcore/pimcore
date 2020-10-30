@@ -37,7 +37,7 @@ class SelectRelation extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
      *
      * @throws \Exception
      */
-    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);
 

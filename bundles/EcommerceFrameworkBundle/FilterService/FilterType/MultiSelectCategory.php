@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
 class MultiSelectCategory extends AbstractFilterType
 {
-    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $rawValues = $productList->getGroupByValues($filterDefinition->getField(), true);
         $values = [];

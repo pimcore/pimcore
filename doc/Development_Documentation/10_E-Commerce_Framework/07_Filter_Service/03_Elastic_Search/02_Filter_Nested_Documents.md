@@ -115,14 +115,7 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
         $productList->addCondition($condition, $this->getField($filterDefinition));
     }
 
-    /**
-     * @param AbstractFilterDefinitionType $filterDefinition
-     * @param ProductListInterface $productList
-     * @param array $currentFilter
-     * @return array
-     * @throws \Exception
-     */
-    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);
         $this->prepareGroupByValues($filterDefinition, $productList);
@@ -136,7 +129,6 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
             'hasValue' => $this->hasValue,
         ];
     }
-
 }
 ```
 

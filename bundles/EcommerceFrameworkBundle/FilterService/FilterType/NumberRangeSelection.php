@@ -29,7 +29,7 @@ class NumberRangeSelection extends AbstractFilterType
      *
      * @throws \Exception
      */
-    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);
         $ranges = $filterDefinition->getRanges();

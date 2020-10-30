@@ -32,7 +32,7 @@ class MultiSelectRelation extends AbstractFilterType
      *
      * @throws \Exception
      */
-    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);
         $values = $productList->getGroupByRelationValues($field, true, !$filterDefinition->getUseAndCondition());

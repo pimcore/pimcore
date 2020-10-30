@@ -15,7 +15,7 @@
     ```
     After:
     ```php
-    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter) 
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array 
     {
         // ...
         return [

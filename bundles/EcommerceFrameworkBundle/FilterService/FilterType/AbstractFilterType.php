@@ -134,7 +134,7 @@ abstract class AbstractFilterType
      *
      * @return array
      */
-    abstract public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter);
+    abstract public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array;
 
     /**
      * adds necessary conditions to the product list implementation based on the currently set filter params.

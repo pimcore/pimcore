@@ -125,7 +125,7 @@ class FilterService
      *
      * @return array
      */
-    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         return $this
             ->getFilterType($filterDefinition->getType())

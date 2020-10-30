@@ -38,7 +38,7 @@ class SelectCategory extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterServ
      *
      * @throws \Exception
      */
-    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $rawValues = $productList->getGroupByValues(self::FIELDNAME, true);
         $values = [];

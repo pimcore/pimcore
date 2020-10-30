@@ -34,7 +34,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
      *
      * @throws \Exception
      */
-    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $currentField = $this->getField($filterDefinition);
         $values = [];

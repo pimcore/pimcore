@@ -29,7 +29,7 @@ class SelectCategory extends AbstractFilterType
      *
      * @throws \Exception
      */
-    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $rawValues = $productList->getGroupByValues($filterDefinition->getField(), true);
         $values = [];
