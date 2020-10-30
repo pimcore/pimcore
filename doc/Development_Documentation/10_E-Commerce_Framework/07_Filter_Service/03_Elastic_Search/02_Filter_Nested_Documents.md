@@ -119,7 +119,7 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
      * @param AbstractFilterDefinitionType $filterDefinition
      * @param ProductListInterface $productList
      * @param array $currentFilter
-     * @return string
+     * @return array
      * @throws \Exception
      */
     public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
@@ -128,12 +128,13 @@ class SelectMyAttribute extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterS
         $this->prepareGroupByValues($filterDefinition, $productList);
 
         $values = $productList->getGroupByValues($field, true, !$filterDefinition->getUseAndCondition());
-        return $this->render($this->getTemplate($filterDefinition), [
+
+        return [
             'label' => $filterDefinition->getLabel(),
             'values' => $values,
             'metaData' => $filterDefinition->getMetaData(),
-            'hasValue' => $this->hasValue
-        ]);
+            'hasValue' => $this->hasValue,
+        ];
     }
 
 }
