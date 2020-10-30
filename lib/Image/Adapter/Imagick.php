@@ -313,9 +313,11 @@ class Imagick extends Adapter
      * @param string $format
      * @param \Imagick|null $i
      * @param bool $checkNumberOfImages
+     *
      * @return bool
      */
-    protected function checkPreserveAnimation(string $format = "", \Imagick $i = null, bool $checkNumberOfImages = true){
+    protected function checkPreserveAnimation(string $format = '', \Imagick $i = null, bool $checkNumberOfImages = true)
+    {
         if (!$this->isPreserveAnimation()) {
             return false;
         }
@@ -328,7 +330,7 @@ class Imagick extends Adapter
             return false;
         }
 
-        if ($format && !in_array(strtolower($format), ["gif", "original", "auto"])) {
+        if ($format && !in_array(strtolower($format), ['gif', 'original', 'auto'])) {
             return false;
         }
 
@@ -667,6 +669,7 @@ class Imagick extends Adapter
      * @param int $y
      * @param string $color
      * @param int $composite
+     *
      * @return \Imagick
      */
     protected function createCompositeImageFromResource($width, $height, $x, $y, $color = 'transparent', $composite = \Imagick::COMPOSITE_DEFAULT)
@@ -686,6 +689,7 @@ class Imagick extends Adapter
             $newImage = $this->createImage($width, $height, $color);
             $newImage->compositeImage($this->resource, $composite, $x, $y);
         }
+
         return $newImage;
     }
 
