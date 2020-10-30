@@ -93,17 +93,17 @@ class ImageThumbnail
                         \Pimcore\File::mkdir(dirname($path));
                     }
 
-                    $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock('document-thumbnail-' . $this->asset->getId() . '-' . $this->page);
-
-                    $lockAcquired = $lock->acquire();
-                    if (!is_file($path) && $lockAcquired) {
-                        $converter->saveImage($path, $this->page);
-                        $generated = true;
-                        $lock->release();
-                    } elseif (!$lockAcquired) {
-                        $this->filesystemPath = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/please-wait.png';
-
-                        return;
+                    if(!is_file($path)) {
+                        $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock('document-thumbnail-' . $this->asset->getId() . '-' . $this->page);
+                        $lockAcquired = $lock->acquire();
+                        if ($lockAcquired) {
+                            $converter->saveImage($path, $this->page);
+                            $generated = true;
+                            $lock->release();
+                        } else {
+                            $this->filesystemPath = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/please-wait.png';
+                            return;
+                        }
                     }
                 }
 
