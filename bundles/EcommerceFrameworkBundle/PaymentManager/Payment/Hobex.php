@@ -78,6 +78,18 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
     }
 
     /**
+     * @return HobexConfig
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+
+
+
+
+    /**
      * Check options that have been passed by the main configuration
      *
      * @param OptionsResolver $resolver
@@ -146,7 +158,8 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
                 'taxAmount' => $price->getAmount()->sub($price->getNetAmount())->asString(2),
                 'currency' => $price->getCurrency()->getShortName(),
                 'paymentType' => static::PAYMENT_TYPE_DEBIT,
-                'merchantTransactionId' => $orderAgent->getOrder()->getLastPaymentInfo()->getInternalPaymentId(),
+                'merchantTransactionId' => $this->createMerchantId($orderAgent->getOrder()),
+                'customParameters[\'internalTransactionId\']' => $orderAgent->getOrder()->getLastPaymentInfo()->getInternalPaymentId(),
                 'transactionCategory' => static::TRANSACTION_CATEGORY_ECOMMERCE,
             ];
 
@@ -239,7 +252,6 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
     public function handleResponse($response)
     {
         $responseStatus = StatusInterface::STATUS_PENDING;
-        $checkoutId = $response['id'];
 
         $resourcePath = $response['resourcePath'];
 
@@ -257,7 +269,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
             $this->logger->debug('Received JSON response in ' . self::class . '::handleResponse', $jsonResponse);
 
-            $internalPaymentId = $jsonResponse['merchantTransactionId'];
+            $internalPaymentId = $jsonResponse['customParameters']['internalTransactionId'];
 
             $clearedParams = [
                 'paymentType' => $jsonResponse['paymentBrand'],
@@ -273,18 +285,24 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
             $this->setAuthorizedData($clearedParams);
 
             //https://hobex.docs.oppwa.com/reference/resultCodes
-            if (strpos($jsonResponse['result']['code'], '000.100.') === 0) {
-                $responseStatus = StatusInterface::STATUS_AUTHORIZED;
+            if ($this->isSuccess($jsonResponse['result']['code'])){
+                $paymentType = $jsonResponse['paymentType'];
+                switch ($paymentType){
+                    case self::PAYMENT_TYPE_DEBIT:
+                        $responseStatus = StatusInterface::STATUS_CLEARED;
+                        break;
+                    default: $responseStatus = StatusInterface::STATUS_AUTHORIZED;
+                }
             }
 
-            //$jsonResponse['checkoutId'] = $checkoutId;
+            $providerData = $this->createProviderData($jsonResponse);
 
             $responseStatus = new Status(
                 $internalPaymentId, //internal Payment ID
-                $checkoutId, //paymentReference
+                $jsonResponse['id'], //paymentReference
                 $jsonResponse['result']['description'],
                 $responseStatus,
-                $jsonResponse
+                $providerData
             );
         } catch (\Exception $e) {
             $this->logException('Could not process payment response.', 'handleResponse', $e, ['response' => $response]);
@@ -368,4 +386,64 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
     {
         throw new NotImplementedException('executeCredit is not implemented yet.');
     }
+
+    /**
+     * https://hobex.docs.oppwa.com/reference/resultCodes
+     *
+     * @param string $code
+     *
+     * @return bool
+     */
+    protected  function isSuccess($code)
+    {
+        return strpos($code, '000.100.') === 0 || strpos($code,'000.000.') === 0;
+    }
+
+
+    /**
+     * unlike documented, merchantTransactionId only allows numeric values (N20)
+     * might be required and should be unique
+     * creates numeric value from internal paymentId
+     *
+     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order
+     *
+     * @return int
+     */
+    protected function createMerchantId(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order)
+    {
+        if ($order->getLastPaymentInfo()){
+            $internalPaymentId = $order->getLastPaymentInfo()->getInternalPaymentId();
+            if ($internalPaymentId){
+                $txtId = (int) preg_replace('/\D/',0,str_replace('payment_','',$internalPaymentId));
+                return $txtId;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * prefix all keys with 'hobex_' to allow pimcore to store the values in fieldcollection PaymentInfo
+     *
+     * @param array $jsonResponse
+     *
+     * @param string $prefix
+     *
+     * @return array
+     */
+    protected function createProviderData($jsonResponse, $prefix = 'hobex_'){
+        $providerData = [];
+
+        // prefix keys with hobex_ to allow pimcore to store the values in Fieldcollection PaymentInfo
+        foreach ($jsonResponse as $key => $value) {
+            if (is_array($value)){
+                $data = $this->createProviderData($value, $prefix . $key . '_');
+                $providerData = $providerData + $data;
+            } else {
+                $providerData[$prefix . $key] = $value;
+            }
+
+        }
+        return $providerData;
+    }
+
 }
