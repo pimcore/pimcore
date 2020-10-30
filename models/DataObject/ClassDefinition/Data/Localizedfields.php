@@ -28,6 +28,7 @@ use Pimcore\Tool;
 class Localizedfields extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface
 {
     use Element\ChildsCompatibilityTrait;
+    use Layout\Traits\LabelTrait;
 
     /**
      * Static type of this element
@@ -82,16 +83,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
      * @var int
      */
     public $maxTabs;
-
-    /**
-     * @var int
-     */
-    public $labelWidth;
-
-    /**
-     * @var string
-     */
-    public $labelAlign = 'left';
 
     /**
      * @var bool
@@ -1409,38 +1400,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getMaxTabs()
     {
         return $this->maxTabs;
-    }
-
-    /**
-     * @param int $labelWidth
-     */
-    public function setLabelWidth($labelWidth)
-    {
-        $this->labelWidth = $labelWidth;
-    }
-
-    /**
-     * @return int
-     */
-    public function getLabelWidth()
-    {
-        return $this->labelWidth;
-    }
-
-    /**
-     * @param string $labelAlign
-     */
-    public function setLabelAlign($labelAlign): void
-    {
-        $this->labelAlign = $labelAlign;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLabelAlign()
-    {
-        return $this->labelAlign;
     }
 
     /**

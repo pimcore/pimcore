@@ -18,10 +18,12 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Layout\Traits\IconTrait;
+use Pimcore\Model\DataObject\ClassDefinition\Layout\Traits\LabelTrait;
 
 class Panel extends Model\DataObject\ClassDefinition\Layout
 {
     use IconTrait;
+    use LabelTrait;
 
     /**
      * Static type of this element
@@ -29,20 +31,6 @@ class Panel extends Model\DataObject\ClassDefinition\Layout
      * @var string
      */
     public $fieldtype = 'panel';
-
-    /**
-     * Width of input field labels
-     *
-     * @var int
-     */
-    public $labelWidth = 100;
-
-    /**
-     * Align of input field labels
-     *
-     * @var string
-     */
-    public $labelAlign = 'left';
 
     /**
      * @var string
@@ -53,50 +41,6 @@ class Panel extends Model\DataObject\ClassDefinition\Layout
      * @var bool
      */
     public $border = false;
-
-    /**
-     * @param int $labelWidth
-     *
-     * @return $this
-     */
-    public function setLabelWidth($labelWidth)
-    {
-        if (!empty($labelWidth)) {
-            $this->labelWidth = intval($labelWidth);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getLabelWidth()
-    {
-        return $this->labelWidth;
-    }
-
-    /**
-     * @param string $labelAlign
-     *
-     * @return $this
-     */
-    public function setLabelAlign($labelAlign): self
-    {
-        if (!empty($labelAlign)) {
-            $this->labelAlign = $labelAlign;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLabelAlign()
-    {
-        return $this->labelAlign;
-    }
 
     /**
      * @param string $layout

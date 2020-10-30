@@ -17,29 +17,18 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Layout\Traits\LabelTrait;
 
 class Fieldcontainer extends Model\DataObject\ClassDefinition\Layout
 {
+    use LabelTrait;
+
     /**
      * Static type of this element
      *
      * @var string
      */
     public $fieldtype = 'fieldcontainer';
-
-    /**
-     * Width of input field labels
-     *
-     * @var int
-     */
-    public $labelWidth = 100;
-
-    /**
-     * Align of input field labels
-     *
-     * @var string
-     */
-    public $labelAlign = 'left';
 
     /**
      * @var string
@@ -50,50 +39,6 @@ class Fieldcontainer extends Model\DataObject\ClassDefinition\Layout
      * @var string
      */
     public $fieldLabel;
-
-    /**
-     * @param int $labelWidth
-     *
-     * @return $this
-     */
-    public function setLabelWidth($labelWidth)
-    {
-        if (!empty($labelWidth)) {
-            $this->labelWidth = intval($labelWidth);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getLabelWidth()
-    {
-        return $this->labelWidth;
-    }
-
-    /**
-     * @param string $labelAlign
-     *
-     * @return $this
-     */
-    public function setLabelAlign($labelAlign): self
-    {
-        if (!empty($labelAlign)) {
-            $this->labelAlign = $labelAlign;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLabelAlign()
-    {
-        return $this->labelAlign;
-    }
 
     /**
      * @param string $layout
