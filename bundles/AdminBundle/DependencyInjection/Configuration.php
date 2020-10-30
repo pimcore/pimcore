@@ -92,8 +92,7 @@ class Configuration implements ConfigurationInterface
         $gdprDataExtractor = $treeBuilder->getRootNode();
         $gdprDataExtractor->addDefaultsIfNotSet();
 
-        $nodeBuilder = new NodeBuilder();
-        $dataObjects = $nodeBuilder->node('dataObjects', 'array')->setParent($treeBuilder);
+        $dataObjects = $treeBuilder->getRootNode()->children()->arrayNode('dataObjects');
         $dataObjects
             ->addDefaultsIfNotSet()
             ->info('Settings for DataObjects DataProvider');
@@ -132,9 +131,8 @@ class Configuration implements ConfigurationInterface
 
         $gdprDataExtractor->append($dataObjects);
 
-        $nodeBuilder = new NodeBuilder();
-        $assets = $nodeBuilder->node('assets', 'array')->setParent($treeBuilder);
-        
+        $assets = $treeBuilder->getRootNode()->children()->arrayNode('assets');
+
         $assets
             ->addDefaultsIfNotSet()
             ->info('Settings for Assets DataProvider');
