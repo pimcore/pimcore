@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -28,8 +29,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('pimcore_admin');
+        $treeBuilder = new TreeBuilder('pimcore_admin');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode->append($this->buildGdprDataExtractorNode());
         $rootNode->append($this->buildObjectsNode());
@@ -86,12 +87,13 @@ class Configuration implements ConfigurationInterface
      */
     protected function buildGdprDataExtractorNode()
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('gdpr_data_extractor');
 
-        $gdprDataExtractor = $treeBuilder->root('gdpr_data_extractor');
+        $gdprDataExtractor = $treeBuilder->getRootNode();
         $gdprDataExtractor->addDefaultsIfNotSet();
 
-        $dataObjects = $treeBuilder->root('dataObjects');
+        $nodeBuilder = new NodeBuilder();
+        $dataObjects = $nodeBuilder->node('dataObjects', 'array')->setParent($treeBuilder);
         $dataObjects
             ->addDefaultsIfNotSet()
             ->info('Settings for DataObjects DataProvider');
@@ -130,7 +132,9 @@ class Configuration implements ConfigurationInterface
 
         $gdprDataExtractor->append($dataObjects);
 
-        $assets = $treeBuilder->root('assets');
+        $nodeBuilder = new NodeBuilder();
+        $assets = $nodeBuilder->node('assets', 'array')->setParent($treeBuilder);
+        
         $assets
             ->addDefaultsIfNotSet()
             ->info('Settings for Assets DataProvider');
@@ -154,8 +158,8 @@ class Configuration implements ConfigurationInterface
      */
     protected function buildEventsNode()
     {
-        $treeBuilder = new TreeBuilder();
-        $notesEvents = $treeBuilder->root('notes_events');
+        $treeBuilder = new TreeBuilder('notes_events');
+        $notesEvents = $treeBuilder->getRootNode();
 
         $notesEvents
             ->addDefaultsIfNotSet()
@@ -176,8 +180,8 @@ class Configuration implements ConfigurationInterface
      */
     protected function buildObjectsNode()
     {
-        $treeBuilder = new TreeBuilder();
-        $objectsNode = $treeBuilder->root('objects');
+        $treeBuilder = new TreeBuilder('objects');
+        $objectsNode = $treeBuilder->getRootNode();
 
         $objectsNode
             ->addDefaultsIfNotSet()
@@ -191,8 +195,8 @@ class Configuration implements ConfigurationInterface
      */
     protected function buildAssetsNode()
     {
-        $treeBuilder = new TreeBuilder();
-        $assetsNode = $treeBuilder->root('assets');
+        $treeBuilder = new TreeBuilder('assets');
+        $assetsNode = $treeBuilder->getRootNode();
 
         $assetsNode
             ->addDefaultsIfNotSet()
@@ -206,8 +210,8 @@ class Configuration implements ConfigurationInterface
      */
     protected function buildDocumentsNode()
     {
-        $treeBuilder = new TreeBuilder();
-        $documentsNode = $treeBuilder->root('documents');
+        $treeBuilder = new TreeBuilder('documents');
+        $documentsNode = $treeBuilder->getRootNode();
 
         $documentsNode
             ->addDefaultsIfNotSet()
