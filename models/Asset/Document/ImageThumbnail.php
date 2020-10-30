@@ -95,8 +95,7 @@ class ImageThumbnail
 
                     if(!is_file($path)) {
                         $lock = \Pimcore::getContainer()->get(LockFactory::class)->createLock('document-thumbnail-' . $this->asset->getId() . '-' . $this->page);
-                        $lockAcquired = $lock->acquire();
-                        if ($lockAcquired) {
+                        if ($lock->acquire()) {
                             $converter->saveImage($path, $this->page);
                             $generated = true;
                             $lock->release();
