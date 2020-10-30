@@ -1,4 +1,29 @@
 # Upgrade Notes
+
+## 10.0.0
+- Added `Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::getFilterValues()` with the same signature as `getFilterFrontend()`. To upgrade, rename `getFilterFrontend()` to `getFilterValues()` and remove the rendering stuff to just return the data array.
+
+    Before:
+    ```php
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter) 
+    {
+        // ...
+        return $this->render($this->getTemplate($filterDefinition), [
+            //...
+        ]);
+    }
+    ```
+    After:
+    ```php
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter) 
+    {
+        // ...
+        return [
+            //...
+        ];
+    }
+    ```
+
 ## 6.9.0
 - [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 7. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 7. 
 - Config option and container parameter `pimcore.routing.defaults` is deprecated, use `pimcore.documents.default_controller` instead. 
@@ -142,30 +167,6 @@ pimcore:
 - The built in cookie info bar (in system settings) is now marked as deprecated and will be removed in Pimcore 7. 
 - `\Pimcore\Config::getSystemConfig()` is now marked as deprecated and will be removed in Pimcore 7. Use `Pimcore\Config` service or `\Pimcore\Config::getSystemConfiguration()` method instead.
 - Javascript function `ts(key)` (alias of `t(key)`) is marked as deprecated and will be removed in v7. Please use `t(key)` instead. 
-
-## unreleased
-- Added `Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::getFilterValues()` with the same signature as `getFilterFrontend()`. To upgrade, rename `getFilterFrontend()` to `getFilterValues()` and remove the rendering stuff to just return the data array.
-
-    Before:
-    ```php
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter) 
-    {
-        // ...
-        return $this->render($this->getTemplate($filterDefinition), [
-            //...
-        ]);
-    }
-    ```
-    After:
-    ```php
-    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter) 
-    {
-        // ...
-        return [
-            //...
-        ];
-    }
-    ```
 
 ## 6.4.0
 - Deprecated the REST Webservice API. The API will be removed in Pimcore 7, use the [Pimcore Datahub](https://github.com/pimcore/data-hub) instead.

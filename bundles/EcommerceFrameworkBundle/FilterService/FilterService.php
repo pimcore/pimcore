@@ -120,9 +120,8 @@ class FilterService
      * Returns filter data for given filter type (delegates)
      *
      * @param AbstractFilterDefinitionType $filterDefinition filter definition to get frontend script for
-     * @param ProductListInterface $productList                      current product list (with all set filters) to get
-     *                                                       available options and counts
-     * @param array $currentFilter                           current filter for this filter definition
+     * @param ProductListInterface $productList current product list (with all set filters) to get available options and counts
+     * @param array $currentFilter current filter for this filter definition
      *
      * @return array
      */
