@@ -81,3 +81,5 @@ services:
     # provides truncate and wordwrap filters
     Twig_Extensions_Extension_Text:
         class: Twig_Extensions_Extension_Text
+
+    Pimcore\Twig\Extension\AdminExtension: ~
