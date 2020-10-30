@@ -141,7 +141,7 @@ class Dao extends Model\Element\Dao
 
                 $metadataItem['language'] = (string) $metadataItem['language']; // language column cannot be NULL -> see SQL schema
 
-                if (is_scalar($metadataItem['data']) && strlen($metadataItem['data']) > 0) {
+                if (is_scalar($metadataItem['data'])) {
                     $this->db->insert('assets_metadata', $metadataItem);
                     $data['hasMetaData'] = 1;
                 }
