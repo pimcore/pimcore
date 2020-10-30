@@ -160,6 +160,8 @@
 {# define stylesheets #}
 
 {# SCRIPT LIBRARIES #}
+{% set debugSuffix = '' %}
+
 {% if settings.disableMinifyJs %}
     {% set debugSuffix = "-debug" %}
 {% endif %}
@@ -726,7 +728,8 @@
             {% set scriptContents = scriptContents ~ scriptContent ~ "\n\n\n" %}
         {% endif %}
     {% endfor %}
-    {#{% set minimizedScriptParams = \Pimcore\Tool\Admin::getMinimizedScriptPath($scriptContents, false); %}#}
+    {% set minimizedScriptParams = pimcore_minimize_scripts(scriptContents) %}
+
     <script src="{{ path('pimcore_admin_misc_scriptproxy', minimizedScriptParams) }}"></script>
 {% endif %}
 
