@@ -89,11 +89,10 @@ class Admin
      * @static
      *
      * @param string $scriptContent
-     * @param bool $asUrl
      *
      * @return mixed
      */
-    public static function getMinimizedScriptPath($scriptContent, bool $asUrl = true)
+    public static function getMinimizedScriptPath($scriptContent)
     {
         $scriptPath = PIMCORE_SYSTEM_TEMP_DIRECTORY . '/minified_javascript_core_'.md5($scriptContent).'.js';
 
@@ -105,15 +104,6 @@ class Admin
             'scripts' => basename($scriptPath),
             '_dc' => \Pimcore\Version::getRevision(),
         ];
-
-        if ($asUrl) {
-            @trigger_error(
-                'Calling Pimcore\Tool::getMinimizedScriptPath with $asUrl true is deprecated and will be removed with Pimcore 7.0',
-                E_USER_DEPRECATED
-            );
-
-            return '/admin/misc/script-proxy?'.array_toquerystring($params);
-        }
 
         return $params;
     }
