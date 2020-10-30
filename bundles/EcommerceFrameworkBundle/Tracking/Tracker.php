@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
-use Twig\Environment;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Twig\Environment;
 
 abstract class Tracker implements TrackerInterface
 {
