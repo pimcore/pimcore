@@ -11,7 +11,7 @@ services:
         public: false
         arguments:
             - '@translator'
-            - '@templating.engine.delegating'
+            - '@twig'
             - '@request_stack'
 
     Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\:
