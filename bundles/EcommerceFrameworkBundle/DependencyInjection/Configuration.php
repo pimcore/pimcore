@@ -557,7 +557,7 @@ class Configuration implements ConfigurationInterface
     {
         $builder = new TreeBuilder('price_systems');
 
-        $priceSystems = $builder->getRootNode()
+        $priceSystems = $builder->getRootNode();
         $priceSystems
             ->info('Configuration of price systems - key is name of price system.')
             ->useAttributeAsKey('name')
