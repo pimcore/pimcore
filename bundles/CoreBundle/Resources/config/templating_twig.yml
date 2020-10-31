@@ -9,8 +9,6 @@ services:
         alias: twig
         public: true
 
-    Pimcore\Twig\Extension\AdminExtension: ~
-
     Pimcore\Twig\Extension\HelpersExtension: ~
 
     Pimcore\Twig\Extension\DocumentEditableExtension: ~

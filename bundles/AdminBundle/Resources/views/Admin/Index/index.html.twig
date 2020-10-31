@@ -714,7 +714,7 @@
 {% endfor %}
 
 <!-- internal scripts -->
-{% if settings.disableMinifyJs or true %}
+{% if settings.disableMinifyJs %}
     {% for scriptUrl in scripts %}
     <script src="/bundles/pimcoreadmin/js/{{ scriptUrl }}?_dc={{ settings.build }}"></script>
     {% endfor %}
