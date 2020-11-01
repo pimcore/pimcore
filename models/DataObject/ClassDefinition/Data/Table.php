@@ -325,8 +325,8 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         $unserializedData = Serialize::unserialize((string) $data);
 
-        if ($unserializedData === null) {
-            return $unserializedData;
+        if ($data === null || $unserializedData === null) {
+            return null;
         }
 
         //set array keys based on column configuration if set
