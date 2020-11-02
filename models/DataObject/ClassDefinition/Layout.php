@@ -308,7 +308,7 @@ class Layout
     {
         foreach ($data as $key => $value) {
             if (!in_array($key, $blockedKeys)) {
-                $method = 'set' . $key;
+                $method = 'set' . ucfirst($key);
                 if (method_exists($this, $method)) {
                     $this->$method($value);
                 }

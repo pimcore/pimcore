@@ -59,6 +59,14 @@ pimcore.object.classes.layout.fieldcontainer = Class.create(pimcore.object.class
             this.datax.layout = "hbox";
         }
 
+        var labelAligns = Ext.create('Ext.data.Store', {
+            fields: ['abbr', 'name'],
+            data : [
+                {"abbr": "left", "name": t("left")},
+                {"abbr": "top", "name": t("top")}
+            ]
+        });
+
         this.layout.add({
             xtype: "form",
             bodyStyle: "padding: 10px;",
@@ -75,6 +83,17 @@ pimcore.object.classes.layout.fieldcontainer = Class.create(pimcore.object.class
                     name: "labelWidth",
                     fieldLabel: t("label_width"),
                     value: this.datax.labelWidth
+                },
+                {
+                    xtype: "combo",
+                    fieldLabel: t("label_align"),
+                    name: "labelAlign",
+                    value: this.datax.labelAlign,
+                    store: labelAligns,
+                    triggerAction: 'all',
+                    editable: false,
+                    displayField: 'name',
+                    valueField: 'abbr',
                 },
                 {
                     xtype: "combo",

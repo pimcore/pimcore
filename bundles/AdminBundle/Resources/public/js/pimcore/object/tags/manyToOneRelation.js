@@ -150,8 +150,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             });
         }
 
-
-        this.composite = Ext.create('Ext.form.FieldContainer', {
+        var compositeCfg = {
             fieldLabel: this.fieldConfig.title,
             labelWidth: labelWidth,
             layout: 'hbox',
@@ -166,7 +165,13 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
                     this.requestNicePathData();
                 }.bind(this)
             }
-        });
+        };
+
+        if (this.fieldConfig.labelAlign) {
+            compositeCfg.labelAlign = this.fieldConfig.labelAlign;
+        }
+
+        this.composite = Ext.create('Ext.form.FieldContainer', compositeCfg);
 
         return this.composite;
     },
