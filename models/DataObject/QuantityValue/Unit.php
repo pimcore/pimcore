@@ -187,7 +187,7 @@ class Unit extends Model\AbstractModel
     /**
      * @param string $abbreviation
      *
-     * @return Unit
+     * @return $this
      */
     public function setAbbreviation($abbreviation)
     {
@@ -207,7 +207,7 @@ class Unit extends Model\AbstractModel
     /**
      * @param int|Unit $baseunit
      *
-     * @return Unit
+     * @return $this
      */
     public function setBaseunit($baseunit)
     {
@@ -234,7 +234,7 @@ class Unit extends Model\AbstractModel
     /**
      * @param float $factor
      *
-     * @return Unit
+     * @return $this
      */
     public function setFactor($factor)
     {
@@ -254,7 +254,7 @@ class Unit extends Model\AbstractModel
     /**
      * @param string $group
      *
-     * @return Unit
+     * @return $this
      */
     public function setGroup($group)
     {
@@ -274,7 +274,7 @@ class Unit extends Model\AbstractModel
     /**
      * @param string $id
      *
-     * @return Unit
+     * @return $this
      */
     public function setId($id)
     {
@@ -294,7 +294,7 @@ class Unit extends Model\AbstractModel
     /**
      * @param string $longname
      *
-     * @return Unit
+     * @return $this
      */
     public function setLongname($longname)
     {
@@ -322,7 +322,7 @@ class Unit extends Model\AbstractModel
     /**
      * @param string $reference
      * 
-     * @return Unit
+     * @return $this
      */
     public function setReference($reference)
     {
@@ -342,7 +342,7 @@ class Unit extends Model\AbstractModel
     /**
      * @param float $conversionOffset
      * 
-     * @return Unit
+     * @return $this
      */
     public function setConversionOffset($conversionOffset)
     {
@@ -362,7 +362,7 @@ class Unit extends Model\AbstractModel
     /**
      * @param string $converter
      * 
-     * @return Unit
+     * @return $this
      */
     public function setConverter($converter)
     {
