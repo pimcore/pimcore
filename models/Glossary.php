@@ -83,7 +83,7 @@ class Glossary extends AbstractModel
     {
         try {
             $glossary = new self();
-            $glossary->setId(intval($id));
+            $glossary->setId((int)$id);
             $glossary->getDao()->getById();
 
             return $glossary;

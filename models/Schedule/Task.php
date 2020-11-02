@@ -82,7 +82,7 @@ class Task extends Model\AbstractModel
         } catch (\Exception $e) {
             try {
                 $task = new self();
-                $task->getDao()->getById(intval($id));
+                $task->getDao()->getById((int)$id);
                 \Pimcore\Cache\Runtime::set($cacheKey, $task);
             } catch (\Exception $e) {
                 return null;

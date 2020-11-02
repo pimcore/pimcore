@@ -44,7 +44,7 @@ use Pimcore\Model\DataObject;
  
 //create a new user for Sydney
 $user = User::create([
-    "parentId" => intval($userGroup->getId()),
+    "parentId" => (int) $userGroup->getId(),
     "username" => "sydney",
     "password" => "password1234",
     "hasCredentials" => true,

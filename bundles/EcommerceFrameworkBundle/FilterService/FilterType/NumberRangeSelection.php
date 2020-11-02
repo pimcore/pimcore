@@ -43,13 +43,13 @@ class NumberRangeSelection extends AbstractFilterType
 
         foreach ($groupByValues as $groupByValue) {
             if ($groupByValue['value'] !== null) {
-                $value = floatval($groupByValue['value']);
+                $value = (float)$groupByValue['value'];
 
                 if (!$value) {
                     $value = 0;
                 }
                 foreach ($ranges->getData() as $row) {
-                    if ((empty($row['from']) || (floatval($row['from']) <= $value)) && (empty($row['to']) || floatval($row['to']) > $value)) {
+                    if ((empty($row['from']) || ((float)$row['from'] <= $value)) && (empty($row['to']) || (float)$row['to'] > $value)) {
                         $counts[$row['from'] . '_' . $row['to']] += $groupByValue['count'];
                         break;
                     }

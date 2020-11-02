@@ -124,7 +124,7 @@ class Workflow extends AbstractModel
             try {
                 $workflow = new self();
                 \Pimcore\Cache\Runtime::set($cacheKey, $workflow);
-                $workflow->getDao()->getById(intval($id));
+                $workflow->getDao()->getById((int)$id);
             } catch (\Exception $e) {
                 return null;
             }

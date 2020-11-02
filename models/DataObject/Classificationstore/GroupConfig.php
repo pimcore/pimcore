@@ -86,7 +86,7 @@ class GroupConfig extends Model\AbstractModel
 
             if (!$config = Cache::load($cacheKey)) {
                 $config = new self();
-                $config->getDao()->getById(intval($id));
+                $config->getDao()->getById((int)$id);
                 Cache::save($config, $cacheKey, [], null, 0, true);
             }
 

@@ -128,8 +128,8 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $filter = $request->get('filter');
-        $limit = intval($allParams['limit'] ?? 100000000);
-        $offset = intval($allParams['start'] ?? 0);
+        $limit = (int)($allParams['limit'] ?? 100000000);
+        $offset = (int)($allParams['start'] ?? 0);
 
         if (!is_null($filter)) {
             if (substr($filter, -1) != '*') {
@@ -217,7 +217,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 'total' => $document->getChildAmount($this->getAdminUser()),
                 'nodes' => $documents,
                 'filter' => $request->get('filter') ? $request->get('filter') : '',
-                'inSearch' => intval($request->get('inSearch')),
+                'inSearch' => (int)$request->get('inSearch'),
             ]);
         } else {
             return $this->adminJson($documents);
@@ -237,7 +237,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $errorMessage = '';
 
         // check for permission
-        $parentDocument = Document::getById(intval($request->get('parentId')));
+        $parentDocument = Document::getById((int)$request->get('parentId'));
         $document = null;
         if ($parentDocument->isAllowed('create')) {
             $intendedPath = $parentDocument->getRealFullPath() . '/' . $request->get('key');
@@ -252,7 +252,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 $createValues['key'] = \Pimcore\Model\Element\Service::getValidKey($request->get('key'), 'document');
 
                 // check for a docType
-                $docType = Document\DocType::getById(intval($request->get('docTypeId')));
+                $docType = Document\DocType::getById((int)$request->get('docTypeId'));
                 if ($docType) {
                     $createValues['template'] = $docType->getTemplate();
                     $createValues['controller'] = $docType->getController();
@@ -382,7 +382,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
 
             $list = new Document\Listing();
             $list->setCondition('path LIKE ?', [$list->escapeLike($parentDocument->getRealFullPath()) . '/%']);
-            $list->setLimit(intval($request->get('amount')));
+            $list->setLimit((int)$request->get('amount'));
             $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
 
@@ -614,7 +614,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
         };
 
         // if changed the index change also all documents on the same level
-        $newIndex = intval($newIndex);
+        $newIndex = (int)$newIndex;
         $document->saveIndex($newIndex);
 
         $list = new Document\Listing();
@@ -797,9 +797,9 @@ class DocumentController extends ElementControllerBase implements KernelControll
         $domains = str_replace(' ', '', $domains);
         $domains = explode("\n", $domains);
 
-        if (!$site = Site::getByRootId(intval($request->get('id')))) {
+        if (!$site = Site::getByRootId((int)$request->get('id'))) {
             $site = Site::create([
-                'rootId' => intval($request->get('id')),
+                'rootId' => (int)$request->get('id'),
             ]);
         }
 
@@ -822,7 +822,7 @@ class DocumentController extends ElementControllerBase implements KernelControll
      */
     public function removeSiteAction(Request $request)
     {
-        $site = Site::getByRootId(intval($request->get('id')));
+        $site = Site::getByRootId((int)$request->get('id'));
         $site->delete();
 
         return $this->adminJson(['success' => true]);
@@ -982,11 +982,11 @@ class DocumentController extends ElementControllerBase implements KernelControll
     public function copyAction(Request $request)
     {
         $success = false;
-        $sourceId = intval($request->get('sourceId'));
+        $sourceId = (int)$request->get('sourceId');
         $source = Document::getById($sourceId);
         $session = Session::get('pimcore_copy');
 
-        $targetId = intval($request->get('targetId'));
+        $targetId = (int)$request->get('targetId');
 
         $sessionBag = $session->get($request->get('transactionId'));
 

@@ -40,7 +40,7 @@ class TagsController extends AdminController
         try {
             $tag = new Tag();
             $tag->setName(strip_tags($request->get('text')));
-            $tag->setParentId(intval($request->get('parentId')));
+            $tag->setParentId((int)$request->get('parentId'));
             $tag->save();
 
             return $this->adminJson(['success' => true, 'id' => $tag->getId()]);
@@ -85,7 +85,7 @@ class TagsController extends AdminController
         if ($tag) {
             $parentId = $request->get('parentId');
             if ($parentId || $parentId === '0') {
-                $tag->setParentId(intval($parentId));
+                $tag->setParentId((int)$parentId);
             }
             if ($request->get('text')) {
                 $tag->setName(strip_tags($request->get('text')));
@@ -109,7 +109,7 @@ class TagsController extends AdminController
     public function treeGetChildrenByIdAction(Request $request)
     {
         $showSelection = $request->get('showSelection') == 'true';
-        $assginmentCId = intval($request->get('assignmentCId'));
+        $assginmentCId = (int)$request->get('assignmentCId');
         $assginmentCType = strip_tags($request->get('assignmentCType'));
 
         $recursiveChildren = false;
@@ -124,7 +124,7 @@ class TagsController extends AdminController
 
         $tagList = new Tag\Listing();
         if ($request->get('node')) {
-            $tagList->setCondition('parentId = ?', intval($request->get('node')));
+            $tagList->setCondition('parentId = ?', (int)$request->get('node'));
         } else {
             $tagList->setCondition('ISNULL(parentId) OR parentId = 0');
         }
@@ -140,7 +140,7 @@ class TagsController extends AdminController
                 } else {
                     $ids = explode('/', $filterTag->getIdPath());
                     if (isset($ids[1])) {
-                        $filterIds[] = intval($ids[1]);
+                        $filterIds[] = (int)$ids[1];
                     }
                 }
             }
@@ -205,7 +205,7 @@ class TagsController extends AdminController
      */
     public function loadTagsForElementAction(Request $request)
     {
-        $assginmentCId = intval($request->get('assignmentCId'));
+        $assginmentCId = (int)$request->get('assignmentCId');
         $assginmentCType = strip_tags($request->get('assignmentCType'));
 
         $assignedTagArray = [];
@@ -229,9 +229,9 @@ class TagsController extends AdminController
      */
     public function addTagToElementAction(Request $request)
     {
-        $assginmentCId = intval($request->get('assignmentElementId'));
+        $assginmentCId = (int)$request->get('assignmentElementId');
         $assginmentCType = strip_tags($request->get('assignmentElementType'));
-        $tagId = intval($request->get('tagId'));
+        $tagId = (int)$request->get('tagId');
 
         $tag = Tag::getById($tagId);
         if ($tag) {
@@ -252,9 +252,9 @@ class TagsController extends AdminController
      */
     public function removeTagFromElementAction(Request $request)
     {
-        $assginmentCId = intval($request->get('assignmentElementId'));
+        $assginmentCId = (int)$request->get('assignmentElementId');
         $assginmentCType = strip_tags($request->get('assignmentElementType'));
-        $tagId = intval($request->get('tagId'));
+        $tagId = (int)$request->get('tagId');
 
         $tag = Tag::getById($tagId);
         if ($tag) {
@@ -276,7 +276,7 @@ class TagsController extends AdminController
      */
     public function getBatchAssignmentJobsAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        $elementId = intval($request->get('elementId'));
+        $elementId = (int)$request->get('elementId');
         $elementType = strip_tags($request->get('elementType'));
 
         $idList = [];
