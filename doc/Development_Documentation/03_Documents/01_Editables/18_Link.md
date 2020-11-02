@@ -35,14 +35,6 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*
 ## Examples
 
 ### Basic Usage
-<div class="code-section">
-
-```php
-<p>
-    <?= $this->translate("Visit our"); ?> 
-    <?= $this->link("blogLink"); ?>
-</p>
-```
 
 ```twig
 <p>
@@ -51,7 +43,6 @@ such as: `class`, `target`, `id`, `style`, `accesskey`, `name`, `title`, `data-*
 </p>
 ```
 
-</div>
 You could see the backend preview in the picture, below.
 
 ![Link editable - adminitration panel](../../img/editables_link_backend_preview.png)
@@ -66,19 +57,6 @@ And the frontend:
 
 Let's see how to make a list of links with [Block](./06_Block.md).
 
-<div class="code-section">
-
-```php
-<h3><?= $this->translate("Useful links"); ?></h3>
-<ul>
-    <?php while ($this->block("linkblock")->loop()): ?>
-        <li>
-            <?= $this->link("myLink", ["class" => "special-link-class"]); ?>
-        </li>
-    <?php endwhile; ?>
-</ul>
-```
-
 ```twig
 <h3>{{ "Useful links" | trans }}</h3>
 <ul>
@@ -87,8 +65,6 @@ Let's see how to make a list of links with [Block](./06_Block.md).
     {% endfor %}
 </ul>
 ```
-
-</div>
 
 The above example renders a list of links: 
 ![The links list in the backend](../../img/editables_link_inside_block.png)
