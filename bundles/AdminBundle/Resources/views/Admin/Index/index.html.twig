@@ -159,6 +159,8 @@
 
 {# define stylesheets #}
 
+{% set debugSuffix = '' %}
+
 {# SCRIPT LIBRARIES #}
 {% if settings.disableMinifyJs %}
     {% set debugSuffix = "-debug" %}
@@ -714,7 +716,7 @@
 {% endfor %}
 
 <!-- internal scripts -->
-{% if settings.disableMinifyJs %}
+{% if settings.disableMinifyJs or true %}
     {% for scriptUrl in scripts %}
     <script src="/bundles/pimcoreadmin/js/{{ scriptUrl }}?_dc={{ settings.build }}"></script>
     {% endfor %}

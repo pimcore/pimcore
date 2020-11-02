@@ -486,7 +486,7 @@ class SearchController extends AdminController
 
                 $validLanguages = \Pimcore\Tool::getValidLanguages();
 
-                $data['preview'] = $this->renderView('PimcoreAdminBundle:SearchAdmin/Search/Quicksearch:' . $hit->getId()->getType() . '.html.twig', [
+                $data['preview'] = $this->renderView('@PimcoreAdmin/SearchAdmin/Search/Quicksearch/' . $hit->getId()->getType() . '.html.twig', [
                     'element' => $element,
                     'iconCls' => $data['iconCls'],
                     'config' => $config,

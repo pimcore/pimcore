@@ -244,7 +244,7 @@ class MiscController extends AdminController
         $adminLanguages = \Pimcore\Tool\Admin::getLanguages();
         $languages = array_unique(array_merge($languages, $adminLanguages));
 
-        $response = $this->render('PimcoreAdminBundle:Admin/Misc:admin-css.html.twig', [
+        $response = $this->render('@PimcoreAdmin/Admin/Misc/admin-css.html.twig', [
             'customviews' => $cvData,
             'config' => $config,
             'languages' => $languages,
@@ -671,7 +671,7 @@ class MiscController extends AdminController
             }
         }
 
-        $response = $this->render('PimcoreAdminBundle:Admin/Misc:http-error-log-detail.html.twig', ['data' => $data]);
+        $response = $this->render('@PimcoreAdmin/Admin/Misc/http-error-log-detail.html.twig', ['data' => $data]);
 
         return $response;
     }
@@ -801,7 +801,7 @@ class MiscController extends AdminController
 
         $iconsCss = file_get_contents($publicDir . '/css/icons.css');
 
-        return $this->render('PimcoreAdminBundle:Admin/Misc:iconList.html.twig', [
+        return $this->render('@PimcoreAdmin/Admin/Misc/iconList.html.twig', [
             'colorIcons' => $colorIcons,
             'whiteIcons' => $whiteIcons,
             'twemoji' => $twemoji,
