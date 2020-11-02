@@ -25,17 +25,23 @@ use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
+/**
+ * @internal
+ */
 class AdminExtension extends AbstractExtension
 {
     public function getFunctions()
     {
         return [
-            new TwigFunction('pimcore_minimize_scripts', [$this, 'minimze']),
+            new TwigFunction('pimcore_minimize_scripts', [$this, 'minimize']),
         ];
     }
 
-    public function minimze($value)
+    /**
+     * @deprecated
+     */
+    public function minimize(string $value) : string
     {
-        return Admin::getMinimizedScriptPath($value, false);
+        return Admin::getMinimizedScriptPath($value);
     }
 }
