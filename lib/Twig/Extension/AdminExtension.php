@@ -40,7 +40,7 @@ class AdminExtension extends AbstractExtension
     /**
      * @deprecated
      */
-    public function minimize(string $value) : string
+    public function minimize(string $value) : array
     {
         return Admin::getMinimizedScriptPath($value);
     }
