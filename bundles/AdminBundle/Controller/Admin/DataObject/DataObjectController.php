@@ -236,9 +236,9 @@ class DataObjectController extends ElementControllerBase implements KernelContro
                 'total' => $total,
                 'overflow' => !is_null($filter) && ($filteredTotalCount > $limit),
                 'nodes' => $objects,
-                'fromPaging' => intval($request->get('fromPaging')),
+                'fromPaging' => (int)$request->get('fromPaging'),
                 'filter' => $request->get('filter') ? $request->get('filter') : '',
-                'inSearch' => intval($request->get('inSearch')),
+                'inSearch' => (int)$request->get('inSearch'),
             ]);
         }
 
@@ -256,7 +256,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         $tmpObject = [
             'id' => $child->getId(),
-            'idx' => intval($child->getIndex()),
+            'idx' => (int)$child->getIndex(),
             'key' => $child->getKey(),
             'sortBy' => $child->getChildrenSortBy(),
             'sortOrder' => $child->getChildrenSortOrder(),
@@ -700,7 +700,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
         Element\Editlock::lock($request->get('id'), 'object');
 
-        $object = DataObject::getById(intval($request->get('id')));
+        $object = DataObject::getById((int)$request->get('id'));
         if ($object->isAllowed('view')) {
             $objectData = [];
 
@@ -902,7 +902,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             $list = new DataObject\Listing();
             $list->setCondition('o_path LIKE ' . $list->quote($list->escapeLike($parentObject->getRealFullPath()) . '/%'));
-            $list->setLimit(intval($request->get('amount')));
+            $list->setLimit((int)$request->get('amount'));
             $list->setOrderKey('LENGTH(o_path)', false);
             $list->setOrder('DESC');
 
@@ -1461,7 +1461,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         DataObject\AbstractObject::setDoNotRestoreKeyAndPath(true);
 
-        $id = intval($request->get('id'));
+        $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
         $object = $version->loadData();
 
@@ -1497,8 +1497,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     {
         DataObject\AbstractObject::setDoNotRestoreKeyAndPath(true);
 
-        $id1 = intval($from);
-        $id2 = intval($to);
+        $id1 = (int)$from;
+        $id2 = (int)$to;
 
         $version1 = Model\Version::getById($id1);
         $object1 = $version1->loadData();
@@ -1948,13 +1948,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
     public function copyAction(Request $request)
     {
         $message = '';
-        $sourceId = intval($request->get('sourceId'));
+        $sourceId = (int)$request->get('sourceId');
         $source = DataObject::getById($sourceId);
 
         $session = Tool\Session::get('pimcore_copy');
         $sessionBag = $session->get($request->get('transactionId'));
 
-        $targetId = intval($request->get('targetId'));
+        $targetId = (int)$request->get('targetId');
         if ($request->get('targetParentId')) {
             $sourceParent = DataObject::getById($request->get('sourceParentId'));
 

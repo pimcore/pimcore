@@ -252,7 +252,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function setDefaultValue($defaultValue)
     {
-        if (strlen(strval($defaultValue)) > 0) {
+        if (strlen((string)$defaultValue) > 0) {
             if (is_numeric($defaultValue)) {
                 $this->defaultValue = (int)$defaultValue;
             } else {

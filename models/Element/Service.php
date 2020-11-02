@@ -458,8 +458,8 @@ class Service extends Model\AbstractModel
                 // If key already ends with _copy or copy_N, append a digit to avoid _copy_copy_copy naming
                 $keyParts = explode('_', $sourceKey);
                 $counterKey = array_key_last($keyParts);
-                if (intval($keyParts[$counterKey]) > 0) {
-                    $keyParts[$counterKey] = intval($keyParts[$counterKey]) + 1;
+                if ((int)$keyParts[$counterKey] > 0) {
+                    $keyParts[$counterKey] = (int)$keyParts[$counterKey] + 1;
                 } else {
                     $keyParts[] = 1;
                 }

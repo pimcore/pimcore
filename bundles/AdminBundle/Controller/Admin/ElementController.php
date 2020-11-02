@@ -317,8 +317,8 @@ class ElementController extends AdminController
         $success = false;
         $hasHidden = false;
         $total = 0;
-        $limit = intval($request->get('limit', 50));
-        $offset = intval($request->get('start', 0));
+        $limit = (int)$request->get('limit', 50);
+        $offset = (int)$request->get('start', 0);
 
         if ($element instanceof Element\ElementInterface) {
             $total = $element->getDependencies()->getRequiredByTotalCount();
@@ -587,7 +587,7 @@ class ElementController extends AdminController
      */
     public function getVersionsAction(Request $request)
     {
-        $id = intval($request->get('id'));
+        $id = (int)$request->get('id');
         $type = $request->get('elementType');
         $allowedTypes = ['asset', 'document', 'object'];
 

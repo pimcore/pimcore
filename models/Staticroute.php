@@ -156,7 +156,7 @@ class Staticroute extends AbstractModel
         } catch (\Exception $e) {
             try {
                 $route = new self();
-                $route->setId(intval($id));
+                $route->setId((int)$id);
                 $route->getDao()->getById();
                 \Pimcore\Cache\Runtime::set($cacheKey, $route);
             } catch (\Exception $e) {

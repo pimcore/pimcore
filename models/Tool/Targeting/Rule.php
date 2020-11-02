@@ -92,7 +92,7 @@ class Rule extends Model\AbstractModel
             $targetId = (int) $target;
         }
 
-        if (array_key_exists('_ptc', $_GET) && intval($targetId) == intval($_GET['_ptc'])) {
+        if (array_key_exists('_ptc', $_GET) && (int)$targetId == (int)$_GET['_ptc']) {
             return true;
         }
 
@@ -110,7 +110,7 @@ class Rule extends Model\AbstractModel
     {
         try {
             $target = new self();
-            $target->getDao()->getById(intval($id));
+            $target->getDao()->getById((int)$id);
 
             return $target;
         } catch (\Exception $e) {

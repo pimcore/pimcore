@@ -1010,8 +1010,8 @@ class SettingsController extends AdminController
                 $glossary->save();
 
                 if ($link = $glossary->getLink()) {
-                    if (intval($link) > 0) {
-                        if ($doc = Document::getById(intval($link))) {
+                    if ((int)$link > 0) {
+                        if ($doc = Document::getById((int)$link)) {
                             $glossary->setLink($doc->getRealFullPath());
                         }
                     }
@@ -1036,8 +1036,8 @@ class SettingsController extends AdminController
                 $glossary->save();
 
                 if ($link = $glossary->getLink()) {
-                    if (intval($link) > 0) {
-                        if ($doc = Document::getById(intval($link))) {
+                    if ((int)$link > 0) {
+                        if ($doc = Document::getById((int)$link)) {
                             $glossary->setLink($doc->getRealFullPath());
                         }
                     }
@@ -1067,8 +1067,8 @@ class SettingsController extends AdminController
             $glossaries = [];
             foreach ($list->getGlossary() as $glossary) {
                 if ($link = $glossary->getLink()) {
-                    if (intval($link) > 0) {
-                        if ($doc = Document::getById(intval($link))) {
+                    if ((int)$link > 0) {
+                        if ($doc = Document::getById((int)$link)) {
                             $glossary->setLink($doc->getRealFullPath());
                         }
                     }

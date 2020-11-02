@@ -243,7 +243,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         if ($data) {
             if ($data instanceof DataObject\Data\Link) {
-                if (intval($data->getInternal()) > 0) {
+                if ((int)$data->getInternal() > 0) {
                     if ($data->getInternalType() == 'document') {
                         $doc = Document::getById($data->getInternal());
                         if (!$doc instanceof Document) {
@@ -270,7 +270,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         $dependencies = [];
 
         if ($data instanceof DataObject\Data\Link and $data->getInternal()) {
-            if (intval($data->getInternal()) > 0) {
+            if ((int)$data->getInternal() > 0) {
                 if ($data->getInternalType() == 'document') {
                     if ($doc = Document::getById($data->getInternal())) {
                         $key = 'document_' . $doc->getId();
@@ -308,7 +308,7 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         $tags = is_array($tags) ? $tags : [];
 
         if ($data instanceof DataObject\Data\Link and $data->getInternal()) {
-            if (intval($data->getInternal()) > 0) {
+            if ((int)$data->getInternal() > 0) {
                 if ($data->getInternalType() == 'document') {
                     if ($doc = Document::getById($data->getInternal())) {
                         if (!array_key_exists($doc->getCacheTag(), $tags)) {

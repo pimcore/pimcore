@@ -223,7 +223,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getRequiredByWithPath($offset = null, $limit = null, $orderBy = null, $orderDirection = null)
     {
-        $targetId = intval($this->model->getSourceId());
+        $targetId = (int)$this->model->getSourceId();
 
         if (in_array($this->model->getSourceType(), ['object', 'document', 'asset'])) {
             $targetType = $this->model->getSourceType();

@@ -207,7 +207,7 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        return strval($data);
+        return (string)$data;
     }
 
     /**

@@ -349,11 +349,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $scale = self::DECIMAL_PRECISION_DEFAULT;
 
         if (null !== $this->decimalSize) {
-            $precision = intval($this->decimalSize);
+            $precision = (int)$this->decimalSize;
         }
 
         if (null !== $this->decimalPrecision) {
-            $scale = intval($this->decimalPrecision);
+            $scale = (int)$this->decimalPrecision;
         }
 
         if ($precision < 1 || $precision > 65) {
@@ -527,7 +527,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        return strval($data);
+        return (string)$data;
     }
 
     /**

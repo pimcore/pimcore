@@ -222,7 +222,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $asset = Asset::getById($allParams['node']);
 
         $filter = $request->get('filter');
-        $limit = intval($allParams['limit']);
+        $limit = (int)$allParams['limit'];
         if (!is_null($filter)) {
             if (substr($filter, -1) != '*') {
                 $filter .= '*';
@@ -235,7 +235,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $limit = 100000000;
         }
 
-        $offset = isset($allParams['start']) ? intval($allParams['start']) : 0;
+        $offset = isset($allParams['start']) ? (int)$allParams['start'] : 0;
 
         $filteredTotalCount = 0;
 
@@ -310,7 +310,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 'overflow' => !is_null($filter) && ($filteredTotalCount > $limit),
                 'nodes' => $assets,
                 'filter' => $request->get('filter') ? $request->get('filter') : '',
-                'inSearch' => intval($request->get('inSearch')),
+                'inSearch' => (int)$request->get('inSearch'),
             ]);
         } else {
             return $this->adminJson($assets);
@@ -469,7 +469,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             $parentId = Asset\Service::createFolderByPath($defaultUploadPath)->getId();
         }
 
-        $parentAsset = Asset::getById(intval($parentId));
+        $parentAsset = Asset::getById((int)$parentId);
 
         // check for duplicate filename
         $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
@@ -596,7 +596,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function addFolderAction(Request $request)
     {
         $success = false;
-        $parentAsset = Asset::getById(intval($request->get('parentId')));
+        $parentAsset = Asset::getById((int)$request->get('parentId'));
         $equalAsset = Asset::getByPath($parentAsset->getRealFullPath() . '/' . $request->get('name'));
 
         if ($parentAsset->isAllowed('create')) {
@@ -630,7 +630,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             $list = new Asset\Listing();
             $list->setCondition('path LIKE ?', [$list->escapeLike($parentAsset->getRealFullPath()) . '/%']);
-            $list->setLimit(intval($request->get('amount')));
+            $list->setLimit((int)$request->get('amount'));
             $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
 
@@ -1073,7 +1073,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function showVersionAction(Request $request)
     {
-        $id = intval($request->get('id'));
+        $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
         if (!$version) {
             throw $this->createNotFoundException('Version not found');
@@ -1248,7 +1248,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function getAssetAction(Request $request)
     {
-        $image = Asset::getById(intval($request->get('id')));
+        $image = Asset::getById((int)$request->get('id'));
 
         if (!$image) {
             throw $this->createNotFoundException('Asset not found');
@@ -1276,7 +1276,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function getImageThumbnailAction(Request $request)
     {
         $fileinfo = $request->get('fileinfo');
-        $image = Asset\Image::getById(intval($request->get('id')));
+        $image = Asset\Image::getById((int)$request->get('id'));
 
         if (!$image) {
             throw $this->createNotFoundException('Asset not found');
@@ -1358,7 +1358,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $video = null;
 
         if ($request->get('id')) {
-            $video = Asset\Video::getById(intval($request->get('id')));
+            $video = Asset\Video::getById((int)$request->get('id'));
         } elseif ($request->get('path')) {
             $video = Asset\Video::getByPath($request->get('path'));
         }
@@ -1379,7 +1379,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $time = null;
         if ($request->get('time')) {
-            $time = intval($request->get('time'));
+            $time = (int)$request->get('time');
         }
 
         if ($request->get('settime')) {
@@ -1390,7 +1390,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
         $image = null;
         if ($request->get('image')) {
-            $image = Asset::getById(intval($request->get('image')));
+            $image = Asset::getById((int)$request->get('image'));
         }
 
         if ($request->get('setimage') && $image) {
@@ -1419,7 +1419,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      */
     public function getDocumentThumbnailAction(Request $request)
     {
-        $document = Asset\Document::getById(intval($request->get('id')));
+        $document = Asset\Document::getById((int)$request->get('id'));
 
         if (!$document) {
             throw $this->createNotFoundException('could not load document asset');
@@ -1842,13 +1842,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
     public function copyAction(Request $request)
     {
         $success = false;
-        $sourceId = intval($request->get('sourceId'));
+        $sourceId = (int)$request->get('sourceId');
         $source = Asset::getById($sourceId);
 
         $session = Tool\Session::get('pimcore_copy');
         $sessionBag = $session->get($request->get('transactionId'));
 
-        $targetId = intval($request->get('targetId'));
+        $targetId = (int)$request->get('targetId');
         if ($request->get('targetParentId')) {
             $sourceParent = Asset::getById($request->get('sourceParentId'));
 
@@ -2335,7 +2335,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $data = Tool::getHttpData($request->get('url'));
         $filename = basename($request->get('url'));
         $parentId = $request->get('id');
-        $parentAsset = Asset::getById(intval($parentId));
+        $parentAsset = Asset::getById((int)$parentId);
 
         if (!$parentAsset) {
             throw $this->createNotFoundException('Parent asset not found');

@@ -56,12 +56,12 @@ class AssetController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $result = $service->searchData(
-            intval($allParams['id']),
+            (int)$allParams['id'],
             strip_tags($allParams['firstname']),
             strip_tags($allParams['lastname']),
             strip_tags($allParams['email']),
-            intval($allParams['start']),
-            intval($allParams['limit']),
+            (int)$allParams['start'],
+            (int)$allParams['limit'],
             $allParams['sort'] ?? null
         );
 

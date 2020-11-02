@@ -416,9 +416,9 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if (intval($data) === 1) {
+        if ((int)$data === 1) {
             return true;
-        } elseif (intval($data) === -1) {
+        } elseif ((int)$data === -1) {
             return false;
         }
 

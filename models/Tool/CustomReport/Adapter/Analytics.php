@@ -84,7 +84,7 @@ class Analytics extends AbstractAdapter
                     $value = str_replace(';', '', addslashes($filter['value']));
                     $gaFilters[] = "{$filter['field']}=~{$value}";
                 } elseif ($filter['type'] == 'numeric') {
-                    $value = floatval($filter['value']);
+                    $value = (float)$filter['value'];
                     $compMapping = [
                         'lt' => '<',
                         'gt' => '>',

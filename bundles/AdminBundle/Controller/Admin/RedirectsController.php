@@ -82,7 +82,7 @@ class RedirectsController extends AdminController
 
                 $redirectTarget = $redirect->getTarget();
                 if (is_numeric($redirectTarget)) {
-                    if ($doc = Document::getById(intval($redirectTarget))) {
+                    if ($doc = Document::getById((int)$redirectTarget)) {
                         $redirect->setTarget($doc->getRealFullPath());
                     }
                 }
@@ -111,7 +111,7 @@ class RedirectsController extends AdminController
 
                 $redirectTarget = $redirect->getTarget();
                 if (is_numeric($redirectTarget)) {
-                    if ($doc = Document::getById(intval($redirectTarget))) {
+                    if ($doc = Document::getById((int)$redirectTarget)) {
                         $redirect->setTarget($doc->getRealFullPath());
                     }
                 }
@@ -155,7 +155,7 @@ class RedirectsController extends AdminController
             foreach ($list->getRedirects() as $redirect) {
                 if ($link = $redirect->getTarget()) {
                     if (is_numeric($link)) {
-                        if ($doc = Document::getById(intval($link))) {
+                        if ($doc = Document::getById((int)$link)) {
                             $redirect->setTarget($doc->getRealFullPath());
                         }
                     }

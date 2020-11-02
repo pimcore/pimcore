@@ -55,7 +55,7 @@ class ElementControllerBase extends AdminController
 
         $id = 1;
         if ($request->get('id')) {
-            $id = intval($request->get('id'));
+            $id = (int)$request->get('id');
         }
 
         if (in_array($type, $allowedTypes)) {

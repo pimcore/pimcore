@@ -208,7 +208,7 @@ class Layout
     public function setWidth($width)
     {
         if (!empty($width) && is_numeric($width)) {
-            $this->width = intval($width);
+            $this->width = (int)$width;
         } else {
             $this->width = $width;
         }
@@ -224,7 +224,7 @@ class Layout
     public function setHeight($height)
     {
         if (!empty($height) && is_numeric($height)) {
-            $this->height = intval($height);
+            $this->height = (int)$height;
         } else {
             $this->height = $height;
         }

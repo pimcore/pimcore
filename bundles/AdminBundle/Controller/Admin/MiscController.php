@@ -588,8 +588,8 @@ class MiscController extends AdminController
 
         $db = Db::get();
 
-        $limit = intval($request->get('limit'));
-        $offset = intval($request->get('start'));
+        $limit = (int)$request->get('limit');
+        $offset = (int)$request->get('start');
         $sort = $request->get('sort');
         $dir = $request->get('dir');
         $filter = $request->get('filter');

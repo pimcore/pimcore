@@ -141,7 +141,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        if (intval($data) > 0) {
+        if ((int)$data > 0) {
             return Asset\Image::getById($data);
         }
 
@@ -207,7 +207,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if ($data && intval($data['id']) > 0) {
+        if ($data && (int)$data['id'] > 0) {
             return Asset\Image::getById($data['id']);
         }
 
@@ -456,7 +456,7 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function unmarshal($value, $object = null, $params = [])
     {
         $id = $value['id'];
-        if (intval($id) > 0) {
+        if ((int)$id > 0) {
             return Asset\Image::getById($id);
         }
     }

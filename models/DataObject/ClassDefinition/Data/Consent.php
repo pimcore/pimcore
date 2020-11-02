@@ -318,7 +318,7 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        return $data ? strval($data->getConsent()) : '';
+        return $data ? (string)$data->getConsent() : '';
     }
 
     /**

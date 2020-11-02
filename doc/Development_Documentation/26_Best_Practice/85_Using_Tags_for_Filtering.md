@@ -30,7 +30,7 @@ $tagList = new \Pimcore\Model\Element\Tag\Listing();
 
 //select parent node for tags or use all root tags.
 if ($this->getParam("node")) {
-    $tagList->setCondition("parentId = ?", intval($request->get("node")));
+    $tagList->setCondition("parentId = ?", (int) $request->get("node"));
 } else {
     $tagList->setCondition("ISNULL(parentId) OR parentId = 0");
 }
@@ -127,12 +127,12 @@ Important to know:
                             SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid 
                             WHERE 
                                 ctype = 'asset' AND 
-                                (id = " . intval($tagId) . " OR idPath LIKE " . $listing->quote(Db::get()->escapeLike($tagPath) . "%") . ")
+                                (id = " . (int) $tagId . " OR idPath LIKE " . $listing->quote(Db::get()->escapeLike($tagPath) . "%") . ")
                         )";
                     }
                 } else {
                     $conditionParts[] = "id IN (
-                        SELECT cId FROM tags_assignment WHERE ctype = 'asset' AND tagid = " . intval($tagId) . 
+                        SELECT cId FROM tags_assignment WHERE ctype = 'asset' AND tagid = " . (int) $tagId . 
                     ")";
                 }
             }

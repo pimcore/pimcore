@@ -329,13 +329,13 @@ function filesize2bytes($str)
         'P' => 1024 * 1024 * 1024 * 1024 * 1024,
     ];
 
-    $bytes = floatval($str);
+    $bytes = (float)$str;
 
     if (preg_match('#([KMGTP])?B?$#si', $str, $matches) && (array_key_exists(1, $matches) && !empty($bytes_array[$matches[1]]))) {
         $bytes *= $bytes_array[$matches[1]];
     }
 
-    $bytes = intval(round($bytes, 2));
+    $bytes = (int)round($bytes, 2);
 
     return $bytes;
 }

@@ -161,7 +161,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function activeGenerateProcessAction(Request $request)
     {
-        $document = Document\PrintAbstract::getById(intval($request->get('id')));
+        $document = Document\PrintAbstract::getById((int)$request->get('id'));
 
         if (!$document) {
             throw $this->createNotFoundException('Document with id ' . $request->get('id') . ' not found.');
@@ -197,7 +197,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function pdfDownloadAction(Request $request)
     {
-        $document = Document\PrintAbstract::getById(intval($request->get('id')));
+        $document = Document\PrintAbstract::getById((int)$request->get('id'));
 
         if (!$document) {
             throw $this->createNotFoundException('Document with id ' . $request->get('id') . ' not found.');
@@ -331,7 +331,7 @@ class PrintpageControllerBase extends DocumentControllerBase
      */
     public function cancelGenerationAction(Request $request)
     {
-        Processor::getInstance()->cancelGeneration(intval($request->get('id')));
+        Processor::getInstance()->cancelGeneration((int)$request->get('id'));
 
         return $this->adminJson(['success' => true]);
     }

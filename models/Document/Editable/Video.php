@@ -636,7 +636,7 @@ class Video extends Model\Document\Editable
 
         // get vimeo id
         if (preg_match("@vimeo.*/([\d]+)@i", $this->id, $matches)) {
-            $vimeoId = intval($matches[1]);
+            $vimeoId = (int)$matches[1];
         } else {
             // for object-videos
             $vimeoId = $this->id;

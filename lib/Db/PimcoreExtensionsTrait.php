@@ -497,7 +497,7 @@ trait PimcoreExtensionsTrait
         if ($auto === false) {
             $q = '`';
 
-            return $q . str_replace("$q", "$q$q", $value) . $q;
+            return $q . str_replace((string) $q, "$q$q", $value) . $q;
         }
 
         return $value;
@@ -528,12 +528,12 @@ trait PimcoreExtensionsTrait
      */
     public function limit($sql, $count, $offset = 0)
     {
-        $count = intval($count);
+        $count = (int) $count;
         if ($count <= 0) {
             throw new \Exception("LIMIT argument count=$count is not valid");
         }
 
-        $offset = intval($offset);
+        $offset = (int) $offset;
         if ($offset < 0) {
             throw new \Exception("LIMIT argument offset=$offset is not valid");
         }

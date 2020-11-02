@@ -181,7 +181,7 @@ class Snippet extends Model\Document\Editable
      */
     public function setDataFromResource($data)
     {
-        if (intval($data) > 0) {
+        if ((int)$data > 0) {
             $this->id = $data;
             $this->snippet = Document\Snippet::getById($this->id);
         }
@@ -198,7 +198,7 @@ class Snippet extends Model\Document\Editable
      */
     public function setDataFromEditmode($data)
     {
-        if (intval($data) > 0) {
+        if ((int)$data > 0) {
             $this->id = $data;
             $this->snippet = Document\Snippet::getById($this->id);
         }
