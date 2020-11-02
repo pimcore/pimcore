@@ -198,6 +198,8 @@ class Unit extends Model\AbstractModel
             $baseunit = $baseunit->getId();
         }
         $this->baseunit = $baseunit;
+        
+        return $this;
     }
 
     public function getBaseunit()
@@ -212,6 +214,8 @@ class Unit extends Model\AbstractModel
     public function setFactor($factor)
     {
         $this->factor = $factor;
+        
+        return $this;
     }
 
     public function getFactor()
@@ -222,6 +226,8 @@ class Unit extends Model\AbstractModel
     public function setGroup($group)
     {
         $this->group = $group;
+        
+        return $this;
     }
 
     public function getGroup()
@@ -235,6 +241,8 @@ class Unit extends Model\AbstractModel
     public function setId($id)
     {
         $this->id = (string) $id;
+        
+        return $this;
     }
 
     /**
@@ -248,6 +256,8 @@ class Unit extends Model\AbstractModel
     public function setLongname($longname)
     {
         $this->longname = $longname;
+        
+        return $this;
     }
 
     public function getLongname()
@@ -269,6 +279,8 @@ class Unit extends Model\AbstractModel
     public function setReference($reference)
     {
         $this->reference = $reference;
+        
+        return $this;
     }
 
     /**
@@ -285,6 +297,8 @@ class Unit extends Model\AbstractModel
     public function setConversionOffset($conversionOffset)
     {
         $this->conversionOffset = $conversionOffset;
+        
+        return $this;
     }
 
     /**
@@ -301,5 +315,7 @@ class Unit extends Model\AbstractModel
     public function setConverter($converter)
     {
         $this->converter = (string)$converter;
+        
+        return $this;
     }
 }
