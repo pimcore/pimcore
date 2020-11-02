@@ -180,11 +180,17 @@ pimcore.object.tags.booleanSelect = Class.create(pimcore.object.tags.abstract, {
             options.labelWidth = this.fieldConfig.labelWidth;
         }
 
+        if (this.fieldConfig.labelAlign) {
+            options.labelAlign = this.fieldConfig.labelAlign;
+        }
+
         if (this.fieldConfig.width) {
             options.width = this.fieldConfig.width;
         }
 
-        options.width += options.labelWidth;
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
+            options.width += options.labelWidth;
+        }
 
         if (typeof this.data == "string" || typeof this.data == "number") {
             if (in_array(this.data, validValues)) {

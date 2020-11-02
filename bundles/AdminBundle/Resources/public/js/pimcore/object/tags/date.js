@@ -73,7 +73,14 @@ pimcore.object.tags.date = Class.create(pimcore.object.tags.abstract, {
         if (this.fieldConfig.labelWidth) {
             date.labelWidth = this.fieldConfig.labelWidth;
         }
-        date.width += date.labelWidth;
+
+        if (this.fieldConfig.labelAlign) {
+            date.labelAlign = this.fieldConfig.labelAlign;
+        }
+
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
+            date.width += date.labelWidth;
+        }
 
         if (this.data) {
             var tmpDate = new Date(intval(this.data) * 1000);
