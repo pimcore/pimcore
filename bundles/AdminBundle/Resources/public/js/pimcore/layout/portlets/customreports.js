@@ -409,6 +409,8 @@ pimcore.layout.portlets.customreports = Class.create(pimcore.layout.portlets.abs
 
             if(colConfig["width"]) {
                 gridColConfig["width"] = intval(colConfig["width"]);
+            } else {
+                gridColConfig["flex"] = 1;
             }
 
             if(colConfig["filter"]) {
