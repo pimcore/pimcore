@@ -106,12 +106,6 @@ for details.
 
 #### Subrequests
 
-The following methods use the matching PHP templating view helpers to render subrequests:
-
-* `pimcore_inc`
-* `pimcore_action`
-
-
 ```twig
 {# render an action #}
 {{ pimcore_action('sidebarBox', 'Blog', null, { items: count }) }}

@@ -351,6 +351,7 @@ class NavigationExtension extends AbstractExtension
 }
 
 ?>
+```
 
 ```twig
 {% set mainNav = pimcore_build_nav({
@@ -478,8 +479,8 @@ pimcore_build_nav({active: document, root: navStartNode, cache: 'yourindividualk
 
 You can disable the navigation cache by setting the 5th argument to `false`.
 
-```php
-$this->navigation()->build(['active' => $this->document, 'root' => $mainNavStartNode, 'cache' => false]);
+```twig
+pimcore_build_nav({active: document, root: navStartNode, cache: false})
 ```
 
 ## FAQ
