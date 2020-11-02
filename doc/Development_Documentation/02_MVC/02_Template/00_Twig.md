@@ -58,8 +58,6 @@ for further details. Note that all of Pimcore's Twig extensions are prefixed wit
 
 You can use any Pimcore document editable in Twig by prefixing it with `pimcore_` and using the same arguments as in PHP:
 
-<div class="code-section">
-
 ```twig
 <h1>{{ pimcore_input('headline') }}</h1>
 
@@ -67,16 +65,6 @@ You can use any Pimcore document editable in Twig by prefixing it with `pimcore_
 
 {{ pimcore_select('type', { reload: true, store: [["video","video"], ["image","image"]] }) }}
 ```
-
-```php
-<h1><?= $this->input('headline') ?></h1>
-
-<?= $this->wysiwyg('content') ?>
-
-<?= $this->select('type', ['reload' => true, 'store' => [["video","video"], ["image","image"]]]) ?>
-```
-
-</div>
 
 Please note that if you store the editable in a variable, you'll need to pipe it through the raw filter on output if it
 generates HTML as otherwise the HTML will be escaped by twig.

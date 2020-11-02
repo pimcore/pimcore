@@ -23,21 +23,11 @@ Since the language is a simple property you can access it like every other prope
  $language = $doc->getProperty("language");
   
  ```
- 
- <div class="code-section">
-    
- ```php
- $this->getLocale();
- // or 
- $language = $this->document->getProperty("language");
   
- ```
- 
  ```twig
  {% set documentLanguage = document.getProperty('language') %}
  ```
  
-</div>
  
 Once you have defined the language of your documents you can also use the [translate helper](./04_Shared_Translations) 
 in your views, as described [here](./04_Shared_Translations). Pimcore uses the standard Symfony translator, 

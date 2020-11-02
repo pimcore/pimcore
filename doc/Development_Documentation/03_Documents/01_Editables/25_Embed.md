@@ -19,16 +19,6 @@ Additionally you can use any configuration option of [Embera](https://github.com
 
 ## Example
 
-<div class="code-section">
-
-```php
-// Basic usage
-<?= $this->embed("socialWidgets"); ?>
- 
-// Advanced usage
-<?= $this->embed("socialWidgets", ["width" => 540]); ?>
-```
-
 ```twig
 {# Basic usage #}
 {{ pimcore_embed("socialWidgets") }}
@@ -36,5 +26,3 @@ Additionally you can use any configuration option of [Embera](https://github.com
 {# Advanced usage #}
 {{ pimcore_embed("socialWidgets", { "width": 540 }) }}
 ```
-
-</div>
