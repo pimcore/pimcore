@@ -77,7 +77,6 @@ class EditmodeListener implements EventSubscriberInterface
      * @param UserLoader $userLoader
      * @param PimcoreBundleManager $bundleManager
      * @param RouterInterface $router
-     * @param Packages $package
      */
     public function __construct(
         EditmodeResolver $editmodeResolver,
