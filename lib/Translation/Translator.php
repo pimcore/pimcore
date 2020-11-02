@@ -176,7 +176,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
      */
     public function lazyInitialize($domain, $locale)
     {
-        $cacheKey = 'translation_data_' . $domain . '_' . $locale;
+        $cacheKey = 'translation_data_' . md5($domain . '_' . $locale);
 
         if (isset($this->initializedCatalogues[$cacheKey])) {
             return;
