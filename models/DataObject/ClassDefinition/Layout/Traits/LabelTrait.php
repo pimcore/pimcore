@@ -17,8 +17,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Layout\Traits;
 
-use Pimcore\Model\DataObject\ClassDefinition\Layout;
-
 trait LabelTrait
 {
     /**
