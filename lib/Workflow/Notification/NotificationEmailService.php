@@ -20,18 +20,18 @@ use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class NotificationEmailService extends AbstractNotificationService
 {
     const MAIL_PATH_LANGUAGE_PLACEHOLDER = '%_locale%';
 
     /**
-     * @var EngineInterface $templatingEngine
+     * @var Environment
      */
-    private $templatingEngine;
+    private $twig;
 
     /**
      * @var RouterInterface
@@ -44,13 +44,13 @@ class NotificationEmailService extends AbstractNotificationService
     protected $translator;
 
     /**
-     * @param EngineInterface $templatingEngine
+     * @param Environment $twig
      * @param RouterInterface $router
      * @param TranslatorInterface $translator
      */
-    public function __construct(EngineInterface $templatingEngine, RouterInterface $router, TranslatorInterface $translator)
+    public function __construct(Environment $twig, RouterInterface $router, TranslatorInterface $translator)
     {
-        $this->templatingEngine = $templatingEngine;
+        $this->twig = $twig;
         $this->translator = $translator;
         $this->router = $router;
     }
@@ -189,7 +189,7 @@ class NotificationEmailService extends AbstractNotificationService
         $translatorLocaleBackup = $this->translator->getLocale();
         $this->translator->setLocale($language);
 
-        $emailTemplate = $this->templatingEngine->render(
+        $emailTemplate = $this->twig->render(
             $mailPath, $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)
         );
 

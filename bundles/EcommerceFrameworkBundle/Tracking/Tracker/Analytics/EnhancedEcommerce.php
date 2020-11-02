@@ -71,7 +71,7 @@ class EnhancedEcommerce extends AbstractAnalyticsTracker implements
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'template_prefix' => 'PimcoreEcommerceFrameworkBundle:Tracking/analytics/enhanced',
+            'template_prefix' => '@PimcoreEcommerceFramework/Tracking/analytics/enhanced',
         ]);
     }
 

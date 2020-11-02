@@ -65,11 +65,6 @@ class EditmodeListener implements EventSubscriberInterface
     protected $router;
 
     /**
-     * @var Packages
-     */
-    protected $package;
-
-    /**
      * @var array
      */
     protected $contentTypes = [
@@ -82,22 +77,19 @@ class EditmodeListener implements EventSubscriberInterface
      * @param UserLoader $userLoader
      * @param PimcoreBundleManager $bundleManager
      * @param RouterInterface $router
-     * @param Packages $package
      */
     public function __construct(
         EditmodeResolver $editmodeResolver,
         DocumentResolver $documentResolver,
         UserLoader $userLoader,
         PimcoreBundleManager $bundleManager,
-        RouterInterface $router,
-        Packages $package
+        RouterInterface $router
     ) {
         $this->editmodeResolver = $editmodeResolver;
         $this->documentResolver = $documentResolver;
         $this->userLoader = $userLoader;
         $this->bundleManager = $bundleManager;
         $this->router = $router;
-        $this->package = $package;
     }
 
     /**
@@ -318,7 +310,7 @@ class EditmodeListener implements EventSubscriberInterface
     {
         return array_merge(
             [
-                $this->package->getUrl('bundles/fosjsrouting/js/router.js'),
+                'bundles/fosjsrouting/js/router.js',
                 '/bundles/pimcoreadmin/js/pimcore/functions.js',
                 '/bundles/pimcoreadmin/js/pimcore/overrides.js',
                 '/bundles/pimcoreadmin/js/pimcore/tool/milestoneslider.js',
