@@ -32,7 +32,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Intl\Exception\NotImplementedException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 /**
  * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-hobex" in Pimcore 7.
@@ -53,18 +53,18 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
     const TRANSACTION_CATEGORY_ECOMMERCE = 'EC';
 
-    /** @var EngineInterface */
-    private $templatingEngine;
+    /** @var Environment */
+    private $twig;
 
     private $authorizedData = [];
 
     /** @var HobexConfig */
     private $config;
 
-    public function __construct(array $options, EngineInterface $templatingEngine, LoggerInterface $hobexLogger)
+    public function __construct(array $options, Environment $twig, LoggerInterface $hobexLogger)
     {
         $this->setLogger($hobexLogger);
-        $this->templatingEngine = $templatingEngine;
+        $this->twig = $twig;
         $this->configureOptions(new OptionsResolver())->resolve($options);
 
         $this->config = new HobexConfig();

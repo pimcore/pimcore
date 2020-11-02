@@ -1,7 +1,7 @@
 {% set fields = element.getClass().getFieldDefinitions() %}
 
 <div class="small-icon {{ iconCls }}"></div>
-{% include 'PimcoreAdminBundle:SearchAdmin/Search/Quicksearch:info-table.html.twig' with {'element': element, 'cls': 'no-opacity'} %}
+{% include '@PimcoreAdmin/SearchAdmin/Search/Quicksearch/info-table.html.twig' with {'element': element, 'cls': 'no-opacity'} %}
 
 <table class="data-table" style="top: 70px;">
     {% set c = 0 %}

@@ -142,17 +142,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
         // load engine specific configuration only if engine is active
-        $configuredEngines = ['twig', 'php'];
-
-        if ($container->hasParameter('templating.engines')) {
-            $engines = $container->getParameter('templating.engines');
-
-            foreach ($engines as $engine) {
-                if (in_array($engine, $configuredEngines)) {
-                    $loader->load(sprintf('templating_%s.yml', $engine));
-                }
-            }
-        }
+        $loader->load('templating_twig.yml');
 
         $this->addContextRoutes($container, $config['context']);
     }

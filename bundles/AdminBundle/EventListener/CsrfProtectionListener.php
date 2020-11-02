@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\AdminBundle\EventListener;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
-use Pimcore\Templating\PhpEngine;
 use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -25,6 +24,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Twig\Environment;
 
 class CsrfProtectionListener implements EventSubscriberInterface
 {
@@ -36,18 +36,18 @@ class CsrfProtectionListener implements EventSubscriberInterface
     protected $csrfToken = null;
 
     /**
-     * @var PhpEngine
+     * @var Environment
      */
-    protected $phpTemplatingEngine;
+    protected $twig;
 
     /**
      * @param array $excludedRoutes
-     * @param PhpEngine $phpTemplatingEngine
+     * @param Environment $twig
      */
-    public function __construct($excludedRoutes, PhpEngine $phpTemplatingEngine)
+    public function __construct($excludedRoutes, Environment $twig)
     {
         $this->excludedRoutes = $excludedRoutes;
-        $this->phpTemplatingEngine = $phpTemplatingEngine;
+        $this->twig = $twig;
     }
 
     /**
@@ -70,7 +70,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
             return;
         }
 
-        $this->phpTemplatingEngine->addGlobal('csrfToken', $this->getCsrfToken());
+        $this->twig->addGlobal('csrfToken', $this->getCsrfToken());
 
         if ($request->getMethod() == Request::METHOD_GET) {
             return;
@@ -144,6 +144,6 @@ class CsrfProtectionListener implements EventSubscriberInterface
             return $token;
         });
 
-        $this->phpTemplatingEngine->addGlobal('csrfToken', $this->csrfToken);
+        $this->twig->addGlobal('csrfToken', $this->csrfToken);
     }
 }

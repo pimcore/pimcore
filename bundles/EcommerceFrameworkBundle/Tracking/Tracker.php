@@ -86,7 +86,7 @@ abstract class Tracker implements TrackerInterface
     protected function getTemplatePath(string $name)
     {
         return sprintf(
-            '%s:%s.js.twig',
+            '%s/%s.js.twig',
             $this->templatePrefix,
             $name
         );

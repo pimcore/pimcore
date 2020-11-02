@@ -31,9 +31,9 @@ use Pimcore\Templating\Model\ViewModelInterface;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
 {
@@ -45,9 +45,9 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
     protected $brickManager;
 
     /**
-     * @var EngineInterface
+     * @var Environment
      */
-    protected $templating;
+    protected $twig;
 
     /**
      * @var BundleLocatorInterface
@@ -88,7 +88,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
 
     /**
      * @param AreabrickManagerInterface $brickManager
-     * @param EngineInterface $templating
+     * @param Environment $twig
      * @param BundleLocatorInterface $bundleLocator
      * @param WebPathResolver $webPathResolver
      * @param ActionRenderer $actionRenderer
@@ -98,7 +98,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
      */
     public function __construct(
         AreabrickManagerInterface $brickManager,
-        EngineInterface $templating,
+        Environment $twig,
         BundleLocatorInterface $bundleLocator,
         WebPathResolver $webPathResolver,
         ActionRenderer $actionRenderer,
@@ -107,7 +107,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
         ResponseStack $responseStack
     ) {
         $this->brickManager = $brickManager;
-        $this->templating = $templating;
+        $this->twig = $twig;
         $this->bundleLocator = $bundleLocator;
         $this->webPathResolver = $webPathResolver;
         $this->actionRenderer = $actionRenderer;
@@ -235,7 +235,9 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
 
         // check if view template exists and throw error before open tag is rendered
         $viewTemplate = $this->resolveBrickTemplate($brick, 'view');
-        if (!$this->templating->exists($viewTemplate)) {
+        $loader = $this->twig->getLoader();
+
+        if (!$loader->exists($viewTemplate)) {
             $e = new ConfigurationException(sprintf(
                 'The view template "%s" for areabrick %s does not exist',
                 $viewTemplate,
@@ -274,10 +276,10 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
         // passing the engine interface is necessary otherwise rendering a
         // php template inside the twig template returns the content of the php file
         // instead of actually parsing the php template
-        echo $this->templating->render('PimcoreCoreBundle:Areabrick:wrapper.html.twig', [
+        echo $this->twig->render('@PimcoreCore/Areabrick/wrapper.html.twig', [
             'brick' => $brick,
             'info' => $info,
-            'templating' => $this->templating,
+            'twig' => $this->twig,
             'editmode' => $editmode,
             'viewTemplate' => $viewTemplate,
             'viewParameters' => $viewParameters,

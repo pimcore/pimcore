@@ -6,7 +6,7 @@ services:
 
     # public alias to Twig engine
     pimcore.templating.engine.twig:
-        alias: templating.engine.twig
+        alias: twig
         public: true
 
     Pimcore\Twig\Extension\HelpersExtension: ~

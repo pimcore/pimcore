@@ -4,11 +4,6 @@ services:
         autoconfigure: true
         public: false
 
-    # public alias to the delegating engine
-    pimcore.templating.engine.delegating:
-        alias: templating.engine.delegating
-        public: true
-
     # RENDERERS
 
     Pimcore\Templating\Renderer\ActionRenderer:
@@ -40,13 +35,13 @@ services:
 
     Pimcore\Navigation\Renderer\Menu:
         arguments:
-            $templatingEngine: '@templating.engine.delegating'
+            $twig: '@twig'
         tags:
             - { name: pimcore.navigation.renderer, alias: menu }
 
     Pimcore\Navigation\Renderer\Breadcrumbs:
         arguments:
-            $templatingEngine: '@templating.engine.delegating'
+            $twig: '@twig'
         tags:
             - { name: pimcore.navigation.renderer, alias: breadcrumbs }
 

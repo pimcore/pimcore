@@ -1087,7 +1087,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
         return $this->render(
-            'PimcoreAdminBundle:Admin/Asset:showVersion' . ucfirst($asset->getType()) . '.html.twig',
+            '@PimcoreAdmin/Admin/Asset/showVersion' . ucfirst($asset->getType()) . '.html.twig',
             [
                 'asset' => $asset,
                 'loader' => $loader,
@@ -1553,18 +1553,18 @@ class AssetController extends ElementControllerBase implements KernelControllerE
 
             if ($thumbnail['status'] == 'finished') {
                 return $this->render(
-                    'PimcoreAdminBundle:Admin/Asset:getPreviewVideoDisplay.html.twig',
+                    '@PimcoreAdmin/Admin/Asset/getPreviewVideoDisplay.html.twig',
                     $previewData
                 );
             } else {
                 return $this->render(
-                    'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.twig',
+                    '@PimcoreAdmin/Admin/Asset/getPreviewVideoError.html.twig',
                     $previewData
                 );
             }
         } else {
             return $this->render(
-                'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.twig',
+                '@PimcoreAdmin/Admin/Asset/getPreviewVideoError.html.twig',
                 $previewData
             );
         }
@@ -1619,7 +1619,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         }
 
         return $this->render(
-            'PimcoreAdminBundle:Admin/Asset:imageEditor.html.twig',
+            '@PimcoreAdmin/Admin/Asset/imageEditor.html.twig',
             ['asset' => $asset]
         );
     }

@@ -34,7 +34,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     {
         parent::__construct($configuration);
         if ($configuration instanceof VoucherTokenTypeSingle) {
-            $this->template = 'PimcoreEcommerceFrameworkBundle:voucher:voucher_code_tab_single.html.twig';
+            $this->template = '@PimcoreEcommerceFramework/voucher/voucher_code_tab_single.html.twig';
         } else {
             throw new InvalidConfigException('Invalid Configuration Class for type VoucherTokenTypeSingle.');
         }

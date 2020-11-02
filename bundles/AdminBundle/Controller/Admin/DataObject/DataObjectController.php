@@ -1469,7 +1469,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         if ($object) {
             if ($object->isAllowed('versions')) {
-                return $this->render('PimcoreAdminBundle:Admin/DataObject/DataObject:previewVersion.html.twig',
+                return $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/previewVersion.html.twig',
                     [
                         'object' => $object,
                         'validLanguages' => Tool::getValidLanguages(),
@@ -1510,7 +1510,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
         if ($object1 && $object2) {
             if ($object1->isAllowed('versions') && $object2->isAllowed('versions')) {
-                return $this->render('PimcoreAdminBundle:Admin/DataObject/DataObject:diffVersions.html.twig',
+                return $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/diffVersions.html.twig',
                     [
                         'object1' => $object1,
                         'object2' => $object2,

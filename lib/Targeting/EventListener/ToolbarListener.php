@@ -36,7 +36,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 class ToolbarListener implements EventSubscriberInterface
 {
@@ -68,9 +68,9 @@ class ToolbarListener implements EventSubscriberInterface
     private $eventDispatcher;
 
     /**
-     * @var EngineInterface
+     * @var Environment
      */
-    private $templatingEngine;
+    private $twig;
 
     /**
      * @var CodeInjector
@@ -83,7 +83,7 @@ class ToolbarListener implements EventSubscriberInterface
         TargetingDataCollector $targetingDataCollector,
         OverrideHandler $overrideHandler,
         EventDispatcherInterface $eventDispatcher,
-        EngineInterface $templatingEngine,
+        Environment $twig,
         CodeInjector $codeInjector
     ) {
         $this->visitorInfoStorage = $visitorInfoStorage;
@@ -91,7 +91,7 @@ class ToolbarListener implements EventSubscriberInterface
         $this->targetingDataCollector = $targetingDataCollector;
         $this->overrideHandler = $overrideHandler;
         $this->eventDispatcher = $eventDispatcher;
-        $this->templatingEngine = $templatingEngine;
+        $this->twig = $twig;
         $this->codeInjector = $codeInjector;
     }
 
@@ -194,7 +194,7 @@ class ToolbarListener implements EventSubscriberInterface
 
         $this->eventDispatcher->dispatch($event, TargetingEvents::RENDER_TOOLBAR);
 
-        $code = $this->templatingEngine->render(
+        $code = $this->twig->render(
             $event->getTemplate(),
             $event->getData()
         );

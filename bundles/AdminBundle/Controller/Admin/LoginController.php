@@ -116,7 +116,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
         $params['browserSupported'] = $this->detectBrowser();
 
-        return $this->render('PimcoreAdminBundle:Admin/Login:login.html.twig', $params);
+        return $this->render('@PimcoreAdmin/Admin/Login/login.html.twig', $params);
     }
 
     /**
@@ -216,7 +216,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
         $csrfProtectionListener->regenerateCsrfToken();
 
-        return $this->render('PimcoreAdminBundle:Admin/Login:lostpassword.html.twig', $params);
+        return $this->render('@PimcoreAdmin/Admin/Login/lostpassword.html.twig', $params);
     }
 
     /**
@@ -241,7 +241,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
                 return $this->redirect($url);
             } elseif ($queryString) {
-                return $this->render('PimcoreAdminBundle:Admin/Login:deeplink.html.twig', [
+                return $this->render('@PimcoreAdmin/Admin/Login/deeplink.html.twig', [
                     'tab' => $deeplink,
                     'perspective' => $perspective,
                 ]);
@@ -284,7 +284,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             $params['error'] = 'No session available, it either timed out or cookies are not enabled.';
         }
 
-        return $this->render('PimcoreAdminBundle:Admin/Login:twoFactorAuthentication.html.twig', $params);
+        return $this->render('@PimcoreAdmin/Admin/Login/twoFactorAuthentication.html.twig', $params);
     }
 
     /**

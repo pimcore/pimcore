@@ -39,14 +39,14 @@ namespace Pimcore\Navigation\Renderer;
 
 use Pimcore\Navigation\Container;
 use Pimcore\Navigation\Page;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 abstract class AbstractRenderer implements RendererInterface
 {
     /**
-     * @var EngineInterface
+     * @var Environment
      */
-    protected $templatingEngine;
+    protected $twig;
 
     /**
      * The minimum depth a page must have to be included when rendering
@@ -91,11 +91,11 @@ abstract class AbstractRenderer implements RendererInterface
     protected $_renderInvisible = false;
 
     /**
-     * @param EngineInterface $templatingEngine
+     * @param Environment $twig
      */
-    public function __construct(EngineInterface $templatingEngine)
+    public function __construct(Environment $twig)
     {
-        $this->templatingEngine = $templatingEngine;
+        $this->twig = $twig;
     }
 
     // Accessors:

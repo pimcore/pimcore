@@ -16,7 +16,9 @@ services:
 
     Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener:
         public: true
-        arguments: ['%pimcore_admin.csrf_protection.excluded_routes%', '@templating.engine.php']
+        arguments:
+            - '%pimcore_admin.csrf_protection.excluded_routes%'
+            - '@twig'
         calls:
             - [setLogger, ['@logger']]
         tags:

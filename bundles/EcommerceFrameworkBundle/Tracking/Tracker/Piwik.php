@@ -81,7 +81,7 @@ class Piwik extends Tracker implements
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'template_prefix' => 'PimcoreEcommerceFrameworkBundle:Tracking/piwik',
+            'template_prefix' => '@PimcoreEcommerceFramework/Tracking/piwik',
 
             // by default, a cart add/remove delegates to cart update
             // if you manually trigger cart update on every change you can

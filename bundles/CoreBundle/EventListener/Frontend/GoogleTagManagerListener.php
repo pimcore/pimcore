@@ -30,7 +30,7 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 class GoogleTagManagerListener
 {
@@ -56,9 +56,9 @@ class GoogleTagManagerListener
     private $eventDispatcher;
 
     /**
-     * @var EngineInterface
+     * @var Environment
      */
-    private $templatingEngine;
+    private $twig;
 
     /**
      * @var array
@@ -79,11 +79,11 @@ class GoogleTagManagerListener
     public function __construct(
         SiteIdProvider $siteIdProvider,
         EventDispatcherInterface $eventDispatcher,
-        EngineInterface $templatingEngine
+        Environment $twig
     ) {
         $this->siteIdProvider = $siteIdProvider;
         $this->eventDispatcher = $eventDispatcher;
-        $this->templatingEngine = $templatingEngine;
+        $this->twig = $twig;
     }
 
     public function onKernelResponse(ResponseEvent $event)
@@ -184,7 +184,7 @@ class GoogleTagManagerListener
         $data = $event->getData();
         $data['blocks'] = $event->getBlocks();
 
-        $code = $this->templatingEngine->render(
+        $code = $this->twig->render(
             $event->getTemplate(),
             $data
         );

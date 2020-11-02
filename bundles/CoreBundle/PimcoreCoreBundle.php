@@ -18,13 +18,10 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\AreabrickPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\CacheCollectorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\DebugStopwatchPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\DoctrineMigrationsParametersPass;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LegacyTemplatePass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\LongRunningHelperPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPsrLogMessageProcessorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\MonologPublicLoggerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\NavigationRendererPass;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PhpTemplatingPass;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\PimcoreGlobalTemplatingVariablesPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ProfilerAliasPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterImageOptimizersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RegisterMaintenanceTaskPass;
@@ -32,7 +29,6 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RoutingLoaderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SessionConfiguratorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TargetingOverrideHandlersPass;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TemplateVarsProviderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WebDebugToolbarListenerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -69,12 +65,9 @@ class PimcoreCoreBundle extends Bundle
      */
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new PhpTemplatingPass());
         $container->addCompilerPass(new AreabrickPass());
         $container->addCompilerPass(new NavigationRendererPass());
         $container->addCompilerPass(new CacheCollectorPass());
-        $container->addCompilerPass(new PimcoreGlobalTemplatingVariablesPass());
-        $container->addCompilerPass(new TemplateVarsProviderPass());
         $container->addCompilerPass(new ServiceControllersPass());
         $container->addCompilerPass(new SessionConfiguratorPass());
         $container->addCompilerPass(new WebDebugToolbarListenerPass());
@@ -89,6 +82,5 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new RegisterMaintenanceTaskPass());
         $container->addCompilerPass(new RoutingLoaderPass());
         $container->addCompilerPass(new ProfilerAliasPass());
-        $container->addCompilerPass(new LegacyTemplatePass());
     }
 }
