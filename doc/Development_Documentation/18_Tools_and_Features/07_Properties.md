@@ -19,23 +19,10 @@ Have a look at a few cases below:
 
 The following example shows how you can get a property value in the template:
 
-<div class="code-section">
-
-```php
-//retrieve the value of a property named "hideNavigation"
-$hideNavigation = $this->document->getProperty('hideNavigation');
- 
-//retrieve an array with all properties for this document
-$propertiesList = $this->document->getProperties();
-```
-
 ```twig
 {# retrieve the value of a property named "hideNavigation" #}
 {% set hideNavigation = document.getProperty('hideNavigation') %}
 ```
-
-</div>
-
 
 
 ## Predefined properties

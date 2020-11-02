@@ -60,17 +60,9 @@ You can also pass every valid `<img>` tag attribute ([w3.org Image](http://www.w
 
 ### Basic usage
 
-<div class="code-section">
-
-```php
-<?= $this->image("myImage"); ?>
-```
-
 ```twig
 {{ pimcore_image("myImage") }}
 ```
-
-</div>
 
 The code above generates an image area in the backend and displays the image at the frontend.
 
@@ -87,17 +79,6 @@ Note that if you use the thumbnail argument, the rendered image on the frontend 
 
 Learn more about thumbnails here: [Image Thumbnails](../../04_Assets/03_Working_with_Thumbnails/01_Image_Thumbnails.md).
 
-<div class="code-section">
-
-```php
-<?= $this->image("myImage", [
-    "title" => "Drag your image here",
-    "width" => 200,
-    "height" => 200,
-    "thumbnail" => "contentimages"
-]); ?>
-```
-
 ```twig
 {{ pimcore_image("myImage", {
     "title": "Drag your image here",
@@ -107,8 +88,6 @@ Learn more about thumbnails here: [Image Thumbnails](../../04_Assets/03_Working_
 }) }}
 ```
 
-</div>
-
 ###### Backend Preview
 
 ![Image with title and specified size - the backend preview](../../img/image_preview_backend3.png)
@@ -116,22 +95,6 @@ Learn more about thumbnails here: [Image Thumbnails](../../04_Assets/03_Working_
 ### An Example with a Direct Thumbnail Configuration
 
 You can also change the thumbnail configuration:
-
-<div class="code-section">
-
-```php
-<?= $this->image("myImage", [
-    "title" => "Drag your image here",
-    "width" => 200,
-    "height" => 200,
-    "thumbnail" => [
-        "width" => 200,
-        "height" => 200,
-        "interlace" => true,
-        "quality" => 90
-    ]
-]); ?>
-```
 
 ```twig
 {{ pimcore_image("myImage", {
@@ -147,21 +110,7 @@ You can also change the thumbnail configuration:
 }) }}
 ```
 
-</div>
-
 ### An Example Using Custom Attributes
-
-<div class="code-section">
-
-```php
-<?= $this->image("myImage", [
-    "thumbnail" => "content",
-    "attributes" => [
-        "custom-attr" => "value",
-        "data-role" => "image"
-    ]
-]) ?>
-```
 
 ```twig
 {{ pimcore_image("myImage", {
@@ -173,51 +122,9 @@ You can also change the thumbnail configuration:
 }) }}
 ```
 
-</div>
-
 And this is how the rendered html looks: `<img custom-attr="value" data-role="image" src="/var/tmp/image-thumbnails/0/56/thumb__content/dsc03807.jpeg" />`
 
 ### Other Advanced Examples
-
-<div class="code-section">
-
-```php
-
-// get retina image
-<?= $this->image("myImage", [
-    "thumbnail" => [
-        "width" => 200,
-        "height" => 200
-    ],    
-    "highResolution" => 2
-]); ?>
-
-
-// will output<img src="/var/thumb_9999__auto_xxxxxxxx@2x.png" width="200" height="200" /> <!-- but the real image size is 400x400 pixel -->
-
-// custom image tag (thumbnail objects)
-<?php if($this->editmode): ?>
-    <?= $this->image("myImage", ["thumbnail" => "myThumbnail"]); ?>
-<?php else: ?>
-    <?php $thumbnail = $this->image("myImage")->getThumbnail("myThumbnail"); ?>
-    <img src="<?= $thumbnail; ?>" width="<?= $thumbnail->getWidth(); ?>" height="<?= $thumbnail->getHeight(); ?>" data-custom="xxxx" />
-<?php endif; ?>
- 
- 
-// disable automatic width and height attributes
-<?= $this->image("myImage", [
-    "thumbnail" => "exampleScaleWidth",
-    "disableWidthHeightAttributes" => true
-]) ?>
-  
-// custom drop targets
-<div class="myCustomImageDropTarget anotherClass">My first alternative drop target</div>
-<?= $this->image("image", [
-    "thumbnail" => "contentfullimage",
-    "dropClass" => "myCustomImageDropTarget"
-]) ?>
-<div class="myCustomImageDropTarget someClass">My second alternative drop target</div>
-```
 
 ```twig
 {# Get retina image #}
@@ -257,8 +164,6 @@ And this is how the rendered html looks: `<img custom-attr="value" data-role="im
 <div class="myCustomImageDropTarget someClass">My second alternative drop target</div>
 ```
 
-</div>
-
 ## Field-specific Image Cropping for Documents
 
 ### Backend Usage
@@ -287,71 +192,6 @@ All dimensions are in percent and therefore independent from the image size, you
  
 ### Code Usage Example
 
-<div class="code-section">
- 
-```php
-<div>
- <p>
-        <?= $this->image("myImage", [
-            "title" => "Drag your image here",
-            "width" => 400,
-            "height" => 400,
-            "thumbnail" => "content",
-            /* 
-            //adds predefined config sets
-            "predefinedDataTemplates" => [
-                            "marker" => [
-                                [
-                                    "menuName" => "marker config 1",
-                                    "name" => "marker name",
-                                    "data" => [
-                                        [
-                                            "name" => "my textfield",
-                                            "type" => "textfield"
-                                        ],
-                                        [
-                                            "name" => "my asset href",
-                                            "type" => "asset",
-                                            "value" => "/testimage1.jpg"
-                                        ]
-                                    ]
-                                ]
-                            ],
-                            "hotspot" => [
-                                [
-                                    "menuName" => "hotspot config 1",
-                                    "name" => "hotspot name",
-                                    "data" => [
-                                        [
-                                            "name" => "my textfield",
-                                            "type" => "textfield"
-                                        ],
-                                        [
-                                            "name" => "my asset href",
-                                            "type" => "asset",
-                                            "value" => "/testimage1.jpg"
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]*/
-        ]); ?>
-        
-        <?php if(!$this->editmode): ?>
-            <?php
-            // outside the editmode: do something with the data
-            if($this->image("myImage")->getHotspots()) {
-                dump($this->image("myImage")->getHotspots());
-            }
-            if($this->image("myImage")->getMarker()) {
-                dump($this->image("myImage")->getMarker());
-            }
-            ?>
-        <?php endif; ?>
- </p>
-</div>
-```
-
 ```twig
 <div>
     <p>
@@ -374,8 +214,6 @@ All dimensions are in percent and therefore independent from the image size, you
     </p>
 </div>
 ```
-
-</div>
 
 `getHotspots` output:
 

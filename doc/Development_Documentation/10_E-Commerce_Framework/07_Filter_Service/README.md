@@ -189,18 +189,6 @@ For a sample of a controller see our demo [here](https://github.com/pimcore/demo
 For putting all filters to the frontend use following sample. It is important that this sample is inside a form in order 
 to get the parameter of changed filters delivered back to the controller. 
 
-<div class="code-section">
-
-```php
-<?php if($this->filterDefinitionObject->getFilters()): ?>
-	<div class="widget">
-	<?php foreach ($this->filterDefinitionObject->getFilters() as $filter): ?>
-		<?= $this->filterService->getFilterFrontend($filter, $this->products, $this->currentFilter);?>
-	<?php endforeach; ?><!-- end widget -->
-	</div>
-<?php endif; ?>
-```
-
 ```twig
 {% if(filterDefinition.filters|length > 0) %}
     {% for filter in filterDefinition.filters %}
@@ -209,5 +197,3 @@ to get the parameter of changed filters delivered back to the controller.
     {% endfor %}
 {% endif %}
 ```
-
-</div>

@@ -41,23 +41,12 @@ to reference the right elements within a block.
 As Twig does not provide a `while` construct, there's a specialized function `pimcore_iterate_block` which allows you
 to iterate through all block elements.
 
-<div class="code-section">
-
-```php
-<?php while($this->block("contentblock")->loop()) { ?>
-    <h2><?= $this->input("subline"); ?></h2>
-    <?= $this->wysiwyg("content"); ?>
-<?php } ?>
-```
-
 ```twig
 {% for i in pimcore_iterate_block(pimcore_block('contentblock')) %}
     <h2>{{ pimcore_input('subline') }}</h2>
     {{ pimcore_wysiwyg('content') }}
 {% endfor %}
 ```
-
-</div>
 
 The result in editmode should looks like to following: 
 ![Block in editmode](../../img/block_editmode.png)
@@ -107,28 +96,6 @@ And in the frontend of the application:
 
 The manual mode offers you the possibility to deal with block the way you like, this is for example useful with tables: 
 
-<div class="code-section">
-
-```php
-<?php $block = $this->block("gridblock", ["manual" => true])->start(); ?>
-<table>
-    <tr>
-        <?php while ($block->loop()) { ?>
-            <?php $block->blockConstruct(); ?>
-                <td customAttribute="<?= $this->input("myInput")->getData() ?>">
-                    <?php $block->blockStart(); ?>
-                        <div style="width:200px; height:200px;border:1px solid black;">
-                            <?= $this->input("myInput"); ?>
-                        </div>
-                    <?php $block->blockEnd(); ?>
-                </td>
-            <?php $block->blockDestruct(); ?>
-        <?php } ?>
-    </tr>
-</table>
-<?php $block->end(); ?>
-```
-
 ```twig
 {% set block = pimcore_block('gridblock', {'manual' : true, 'limit' : 6}).start() %}
 <table>
@@ -148,8 +115,6 @@ The manual mode offers you the possibility to deal with block the way you like, 
 </table>
 {% do block.end() %}
 ```
-
-</div>
 
 ### Using Manual Mode with custom button position
 

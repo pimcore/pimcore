@@ -45,23 +45,12 @@ to reference the right elements within a block.
 As Twig does not provide a `while` construct, there's a specialized function `pimcore_iterate_block` which allows you
 to iterate through all block elements.
 
-<div class="code-section">
-
-```php
-<?php while($this->scheduledblock("block")->loop()) { ?>
-    <h2><?= $this->input("blockinput") ?><h2>
-    <?= $this->image("myimage") ?>
-<?php } ?>
-```
-
 ```twig
 {% for i in pimcore_iterate_block(pimcore_scheduledblock('block')) %}
     <h2>{{ pimcore_input('blockinput') }}</h2>
     {{ pimcore_image('myimage') }}
 {% endfor %}
 ```
-
-</div>
 
 The result in editmode should looks like to following: 
 ![Scheduled Block in editmode](../../img/scheduledblock_editmode.jpg)

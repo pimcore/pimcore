@@ -17,30 +17,12 @@
 
 ## Simple Example
 
-<div class="code-section">
-
-```php
-<?= $this->checkbox("myCheckbox"); ?>
-```
-
 ```twig
 {{ pimcore_checkbox('myCheckbox') }}
 ```
-</div>
+
 
 ## Advanced Example
-
-<div class="code-section">
-
-```php
-Setting XYZ: <?= $this->checkbox("myCheckbox"); ?>
-
-<?php if($this->checkbox("myCheckbox")->isChecked()): ?>
-    <div>
-        <?php //do something... ?>
-    </div>
-<? endif; ?>
-```
 
 ```twig
 Setting XYZ: {{ pimcore_checkbox('myCheckbox') }}
@@ -51,4 +33,3 @@ Setting XYZ: {{ pimcore_checkbox('myCheckbox') }}
     </div>
 {% endif %}
 ```
-</div>

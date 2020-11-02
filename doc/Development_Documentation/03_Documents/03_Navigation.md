@@ -58,8 +58,6 @@ Having set up the navigation container as shown above, you can easily use it to 
 
 ### Meta Navigation - Multilevel
 
-<div class="code-section">
-
 ```twig
 <div class="my-menu">
     {# you can use array for ulClass to provide depth level classes #}
@@ -81,8 +79,6 @@ Having set up the navigation container as shown above, you can easily use it to 
         }) }}
 </div>
 ```
-
-</div>
 
 ### Breadcrumbs
 

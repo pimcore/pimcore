@@ -20,39 +20,13 @@ into a block element, and the editor cannot choose which area is used, this has 
 
 ## Example
 
-<div class="code-section">
-
 ```twig
 <div>
 {{ pimcore_area('myArea', { 'type' : 'gallery-single-images' }) }}
 </div>
 ```
 
-```php
-<div>
-    <?= $this->area('myArea', ['type' => 'gallery-single-images']); ?>
-</div>
-```
-
-</div>
-
-
 ## Example with Parameters
-
-<div class="code-section">
-
-```php
-<div>
-    <?= $this->area('myArea', [
-        'type' => 'gallery-single-images',
-        'params' => [
-            'gallery-single-images' => [
-                'param1' => 123,
-            ]
-        ]
-    ]); ?>
-</div>
-```
 
 ```twig
 <div>
@@ -67,13 +41,11 @@ into a block element, and the editor cannot choose which area is used, this has 
 </div>
 ```
 
-</div>
-
 Get the params in your brick:
 
-```php
+```twig
 <div>
-    <?= $this->param1; ?>
+    {{ param1 }}
 </div>
 ```
 
