@@ -334,6 +334,6 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
      */
     public function setWidth($width)
     {
-        $this->width = intval($width);
+        $this->width = (int)$width;
     }
 }

@@ -71,8 +71,8 @@ class SearchController extends AdminController
         $subtypes = explode(',', $allParams['subtype'] ?? '');
         $classnames = explode(',', $allParams['class'] ?? '');
 
-        $offset = intval($allParams['start']);
-        $limit = intval($allParams['limit']);
+        $offset = (int)$allParams['start'];
+        $limit = (int)$allParams['limit'];
 
         $offset = $offset ? $offset : 0;
         $limit = $limit ? $limit : 50;
@@ -210,10 +210,10 @@ class SearchController extends AdminController
                         $tag = Element\Tag::getById($tagId);
                         if ($tag) {
                             $tagPath = $tag->getFullIdPath();
-                            $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE ctype = ' . $db->quote($type) . ' AND (id = ' . intval($tagId) . ' OR idPath LIKE ' . $db->quote($db->escapeLike($tagPath) . '%') . '))';
+                            $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment INNER JOIN tags ON tags.id = tags_assignment.tagid WHERE ctype = ' . $db->quote($type) . ' AND (id = ' .(int)$tagId. ' OR idPath LIKE ' . $db->quote($db->escapeLike($tagPath) . '%') . '))';
                         }
                     } else {
-                        $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment WHERE ctype = ' . $db->quote($type) . ' AND tagid = ' . intval($tagId) . ')';
+                        $conditionParts[] = 'id IN (SELECT cId FROM tags_assignment WHERE ctype = ' . $db->quote($type) . ' AND tagid = ' .(int)$tagId. ')';
                     }
                 }
             }

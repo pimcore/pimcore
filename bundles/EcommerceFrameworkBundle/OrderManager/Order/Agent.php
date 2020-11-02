@@ -155,7 +155,7 @@ class Agent implements OrderAgentInterface
     public function itemChangeAmount(OrderItem $item, $amount)
     {
         // init
-        $amount = floatval($amount);
+        $amount = (float)$amount;
 
         // add log note
         $note = $this->createNote($item);

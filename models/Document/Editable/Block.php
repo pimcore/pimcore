@@ -117,7 +117,7 @@ class Block extends Model\Document\Editable implements BlockInterface
     public function setDefault()
     {
         if (empty($this->indices) && isset($this->config['default']) && $this->config['default']) {
-            for ($i = 0; $i < intval($this->config['default']); $i++) {
+            for ($i = 0; $i < (int)$this->config['default']; $i++) {
                 $this->indices[$i] = $i + 1;
             }
         }

@@ -47,7 +47,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
 
         foreach ($groupByValues as $groupByValue) {
             if ($groupByValue['label']) {
-                $value = floatval($groupByValue['label']);
+                $value = (float)$groupByValue['label'];
 
                 if (!$value) {
                     $value = 0;

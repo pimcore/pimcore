@@ -43,7 +43,7 @@ class UserController extends AdminController implements KernelControllerEventInt
     public function treeGetChildsByIdAction(Request $request)
     {
         $list = new User\Listing();
-        $list->setCondition('parentId = ?', intval($request->get('node')));
+        $list->setCondition('parentId = ?', (int)$request->get('node'));
         $list->setOrder('ASC');
         $list->setOrderKey('name');
         $list->load();
@@ -116,7 +116,7 @@ class UserController extends AdminController implements KernelControllerEventInt
 
             $className = User\Service::getClassNameForType($type);
             $user = $className::create([
-                'parentId' => intval($request->get('parentId')),
+                'parentId' => (int)$request->get('parentId'),
                 'name' => trim($request->get('name')),
                 'password' => '',
                 'active' => $request->get('active'),
@@ -239,7 +239,7 @@ class UserController extends AdminController implements KernelControllerEventInt
      */
     public function deleteAction(Request $request)
     {
-        $user = User\AbstractUser::getById(intval($request->get('id')));
+        $user = User\AbstractUser::getById((int)$request->get('id'));
 
         // only admins are allowed to delete admins and folders
         // because a folder might contain an admin user, so it is simply not allowed for users with the "users" permission
@@ -277,7 +277,7 @@ class UserController extends AdminController implements KernelControllerEventInt
     public function updateAction(Request $request)
     {
         /** @var User|User\Role $user */
-        $user = User\AbstractUser::getById(intval($request->get('id')));
+        $user = User\AbstractUser::getById((int)$request->get('id'));
 
         if ($user instanceof User && $user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Only admin users are allowed to modify admin users');
@@ -335,7 +335,7 @@ class UserController extends AdminController implements KernelControllerEventInt
                     $newWorkspaces = [];
                     foreach ($spaces as $space) {
                         if (in_array($space['path'], $processedPaths[$type])) {
-                            throw new \Exception('Error saving workspaces as multiple entries found for path "' . $space['path'] .'" in '.$this->trans("$type") . 's');
+                            throw new \Exception('Error saving workspaces as multiple entries found for path "' . $space['path'] .'" in '.$this->trans((string)$type) . 's');
                         }
 
                         $element = Element\Service::getElementByPath($type, $space['path']);
@@ -386,12 +386,12 @@ class UserController extends AdminController implements KernelControllerEventInt
      */
     public function getAction(Request $request, Config $config)
     {
-        if (intval($request->get('id')) < 1) {
+        if ((int)$request->get('id') < 1) {
             return $this->adminJson(['success' => false]);
         }
 
         /** @var User $user */
-        $user = User::getById(intval($request->get('id')));
+        $user = User::getById((int)$request->get('id'));
 
         if ($user->isAdmin() && !$this->getAdminUser()->isAdmin()) {
             throw new \Exception('Only admin users are allowed to modify admin users');
@@ -479,7 +479,7 @@ class UserController extends AdminController implements KernelControllerEventInt
     public function getMinimalAction(Request $request)
     {
         /** @var User $user */
-        $user = User::getById(intval($request->get('id')));
+        $user = User::getById((int)$request->get('id'));
         $user->setPassword(null);
 
         $minimalUserData['id'] = $user->getId();
@@ -646,7 +646,7 @@ class UserController extends AdminController implements KernelControllerEventInt
     public function roleTreeGetChildsByIdAction(Request $request)
     {
         $list = new User\Role\Listing();
-        $list->setCondition('parentId = ?', intval($request->get('node')));
+        $list->setCondition('parentId = ?', (int)$request->get('node'));
         $list->load();
 
         $roles = [];
@@ -706,7 +706,7 @@ class UserController extends AdminController implements KernelControllerEventInt
     public function roleGetAction(Request $request)
     {
         /** @var User\UserRole $role */
-        $role = User\Role::getById(intval($request->get('id')));
+        $role = User\Role::getById((int)$request->get('id'));
 
         // workspaces
         $types = ['asset', 'document', 'object'];
@@ -867,7 +867,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         /**
          * @var User $user
          */
-        $user = User::getById(intval($request->get('id')));
+        $user = User::getById((int)$request->get('id'));
         $success = true;
         $user->setTwoFactorAuthentication('enabled', false);
         $user->setTwoFactorAuthentication('secret', '');
@@ -955,7 +955,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         $q = '%' . $request->get('query') . '%';
 
         $list = new User\Listing();
-        $list->setCondition('name LIKE ? OR firstname LIKE ? OR lastname LIKE ? OR email LIKE ? OR id = ?', [$q, $q, $q, $q, intval($request->get('query'))]);
+        $list->setCondition('name LIKE ? OR firstname LIKE ? OR lastname LIKE ? OR email LIKE ? OR id = ?', [$q, $q, $q, $q, (int)$request->get('query')]);
         $list->setOrder('ASC');
         $list->setOrderKey('name');
         $list->load();

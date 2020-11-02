@@ -496,7 +496,7 @@ class Link extends Model\Document\Editable
         $isInternal = $this->data['internal'] ?? false;
 
         if (is_array($this->data) && $isInternal) {
-            if (intval($this->data['internalId']) > 0) {
+            if ((int)$this->data['internalId'] > 0) {
                 if ($this->data['internalType'] == 'document') {
                     if ($doc = Document::getById($this->data['internalId'])) {
                         $key = 'document_'.$doc->getId();

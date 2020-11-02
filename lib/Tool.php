@@ -125,7 +125,7 @@ class Tool
                 return [];
             }
 
-            $validLanguages = str_replace(' ', '', strval($config['valid_languages']));
+            $validLanguages = str_replace(' ', '', (string)$config['valid_languages']);
             $languages = explode(',', $validLanguages);
 
             if (!is_array($languages)) {
