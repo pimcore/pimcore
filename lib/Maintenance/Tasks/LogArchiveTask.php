@@ -14,6 +14,8 @@
 
 namespace Pimcore\Maintenance\Tasks;
 
+use DateInterval;
+use DateTimeImmutable;
 use Pimcore\Config;
 use Pimcore\Db;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
@@ -119,5 +121,24 @@ final class LogArchiveTask implements TaskInterface
         } else {
             $this->logger->debug('Skip cleaning up referenced FileObjects of application_logs, was done within the last 24 hours');
         }
+
+        $deleteArchiveLogDate = (new DateTimeImmutable())->sub(new DateInterval('P'. ($this->config['applicationlog']['delete_archive_threshold'] ?? 6) .'M'));
+        do {
+            $applicationLogArchiveTable = 'application_logs_archive_' . $deleteArchiveLogDate->format('m_Y');
+            $archiveTableExists = $db->fetchOne('SELECT 1
+                FROM information_schema.tables
+                WHERE table_schema = ?
+                AND table_name = ?',
+                [
+                    $this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase(),
+                    $applicationLogArchiveTable
+                ]);
+
+            if($archiveTableExists) {
+                $db->exec('DROP TABLE IF EXISTS ' . ($this->config['applicationlog']['archive_alternative_database'] ?: $db->getDatabase()) . '.' . $applicationLogArchiveTable);
+            }
+
+            $deleteArchiveLogDate = $deleteArchiveLogDate->sub(new DateInterval('P1M'));
+        } while($archiveTableExists);
     }
 }

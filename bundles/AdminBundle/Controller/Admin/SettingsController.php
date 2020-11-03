@@ -529,6 +529,7 @@ class SettingsController extends AdminController
                 ],
                 'archive_treshold' => $values['applicationlog.archive_treshold'],
                 'archive_alternative_database' => $values['applicationlog.archive_alternative_database'],
+                'delete_archive_threshold' => $values['applicationlog.delete_archive_threshold'],
             ],
         ];
 

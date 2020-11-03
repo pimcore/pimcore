@@ -453,6 +453,11 @@ pimcore.settings.system = Class.create({
                                 value: this.getValue("applicationlog.archive_alternative_database")
                             },
                             {
+                                fieldLabel: t('log_config_delete_archive_threshold'),
+                                name: 'applicationlog.delete_archive_threshold',
+                                value: this.getValue("applicationlog.delete_archive_threshold") ? this.getValue("applicationlog.delete_archive_threshold") : '6'
+                            },
+                            {
                                 xtype: "displayfield",
                                 hideLabel: true,
                                 width: 600,
