@@ -33,5 +33,3 @@ interface PricingManagerLocatorInterface
      */
     public function hasPricingManager(string $tenant): bool;
 }
-
-class_alias(PricingManagerLocatorInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPricingManagerLocator');

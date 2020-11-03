@@ -332,5 +332,3 @@ interface CartInterface
      */
     public function isVoucherErrorCode($errorCode);
 }
-
-class_alias(CartInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart');

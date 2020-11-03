@@ -17,5 +17,3 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter;
 interface RelationInterpreterInterface extends InterpreterInterface
 {
 }
-
-class_alias(RelationInterpreterInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IRelationInterpreter');

@@ -42,5 +42,3 @@ interface DiscountInterface extends ActionInterface
      */
     public function getPercent();
 }
-
-class_alias(DiscountInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\IDiscount');

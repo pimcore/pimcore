@@ -18,5 +18,3 @@ interface GetterInterface
 {
     public function get($object, $config = null);
 }
-
-class_alias(GetterInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\IGetter');

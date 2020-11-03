@@ -119,5 +119,3 @@ interface PaymentInterface
      */
     public function getConfigurationKey();
 }
-
-class_alias(PaymentInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment');
