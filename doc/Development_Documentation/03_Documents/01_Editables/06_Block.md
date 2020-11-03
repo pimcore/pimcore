@@ -36,7 +36,7 @@ The items in the loop as well as their order can be defined by the editor with t
 ## Basic Usage
 
 ```twig
-{% for i in pimcore_block('contentblock').iterable %}
+{% for i in pimcore_block('contentblock').iterator %}
     <h2>{{ pimcore_input('subline') }}</h2>
     {{ pimcore_wysiwyg('content') }}
 {% endfor %}
@@ -94,7 +94,7 @@ The manual mode offers you the possibility to deal with block the way you like, 
 {% set block = pimcore_block('gridblock', {'manual' : true, 'limit' : 6}).start() %}
 <table>
     <tr>
-        {% for b in block.iterable %}
+        {% for b in block.iterator %}
             {% do block.blockConstruct() %}
               <td customAttribute="{{ pimcore_input("myInput").getData() }}">
                     {% do block.blockStart() %}

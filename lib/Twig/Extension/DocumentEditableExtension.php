@@ -101,6 +101,6 @@ class DocumentEditableExtension extends AbstractExtension
      */
     public function getBlockIterator(BlockInterface $block): \Generator
     {
-        return $block->getIterable();
+        return $block->getIterator();
     }
 }

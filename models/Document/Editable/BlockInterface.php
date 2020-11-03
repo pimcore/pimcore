@@ -19,7 +19,7 @@ namespace Pimcore\Model\Document\Editable;
 
 interface BlockInterface
 {
-    public function getIterable();
+    public function getIterator();
 
     /**
      * Is executed at the beginning of the loop and setup some general settings

@@ -40,7 +40,7 @@ In editmode, additional block items can be added and their timestamp can be conf
 ## Basic Usage
 
 ```twig
-{% for i in pimcore_scheduledblock('block').iterable %}
+{% for i in pimcore_scheduledblock('block').iterator %}
     <h2>{{ pimcore_input('blockinput') }}</h2>
     {{ pimcore_image('myimage') }}
 {% endfor %}
