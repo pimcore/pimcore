@@ -321,7 +321,7 @@ class Unit extends Model\AbstractModel
 
     /**
      * @param string $reference
-     * 
+     *
      * @return $this
      */
     public function setReference($reference)
@@ -341,7 +341,7 @@ class Unit extends Model\AbstractModel
 
     /**
      * @param float $conversionOffset
-     * 
+     *
      * @return $this
      */
     public function setConversionOffset($conversionOffset)
@@ -361,7 +361,7 @@ class Unit extends Model\AbstractModel
 
     /**
      * @param string $converter
-     * 
+     *
      * @return $this
      */
     public function setConverter($converter)
@@ -371,4 +371,3 @@ class Unit extends Model\AbstractModel
         return $this;
     }
 }
-

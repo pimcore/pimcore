@@ -18,10 +18,6 @@ declare(strict_types=1);
 namespace Pimcore\Twig\Extension;
 
 use Pimcore\Tool\Admin;
-use Pimcore\Twig\TokenParser\AssetCompressParser;
-use Symfony\Component\VarDumper\Cloner\VarCloner;
-use Symfony\Component\VarDumper\Dumper\AbstractDumper;
-use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -40,7 +36,7 @@ class AdminExtension extends AbstractExtension
     /**
      * @deprecated
      */
-    public function minimize(string $value) : array
+    public function minimize(string $value): array
     {
         return Admin::getMinimizedScriptPath($value);
     }
