@@ -27,7 +27,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
 {
     use OwnerAwareFieldTrait;
     /**
-     * @var Asset\Image
+     * @var Asset\Image|null
      */
     protected $image;
 
@@ -228,6 +228,8 @@ class Hotspotimage implements OwnerAwareFieldInterface
             $image = Service::getElementById($this->image->getType(), $this->image->getId());
             if($image instanceof Asset\Image) {
                 $this->image = $image;
+            } else {
+                $this->image = null;
             }
         }
     }
