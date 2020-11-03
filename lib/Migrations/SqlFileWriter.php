@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Migrations;
 
-use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Doctrine\DBAL\Migrations\OutputWriter;
 use Pimcore\Migrations\Configuration\Configuration;
@@ -47,7 +46,7 @@ class SqlFileWriter
     public function __construct(Configuration $configuration, $destPath, OutputWriter $outputWriter = null)
     {
         if (empty($destPath)) {
-            $this->throwInvalidArgumentException('Destination file must be specified.');
+            throw new InvalidArgumentException('Destination file must be specified.');
         }
 
         $this->configuration = $configuration;
@@ -117,17 +116,5 @@ class SqlFileWriter
         }
 
         return $path;
-    }
-
-    /**
-     * This only exists for backwards-compatibiliy with DBAL 2.4
-     */
-    protected function throwInvalidArgumentException($message)
-    {
-        if (class_exists('Doctrine\DBAL\Exception\InvalidArgumentException')) {
-            throw new InvalidArgumentException($message);
-        } else {
-            throw new DBALException($message);
-        }
     }
 }

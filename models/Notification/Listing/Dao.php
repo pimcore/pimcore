@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Notification\Listing;
 
+use Doctrine\DBAL\Exception;
 use Pimcore\Model\Listing\Dao\AbstractDao;
 use Pimcore\Model\Notification;
 
@@ -52,7 +53,7 @@ class Dao extends AbstractDao
     /**
      * @return array
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws Exception
      */
     public function load(): array
     {

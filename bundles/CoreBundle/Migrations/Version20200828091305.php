@@ -3,7 +3,7 @@
 namespace Pimcore\Bundle\CoreBundle\Migrations;
 
 use Doctrine\DBAL\ConnectionException;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Log\Handler\ApplicationLoggerDb;
 use Pimcore\Migrations\Migration\AbstractPimcoreMigration;

@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Storage;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\PDO\Statement as PDOStatement;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Types\Types;
 use Pimcore\Targeting\Model\VisitorInfo;
@@ -86,11 +87,12 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         $this->addExpiryParam($qb, $scope);
 
         $stmt = $qb->execute();
-        $result = $stmt->fetchAll();
-
         $data = [];
-        foreach ($result as $row) {
-            $data[$row['name']] = json_decode($row['value'], true);
+
+        if ($stmt instanceof PDOStatement) {
+            while ($row = $stmt->fetchAssociative()) {
+                $data[$row['name']] = json_decode($row['value'], true);
+            }
         }
 
         return $data;
@@ -119,7 +121,11 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         $this->addExpiryParam($qb, $scope);
 
         $stmt = $qb->execute();
-        $result = (int)$stmt->fetchColumn();
+        $result = 0;
+
+        if ($stmt instanceof PDOStatement) {
+            $result = (int)$stmt->fetchOne();
+        }
 
         return 1 === $result;
     }
@@ -177,7 +183,11 @@ EOF;
         $this->addExpiryParam($qb, $scope);
 
         $stmt = $qb->execute();
-        $result = $stmt->fetchColumn();
+        $result = false;
+
+        if ($stmt instanceof PDOStatement) {
+            $result = $stmt->fetchOne();
+        }
 
         if (!$result) {
             return $default;
@@ -292,9 +302,12 @@ EOF;
         $this->addExpiryParam($qb, $scope);
 
         $stmt = $qb->execute();
-        $date = $this->convertToDateTime($stmt->fetchColumn());
 
-        return $date;
+        if ($stmt instanceof PDOStatement) {
+            return $this->convertToDateTime($stmt->fetchOne());
+        }
+
+        return null;
     }
 
     private function convertToDateTime($result = null)
