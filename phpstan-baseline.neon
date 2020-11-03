@@ -28,26 +28,6 @@ parameters:
 			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
 
 		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Templating\\\\Helper\\\\HelperInterface\\:\\:setDomain\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Resources/views/Admin/Login/twoFactorAuthentication.html.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Templating\\\\PhpEngine\\:\\:\\$error\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Resources/views/Admin/Login/twoFactorAuthentication.html.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Templating\\\\PhpEngine\\:\\:\\$csrfToken\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Resources/views/Admin/Login/twoFactorAuthentication.html.php
-
-		-
-			message: "#^Parameter \\#1 \\(array\\) of echo cannot be converted to string\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Resources/views/Admin/Login/twoFactorAuthentication.html.php
-
-		-
 			message: "#^Property Pimcore\\\\Bundle\\\\AdminBundle\\\\Security\\\\LogoutSuccessHandler\\:\\:\\$tokenStorage \\(Symfony\\\\Component\\\\Security\\\\Core\\\\Authentication\\\\Token\\\\Storage\\\\TokenStorage\\) does not accept Symfony\\\\Component\\\\Security\\\\Core\\\\Authentication\\\\Token\\\\Storage\\\\TokenStorageInterface\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Security/LogoutSuccessHandler.php
