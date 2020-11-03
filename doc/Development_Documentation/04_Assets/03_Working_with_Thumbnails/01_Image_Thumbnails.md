@@ -129,6 +129,9 @@ $height = $thumbnail->getHeight();
  
 // get the html "img" tag for the thumbnail incl. custom class:
 echo $thumbnail->getHtml(["class" => "custom-class"]);
+
+// get the html "img" tag including attribute to enable lazy.loading
+echo $thumbnail->getHtml(["loading" => "lazy"]);
  
 // get the path to the thumbnail
 $path = $thumbnail->getPath();
@@ -160,10 +163,8 @@ echo $thumbnail; // prints something like /var/tmp/....png
 <?= $asset->getThumbnail("content")->getHtml(['alt' => 'top priority alt']) ?>
 // or
 <?= $asset->getThumbnail("content")->getHtml(['defaultalt' => 'default alt, if not set in image']) ?>
-
-
 ```
-
+Additionally there are some special parameters to [customize generated image HTML code](https://pimcore.com/docs/pimcore/current/Development_Documentation/Documents/Editables/Image.html#page_Configuration).
 
 ## Using ICC Color Profiles for CMYK -> RGB 
 Pimcore supports ICC color profiles to get better results when converting CMYK images (without embedded color profile) 
