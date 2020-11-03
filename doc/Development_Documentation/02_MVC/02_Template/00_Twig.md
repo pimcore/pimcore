@@ -143,19 +143,6 @@ detailed description of every helper:
 * `pimcore_cache`
 * `pimcore_url`
 
-
-#### Block elements
-
-As Twig does not provide a `while` control structure which is needed to iterate a [Block](../../03_Documents/01_Editables/06_Block.md)
-editable, we introduced a function called `pimcore_iterate_block` to allow walking through every block element:
-
-```twig
-{% for i in pimcore_iterate_block(pimcore_block('contentblock')) %}
-    <h2>{{ pimcore_input('subline') }}</h2>
-    {{ pimcore_wysiwyg('content') }}
-{% endfor %}
-```
-
 ### Tests
 
 #### `instanceof`
