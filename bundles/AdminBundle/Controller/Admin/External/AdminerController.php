@@ -239,18 +239,18 @@ namespace {
                  */
                 public function credentials()
                 {
-                    $db = \Pimcore\Db::get();
+                    $params = \Pimcore\Db::get()->getParams();
 
-                    $host = $db->getHost();
-                    if ($db->getPort()) {
-                        $host .= ':' . $db->getPort();
+                    $host = $params['host'] ?? null;
+                    if ($port = $params['port'] ?? null) {
+                        $host .= ':' . $port;
                     }
 
                     // server, username and password for connecting to database
                     $result = [
                         $host,
-                        $db->getUsername(),
-                        $db->getPassword(),
+                        $params['user'] ?? null,
+                        $params['password'] ?? null,
                     ];
 
                     return $result;

@@ -14,7 +14,7 @@
 
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
-use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Controller\KernelControllerEventInterface;
@@ -85,12 +85,12 @@ class LogController extends AdminController implements KernelControllerEventInte
 
         if ($fromDate = $this->parseDateObject($request->get('fromDate'), $request->get('fromTime'))) {
             $qb->andWhere('timestamp > :fromDate');
-            $qb->setParameter('fromDate', $fromDate, Type::DATETIME);
+            $qb->setParameter('fromDate', $fromDate, Types::DATETIME_MUTABLE);
         }
 
         if ($toDate = $this->parseDateObject($request->get('toDate'), $request->get('toTime'))) {
             $qb->andWhere('timestamp <= :toDate');
-            $qb->setParameter('toDate', $toDate, Type::DATETIME);
+            $qb->setParameter('toDate', $toDate, Types::DATETIME_MUTABLE);
         }
 
         if (!empty($component = $request->get('component'))) {
