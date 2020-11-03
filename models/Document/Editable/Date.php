@@ -93,7 +93,7 @@ class Date extends Model\Document\Editable
     }
 
     /**
-     * @see Tag::getDataForResource
+     * @see Model\Document\Editable::getDataForResource
      *
      * @return int|null
      */

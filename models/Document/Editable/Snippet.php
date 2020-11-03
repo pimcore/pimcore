@@ -105,7 +105,7 @@ class Snippet extends Model\Document\Editable
      */
     public function frontend()
     {
-        // TODO inject services via DI when tags are built through container
+        // TODO inject services via DI when editables are built through container
         $container = \Pimcore::getContainer();
 
         $editableHandler = $container->get(EditableHandler::class);
@@ -149,7 +149,7 @@ class Snippet extends Model\Document\Editable
                 $cacheParams['siteId'] = Site::getCurrentSite()->getId();
             }
 
-            $cacheKey = 'tag_snippet__' . md5(serialize($cacheParams));
+            $cacheKey = 'editable_snippet__' . md5(serialize($cacheParams));
             if ($content = Cache::load($cacheKey)) {
                 return $content;
             }

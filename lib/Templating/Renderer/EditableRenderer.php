@@ -26,13 +26,6 @@ class EditableRenderer implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     /**
-     * @var EditableLoaderInterface
-     *
-     * @deprecated since v6.8 and will be removed in 7. Use $editableLoader instead.
-     */
-    protected $tagLoader;
-
-    /**
      * @var Editable\Loader\EditableLoader
      */
     protected $editableLoader;
@@ -49,20 +42,7 @@ class EditableRenderer implements LoggerAwareInterface
     public function __construct(EditableLoaderInterface $editableLoader, EditmodeResolver $editmodeResolver)
     {
         $this->editableLoader = $editableLoader;
-        $this->tagLoader = & $this->editableLoader;
         $this->editmodeResolver = $editmodeResolver;
-    }
-
-    /**
-     * @param string $type
-     *
-     * @return bool
-     *
-     * @deprecated since v6.8 and will be removed in 7. Use editableExists() instead.
-     */
-    public function tagExists($type)
-    {
-        return $this->editableExists($type);
     }
 
     /**
@@ -73,24 +53,6 @@ class EditableRenderer implements LoggerAwareInterface
     public function editableExists($type)
     {
         return $this->editableLoader->supports($type);
-    }
-
-    /**
-     * Loads a document tag
-     *
-     * @param PageSnippet $document
-     * @param string $type
-     * @param string $inputName
-     * @param array $options
-     * @param bool|null $editmode
-     *
-     * @return Editable|null
-     *
-     * @deprecated since v6.8 and will be removed in 7. Use editableExists() instead.
-     */
-    public function getTag(PageSnippet $document, $type, $inputName, array $options = [], bool $editmode = null)
-    {
-        return $this->getEditable($document, $type, $inputName, $options, $editmode);
     }
 
     /**

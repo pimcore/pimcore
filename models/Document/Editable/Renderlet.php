@@ -109,7 +109,7 @@ class Renderlet extends Model\Document\Editable
      */
     public function frontend()
     {
-        // TODO inject services via DI when tags are built through container
+        // TODO inject services via DI when editables are built through container
         $container = \Pimcore::getContainer();
         $editableHandler = $container->get(EditableHandler::class);
 

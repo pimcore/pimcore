@@ -68,7 +68,7 @@ class Area extends Model\Document\Editable
     {
         $config = $this->getConfig();
 
-        // TODO inject area handler via DI when tags are built through container
+        // TODO inject area handler via DI when editables are built by container
         $editableHandler = \Pimcore::getContainer()->get(EditableHandler::class);
 
         // don't show disabled bricks

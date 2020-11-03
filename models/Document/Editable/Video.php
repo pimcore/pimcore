@@ -895,7 +895,7 @@ class Video extends Model\Document\Editable
         $code = '
         <div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video">
             <style type="text/css">
-                #' . $uid . ' .pimcore_tag_video_progress_status {
+                #' . $uid . ' .pimcore_editable_video_progress_status {
                     box-sizing:content-box;
                     background:#fff url(/bundles/pimcoreadmin/img/video-loading.gif) center center no-repeat;
                     width:66px;
@@ -927,7 +927,7 @@ class Video extends Model\Document\Editable
     {
         $uid = 'video_' . uniqid();
 
-        return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video"><div class="pimcore_tag_video_empty" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;"></div></div>';
+        return '<div id="pimcore_video_' . $this->getName() . '" class="pimcore_editable_video"><div class="pimcore_editable_video_empty" id="' . $uid . '" style="width: ' . $this->getWidth() . 'px; height: ' . $this->getHeight() . 'px;"></div></div>';
     }
 
     /**
