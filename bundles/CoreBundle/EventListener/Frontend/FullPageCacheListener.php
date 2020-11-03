@@ -234,7 +234,7 @@ class FullPageCacheListener
                 }
 
                 if (!empty($conf['exclude_cookie'])) {
-                    $cookies = explode(',', strval($conf['exclude_cookie']));
+                    $cookies = explode(',', (string)$conf['exclude_cookie']);
 
                     foreach ($cookies as $cookie) {
                         if (!empty($cookie) && isset($_COOKIE[trim($cookie)])) {

@@ -92,7 +92,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -171,7 +171,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -257,7 +257,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -353,7 +353,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -419,7 +419,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -490,7 +490,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -567,7 +567,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -633,7 +633,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -694,7 +694,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }
@@ -755,7 +755,7 @@ class PDFreactor
             $lastError = error_get_last();
             throw new \Exception('Error connecting to PDFreactor Web Service at ' . $this->url . '. Please make sure the PDFreactor Web Service is installed and running (Error: ' . $lastError['message'] . ')');
         }
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status >= 200 && $status <= 204) {
             $errorMode = false;
         }

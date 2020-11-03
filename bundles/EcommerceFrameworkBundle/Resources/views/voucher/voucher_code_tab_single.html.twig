@@ -119,19 +119,19 @@
                         </div>
                     </div>
 
-                    {% include "PimcoreEcommerceFrameworkBundle:voucher/parts:statistics.html.twig" with {'statistics': statistics, 'colors': colors} %}
+                    {% include "@PimcoreEcommerceFramework/voucher/parts/statistics.html.twig" with {'statistics': statistics, 'colors': colors} %}
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal Templates -->
-    {% include "PimcoreEcommerceFrameworkBundle:voucher/parts/modals/single:assign_settings_modal.html.twig" with {'settings': settings, 'generateWarning': generateWarning, 'urlParams': urlParams} %}
-    {% include "PimcoreEcommerceFrameworkBundle:voucher/parts/modals:cleanup_reservations_modal.html.twig" with {'urlParams': urlParams} %}
+    {% include "@PimcoreEcommerceFramework/voucher/parts/modals/single/assign_settings_modal.html.twig" with {'settings': settings, 'generateWarning': generateWarning, 'urlParams': urlParams} %}
+    {% include "@PimcoreEcommerceFramework/voucher/parts/modals/cleanup_reservations_modal.html.twig" with {'urlParams': urlParams} %}
 
 
     <!--Script for statistics-->
     {% if statistics['usage'] is iterable  %}
-        {% include "PimcoreEcommerceFrameworkBundle:voucher/parts:usage_statistic_script.html.twig" with {'usage': statistics['usage'], 'colors': colors} %}
+        {% include "@PimcoreEcommerceFramework/voucher/parts/usage_statistic_script.html.twig" with {'usage': statistics['usage'], 'colors': colors} %}
     {% endif %}
 {% endblock %}

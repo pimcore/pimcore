@@ -50,7 +50,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     {
         parent::__construct($configuration);
         if ($configuration instanceof VoucherTokenTypePattern) {
-            $this->template = 'PimcoreEcommerceFrameworkBundle:voucher:voucher_code_tab_pattern.html.twig';
+            $this->template = '@PimcoreEcommerceFramework/voucher/voucher_code_tab_pattern.html.twig';
         } else {
             throw new InvalidConfigException('Invalid Configuration Class for Type VoucherTokenTypePattern.');
         }
@@ -535,7 +535,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         try {
             $tokens->setFilterConditions($params['id'], $params);
         } catch (\Exception $e) {
-            $this->template = 'PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabError.html.php';
+            $this->template = '@PimcoreEcommerceFramework/Voucher/voucherCodeTabError.html.twig';
             $viewParamsBag['errors'][] = $e->getMessage() . ' | Error-Code: ' . $e->getCode();
         }
 

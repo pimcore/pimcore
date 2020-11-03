@@ -335,7 +335,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
         $configuration = $this->decodeJson($request->get('configuration'));
         $values = $this->decodeJson($request->get('values'));
 
-        $modificationDate = intval($values['modificationDate']);
+        $modificationDate = (int)$values['modificationDate'];
         if ($modificationDate < $customLayout->getModificationDate()) {
             return $this->adminJson(['success' => false, 'msg' => 'custom_layout_changed']);
         }
@@ -966,7 +966,7 @@ class ClassController extends AdminController implements KernelControllerEventIn
     public function getClassDefinitionForColumnConfigAction(Request $request)
     {
         $class = DataObject\ClassDefinition::getById($request->get('id'));
-        $objectId = intval($request->get('oid'));
+        $objectId = (int)$request->get('oid');
 
         $filteredDefinitions = DataObject\Service::getCustomLayoutDefinitionForGridColumnConfig($class, $objectId);
 

@@ -1425,7 +1425,7 @@ class DataObjectHelperController extends AdminController
             $paramsBag['isImportPreview'] = true;
             $paramsBag['validLanguages'] = Tool::getValidLanguages();
 
-            $response = $this->render('PimcoreAdminBundle:Admin/DataObject/DataObject:diffVersions.html.twig', $paramsBag);
+            $response = $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/diffVersions.html.twig', $paramsBag);
 
             return $response;
         } catch (\Exception $e) {

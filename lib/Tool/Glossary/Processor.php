@@ -236,7 +236,7 @@ class Processor
                 $linkType = 'external';
                 $linkTarget = $d['link'];
 
-                if (intval($d['link'])) {
+                if ((int)$d['link']) {
                     if ($doc = Document::getById($d['link'])) {
                         $d['link'] = $doc->getFullPath();
 

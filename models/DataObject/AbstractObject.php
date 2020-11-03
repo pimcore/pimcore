@@ -274,7 +274,7 @@ class AbstractObject extends Model\Element\AbstractElement
             return null;
         }
 
-        $id = intval($id);
+        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
         if (!$force && Runtime::isRegistered($cacheKey)) {

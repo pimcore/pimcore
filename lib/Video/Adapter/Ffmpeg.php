@@ -221,7 +221,7 @@ class Ffmpeg extends Adapter
         $durationParts = explode(':', $durationRaw);
 
         // calculate duration in seconds
-        $duration = (intval($durationParts[0]) * 3600) + (intval($durationParts[1]) * 60) + floatval($durationParts[2]);
+        $duration = ((int)$durationParts[0] * 3600) + ((int)$durationParts[1] * 60) + (float)$durationParts[2];
 
         return $duration;
     }
@@ -306,7 +306,7 @@ class Ffmpeg extends Adapter
      */
     public function setVideoBitrate($videoBitrate)
     {
-        $videoBitrate = intval($videoBitrate);
+        $videoBitrate = (int)$videoBitrate;
 
         $videoBitrate = ceil($videoBitrate / 2) * 2;
 
@@ -326,7 +326,7 @@ class Ffmpeg extends Adapter
      */
     public function setAudioBitrate($audioBitrate)
     {
-        $audioBitrate = intval($audioBitrate);
+        $audioBitrate = (int)$audioBitrate;
 
         $audioBitrate = ceil($audioBitrate / 2) * 2;
 

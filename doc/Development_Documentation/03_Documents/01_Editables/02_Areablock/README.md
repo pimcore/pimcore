@@ -129,7 +129,7 @@ The manual mode offers you the possibility to use areablocks with custom HTML, t
 
 {% do areaBlock.start() %}
 <table>
-    {% for i in pimcore_iterate_block(areaBlock) %}
+    {% for i in areaBlock.iterator %}
         {% do areaBlock.blockConstruct() %}
             <tr>
                 <td>

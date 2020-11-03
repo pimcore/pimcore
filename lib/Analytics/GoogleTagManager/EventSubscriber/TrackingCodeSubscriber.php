@@ -27,7 +27,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Event\Analytics\Google\TagManager\CodeEvent;
 use Pimcore\Event\Analytics\GoogleTagManagerEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 class TrackingCodeSubscriber implements EventSubscriberInterface
 {
@@ -39,13 +39,13 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
     /** @var TrackingManager */
     protected $trackingManager;
 
-    /** @var EngineInterface * */
-    protected $templatingEngine;
+    /** @var Environment * */
+    protected $twig;
 
-    public function __construct(TrackingManager $trackingManager, EngineInterface $templatingEngine)
+    public function __construct(TrackingManager $trackingManager, Environment $twig)
     {
         $this->trackingManager = $trackingManager;
-        $this->templatingEngine = $templatingEngine;
+        $this->twig = $twig;
     }
 
     public static function getSubscribedEvents()
@@ -73,7 +73,7 @@ class TrackingCodeSubscriber implements EventSubscriberInterface
 
                 $block = $event->getBlock(Tracker::BLOCK_BEFORE_SCRIPT_TAG);
 
-                $code = $this->templatingEngine->render(
+                $code = $this->twig->render(
                     '@PimcoreCore/Analytics/Tracking/GoogleTagManager/dataLayer.html.twig',
                     ['trackedCodes' => $trackedCodes]
                 );

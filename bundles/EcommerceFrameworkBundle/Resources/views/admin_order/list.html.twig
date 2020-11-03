@@ -120,7 +120,7 @@
     </table>
 
     {% if paginator.getPages().pageCount > 1 %}
-        {% include "PimcoreEcommerceFrameworkBundle:includes:paging.html.twig" with {'paginationVariables': paginator.getPages("Sliding") } %}
+        {% include "@PimcoreEcommerceFramework/includes/paging.html.twig" with {'paginationVariables': paginator.getPages("Sliding") } %}
     {% endif %}
 
     {% do pimcore_head_script().captureStart() %}

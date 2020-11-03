@@ -91,7 +91,7 @@ abstract class FrontendController extends Controller
      * @param array $options
      * @param Document\PageSnippet|null $document
      *
-     * @return null|Document\Editable
+     * @return Document\Editable\EditableInterface
      */
     public function getDocumentEditable($type, $inputName, array $options = [], Document\PageSnippet $document = null)
     {

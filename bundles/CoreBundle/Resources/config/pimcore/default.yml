@@ -13,8 +13,6 @@ framework:
     form: ~
     csrf_protection: ~
     validation: { enable_annotations: true }
-    templating:
-        engines: ['php', 'twig']
     web_link:
         enabled: true
     default_locale:  "%locale%"
@@ -24,6 +22,7 @@ framework:
         handler_id:  null
     php_errors:
         log: true
+    assets: ~
 
 # Twig Configuration
 twig:
@@ -34,7 +33,9 @@ twig:
         # this is only here for compatibility/dev reasons and may be removed later
         container: '@service_container'
         pimcore_csrf: '@Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener'
-
+    paths:
+        '%kernel.project_dir%/app/Resources/views': App
+        
 # Doctrine Configuration
 doctrine:
     dbal:

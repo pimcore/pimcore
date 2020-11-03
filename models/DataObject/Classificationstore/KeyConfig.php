@@ -99,7 +99,7 @@ class KeyConfig extends Model\AbstractModel
     public static function getById($id)
     {
         try {
-            $id = intval($id);
+            $id = (int)$id;
             if (self::$cacheEnabled && self::$cache[$id]) {
                 return self::$cache[$id];
             }

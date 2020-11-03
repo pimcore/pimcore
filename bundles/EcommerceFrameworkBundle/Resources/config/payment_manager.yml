@@ -42,7 +42,7 @@ services:
     Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\WirecardSeamless:
         arguments:
             $options: []
-            $templatingEngine: '@templating.engine.delegating'
+            $twig: '@twig'
             $session: '@session'
 
     Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\PayU:
