@@ -46,6 +46,6 @@ abstract class AbstractTemplateAreabrick extends AbstractAreabrick implements Te
      */
     public function getTemplateSuffix()
     {
-        return static::TEMPLATE_SUFFIX_PHP;
+        return static::TEMPLATE_SUFFIX_TWIG;
     }
 }
