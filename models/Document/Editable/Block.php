@@ -126,6 +126,16 @@ class Block extends Model\Document\Editable implements BlockInterface
     }
 
     /**
+     * @return \Generator
+     */
+    public function getIterator()
+    {
+        while ($this->loop()) {
+            yield $this->getCurrentIndex();
+        }
+    }
+
+    /**
      * Loops through the block
      *
      * @return bool

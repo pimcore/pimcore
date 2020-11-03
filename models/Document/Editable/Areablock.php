@@ -126,6 +126,16 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $this->end();
     }
 
+    /**
+     * @return \Generator
+     */
+    public function getIterator()
+    {
+        while ($this->loop()) {
+            yield $this->getCurrentIndex();
+        }
+    }
+
     public function loop()
     {
         $disabled = false;

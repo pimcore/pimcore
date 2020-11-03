@@ -35,14 +35,8 @@ The items in the loop as well as their order can be defined by the editor with t
 
 ## Basic Usage
 
-Please use the `loop()` method to iterate through all block elements. This makes sure the correct indices are set internally
-to reference the right elements within a block.
-
-As Twig does not provide a `while` construct, there's a specialized function `pimcore_iterate_block` which allows you
-to iterate through all block elements.
-
 ```twig
-{% for i in pimcore_iterate_block(pimcore_block('contentblock')) %}
+{% for i in pimcore_block('contentblock').iterator %}
     <h2>{{ pimcore_input('subline') }}</h2>
     {{ pimcore_wysiwyg('content') }}
 {% endfor %}
@@ -100,7 +94,7 @@ The manual mode offers you the possibility to deal with block the way you like, 
 {% set block = pimcore_block('gridblock', {'manual' : true, 'limit' : 6}).start() %}
 <table>
     <tr>
-        {% for b in pimcore_iterate_block(block) %}
+        {% for b in block.iterator %}
             {% do block.blockConstruct() %}
               <td customAttribute="{{ pimcore_input("myInput").getData() }}">
                     {% do block.blockStart() %}
