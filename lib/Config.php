@@ -500,6 +500,7 @@ class Config implements \ArrayAccess
                     ],
                     'archive_treshold' => self::getArrayValue(['applicationlog', 'archive_treshold'], $config),
                     'archive_alternative_database' => self::getArrayValue(['applicationlog', 'archive_alternative_database'], $config),
+                    'delete_archive_threshold' => self::getArrayValue(['applicationlog', 'delete_archive_threshold'], $config),
                 ],
             ]);
         }

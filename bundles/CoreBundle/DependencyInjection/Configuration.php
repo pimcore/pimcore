@@ -391,6 +391,9 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('archive_alternative_database')
                             ->defaultValue('')
                         ->end()
+                        ->scalarNode('delete_archive_threshold')
+                            ->defaultValue('6')
+                        ->end()
                     ->end()
             ->end();
     }
