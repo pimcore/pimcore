@@ -31,7 +31,7 @@ class PDFreactor
 
         $result = file_get_contents($url, false, $context);
 
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -58,7 +58,7 @@ class PDFreactor
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -86,7 +86,7 @@ class PDFreactor
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -126,7 +126,7 @@ class PDFreactor
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -155,7 +155,7 @@ class PDFreactor
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -184,7 +184,7 @@ class PDFreactor
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -213,7 +213,7 @@ class PDFreactor
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -237,7 +237,7 @@ class PDFreactor
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {
@@ -263,7 +263,7 @@ class PDFreactor
         ];
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
-        $status = intval(substr($http_response_header[0], 9, 3));
+        $status = (int)substr($http_response_header[0], 9, 3);
         if ($status == 404) {
             throw new Exception('Document with the given ID was not found.');
         } elseif ($status == 422) {

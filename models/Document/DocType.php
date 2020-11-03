@@ -106,7 +106,7 @@ class DocType extends Model\AbstractModel
     {
         try {
             $docType = new self();
-            $docType->getDao()->getById(intval($id));
+            $docType->getDao()->getById((int)$id);
 
             return $docType;
         } catch (\Exception $e) {

@@ -98,7 +98,7 @@ class Site extends AbstractModel
         } elseif (!$site = \Pimcore\Cache::load($cacheKey)) {
             try {
                 $site = new self();
-                $site->getDao()->getById(intval($id));
+                $site->getDao()->getById((int)$id);
             } catch (\Exception $e) {
                 $site = 'failed';
             }
@@ -124,7 +124,7 @@ class Site extends AbstractModel
     {
         try {
             $site = new self();
-            $site->getDao()->getByRootId(intval($id));
+            $site->getDao()->getByRootId((int)$id);
 
             return $site;
         } catch (\Exception $e) {

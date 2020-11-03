@@ -56,12 +56,12 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
         $allParams = array_merge($request->request->all(), $request->query->all());
 
         $result = $pimcoreUsers->searchData(
-            intval($allParams['id']),
+            (int)$allParams['id'],
             strip_tags($allParams['firstname']),
             strip_tags($allParams['lastname']),
             strip_tags($allParams['email']),
-            intval($allParams['start']),
-            intval($allParams['limit']),
+            (int)$allParams['start'],
+            (int)$allParams['limit'],
             $allParams['sort'] ?? null
         );
 
@@ -79,7 +79,7 @@ class PimcoreUsersController extends \Pimcore\Bundle\AdminBundle\Controller\Admi
     public function exportUserDataAction(Request $request, PimcoreUsers $pimcoreUsers)
     {
         $this->checkPermission('users');
-        $userData = $pimcoreUsers->getExportData(intval($request->get('id')));
+        $userData = $pimcoreUsers->getExportData((int)$request->get('id'));
 
         $json = $this->encodeJson($userData, [], JsonResponse::DEFAULT_ENCODING_OPTIONS | JSON_PRETTY_PRINT);
         $jsonResponse = new JsonResponse($json, 200, [

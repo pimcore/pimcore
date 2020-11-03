@@ -69,7 +69,7 @@ class CollectionConfig extends Model\AbstractModel
     {
         try {
             $config = new self();
-            $config->getDao()->getById(intval($id));
+            $config->getDao()->getById((int)$id);
 
             return $config;
         } catch (\Exception $e) {

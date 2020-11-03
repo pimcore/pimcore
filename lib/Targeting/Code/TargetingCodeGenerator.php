@@ -22,7 +22,7 @@ use Pimcore\Event\Targeting\TargetingCodeEvent;
 use Pimcore\Event\TargetingEvents;
 use Pimcore\Targeting\Model\VisitorInfo;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 class TargetingCodeGenerator
 {
@@ -37,9 +37,9 @@ class TargetingCodeGenerator
     private $eventDispatcher;
 
     /**
-     * @var EngineInterface
+     * @var Environment
      */
-    private $templatingEngine;
+    private $twig;
 
     /**
      * @var array
@@ -53,10 +53,10 @@ class TargetingCodeGenerator
 
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
-        EngineInterface $templatingEngine
+        Environment $twig
     ) {
         $this->eventDispatcher = $eventDispatcher;
-        $this->templatingEngine = $templatingEngine;
+        $this->twig = $twig;
     }
 
     public function generateCode(VisitorInfo $visitorInfo): string
@@ -82,7 +82,7 @@ class TargetingCodeGenerator
         $data = $event->getData();
         $data['blocks'] = $event->getBlocks();
 
-        $code = $this->templatingEngine->render(
+        $code = $this->twig->render(
             $event->getTemplate(),
             $data
         );

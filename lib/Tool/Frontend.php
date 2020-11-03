@@ -195,7 +195,7 @@ class Frontend
                 foreach ($browsersToCheck as $browser => $version) {
                     if (preg_match('@(' . $browser . ')/([\d]+)@', $userAgent, $matches)) {
                         if ($matches[1] == $browser) {
-                            if (intval($matches[2]) >= $version) {
+                            if ((int)$matches[2] >= $version) {
                                 return true;
                             } else {
 

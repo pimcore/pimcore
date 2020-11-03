@@ -14,7 +14,7 @@ services:
     Pimcore\Document\Editable\EditableHandler:
         public: true
         arguments:
-            $templating: '@templating'
+            $twig: '@twig'
             $translator: '@Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator'
             $responseStack: '@Pimcore\Http\ResponseStack'
         calls:

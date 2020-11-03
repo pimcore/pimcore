@@ -101,7 +101,7 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      */
     public function setWidth($width)
     {
-        $this->width = intval($width);
+        $this->width = (int)$width;
     }
 
     /**
