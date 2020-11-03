@@ -20,10 +20,18 @@ namespace Pimcore\Model\Document\Editable;
 interface EditableInterface
 {
     /**
-     * Renders the editable, calls either frontend() or admin() depending on the context
-     * @return mixed
+     * Return the data for direct output to the frontend, can also contain HTML code!
+     *
+     * @return string|void
      */
-    public function render();
+    public function frontend();
+
+    /**
+     * Return the data for the admin, can also contain HTML code!
+     *
+     * @return string|void
+     */
+    public function admin();
 
     /**
      * Get the current data stored for the element

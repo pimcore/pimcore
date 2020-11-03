@@ -143,13 +143,6 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     }
 
     /**
-     * Return the data for direct output to the frontend, can also contain HTML code!
-     *
-     * @return string|void
-     */
-    public abstract function frontend();
-
-    /**
      * @param string $id
      * @param string $code
      *
@@ -494,7 +487,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * direct output to the frontend
      *
-     * @return mixed
+     * @return string
      */
     public function render()
     {
