@@ -67,7 +67,9 @@ class Unit extends Model\AbstractModel
      */
     public $conversionOffset;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     public $converter;
 
     /**
@@ -107,7 +109,7 @@ class Unit extends Model\AbstractModel
     /**
      * @param string $id
      *
-     * @return self|null
+     * @return Unit|null
      */
     public static function getById($id)
     {
@@ -182,24 +184,44 @@ class Unit extends Model\AbstractModel
         return ucfirst($this->getAbbreviation() . ' (' . $this->getId() . ')');
     }
 
+    /**
+     * @param string $abbreviation
+     *
+     * @return $this
+     */
     public function setAbbreviation($abbreviation)
     {
         $this->abbreviation = $abbreviation;
+
+        return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getAbbreviation()
     {
         return $this->abbreviation;
     }
 
+    /**
+     * @param int|Unit $baseunit
+     *
+     * @return $this
+     */
     public function setBaseunit($baseunit)
     {
         if ($baseunit instanceof self) {
             $baseunit = $baseunit->getId();
         }
         $this->baseunit = $baseunit;
+
+        return $this;
     }
 
+    /**
+     * @return Unit|null
+     */
     public function getBaseunit()
     {
         if ($this->baseunit) {
@@ -209,21 +231,41 @@ class Unit extends Model\AbstractModel
         return null;
     }
 
+    /**
+     * @param float $factor
+     *
+     * @return $this
+     */
     public function setFactor($factor)
     {
         $this->factor = $factor;
+
+        return $this;
     }
 
+    /**
+     * @return float
+     */
     public function getFactor()
     {
         return $this->factor;
     }
 
+    /**
+     * @param string $group
+     *
+     * @return $this
+     */
     public function setGroup($group)
     {
         $this->group = $group;
+
+        return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getGroup()
     {
         return $this->group;
@@ -231,10 +273,14 @@ class Unit extends Model\AbstractModel
 
     /**
      * @param string $id
+     *
+     * @return $this
      */
     public function setId($id)
     {
         $this->id = (string) $id;
+
+        return $this;
     }
 
     /**
@@ -245,11 +291,21 @@ class Unit extends Model\AbstractModel
         return (string) $this->id;
     }
 
+    /**
+     * @param string $longname
+     *
+     * @return $this
+     */
     public function setLongname($longname)
     {
         $this->longname = $longname;
+
+        return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getLongname()
     {
         return $this->longname;
@@ -265,10 +321,14 @@ class Unit extends Model\AbstractModel
 
     /**
      * @param string $reference
+     * 
+     * @return $this
      */
     public function setReference($reference)
     {
         $this->reference = $reference;
+
+        return $this;
     }
 
     /**
@@ -281,10 +341,14 @@ class Unit extends Model\AbstractModel
 
     /**
      * @param float $conversionOffset
+     * 
+     * @return $this
      */
     public function setConversionOffset($conversionOffset)
     {
         $this->conversionOffset = $conversionOffset;
+
+        return $this;
     }
 
     /**
@@ -297,9 +361,14 @@ class Unit extends Model\AbstractModel
 
     /**
      * @param string $converter
+     * 
+     * @return $this
      */
     public function setConverter($converter)
     {
         $this->converter = (string)$converter;
+
+        return $this;
     }
 }
+
