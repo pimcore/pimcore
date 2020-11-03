@@ -873,25 +873,6 @@ class ElementController extends AdminController
                         'fd' => $fd,
                         'context' => $context,
                     ]);
-                } elseif (method_exists($formatter, 'formatPath')) {
-                    @trigger_error(
-                        sprintf(
-                            'Static PathFormatters are deprecated since Pimcore 5.5 and will be removed in 6.0. Please use %s instead',
-                            DataObject\ClassDefinition\PathFormatterInterface::class
-                        ),
-                        E_USER_DEPRECATED
-                    );
-
-                    $result = call_user_func(
-                        $formatter . '::formatPath',
-                        $result,
-                        $source,
-                        $targets,
-                        [
-                            'fd' => $fd,
-                            'context' => $context,
-                        ]
-                    );
                 }
             }
         }
