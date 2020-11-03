@@ -303,7 +303,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
 
         $params['wirecardFrontendScript'] = $this->js;
 
-        return $this->twig->render($this->partial, $params);
+        return $this->template->render($this->partial, $params);
     }
 
     /**
