@@ -737,7 +737,7 @@ class TranslationController extends AdminController
                 }
 
                 if (isset($element['relations']) && $element['relations']) {
-                    if (!$el instanceof Element\AbstractElement) {
+                    if (!$el instanceof Element\ElementInterface) {
                         $el = Element\Service::getElementById($element['type'], $element['id']);
                     }
 

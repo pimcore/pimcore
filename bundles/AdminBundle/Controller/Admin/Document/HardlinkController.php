@@ -15,7 +15,6 @@
 namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
-use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -138,7 +137,7 @@ class HardlinkController extends DocumentControllerBase
         if (($request->get('task') == 'publish' && $link->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $link->isAllowed('unpublish'))) {
             $link->save();
 
-            $this->addAdminStyle($link, ElementAdminStyleEvent::CONTEXT_EDITOR, $treeData);
+            $treeData = $this->getTreeNodeConfig($link);
 
             return $this->adminJson([
                 'success' => true,

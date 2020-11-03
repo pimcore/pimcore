@@ -574,7 +574,7 @@ abstract class AbstractElasticSearch implements ProductListInterface
         $params['type'] = $this->getTenantConfig()->getElasticSearchClientParams()['indexType'];
         $params['body']['_source'] = true;
 
-        if (is_integer($this->getLimit())) { // null not allowed
+        if (is_int($this->getLimit())) { // null not allowed
             $params['body']['size'] = $this->getLimit();
         }
         $params['body']['from'] = $this->getOffset();

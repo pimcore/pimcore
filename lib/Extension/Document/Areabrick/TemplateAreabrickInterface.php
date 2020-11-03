@@ -15,7 +15,7 @@
 namespace Pimcore\Extension\Document\Areabrick;
 
 /**
- * Bricks implementing this interface auto-resolve view and edit templates if has*Template properties are set.
+ * Bricks implementing this interface auto-resolve view templates if hasTemplate properties are set.
  * Depending on the result of getTemplateLocation and getTemplateSuffix the tag handler builds the following references:
  *
  * - <currentBundle>:Areas/<brickId>/(view|edit).<suffix>

@@ -21,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\Classificationstore\KeyConfig\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
@@ -62,14 +64,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $amount = 0;
-
         try {
-            $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ' '. $this->getCondition(), $this->model->getConditionVariables());
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . DataObject\Classificationstore\KeyConfig\Dao::TABLE_NAME_KEYS . ' '. $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
+            return 0;
         }
-
-        return $amount;
     }
 
     /**

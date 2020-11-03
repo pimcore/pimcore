@@ -16,7 +16,6 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
-use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 
@@ -240,56 +239,6 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     public function getDataForSearchIndex($object, $params = [])
     {
         return '';
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        if ($data instanceof DataObject\Data\Geopoint) {
-            return [
-                'longitude' => $data->getLongitude(),
-                'latitude' => $data->getLatitude(),
-            ];
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|void
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } else {
-            $value = (array) $value;
-            if ($value['longitude'] !== null && $value['latitude'] !== null) {
-                return new DataObject\Data\Geopoint($value['longitude'], $value['latitude']);
-            } else {
-                throw new \Exception('cannot get values from web service import - invalid data');
-            }
-        }
     }
 
     /** True if change is allowed in edit mode.

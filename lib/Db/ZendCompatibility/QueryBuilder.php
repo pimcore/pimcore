@@ -40,6 +40,9 @@ namespace Pimcore\Db\ZendCompatibility;
 use Exception;
 use Pimcore\Db\ConnectionInterface;
 
+/**
+ * @deprecated
+ */
 class QueryBuilder
 {
     const DISTINCT = 'distinct';

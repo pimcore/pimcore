@@ -24,7 +24,7 @@ Specify synonym providers for synonym filters defined in filter section of index
 For details see [Synonyms](./02_Synonyms.md).
 
 #### Sample Config
-```yml 
+```yml
 pimcore_ecommerce_framework:
     index_service:
         tenants:

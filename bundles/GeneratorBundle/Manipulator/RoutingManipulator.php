@@ -6,6 +6,7 @@ use Pimcore\Bundle\GeneratorBundle\Generator\Generator;
 use Symfony\Component\DependencyInjection\Container;
 
 /**
+ * @deprecated
  * Changes the PHP code of a YAML routing file.
  *
  * The following class is copied from \Sensio\Bundle\GeneratorBundle\Manipulator\RoutingManipulator

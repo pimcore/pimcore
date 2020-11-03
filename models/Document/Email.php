@@ -76,6 +76,11 @@ class Email extends Model\Document\PageSnippet
     protected $bcc = '';
 
     /**
+     * @inheritdoc
+     */
+    protected $supportsContentMaster = false;
+
+    /**
      * Contains the email subject
      *
      * @param string $subject

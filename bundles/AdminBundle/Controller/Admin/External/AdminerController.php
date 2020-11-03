@@ -157,7 +157,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\External {
                 $headersRaw = headers_list();
 
                 foreach ($headersRaw as $header) {
-                    $header = explode(':', $header);
+                    $header = explode(':', $header, 2);
                     list($headerKey, $headerValue) = $header;
 
                     if ($headerKey && $headerValue) {

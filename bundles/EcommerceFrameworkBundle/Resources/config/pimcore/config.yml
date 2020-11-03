@@ -1,6 +1,6 @@
 # Monolog Configuration
 monolog:
-    channels: ['pimcore_ecommerce_sql', 'pimcore_ecommerce_factfinder', 'pimcore_ecommerce_es', 'pimcore_ecommerce_findologic']
+    channels: ['pimcore_ecommerce_sql', 'pimcore_ecommerce_es', 'pimcore_ecommerce_findologic']
 
 pimcore:
     objects:

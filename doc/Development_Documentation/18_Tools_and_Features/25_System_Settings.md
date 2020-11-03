@@ -51,7 +51,7 @@ creating a bundle. Please don't activate it in production systems!
 
 What exactly does the dev mode:
 * Loading the source javascript files (uncompressed & commented)
-* Disables some caches (Webservice Cache, ...)
+* Disables some caches (Cache, ...)
 * extensive logging into log files
 * ... and some more little things
 
@@ -123,3 +123,28 @@ Settings for outbound HTTP connectivity of Pimcore - needed e.g. for Pimcore Upd
 Possibility for configuring different newsletter delivery settings from the default e-mail settings.
  
  
+## Access system config in PHP Controller
+Using `\Pimcore\Config::getSystemConfig()` is deprecated. You can choose one of the following options to access the system configuration:
+
+```php 
+<?php
+
+namespace AppBundle\Controller;
+
+use Pimcore\Controller\FrontendController;
+use Symfony\Component\HttpFoundation\Request;
+use Pimcore\Config;
+
+class DefaultController extends FrontendController
+{
+    public function defaultAction(Request $request, Config $config)
+    {
+        // option 1 - use type-hinting to inject the config service
+        $bar = $config['general']['valid_languages'];
+        
+        // option 2 - use the container parameter 
+        $foo = $this->getParameter('pimcore.config')['general']['valid_languages'];    
+    }
+
+}
+```

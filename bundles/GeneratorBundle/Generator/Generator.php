@@ -5,6 +5,7 @@ namespace Pimcore\Bundle\GeneratorBundle\Generator;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
+ * @deprecated
  * Generator is the base class for all generators.
  *
  * The following class is copied from \Sensio\Bundle\GeneratorBundle\Generator\Generator

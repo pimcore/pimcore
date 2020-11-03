@@ -19,6 +19,9 @@ use Pimcore\Model\DataObject\Concrete;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Templating\Helper\Helper;
 
+/**
+ * @deprecated
+ */
 class PimcoreUrl extends Helper
 {
     /**

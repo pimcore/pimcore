@@ -22,40 +22,43 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Version;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Document\PageSnippet $model
  */
 abstract class Dao extends Model\Document\Dao
 {
     /**
-     * Delete all editables containing the content (tags) from the database
+     * Delete all editables containing the content from the database
      */
     public function deleteAllEditables()
     {
-        $this->db->delete('documents_elements', ['documentId' => $this->model->getId()]);
+        $this->db->delete('documents_editables', ['documentId' => $this->model->getId()]);
     }
 
     /**
-     * Get all editables containing the content (tags) from the database
+     * Get all editables containing the content from the database
      *
-     * @return Document\Tag[]
+     * @return Document\Editable[]
      */
     public function getEditables()
     {
-        $editablesRaw = $this->db->fetchAll('SELECT * FROM documents_elements WHERE documentId = ?', [$this->model->getId()]);
+        $editablesRaw = $this->db->fetchAll('SELECT * FROM documents_editables WHERE documentId = ?', [$this->model->getId()]);
 
         $editables = [];
-        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.document.tag');
+        $loader = \Pimcore::getContainer()->get(Document\Editable\Loader\EditableLoader::class);
 
         foreach ($editablesRaw as $editableRaw) {
-            /** @var Document\Tag $editable */
+            /** @var Document\Editable $editable */
             $editable = $loader->build($editableRaw['type']);
             $editable->setName($editableRaw['name']);
             $editable->setDocument($this->model);
             $editable->setDataFromResource($editableRaw['data']);
 
             $editables[$editableRaw['name']] = $editable;
-            $this->model->setEditable($editableRaw['name'], $editable);
         }
+
+        $this->model->setEditables($editables);
 
         return $editables;
     }
@@ -107,6 +110,6 @@ abstract class Dao extends Model\Document\Dao
     public function delete()
     {
         parent::delete();
-        $this->db->delete('documents_elements', ['documentId' => $this->model->getId()]);
+        $this->db->delete('documents_editables', ['documentId' => $this->model->getId()]);
     }
 }

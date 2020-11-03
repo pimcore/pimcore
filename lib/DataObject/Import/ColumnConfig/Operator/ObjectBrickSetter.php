@@ -50,7 +50,7 @@ class ObjectBrickSetter extends AbstractOperator
 
         $this->attr = $config->attr;
         $this->brickType = $config->brickType;
-        $this->mode = $config->mode;
+        $this->mode = $config->mode ?? 'ifNotEmpty';
     }
 
     public function process($element, &$target, array &$rowData, $colIndex, array &$context = [])

@@ -24,6 +24,9 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPayme
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-klarna" in Pimcore 7.
+ */
 class Klarna extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
     /**

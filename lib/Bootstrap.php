@@ -73,7 +73,9 @@ class Bootstrap
         /** @var \Pimcore\Kernel $kernel */
         $kernel = self::kernel();
 
-        chdir($workingDirectory);
+        if (is_readable($workingDirectory)) {
+            chdir($workingDirectory);
+        }
 
         // activate inheritance for cli-scripts
         \Pimcore::unsetAdminMode();
@@ -130,8 +132,6 @@ class Bootstrap
 
         Config::initDebugDevMode();
         self::defineConstants();
-
-        error_reporting(PIMCORE_PHP_ERROR_REPORTING);
 
         /** @var \Composer\Autoload\ClassLoader $loader */
         \Pimcore::setAutoloader($loader);
@@ -273,7 +273,6 @@ class Bootstrap
         $resolveConstant('PIMCORE_USERIMAGE_DIRECTORY', PIMCORE_PRIVATE_VAR . '/user-image');
 
         // configure PHP's error logging
-        $resolveConstant('PIMCORE_PHP_ERROR_REPORTING', E_ALL & ~E_NOTICE & ~E_STRICT);
         $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
         $resolveConstant('PIMCORE_KERNEL_CLASS', '\AppKernel');
 
@@ -331,7 +330,7 @@ class Bootstrap
         }
 
         if ($debug) {
-            Debug::enable(PIMCORE_PHP_ERROR_REPORTING);
+            Debug::enable();
             @ini_set('display_errors', 'On');
         }
 

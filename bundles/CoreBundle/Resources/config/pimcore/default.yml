@@ -168,15 +168,10 @@ pimcore:
                     - \Object_Class_Layout_
 
     documents:
-        tags:
-            map:
-                # @TODO: BC layer, to be removed in v7
-                href: \Pimcore\Model\Document\Tag\Relation
-                multihref: \Pimcore\Model\Document\Tag\Relations
-
+        editables:
             prefixes:
-                - \Pimcore\Model\Document\Tag\
-                - \Document_Tag_
+                - \Pimcore\Model\Document\Editable\
+
     newsletter:
         source_adapters:
             defaultAdapter: pimcore.document.newsletter.factory.default
@@ -224,10 +219,6 @@ pimcore:
             routes:
                 - { path: ^/admin(/.*)?$ }
                 - { route: ^pimcore_admin_ }
-        webservice:
-            routes:
-                - { path: ^/webservice(/.*)?$ }
-                - { route: ^pimcore_webservice }
         plugin:
             routes:
                 - { path: ^/plugin(/.*)?$ }

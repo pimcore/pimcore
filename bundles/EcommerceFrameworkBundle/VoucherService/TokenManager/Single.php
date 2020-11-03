@@ -77,7 +77,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
 
         if ($codes = $this->getCodes()) {
             $viewParamsBag['paginator'] = new Paginator(new ArrayAdapter($codes));
-            $viewParamsBag['count'] = sizeof($codes);
+            $viewParamsBag['count'] = count($codes);
         }
 
         $viewParamsBag['msg']['error'] = $params['error'];

@@ -40,6 +40,9 @@ namespace Pimcore\Templating\Helper;
 use Pimcore\Templating\Helper\Placeholder\AbstractHelper;
 use Pimcore\Templating\Helper\Placeholder\Container;
 
+/**
+ * @deprecated
+ */
 class HeadTitle extends AbstractHelper
 {
     /**

@@ -20,7 +20,6 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
-use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\TmpStore;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -222,40 +221,6 @@ class PublicServicesController extends Controller
     public function commonFilesAction(Request $request)
     {
         return new Response("HTTP/1.1 404 Not Found\nFiltered by common files filter", 404);
-    }
-
-    /**
-     * @param Request $request
-     */
-    public function hybridauthAction(Request $request)
-    {
-        \Pimcore\Tool\HybridAuth::process();
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    public function qrcodeAction(Request $request)
-    {
-        $code = Tool\Qrcode\Config::getByName($request->get('key'));
-        if ($code) {
-            $url = $code->getUrl();
-            if ($code->getGoogleAnalytics()) {
-                $glue = '?';
-                if (strpos($url, '?')) {
-                    $glue = '&';
-                }
-
-                $url .= $glue;
-                $url .= 'utm_source=Mobile&utm_medium=QR-Code&utm_campaign=' . $code->getName();
-            }
-
-            return $this->redirect($url);
-        } else {
-            Logger::error("called an QR code but '" . $request->get('key') . ' is not a code in the system.');
-        }
     }
 
     /**

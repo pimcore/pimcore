@@ -156,8 +156,8 @@ pimcore.document.edit = Class.create({
         for(var i=0; i<editables.length; i++) {
             ed = this.frame.Ext.get(editables[i].getId());
 
-            if(!ed.hasCls("pimcore_tag_inc") && !ed.hasCls("pimcore_tag_areablock")
-                && !ed.hasCls("pimcore_tag_block") && !ed.hasCls("pimcore_tag_area")) {
+            if(!ed.hasCls("pimcore_editable_inc") && !ed.hasCls("pimcore_editable_areablock")
+                && !ed.hasCls("pimcore_editable_block") && !ed.hasCls("pimcore_editable_area")) {
                 if(!this.tagHighlightingActive) {
                     var mask = ed.mask();
                     mask.setStyle("background-color","#f5d833");

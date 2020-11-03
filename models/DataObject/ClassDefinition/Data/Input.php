@@ -21,6 +21,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class Input extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
+    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;

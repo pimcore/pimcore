@@ -32,6 +32,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
+    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * don't throw an error it encrypted field cannot be decoded (default)
@@ -318,48 +319,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
         }
 
         return true;
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        $data = $data instanceof Model\DataObject\Data\EncryptedField ? $data->getPlain() : null;
-
-        if ($data instanceof Model\DataObject\Data\RgbaColor) {
-            return $this->getDataForEditmode($data, $object, $params);
-        }
-
-        return null;
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return null
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        // not implemented
-        return null;
     }
 
     /**

@@ -26,6 +26,7 @@ The PDF editable allows you to embed asset documents (pdf, doc, xls, ...) into d
 
 ### Basic usage
 
+<div class="code-section">
 
 PHP:
 ```php
@@ -45,6 +46,7 @@ Twig:
 </div>    
 ```
 
+</div>
 
 This looks like the following in editmode: 
 

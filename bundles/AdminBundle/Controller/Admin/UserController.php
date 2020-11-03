@@ -258,27 +258,6 @@ class UserController extends AdminController implements EventedControllerInterfa
                 }
             } else {
                 if ($user->getId()) {
-                    if ($user instanceof User\Role) {
-                        // #1431 remove user-role relations
-                        $userRoleRelationListing = new User\Listing();
-                        $userRoleRelationListing->setCondition('FIND_IN_SET(' . $user->getId() . ',roles)');
-                        $userRoleRelationListing = $userRoleRelationListing->load();
-                        if ($userRoleRelationListing) {
-                            /** @var User $relatedUser */
-                            foreach ($userRoleRelationListing as $relatedUser) {
-                                $userRoles = $relatedUser->getRoles();
-                                if (is_array($userRoles)) {
-                                    $key = array_search($user->getId(), $userRoles);
-                                    if (false !== $key) {
-                                        unset($userRoles[$key]);
-                                        $relatedUser->setRoles($userRoles);
-                                        $relatedUser->save();
-                                    }
-                                }
-                            }
-                        }
-                    }
-
                     $user->delete();
                 }
             }
@@ -478,7 +457,6 @@ class UserController extends AdminController implements EventedControllerInterfa
 
         return $this->adminJson([
             'success' => true,
-            'wsenabled' => $config['webservice']['enabled'],
             'user' => $userData,
             'roles' => $roles,
             'permissions' => $user->generatePermissionList(),

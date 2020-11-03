@@ -119,7 +119,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
                 ];
             } catch (ValidationException $e) {
                 $reason = '';
-                if (sizeof((array)$e->getSubItems()) > 0) {
+                if (count((array)$e->getSubItems()) > 0) {
                     $reason = '<ul>' . implode('', array_map(function ($item) {
                         return '<li>' . $item . '</li>';
                     }, $e->getSubItems())) . '</ul>';
@@ -176,7 +176,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
             ];
         } catch (ValidationException $e) {
             $reason = '';
-            if (sizeof((array)$e->getSubItems()) > 0) {
+            if (count((array)$e->getSubItems()) > 0) {
                 $reason = '<ul>' . implode('', array_map(function ($item) {
                     return '<li>' . $item . '</li>';
                 }, $e->getSubItems())) . '</ul>';
@@ -252,7 +252,7 @@ class WorkflowController extends AdminController implements EventedControllerInt
         return $this->adminJson([
             'data' => $data,
             'success' => true,
-            'total' => sizeof($data),
+            'total' => count($data),
         ]);
     }
 

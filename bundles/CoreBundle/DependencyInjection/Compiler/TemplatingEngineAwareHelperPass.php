@@ -24,6 +24,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Adds a call to set the PHP templating engine to all helpers implementing TemplatingEngineAwareHelperInterface
+ *
+ * @deprecated
  */
 class TemplatingEngineAwareHelperPass implements CompilerPassInterface
 {

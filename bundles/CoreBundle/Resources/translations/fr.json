@@ -957,5 +957,8 @@
     "different_number_of_columns": "Nombre de colonnes différent",
     "brick_limit_reached": "Limite ({bricklimit}) atteinte pour la brique : {brickname}",
     "generate_type_declarations": "Générer les déclarations de type",
-    "batch_change_language": "Mise à jour langue par lots"
+    "batch_change_language": "Mise à jour langue par lots",
+    "preview_item": "Aperçu de l'élément",
+    "by_key_reverse": "Clé (Z à A)",
+    "deprecated": "Deprecated"
 }

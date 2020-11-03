@@ -100,7 +100,9 @@ class Processor
         $generated = false;
         $errorImage = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/img/filetype-not-supported.svg';
         $format = strtolower($config->getFormat());
-        $contentOptimizedFormat = false;
+        // Optimize if allowed to strip info.
+        $optimizeContent = (!$config->isPreserveColor() && !$config->isPreserveMetaData());
+        $optimizedFormat = false;
 
         if (self::containsTransformationType($config, '1x1_pixel')) {
             return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
@@ -114,14 +116,17 @@ class Processor
 
         // simple detection for source type if SOURCE is selected
         if ($format == 'source' || empty($format)) {
+            $optimizedFormat = true;
             $format = self::getAllowedFormat($fileExt, ['pjpeg', 'jpeg', 'gif', 'png'], 'png');
             if ($format === 'jpeg') {
                 $format = 'pjpeg';
             }
-            $contentOptimizedFormat = true; // format can change depending of the content (alpha-channel, ...)
         }
 
         if ($format == 'print') {
+            // Don't optimize images for print as we assume we want images as
+            // untouched as possible.
+            $optimizedFormat = $optimizeContent = false;
             $format = self::getAllowedFormat($fileExt, ['svg', 'jpeg', 'png', 'tiff'], 'png');
 
             if (($format == 'tiff') && \Pimcore\Tool::isFrontendRequestByAdmin()) {
@@ -134,6 +139,7 @@ class Processor
                 return $asset->getFullPath();
             }
         } elseif ($format == 'tiff') {
+            $optimizedFormat = $optimizeContent = false;
             if (\Pimcore\Tool::isFrontendRequestByAdmin()) {
                 // return a webformat in admin -> tiff cannot be displayed in browser
                 $format = 'png';
@@ -143,7 +149,8 @@ class Processor
 
         $image = Asset\Image::getImageTransformInstance();
 
-        if ($contentOptimizedFormat && self::hasWebpSupport() && $image->supportsFormat('webp')) {
+        if ($optimizedFormat && self::hasWebpSupport() && $image->supportsFormat('webp')) {
+            $optimizedFormat = $optimizeContent = false;
             $format = 'webp';
         }
 
@@ -350,7 +357,7 @@ class Processor
             }
         }
 
-        if ($contentOptimizedFormat && !self::hasWebpSupport()) {
+        if ($optimizedFormat) {
             $format = $image->getContentOptimizedFormat();
         }
 
@@ -360,7 +367,7 @@ class Processor
 
         $generated = true;
 
-        if ($contentOptimizedFormat) {
+        if ($optimizeContent) {
             $filePath = str_replace(PIMCORE_TEMPORARY_DIRECTORY . '/', '', $fsPath);
             $tmpStoreKey = 'thumb_' . $asset->getId() . '__' . md5($filePath);
             TmpStore::add($tmpStoreKey, $filePath, 'image-optimize-queue');

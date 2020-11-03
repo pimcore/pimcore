@@ -19,6 +19,9 @@ use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Templating\Renderer\IncludeRenderer;
 use Symfony\Component\Templating\Helper\Helper;
 
+/**
+ * @deprecated
+ */
 class Inc extends Helper
 {
     /**

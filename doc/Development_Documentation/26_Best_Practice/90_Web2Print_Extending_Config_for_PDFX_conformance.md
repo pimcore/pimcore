@@ -23,7 +23,7 @@ To do so, Pimcore provides two events:
 ##### Example for adding Additional Config
 
 Services in Container:
-```yml 
+```yml
  app.event_listener.test:
         class: AppBundle\EventListener\PDFConfigListener
         tags:

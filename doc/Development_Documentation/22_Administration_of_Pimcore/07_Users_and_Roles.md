@@ -29,8 +29,6 @@ to that user or role. An individual user has a few more general settings than th
 The following list outlines what the different system permissions (available for users and roles) mean:
 
 * **Assets**: assets tree is visible
-* **Backup**: backup functionality is visible
-* **Bounce Mail Inbox**: Bounce Mail Inbox visible 
 * **Classes**: Object classes editor visible (user can create and modify object classes)
 * **Clear Cache**: defines if a user may clear Pimcore cache (internal cache and response cache if configured)
 * **Clear Temporary Files**: defines if user may delete temporary system files (e.g thumbnails)
@@ -38,11 +36,11 @@ The following list outlines what the different system permissions (available for
 * **Documents**: documents tree is visible
 * **Document Types**: User can create and modify predefined document types
 * **Emails**: User sees E-Mail history
+* **Extensions**: specifies if a user is allowed to download install and manage extension
 * **Glossary**: Glossary entries visible
 * **HTTP Errors**: HTTP Errors are visible 
 * **Notes & Events**: Notes & Events are visible 
 * **Objects**: objects tree is visible 
-* **Plugins**: specifies if a user is allowed to download install and manage extension
 * **Predefined Properties**: User can create and modify predefined properties
 * **QR-Codes**: User can create and modify QR codes
 * **Recycle Bin**: User has access to recycle bin
@@ -54,7 +52,7 @@ The following list outlines what the different system permissions (available for
 * **Tag & Snippet Management**: User can create and modify entries in tag & snippet management
 * **Targeting**: User has access to targeting module
 * **Thumbnails** User can create and modify thumbnail configurations
-* **Website Translations**: defines whether a user may view and edit website translations
+* **Translations**: defines whether a user may view and edit website translations
 * **Users**: defines whether a user may manage other users' settings and system permissions
 * **Website Settings**: User can create and modify website settings
 
@@ -113,6 +111,4 @@ custom layouts for the user.
 #### Dynamically control permissions on elements
 
 By using the event `Pimcore\Event\AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED` it is possible to dynamically manipulate 
-the permissions of a user on a specific element on request. 
-
- 
+the permissions of a user on a specific element on request.

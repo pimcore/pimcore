@@ -21,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
 
 /**
+ * @internal
+ *
  * @property TargetGroup\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
@@ -40,5 +42,17 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $this->model->setTargetGroups($targetGroups);
 
         return $targetGroups;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalCount()
+    {
+        try {
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM targeting_target_groups ' . $this->getCondition(), $this->model->getConditionVariables());
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 }

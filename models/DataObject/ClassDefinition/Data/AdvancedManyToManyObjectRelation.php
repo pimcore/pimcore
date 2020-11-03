@@ -350,7 +350,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
 
                 $item = $o->getRealFullPath();
 
-                if (sizeof($metaObject->getData())) {
+                if (count($metaObject->getData())) {
                     $subItems = [];
                     foreach ($metaObject->getData() as $key => $value) {
                         if (!$value) {
@@ -359,7 +359,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         $subItems[] = $key . ': ' . $value;
                     }
 
-                    if (sizeof($subItems)) {
+                    if (count($subItems)) {
                         $item .= ' <br/><span class="preview-metadata">[' . implode(' | ', $subItems) . ']</span>';
                     }
                 }
@@ -486,108 +486,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         }
 
         return $dependencies;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array|mixed|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if (is_array($data)) {
-            $items = [];
-            foreach ($data as $metaObject) {
-                $eo = $metaObject->getObject();
-                if ($eo instanceof Element\ElementInterface) {
-                    $item = [];
-                    $item['type'] = $eo->getType();
-                    $item['id'] = $eo->getId();
-
-                    foreach ($this->getColumns() as $c) {
-                        $getter = 'get' . ucfirst($c['key']);
-                        $value = $metaObject->$getter();
-
-                        if ($c['type'] == 'bool' || $c['type'] == 'columnbool') {
-                            $value = (int)$value;
-                        }
-
-                        $item[$c['key']] = $value;
-                    }
-                    $items[] = $item;
-                }
-            }
-
-            return $items;
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete|null $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return array|mixed
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        $objects = [];
-        if (empty($value)) {
-            return null;
-        } elseif (is_array($value)) {
-            foreach ($value as $key => $item) {
-                $item = (array)$item;
-                $id = $item['id'];
-
-                if ($idMapper) {
-                    $id = $idMapper->getMappedId('object', $id);
-                }
-
-                $dest = null;
-                if ($id) {
-                    $dest = DataObject::getById($id);
-                }
-
-                if ($dest instanceof DataObject\AbstractObject) {
-                    /** @var DataObject\Data\ObjectMetadata $metaObject */
-                    $metaObject = \Pimcore::getContainer()->get('pimcore.model.factory')
-                        ->build('Pimcore\Model\DataObject\Data\ObjectMetadata', [
-                            'fieldname' => $this->getName(),
-                            'columns' => $this->getColumnKeys(),
-                            'object' => $dest,
-                        ]);
-                    $metaObject->setOwner($object, $this->getName());
-
-                    foreach ($this->getColumns() as $c) {
-                        $setter = 'set' . ucfirst($c['key']);
-                        $metaObject->$setter($item[$c['key']]);
-                    }
-
-                    $objects[] = $metaObject;
-                } else {
-                    if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-                        throw new \Exception('cannot get values from web service import - references unknown object with id [ ' . $item['id'] . ' ]');
-                    } else {
-                        $idMapper->recordMappingFailure('object', $object->getId(), 'object', $item['id']);
-                    }
-                }
-            }
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
-
-        return $objects;
     }
 
     /**

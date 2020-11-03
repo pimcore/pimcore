@@ -20,6 +20,8 @@ namespace Pimcore\Model\User\Listing\AbstractListing;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\User\Listing\AbstractListing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
@@ -63,5 +65,17 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $condition .= "id > 0 AND `type` IN ('" . implode("','", $types) . "')";
 
         return $condition;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalCount()
+    {
+        try {
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM users ' . $this->getCondition(), $this->model->getConditionVariables());
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 }

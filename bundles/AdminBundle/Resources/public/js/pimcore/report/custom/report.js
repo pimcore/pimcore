@@ -496,7 +496,7 @@ pimcore.report.custom.report = Class.create(pimcore.report.abstract, {
 
         if(!this.panel) {
             this.panel = new Ext.Panel({
-                title: this.config["niceName"],
+                title: t(this.config["niceName"]),
                 layout: "fit",
                 border: false,
                 items: []

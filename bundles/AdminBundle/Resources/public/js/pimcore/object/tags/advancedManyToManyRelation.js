@@ -182,12 +182,12 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 }
             } else if (this.fieldConfig.columns[i].type === "bool" || this.fieldConfig.columns[i].type === "columnbool") {
                 renderer = function (value, metaData, record, rowIndex, colIndex, store) {
-                    if (value) {
-                        return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn x-grid-checkcolumn-checked" style=""></div></div>';
-                    } else {
-                        return '<div style="text-align: center"><div role="button" class="x-grid-checkcolumn" style=""></div></div>';
+                    if (this.fieldConfig.noteditable) {
+                        metaData.tdCls += ' grid_cbx_noteditable';
                     }
-                };
+
+                    return Ext.String.format('<div style="text-align: center"><div role="button" class="x-grid-checkcolumn {0}" style=""></div></div>', value ? 'x-grid-checkcolumn-checked' : '');
+                }.bind(this);
 
                 if (readOnly) {
                     columns.push(Ext.create('Ext.grid.column.Check', {

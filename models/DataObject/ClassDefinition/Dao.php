@@ -21,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\ClassDefinition $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -131,6 +133,7 @@ class Dao extends Model\Dao\AbstractDao
 			) DEFAULT CHARSET=utf8mb4;");
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTableRelation . "` (
+              `id` BIGINT(20) NOT NULL PRIMARY KEY  AUTO_INCREMENT,
               `src_id` int(11) NOT NULL DEFAULT '0',
               `dest_id` int(11) NOT NULL DEFAULT '0',
               `type` varchar(50) NOT NULL DEFAULT '',

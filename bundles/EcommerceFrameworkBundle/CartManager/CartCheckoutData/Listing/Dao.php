@@ -14,6 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Listing;
 
+/**
+ * @internal
+ */
 class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 {
     /**
@@ -36,8 +39,10 @@ class Dao extends \Pimcore\Model\Listing\Dao\AbstractDao
 
     public function getTotalCount()
     {
-        $amount = $this->db->fetchRow('SELECT COUNT(*) as amount FROM `' . \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Dao::TABLE_NAME . '`' . $this->getCondition());
-
-        return $amount['amount'];
+        try {
+            return (int)$this->db->fetchOne('SELECT COUNT(*) FROM `' . \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartCheckoutData\Dao::TABLE_NAME . '`' . $this->getCondition());
+        } catch (\Exception $e) {
+            return 0;
+        }
     }
 }

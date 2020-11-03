@@ -24,7 +24,7 @@ use Pimcore\Model\AbstractModel;
  *
  * @method \Pimcore\Db\ZendCompatibility\QueryBuilder getQuery()
  */
-abstract class AbstractListing extends AbstractModel implements \Iterator
+abstract class AbstractListing extends AbstractModel implements \Iterator, \Countable
 {
     /**
      * @var array
@@ -336,7 +336,17 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
                     $conditionVariableTypes[$pkey] = \Doctrine\DBAL\Connection::PARAM_INT_ARRAY;
                 }
             } else {
-                $conditionVariableTypes[$pkey] = \PDO::PARAM_STR;
+                if (is_bool($param)) {
+                    $type = \PDO::PARAM_BOOL;
+                } elseif (is_int($param)) {
+                    $type = \PDO::PARAM_INT;
+                } elseif (is_null($param)) {
+                    $type = \PDO::PARAM_NULL;
+                } else {
+                    $type = \PDO::PARAM_STR;
+                }
+
+                $conditionVariableTypes[$pkey] = $type;
             }
         }
 
@@ -570,5 +580,20 @@ abstract class AbstractListing extends AbstractModel implements \Iterator
     {
         $this->getData();
         reset($this->data);
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        $dao = $this->getDao();
+        if (!\method_exists($dao, 'getTotalCount')) {
+            @trigger_error('Listings should implement Countable interface', E_USER_DEPRECATED);
+
+            return 0;
+        }
+
+        return $dao->getTotalCount();
     }
 }

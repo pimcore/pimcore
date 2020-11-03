@@ -19,6 +19,9 @@ use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Tool;
 use Symfony\Component\Templating\Helper\Helper;
 
+/**
+ * @deprecated
+ */
 class Cache extends Helper
 {
     /**

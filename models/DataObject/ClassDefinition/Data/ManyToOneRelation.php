@@ -273,7 +273,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @see Data::getDataForEditmode
      *
-     * @param Element\AbstractElement|null $data
+     * @param Element\ElementInterface|null $data
      * @param null|DataObject\Concrete $object
      * @param array|null $params
      *
@@ -281,7 +281,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function getDataForEditmode($data, $object = null, $params = [])
     {
-        if ($data instanceof Element\AbstractElement) {
+        if ($data instanceof Element\ElementInterface) {
             $r = [
                 'id' => $data->getId(),
                 'path' => $data->getRealFullPath(),
@@ -327,7 +327,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param Element\AbstractElement|null $data
+     * @param Element\ElementInterface|null $data
      * @param DataObject\Concrete $object
      * @param array $params
      *
@@ -341,7 +341,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @see Data::getVersionPreview
      *
-     * @param Element\AbstractElement|null $data
+     * @param Element\ElementInterface|null $data
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
@@ -349,7 +349,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        if ($data instanceof Element\AbstractElement) {
+        if ($data instanceof Element\ElementInterface) {
             return Element\Service::getElementType($data).' '.$data->getRealFullPath();
         }
 
@@ -459,7 +459,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     }
 
     /**
-     * @param Element\AbstractElement|null $data
+     * @param Element\ElementInterface|null $data
      *
      * @return array
      */
@@ -476,76 +476,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
         }
 
         return $dependencies;
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if ($data instanceof Element\ElementInterface) {
-            return [
-                'type' => Element\Service::getType($data),
-                'subtype' => $data->getType(),
-                'id' => $data->getId(),
-            ];
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param Element\AbstractElement $relatedObject
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|void
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        }
-
-        $value = (array) $value;
-        if (array_key_exists('id', $value) and array_key_exists('type', $value)) {
-            $type = $value['type'];
-            $id = $value['id'];
-            $el = null;
-
-            if ($idMapper) {
-                $id = $idMapper->getMappedId($type, $id);
-            }
-
-            if ($id) {
-                $el = Element\Service::getElementById($type, $id);
-            }
-
-            if ($el instanceof Element\ElementInterface) {
-                return $el;
-            } else {
-                if ($idMapper && $idMapper->ignoreMappingFailures()) {
-                    $idMapper->recordMappingFailure('object', $relatedObject->getId(), $type, $value['id']);
-                } else {
-                    throw new \Exception('cannot get values from web service import - invalid ' . $this->getFieldtype() . ' relation');
-                }
-            }
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
     }
 
     /**
@@ -772,6 +702,18 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
             return $listing;
         }
         throw new \InvalidArgumentException('Filtering '.__CLASS__.' does only support "=" operator');
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhpdocReturnType(): ?string
+    {
+        if ($this->getPhpdocType()) {
+            return $this->getPhpdocType() . '|null';
+        }
+
+        return null;
     }
 }
 

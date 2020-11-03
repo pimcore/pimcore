@@ -20,6 +20,8 @@ use Pimcore\Model\Listing\Dao\AbstractDao;
 use Pimcore\Model\Notification;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Notification\Listing $model
  */
 class Dao extends AbstractDao
@@ -40,6 +42,11 @@ class Dao extends AbstractDao
         }
 
         return $count;
+    }
+
+    public function getTotalCount()
+    {
+        return $this->count();
     }
 
     /**

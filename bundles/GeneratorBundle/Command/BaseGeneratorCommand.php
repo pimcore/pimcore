@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 /**
+ * @deprecated
  * Base class for generator commands.
  *
  * The following class is copied from \Sensio\Bundle\GeneratorBundle\Command\GeneratorCommand
