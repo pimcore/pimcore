@@ -86,7 +86,7 @@ class NewsletterController extends FrontendController
         $newsletter = new Newsletter("person"); // replace "person" with the class name you have used for your class above (mailing list)
         $params = $request->request->all();
 
-        $this->view->success = false;
+        $success = false;
 
         if ($newsletter->checkParams($params)) {
             try {
@@ -107,22 +107,26 @@ class NewsletterController extends FrontendController
                 $user->setDateRegister(new \DateTime());
                 $user->save();
 
-                $this->view->success = true;
+                $success = true;
             } catch (\Exception $e) {
                 echo $e->getMessage();
             }
         }
+
+        return $this->render('Newsletter/subscribe.html.twig', ['success' => $success]);
     }
 
     public function confirmAction(Request $request)
     {
-        $this->view->success = false;
+        $success = false;
 
         $newsletter = new Newsletter("person"); // replace "person" with the class name you have used for your class above (mailing list)
 
         if ($newsletter->confirm($request->get("token"))) {
-            $this->view->success = true;
+            $success = true;
         }
+
+        return $this->render('Newsletter/confirm.html.twig', ['success' => $success]);
     }
 
     public function unsubscribeAction(Request $request)
@@ -142,66 +146,57 @@ class NewsletterController extends FrontendController
             $success = $newsletter->unsubscribeByToken($request->get("token"));
         }
 
-        $this->view->success = $success;
-        $this->view->unsubscribeMethod = $unsubscribeMethod;
+        return $this->render('Newsletter/unsubscribe.html.twig', [
+            'success' => $success,
+            'unsubscribeMethod' => $unsubscribeMethod, 
+        ]);
     }
 }
 ```
 
 ### Views
 
-The subscribe action view: `app/Resources/views/Newsletter/subscribe.html.php`
+The subscribe action view: `app/Resources/views/Newsletter/subscribe.html.twig`
 
-```php
-<?php
-/**
- * @var \Pimcore\Templating\PhpEngine $this
- * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables $app
- */
+```twig
+{% extends 'layout.html.twig' %}
+{% set request = app.request %}
 
-$this->extend('layout.html.php');
-
-?>
-
-<?= $this->template('Includes/content-default.html.php') ?>
-
-<?php if(!$this->success) { ?>
-
-    <?php if($this->getParam("submit")) { ?>
+{% if not success %}
+    {% if request.get('submit') %}
         <div class="alert alert-danger">
-            <?= $this->translate("Sorry, something went wrong, please check the data in the form and try again!"); ?>
+            {{ "Sorry, something went wrong, please check the data in the form and try again!"|trans }}
         </div>
         <br />
         <br />
-    <?php } ?>
-
+    {% endif %} 
+    
     <form class="form-horizontal" role="form" action="" method="post">
         <div class="form-group">
-            <label class="col-lg-2 control-label"><?= $this->translate("Gender"); ?></label>
+            <label class="col-lg-2 control-label">{{ "Gender"|trans }}</label>
             <div class="col-lg-10">
                 <select name="gender" class="form-control">
-                    <option value="male"<?php if($this->getParam("gender") == "male") { ?> selected="selected"<?php } ?>>Male</option>
-                    <option value="female"<?php if($this->getParam("gender") == "female") { ?> selected="selected"<?php } ?>>Female</option>
+                    <option value="male"{% if request.get('gender') == 'male' %} selected="selected"{% endif %}>{{ "Male"|trans }}</option>
+                    <option value="female"{% if request.get('gender') == 'female' %} selected="selected"{% endif %}>{{ "Female"|trans }}</option>
                 </select>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-lg-2 control-label"><?= $this->translate("Firstname"); ?></label>
+            <label class="col-lg-2 control-label">{{ "Firstname"|trans }}</label>
             <div class="col-lg-10">
-                <input name="firstname" type="text" class="form-control" placeholder="" value="<?= $this->escape($this->getParam("firstname")); ?>">
+                <input name="firstname" type="text" class="form-control" placeholder="" value="{{ request.get('firstname') }}">
             </div>
         </div>
         <div class="form-group">
-            <label class="col-lg-2 control-label"><?= $this->translate("Lastname"); ?></label>
+            <label class="col-lg-2 control-label">{{ "Lastname"|trans }}</label>
             <div class="col-lg-10">
-                <input name="lastname" type="text" class="form-control" placeholder="" value="<?= $this->escape($this->getParam("lastname")); ?>">
+                <input name="lastname" type="text" class="form-control" placeholder="" value="{{ request.get('lastname') }}">
             </div>
         </div>
         <div class="form-group">
-            <label class="col-lg-2 control-label"><?= $this->translate("E-Mail"); ?></label>
+            <label class="col-lg-2 control-label">{{ "E-Mail"|trans }}</label>
             <div class="col-lg-10">
-                <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?= $this->escape($this->getParam("email")); ?>">
+                <input name="email" type="text" class="form-control" placeholder="example@example.com" value="{{ request.get('email') }}">
             </div>
         </div>
 
@@ -209,75 +204,56 @@ $this->extend('layout.html.php');
 
         <div class="form-group">
             <div class="col-lg-offset-2 col-lg-10">
-                <input type="submit" name="submit" class="btn btn-default" value="<?= $this->translate("Submit"); ?>">
+                <input type="submit" name="submit" class="btn btn-default" value="{{ "Submit"|trans }}">
             </div>
         </div>
     </form>
-<?php } else { ?>
-    <div class="alert alert-success"><?= $this->translate("Success, Please check your mailbox!"); ?></div>
-<?php } ?>
+{% else %} 
+    <div class="alert alert-success">{{ "Success, Please check your mailbox!"|trans }}</div>
+{% endif %}
 ```
 
-The confirm action view: `app/Resources/views/Newsletter/confirm.html.php`
+The confirm action view: `app/Resources/views/Newsletter/confirm.html.twig`
 
-```php
-<?php
-/**
- * @var \Pimcore\Templating\PhpEngine $this
- * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables $app
- */
-?>
+```twig
+{% extends 'layout.html.twig' %}
 
-
-<?php if(!$this->success) { ?>
+{% if not success %}
     <div class="alert alert-danger">
-        <h2><?= $this->translate("Sorry, something went wrong, please sign up again!"); ?></h2>
+        <h2>{{ "Sorry, something went wrong, please sign up again!"|trans }}</h2>
     </div>
-<?php } else { ?>
+{% else %} 
     <div class="alert alert-success">
-        <h2><?= $this->translate("Thanks for confirming your address!"); ?></h2>
+        <h2>{{ "Thanks for confirming your address!"|trans }}</h2>
     </div>
-<?php } ?>
-
-
+{% endif %}
 ```
 
-The unsubscribe action view: `app/Resources/views/Newsletter/unsubscribe.html.php`
+The unsubscribe action view: `app/Resources/views/Newsletter/unsubscribe.html.twig`
 
-```php
-<?php
-/**
- * @var \Pimcore\Templating\PhpEngine $this
- * @var \Pimcore\Templating\PhpEngine $view
- * @var \Pimcore\Templating\GlobalVariables $app
- */
+```twig
+{% extends 'layout.html.twig' %}
+{% set request = app.request %}
 
-$this->extend('layout.html.php');
+{% if not success %}
 
-?>
-
-<?= $this->template('Includes/content-default.html.php') ?>
-
-<?php if(!$this->success) { ?>
-
-    <?php if ($this->unsubscribeMethod) { ?>
+    {% if unsubscribeMethod %}
         <div class="alert alert-danger">
-            <?php if ($this->unsubscribeMethod == "email") { ?>
+            {% if unsubscribeMethod == 'email' %}
                 Sorry, we don't have your address in our database.
-            <?php } else { ?>
+            {% else %} 
                 Sorry, your unsubscribe token is invalid, try to remove your address manually:
-            <?php } ?>
+            {% endif %}
         </div>
-    <?php } ?>
+    {% endif %}
 
 
     <form class="form-horizontal" role="form" action="" method="post">
 
         <div class="form-group">
-            <label class="col-lg-2 control-label"><?= $this->translate("E-Mail"); ?></label>
+            <label class="col-lg-2 control-label">{{ 'E-Mail'|trans }}</label>
             <div class="col-lg-10">
-                <input name="email" type="text" class="form-control" placeholder="example@example.com" value="<?= $this->escape($this->getParam("email")); ?>">
+                <input name="email" type="text" class="form-control" placeholder="example@example.com" value="{{ request.get('email') }}">
             </div>
         </div>
 
@@ -285,16 +261,15 @@ $this->extend('layout.html.php');
 
         <div class="form-group">
             <div class="col-lg-offset-2 col-lg-10">
-                <input type="submit" name="submit" class="btn btn-default" value="<?= $this->translate("Submit"); ?>">
+                <input type="submit" name="submit" class="btn btn-default" value="{{ 'Submit'|trans }}">
             </div>
         </div>
     </form>
-<?php } else { ?>
+{% else %} 
     <div class="alert alert-success">
-        <h2>Unsubscribed</h2>
+        <h2>{{ 'Unsubscribed'|trans }}</h2>
     </div>
-<?php } ?>
-
+{% endif %}
 ```
 
 ### Confirmation E-Mail
@@ -349,7 +324,6 @@ In this document the following Twig parameters are available:
 $userObject = $this->getParam('object');
 $firstname = $userObject->getFirstname();
 $lastname = $userObject->getLastname();
-
 ...
 ```
 
