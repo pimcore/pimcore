@@ -159,7 +159,7 @@ class Imagick extends Adapter
                         $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
                         $i->clipImage();
                     } catch (\Exception $e) {
-                        Logger::info('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation');
+                        Logger::info(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
                     }
 
                     // Imagick version compatibility
