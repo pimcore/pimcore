@@ -162,7 +162,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
      * @param string $inputName
      * @param array $options
      *
-     * @return Editable|null
+     * @return Editable\EditableInterface
      */
     protected function getDocumentEditable(PageSnippet $document, $type, $inputName, array $options = [])
     {

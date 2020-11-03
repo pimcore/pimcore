@@ -150,17 +150,10 @@ Ext.onReady(function () {
     if (typeof Ext == "object" && typeof pimcore == "object") {
 
         for (var i = 0; i < editableDefinitions.length; i++) {
-            try {
-                let editable = getEditable(editableDefinitions[i]);
-                editables.push(editable);
-                if (editableDefinitions[i]['config']['required']) {
-                    requiredEditables.push(editable)
-                }
-            } catch (e) {
-                console.error(e);
-                if(e.stack) {
-                    console.error(e.stack);
-                }
+            let editable = getEditable(editableDefinitions[i]);
+            editables.push(editable);
+            if (editableDefinitions[i]['config']['required']) {
+                requiredEditables.push(editable)
             }
         }
 
