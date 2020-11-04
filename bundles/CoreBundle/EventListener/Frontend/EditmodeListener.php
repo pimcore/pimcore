@@ -318,7 +318,7 @@ class EditmodeListener implements EventSubscriberInterface
     {
         return array_merge(
             [
-                $this->package->getUrl('bundles/fosjsrouting/js/router.js'),
+                '/bundles/fosjsrouting/js/router.js',
                 '/bundles/pimcoreadmin/js/pimcore/functions.js',
                 '/bundles/pimcoreadmin/js/pimcore/overrides.js',
                 '/bundles/pimcoreadmin/js/pimcore/tool/milestoneslider.js',
