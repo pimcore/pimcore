@@ -47,13 +47,13 @@ class MiscController extends AdminController
         // convert to normal array
         $bundles = array_values($provider->getBundles());
 
+        sort($bundles, SORT_NATURAL | SORT_FLAG_CASE);
+
         $result = array_map(function (BundleInterface $bundle) {
             return [
                 'name' => $bundle->getName(),
             ];
         }, $bundles);
-
-        sort($result);
 
         return $this->adminJson([
             'data' => $result,
@@ -74,13 +74,13 @@ class MiscController extends AdminController
         $bundle = $request->get('moduleName');
         $controllers = $provider->getControllers($bundle, $routingDefaults['bundle']);
 
+        sort($controllers, SORT_NATURAL | SORT_FLAG_CASE);
+
         $result = array_map(function ($controller) {
             return [
                 'name' => $controller,
             ];
         }, $controllers);
-
-        sort($result);
 
         return $this->adminJson([
             'data' => $result,
@@ -110,13 +110,13 @@ class MiscController extends AdminController
 
         $actions = $provider->getActions($controller, $bundle);
 
+        sort($actions, SORT_NATURAL | SORT_FLAG_CASE);
+
         $result = array_map(function ($action) {
             return [
                 'name' => $action,
             ];
         }, $actions);
-
-        sort($result);
 
         return $this->adminJson([
             'data' => $result,
@@ -134,13 +134,13 @@ class MiscController extends AdminController
     {
         $templates = $provider->getTemplates();
 
+        sort($templates, SORT_NATURAL | SORT_FLAG_CASE);
+
         $result = array_map(function ($template) {
             return [
                 'path' => $template,
             ];
         }, $templates);
-
-        sort($result);
 
         return $this->adminJson([
             'data' => $result,
