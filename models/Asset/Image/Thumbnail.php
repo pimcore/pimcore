@@ -205,7 +205,7 @@ class Thumbnail
         $w3cImgAttributes = ['alt', 'align', 'border', 'height', 'hspace', 'ismap', 'longdesc', 'usemap',
             'vspace', 'width', 'class', 'dir', 'id', 'lang', 'style', 'title', 'xml:lang', 'onmouseover',
             'onabort', 'onclick', 'ondblclick', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseup',
-            'onkeydown', 'onkeypress', 'onkeyup', 'itemprop', 'itemscope', 'itemtype', ];
+            'onkeydown', 'onkeypress', 'onkeyup', 'itemprop', 'itemscope', 'itemtype', 'loading'];
 
         $customAttributes = [];
         if (isset($options['attributes']) && is_array($options['attributes'])) {
