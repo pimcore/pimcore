@@ -184,7 +184,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return string|void
      */
-    public abstract function frontend();
+    abstract public function frontend();
 
     /**
      * @param string $id

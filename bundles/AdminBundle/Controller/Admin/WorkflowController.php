@@ -140,14 +140,14 @@ class WorkflowController extends AdminController implements KernelControllerEven
         } else {
             $blockTransitionList = $workflow->buildTransitionBlockerList($this->element, $request->get('transition'));
 
-            $reasons = array_map(function($blockTransitionItem){
+            $reasons = array_map(function ($blockTransitionItem) {
                 return $blockTransitionItem->getMessage();
             }, $blockTransitionList->getIterator()->getArrayCopy());
 
             $data = [
                 'success' => false,
                 'message' => 'transition failed',
-                'reasons' => $reasons
+                'reasons' => $reasons,
             ];
         }
 
