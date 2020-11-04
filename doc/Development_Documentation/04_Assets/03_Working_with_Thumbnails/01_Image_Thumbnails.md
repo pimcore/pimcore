@@ -164,6 +164,8 @@ echo $thumbnail; // prints something like /var/tmp/....png
 
 ```
 
+Additionally there are some special parameters to [customize generated image HTML code](../../03_Documents/01_Editables/14_Image.md#page_Configuration).
+
 
 ## Using ICC Color Profiles for CMYK -> RGB 
 Pimcore supports ICC color profiles to get better results when converting CMYK images (without embedded color profile) 
