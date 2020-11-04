@@ -337,8 +337,8 @@ class Classificationstore extends Model\AbstractModel implements DirtyIndicatorI
     }
 
     /**
-     * @param int $keyId
      * @param int $groupId
+     * @param int $keyId
      * @param string $language
      * @param bool $ignoreFallbackLanguage
      * @param bool $ignoreDefaultLanguage
