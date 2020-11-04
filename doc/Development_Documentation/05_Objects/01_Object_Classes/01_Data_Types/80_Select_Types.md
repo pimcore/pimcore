@@ -85,7 +85,9 @@ use Pimcore\Model\DataObject;
 
 $product = DataObject::getById(49);
 // for a select data field
-$this->view->colorOptions = DataObject\Service::getOptionsForSelectField($product, "color");
+$colorOptions = DataObject\Service::getOptionsForSelectField($product, "color");
+
+return $this->render('foo/bar.html.twig', ['colorOptions' => $colorOptions]);
 ```
 
 Then you can use it in the Twig view:

@@ -57,6 +57,7 @@ class NewsController extends FrontendController
         $text = $request->get('text');
         
         // ...
+        return $this->render('News/detail.html.twig');
     }
 }
 ```
@@ -71,6 +72,7 @@ To use the param converter, simply type hint the argument (Symfony routing examp
 
 ```php
     /**
+     * @Template
      * @Route("/news/{news}")
      */
     public function testAction(DataObject\News $news) {

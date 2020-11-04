@@ -2,70 +2,159 @@
 
 ## Introduction
 
-In general the templates are located in: `/app/Resources/views/[Controller]/[action].html.(php|twig)` but [Symfony-style locations](https://symfony.com/doc/4.4/best_practices.html#use-the-default-directory-structure) also work (both controller as well as action without their suffix).  
+In general the templates are located in: `/app/Resources/views/[controller]/[action].html.twig` 
+but [Symfony-style locations](https://symfony.com/doc/4.4/best_practices.html#use-the-default-directory-structure) also work (both controller as well as action without their suffix).  
 
-For historical reasons, Pimcore defaults to PHP as template language, but can easily reconfigured to use [Twig](./00_Twig.md)
-for templating. For new projects we recommend the usage of Twig as PHP templating support has been deprecated and is going to be removed in Pimcore 7.
+Pimcore uses the Twig templating engine, you can use Twig exactly as documented in:
 
-We're still working on adding Twig references throughout the documentation. In the meantime please:
+* [Twig Documentation](https://twig.symfony.com/doc/2.x/)
+* [Symfony Templating Documentation](https://symfony.com/doc/3.4/templating.html)
+* Check also our [Demo](https://github.com/pimcore/demo) as starting point
 
-* Have a look at the dedicated [Twig](./00_Twig.md) documentation page
-* Check the [Demo](https://github.com/pimcore/demo) as starting point
-* Provide PRs with Twig examples :) See [#1699](https://github.com/pimcore/pimcore/issues/1699#issuecomment-328115727) for
-  an example how to add a tabbed PHP/Twig code block to the documentation.
-
-## Twig Templates
-
-Please see the dedicated [Twig documentation page](./00_Twig.md). 
-
-
-## PHP Templates (deprecated)
-
-> PHP Templates are deprecated and support will be removed in Pimcore 7. 
-> Please use Twig (see above) instead.    
-
-Pimcore uses an enhanced version of [Symfony's PHP templating engine](http://symfony.com/doc/3.4/templating/PHP.html).
-We've enhanced the default Symfony PHP engine, by adding the `$this` context and an object oriented access to properties 
-and templating helpers (eg. `$this->slots()` instead of `$view["slots"]`), which is basically the same as using 
-the `$view` variable with the array based syntax or local variables when using the default Symfony style. 
-However the default syntax is still available and ready to use.
-We've decided to implement the `$this` context for mainly 2 reasons: easier migration from Pimcore 4 and better IDE support
-since with the OOP approach we have the full power of auto-complete and code suggestions. 
-
-> It's recommended to have a look into [Symfony's Templating Component](http://symfony.com/doc/3.4/templating.html) 
-which covers much  more topics and goes a bit deeper into detail. 
-
-### Pimcore Specialities and Examples
-
-A simple example of a view looks like the following code. Just use HTML/CSS and enrich it with custom PHP code. 
-But keep in mind, it is bad practise to include business logic code in your view. So keep your view as clean as 
-possible and use PHP just printing out data. 
-
-#### Example
+Just use annotations or render the view directly to use Twig:
 
 ```php
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Example</title>
-</head>
-<body>
-<div id="site">
-    <div id="logo">
-        <a href="http://www.pimcore.org/"><img src="/bundles/pimcoreadmin/img/logo-gray.svg" style="width: 200px;" /></a>
-        <hr />
-        <div class="claim">
-            THE OPEN-SOURCE ENTERPRISE PLATFORM FOR PIM, CMS, DAM & COMMERCE
-        </div>
-        <div class="time">
-            <?= date("Y-m-d H:i:s");  ?>
-        </div>
-    </div>
-</div>
+<?php
 
-</body>
-</html>
+namespace AppBundle\Controller;
+
+use Pimcore\Controller\FrontendController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
+class MyController extends FrontendController
+{
+    /**
+     * The annotation will automatically resolve the view to MyController/myAnnotatedAction.html.twig
+     * 
+     * @Template() 
+     */
+    public function myAnnotatedAction()
+    {   
+    }
+    
+    public function directRenderAction()
+    {
+        return $this->render('my/custom/action.html.twig', ['param1' => 'value1']);
+    }
+}
+```
+
+Of course, you can just set a custom template for Pimcore documents in the admin interface and that
+template will be used for auto-rendering when the controller does not return a response.
+
+
+## Twig Reference
+
+To make Pimcore's functions available in Twig templates, Pimcore implements a set of extensions. Please see our [Demo](https://github.com/pimcore/demo)
+as first reference how to use Pimcore with Twig. 
+
+You can take a look at the [implementations](https://github.com/pimcore/pimcore/tree/master/pimcore/lib/Pimcore/Twig)
+for further details. Note that all of Pimcore's Twig extensions are prefixed with `pimcore` to avoid naming collisions.
+
+### Pimcore Editables
+
+```twig
+<h1>{{ pimcore_input('headline') }}</h1>
+
+{{ pimcore_wysiwyg('content') }}
+
+{{ pimcore_select('type', { reload: true, store: [["video","video"], ["image","image"]] }) }}
+```
+
+Please note that if you store the editable in a variable, you'll need to pipe it through the raw filter on output if it
+generates HTML as otherwise the HTML will be escaped by twig.
+
+```twig
+{% set content = pimcore_wysiwyg('content') %}
+
+{# this will be escaped HTML #}
+{{ content }}
+
+{# HTML will be rendered #}
+{{ content|raw }}
+```
+
+### Functions
+
+#### Loading Objects
+
+The following functions can be used to load Pimcore elements from within a template:
+
+* `pimcore_document`
+* `pimcore_document_by_path`
+* `pimcore_site`
+* `pimcore_asset`
+* `pimcore_asset_by_path`
+* `pimcore_object`
+* `pimcore_object_by_path`
+
+```twig
+{% set myObject = pimcore_object(123) %}
+{{ myObject.getTitle() }}
+```
+or
+```twig
+{% set myObject = pimcore_object_by_path("/path/to/my/object") %}
+{{ myObject.title }}
+```
+
+For documents, Pimcore also provides a function to handle hardlinks through the `pimcore_document_wrap_hardlink` method.
+
+See [PimcoreObjectExtension](https://github.com/pimcore/pimcore/blob/master/lib/Twig/Extension/PimcoreObjectExtension.php)
+for details.
+
+
+#### Subrequests
+
+```twig
+{# render an action #}
+{{ pimcore_action('sidebarBox', 'Blog', null, { items: count }) }}
+
+{# include another document #}
+{{ pimcore_inc('/snippets/foo') }}
+```
+
+See [Template Extensions](./02_Template_Extensions) for details.
+
+
+#### Templating Extensions
+
+The following extensions can directly be used on Twig. See [Template Extensions](./02_Template_Extensions) for a 
+detailed description of every helper:
+
+* `pimcore_head_link`
+* `pimcore_head_meta`
+* `pimcore_head_script`
+* `pimcore_head_style`
+* `pimcore_head_title`
+* `pimcore_inline_script`
+* `pimcore_placeholder`
+* `pimcore_cache`
+* `pimcore_url`
+
+
+#### Block elements
+
+As Twig does not provide a `while` control structure which is needed to iterate a [Block](../../03_Documents/01_Editables/06_Block.md)
+editable, we introduced a function called `pimcore_iterate_block` to allow walking through every block element:
+
+```twig
+{% for i in pimcore_iterate_block(pimcore_block('contentblock')) %}
+    <h2>{{ pimcore_input('subline') }}</h2>
+    {{ pimcore_wysiwyg('content') }}
+{% endfor %}
+```
+
+### Tests
+
+#### `instanceof`
+
+Can be used to test if an object is an instance of a given class.
+
+```twig
+{% if image is instanceof('\\Pimcore\\Model\\Asset\\Image') %}
+    {# ... #}
+{% endif %}
 ```
 
 ####  Pimcore Specialities
