@@ -68,30 +68,6 @@ implements the `TemplateAreabrickInterface` which defines the following methods 
 auto-discovery. Please make sure your brick is defined inside a bundle as otherwise your templates can't be 
 auto-discovered.
 
-```php
-interface TemplateAreabrickInterface extends AreabrickInterface
-{
-    const TEMPLATE_LOCATION_GLOBAL = 'global';
-    const TEMPLATE_LOCATION_BUNDLE = 'bundle';
-
-    const TEMPLATE_SUFFIX_TWIG = 'html.twig';
-
-    /**
-     * Determines if template should be auto-located in area bundle or in app/Resources
-     *
-     * @return string
-     */
-    public function getTemplateLocation();
-
-    /**
-     * Returns view suffix used to auto-build view names
-     *
-     * @return string
-     */
-    public function getTemplateSuffix();
-}
-```
-
 The template location defines the base path which will be used to find your templates. It resolves to the following 
 locations. `<bundlePath>` is the filesystem path of the bundle the brick resides in, `<brickId>` the ID of the brick 
 as registered on the areabrick manager (see below).
@@ -107,7 +83,7 @@ implementing the methods for templates and icon yourself (see `AreabrickInterfac
 
 | Type |  Location |
 |---------------------------|-------------------------------------------------------------------------------------------------|
-| view template | `<templateLocation>/view.<suffix>` |
+| view template | `<templateLocation>/view.html.twig` |
 
 
 If the brick defines an icon in the `public` resources directory of the bundle, the icon will be automatically used 
@@ -122,7 +98,7 @@ Given our `iframe` brick defined before, the following paths will be used.
 
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
-| view template | `app/Resources/views/Areas/iframe/view.html.(php|twig)` |
+| view template | `app/Resources/views/Areas/iframe/view.html.twig` |
 | icon path     | `web/bundles/app/areas/iframe/icon.png`                 |
 | icon URL      | `/bundles/app/areas/iframe/icon.png`                    |
 
@@ -132,7 +108,7 @@ The icon path and URL are the same as above, but the view scripts are expected i
 
 | Location      | Path                                                    |
 |---------------|---------------------------------------------------------|
-| view template | `src/AppBundle/Resources/views/Areas/iframe/view.html.(php|twig)` |
+| view template | `src/AppBundle/Resources/views/Areas/iframe/view.html.twig` |
 
 ## How to Create a Brick
  
@@ -171,53 +147,57 @@ class Iframe extends AbstractTemplateAreabrick
 Let's create a view as next step. Views behave exactly as native controller views and you have access to the current 
 document, to editmode and to editables and templating helpers as everywhere else. In addition there's a `instance` 
 variable on the view which gives you access to the brick instance. A `info` variable (see below) gives you access to 
-brick metadata. Our view is rendered through the PHP engine and has a suffix of `.html.php` however you're free to 
-use Twig or other templating engines as you wish.
+brick metadata.
 
-```php
-<?php // app/Resources/views/Areas/iframe/view.html.php ?>
-<?php if ($this->editmode): ?>
+```twig
+/* app/Resources/views/Areas/iframe/view.html.twig */
+
+{% set urlField = pimcore_input('iframe_url') %}
+{% set widthField = pimcore_numeric('iframe_width') %}
+{% set heightField = pimcore_numeric('iframe_height') %}
+{% set transparentField = pimcore_checkbox('iframe_transparent') %}
+
+{% if editmode %}
     <div>
         <h2>IFrame</h2>
         <div>
-            URL: <?= $this->input("iframe_url"); ?>
+            URL: {{ urlField }}
         </div>
         <br/>
         <b>Advanced Configuration</b>
         <div>
-            Width: <?= $this->numeric("iframe_width"); ?>px (default: 100%)
+            Width: {{ widthField }}px (default: 100%)
         </div>
         <div>
-            Height: <?= $this->numeric("iframe_height"); ?>px (default: 400px)
+            Height: {{ heightField }}px (default: 400px)
         </div>
         <div>
-            Transparent: <?= $this->checkbox("iframe_transparent"); ?> (default: false)
+            Transparent: {{ transparentField }} (default: false)
         </div>
     </div>
-<?php else: ?>
-    <?php if (!$this->input("iframe_url")->isEmpty()): ?>
+{% else %}
+    {% if not urlField.isEmpty() %}
+        
+        {% set transparent = 'false' %}
+        {% set width = '100%' %}
+        {% set height = '400' %}
 
-        <?php
-        // defaults
-        $transparent = "false";
-        $width       = "100%";
-        $height      = "400";
+        {% if not widthField.isEmpty() %}
+            {% set width = widthField.data %}    
+        {% endif %}
 
-        if (!$this->numeric("iframe_width")->isEmpty()) {
-            $width = (string)$this->numeric("iframe_width");
-        }
-        if (!$this->numeric("iframe_height")->isEmpty()) {
-            $height = (string)$this->numeric("iframe_height");
-        }
-        if ($this->checkbox("iframe_transparent")->isChecked()) {
-            $transparent = "true";
-        }
-        ?>
+        {% if not heightField.isEmpty() %}
+            {% set height = heightField.data %}    
+        {% endif %}
 
-        <iframe src="<?= $this->input("iframe_url"); ?>" width="<?= $width; ?>" height="<?= $height; ?>" allowtransparency="<?= $transparent; ?>" frameborder="0"></iframe>
+        {% if transparentField.isChecked() %}
+            {% set transparent = 'true' %}    
+        {% endif %}
 
-    <?php endif; ?>
-<?php endif; ?>
+        <iframe src="{{ urlField }}" width="{{ width }}" height="{{ height }}" allowtransparency="{{ transparent }}" frameborder="0"></iframe>
+
+    {% endif %}
+{% endif %}
 ```
 
 Now you should be able to see your brick in the list of available bricks on your areablock:
@@ -517,21 +497,6 @@ class Iframe extends AbstractTemplateAreabrick
     }
 }
 ```
-
-## Migration from Pimcore 4 bricks
-
-Migration of existing bricks should be quite straightforward if you don't switch the templating engine. The following
- steps should get you started:
- 
-* Create a brick class which contains the data you need from the `area.xml` file and make sure the `ID` of the new 
-brick matches the `<id></id>` attribute from `area.xml` either by naming your class accordingly or by registering the
- service manually.
-* Move the view scripts and an optional icon from `website/views/areas` to their new location (see above). Depending 
-on the complexity of your view scripts you might need to adapt them to the new templating engine (see MVC docs). Please
-note that the extension for PHP templating view scripts changed from `.php` to `.html.php`.
-
-> Bricks defined this way are only valid for views rendered through the Symfony stack. If you need bricks to work in 
-the compatibility they still need to be implemented the Pimcore 4 way in `website/views`.
 
 ## Examples
 

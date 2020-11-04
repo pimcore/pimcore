@@ -100,62 +100,53 @@ correct tax class.
 To print taxes into the frontend use following samples:
 
 #### Product Detail Page
-```php
-<?php
-    $price = $this->product->getOSPrice();
-?>
-<strong><?= $price ?></strong>
+```twig
+{% set price = product.OSPrise %}
+<strong>{{ price }}</strong>
 
 <div class="tax">
-    <p><strong><?= $this->translate("shop.detail.included_tax") ?></strong></p>
+    <p><strong>{{ 'shop.detail.included_tax'|trans }}'</strong></p>
     <ul>
-        <?php foreach($price->getTaxEntries() as $entry) { ?>
+        {% for entry in price.taxEntries %}
             <?php
                 $amountAsCurrency = $price->getCurrency()->toCurrency($entry->getAmount());
             ?>
-            <li><?= $entry->getEntry()->getName() ?>: <?=  $entry->getPercent() ?>% (<?= $amountAsCurrency ?>)</li>
-        <?php } ?>
+            <li>{{ entry.entry.name }}: {{ entry.percent }}% ({{ price.currency.toCurrency(entry.amount) }})</li>
+        {% endfor %}
     </ul>
 </div>
 ```
 
 #### Cart
-```php
-<?php $grandTotal = $cart->getPriceCalculator()->getGrandTotal() ?>
-
-<?php if($grandTotal->getTaxEntries()) { ?>
-
+```twig
+{% set grandTotal = cart.priceCalculator.grandTotal %}
+{% if grandTotal.taxEntries %}
     <tr>
-        <td><?= $this->translate("cart.taxes") ?></td>
+        <td>{{ 'cart.taxes'|trans }}</td>
         <td>
-            <?php foreach($grandTotal->getTaxEntries() as $taxEntry) { ?>
+            {% for taxEntry in grandTotal.taxEntries %}
                 <?php
                     $amountAsCurrency = $grandTotal->getCurrency()->toCurrency($taxEntry->getAmount());
                 ?>
-                <?= $taxEntry->getEntry()->getName() ?>: <?= $taxEntry->getPercent() ?>% (<?= $amountAsCurrency ?>)<br/>
-            <?php } ?>
+                {{ taxEntry.entry.name }}: {{ taxEntry.percent }}% ({{ grandTotal.currency.toCurrency(taxEntry.amount) }})<br/>
+            {% endfor %}
         </td>
     </tr>
-
-<?php } ?>
+{% endif %}
 ```
 
 #### Order Confirmation Mail
-```php
-
-<?php if($order->getTaxInfo()) { ?>
-
+```twig
+{% if order.taxInfo %}
     <tr>
-        <td><?= $this->translate("cart.taxes") ?></td>
+        <td>{{ 'cart.taxes'|trans }}</td>
         <td>
-            <?php foreach($order->getTaxInfo() as $taxEntry) { ?>
-                <?= $taxEntry[0] ?>: <?= $taxEntry[1] ?> (<?=  $currency->toCurrency($taxEntry[2]) ?>)<br/>
-            <?php } ?>
+            {% for taxEntry in order.taxInfo %}
+                {{ taxEntry[0] }}: {{ taxEntry[1] }} ({{ currency.toCurrency(taxEntry[2])) }})<br/>
+            {% endfor %}
         </td>
     </tr>
-
-<?php } ?>
-
+{% endif %}
 ```
 
 ### 4) Taxes in `OnlineShopOrders`

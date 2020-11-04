@@ -30,20 +30,27 @@ beginning from the document root, for example:
 
 This path can then be directly used to display the image in a `<img />` or `<picture`> tag. For example:
 ```php
-<?php
-    use Pimcore\Model\Asset;
-    // get an asset
-    $asset = Asset::getById(1234);
-?>
- 
-<?php if ($asset) { ?>
-   <img src="<?= $asset->getThumbnail("myThumbnailName") ?>" />
+$image = Asset::getById(1234);
 
-    <!-- preferred alternative - let Pimcore create the whole image tag -->
-    <!-- including high-res alternatives (srcset) or media queries, if configured -->
-    <?= $asset->getThumbnail("myThumbnail")->getHtml(); ?>
+// get path to thumbnail, e.g. `/foo/bar/image-thumb__362__content/foo.webp 
+$pathToThumbnail = $image->getThumbnail("myThumbnailName");
 
-<?php } ?>
+// preferred alternative - let Pimcore create the whole image tag
+// including high-res alternatives (srcset) or media queries, if configured
+$htmlCode = $image->getThumbnail("myThumbnail")->getHtml();
+```
+
+Same in Twig: 
+
+```twig 
+{% set image = pimcore_asset(1234) %}
+
+/* get path to thumbnail, e.g. `/foo/bar/image-thumb__362__content/foo.webp  */
+<img src="{{ image.thumbnail('myThumbnailName')">
+
+/* preferred alternative - let Pimcore create the whole image tag */
+/* including high-res alternatives (srcset) or media queries, if configured */
+{{ image.thumbnail('myThumbnailName').html }}
 ```
 
 ## Explanation of the Transformations
@@ -66,54 +73,42 @@ This path can then be directly used to display the image in a `<img />` or `<pic
 For thumbnails in action also have a look at our [Live Demo](https://demo.pimcore.fun/en/More-Stuff/Developers-Corner/Thumbnails). 
 
 ## Usage Examples
-```php
-<?php // Use with the image tag in documents ?>
+```twig
+/* Use with the image tag in documents */
 <div>
     <p>
-        <?= $this->image("image", ["thumbnail" => "myThumbnail"]) ?>
+        {{ pimcore_image('myImage', {'thumbnail': 'myThumbnail'}) }}
     </p>
 </div>
  
+
+/* Use directly on the asset object */
+{{ pimcore_asset_by_path('/path/to/image.jpg').thumbnail('myThumbnail').html }}
+
+/* Use without pre-configured thumbnail */
+{{ pimcore_image('myImage', {
+    'thumbnail': {
+        'width': 500,
+        'aspectratio': true,
+        'interlace': true,
+        'quality': 85,
+        'format': 'png'
+    }
+}) }}
  
-<?php // Use directly on the asset object ?>
-<?php
-    $asset = Asset::getByPath("/path/to/image.jpg");
-    echo $asset->getThumbnail("myThumbnail")->getHtml();
-?>
+/* Use from an object-field */
+/* where "myThumbnail" is the name of the thumbnail configuration in settings -> thumbnails */
+{% if myObject.myImage %}
+   {{ myObject.myImage.thumbnail('myThumbnail').html }}
+{% endif %}
+
  
-<?php // Use without pre-configured thumbnail ?>
-<?= $this->image("image", [
-    "thumbnail" => [
-        "width" => 500,
-        "height" => 0,
-        "aspectratio" => true,
-        "interlace" => true,
-        "quality" => 95,
-        "format" => "PNG"
-    ]
-]) ?>
+/* Use from an object-field with dynamic configuration */
+<img src="{{ myObject.myImage.thumbnail({'width': 220, 'format': 'jpeg'}) }}" />
  
-<?php // Use from an object-field ?>
-<?php if ($this->myObject->getMyImage() instanceof Asset\Image) { ?>
-    <img src="<?= $this->myObject->getMyImage()->getThumbnail("myThumbnail"); ?>" />
-<?php } ?>
- 
-// where "myThumbnail" is the name of the thumbnail configuration in settings -> thumbnails
- 
- 
-<?php // Use from an object-field with dynamic configuration ?><?php if ($this->myObject->getMyImage() instanceof Asset\Image) { ?>
-    <img src="<?= $this->myObject->getMyImage()->getThumbnail(["width" => 220, "format" => "jpeg"]); ?>" />
-<?php } ?>
- 
- 
- 
-<?php // Use directly on the asset object using dynamic configuration ?>
-<?php
- 
-$asset = Asset::getByPath("/path/to/image.jpg");
-echo $asset->getThumbnail(["width" => 500, "format" => "png"])->getHtml();
- 
-?>
+
+/* Use directly on the asset object using dynamic configuration */
+{{ pimcore_asset_by_path('/path/to/image.jpg').thumbnail({'width': 500, 'format': 'png'}).html }}
 ```
 
 ## Advanced Examples
@@ -138,30 +133,35 @@ echo $thumbnail; // prints something like /var/tmp/....png
 ```
 
 ## More Examples
-```php
-// adding custom html attributes to the generated <img> or <picture> tag, using a dynamic thumbnail
-<?= $asset->getThumbnail([
- "width" => 180,
- "height" => 180,
- "cover" => true
-])->getHtml(["class" => "thumbnail", "data-my-name" => "my value"]) ?>
- 
+```twig
+
+/* adding custom html attributes to the generated <img> or <picture> tag, using a dynamic thumbnail */
+{{ image.thumbnail({
+    'width': 180,
+    'height': 180,
+    'cover': true,
+}).html({
+    'class': 'thumbnail-class',
+    'data-my-name': 'my value',
+    'attributes': {
+        'non-standard': 'HTML attributes',
+        'another': 'one'
+    }
+}) }}
   
-// same with a thumbnail definition
-<?= $asset->getThumbnail("exampleScaleWidth")->getHtml([
-    "class" => "thumbnail", 
-    "data-my-name" => "my value"
-]) ?>
+/* same with a thumbnail definition */
+{{ image.thumbnail('exampleScaleWidth').html({
+    'class': 'thumbnail-class',
+    'data-my-name': 'my value',
+}) }}
   
-// disable the automatically added width & height attributes
-<?= $asset->getThumbnail("exampleScaleWidth")->getHtml([], ["width","height"]) ?>
+/* disable the automatically added width & height attributes */
+{{ image.thumbnail('exampleScaleWidth').html({}, ['width', 'height']) }}
 
-// add alt text
-<?= $asset->getThumbnail("content")->getHtml(['alt' => 'top priority alt']) ?>
-// or
-<?= $asset->getThumbnail("content")->getHtml(['defaultalt' => 'default alt, if not set in image']) ?>
-
-
+/* add alt text */
+{{ image.thumbnail('exampleScaleWidth').html({'alt': 'top priority alt text'}) }}
+/* OR */
+{{ image.thumbnail('exampleScaleWidth').html({'defaultalt': 'default alt, if not set in image'}) }}
 ```
 
 Additionally there are some special parameters to [customize generated image HTML code](../../03_Documents/01_Editables/14_Image.md#page_Configuration).
@@ -231,16 +231,20 @@ The above configuration will generate a thumbnail with 500px width.
 
 When using this configuration in combination with the [image editable](../../03_Documents/01_Editables/14_Image.md) 
 using the following code
-```php
-<?= $this->image("myImage", ["thumbnail" => "contentimages"]); ?>
+```twig
+{{ pimcore_image('myImage', {'thumbnail': 'contentimages'}) }}
 ```
 this will create the following output: 
 ```php
 <img src="/var/tmp/thumb_6644__contentimages@2x.png" width="250" height="190" />
 ```
 It's also possible to add the high-res dynamically: 
-```php
-<?= $this->image("myImage", ["thumbnail" => ["width" => 250, "contain" => true, "highResolution" => 2]])
+```twig
+{{ pimcore_image('myImage', {thumbnail: {
+    width: 250,
+    contain: true,
+    highResolution: 2
+}}) }}
 ```
 This will create an image `width = 500px`
 
@@ -252,8 +256,8 @@ So again, this feature is only useful in some edge-cases.
 
 ###### Example 
 
-```php
-<?= $image->getThumbnail("testimage")->getPath(); ?>
+```twig
+{{ image.thumbnail('testThumbnailDefinitionName').path }}
 ```
 this generates the followinig ouput: 
 ```php

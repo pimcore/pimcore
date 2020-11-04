@@ -31,17 +31,15 @@ For more details about template inheritance and layouts, please have a look at t
 </head>
 <body>
     <div id="site">
-        {% block content %}
-        {% endblock %}
+        {{ block('content') }}
     </div>
 </body>
 </html>
 ```
 
-Of course, PHP, editables and template helpers can be used within the layout file and therefore layouts can become much 
-more complicated. The most important line though is `<?php $this->slots()->output('_content') ?>`. 
+Of course, editables and template helpers can be used within the layout file and therefore layouts can become much 
+more complicated. The most important line though is `{{ block('content') }}`. 
 It includes the actual rendered content of the view. 
-
 
 ###### Use a Layout in a template
 
@@ -51,7 +49,7 @@ Layouts are simply used by declaring a parent template with the following code.
 {% extends 'layout.html.twig' %}
 ```
 
-In this example we extend from the template `layout.html.php`, but we can use any other and as many as needed 
+In this example we extend from the template `layout.html.twig`, but we can use any other and as many as needed 
 scripts instead.  
   
 A complete example of a document page would look like the following: 

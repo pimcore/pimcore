@@ -185,7 +185,7 @@ The parameters are passed as attributes to the included document, and should be 
 Example:
 
 index.html.twig
-```php
+```twig
 {{ pimcore_inc('/some/other/document', { 'parameterToPass': parameterToPass }) }}
 ``` 
 

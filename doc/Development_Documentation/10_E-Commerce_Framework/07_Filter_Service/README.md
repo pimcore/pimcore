@@ -156,12 +156,12 @@ sample:
 <?php 
 $ecommerceFactory = \Pimcore\Bundle\EcommerceFrameworkBundle\Factory::getInstance();
 
-$viewModel = new ViewModel();
+$templateParams = [];
 $params = array_merge($request->query->all(), $request->attributes->all());
 
 $indexService = $ecommerceFactory->getIndexService();
 $productListing = $indexService->getProductListForCurrentTenant();
-$viewModel->productListing = $productListing;
+$templateParams['productListing'] = $productListing;
 
 //get filter definition from document, category or global settings
 $filterDefinition = //TODO ...get from somewhere;
@@ -169,18 +169,18 @@ $filterDefinition = //TODO ...get from somewhere;
 // create and init filter service
 $filterService = $ecommerceFactory->getFilterService();
 \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Helper::setupProductList($filterDefinition, $productListing, $params, $viewModel, $filterService, true);
-$viewModel->filterService = $filterService;
-$viewModel->filterDefinition = $filterDefinition;
+$templateParams['filterService'] = $filterService;
+$templateParams['filterDefinition'] = $filterDefinition;
 
 // init pagination
 $paginator = new Paginator($productListing);
 $paginator->setCurrentPageNumber($request->get('page'));
 $paginator->setItemCountPerPage(18);
 $paginator->setPageRange(5);
-$viewModel->results = $paginator;
-$viewModel->paginationVariables = $paginator->getPages('Sliding');
+$templateParams['results'] = $paginator;
+$templateParams['paginationVariables'] = $paginator->getPages('Sliding');
 
-return $viewModel->getAllParameters();
+return $this->render('Path/template.html.twig', $templateParams);
 ```
 
 For a sample of a controller see our demo [here](https://github.com/pimcore/demo/blob/master/src/AppBundle/Controller/ProductController.php#L118). 
