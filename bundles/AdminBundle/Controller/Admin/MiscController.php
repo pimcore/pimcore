@@ -49,7 +49,7 @@ class MiscController extends AdminController
 
         sort($bundles, SORT_NATURAL | SORT_FLAG_CASE);
 
-        $result = array_map(function (BundleInterface $bundle) {
+        $result = array_map(static function (BundleInterface $bundle) {
             return [
                 'name' => $bundle->getName(),
             ];
@@ -76,7 +76,7 @@ class MiscController extends AdminController
 
         sort($controllers, SORT_NATURAL | SORT_FLAG_CASE);
 
-        $result = array_map(function ($controller) {
+        $result = array_map(static function ($controller) {
             return [
                 'name' => $controller,
             ];
@@ -112,7 +112,7 @@ class MiscController extends AdminController
 
         sort($actions, SORT_NATURAL | SORT_FLAG_CASE);
 
-        $result = array_map(function ($action) {
+        $result = array_map(static function ($action) {
             return [
                 'name' => $action,
             ];
@@ -136,7 +136,7 @@ class MiscController extends AdminController
 
         sort($templates, SORT_NATURAL | SORT_FLAG_CASE);
 
-        $result = array_map(function ($template) {
+        $result = array_map(static function ($template) {
             return [
                 'path' => $template,
             ];
