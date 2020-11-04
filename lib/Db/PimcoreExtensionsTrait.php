@@ -17,7 +17,7 @@ namespace Pimcore\Db;
 use Doctrine\DBAL\Cache\CacheException;
 use Doctrine\DBAL\Cache\QueryCacheProfile;
 use Doctrine\DBAL\Driver\Exception as DriverException;
-use Doctrine\DBAL\Driver\PDO\Statement as PDOStatement;
+use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Exception as DBALException;
 use Pimcore\Db;
@@ -288,7 +288,7 @@ trait PimcoreExtensionsTrait
         // unfortunately Mysqli driver doesn't support \PDO::FETCH_COLUMN, so we have to do it manually
         $stmt = $this->executeQuery($sql, $params, $types);
         $data = [];
-        if ($stmt instanceof PDOStatement) {
+        if ($stmt instanceof Result) {
             while (($row = $stmt->fetchOne()) || $row !== false) {
                 $data[] = $row;
             }
@@ -336,7 +336,7 @@ trait PimcoreExtensionsTrait
         $params = $this->prepareParams($params);
         $stmt = $this->executeQuery($sql, $params, $types);
         $data = [];
-        if ($stmt instanceof PDOStatement) {
+        if ($stmt instanceof Result) {
             while ($row = $stmt->fetchNumeric()) {
                 $data[$row[0]] = $row[1];
             }

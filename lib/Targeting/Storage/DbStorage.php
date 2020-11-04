@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Storage;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\PDO\Statement as PDOStatement;
+use Doctrine\DBAL\Driver\Result;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Types\Types;
 use Pimcore\Targeting\Model\VisitorInfo;
@@ -89,7 +89,7 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         $stmt = $qb->execute();
         $data = [];
 
-        if ($stmt instanceof PDOStatement) {
+        if ($stmt instanceof Result) {
             while ($row = $stmt->fetchAssociative()) {
                 $data[$row['name']] = json_decode($row['value'], true);
             }
@@ -123,7 +123,7 @@ class DbStorage implements TargetingStorageInterface, MaintenanceStorageInterfac
         $stmt = $qb->execute();
         $result = 0;
 
-        if ($stmt instanceof PDOStatement) {
+        if ($stmt instanceof Result) {
             $result = (int)$stmt->fetchOne();
         }
 
@@ -185,7 +185,7 @@ EOF;
         $stmt = $qb->execute();
         $result = false;
 
-        if ($stmt instanceof PDOStatement) {
+        if ($stmt instanceof Result) {
             $result = $stmt->fetchOne();
         }
 
@@ -303,7 +303,7 @@ EOF;
 
         $stmt = $qb->execute();
 
-        if ($stmt instanceof PDOStatement) {
+        if ($stmt instanceof Result) {
             return $this->convertToDateTime($stmt->fetchOne());
         }
 
