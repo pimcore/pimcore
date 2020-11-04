@@ -313,11 +313,11 @@ pimcore.workflow.transitionPanel = Class.create({
             }
 
         } else {
-            this.getWorkflowFormPanel().getComponent('workflowMessage').setHtml(
-                [
-                    '<div class="action_error">' + data.message + '</div>',
-                    '<div class="action_reason">' + data.reason + '</div>'
-                ].join(''));
+                this.getWorkflowFormPanel().getComponent('workflowMessage').setHtml(
+                    [
+                        '<div class="action_error">' + t(data.message) + '</div>',
+                        '<div class="action_reason">' + data.reasons.map(function(reason){ return t(reason); }).join('<br>') + '</div>'
+                    ].join(''));
 
             this.getWorkflowFormPanel().scrollTo(0, 0);
 
