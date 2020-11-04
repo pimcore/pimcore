@@ -79,7 +79,7 @@ public function myGalleryAction(Request $request)
         $asset = Asset::getById($request->get('id'));
         if ('folder' === $asset->getType()) {
             return [
-                'assets' =>> $asset->getChildren()
+                'assets' => $asset->getChildren()
             ];
         }
     }
