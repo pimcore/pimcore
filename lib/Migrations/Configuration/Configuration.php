@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Migrations\Configuration;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Migrations\Finder\MigrationFinderInterface;
 use Doctrine\DBAL\Migrations\MigrationException;
 use Doctrine\DBAL\Migrations\OutputWriter;
@@ -256,13 +257,15 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
      * @param Version $version
      *
      * @return bool
+     *
+     * @throws Exception
      */
     public function hasVersionMigrated(\Doctrine\DBAL\Migrations\Version $version)
     {
         $this->connect();
         $this->createMigrationTable();
 
-        $version = $this->connection->fetchColumn(
+        $version = $this->connection->fetchOne(
             $this->formatQuery('SELECT {version} FROM {table} WHERE {migration_set} = ? AND {version} = ?'),
             [
                 $this->migrationSet,
@@ -283,9 +286,10 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
         $this->connect();
         $this->createMigrationTable();
 
-        $ret = $this->connection->fetchAll($this->formatQuery('SELECT {version} FROM {table} WHERE {migration_set} = ?'), [
-            $this->migrationSet,
-        ]);
+        $ret = $this->connection->fetchAllAssociative(
+            $this->formatQuery('SELECT {version} FROM {table} WHERE {migration_set} = ?'),
+            [$this->migrationSet]
+        );
 
         return array_map('current', $ret);
     }
@@ -319,9 +323,10 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
         ));
 
         $sql = $this->connection->getDatabasePlatform()->modifyLimitQuery($sql, 1);
-        $result = $this->connection->fetchColumn($sql, [
-            $this->migrationSet,
-        ]);
+        $result = $this->connection->fetchOne(
+            $sql,
+            [$this->migrationSet]
+        );
 
         if (false !== $result) {
             return (string)$result;
@@ -344,7 +349,7 @@ class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuratio
         $this->connect();
         $this->createMigrationTable();
 
-        $result = $this->connection->fetchColumn(
+        $result = $this->connection->fetchOne(
             $this->formatQuery('SELECT COUNT({version}) FROM {table} WHERE {migration_set} = ?'),
             [$this->migrationSet]
         );

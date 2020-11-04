@@ -55,13 +55,6 @@ jobs:
 
   include:
     # Symfony 3.4 all tests
-#    - name: "All Tests - PHP 7.2 | Symfony 3.4 | MariaDB 10.1"
-#      os: linux
-#      sudo: required
-#      php: 7.2
-#      env:
-#        - SYMFONY_VERSION="^3.4"
-#        - DATABASE_SERVER="mariadb-10.1"
 
 #    - name: "All Tests - PHP 7.3 | Symfony 3.4 | MariaDB 10.2"
 #      os: linux
@@ -80,12 +73,6 @@ jobs:
 #        - DATABASE_SERVER="mysql-5.7"
 
     # Symfony 4.* all tests
-    - name: "All Tests - PHP 7.2 | Symfony 4 | MariaDB 10.3"
-      os: linux
-      sudo: required
-      php: 7.2
-      env:
-          - DATABASE_SERVER="mariadb-10.3"
 
     - name: "All Tests - PHP 7.3 | Symfony 4 | MariaDB 10.4"
       os: linux
@@ -109,15 +96,6 @@ jobs:
           - DATABASE_SERVER="mariadb-10.3"
 
     # Other Tests
-#    - name: "REST Tests - PHP 7.2 | Symfony 3.4 | MySQL 8.0"
-#      os: linux
-#      sudo: required
-#      php: 7.2
-#      env:
-#        - SYMFONY_VERSION="^3.4"
-#        - PIMCORE_TEST_SUITE=Rest
-#        - PIMCORE_TEST_ENV=http
-#        - DATABASE_SERVER="mysql-8.0"
 
 #    - name: "REST Tests - PHP 7.3 | Symfony 3.4"
 #      os: linux
@@ -173,7 +151,7 @@ jobs:
     # Test Docs
     - name: "Documentation"
       os: linux
-      php: 7.2
+      php: 7.4
       env:
         - TASK_TESTS=0
         - TASK_DOCS=1

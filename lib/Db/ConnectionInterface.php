@@ -14,10 +14,15 @@
 
 namespace Pimcore\Db;
 
+use Doctrine\DBAL\Cache\CacheException;
 use Doctrine\DBAL\Cache\QueryCacheProfile;
 use Doctrine\DBAL\Driver\Connection;
+use Doctrine\DBAL\Driver\Exception as DriverException;
+use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendDbCompatibleQueryBuilder;
+use Pimcore\Model\Element\ValidationException;
 
 interface ConnectionInterface extends Connection
 {
@@ -27,7 +32,9 @@ interface ConnectionInterface extends Connection
      * @param array $types
      * @param QueryCacheProfile|null $qcp
      *
-     * @return \Doctrine\DBAL\Driver\Statement
+     * @return ResultStatement
+     *
+     * @throws DBALException
      */
     public function executeQuery($query, array $params = [], $types = [], QueryCacheProfile $qcp = null);
 
@@ -37,6 +44,8 @@ interface ConnectionInterface extends Connection
      * @param array $types
      *
      * @return int
+     *
+     * @throws DBALException
      */
     public function executeUpdate($query, array $params = [], array $types = []);
 
@@ -46,7 +55,9 @@ interface ConnectionInterface extends Connection
      * @param array $types
      * @param QueryCacheProfile $qcp
      *
-     * @return \Doctrine\DBAL\Driver\ResultStatement
+     * @return ResultStatement
+     *
+     * @throws CacheException
      */
     public function executeCacheQuery($query, $params, $types, QueryCacheProfile $qcp);
 
@@ -57,6 +68,8 @@ interface ConnectionInterface extends Connection
      * @param array $types
      *
      * @return int
+     *
+     * @throws DBALException
      */
     public function update($tableExpression, array $data, array $identifier, array $types = []);
 
@@ -65,7 +78,9 @@ interface ConnectionInterface extends Connection
      * @param array $data
      * @param array $types
      *
-     * @return mixed
+     * @return int
+     *
+     * @throws DBALException
      */
     public function insert($tableExpression, array $data, array $types = []);
 
@@ -74,6 +89,8 @@ interface ConnectionInterface extends Connection
      * @param string $where
      *
      * @return int
+     *
+     * @throws DBALException
      */
     public function deleteWhere($table, $where = '');
 
@@ -83,6 +100,8 @@ interface ConnectionInterface extends Connection
      * @param string $where
      *
      * @return int
+     *
+     * @throws DBALException
      */
     public function updateWhere($table, array $data, $where = '');
 
@@ -101,6 +120,9 @@ interface ConnectionInterface extends Connection
      * @param array $types
      *
      * @return mixed
+     *
+     * @throws DBALException
+     * @throws DriverException
      */
     public function fetchCol($sql, $params = [], $types = []);
 
@@ -110,6 +132,8 @@ interface ConnectionInterface extends Connection
      * @param array $types
      *
      * @return mixed
+     *
+     * @throws DBALException
      */
     public function fetchOne($sql, $params = [], $types = []);
 
@@ -119,6 +143,9 @@ interface ConnectionInterface extends Connection
      * @param array $types
      *
      * @return array
+     *
+     * @throws DBALException
+     * @throws DriverException
      */
     public function fetchPairs($sql, array $params = [], $types = []);
 
@@ -127,6 +154,8 @@ interface ConnectionInterface extends Connection
      * @param array $data
      *
      * @return int
+     *
+     * @throws DBALException
      */
     public function insertOrUpdate($table, array $data);
 
@@ -183,7 +212,9 @@ interface ConnectionInterface extends Connection
      * @param string $sql
      * @param array $exclusions
      *
-     * @return \Doctrine\DBAL\Driver\Statement|int|null
+     * @return ResultStatement
+     *
+     * @throws ValidationException
      */
     public function queryIgnoreError($sql, $exclusions = []);
 

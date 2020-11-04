@@ -130,7 +130,7 @@ class VisitorInfoResolver
             return $this->targetingConfigured;
         }
 
-        $configuredRules = $this->db->fetchColumn(
+        $configuredRules = $this->db->fetchOne(
             'SELECT id FROM targeting_target_groups UNION SELECT id FROM targeting_rules LIMIT 1'
         );
 

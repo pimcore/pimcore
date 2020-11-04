@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Notification\Service;
 
+use Doctrine\DBAL\Exception;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Notification;
 use Pimcore\Model\Notification\Listing;
@@ -200,7 +201,7 @@ class NotificationService
      *
      * @return array
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws Exception
      */
     public function findLastUnread(int $user, int $lastUpdate): array
     {
