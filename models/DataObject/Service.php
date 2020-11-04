@@ -1528,24 +1528,15 @@ class Service extends Model\Element\Service
         }
         $className = $fd->getCalculatorClass();
         $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
-        if (!$className || $calculator === null) {
-            Logger::error('Class does not exist: ' . $className);
+        if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
+            Logger::error('Class does not exist or is not valid: ' . $className);
 
             return null;
         }
 
-        if (!$calculator instanceof Model\DataObject\ClassDefinition\CalculatorClassInterface) {
-            @trigger_error('Using a calculator class which does not implement '.Model\DataObject\ClassDefinition\CalculatorClassInterface::class.' is deprecated', \E_USER_DEPRECATED);
-        }
-
         $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
         Model\DataObject\Concrete::setGetInheritedValues(true);
-
-        if (method_exists($calculator, 'getCalculatedValueForEditMode')) {
-            $result = call_user_func([$calculator, 'getCalculatedValueForEditMode'], $object, $data);
-        } else {
-            $result = self::getCalculatedFieldValue($object, $data);
-        }
+        $result = $calculator->getCalculatedValueForEditMode($object, $data);
         Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
 
         return $result;
@@ -1581,27 +1572,24 @@ class Service extends Model\Element\Service
         }
         $className = $fd->getCalculatorClass();
         $calculator = Model\DataObject\ClassDefinition\Helper\CalculatorClassResolver::resolveCalculatorClass($className);
-        if (!$className || $calculator === null) {
-            Logger::error('Calculator class "' . $className.'" does not exist -> '.$fieldname.'=null');
+        if (!$calculator instanceof DataObject\ClassDefinition\CalculatorClassInterface) {
+            Logger::error('Class does not exist or is not valid: ' . $className);
 
             return null;
         }
 
-        if (method_exists($calculator, 'compute')) {
-            $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
-            Model\DataObject\Concrete::setGetInheritedValues(true);
-
-            if ($object instanceof Model\DataObject\Fieldcollection\Data\AbstractData
-                || $object instanceof Model\DataObject\Objectbrick\Data\AbstractData) {
-                $object = $object->getObject();
-            }
-            $result = call_user_func([$calculator, 'compute'], $object, $data);
-            Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
-
-            return $result;
+        $inheritanceEnabled = Model\DataObject\Concrete::getGetInheritedValues();
+        Model\DataObject\Concrete::setGetInheritedValues(true);
+        if (
+            $object instanceof Model\DataObject\Fieldcollection\Data\AbstractData ||
+            $object instanceof Model\DataObject\Objectbrick\Data\AbstractData
+        ) {
+            $object = $object->getObject();
         }
+        $result = $calculator->compute($object, $data);
+        Model\DataObject\Concrete::setGetInheritedValues($inheritanceEnabled);
 
-        return null;
+        return $result;
     }
 
     /**
