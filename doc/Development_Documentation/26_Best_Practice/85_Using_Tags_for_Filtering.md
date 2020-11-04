@@ -39,7 +39,6 @@ $tags = [];
 foreach ($tagList->load() as $tag) {
     $tags[] = $this->convertTagToArray($tag, $request->get('tags-filter'));
 }
-$this->view->tagTree = $tags; 
 ```
 
 ```php

@@ -143,6 +143,10 @@ echo $thumbnail; // prints something like /var/tmp/....png
 }).html({
     'class': 'thumbnail-class',
     'data-my-name': 'my value',
+    'attributes': {
+        'non-standard': 'HTML attributes',
+        'another': 'one'
+    }
 }) }}
   
 /* same with a thumbnail definition */
