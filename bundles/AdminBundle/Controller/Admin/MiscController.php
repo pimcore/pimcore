@@ -47,13 +47,13 @@ class MiscController extends AdminController
         // convert to normal array
         $bundles = array_values($provider->getBundles());
 
-        $result = array_map(function (BundleInterface $bundle) {
+        sort($bundles, SORT_NATURAL | SORT_FLAG_CASE);
+
+        $result = array_map(static function (BundleInterface $bundle) {
             return [
                 'name' => $bundle->getName(),
             ];
         }, $bundles);
-
-        sort($result);
 
         return $this->adminJson([
             'data' => $result,
@@ -74,13 +74,13 @@ class MiscController extends AdminController
         $bundle = $request->get('moduleName');
         $controllers = $provider->getControllers($bundle, $routingDefaults['bundle']);
 
-        $result = array_map(function ($controller) {
+        sort($controllers, SORT_NATURAL | SORT_FLAG_CASE);
+
+        $result = array_map(static function ($controller) {
             return [
                 'name' => $controller,
             ];
         }, $controllers);
-
-        sort($result);
 
         return $this->adminJson([
             'data' => $result,
@@ -110,13 +110,13 @@ class MiscController extends AdminController
 
         $actions = $provider->getActions($controller, $bundle);
 
-        $result = array_map(function ($action) {
+        sort($actions, SORT_NATURAL | SORT_FLAG_CASE);
+
+        $result = array_map(static function ($action) {
             return [
                 'name' => $action,
             ];
         }, $actions);
-
-        sort($result);
 
         return $this->adminJson([
             'data' => $result,
@@ -134,13 +134,13 @@ class MiscController extends AdminController
     {
         $templates = $provider->getTemplates();
 
-        $result = array_map(function ($template) {
+        sort($templates, SORT_NATURAL | SORT_FLAG_CASE);
+
+        $result = array_map(static function ($template) {
             return [
                 'path' => $template,
             ];
         }, $templates);
-
-        sort($result);
 
         return $this->adminJson([
             'data' => $result,
