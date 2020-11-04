@@ -61,7 +61,9 @@ class EditableRenderer implements LoggerAwareInterface
      * @param string $inputName
      * @param array $config
      * @param bool|null $editmode
+     *
      * @return Editable\EditableInterface
+     *
      * @throws \Exception
      */
     public function getEditable(PageSnippet $document, string $type, string $inputName, array $config = [], bool $editmode = null): Editable\EditableInterface
@@ -106,6 +108,7 @@ class EditableRenderer implements LoggerAwareInterface
      * @param bool|null $editmode
      *
      * @return mixed
+     *
      * @throws \Exception
      */
     public function render(PageSnippet $document, $type, $inputName, array $options = [], bool $editmode = null)

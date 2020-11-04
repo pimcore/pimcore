@@ -21,6 +21,7 @@ interface EditableInterface
 {
     /**
      * Renders the editable, calls either frontend() or admin() depending on the context
+     *
      * @return mixed
      */
     public function render();
