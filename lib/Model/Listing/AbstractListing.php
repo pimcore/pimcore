@@ -14,6 +14,7 @@
 
 namespace Pimcore\Model\Listing;
 
+use Doctrine\DBAL\Connection;
 use Pimcore\Db;
 use Pimcore\Model\AbstractModel;
 
@@ -331,9 +332,9 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
         foreach ($params as $pkey => $param) {
             if (is_array($param)) {
                 if (isset($param[0]) && is_string($param[0])) {
-                    $conditionVariableTypes[$pkey] = \Doctrine\DBAL\Connection::PARAM_STR_ARRAY;
+                    $conditionVariableTypes[$pkey] = Connection::PARAM_STR_ARRAY;
                 } else {
-                    $conditionVariableTypes[$pkey] = \Doctrine\DBAL\Connection::PARAM_INT_ARRAY;
+                    $conditionVariableTypes[$pkey] = Connection::PARAM_INT_ARRAY;
                 }
             } else {
                 if (is_bool($param)) {

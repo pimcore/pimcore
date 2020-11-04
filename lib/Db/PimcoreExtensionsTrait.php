@@ -14,7 +14,12 @@
 
 namespace Pimcore\Db;
 
+use Doctrine\DBAL\Cache\CacheException;
 use Doctrine\DBAL\Cache\QueryCacheProfile;
+use Doctrine\DBAL\Driver\Exception as DriverException;
+use Doctrine\DBAL\Driver\Result;
+use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\Exception as DBALException;
 use Pimcore\Db;
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
@@ -51,11 +56,11 @@ trait PimcoreExtensionsTrait
     }
 
     /**
-     * @see \Doctrine\DBAL\Connection::query
+     * @see \Doctrine\DBAL\Connection::executeQuery
      *
-     * @return \Doctrine\DBAL\Driver\Statement
+     * @return ResultStatement
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function query(...$params)
     {
@@ -63,7 +68,7 @@ trait PimcoreExtensionsTrait
         // eg. $db->query("UPDATE myTest SET date = ? WHERE uri = ?", [time(), $uri]);
         if (func_num_args() === 2) {
             if (is_array($params[1])) {
-                return parent::executeUpdate($params[0], $params[1]);
+                return parent::executeQuery($params[0], $params[1]);
             }
         }
 
@@ -71,20 +76,20 @@ trait PimcoreExtensionsTrait
             $params[0] = $this->normalizeQuery($params[0], [], true);
         }
 
-        return parent::query(...$params);
+        return parent::executeQuery(...$params);
     }
 
     /**
      * @see \Doctrine\DBAL\Connection::executeQuery
      *
-     * @param string                                      $query  The SQL query to execute.
-     * @param array                                       $params The parameters to bind to the query, if any.
-     * @param array                                       $types  The types the previous parameters are in.
-     * @param \Doctrine\DBAL\Cache\QueryCacheProfile|null $qcp    The query cache profile, optional.
+     * @param string $query The SQL query to execute.
+     * @param array $params The parameters to bind to the query, if any.
+     * @param array $types The types the previous parameters are in.
+     * @param QueryCacheProfile|null $qcp The query cache profile, optional.
      *
-     * @return \Doctrine\DBAL\Driver\Statement The executed statement.
+     * @return ResultStatement The executed statement.
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function executeQuery($query, array $params = [], $types = [], QueryCacheProfile $qcp = null)
     {
@@ -96,32 +101,32 @@ trait PimcoreExtensionsTrait
     /**
      * @see \Doctrine\DBAL\Connection::executeUpdate
      *
-     * @param string $query  The SQL query.
-     * @param array  $params The query parameters.
-     * @param array  $types  The parameter types.
+     * @param string $query The SQL query.
+     * @param array $params The query parameters.
+     * @param array $types The parameter types.
      *
      * @return int The number of affected rows.
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function executeUpdate($query, array $params = [], array $types = [])
     {
         list($query, $params) = $this->normalizeQuery($query, $params);
 
-        return parent::executeUpdate($query, $params, $types);
+        return parent::executeStatement($query, $params, $types);
     }
 
     /**
      * @see \Doctrine\DBAL\Connection::executeCacheQuery
      *
-     * @param string                                 $query  The SQL query to execute.
-     * @param array                                  $params The parameters to bind to the query, if any.
-     * @param array                                  $types  The types the previous parameters are in.
-     * @param \Doctrine\DBAL\Cache\QueryCacheProfile $qcp    The query cache profile.
+     * @param string $query The SQL query to execute.
+     * @param array $params The parameters to bind to the query, if any.
+     * @param array $types The types the previous parameters are in.
+     * @param QueryCacheProfile $qcp The query cache profile.
      *
-     * @return \Doctrine\DBAL\Driver\ResultStatement
+     * @return ResultStatement
      *
-     * @throws \Doctrine\DBAL\Cache\CacheException
+     * @throws CacheException
      */
     public function executeCacheQuery($query, $params, $types, QueryCacheProfile $qcp)
     {
@@ -167,6 +172,8 @@ trait PimcoreExtensionsTrait
      * @param array  $types      Types of the merged $data and $identifier arrays in that order.
      *
      * @return int The number of affected rows.
+     *
+     * @throws DBALException
      */
     public function update($tableExpression, array $data, array $identifier, array $types = [])
     {
@@ -184,6 +191,8 @@ trait PimcoreExtensionsTrait
      * @param array  $types     Types of the inserted data.
      *
      * @return int The number of affected rows.
+     *
+     * @throws DBALException
      */
     public function insert($tableExpression, array $data, array $types = [])
     {
@@ -200,7 +209,7 @@ trait PimcoreExtensionsTrait
      *
      * @return int          The number of affected rows.
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function deleteWhere($table, $where = '')
     {
@@ -221,7 +230,7 @@ trait PimcoreExtensionsTrait
      *
      * @return int          The number of affected rows.
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function updateWhere($table, array $data, $where = '')
     {
@@ -251,13 +260,13 @@ trait PimcoreExtensionsTrait
      *
      * @return mixed
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
      */
     public function fetchRow($sql, $params = [], $types = [])
     {
         $params = $this->prepareParams($params);
 
-        return $this->executeQuery($sql, $params, $types)->fetch();
+        return $this->fetchAssociative($sql, $params, $types);
     }
 
     /**
@@ -269,7 +278,8 @@ trait PimcoreExtensionsTrait
      *
      * @return mixed
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
+     * @throws DriverException
      */
     public function fetchCol($sql, $params = [], $types = [])
     {
@@ -278,11 +288,12 @@ trait PimcoreExtensionsTrait
         // unfortunately Mysqli driver doesn't support \PDO::FETCH_COLUMN, so we have to do it manually
         $stmt = $this->executeQuery($sql, $params, $types);
         $data = [];
-        while (($row = $stmt->fetchColumn()) || $row !== false) {
-            $data[] = $row;
+        if ($stmt instanceof Result) {
+            while (($row = $stmt->fetchOne()) || $row !== false) {
+                $data[] = $row;
+            }
+            $stmt->free();
         }
-
-        $stmt->closeCursor();
 
         return $data;
     }
@@ -295,12 +306,14 @@ trait PimcoreExtensionsTrait
      * @param array $types
      *
      * @return mixed
+     *
+     * @throws DBALException
      */
     public function fetchOne($sql, $params = [], $types = [])
     {
         $params = $this->prepareParams($params);
         // unfortunately Mysqli driver doesn't support \PDO::FETCH_COLUMN, so we have to use $this->fetchColumn() instead
-        return $this->fetchColumn($sql, $params, 0, $types);
+        return parent::fetchOne($sql, $params, $types);
     }
 
     /**
@@ -315,15 +328,18 @@ trait PimcoreExtensionsTrait
      *
      * @return array
      *
-     * @throws \Doctrine\DBAL\DBALException
+     * @throws DBALException
+     * @throws DriverException
      */
     public function fetchPairs($sql, array $params = [], $types = [])
     {
         $params = $this->prepareParams($params);
-        $statement = $this->executeQuery($sql, $params, $types);
+        $stmt = $this->executeQuery($sql, $params, $types);
         $data = [];
-        while ($row = $statement->fetch(\PDO::FETCH_NUM)) {
-            $data[$row[0]] = $row[1];
+        if ($stmt instanceof Result) {
+            while ($row = $stmt->fetchNumeric()) {
+                $data[$row[0]] = $row[1];
+            }
         }
 
         return $data;
@@ -335,7 +351,7 @@ trait PimcoreExtensionsTrait
      *
      * @return int
      *
-     * @throws \Exception
+     * @throws DBALException
      */
     public function insertOrUpdate($table, array $data)
     {
@@ -366,9 +382,8 @@ trait PimcoreExtensionsTrait
         );
 
         $bind = array_merge($bind, $bind);
-        $result = $this->executeUpdate($sql, $bind);
 
-        return $result;
+        return $this->executeUpdate($sql, $bind);
     }
 
     /**
@@ -378,7 +393,8 @@ trait PimcoreExtensionsTrait
     {
         if ($str instanceof Expression) {
             return (string) $str;
-        } elseif ($str instanceof QueryBuilder) {
+        }
+        if ($str instanceof QueryBuilder) {
             return '(' . $str->assemble() . ')';
         }
 
@@ -398,10 +414,10 @@ trait PimcoreExtensionsTrait
      * // $safe = "WHERE date < '2005-01-02'"
      * </code>
      *
-     * @param string  $text  The text with a placeholder.
-     * @param mixed   $value The value to quote.
-     * @param string  $type  OPTIONAL SQL datatype
-     * @param int $count OPTIONAL count of placeholders to replace
+     * @param string $text The text with a placeholder.
+     * @param mixed $value The value to quote.
+     * @param string|null $type OPTIONAL SQL datatype
+     * @param int|null $count OPTIONAL count of placeholders to replace
      *
      * @return string An SQL-safe quoted value placed into the original text.
      */
@@ -409,20 +425,20 @@ trait PimcoreExtensionsTrait
     {
         if ($count === null) {
             return str_replace('?', $this->quote($value, $type), $text);
-        } else {
-            return implode($this->quote($value, $type), explode('?', $text, $count + 1));
         }
+
+        return implode($this->quote($value, $type), explode('?', $text, $count + 1));
     }
 
     /**
      * Quote a column identifier and alias.
      *
      * @param string|array $ident The identifier or expression.
-     * @param string $alias An alias for the column.
+     * @param string|null $alias An alias for the column.
      *
      * @return string The quoted identifier and alias.
      */
-    public function quoteColumnAs($ident, $alias)
+    public function quoteColumnAs($ident, $alias = null)
     {
         return $this->_quoteIdentifierAs($ident, $alias);
     }
@@ -431,7 +447,7 @@ trait PimcoreExtensionsTrait
      * Quote a table identifier and alias.
      *
      * @param string|array $ident The identifier or expression.
-     * @param string $alias An alias for the table.
+     * @param string|null $alias An alias for the table.
      *
      * @return string The quoted identifier and alias.
      */
@@ -444,7 +460,7 @@ trait PimcoreExtensionsTrait
      * Quote an identifier and an optional alias.
      *
      * @param string|array|Expression $ident The identifier or expression.
-     * @param string $alias An optional alias.
+     * @param string|null $alias An optional alias.
      * @param bool $auto If true, heed the AUTO_QUOTE_IDENTIFIERS config option.
      * @param string $as The string to add between the identifier/expression and the alias.
      *
@@ -487,10 +503,10 @@ trait PimcoreExtensionsTrait
     /**
      * Quote an identifier.
      *
-     * @param  string $value The identifier or expression.
+     * @param string $value The identifier or expression.
      * @param bool $auto If true, heed the AUTO_QUOTE_IDENTIFIERS config option.
      *
-     * @return string        The quoted identifier and alias.
+     * @return string The quoted identifier and alias.
      */
     protected function _quoteIdentifier($value, $auto = false)
     {
@@ -518,9 +534,9 @@ trait PimcoreExtensionsTrait
     /**
      * Adds an adapter-specific LIMIT clause to the SELECT statement.
      *
-     * @param  string $sql
-     * @param  int $count
-     * @param  int $offset OPTIONAL
+     * @param string $sql
+     * @param int $count
+     * @param int $offset OPTIONAL
      *
      * @throws \Exception
      *
@@ -550,16 +566,14 @@ trait PimcoreExtensionsTrait
      * @param string $sql
      * @param array $exclusions
      *
-     * @return \Doctrine\DBAL\Driver\Statement|int|null
+     * @return ResultStatement|null
      *
      * @throws ValidationException
      */
     public function queryIgnoreError($sql, $exclusions = [])
     {
         try {
-            $return = $this->query($sql);
-
-            return $return;
+            return $this->query($sql);
         } catch (\Exception $e) {
             foreach ($exclusions as $exclusion) {
                 if ($e instanceof $exclusion) {
