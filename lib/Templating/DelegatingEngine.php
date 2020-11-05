@@ -26,7 +26,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     protected $twig;
 
     /**
-     * @var string
+     * @var bool
      */
     protected $delegate = false;
 
