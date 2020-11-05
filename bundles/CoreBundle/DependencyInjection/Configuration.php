@@ -1683,7 +1683,7 @@ class Configuration implements ConfigurationInterface
                                                                         ->scalarNode('name')->isRequired()->info('The technical name used in the input form.')->end()
                                                                         ->enumNode('fieldType')
                                                                             ->isRequired()
-                                                                            ->values(['input', 'textarea', 'select', 'datetime', 'date', 'user', 'checkbox'])
+                                                                            ->values(['input', 'numeric', 'textarea', 'select', 'datetime', 'date', 'user', 'checkbox'])
                                                                             ->info('The data component name/field type.')
                                                                         ->end()
                                                                         ->scalarNode('title')->info('The label used by the field')->end()

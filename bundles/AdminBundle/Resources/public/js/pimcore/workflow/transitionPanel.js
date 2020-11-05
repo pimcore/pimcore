@@ -230,7 +230,7 @@ pimcore.workflow.transitionPanel = Class.create({
         Ext.each(additional, function(a) {
             //add a new field
             var field = {};
-            var supportedTags = ['input', 'textarea', 'select', 'datetime', 'date', 'user', 'checkbox'];
+            var supportedTags = ['input', 'numeric', 'textarea', 'select', 'datetime', 'date', 'user', 'checkbox'];
 
             var c = a.fieldTypeSettings;
             c.name = 'workflow[additional][' + a.name + ']';
