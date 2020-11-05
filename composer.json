@@ -91,6 +91,7 @@
     "umpirsky/country-list": "^2.0.4",
     "vrana/adminer": "^4.6.3",
     "vrana/jush": "~2.0.2",
+    "zendframework/zend-code": "^3.3.1",
     "zendframework/zend-paginator": "^2.7",
     "zendframework/zend-servicemanager": "^3.2",
     "scheb/two-factor-bundle": "^3.26",
