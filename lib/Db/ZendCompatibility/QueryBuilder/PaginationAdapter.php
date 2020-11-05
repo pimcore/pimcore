@@ -39,7 +39,7 @@ namespace Pimcore\Db\ZendCompatibility\QueryBuilder;
 
 use Pimcore\Db\ZendCompatibility\Expression;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
-use Zend\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\Adapter\AdapterInterface;
 
 /**
  * @deprecated
