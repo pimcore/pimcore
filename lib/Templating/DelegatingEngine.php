@@ -18,11 +18,8 @@ use Twig\Environment;
 use Symfony\Component\Templating\EngineInterface;
 use \Symfony\Component\Templating\DelegatingEngine as BaseDelegatingEngine;
 
-class DelegatingEngine extends BaseDelegatingEngine
+class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
 {
-    const ENGINE_TWIG = 'twig';
-    const ENGINE_CUSTOM = 'custom';
-
     /**
      * @var Environment
      */
@@ -31,7 +28,7 @@ class DelegatingEngine extends BaseDelegatingEngine
     /**
      * @var string
      */
-    protected $defaultEngine = self::ENGINE_TWIG;
+    protected $delegate = false;
 
     /**
      * @param Environment $twig
@@ -49,7 +46,7 @@ class DelegatingEngine extends BaseDelegatingEngine
      */
     public function exists($name)
     {
-        if ($this->defaultEngine === self::ENGINE_TWIG) {
+        if (!$this->delegate) {
             return $this->twig->getLoader()->exists($name);
         } else {
             return parent::exists($name);
@@ -63,7 +60,7 @@ class DelegatingEngine extends BaseDelegatingEngine
      */
     public function render($name, array $parameters = [])
     {
-        if ($this->defaultEngine === self::ENGINE_TWIG) {
+        if (!$this->delegate) {
             return $this->twig->render($name, $parameters);
         } else {
             return parent::render($name, $parameters);
@@ -75,10 +72,18 @@ class DelegatingEngine extends BaseDelegatingEngine
      */
     public function supports($name)
     {
-        if ($this->defaultEngine === self::ENGINE_TWIG) {
+        if (!$this->delegate) {
             return true;
         } else {
             return parent::supports($name);
         }
+    }
+
+    /**
+     * @param bool $delegate
+     */
+    public function setDelegate(bool $delegate)
+    {
+        $this->delegate = $delegate;
     }
 }

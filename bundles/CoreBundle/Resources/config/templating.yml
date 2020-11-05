@@ -55,4 +55,4 @@ services:
 
     pimcore.templating.engine.delegating:
         public: true
-        class: Pimcore\Templating\DelegatingEngine
+        class: Pimcore\Templating\TwigDefaultDelegatingEngine
