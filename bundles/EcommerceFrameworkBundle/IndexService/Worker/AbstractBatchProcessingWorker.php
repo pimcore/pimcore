@@ -351,7 +351,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
         } elseif ($currentEntry['crc_current'] != $data['crc_current']) {
             $this->executeTransactionalQuery(function () use ($data, $subObjectId) {
                 $data['preparation_worker_timestamp'] = 0;
-                $data['preparation_worker_id'] = $this->db->quote(null);
+                $data['preparation_worker_id'] = null;
 
                 $this->db->updateWhere($this->getStoreTableName(), $data, 'o_id = ' . $this->db->quote((string)$subObjectId) . ' AND tenant = ' . $this->db->quote($this->name));
             });
