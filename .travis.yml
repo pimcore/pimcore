@@ -34,14 +34,6 @@ addons:
 jobs:
   allow_failures:
     # Run PHPStan level 3 without baseline, but allow them to fail
-    -
-#      os: linux
-#      php: 7.4
-#      env:
-#        - SYMFONY_VERSION="^3.4"
-#        - TASK_TESTS=0
-#        - TASK_STAN=1
-#        - PHPSTAN_BASELINE=0
     - os: linux
       php: 7.4
       env:
@@ -54,85 +46,55 @@ jobs:
           - DATABASE_SERVER="mariadb-10.3"
 
   include:
-    # Symfony 3.4 all tests
 
-#    - name: "All Tests - PHP 7.3 | Symfony 3.4 | MariaDB 10.2"
-#      os: linux
-#      sudo: required
-#      php: 7.3
-#      env:
-#        - SYMFONY_VERSION="^3.4"
-#        - DATABASE_SERVER="mariadb-10.2"
+    # All tests
 
-#    - name: "All Tests - PHP 7.4 | Symfony 3.4 | MySQL 5.7"
-#      os: linux
-#      sudo: required
-#      php: 7.4
-#      env:
-#        - SYMFONY_VERSION="^3.4"
-#        - DATABASE_SERVER="mysql-5.7"
-
-    # Symfony 4.* all tests
-
-    - name: "All Tests - PHP 7.3 | Symfony 4 | MariaDB 10.4"
+    - name: "All Tests - PHP 7.3 | MariaDB 10.4"
       os: linux
       sudo: required
       php: 7.3
       env:
           - DATABASE_SERVER="mariadb-10.4"
 
-    - name: "All Tests - PHP 7.4 | Symfony 4 | Percona 5.6"
+    - name: "All Tests - PHP 7.4 | Percona 5.6"
       os: linux
       sudo: required
       php: 7.4
       env:
           - DATABASE_SERVER="percona-server-5.6"
 
-    - name: "All Tests - PHP 8 | Symfony 4 | MariaDB 10.3"
+    - name: "All Tests - PHP 8 | MariaDB 10.3"
       os: linux
       sudo: required
       php: nightly
       env:
           - DATABASE_SERVER="mariadb-10.3"
 
-    # Other Tests
-
-#    - name: "REST Tests - PHP 7.3 | Symfony 3.4"
-#      os: linux
-#      sudo: required
-#      php: 7.3
-#      env:
-#        - SYMFONY_VERSION="^3.4"
-#        - PIMCORE_TEST_SUITE=Rest
-#        - PIMCORE_TEST_ENV=http
+    - name: "All Tests - PHP 7.3 | MariaDB 10.4 | Lowest dependencies"
+      os: linux
+      sudo: required
+      php: 7.3
+      env:
+        - DATABASE_SERVER="mariadb-10.4"
+        - COMPOSER_PREFER_LOWEST=1
 
     # Test Stan - see https://github.com/phpstan/phpstan
-#    - name: "PHPStan Level 3 - PHP 7.4 Symfony 3.4 baseline"
-#      os: linux
-#      php: 7.4
-#      env:
-#        - SYMFONY_VERSION="^3.4"
-#        - TASK_TESTS=0
-#        - TASK_STAN=1
-
-#    - name: "PHPStan Level 3 - PHP 7.4 Symfony 3.4"
-#      os: linux
-#      php: 7.4
-#      env:
-#        - SYMFONY_VERSION="^3.4"
-#        - TASK_TESTS=0
-#        - TASK_STAN=1
-#        - PHPSTAN_BASELINE=0
-
-    # Test Stan Symfony ^4.0
-    - name: "PHPStan Level 3 - PHP 7.4 Symfony 4 baseline"
+    - name: "PHPStan - PHP 7.4 | Level 3 | baseline"
       os: linux
       php: 7.4
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
 
-    - name: "PHPStan Level 3 - PHP 7.4 Symfony 4"
+    - name: "PHPStan - PHP 7.3 | Level 3 | baseline | Lowest dependencies"
+      os: linux
+      php: 7.3
+      env:
+        - TASK_TESTS=0
+        - TASK_STAN=1
+        - COMPOSER_PREFER_LOWEST=1
+
+    - name: "PHPStan - PHP 7.4 | Level 3"
       os: linux
       php: 7.4
       env:
@@ -140,7 +102,7 @@ jobs:
         - TASK_STAN=1
         - PHPSTAN_BASELINE=0
 
-    - name: "PHPStan Level 3 - PHP 7.4 Symfony 4 - Generate baseline"
+    - name: "PHPStan - PHP 7.4 | Level 3 | Generate baseline"
       os: linux
       php: 7.4
       env:
@@ -167,6 +129,8 @@ cache:
 env:
   global:
     - COMPOSER_MEMORY_LIMIT=-1
+    - COMPOSER_NO_INTERACTION=1
+    - COMPOSER_PREFER_LOWEST=0
     - TASK_TESTS=1
     - TASK_STAN=0
     - TASK_DOCS=0
@@ -178,7 +142,6 @@ env:
     - PIMCORE_TEST_URL=http://pimcore-test.dev
     - PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test"
     - PIMCORE_TEST_CACHE_REDIS_DATABASE=1
-    - SYMFONY_VERSION=^4.0
     - DATABASE_SERVER="mariadb-10.4"
     - PIMCORE_PROJECT_ROOT=$TRAVIS_BUILD_DIR
 

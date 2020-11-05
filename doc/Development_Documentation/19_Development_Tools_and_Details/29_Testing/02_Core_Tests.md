@@ -130,8 +130,8 @@ Open https://travis-ci.com/pimcore/pimcore for the current build status.
 
 The build matrix (which can change at any time) consists of a mixture of
 
-* different PHP versions (7.2, 7.3, 7.4)
-* different Symfony versions (3.4 and 4)
+* different PHP versions (7.3, 7.4)
+* different Composer dependencies (lowest, highest)
 
 In addition it
 * verifies the state of the documentation (broken links, etc) 

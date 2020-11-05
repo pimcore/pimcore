@@ -42,7 +42,7 @@ class Dao extends Model\Dao\AbstractDao
             $data = $this->db->fetchRow('SELECT * FROM users WHERE `id` = ?', $id);
         }
 
-        if (is_numeric($data['id'])) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception("user doesn't exist");
@@ -58,7 +58,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $data = $this->db->fetchRow('SELECT * FROM users WHERE `type` = ? AND `name` = ?', [$this->model->getType(), $name]);
 
-        if ($data['id']) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
             throw new \Exception("user doesn't exist");

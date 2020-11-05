@@ -23,8 +23,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
-use Zend\Paginator\Adapter\ArrayAdapter;
-use Zend\Paginator\Paginator;
+use Laminas\Paginator\Adapter\ArrayAdapter;
+use Laminas\Paginator\Paginator;
 
 class Single extends AbstractTokenManager implements ExportableTokenManagerInterface
 {

@@ -15,8 +15,8 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
+use Laminas\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\AdapterAggregateInterface;
 
 /**
  * @method Token[] load()

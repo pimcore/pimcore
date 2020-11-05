@@ -27,7 +27,7 @@ use Pimcore\File;
 use Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
-use Zend\Paginator\Paginator;
+use Laminas\Paginator\Paginator;
 
 /**
  * Class Pattern

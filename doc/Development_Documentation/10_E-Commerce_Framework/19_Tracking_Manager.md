@@ -126,7 +126,7 @@ namespace AppBundle\Controller;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\TrackingManager;
 use Pimcore\Controller\FrontendController;
 use Symfony\Component\HttpFoundation\Request;
-use Zend\Paginator\Paginator;
+use Laminas\Paginator\Paginator;
 
 class ShopController extends FrontendController
 {

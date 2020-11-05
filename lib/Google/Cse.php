@@ -18,8 +18,8 @@ use Pimcore\Cache;
 use Pimcore\Google\Cse\Item;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
+use Laminas\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\AdapterAggregateInterface;
 
 class Cse implements \Iterator, AdapterInterface, AdapterAggregateInterface
 {

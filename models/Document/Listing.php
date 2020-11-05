@@ -19,8 +19,8 @@ namespace Pimcore\Model\Document;
 
 use Pimcore\Model;
 use Pimcore\Model\Document;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
+use Laminas\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\AdapterAggregateInterface;
 
 /**
  * @method Document[] load()

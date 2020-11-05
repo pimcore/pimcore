@@ -18,8 +18,8 @@
 namespace Pimcore\Model\Asset;
 
 use Pimcore\Model;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
+use Laminas\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\AdapterAggregateInterface;
 
 /**
  * @method Model\Asset[] load()
