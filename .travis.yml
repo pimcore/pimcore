@@ -70,6 +70,14 @@ jobs:
       env:
           - DATABASE_SERVER="mariadb-10.3"
 
+    - name: "All Tests - PHP 7.3 | Symfony 4 | MariaDB 10.4 | Lowest dependencies"
+      os: linux
+      sudo: required
+      php: 7.3
+      env:
+        - DATABASE_SERVER="mariadb-10.4"
+        - COMPOSER_PREFER_LOWEST=1
+
     # Test Stan - see https://github.com/phpstan/phpstan
 
     # Test Stan Symfony ^4.0
@@ -80,9 +88,9 @@ jobs:
         - TASK_TESTS=0
         - TASK_STAN=1
 
-    - name: "PHPStan Level 3 - PHP 7.4 Symfony 4 baseline - Lowest dependencies"
+    - name: "PHPStan Level 3 - PHP 7.3 Symfony 4 baseline - Lowest dependencies"
       os: linux
-      php: 7.4
+      php: 7.3
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
