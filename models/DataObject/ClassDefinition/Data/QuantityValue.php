@@ -748,7 +748,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             return false;
         }
 
-        return $oldValue->getValue() === $newValue->getValue() &&
-            intval($oldValue->getUnitId()) === intval($newValue->getUnitId());
+        return $oldValue->getValue() === $newValue->getValue()
+            && (int)$oldValue->getUnitId() === (int)$newValue->getUnitId();
     }
 }
