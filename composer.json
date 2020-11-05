@@ -87,7 +87,7 @@
     "symfony/symfony": "^4.4.0",
     "tijsverkoyen/css-to-inline-styles": "^2.2.1",
     "twig/extensions": "^1.5",
-    "twig/twig": "^2.4",
+    "twig/twig": "^2.10",
     "umpirsky/country-list": "^2.0.4",
     "vrana/adminer": "^4.6.3",
     "vrana/jush": "~2.0.2",
