@@ -178,5 +178,10 @@
       "dev-master": "6.8-dev"
     }
   },
-  "bin": ["bin/pimcore-install"]
+  "bin": ["bin/pimcore-install"],
+  "config": {
+    "preferred-install": {
+      "symfony/symfony": "source"
+    }
+  }
 }
