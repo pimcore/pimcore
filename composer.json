@@ -56,6 +56,7 @@
     "doctrine/doctrine-bundle": "^1.9.1",
     "doctrine/doctrine-migrations-bundle": "^1.3.1",
     "doctrine/inflector": "^1.4.0 || ^2.0.0",
+    "doctrine/migrations": "^1.8.1",
     "egulias/email-validator": "^2.1.5",
     "endroid/qr-code": "^3.4.4",
     "friendsofsymfony/jsrouting-bundle": "^2.5",
@@ -67,14 +68,14 @@
     "league/csv": "^9.1",
     "mjaschen/phpgeo": "^2.0",
     "mpratt/embera": "^2.0.3",
-    "myclabs/deep-copy": "^1.3",
+    "myclabs/deep-copy": "^1.7",
     "neitanod/forceutf8": "^2.0.4",
     "nesbot/carbon": "^1.34.0 || ^2.11.0",
     "ocramius/package-versions": "^1.2",
     "pear/net_url2": "^2.2",
     "phive/twig-extensions-deferred": "^2.0",
     "piwik/device-detector": "^3.9",
-    "presta/sitemap-bundle": "^1.5 || ^2.1",
+    "presta/sitemap-bundle": "^1.7 || ^2.1",
     "ramsey/uuid": "^3.8",
     "sabre/dav": "^3.2",
     "sensio/framework-extra-bundle": "^5.4",
@@ -83,15 +84,16 @@
     "symfony/contracts": "^1.1",
     "symfony/monolog-bundle": "^3.1.0",
     "symfony/swiftmailer-bundle": "^3.2.2",
-    "symfony/symfony": "^4.1.12",
+    "symfony/symfony": "^4.4.0",
     "tijsverkoyen/css-to-inline-styles": "^2.2.1",
     "twig/extensions": "^1.5",
-    "twig/twig": "^2.4",
+    "twig/twig": "^2.10",
     "umpirsky/country-list": "^2.0.4",
     "vrana/adminer": "^4.6.3",
     "vrana/jush": "~2.0.2",
-    "zendframework/zend-paginator": "^2.7",
-    "zendframework/zend-servicemanager": "^3.2",
+    "laminas/laminas-code": "^3.3.1",
+    "laminas/laminas-paginator": "^2.7",
+    "laminas/laminas-servicemanager": "^3.2",
     "scheb/two-factor-bundle": "^3.26",
     "phpoffice/phpspreadsheet": "^1.9",
     "html2text/html2text": "^4.2.1",
@@ -106,8 +108,9 @@
   "require-dev": {
     "cache/integration-tests": "^0.16.0",
     "codeception/codeception": "~2.4.5",
-    "phpstan/phpstan": "^0.12.26",
-    "phpstan/phpstan-symfony": "^0.12",
+    "phpstan/phpstan": "^0.12.53",
+    "phpstan/phpstan-symfony": "^0.12.11",
+    "phpunit/phpunit": "^7.5",
     "heidelpay/heidelpay-php": "^1.2.5.1",
     "klarna/checkout": "^3.0.0",
     "elasticsearch/elasticsearch": "^6",
@@ -178,5 +181,10 @@
       "dev-master": "7.0-dev"
     }
   },
-  "bin": ["bin/pimcore-install"]
+  "bin": ["bin/pimcore-install"],
+  "config": {
+    "preferred-install": {
+      "symfony/symfony": "source"
+    }
+  }
 }

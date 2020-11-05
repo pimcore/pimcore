@@ -18,8 +18,8 @@ use ArrayAccess;
 use Countable;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use SeekableIterator;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
+use Laminas\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\AdapterAggregateInterface;
 
 /**
  * Interface OrderListInterface

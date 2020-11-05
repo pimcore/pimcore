@@ -12,6 +12,10 @@ cp .travis/extensions.template.php var/config/extensions.php
 cp app/config/parameters.example.yml app/config/parameters.yml
 
 # install composer dependencies
-composer config preferred-install source
-composer require symfony/symfony:$SYMFONY_VERSION --no-interaction --no-update --no-scripts
-composer install --no-interaction --optimize-autoloader
+composer self-update --2
+if [ $COMPOSER_PREFER_LOWEST = 1 ]
+then
+    composer update --prefer-lowest --prefer-stable -o
+else
+    composer install -o
+fi
