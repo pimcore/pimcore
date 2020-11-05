@@ -1046,7 +1046,7 @@ pimcore.elementservice.replaceAsset = function (id, callback) {
 };
 
 
-pimcore.elementservice.downloadAssetFolderAsZip = function (id, selectedIds) {
+pimcore.elementservice.downloadAssetFolderAsZip = function (id, selectedIds, thumbnail) {
 
     var that = {};
 
@@ -1059,7 +1059,8 @@ pimcore.elementservice.downloadAssetFolderAsZip = function (id, selectedIds) {
         url: Routing.generate('pimcore_admin_asset_downloadaszipjobs'),
         params: {
             id: id,
-            selectedIds: idsParam
+            selectedIds: idsParam,
+            thumbnail: thumbnail
         },
         success: function(response) {
             var res = Ext.decode(response.responseText);

@@ -231,22 +231,58 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
             menu: exportButtons,
         });
 
-        this.downloadSelectedZipButton = new Ext.Button({
+        var downloadHandler = function (thumbnail) {
+            var ids = [];
+
+            var selectedRows = this.grid.getSelectionModel().getSelection();
+            for (var i = 0; i < selectedRows.length; i++) {
+                ids.push(selectedRows[i].data.id);
+            }
+
+            if (ids.length) {
+                pimcore.elementservice.downloadAssetFolderAsZip(ids[0], ids, thumbnail);
+            } else {
+                Ext.Msg.alert(t('error'), t('please_select_items_to_download'));
+            }
+        }.bind(this);
+
+        var downloadButtonConfig = {
             text: t("download_selected_as_zip"),
             iconCls: "pimcore_icon_zip pimcore_icon_overlay_download",
             handler: function () {
-                var ids = [];
+                downloadHandler();
+            }
+        };
 
-                var selectedRows = this.grid.getSelectionModel().getSelection();
-                for (var i = 0; i < selectedRows.length; i++) {
-                    ids.push(selectedRows[i].data.id);
+        Ext.Ajax.request({
+            url: Routing.generate('pimcore_admin_settings_thumbnaildownloadable'),
+            success: function (response) {
+                thumbnails = Ext.decode(response.responseText);
+
+                var thumbnailMenuItems = [];
+                Ext.each(thumbnails, function (thumbnail) {
+                    thumbnailMenuItems.push({
+                        text: t('thumbnail')+' '+thumbnail.text,
+                        handler: function () {
+                            downloadHandler(thumbnail.id)
+                        }
+                    });
+                });
+
+                if (thumbnailMenuItems.length > 0) {
+                    downloadButtonConfig.menu = new Ext.menu.Menu({
+                        items: thumbnailMenuItems
+                    });
                 }
 
-                if(ids.length) {
-                    pimcore.elementservice.downloadAssetFolderAsZip(this.element.id, ids);
+                if (downloadButtonConfig.menu === undefined) {
+                    this.downloadSelectedZipButton = new Ext.Button(downloadButtonConfig);
                 } else {
-                    Ext.Msg.alert(t('error'), t('please_select_items_to_download'));
+                    this.downloadSelectedZipButton = new Ext.SplitButton(downloadButtonConfig);
                 }
+
+                var toolbar = this.grid.getDockedItems('toolbar')[0];
+                toolbar.insert(toolbar.items.indexOf(this.exportButton), [this.downloadSelectedZipButton, "-"]);
             }.bind(this)
         });
 
@@ -284,7 +320,6 @@ pimcore.asset.listfolder = Class.create(pimcore.asset.helpers.gridTabAbstract, {
                 "->",
                 this.checkboxOnlyDirectChildren, "-",
                 this.checkboxOnlyUnreferenced, "-",
-                this.downloadSelectedZipButton, "-",
                 this.exportButton, "-",
                 this.columnConfigButton,
                 this.saveColumnConfigButton

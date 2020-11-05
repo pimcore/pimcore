@@ -1936,8 +1936,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
             if (!empty($quotedSelectedIds)) {
                 //add a condition if id numbers are specified
                 $conditionFilters[] = 'id IN (' . implode(',', $quotedSelectedIds) . ')';
+            } else {
+                $conditionFilters[] = 'path LIKE ' . $db->quote($db->escapeLike($parentPath) . '/%') . ' AND type != ' . $db->quote('folder');
             }
-            $conditionFilters[] = 'path LIKE ' . $db->quote($db->escapeLike($parentPath) . '/%') . ' AND type != ' . $db->quote('folder');
+
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
@@ -1965,6 +1967,7 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                         'offset' => $i * $filesPerJob,
                         'limit' => $filesPerJob,
                         'jobId' => $jobId,
+                        'thumbnail' => $request->get('thumbnail')
                     ],
                 ]];
             }
@@ -2017,8 +2020,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                     $selectedIds = explode(',', $selectedIds);
                     //add a condition if id numbers are specified
                     $conditionFilters[] = 'id IN (' . implode(',', $selectedIds) . ')';
+                } else {
+                    $conditionFilters[] = "type != 'folder' AND path LIKE " . $db->quote($db->escapeLike($parentPath) . '/%');
                 }
-                $conditionFilters[] = "type != 'folder' AND path LIKE " . $db->quote($db->escapeLike($parentPath) . '/%');
+
                 if (!$this->getAdminUser()->isAdmin()) {
                     $userIds = $this->getAdminUser()->getRoles();
                     $userIds[] = $this->getAdminUser()->getId();
@@ -2040,8 +2045,16 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                 foreach ($assetList as $a) {
                     if ($a->isAllowed('view')) {
                         if (!$a instanceof Asset\Folder) {
+                            $pathInZip = preg_replace('@^' . preg_quote($asset->getRealPath(), '@') . '@i', '', $a->getRealFullPath());
+                            if($a instanceof Asset\Image && $request->get('thumbnail')) {
+                                $fileSystemPath = $a->getThumbnail($request->get('thumbnail'), false)->getFileSystemPath();
+                                $pathInZip = dirname($pathInZip).'/'.basename($fileSystemPath);
+                            } else {
+                                $fileSystemPath = $a->getFileSystemPath();
+                            }
+
                             // add the file with the relative path to the parent directory
-                            $zip->addFromString(preg_replace('@^' . preg_quote($asset->getRealPath(), '@') . '@i', '', $a->getRealFullPath()), file_get_contents($a->getFileSystemPath()));
+                            $zip->addFromString($pathInZip, file_get_contents($fileSystemPath));
                         }
                     }
                 }

@@ -39,6 +39,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
 
         var compositeConfig = {
             xtype: "toolbar",
+            itemId: 'toolbar',
             items: [{
                 xtype: "textfield",
                 name: "query",
@@ -104,6 +105,62 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
             text: t("search"),
             iconCls: "pimcore_icon_search",
             handler: this.search.bind(this)
+        });
+
+
+        var downloadHandler = function (thumbnail) {
+            var ids = [];
+
+            var selectedRows = this.resultPanel.getSelectionModel().getSelection();
+            for (var i = 0; i < selectedRows.length; i++) {
+                ids.push(selectedRows[i].data.id);
+            }
+
+            if (ids.length) {
+                pimcore.elementservice.downloadAssetFolderAsZip(ids[0], ids, thumbnail);
+            } else {
+                Ext.Msg.alert(t('error'), t('please_select_items_to_download'));
+            }
+        }.bind(this);
+
+        var downloadButtonConfig = {
+            text: t("download_selected_as_zip"),
+            iconCls: "pimcore_icon_zip pimcore_icon_overlay_download",
+            handler: function () {
+                downloadHandler();
+            }
+        };
+
+        Ext.Ajax.request({
+            url: Routing.generate('pimcore_admin_settings_thumbnaildownloadable'),
+            success: function (response) {
+                thumbnails = Ext.decode(response.responseText);
+
+                var thumbnailMenuItems = [];
+                Ext.each(thumbnails, function (thumbnail) {
+                    thumbnailMenuItems.push({
+                        text: t('thumbnail') + ' ' +thumbnail.text,
+                        handler: function () {
+                            downloadHandler(thumbnail.id)
+                        }
+                    });
+                });
+
+                if (thumbnailMenuItems.length > 0) {
+                    downloadButtonConfig.menu = new Ext.menu.Menu({
+                        items: thumbnailMenuItems
+                    });
+                }
+
+                var downloadSelectedZipButton;
+                if (downloadButtonConfig.menu === undefined) {
+                    downloadSelectedZipButton = new Ext.Button(downloadButtonConfig);
+                } else {
+                    downloadSelectedZipButton = new Ext.SplitButton(downloadButtonConfig);
+                }
+
+                this.formPanel.getComponent('toolbar').add(['->', downloadSelectedZipButton]);
+            }.bind(this)
         });
 
         if(!this.formPanel) {
@@ -238,7 +295,7 @@ pimcore.element.selector.asset = Class.create(pimcore.element.selector.abstract,
                     forceFit: true
                 },
                 plugins: ['gridfilters'],
-                selModel: this.getGridSelModel(),
+                selModel: Ext.create('Ext.selection.CheckboxModel', {}),
                 bbar: this.pagingtoolbar,
                 listeners: {
                     rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {
