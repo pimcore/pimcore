@@ -68,7 +68,7 @@
     "league/csv": "^9.1",
     "mjaschen/phpgeo": "^2.0",
     "mpratt/embera": "^2.0.3",
-    "myclabs/deep-copy": "^1.5",
+    "myclabs/deep-copy": "^1.7",
     "neitanod/forceutf8": "^2.0.4",
     "nesbot/carbon": "^1.34.0 || ^2.11.0",
     "ocramius/package-versions": "^1.2",
