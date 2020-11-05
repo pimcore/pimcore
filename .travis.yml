@@ -81,14 +81,14 @@ jobs:
     # Test Stan - see https://github.com/phpstan/phpstan
 
     # Test Stan Symfony ^4.0
-    - name: "PHPStan Level 3 - PHP 7.4 Symfony 4 baseline"
+    - name: "PHPStan - PHP 7.4 | Level 3 | baseline"
       os: linux
       php: 7.4
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
 
-    - name: "PHPStan Level 3 - PHP 7.3 Symfony 4 baseline - Lowest dependencies"
+    - name: "PHPStan - PHP 7.3 | Level 3 | baseline | Lowest dependencies"
       os: linux
       php: 7.3
       env:
@@ -96,7 +96,7 @@ jobs:
         - TASK_STAN=1
         - COMPOSER_PREFER_LOWEST=1
 
-    - name: "PHPStan Level 3 - PHP 7.4 Symfony 4"
+    - name: "PHPStan - PHP 7.4 | Level 3"
       os: linux
       php: 7.4
       env:
@@ -104,7 +104,7 @@ jobs:
         - TASK_STAN=1
         - PHPSTAN_BASELINE=0
 
-    - name: "PHPStan Level 3 - PHP 7.4 Symfony 4 - Generate baseline"
+    - name: "PHPStan - PHP 7.4 | Level 3 | Generate baseline"
       os: linux
       php: 7.4
       env:
