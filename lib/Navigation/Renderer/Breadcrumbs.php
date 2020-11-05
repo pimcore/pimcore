@@ -264,7 +264,7 @@ class Breadcrumbs extends AbstractRenderer
 
         $pages = $this->getPages($container);
 
-        return $this->twig->render($partial, compact('pages'));
+        return $this->templatingEngine->render($partial, compact('pages'));
     }
 
     /**

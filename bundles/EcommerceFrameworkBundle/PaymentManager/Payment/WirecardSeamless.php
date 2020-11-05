@@ -37,7 +37,7 @@ use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Twig\Environment;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * @deprecated since Pimcore 6.8.0 and will be removed in Pimcore 7.
@@ -56,9 +56,9 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
     const SESSION_KEY_STORAGE_ID = 'Wirecard_dataStorageId';
 
     /**
-     * @var Environment
+     * @var EngineInterface
      */
-    protected $twig;
+    protected $template;
 
     /**
      * @var SessionInterface
@@ -134,9 +134,9 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
     private $WEBSITE_URL;
     private $CHECKOUT_WINDOW_NAME = 'wirecard_checkout';
 
-    public function __construct(array $options, Environment $twig, SessionInterface $session)
+    public function __construct(array $options, EngineInterface $template, SessionInterface $session)
     {
-        $this->twig = $twig;
+        $this->template = $template;
         $this->session = $session;
 
         $this->processOptions(
@@ -303,7 +303,7 @@ class WirecardSeamless extends AbstractPayment implements \Pimcore\Bundle\Ecomme
 
         $params['wirecardFrontendScript'] = $this->js;
 
-        return $this->twig->render($this->partial, $params);
+        return $this->template->render($this->partial, $params);
     }
 
     /**

@@ -13,7 +13,7 @@
     {% endblock %}
 
         {% block areabrickFrontend %}
-            {{ twig.render(viewTemplate, viewParameters) | raw }}
+            {{ templating.render(viewTemplate, viewParameters) | raw }}
         {% endblock %}
 
     {% block areabrickCloseTag %}
