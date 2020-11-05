@@ -35,13 +35,13 @@ services:
 
     Pimcore\Navigation\Renderer\Menu:
         arguments:
-            $twig: '@twig'
+            $templatingEngine: '@pimcore.templating.engine.delegating'
         tags:
             - { name: pimcore.navigation.renderer, alias: menu }
 
     Pimcore\Navigation\Renderer\Breadcrumbs:
         arguments:
-            $twig: '@twig'
+            $templatingEngine: '@pimcore.templating.engine.delegating'
         tags:
             - { name: pimcore.navigation.renderer, alias: breadcrumbs }
 
@@ -50,3 +50,9 @@ services:
 
     Pimcore\Tool\Glossary\Processor:
         public: false
+
+    Symfony\Component\Templating\EngineInterface: '@pimcore.templating.engine.delegating'
+
+    pimcore.templating.engine.delegating:
+        public: true
+        class: Pimcore\Templating\TwigDefaultDelegatingEngine

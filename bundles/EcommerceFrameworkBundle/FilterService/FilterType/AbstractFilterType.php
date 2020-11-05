@@ -17,10 +17,10 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductListInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
+use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Twig\Environment;
 
 abstract class AbstractFilterType
 {
@@ -32,9 +32,9 @@ abstract class AbstractFilterType
     protected $translator;
 
     /**
-     * @var Environment
+     * @var EngineInterface
      */
-    protected $twig;
+    protected $templatingEngine;
 
     /**
      * @var string
@@ -48,19 +48,19 @@ abstract class AbstractFilterType
 
     /**
      * @param TranslatorInterface $translator
-     * @param Environment $twig
+     * @param EngineInterface $templatingEngine
      * @param string $template for rendering the filter frontend
      * @param array $options for additional options
      */
     public function __construct(
         TranslatorInterface $translator,
-        Environment $twig,
+        EngineInterface $templatingEngine,
         RequestStack $requestStack,
         string $template,
         array $options = []
     ) {
         $this->translator = $translator;
-        $this->twig = $twig;
+        $this->templatingEngine = $templatingEngine;
         $this->template = $template;
         $this->request = $requestStack->getCurrentRequest();
 
@@ -167,6 +167,6 @@ abstract class AbstractFilterType
      */
     protected function render($template, array $parameters = [])
     {
-        return $this->twig->render($template, $parameters);
+        return $this->templatingEngine->render($template, $parameters);
     }
 }
