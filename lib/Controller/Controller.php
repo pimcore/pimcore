@@ -14,8 +14,9 @@
 
 namespace Pimcore\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller as BaseController;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-abstract class Controller extends BaseController
+abstract class Controller extends AbstractController
 {
+
 }
