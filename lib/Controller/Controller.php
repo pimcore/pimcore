@@ -14,9 +14,19 @@
 
 namespace Pimcore\Controller;
 
+use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class Controller extends AbstractController
 {
-
+    public static function getSubscribedServices()
+    {
+        $services = parent::getSubscribedServices();
+        $services['translator'] = TranslatorInterface::class;
+        $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
+        $services[PimcoreBundleManager::class] = PimcoreBundleManager::class;
+        return $services;
+    }
 }
