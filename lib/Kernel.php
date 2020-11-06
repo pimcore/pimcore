@@ -18,7 +18,6 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use FOS\JsRoutingBundle\FOSJsRoutingBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
-use Pimcore\Bundle\GeneratorBundle\PimcoreGeneratorBundle;
 use Pimcore\Cache\Runtime;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
@@ -29,7 +28,6 @@ use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Presta\SitemapBundle\PrestaSitemapBundle;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
-use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\MonologBundle\MonologBundle;
@@ -285,25 +283,12 @@ abstract class Kernel extends SymfonyKernel
                 new DebugBundle(),
                 new WebProfilerBundle(),
             ], 80);
-
-            // PimcoreGeneratorBundle depends on SensioGeneratorBundle
-            $generatorEnvironments = $this->getEnvironmentsForDevGeneratorBundles();
-            $collection->addBundle(
-                new PimcoreGeneratorBundle(),
-                60,
-                $generatorEnvironments
-            );
         }
     }
 
     protected function getEnvironmentsForDevBundles(): array
     {
         return ['dev', 'test'];
-    }
-
-    protected function getEnvironmentsForDevGeneratorBundles(): array
-    {
-        return ['dev'];
     }
 
     /**
