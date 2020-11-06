@@ -66,10 +66,10 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     protected $kernel;
 
     /**
-     * @param LegacyTranslatorInterface $translator
+     * @param TranslatorInterface $translator
      * @param bool $caseInsensitive
      */
-    public function __construct(LegacyTranslatorInterface $translator, bool $caseInsensitive = false)
+    public function __construct(TranslatorInterface $translator, bool $caseInsensitive = false)
     {
         if (!$translator instanceof TranslatorBagInterface) {
             throw new InvalidArgumentException(sprintf('The Translator "%s" must implement TranslatorInterface and TranslatorBagInterface.', get_class($translator)));
