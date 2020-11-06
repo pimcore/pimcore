@@ -14,10 +14,7 @@
 
 namespace Pimcore\Controller;
 
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
-use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class Controller extends AbstractController
 {
