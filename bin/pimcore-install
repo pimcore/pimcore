@@ -19,7 +19,7 @@ use Pimcore\Bundle\InstallBundle\InstallerKernel;
 use Pimcore\Version;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Debug\Debug;
+use Symfony\Component\ErrorHandler\Debug;
 
 @ini_set('display_errors', 'On');
 
