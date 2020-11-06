@@ -20,9 +20,9 @@ use Pimcore\Model\User;
 use Pimcore\Tool;
 use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Workflow\Workflow;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Templating\EngineInterface;
 
 class NotificationEmailService extends AbstractNotificationService
 {

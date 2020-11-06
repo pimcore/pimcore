@@ -14,9 +14,9 @@
 
 namespace Pimcore\Templating;
 
-use Twig\Environment;
+use Symfony\Component\Templating\DelegatingEngine as BaseDelegatingEngine;
 use Symfony\Component\Templating\EngineInterface;
-use \Symfony\Component\Templating\DelegatingEngine as BaseDelegatingEngine;
+use Twig\Environment;
 
 class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
 {

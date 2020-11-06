@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList;
 
+use Laminas\Paginator\Adapter\AdapterInterface;
 use Monolog\Logger;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CoreExtensions\ObjectData\IndexFieldSelection;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
@@ -21,7 +22,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\MysqlConfigInter
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractProduct;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
-use Laminas\Paginator\Adapter\AdapterInterface;
 
 /**
  * Implementation of product list which works based on the product index of the online shop framework
