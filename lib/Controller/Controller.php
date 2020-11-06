@@ -23,10 +23,6 @@ abstract class Controller extends AbstractController
 {
     public static function getSubscribedServices()
     {
-        $services = parent::getSubscribedServices();
-        $services['translator'] = TranslatorInterface::class;
-        $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
-        $services[PimcoreBundleManager::class] = PimcoreBundleManager::class;
-        return $services;
+        return parent::getSubscribedServices();
     }
 }

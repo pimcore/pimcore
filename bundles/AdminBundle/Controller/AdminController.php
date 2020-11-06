@@ -18,6 +18,7 @@ use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
 use Pimcore\Controller\Controller;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -25,9 +26,20 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AdminController extends Controller implements AdminControllerInterface
 {
+    public static function getSubscribedServices()
+    {
+        $services = parent::getSubscribedServices();
+        $services['translator'] = TranslatorInterface::class;
+        $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
+        $services[PimcoreBundleManager::class] = PimcoreBundleManager::class;
+        $services['pimcore_admin.serializer'] = SerializerInterface::class;
+        return $services;
+    }
+
     /**
      * @inheritDoc
      */
