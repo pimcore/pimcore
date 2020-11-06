@@ -21,10 +21,10 @@ use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\TranslatorBagInterface;
-use Symfony\Component\Translation\TranslatorInterface as LegacyTranslatorInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class Translator implements LegacyTranslatorInterface, TranslatorInterface, TranslatorBagInterface
+class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleAwareInterface
 {
     /**
      * @var TranslatorInterface|TranslatorBagInterface
@@ -130,20 +130,6 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
         $term = $this->updateLinks($term);
 
         return $term;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function transChoice($id, $number, array $parameters = [], $domain = null, $locale = null)
-    {
-        @trigger_error(
-            'transChoice is deprecated since version 6.0.1 and will be removed in 7.0.0. ' .
-            ' Use the trans() method with "%count%" parameter.',
-            E_USER_DEPRECATED
-        );
-
-        return $this->trans($id, ['%count%' => $number] + $parameters, $domain, $locale);
     }
 
     /**
