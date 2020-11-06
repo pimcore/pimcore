@@ -18,6 +18,7 @@ use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Config;
 use Pimcore\Controller\KernelResponseEventInterface;
 use Pimcore\Db\ConnectionInterface;
@@ -33,27 +34,36 @@ use Pimcore\Tool;
 use Pimcore\Tool\Admin;
 use Pimcore\Tool\Session;
 use Pimcore\Version;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IndexController extends AdminController implements KernelResponseEventInterface
 {
     /**
-     * @var EventDispatcherInterface
+     * @var PimcoreBundleManager
      */
-    private $eventDispatcher;
+    protected $pimcoreBundleManager;
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
+     * @param PimcoreBundleManager $pimcoreBundleManager
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        PimcoreBundleManager $pimcoreBundleManager,
+        TokenStorageUserResolver $tokenStorageUserResolver,
+        TranslatorInterface $translator)
     {
         $this->eventDispatcher = $eventDispatcher;
+        $this->pimcoreBundleManager = $pimcoreBundleManager;
+
+        parent::__construct($eventDispatcher, $tokenStorageUserResolver, $translator);
     }
 
     /**
@@ -184,10 +194,8 @@ class IndexController extends AdminController implements KernelResponseEventInte
      */
     protected function addPluginAssets(array &$templateParams)
     {
-        $bundleManager = $this->get(PimcoreBundleManager::class);
-
-        $templateParams['pluginJsPaths'] = $bundleManager->getJsPaths();
-        $templateParams['pluginCssPaths'] = $bundleManager->getCssPaths();
+        $templateParams['pluginJsPaths'] = $this->pimcoreBundleManager->getJsPaths();
+        $templateParams['pluginCssPaths'] = $this->pimcoreBundleManager->getCssPaths();
 
         return $this;
     }

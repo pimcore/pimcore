@@ -426,7 +426,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
     {
         if ($iframePath = $bundle->getAdminIframePath()) {
             if ($iframePath instanceof RouteReferenceInterface) {
-                return $this->get('router')->generate(
+                return $this->generateUrl(
                     $iframePath->getRoute(),
                     $iframePath->getParameters(),
                     $iframePath->getType()

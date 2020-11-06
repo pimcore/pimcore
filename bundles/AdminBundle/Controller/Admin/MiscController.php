@@ -158,21 +158,20 @@ class MiscController extends AdminController
     {
         $language = $request->get('language');
 
-        $translator = $this->get('translator');
-        $translator->lazyInitialize('admin', $language);
+        $this->translator->lazyInitialize('admin', $language);
 
-        $translations = $translator->getCatalogue($language)->all('admin');
+        $translations =  $this->translator->getCatalogue($language)->all('admin');
         if ($language != 'en') {
             // add en as a fallback
-            $translator->lazyInitialize('admin', 'en');
-            foreach ($translator->getCatalogue('en')->all('admin') as $key => $value) {
+            $this->translator->lazyInitialize('admin', 'en');
+            foreach ( $this->translator->getCatalogue('en')->all('admin') as $key => $value) {
                 if (!isset($translations[$key]) || empty($translations[$key])) {
                     $translations[$key] = $value;
                 }
             }
         }
 
-        $caseInsensitive = $translator instanceof Translator && $translator->getCaseInsensitive();
+        $caseInsensitive =  $this->translator instanceof Translator && $this->translator->getCaseInsensitive();
         $response = new Response('pimcore.system_i18n = ' . $this->encodeJson($translations) . ';pimcore.system_i18n_case_insensitive='. json_encode($caseInsensitive));
         $response->headers->set('Content-Type', 'text/javascript');
 

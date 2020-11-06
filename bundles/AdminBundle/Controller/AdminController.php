@@ -25,9 +25,36 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 abstract class AdminController extends Controller implements AdminControllerInterface
 {
+    /**
+     * @var TokenStorageUserResolver
+     */
+    protected $tokenStorageUserResolver;
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
+     * @param TokenStorageUserResolver $tokenStorageUserResolver
+     */
+    public function __construct(EventDispatcherInterface $eventDispatcher, TokenStorageUserResolver $tokenStorageUserResolver, TranslatorInterface $translator)
+    {
+        $this->tokenStorageUserResolver = $tokenStorageUserResolver;
+        $this->translator = $translator;
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     /**
      * @inheritDoc
      */
@@ -53,12 +80,10 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     protected function getAdminUser($proxyUser = false)
     {
-        $resolver = $this->get(TokenStorageUserResolver::class);
-
         if ($proxyUser) {
-            return $resolver->getUserProxy();
+            return $this->tokenStorageUserResolver->getUserProxy();
         } else {
-            return $resolver->getUser();
+            return $this->tokenStorageUserResolver->getUser();
         }
     }
 
@@ -232,9 +257,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     public function trans($id, array $parameters = [], $domain = 'admin', $locale = null)
     {
-        $translator = $this->get('translator');
-
-        return $translator->trans($id, $parameters, $domain, $locale);
+        return $this->translator->trans($id, $parameters, $domain, $locale);
     }
 
     /**

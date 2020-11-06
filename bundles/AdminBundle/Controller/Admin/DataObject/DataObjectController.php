@@ -1559,7 +1559,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $requestedLanguage = $allParams['language'] ?? null;
         if ($requestedLanguage) {
             if ($requestedLanguage != 'default') {
-                //                $this->get('translator')->setLocale($requestedLanguage);
                 $request->setLocale($requestedLanguage);
             }
         } else {

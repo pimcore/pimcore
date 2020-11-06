@@ -119,7 +119,7 @@ class ElementControllerBase extends AdminController
                 }
 
                 if ($event instanceof ElementDeleteInfoEventInterface) {
-                    $this->get('event_dispatcher')->dispatch($event, $eventName);
+                    $this->eventDispatcher->dispatch($event, $eventName);
 
                     if (!$event->getDeletionAllowed()) {
                         $itemResults[] = [
@@ -167,7 +167,7 @@ class ElementControllerBase extends AdminController
                         $deleteObjectsPerRequest = 5;
                         for ($i = 0, $iMax = ceil($childs / $deleteObjectsPerRequest); $i < $iMax; $i++) {
                             $deleteJobs[] = [[
-                                'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/' . $type . '/delete',
+                                'url' => $request->getBaseUrl() . '/admin/' . $type . '/delete',
                                 'method' => 'DELETE',
                                 'params' => [
                                     'step' => $i,
@@ -182,7 +182,7 @@ class ElementControllerBase extends AdminController
 
                 // the element itself is the last one
                 $deleteJobs[] = [[
-                    'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/' . $type . '/delete',
+                    'url' => $request->getBaseUrl() . '/admin/' . $type . '/delete',
                     'method' => 'DELETE',
                     'params' => [
                         'id' => $element->getId(),
