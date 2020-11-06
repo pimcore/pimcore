@@ -2,7 +2,7 @@
     {% spaceless -%}
         {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/bootstrap4/css/bootstrap.css')) %}
         {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/vendor/flatpickr.min.css')) %}
-        {% do pimcore_head_link().appendStylesheet('https://use.fontawesome.com/releases/v5.9.0/css/all.css') %}
+        {% do pimcore_head_link().appendStylesheet('/bundles/pimcoreecommerceframework/vendor/fontawesome/css/fontawesome-all.min.css') %}
         {% do pimcore_head_link().appendStylesheet(asset('/bundles/pimcoreecommerceframework/css/voucherservice/style.css')) %}
         {% do pimcore_head_script().prependFile(asset('/bundles/pimcoreecommerceframework/vendor/bootstrap4/js/bootstrap-native-v4.min.js')) %}
         {% do pimcore_head_script().appendFile(asset('/bundles/pimcoreecommerceframework/vendor/chart.min.js')) %}
