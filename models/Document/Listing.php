@@ -17,10 +17,10 @@
 
 namespace Pimcore\Model\Document;
 
-use Pimcore\Model;
-use Pimcore\Model\Document;
 use Laminas\Paginator\Adapter\AdapterInterface;
 use Laminas\Paginator\AdapterAggregateInterface;
+use Pimcore\Model;
+use Pimcore\Model\Document;
 
 /**
  * @method Document[] load()

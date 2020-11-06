@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
+use Laminas\Paginator\Paginator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
@@ -27,7 +28,6 @@ use Pimcore\File;
 use Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
-use Laminas\Paginator\Paginator;
 
 /**
  * Class Pattern

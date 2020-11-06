@@ -17,10 +17,10 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Model;
 use Laminas\Paginator\Adapter\AdapterInterface;
 use Laminas\Paginator\AdapterAggregateInterface;
+use Pimcore\Db\ZendCompatibility\Expression;
+use Pimcore\Model;
 
 /**
  * @method Model\DataObject[] load()

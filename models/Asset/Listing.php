@@ -17,9 +17,9 @@
 
 namespace Pimcore\Model\Asset;
 
-use Pimcore\Model;
 use Laminas\Paginator\Adapter\AdapterInterface;
 use Laminas\Paginator\AdapterAggregateInterface;
+use Pimcore\Model;
 
 /**
  * @method Model\Asset[] load()
