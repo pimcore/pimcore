@@ -37,6 +37,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
         $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
         $services[PimcoreBundleManager::class] = PimcoreBundleManager::class;
         $services['pimcore_admin.serializer'] = SerializerInterface::class;
+
         return $services;
     }
 
