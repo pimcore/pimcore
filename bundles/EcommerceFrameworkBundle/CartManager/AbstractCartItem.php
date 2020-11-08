@@ -32,7 +32,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $isLoading = false;
 
     /**
-     * @var CheckoutableInterface
+     * @var CheckoutableInterface|null
      */
     protected $product;
 
@@ -62,7 +62,7 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
     protected $cartId;
 
     /**
-     * @var int unix timestamp
+     * @var int|null unix timestamp
      */
     protected $addedDateTimestamp;
 

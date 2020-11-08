@@ -18,8 +18,5 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 abstract class Controller extends AbstractController
 {
-    public static function getSubscribedServices()
-    {
-        return parent::getSubscribedServices();
-    }
+
 }

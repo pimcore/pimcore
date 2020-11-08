@@ -26,7 +26,7 @@ class EditableRenderer implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     /**
-     * @var Editable\Loader\EditableLoader
+     * @var EditableLoaderInterface
      */
     protected $editableLoader;
 

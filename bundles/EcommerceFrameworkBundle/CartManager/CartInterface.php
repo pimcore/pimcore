@@ -62,6 +62,11 @@ interface CartInterface
     public function getItem($itemKey);
 
     /**
+     * @param CartItemInterface[] $items
+     */
+    public function setItems($items);
+
+    /**
      * @return CartItemInterface[]
      */
     public function getGiftItems();
@@ -204,7 +209,7 @@ interface CartInterface
      *
      * @param string $key
      *
-     * @return string
+     * @return string|null
      */
     public function getCheckoutData($key);
 

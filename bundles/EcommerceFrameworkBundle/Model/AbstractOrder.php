@@ -15,12 +15,13 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Logger;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection;
 
 /**
  * Abstract base class for order pimcore objects
  */
-class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
+class AbstractOrder extends Concrete
 {
     const ORDER_STATE_COMMITTED = 'committed';
     const ORDER_STATE_CANCELLED = 'cancelled';
@@ -71,14 +72,13 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * Should return a float
+     * @throws UnsupportedException
      *
-     * @return void
+     * @return float
      */
     public function getSubTotalNetPrice()
     {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('getSubTotalNetPrice not implemented for ' . get_class($this));
+        throw new UnsupportedException('getSubTotalNetPrice not implemented for ' . get_class($this));
     }
 
     /**
@@ -86,8 +86,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
      */
     public function setSubTotalNetPrice($subTotalPrice)
     {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('setSubTotalNetPrice not implemented for ' . get_class($this));
+        throw new UnsupportedException('setSubTotalNetPrice not implemented for ' . get_class($this));
     }
 
     /**
@@ -111,43 +110,43 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * Should return a float
+     * @throws UnsupportedException
      *
-     * @return void
+     * @return float
      */
     public function getTotalNetPrice()
     {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('getTotalNetPrice not implemented for ' . get_class($this));
+        throw new UnsupportedException('getTotalNetPrice not implemented for ' . get_class($this));
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param float $totalPrice
      */
     public function setTotalNetPrice($totalPrice)
     {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('setTotalNetPrice not implemented for ' . get_class($this));
+        throw new UnsupportedException('setTotalNetPrice not implemented for ' . get_class($this));
     }
 
     /**
-     * Should return an array
+     * @throws UnsupportedException
      *
      * @return array
      */
     public function getTaxInfo()
     {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('getTaxInfo not implemented for ' . get_class($this));
+        throw new UnsupportedException('getTaxInfo not implemented for ' . get_class($this));
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param array $taxInfo
      */
     public function setTaxInfo($taxInfo)
     {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('setTaxInfo not implemented for ' . get_class($this));
+        throw new UnsupportedException('setTaxInfo not implemented for ' . get_class($this));
     }
 
     /**
@@ -201,19 +200,19 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param AbstractOrderItem[] $giftItems
      */
     public function setGiftItems($giftItems)
     {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('setGiftItems not implemented for ' . get_class($this));
+        throw new UnsupportedException('setGiftItems not implemented for ' . get_class($this));
     }
 
     /**
      * @throws UnsupportedException
-     * committed
      *
-     * @return mixed
+     * @return \Pimcore\Model\DataObject\Customer
      */
     public function getCustomer()
     {
@@ -223,7 +222,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @param mixed $customer
+     * @param \Pimcore\Model\DataObject\Customer $customer
      */
     public function setCustomer($customer)
     {
@@ -233,7 +232,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return \Pimcore\Model\DataObject\Fieldcollection
+     * @return Fieldcollection
      */
     public function getPriceModifications()
     {
@@ -243,9 +242,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @param \Pimcore\Model\DataObject\Fieldcollection $priceModifications
-     *
-     * @return void
+     * @param Fieldcollection $priceModifications
      */
     public function setPriceModifications($priceModifications)
     {
@@ -288,8 +285,6 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
      * @throws UnsupportedException
      *
      * @param int $cartId
-     *
-     * @return void
      */
     public function setCartId($cartId)
     {
@@ -299,7 +294,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return \Pimcore\Model\DataObject\Fieldcollection
+     * @return Fieldcollection
      */
     public function getPaymentInfo()
     {
@@ -309,9 +304,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @param \Pimcore\Model\DataObject\Fieldcollection $paymentInfo
-     *
-     * @return void
+     * @param Fieldcollection $paymentInfo
      */
     public function setPaymentInfo($paymentInfo)
     {
@@ -321,23 +314,27 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     /**
      * returns latest payment info entry
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractPaymentInformation
+     * @return AbstractPaymentInformation|null
      */
     public function getLastPaymentInfo()
     {
         if ($this->getPaymentInfo()) {
             $items = $this->getPaymentInfo()->getItems();
 
-            return end($items);
-        } else {
-            return null;
+            $item = end($items);
+
+            if ($item instanceof AbstractPaymentInformation) {
+                return $item;
+            }
         }
+
+        return null;
     }
 
     /**
      * @throws UnsupportedException
      *
-     * @return mixed
+     * @return string
      */
     public function getComment()
     {
@@ -359,7 +356,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return mixed
+     * @return string
      */
     public function getCustomerEMail()
     {
@@ -381,7 +378,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return mixed
+     * @return string
      */
     public function getCustomerCountry()
     {
@@ -403,7 +400,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return mixed
+     * @return string
      */
     public function getCustomerCity()
     {
@@ -425,7 +422,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return mixed
+     * @return string
      */
     public function getCustomerZip()
     {
@@ -447,7 +444,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return mixed
+     * @return string
      */
     public function getCustomerStreet()
     {
@@ -469,7 +466,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return mixed
+     * @return string
      */
     public function getCustomerCompany()
     {

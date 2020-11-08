@@ -18,9 +18,10 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\AdminBundle\Translation;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class AdminUserTranslator implements TranslatorInterface
+class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
 {
     /**
      * @var TranslatorInterface
@@ -38,11 +39,16 @@ class AdminUserTranslator implements TranslatorInterface
         $this->userLoader = $userLoader;
     }
 
+    /**
+     * @return string|null
+     */
     private function getUserLocale()
     {
         if (null !== $user = $this->userLoader->getUser()) {
             return $user->getLanguage();
         }
+
+        return null;
     }
 
     /**
@@ -72,7 +78,9 @@ class AdminUserTranslator implements TranslatorInterface
      */
     public function setLocale($locale)
     {
-        $this->translator->setLocale($locale);
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($locale);
+        }
     }
 
     /**
@@ -80,6 +88,10 @@ class AdminUserTranslator implements TranslatorInterface
      */
     public function getLocale()
     {
-        return $this->translator->getLocale();
+        if ($this->translator instanceof LocaleAwareInterface) {
+            return $this->translator->getLocale();
+        }
+
+        return 'en';
     }
 }

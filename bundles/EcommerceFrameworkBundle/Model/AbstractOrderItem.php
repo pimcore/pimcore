@@ -15,17 +15,18 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Model;
 
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
-use Pimcore\Logger;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection;
 
 /**
  * Abstract base class for order item pimcore objects
  */
-class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
+class AbstractOrderItem extends Concrete
 {
     /**
      * @throws UnsupportedException
      *
-     * @return \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface
+     * @return CheckoutableInterface
      */
     public function getProduct()
     {
@@ -33,7 +34,7 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @param \Pimcore\Bundle\EcommerceFrameworkBundle\Model\CheckoutableInterface $product
+     * @param CheckoutableInterface $product
      *
      * @throws UnsupportedException
      */
@@ -123,43 +124,43 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * Should return a float
+     * @throws UnsupportedException
      *
-     * @return void
+     * @return float
      */
     public function getTotalNetPrice()
     {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('getTotalNetPrice not implemented for ' . get_class($this));
+        throw new UnsupportedException('getTotalNetPrice not implemented for ' . get_class($this));
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param float $totalNetPrice
      */
     public function setTotalNetPrice($totalNetPrice)
     {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('setTotalNetPrice not implemented for ' . get_class($this));
+        throw new UnsupportedException('setTotalNetPrice not implemented for ' . get_class($this));
     }
 
     /**
-     * Should return an array
+     * @throws UnsupportedException
      *
-     * @return void
+     * @return array
      */
     public function getTaxInfo()
     {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('getTaxInfo not implemented for ' . get_class($this));
+        throw new UnsupportedException('getTaxInfo not implemented for ' . get_class($this));
     }
 
     /**
+     * @throws UnsupportedException
+     *
      * @param array $taxInfo
      */
     public function setTaxInfo($taxInfo)
     {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
-        Logger::err('setTaxInfo not implemented for ' . get_class($this));
+        throw new UnsupportedException('setTaxInfo not implemented for ' . get_class($this));
     }
 
     /**
@@ -185,7 +186,7 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
     /**
      * @throws UnsupportedException
      *
-     * @return \Pimcore\Model\DataObject\Fieldcollection
+     * @return Fieldcollection
      */
     public function getPricingRules()
     {
@@ -193,7 +194,7 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
     }
 
     /**
-     * @param \Pimcore\Model\DataObject\Fieldcollection $pricingRules
+     * @param Fieldcollection $pricingRules
      *
      * @throws UnsupportedException
      *
@@ -222,6 +223,16 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
      * @return $this
      */
     public function setOrderState($orderState)
+    {
+        throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
+    }
+
+    /**
+     * @throws UnsupportedException
+     *
+     * @param string $comment
+     */
+    public function setComment($comment)
     {
         throw new UnsupportedException(__FUNCTION__ . ' is not implemented for ' . get_class($this));
     }

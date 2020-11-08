@@ -37,7 +37,7 @@ class ResponseExceptionListener implements EventSubscriberInterface
     use PimcoreContextAwareTrait;
 
     /**
-     * @var ActionRenderer
+     * @var DocumentRenderer
      */
     protected $documentRenderer;
 

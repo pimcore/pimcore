@@ -22,4 +22,15 @@ interface ElementEventInterface
      * @return ElementInterface
      */
     public function getElement();
+
+    /**
+     * Get argument by key.
+     *
+     * @param string $key Key
+     *
+     * @return mixed Contents of array key
+     *
+     * @throws \InvalidArgumentException If key is not found.
+     */
+    public function getArgument($key);
 }

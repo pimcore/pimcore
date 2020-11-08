@@ -57,9 +57,12 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     /**
      * @var bool
      */
-    public $disallowAddRemove;
+    public $disallowAddRemove = false;
 
-    public $disallowReorder;
+    /**
+     * @var bool
+     */
+    public $disallowReorder = false;
 
     /**
      * @var bool
