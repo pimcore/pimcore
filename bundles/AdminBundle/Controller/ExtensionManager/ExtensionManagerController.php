@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\ExtensionManager;
 use ForceUTF8\Encoding;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
@@ -35,10 +34,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
+class templateller extends AdminController implements KernelControllerEventInterface
 {
     /**
      * @var PimcoreBundleManager
@@ -52,15 +49,10 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
     public function __construct(
         PimcoreBundleManager $bundleManager,
-        AreabrickManagerInterface $areabrickManager,
-        EventDispatcherInterface $eventDispatcher,
-        TokenStorageUserResolver $tokenStorageUserResolver,
-        TranslatorInterface $translator
+        AreabrickManagerInterface $areabrickManager
     ) {
         $this->bundleManager = $bundleManager;
         $this->areabrickManager = $areabrickManager;
-
-        parent::__construct($eventDispatcher, $tokenStorageUserResolver, $translator);
     }
 
     /**

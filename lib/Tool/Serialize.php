@@ -56,7 +56,7 @@ class Serialize
      */
     public static function getAdminSerializer()
     {
-        return \Pimcore::getContainer()->get('Pimcore\\Admin\\Serializer');
+        return \Pimcore::getContainer()->get('pimcore_admin.serializer');
     }
 
     /**

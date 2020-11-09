@@ -28,6 +28,7 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Element\Service;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -71,10 +72,13 @@ class ElementControllerBase extends AdminController
 
     /**
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
+     *
+     * @throws \Exception
      */
-    public function deleteInfoAction(Request $request)
+    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $hasDependency = false;
         $errors = false;
@@ -119,7 +123,7 @@ class ElementControllerBase extends AdminController
                 }
 
                 if ($event instanceof ElementDeleteInfoEventInterface) {
-                    $this->eventDispatcher->dispatch($event, $eventName);
+                    $eventDispatcher->dispatch($event, $eventName);
 
                     if (!$event->getDeletionAllowed()) {
                         $itemResults[] = [

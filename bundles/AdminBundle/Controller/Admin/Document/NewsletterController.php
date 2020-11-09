@@ -28,6 +28,7 @@ use Pimcore\Model\Tool\CustomReport\Config;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Newsletter;
 use RuntimeException;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -377,11 +378,11 @@ class NewsletterController extends DocumentControllerBase
      * @Route("/calculate", name="pimcore_admin_document_newsletter_calculate", methods={"POST"})
      *
      * @param Request $request
-     * @param AddressSourceAdapterFactoryInterface $addressSourceAdapterFactory
+     * @param ServiceLocator $addressSourceAdapterFactory
      *
      * @return JsonResponse
      */
-    public function calculateAction(Request $request, AddressSourceAdapterFactoryInterface $addressSourceAdapterFactory): JsonResponse
+    public function calculateAction(Request $request, ServiceLocator $addressSourceAdapterFactory): JsonResponse
     {
         $addressSourceAdapterName = $request->get('addressAdapterName');
         $adapterParams = json_decode($request->get('adapterParams'), true);
@@ -406,13 +407,13 @@ class NewsletterController extends DocumentControllerBase
      * @Route("/send-test", name="pimcore_admin_document_newsletter_sendtest", methods={"POST"})
      *
      * @param Request $request
-     * @param AddressSourceAdapterFactoryInterface $addressSourceAdapterFactory
+     * @param ServiceLocator $addressSourceAdapterFactory
      *
      * @return JsonResponse
      *
      * @throws Exception
      */
-    public function sendTestAction(Request $request, AddressSourceAdapterFactoryInterface $addressSourceAdapterFactory): JsonResponse
+    public function sendTestAction(Request $request, ServiceLocator $addressSourceAdapterFactory): JsonResponse
     {
         $document = Document\Newsletter::getById($request->get('id'));
         $addressSourceAdapterName = $request->get('addressAdapterName');
