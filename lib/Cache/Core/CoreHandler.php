@@ -903,9 +903,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             // item shouldn't go to the cache (either because it's tags are ignored or were cleared within this process) -> see $this->prepareCacheTags();
             } else {
                 $result = $this->storeCacheItem($queueItem->getCacheItem(), $queueItem->getData(), $queueItem->isForce());
-                if (!$result) {
-                    $this->logger->error('Unable to write item {key} to cache', ['key' => $key]);
-                }
             }
 
             $processedKeys[] = $key;
