@@ -65,6 +65,7 @@ class LinkController extends DocumentControllerBase
      * @Route("/get-data-by-id", name="pimcore_admin_document_link_getdatabyid", methods={"GET"})
      *
      * @param Request $request
+     * @param SerializerInterface $serializer
      *
      * @return JsonResponse
      */

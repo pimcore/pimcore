@@ -14,10 +14,12 @@ services:
     # without influencing each other.
     #
 
-    pimcore_admin.serializer:
+    Pimcore\Admin\Serializer:
         class: Symfony\Component\Serializer\Serializer
         public: true
         arguments: ['@?', '@?']
+        tags:
+            - { name: pimcore_admin.serializer }
 
     pimcore_admin.serializer.encoder.json:
         class: Symfony\Component\Serializer\Encoder\JsonEncoder

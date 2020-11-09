@@ -18,7 +18,6 @@ use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\BruteforceProtectedControllerInterface;
 use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\KernelResponseEventInterface;
@@ -40,8 +39,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LoginController extends AdminController implements BruteforceProtectedControllerInterface, KernelControllerEventInterface, KernelResponseEventInterface
 {
@@ -50,29 +47,9 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      */
     protected $reponseHelper;
 
-    /**
-     * @var PimcoreBundleManager
-     */
-    protected $pimcoreBundleManager;
-
-    /**
-     * @param ResponseHelper $responseHelper
-     * @param TranslatorInterface $translator
-     * @param PimcoreBundleManager $pimcoreBundleManager
-     * @param TokenStorageUserResolver $tokenStorageUserResolver
-     *
-     */
-    public function __construct(
-        ResponseHelper $responseHelper,
-        TranslatorInterface $translator,
-        PimcoreBundleManager $pimcoreBundleManager,
-        TokenStorageUserResolver $tokenStorageUserResolver,
-        EventDispatcherInterface $eventDispatcher)
+    public function __construct(ResponseHelper $responseHelper)
     {
         $this->reponseHelper = $responseHelper;
-        $this->pimcoreBundleManager = $pimcoreBundleManager;
-
-        parent::__construct($eventDispatcher, $tokenStorageUserResolver, $translator);
     }
 
     /**
@@ -91,7 +68,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             }
         }
 
-        $this->translator->setLocale($locale);
+        $this->get('translator')->setLocale($locale);
     }
 
     /**
@@ -212,7 +189,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
                 try {
                     $event = new LostPasswordEvent($user, $loginUrl);
-                    $this->eventDispatcher->dispatch($event, AdminEvents::LOGIN_LOSTPASSWORD);
+                    $this->get('event_dispatcher')->dispatch($event, AdminEvents::LOGIN_LOSTPASSWORD);
 
                     // only send mail if it wasn't prevented in event
                     if ($event->getSendMail()) {
@@ -274,9 +251,11 @@ class LoginController extends AdminController implements BruteforceProtectedCont
 
     protected function buildLoginPageViewParams(Config $config): array
     {
+        $bundleManager = $this->get(PimcoreBundleManager::class);
+
         return [
             'config' => $config,
-            'pluginCssPaths' => $this->pimcoreBundleManager->getCssPaths(),
+            'pluginCssPaths' => $bundleManager->getCssPaths(),
         ];
     }
 

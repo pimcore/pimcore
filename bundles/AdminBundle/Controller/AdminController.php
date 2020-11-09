@@ -28,34 +28,9 @@ use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 abstract class AdminController extends Controller implements AdminControllerInterface
 {
-    /**
-     * @var TokenStorageUserResolver
-     */
-    protected $tokenStorageUserResolver;
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @param TokenStorageUserResolver $tokenStorageUserResolver
-     */
-    public function __construct(EventDispatcherInterface $eventDispatcher, TokenStorageUserResolver $tokenStorageUserResolver, TranslatorInterface $translator)
-    {
-        $this->tokenStorageUserResolver = $tokenStorageUserResolver;
-        $this->translator = $translator;
-        $this->eventDispatcher = $eventDispatcher;
-    }
 
     public static function getSubscribedServices()
     {
@@ -63,7 +38,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
         $services['translator'] = TranslatorInterface::class;
         $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
         $services[PimcoreBundleManager::class] = PimcoreBundleManager::class;
-        $services['pimcore_admin.serializer'] = SerializerInterface::class;
+        $services['pimcore_admin.serializer'] = '?Pimcore\\Admin\\Serializer';
 
         return $services;
     }
@@ -93,10 +68,12 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     protected function getAdminUser($proxyUser = false)
     {
+        $resolver = $this->get(TokenStorageUserResolver::class);
+
         if ($proxyUser) {
-            return $this->tokenStorageUserResolver->getUserProxy();
+            return $resolver->getUserProxy();
         } else {
-            return $this->tokenStorageUserResolver->getUser();
+            return $resolver->getUser();
         }
     }
 
@@ -192,6 +169,8 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @param int $options   Options passed to json_encode
      * @param bool $useAdminSerializer
      *
+     * @TODO check if $useAdminSerializer still required?
+     *
      * @return string
      */
     protected function encodeJson($data, array $context = [], $options = JsonResponse::DEFAULT_ENCODING_OPTIONS, bool $useAdminSerializer = true)
@@ -270,7 +249,9 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     public function trans($id, array $parameters = [], $domain = 'admin', $locale = null)
     {
-        return $this->translator->trans($id, $parameters, $domain, $locale);
+        $translator = $this->get('translator');
+
+        return $translator->trans($id, $parameters, $domain, $locale);
     }
 
     /**
