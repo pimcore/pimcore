@@ -774,10 +774,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      * @Route("/add", name="pimcore_admin_dataobject_dataobject_add", methods={"POST"})
      *
      * @param Request $request
+     * @param Model\FactoryInterface $modelFactory
      *
      * @return JsonResponse
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request, Model\FactoryInterface $modelFactory)
     {
         $success = false;
 
@@ -791,7 +792,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             if (!DataObject\Service::pathExists($intendedPath)) {
                 /** @var DataObject\Concrete $object */
-                $object = $this->get('pimcore.model.factory')->build($className);
+                $object = $modelFactory->build($className);
                 $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
 
                 if ($request->get('variantViaTree')) {

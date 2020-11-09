@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\ExtensionManager;
 use ForceUTF8\Encoding;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Extension\Bundle\Exception\BundleNotFoundException;
@@ -24,6 +25,7 @@ use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
+use Pimcore\Logger;
 use Pimcore\Routing\RouteReferenceInterface;
 use Pimcore\Tool\AssetsInstaller;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
@@ -33,6 +35,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ExtensionManagerController extends AdminController implements KernelControllerEventInterface
 {
@@ -48,10 +52,15 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
     public function __construct(
         PimcoreBundleManager $bundleManager,
-        AreabrickManagerInterface $areabrickManager
+        AreabrickManagerInterface $areabrickManager,
+        EventDispatcherInterface $eventDispatcher,
+        TokenStorageUserResolver $tokenStorageUserResolver,
+        TranslatorInterface $translator
     ) {
         $this->bundleManager = $bundleManager;
         $this->areabrickManager = $areabrickManager;
+
+        parent::__construct($eventDispatcher, $tokenStorageUserResolver, $translator);
     }
 
     /**
@@ -295,7 +304,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
                 $results[$bm->getBundleIdentifier($bundle)] = $this->buildBundleInfo($bundle, true, $bm->isInstalled($bundle));
             } catch (\Throwable $e) {
-                $this->get('monolog.logger.pimcore')->error($e);
+                Logger::error($e);
             }
         }
 
@@ -357,7 +366,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
             return $bundle;
         } catch (\Exception $e) {
-            $this->get('monolog.logger.pimcore')->error('Failed to build instance of bundle {bundle}: {error}', [
+            Logger::error('Failed to build instance of bundle {bundle}: {error}', [
                 'bundle' => $bundleName,
                 'error' => $e->getMessage(),
             ]);

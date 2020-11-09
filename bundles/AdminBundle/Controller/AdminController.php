@@ -18,6 +18,7 @@ use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
 use Pimcore\Controller\Controller;
+use Pimcore\Logger;
 use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -97,7 +98,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     protected function checkPermission($permission)
     {
         if (!$this->getAdminUser() || !$this->getAdminUser()->isAllowed($permission)) {
-            $this->get('monolog.logger.security')->error(
+            Logger::error(
                 'User {user} attempted to access {permission}, but has no permission to do so',
                 [
                     'user' => $this->getAdminUser()->getName(),
@@ -138,7 +139,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
         }
 
         if (!$this->getAdminUser() || !$allowed) {
-            $this->get('monolog.logger.security')->error(
+            Logger::error(
                 'User {user} attempted to access {permission}, but has no permission to do so',
                 [
                     'user' => $this->getAdminUser()->getName(),

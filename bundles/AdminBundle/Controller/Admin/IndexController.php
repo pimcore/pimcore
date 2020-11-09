@@ -53,12 +53,15 @@ class IndexController extends AdminController implements KernelResponseEventInte
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param PimcoreBundleManager $pimcoreBundleManager
+     * @param TokenStorageUserResolver $tokenStorageUserResolver
+     * @param TranslatorInterface $translator
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         PimcoreBundleManager $pimcoreBundleManager,
         TokenStorageUserResolver $tokenStorageUserResolver,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator
+    )
     {
         $this->eventDispatcher = $eventDispatcher;
         $this->pimcoreBundleManager = $pimcoreBundleManager;
