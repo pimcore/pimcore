@@ -18,6 +18,7 @@ use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
 use Pimcore\Controller\Controller;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Logger;
 use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,6 +55,17 @@ abstract class AdminController extends Controller implements AdminControllerInte
         $this->tokenStorageUserResolver = $tokenStorageUserResolver;
         $this->translator = $translator;
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    public static function getSubscribedServices()
+    {
+        $services = parent::getSubscribedServices();
+        $services['translator'] = TranslatorInterface::class;
+        $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
+        $services[PimcoreBundleManager::class] = PimcoreBundleManager::class;
+        $services['pimcore_admin.serializer'] = SerializerInterface::class;
+
+        return $services;
     }
 
     /**
