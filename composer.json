@@ -84,7 +84,7 @@
     "symfony/contracts": "^1.1",
     "symfony/monolog-bundle": "^3.1.0",
     "symfony/swiftmailer-bundle": "^3.2.2",
-    "symfony/symfony": "^4.4.0",
+    "symfony/symfony": "^4.4.12",
     "tijsverkoyen/css-to-inline-styles": "^2.2.1",
     "twig/extensions": "^1.5",
     "twig/twig": "^2.10",
@@ -102,7 +102,6 @@
   },
   "conflict": {
     "monolog/monolog": ">=2",
-    "symfony/symfony": "3.4.43 || 4.4.11",
     "symfony/monolog-bundle": "3.6.0"
   },
   "require-dev": {
