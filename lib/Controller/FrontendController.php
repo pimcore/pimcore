@@ -28,6 +28,17 @@ use Symfony\Component\HttpFoundation\Response;
  */
 abstract class FrontendController extends Controller
 {
+    public static function getSubscribedServices()
+    {
+        $services = parent::getSubscribedServices();
+        $services[EditmodeResolver::class] = '?'.EditmodeResolver::class;
+        $services[DocumentResolver::class] = '?'.DocumentResolver::class;
+        $services[ResponseHeaderResolver::class] = '?'.ResponseHeaderResolver::class;
+        $services[EditableRenderer::class] = '?'.EditableRenderer::class;
+
+        return $services;
+    }
+
     /**
      * document and editmode as properties and proxy them to request attributes through
      * their resolvers.
