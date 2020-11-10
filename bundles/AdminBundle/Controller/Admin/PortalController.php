@@ -254,7 +254,6 @@ class PortalController extends AdminController implements KernelControllerEventI
             'limit' => 10,
             'order' => 'DESC',
             'orderKey' => 'modificationDate',
-            'condition' => "userModification = '".$this->getAdminUser()->getId()."'",
         ]);
 
         $response = [];
@@ -290,7 +289,6 @@ class PortalController extends AdminController implements KernelControllerEventI
             'limit' => 10,
             'order' => 'DESC',
             'orderKey' => 'modificationDate',
-            'condition' => "userModification = '".$this->getAdminUser()->getId()."'",
         ]);
 
         $response = [];
@@ -326,7 +324,6 @@ class PortalController extends AdminController implements KernelControllerEventI
             'limit' => 10,
             'order' => 'DESC',
             'orderKey' => 'o_modificationDate',
-            'condition' => "o_userModification = '".$this->getAdminUser()->getId()."'",
         ]);
 
         $response = [];
