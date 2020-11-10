@@ -13,10 +13,10 @@ use Pimcore\Event\Model\Ecommerce\CommitOrderProcessorEvent;
 use Pimcore\Event\Model\Ecommerce\SendConfirmationMailEvent;
 use Pimcore\Log\ApplicationLogger;
 use Pimcore\Log\FileObject;
-use Pimcore\Model\Tool\Lock;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor implements LoggerAwareInterface
@@ -33,7 +33,12 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
      */
     protected $applicationLogger;
 
-    public function __construct(OrderManagerLocatorInterface $orderManagers, EventDispatcherInterface $eventDispatcher, ApplicationLogger $applicationLogger, array $options = [])
+    /**
+     * @var LockFactory
+     */
+    private $lockFactory;
+
+    public function __construct(LockFactory $lockFactory, OrderManagerLocatorInterface $orderManagers, EventDispatcherInterface $eventDispatcher, ApplicationLogger $applicationLogger, array $options = [])
     {
         $this->orderManagers = $orderManagers;
 
@@ -44,6 +49,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
 
         $this->eventDispatcher = $eventDispatcher;
         $this->applicationLogger = $applicationLogger;
+        $this->lockFactory = $lockFactory;
     }
 
     public function handlePaymentResponseAndCommitOrderPayment($paymentResponseParams, PaymentInterface $paymentProvider)
@@ -67,10 +73,11 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
     public function commitOrderPayment(StatusInterface $paymentStatus, PaymentInterface $paymentProvider, AbstractOrder $sourceOrder = null)
     {
         // acquire lock to make sure only one process is committing order payment
-        Lock::acquire(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
+        $lock = $this->lockFactory->createLock(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
+        $lock->acquire(true);
 
         $event = new CommitOrderProcessorEvent($this, null, ['paymentStatus' => $paymentStatus]);
-        $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::PRE_COMMIT_ORDER_PAYMENT, $event);
+        $this->eventDispatcher->dispatch($event, CommitOrderProcessorEvents::PRE_COMMIT_ORDER_PAYMENT);
         $paymentStatus = $event->getArgument('paymentStatus');
 
         // check if order is already committed and payment information with same internal payment id has same state
@@ -103,7 +110,8 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
                     'component' => self::LOGGER_NAME,
                 ]
             );
-            Lock::release(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
+
+            $lock->release();
 
             throw new UnsupportedException($message);
         }
@@ -122,9 +130,9 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
         }
 
         $event = new CommitOrderProcessorEvent($this, $order, ['paymentStatus' => $paymentStatus]);
-        $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::POST_COMMIT_ORDER_PAYMENT, $event);
+        $this->eventDispatcher->dispatch($event, CommitOrderProcessorEvents::POST_COMMIT_ORDER_PAYMENT);
 
-        Lock::release(self::LOCK_KEY . $paymentStatus->getInternalPaymentId());
+        $lock->release();
 
         return $order;
     }
@@ -134,7 +142,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
      */
     public function commitOrder(AbstractOrder $order)
     {
-        $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::PRE_COMMIT_ORDER, new CommitOrderProcessorEvent($this, $order));
+        $this->eventDispatcher->dispatch(new CommitOrderProcessorEvent($this, $order), CommitOrderProcessorEvents::PRE_COMMIT_ORDER);
 
         $this->processOrder($order);
 
@@ -147,7 +155,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
             $this->logger->error('Error during sending confirmation e-mail: ' . $e);
         }
 
-        $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::POST_COMMIT_ORDER, new CommitOrderProcessorEvent($this, $order));
+        $this->eventDispatcher->dispatch(new CommitOrderProcessorEvent($this, $order), CommitOrderProcessorEvents::POST_COMMIT_ORDER);
 
         return $order;
     }
@@ -158,7 +166,7 @@ class CommitOrderProcessor extends \Pimcore\Bundle\EcommerceFrameworkBundle\Chec
     protected function sendConfirmationMail(AbstractOrder $order)
     {
         $event = new SendConfirmationMailEvent($this, $order, $this->confirmationMail);
-        $this->eventDispatcher->dispatch(CommitOrderProcessorEvents::SEND_CONFIRMATION_MAILS, $event);
+        $this->eventDispatcher->dispatch($event, CommitOrderProcessorEvents::SEND_CONFIRMATION_MAILS);
 
         if (!$event->doSkipDefaultBehaviour()) {
             $params = [];

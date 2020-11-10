@@ -13,8 +13,8 @@
  */
 use Pimcore\Cache;
 use Pimcore\File;
-use Pimcore\Model;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class Pimcore
@@ -161,7 +161,7 @@ class Pimcore
     }
 
     /**
-     * @return \Symfony\Component\EventDispatcher\EventDispatcherInterface
+     * @return EventDispatcherInterface
      */
     public static function getEventDispatcher()
     {
@@ -274,9 +274,6 @@ class Pimcore
         if (self::$shutdownEnabled && self::isInstalled()) {
             // write and clean up cache
             Cache::shutdown();
-
-            // release all open locks from this process
-            Model\Tool\Lock::releaseAll();
         }
     }
 

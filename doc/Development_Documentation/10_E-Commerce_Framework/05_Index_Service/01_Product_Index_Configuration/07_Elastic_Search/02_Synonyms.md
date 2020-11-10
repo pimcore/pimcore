@@ -18,7 +18,7 @@ Pimcore ships with a simple `FileSynonymProvider` that can be used right away. T
 Besides the service configuration it self, the synonym providers need to be configured in index service 
 configuration as follows. 
 
-```yml 
+```yml
 pimcore_ecommerce_framework:
     index_service:
         tenants:
@@ -47,7 +47,7 @@ The filter definition in the index settings can hold just an empty array (as som
 index building, index resetting or reloading of synonyms, the synonyms are loaded from synonyms provider and injected
 to the synonyms array of the corresponding synonyms filter. 
 
-```yml 
+```yml
 pimcore_ecommerce_framework:
     index_service:
         tenants:

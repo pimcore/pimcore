@@ -78,8 +78,6 @@ class Link extends Model\Document
     protected $href = '';
 
     /**
-     * @see Document::resolveDependencies
-     *
      * @return array
      */
     public function resolveDependencies()
@@ -87,11 +85,13 @@ class Link extends Model\Document
         $dependencies = parent::resolveDependencies();
 
         if ($this->getLinktype() == 'internal') {
-            if ($this->getObject() instanceof Document || $this->getObject() instanceof Asset) {
-                $key = $this->getInternalType() . '_' . $this->getObject()->getId();
+            $element = $this->getObject();
+
+            if ($element instanceof Document || $element instanceof Asset) {
+                $key = $this->getInternalType() . '_' . $element->getId();
 
                 $dependencies[$key] = [
-                    'id' => $this->getObject()->getId(),
+                    'id' => $element->getId(),
                     'type' => $this->getInternalType(),
                 ];
             }
@@ -344,13 +344,28 @@ class Link extends Model\Document
      */
     public function getHtml()
     {
-        $attributes = ['rel', 'tabindex', 'accesskey', 'title', 'name', 'target'];
+        $attributes = [
+            'class',
+            'target',
+            'title',
+            'accesskey',
+            'tabindex',
+            'rel' => 'relation',
+        ];
+
+        $link = $this->getLink();
+        $link .= $this->getProperty('navigation_parameters') . $this->getProperty('navigation_anchor');
+
         $attribs = [];
-        foreach ($attributes as $a) {
-            $attribs[] = $a . '="' . $this->$a . '"';
+        foreach ($attributes as $key => $name) {
+            $key = is_numeric($key) ? $name : $key;
+            $value = $this->getProperty('navigation_' . $name);
+            if ($value) {
+                $attribs[] = $key . '="' . $value . '"';
+            }
         }
 
-        return '<a href="' . $this->getLink() . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
+        return '<a href="' . $link . '" ' . implode(' ', $attribs) . '>' . htmlspecialchars($this->getProperty('navigation_name')) . '</a>';
     }
 
     /**

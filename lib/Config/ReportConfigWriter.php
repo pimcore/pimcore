@@ -41,8 +41,8 @@ class ReportConfigWriter
     {
         $settingsEvent = new SettingsEvent($settings);
         $this->eventDispatcher->dispatch(
-            ReportEvents::SAVE_SETTINGS,
-            $settingsEvent
+            $settingsEvent,
+            ReportEvents::SAVE_SETTINGS
         );
 
         $settings = $settingsEvent->getSettings();

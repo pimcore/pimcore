@@ -23,7 +23,8 @@ use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
 use Pimcore\Migrations\Configuration\ConfigurationFactory;
-use Pimcore\Model\Document\Tag\Loader\PrefixLoader as DocumentTagPrefixLoader;
+use Pimcore\Model\Document\Editable\Loader\EditableLoader;
+use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
 use Pimcore\Model\Factory;
 use Pimcore\Sitemap\EventListener\SitemapGeneratorListener;
 use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
@@ -127,7 +128,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
-        $this->configureDocumentEditableNamingStrategy($container, $config);
         $this->configureRouting($container, $config['routing']);
         $this->configureCache($container, $loader, $config);
         $this->configureTranslations($container, $config['translations']);
@@ -142,17 +142,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
         // load engine specific configuration only if engine is active
-        $configuredEngines = ['twig', 'php'];
-
-        if ($container->hasParameter('templating.engines')) {
-            $engines = $container->getParameter('templating.engines');
-
-            foreach ($engines as $engine) {
-                if (in_array($engine, $configuredEngines)) {
-                    $loader->load(sprintf('templating_%s.yml', $engine));
-                }
-            }
-        }
+        $loader->load('templating_twig.yml');
 
         $this->addContextRoutes($container, $config['context']);
     }
@@ -175,22 +165,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param array $config
-     */
-    private function configureDocumentEditableNamingStrategy(ContainerBuilder $container, array $config)
-    {
-        $strategyName = $config['documents']['editables']['naming_strategy'];
-
-        $container
-            ->setAlias(
-                'pimcore.document.tag.naming.strategy',
-                sprintf('pimcore.document.tag.naming.strategy.%s', $strategyName)
-            )
-            ->setPublic(true);
-    }
-
-    /**
      * Configure implementation loaders from config
      *
      * @param ContainerBuilder $container
@@ -199,9 +173,9 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     private function configureImplementationLoaders(ContainerBuilder $container, array $config)
     {
         $services = [
-            'pimcore.implementation_loader.document.tag' => [
-                'config' => $config['documents']['tags'],
-                'prefixLoader' => DocumentTagPrefixLoader::class,
+            EditableLoader::class => [
+                'config' => $config['documents']['editables'],
+                'prefixLoader' => DocumentEditablePrefixLoader::class,
             ],
             'pimcore.implementation_loader.object.data' => [
                 'config' => $config['objects']['class_definitions']['data'],
@@ -540,6 +514,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
      */
     public function prepend(ContainerBuilder $container)
     {
+        // @TODO: to be removed in Pimcore 7 -> move security config to skeleton & demo package
         $securityConfigs = $container->getExtensionConfig('security');
 
         if (count($securityConfigs) > 1) {

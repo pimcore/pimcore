@@ -22,6 +22,8 @@ use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use Pimcore\Model;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Asset\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
@@ -57,6 +59,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
+     * @deprecated
+     *
      * @param array|string|Expression $columns
      *
      * @return \Pimcore\Db\ZendCompatibility\QueryBuilder

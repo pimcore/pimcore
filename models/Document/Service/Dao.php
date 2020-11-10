@@ -22,6 +22,8 @@ use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Document\Service $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -38,7 +40,7 @@ class Dao extends Model\Dao\AbstractDao
             'SELECT documents.id FROM documents
             LEFT JOIN documents_page ON documents.id = documents_page.id
             WHERE documents.path LIKE ? AND documents_page.prettyUrl = ?',
-        [$site->getRootPath() . '/%', rtrim($path, '/')]
+        [$this->db->escapeLike($site->getRootPath()) . '/%', rtrim($path, '/')]
         );
     }
 

@@ -16,21 +16,21 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache\Core\CoreHandlerInterface;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Event\Model\TargetGroupEvent;
 use Pimcore\Event\TargetGroupEvents;
 use Pimcore\Model\Tool\Targeting;
 use Pimcore\Model\Tool\Targeting\TargetGroup;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/targeting")
  */
-class TargetingController extends AdminController implements EventedControllerInterface
+class TargetingController extends AdminController implements KernelControllerEventInterface
 {
     /* RULES */
 
@@ -221,10 +221,11 @@ class TargetingController extends AdminController implements EventedControllerIn
      *
      * @param Request $request
      * @param CoreHandlerInterface $cache
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function targetGroupAddAction(Request $request, CoreHandlerInterface $cache)
+    public function targetGroupAddAction(Request $request, CoreHandlerInterface $cache, EventDispatcherInterface $eventDispatcher)
     {
         /** @var TargetGroup|TargetGroup\Dao $targetGroup */
         $targetGroup = new TargetGroup();
@@ -232,7 +233,7 @@ class TargetingController extends AdminController implements EventedControllerIn
         $targetGroup->save();
 
         $event = new TargetGroupEvent($targetGroup);
-        \Pimcore::getEventDispatcher()->dispatch(TargetGroupEvents::POST_ADD, $event);
+        $eventDispatcher->dispatch($event, TargetGroupEvents::POST_ADD);
 
         $cache->clearTag('target_groups');
 
@@ -244,10 +245,11 @@ class TargetingController extends AdminController implements EventedControllerIn
      *
      * @param Request $request
      * @param CoreHandlerInterface $cache
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function targetGroupDeleteAction(Request $request, CoreHandlerInterface $cache)
+    public function targetGroupDeleteAction(Request $request, CoreHandlerInterface $cache, EventDispatcherInterface $eventDispatcher)
     {
         $success = false;
 
@@ -258,7 +260,7 @@ class TargetingController extends AdminController implements EventedControllerIn
             $targetGroup->delete();
             $success = true;
 
-            \Pimcore::getEventDispatcher()->dispatch(TargetGroupEvents::POST_DELETE, $event);
+            $eventDispatcher->dispatch($event, TargetGroupEvents::POST_DELETE);
         }
 
         $cache->clearTag('target_groups');
@@ -286,10 +288,11 @@ class TargetingController extends AdminController implements EventedControllerIn
      *
      * @param Request $request
      * @param CoreHandlerInterface $cache
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function targetGroupSaveAction(Request $request, CoreHandlerInterface $cache)
+    public function targetGroupSaveAction(Request $request, CoreHandlerInterface $cache, EventDispatcherInterface $eventDispatcher)
     {
         $data = $this->decodeJson($request->get('data'));
 
@@ -299,7 +302,7 @@ class TargetingController extends AdminController implements EventedControllerIn
         $targetGroup->save();
 
         $event = new TargetGroupEvent($targetGroup);
-        \Pimcore::getEventDispatcher()->dispatch(TargetGroupEvents::POST_UPDATE, $event);
+        $eventDispatcher->dispatch($event, TargetGroupEvents::POST_UPDATE);
 
         $cache->clearTag('target_groups');
 
@@ -307,9 +310,9 @@ class TargetingController extends AdminController implements EventedControllerIn
     }
 
     /**
-     * @param FilterControllerEvent $event
+     * @param ControllerEvent $event
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -318,13 +321,5 @@ class TargetingController extends AdminController implements EventedControllerIn
 
         // check permissions
         $this->checkActionPermission($event, 'targeting', ['targetGroupListAction']);
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-        // nothing to do
     }
 }

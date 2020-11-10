@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherSeries;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractVoucherTokenType;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractTokenManager implements TokenManagerInterface
 {
@@ -133,7 +134,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface
     protected function checkOnlyToken(CartInterface $cart)
     {
         $cartCodes = $cart->getVoucherTokenCodes();
-        $cartVoucherCount = sizeof($cartCodes);
+        $cartVoucherCount = count($cartCodes);
         if ($cartVoucherCount && method_exists($this->configuration, 'getOnlyTokenPerCart')) {
             if ($this->configuration->getOnlyTokenPerCart()) {
                 throw new VoucherServiceException('OnlyTokenPerCart: This token is only allowed as only token in this cart.', VoucherServiceException::ERROR_CODE_ONLY_TOKEN_PER_CART_CANNOT_BE_ADDED);
@@ -158,7 +159,7 @@ abstract class AbstractTokenManager implements TokenManagerInterface
      */
     public function exportCsv(array $params)
     {
-        $translator = \Pimcore::getContainer()->get('pimcore.translator');
+        $translator = \Pimcore::getContainer()->get(TranslatorInterface::class);
 
         $stream = fopen('php://temp', 'w+');
         fputcsv($stream, [

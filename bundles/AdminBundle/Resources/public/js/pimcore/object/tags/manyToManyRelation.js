@@ -106,7 +106,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
         if (intval(this.fieldConfig.height) < 15) {
             autoHeight = true;
         }
-        var cls = 'object_field';
+        var cls = 'object_field object_field_type_' + this.type;
 
         var toolbarItems = this.getEditToolbarItems();
 
@@ -185,8 +185,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
             store: this.store,
             border: true,
             style: "margin-bottom: 10px",
-
-            selModel: Ext.create('Ext.selection.RowModel', {}),
+            multiSelect: true,
             viewConfig: {
                 markDirty: false,
                 plugins: {

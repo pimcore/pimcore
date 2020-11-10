@@ -25,6 +25,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\Fieldcollection $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -76,7 +78,7 @@ class Dao extends Model\Dao\AbstractDao
                 $collection->setObject($object);
 
                 foreach ($fieldDefinitions as $key => $fd) {
-                    $params =                                 [
+                    $params = [
                         'context' => [
                             'object' => $object,
                             'containerType' => 'fieldcollection',
@@ -218,9 +220,22 @@ class Dao extends Model\Dao\AbstractDao
             }
         }
 
+        $isDirty = $this->model->isFieldDirty('_self');
+        if (!$isDirty) {
+            if ($items = $this->model->getItems()) {
+                /** @var Model\Element\DirtyIndicatorInterface $item */
+                foreach ($items as $item) {
+                    if ($item->hasDirtyFields()) {
+                        $this->model->markFieldDirty('_self');
+                        break;
+                    }
+                }
+            }
+        }
         if (!$this->model->isFieldDirty('_self') && !DataObject\AbstractObject::isDirtyDetectionDisabled()) {
             return [];
         }
+
         $whereLocalizedFields = "(ownertype = 'localizedfield' AND "
             . $this->db->quoteInto('ownername LIKE ?', '/fieldcollection~'
                 . $this->model->getFieldname() . '/%')

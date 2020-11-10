@@ -21,10 +21,9 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Objectbrick;
-use Pimcore\Model\Webservice;
 use Pimcore\Tool;
 
-class Objectbricks extends Data implements CustomResourcePersistingInterface
+class Objectbricks extends Data implements CustomResourcePersistingInterface, TypeDeclarationSupportInterface
 {
     /**
      * Static type of this element
@@ -493,126 +492,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     }
 
     /**
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        $wsData = [];
-
-        if ($data instanceof DataObject\Objectbrick) {
-            $data = $data->getObjectVars();
-            foreach ($data as $item) {
-                if (!$item instanceof DataObject\Objectbrick\Data\AbstractData) {
-                    continue;
-                }
-
-                $wsDataItem = new Webservice\Data\DataObject\Element();
-                $wsDataItem->value = [];
-                $wsDataItem->type = $item->getType();
-
-                if ($collectionDef = DataObject\Objectbrick\Definition::getByKey($item->getType())) {
-                    foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                        $el = new Webservice\Data\DataObject\Element();
-                        $el->name = $fd->getName();
-                        $el->type = $fd->getFieldType();
-                        $el->value = $fd->getForWebserviceExport($item, $params);
-                        if ($el->value == null && self::$dropNullValues) {
-                            continue;
-                        }
-
-                        $wsDataItem->value[] = $el;
-                    }
-
-                    $wsData[] = $wsDataItem;
-                }
-            }
-        }
-
-        return $wsData;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param array $data
-     * @param DataObject\Concrete $relatedObject
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return Objectbrick|null
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($data, $relatedObject = null, $params = [], $idMapper = null)
-    {
-        $containerName = '\\Pimcore\\Model\\DataObject\\' . ucfirst($relatedObject->getClass()->getName()) . '\\' . ucfirst($this->getName());
-
-        if (Tool::classExists($containerName)) {
-            $container = new $containerName($relatedObject, $this->getName());
-
-            if (is_array($data)) {
-                foreach ($data as $collectionRaw) {
-                    if ($collectionRaw instanceof \stdClass) {
-                        $class = '\\Pimcore\\Model\\Webservice\\Data\\DataObject\\Element';
-                        $collectionRaw = Tool\Cast::castToClass($class, $collectionRaw);
-                    }
-
-                    if ($collectionRaw != null) {
-                        if (!$collectionRaw instanceof Webservice\Data\DataObject\Element) {
-                            throw new \Exception('invalid data in objectbrick [' . $this->getName() . ']');
-                        }
-
-                        $brick = $collectionRaw->type;
-                        $collectionData = [];
-                        $collectionDef = DataObject\Objectbrick\Definition::getByKey($brick);
-
-                        if (!$collectionDef) {
-                            throw new \Exception('Unknown objectbrick in webservice import [' . $brick . ']');
-                        }
-
-                        foreach ($collectionDef->getFieldDefinitions() as $fd) {
-                            foreach ($collectionRaw->value as $field) {
-                                if ($field instanceof \stdClass) {
-                                    $class = '\\Pimcore\\Model\\Webservice\\Data\\DataObject\\Element';
-                                    $field = Tool\Cast::castToClass($class, $field);
-                                }
-                                if (!$field instanceof Webservice\Data\DataObject\Element) {
-                                    throw new \Exception('invalid data in objectbricks [' . $this->getName() . ']');
-                                } elseif ($field->name == $fd->getName()) {
-                                    if ($field->type != $fd->getFieldType()) {
-                                        throw new \Exception('Type mismatch for objectbricks field [' . $field->name . ']. Should be [' . $fd->getFieldType() . '] but is [' . $field->type . ']');
-                                    }
-                                    $collectionData[$fd->getName()] = $fd->getFromWebserviceImport($field->value, $relatedObject, $params, $idMapper);
-                                    break;
-                                }
-                            }
-                        }
-
-                        $collectionClass = '\\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brick);
-                        $collection = new $collectionClass($relatedObject);
-                        $collection->setValues($collectionData);
-                        $collection->setFieldname($this->getName());
-
-                        $setter = 'set' . ucfirst($brick);
-
-                        $container->$setter($collection);
-                    }
-                }
-            }
-
-            return $container;
-        }
-
-        return null;
-    }
-
-    /**
      * @param DataObject\Concrete $object
      * @param Objectbrick|null $value
      * @param array $params
@@ -698,6 +577,12 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
     {
         // getter
 
+        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
         $key = $this->getName();
         $code = '';
 
@@ -706,7 +591,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface
         $code .= '/**' . "\n";
         $code .= '* @return ' . $classname . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " () {\n";
+        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration .  " {\n";
 
         $code .= "\t" . '$data = $this->' . $key . ";\n";
         $code .= "\t" . 'if(!$data) { ' . "\n";

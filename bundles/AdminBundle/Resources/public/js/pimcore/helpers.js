@@ -2391,7 +2391,7 @@ pimcore.helpers.removeOtherConfigs = function (objectId, classId, gridConfigId, 
     });
 };
 
-pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, searchType, button, callback, settings, type) {
+pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, searchType, button, callback, settings, type, context) {
 
     type = type || "object";
 
@@ -2417,6 +2417,7 @@ pimcore.helpers.saveColumnConfig = function (objectId, classId, configuration, s
             gridconfig: Ext.encode(configuration),
             searchType: searchType,
             settings: Ext.encode(settings),
+            context: Ext.encode(context),
             type: type
         };
 
@@ -2797,13 +2798,6 @@ pimcore.helpers.reports = function() {
     var user = pimcore.globalmanager.get("user");
     if (user.isAllowed("reports")) {
         pimcore.layout.toolbar.prototype.showReports(null);
-    }
-};
-
-pimcore.helpers.tagManager = function() {
-    var user = pimcore.globalmanager.get("user");
-    if (user.isAllowed("tag_snippet_management")) {
-        pimcore.layout.toolbar.prototype.showTagManagement();
     }
 };
 

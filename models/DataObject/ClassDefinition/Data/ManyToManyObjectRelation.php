@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations;
 use Pimcore\Model\Element;
 
-class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface
+class ManyToManyObjectRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, OptimizedAdminLoadingInterface, TypeDeclarationSupportInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
     use Extension\QueryColumnType;
@@ -443,82 +443,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         }
 
         return $dependencies;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array|mixed|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        if (is_array($data)) {
-            $items = [];
-            foreach ($data as $eo) {
-                if ($eo instanceof Element\ElementInterface) {
-                    $items[] = [
-                        'type' => $eo->getType(),
-                        'id' => $eo->getId(),
-                    ];
-                }
-            }
-
-            return $items;
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete|null $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return array|mixed
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        $relatedObjects = [];
-        if (empty($value)) {
-            return null;
-        } elseif (is_array($value)) {
-            foreach ($value as $key => $item) {
-                $item = (array) $item;
-                $id = $item['id'];
-
-                if ($idMapper) {
-                    $id = $idMapper->getMappedId('object', $id);
-                }
-
-                $relatedObject = null;
-                if ($id) {
-                    $relatedObject = DataObject::getById($id);
-                }
-
-                if ($relatedObject instanceof DataObject\AbstractObject) {
-                    $relatedObjects[] = $relatedObject;
-                } else {
-                    if (!$idMapper || !$idMapper->ignoreMappingFailures()) {
-                        throw new \Exception('cannot get values from web service import - references unknown object with id [ '.$item['id'].' ]');
-                    } else {
-                        $idMapper->recordMappingFailure('object', $object->getId(), 'object', $item['id']);
-                    }
-                }
-            }
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
-
-        return $relatedObjects;
     }
 
     /**
@@ -992,5 +916,3 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         return parent::addListingFilter($listing, $data, $operator);
     }
 }
-
-class_alias(ManyToManyObjectRelation::class, 'Pimcore\Model\DataObject\ClassDefinition\Data\Objects');

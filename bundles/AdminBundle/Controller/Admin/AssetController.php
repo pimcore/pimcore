@@ -18,14 +18,14 @@ use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
 use Pimcore\Config;
-use Pimcore\Controller\Configuration\TemplatePhp;
-use Pimcore\Controller\EventedControllerInterface;
+use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
 use Pimcore\Event\Admin\ElementAdminStyleEvent;
 use Pimcore\Event\AdminEvents;
 use Pimcore\Event\AssetEvents;
 use Pimcore\File;
+use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -39,14 +39,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/asset")
  */
-class AssetController extends ElementControllerBase implements EventedControllerInterface
+class AssetController extends ElementControllerBase implements KernelControllerEventInterface
 {
     use AdminStyleTrait;
     use ElementEditLockHelperTrait;
@@ -73,12 +72,13 @@ class AssetController extends ElementControllerBase implements EventedController
      * @Route("/delete-info", name="pimcore_admin_asset_deleteinfo", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function deleteInfoAction(Request $request)
+    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        return parent::deleteInfoAction($request);
+        return parent::deleteInfoAction($request, $eventDispatcher);
     }
 
     /**
@@ -120,7 +120,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 $data['data'] = false;
             }
         } elseif ($asset instanceof Asset\Document) {
-            $data['pdfPreviewAvailable'] = (bool) $this->getDocumentPreviewPdf($asset);
+            $data['pdfPreviewAvailable'] = (bool)$this->getDocumentPreviewPdf($asset);
         } elseif ($asset instanceof Asset\Video) {
             $videoInfo = [];
 
@@ -167,7 +167,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 $imageInfo['dimensions']['height'] = $asset->getHeight();
             }
 
-            $imageInfo['exiftoolAvailable'] = (bool) \Pimcore\Tool\Console::getExecutable('exiftool');
+            $imageInfo['exiftoolAvailable'] = (bool)\Pimcore\Tool\Console::getExecutable('exiftool');
 
             if (!$asset->getEmbeddedMetaData(false)) {
                 $asset->getEmbeddedMetaData(true, false); // read Exif, IPTC and XPM like in the old days ...
@@ -181,10 +181,10 @@ class AssetController extends ElementControllerBase implements EventedController
         $data['versionDate'] = $asset->getModificationDate();
         $data['filesizeFormatted'] = $asset->getFileSize(true);
         $data['filesize'] = $asset->getFileSize();
-        $data['url'] = Tool::getHostUrl(null, $request) . $asset->getRealFullPath();
         $data['fileExtension'] = File::getFileExtension($asset->getFilename());
         $data['idPath'] = Element\Service::getIdPath($asset);
         $data['userPermissions'] = $asset->getUserPermissions();
+        $data['url'] = $asset->getFrontendFullPath();
 
         $this->addAdminStyle($asset, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
 
@@ -197,7 +197,7 @@ class AssetController extends ElementControllerBase implements EventedController
             'data' => $data,
             'asset' => $asset,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::ASSET_GET_PRE_SEND_DATA, $event);
+        $eventDispatcher->dispatch($event, AdminEvents::ASSET_GET_PRE_SEND_DATA);
         $data = $event->getArgument('data');
 
         if ($asset->isAllowed('view')) {
@@ -223,7 +223,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $asset = Asset::getById($allParams['node']);
 
         $filter = $request->get('filter');
-        $limit = intval($allParams['limit']);
+        $limit = (int)$allParams['limit'];
         if (!is_null($filter)) {
             if (substr($filter, -1) != '*') {
                 $filter .= '*';
@@ -236,7 +236,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $limit = 100000000;
         }
 
-        $offset = isset($allParams['start']) ? intval($allParams['start']) : 0;
+        $offset = isset($allParams['start']) ? (int)$allParams['start'] : 0;
 
         $filteredTotalCount = 0;
 
@@ -255,15 +255,15 @@ class AssetController extends ElementControllerBase implements EventedController
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
 
-                $condition = 'parentId = ' . $db->quote($asset->getId()) . ' and
+                $condition = 'parentId = ' . $db->quote($asset->getId()) . ' AND
                 (
-                (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,filename),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                or
-                (select list from users_workspaces_asset where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,filename))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
-                    )';
+                    (SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(CONCAT(path,filename),cpath)=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $this->getAdminUser()->getId() . ') DESC, list DESC LIMIT 1)=1
+                    or
+                    (SELECT list FROM users_workspaces_asset WHERE userId IN (' . implode(',', $userIds) . ') AND LOCATE(cpath,CONCAT(path,filename))=1 ORDER BY LENGTH(cpath) DESC, FIELD(userId, ' . $this->getAdminUser()->getId() . ') DESC, list DESC LIMIT 1)=1
+                )';
             }
 
-            if (! is_null($filter)) {
+            if (!is_null($filter)) {
                 $db = Db::get();
 
                 $condition = '(' . $condition . ')' . ' AND  CAST(assets.filename AS CHAR CHARACTER SET utf8) COLLATE utf8_general_ci LIKE ' . $db->quote($filter);
@@ -281,7 +281,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 'list' => $childsList,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
             /** @var Asset\Listing $childsList */
             $childsList = $beforeListLoadEvent->getArgument('list');
 
@@ -300,7 +300,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $event = new GenericEvent($this, [
             'assets' => $assets,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::ASSET_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA, $event);
+        $eventDispatcher->dispatch($event, AdminEvents::ASSET_TREE_GET_CHILDREN_BY_ID_PRE_SEND_DATA);
         $assets = $event->getArgument('assets');
 
         if ($allParams['limit']) {
@@ -311,7 +311,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 'overflow' => !is_null($filter) && ($filteredTotalCount > $limit),
                 'nodes' => $assets,
                 'filter' => $request->get('filter') ? $request->get('filter') : '',
-                'inSearch' => intval($request->get('inSearch')),
+                'inSearch' => (int)$request->get('inSearch'),
             ]);
         } else {
             return $this->adminJson($assets);
@@ -461,7 +461,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $context = json_decode($context, true);
             $context = $context ? $context : [];
             $event = new \Pimcore\Event\Model\Asset\ResolveUploadTargetEvent($parentId, $filename, $context);
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::RESOLVE_UPLOAD_TARGET, $event);
+            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::RESOLVE_UPLOAD_TARGET);
             $filename = Element\Service::getValidKey($event->getFilename(), 'asset');
             $parentId = $event->getParentId();
         }
@@ -470,7 +470,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $parentId = Asset\Service::createFolderByPath($defaultUploadPath)->getId();
         }
 
-        $parentAsset = Asset::getById(intval($parentId));
+        $parentAsset = Asset::getById((int)$parentId);
 
         // check for duplicate filename
         $filename = $this->getSafeFilename($parentAsset->getRealFullPath(), $filename);
@@ -547,11 +547,10 @@ class AssetController extends ElementControllerBase implements EventedController
         $newType = Asset::getTypeFromMimeMapping($mimetype, $newFilename);
 
         if ($newType != $asset->getType()) {
-            $translator = $this->get('translator');
 
             return $this->adminJson([
                 'success' => false,
-                'message' => sprintf($translator->trans('asset_type_change_not_allowed', [], 'admin'), $asset->getType(), $newType),
+                'message' => sprintf($this->trans('asset_type_change_not_allowed', [], 'admin'), $asset->getType(), $newType),
             ]);
         }
 
@@ -563,7 +562,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $newFileExt = File::getFileExtension($newFilename);
         $currentFileExt = File::getFileExtension($asset->getFilename());
         if ($newFileExt != $currentFileExt) {
-            $newFilename = preg_replace('/\.' . $currentFileExt . '$/i', '.'.$newFileExt, $asset->getFilename());
+            $newFilename = preg_replace('/\.' . $currentFileExt . '$/i', '.' . $newFileExt, $asset->getFilename());
             $newFilename = Element\Service::getSaveCopyName('asset', $newFilename, $asset->getParent());
             $asset->setFilename($newFilename);
         }
@@ -597,7 +596,7 @@ class AssetController extends ElementControllerBase implements EventedController
     public function addFolderAction(Request $request)
     {
         $success = false;
-        $parentAsset = Asset::getById(intval($request->get('parentId')));
+        $parentAsset = Asset::getById((int)$request->get('parentId'));
         $equalAsset = Asset::getByPath($parentAsset->getRealFullPath() . '/' . $request->get('name'));
 
         if ($parentAsset->isAllowed('create')) {
@@ -630,8 +629,8 @@ class AssetController extends ElementControllerBase implements EventedController
             $parentAsset = Asset::getById($request->get('id'));
 
             $list = new Asset\Listing();
-            $list->setCondition('path LIKE ?', [$parentAsset->getRealFullPath() . '/%']);
-            $list->setLimit(intval($request->get('amount')));
+            $list->setCondition('path LIKE ?', [$list->escapeLike($parentAsset->getRealFullPath()) . '/%']);
+            $list->setLimit((int)$request->get('amount'));
             $list->setOrderKey('LENGTH(path)', false);
             $list->setOrder('DESC');
 
@@ -699,7 +698,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $folderThumbs = [];
             $children = new Asset\Listing();
-            $children->setCondition('path LIKE ?', [$asset->getRealFullPath() . '/%']);
+            $children->setCondition('path LIKE ?', [$children->escapeLike($asset->getRealFullPath()) . '/%']);
             $children->addConditionParam('type IN (\'image\', \'video\', \'document\')', 'AND');
             $children->setLimit(35);
 
@@ -906,7 +905,7 @@ class AssetController extends ElementControllerBase implements EventedController
             $publicDir = new Asset\WebDAV\Folder($homeDir);
             $objectTree = new Asset\WebDAV\Tree($publicDir);
             $server = new \Sabre\DAV\Server($objectTree);
-            $server->setBaseUri($this->generateUrl('pimcore_admin_webdav'));
+            $server->setBaseUri($this->generateUrl('pimcore_admin_webdav', ['path' => '/']));
 
             // lock plugin
             $lockBackend = new \Sabre\DAV\Locks\Backend\File(PIMCORE_SYSTEM_TEMP_DIRECTORY . '/webdav-locks.dat');
@@ -931,12 +930,13 @@ class AssetController extends ElementControllerBase implements EventedController
      * @Route("/save", name="pimcore_admin_asset_save", methods={"PUT","POST"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      *
      * @throws \Exception
      */
-    public function saveAction(Request $request)
+    public function saveAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
         $asset = Asset::getById($request->get('id'));
 
@@ -948,8 +948,18 @@ class AssetController extends ElementControllerBase implements EventedController
             // metadata
             if ($request->get('metadata')) {
                 $metadata = $this->decodeJson($request->get('metadata'));
-                $metadata = Asset\Service::minimizeMetadata($metadata);
-                $asset->setMetadata($metadata);
+
+                $metadataEvent = new GenericEvent($this, [
+                    'id' => $asset->getId(),
+                    'metadata' => $metadata,
+                ]);
+                $eventDispatcher->dispatch($metadataEvent, AdminEvents::ASSET_METADATA_PRE_SET);
+
+                $metadata = $metadataEvent->getArgument('metadata');
+                $metadataValues = $metadata['values'];
+
+                $metadataValues = Asset\Service::minimizeMetadata($metadataValues, 'editor');
+                $asset->setMetadataRaw($metadataValues);
             }
 
             // properties
@@ -1056,7 +1066,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/show-version", name="pimcore_admin_asset_showversion", methods={"GET"})
-     * @TemplatePhp()
      *
      * @param Request $request
      *
@@ -1064,7 +1073,7 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function showVersionAction(Request $request)
     {
-        $id = intval($request->get('id'));
+        $id = (int)$request->get('id');
         $version = Model\Version::getById($id);
         if (!$version) {
             throw $this->createNotFoundException('Version not found');
@@ -1075,9 +1084,14 @@ class AssetController extends ElementControllerBase implements EventedController
             throw $this->createAccessDeniedHttpException('Permission denied, version id [' . $id . ']');
         }
 
+        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
+
         return $this->render(
-            'PimcoreAdminBundle:Admin/Asset:showVersion' . ucfirst($asset->getType()) . '.html.php',
-            ['asset' => $asset]
+            '@PimcoreAdmin/Admin/Asset/showVersion' . ucfirst($asset->getType()) . '.html.twig',
+            [
+                'asset' => $asset,
+                'loader' => $loader,
+            ]
         );
     }
 
@@ -1198,7 +1212,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
             $exiftool = \Pimcore\Tool\Console::getExecutable('exiftool');
             if ($thumbnailConfig->getFormat() == 'JPEG' && $exiftool && isset($config['dpi']) && $config['dpi']) {
-                \Pimcore\Tool\Console::exec($exiftool . ' -overwrite_original -xresolution=' . escapeshellarg((int) $config['dpi']) . ' -yresolution=' . escapeshellarg((int) $config['dpi']) . ' -resolutionunit=inches ' . escapeshellarg($thumbnailFile));
+                \Pimcore\Tool\Console::exec($exiftool . ' -overwrite_original -xresolution=' . escapeshellarg((int)$config['dpi']) . ' -yresolution=' . escapeshellarg((int)$config['dpi']) . ' -resolutionunit=inches ' . escapeshellarg($thumbnailFile));
             }
         }
         if ($thumbnail) {
@@ -1234,7 +1248,7 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function getAssetAction(Request $request)
     {
-        $image = Asset::getById(intval($request->get('id')));
+        $image = Asset::getById((int)$request->get('id'));
 
         if (!$image) {
             throw $this->createNotFoundException('Asset not found');
@@ -1262,7 +1276,7 @@ class AssetController extends ElementControllerBase implements EventedController
     public function getImageThumbnailAction(Request $request)
     {
         $fileinfo = $request->get('fileinfo');
-        $image = Asset\Image::getById(intval($request->get('id')));
+        $image = Asset\Image::getById((int)$request->get('id'));
 
         if (!$image) {
             throw $this->createNotFoundException('Asset not found');
@@ -1297,7 +1311,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         if ($request->get('treepreview')) {
-            $thumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
+            $thumbnailConfig = Asset\Image\Thumbnail\Config::getPreviewConfig((bool)$request->get('hdpi'));
         }
 
         $cropPercent = $request->get('cropPercent');
@@ -1344,7 +1358,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $video = null;
 
         if ($request->get('id')) {
-            $video = Asset\Video::getById(intval($request->get('id')));
+            $video = Asset\Video::getById((int)$request->get('id'));
         } elseif ($request->get('path')) {
             $video = Asset\Video::getByPath($request->get('path'));
         }
@@ -1360,12 +1374,12 @@ class AssetController extends ElementControllerBase implements EventedController
         $thumbnail = array_merge($request->request->all(), $request->query->all());
 
         if ($request->get('treepreview')) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
+            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool)$request->get('hdpi'));
         }
 
         $time = null;
         if ($request->get('time')) {
-            $time = intval($request->get('time'));
+            $time = (int)$request->get('time');
         }
 
         if ($request->get('settime')) {
@@ -1376,7 +1390,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $image = null;
         if ($request->get('image')) {
-            $image = Asset::getById(intval($request->get('image')));
+            $image = Asset::getById((int)$request->get('image'));
         }
 
         if ($request->get('setimage') && $image) {
@@ -1405,7 +1419,7 @@ class AssetController extends ElementControllerBase implements EventedController
      */
     public function getDocumentThumbnailAction(Request $request)
     {
-        $document = Asset\Document::getById(intval($request->get('id')));
+        $document = Asset\Document::getById((int)$request->get('id'));
 
         if (!$document) {
             throw $this->createNotFoundException('could not load document asset');
@@ -1423,7 +1437,7 @@ class AssetController extends ElementControllerBase implements EventedController
         }
 
         if ($request->get('treepreview')) {
-            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool) $request->get('hdpi'));
+            $thumbnail = Asset\Image\Thumbnail\Config::getPreviewConfig((bool)$request->get('hdpi'));
         }
 
         $page = 1;
@@ -1457,7 +1471,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-preview-document", name="pimcore_admin_asset_getpreviewdocument", methods={"GET"})
-     * @TemplatePhp()
      *
      * @param Request $request
      *
@@ -1513,7 +1526,6 @@ class AssetController extends ElementControllerBase implements EventedController
 
     /**
      * @Route("/get-preview-video", name="pimcore_admin_asset_getpreviewvideo", methods={"GET"})
-     * @TemplatePhp()
      *
      * @param Request $request
      *
@@ -1541,18 +1553,18 @@ class AssetController extends ElementControllerBase implements EventedController
 
             if ($thumbnail['status'] == 'finished') {
                 return $this->render(
-                    'PimcoreAdminBundle:Admin/Asset:getPreviewVideoDisplay.html.php',
+                    '@PimcoreAdmin/Admin/Asset/getPreviewVideoDisplay.html.twig',
                     $previewData
                 );
             } else {
                 return $this->render(
-                    'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php',
+                    '@PimcoreAdmin/Admin/Asset/getPreviewVideoError.html.twig',
                     $previewData
                 );
             }
         } else {
             return $this->render(
-                'PimcoreAdminBundle:Admin/Asset:getPreviewVideoError.html.php',
+                '@PimcoreAdmin/Admin/Asset/getPreviewVideoError.html.twig',
                 $previewData
             );
         }
@@ -1595,9 +1607,8 @@ class AssetController extends ElementControllerBase implements EventedController
      * @Route("/image-editor", name="pimcore_admin_asset_imageeditor", methods={"GET"})
      *
      * @param Request $request
-     * @TemplatePhp()
      *
-     * @return array
+     * @return Response
      */
     public function imageEditorAction(Request $request)
     {
@@ -1607,7 +1618,10 @@ class AssetController extends ElementControllerBase implements EventedController
             throw new \Exception('not allowed to preview');
         }
 
-        return ['asset' => $asset];
+        return $this->render(
+            '@PimcoreAdmin/Admin/Asset/imageEditor.html.twig',
+            ['asset' => $asset]
+        );
     }
 
     /**
@@ -1653,7 +1667,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $filterPrepareEvent = new GenericEvent($this, [
             'requestParams' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+        $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
 
@@ -1671,7 +1685,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
         $conditionFilters = [];
         $list = new Asset\Listing();
-        $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%')) ." AND type != 'folder'";
+        $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() == '/' ? "'/%'" : $list->quote($list->escapeLike($folder->getRealFullPath()) . '/%')) . " AND type != 'folder'";
 
         if (!$this->getAdminUser()->isAdmin()) {
             $userIds = $this->getAdminUser()->getRoles();
@@ -1694,7 +1708,7 @@ class AssetController extends ElementControllerBase implements EventedController
             'list' => $list,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+        $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
         /** @var Asset\Listing $list */
         $list = $beforeListLoadEvent->getArgument('list');
 
@@ -1732,7 +1746,7 @@ class AssetController extends ElementControllerBase implements EventedController
             'list' => $result,
             'context' => $allParams,
         ]);
-        $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+        $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::ASSET_LIST_AFTER_LIST_LOAD);
         $result = $afterListLoadEvent->getArgument('list');
 
         // Here we revert to assets key
@@ -1778,7 +1792,7 @@ class AssetController extends ElementControllerBase implements EventedController
             if ($asset->hasChildren()) {
                 // get amount of children
                 $list = new Asset\Listing();
-                $list->setCondition('path LIKE ?', [$asset->getRealFullPath() . '/%']);
+                $list->setCondition('path LIKE ?', [$list->escapeLike($asset->getRealFullPath()) . '/%']);
                 $list->setOrderKey('LENGTH(path)', false);
                 $list->setOrder('ASC');
                 $childIds = $list->loadIdList();
@@ -1828,13 +1842,13 @@ class AssetController extends ElementControllerBase implements EventedController
     public function copyAction(Request $request)
     {
         $success = false;
-        $sourceId = intval($request->get('sourceId'));
+        $sourceId = (int)$request->get('sourceId');
         $source = Asset::getById($sourceId);
 
         $session = Tool\Session::get('pimcore_copy');
         $sessionBag = $session->get($request->get('transactionId'));
 
-        $targetId = intval($request->get('targetId'));
+        $targetId = (int)$request->get('targetId');
         if ($request->get('targetParentId')) {
             $sourceParent = Asset::getById($request->get('sourceParentId'));
 
@@ -1923,7 +1937,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 //add a condition if id numbers are specified
                 $conditionFilters[] = 'id IN (' . implode(',', $quotedSelectedIds) . ')';
             }
-            $conditionFilters[] = 'path LIKE ' . $db->quote($parentPath . '/%') .' AND type != ' . $db->quote('folder');
+            $conditionFilters[] = 'path LIKE ' . $db->quote($db->escapeLike($parentPath) . '/%') . ' AND type != ' . $db->quote('folder');
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
@@ -2004,7 +2018,7 @@ class AssetController extends ElementControllerBase implements EventedController
                     //add a condition if id numbers are specified
                     $conditionFilters[] = 'id IN (' . implode(',', $selectedIds) . ')';
                 }
-                $conditionFilters[] = "type != 'folder' AND path LIKE " . $db->quote($parentPath . '/%');
+                $conditionFilters[] = "type != 'folder' AND path LIKE " . $db->quote($db->escapeLike($parentPath) . '/%');
                 if (!$this->getAdminUser()->isAdmin()) {
                     $userIds = $this->getAdminUser()->getRoles();
                     $userIds[] = $this->getAdminUser()->getId();
@@ -2321,7 +2335,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $data = Tool::getHttpData($request->get('url'));
         $filename = basename($request->get('url'));
         $parentId = $request->get('id');
-        $parentAsset = Asset::getById(intval($parentId));
+        $parentAsset = Asset::getById((int)$parentId);
 
         if (!$parentAsset) {
             throw $this->createNotFoundException('Parent asset not found');
@@ -2395,15 +2409,33 @@ class AssetController extends ElementControllerBase implements EventedController
         ]);
         $language = $request->get('language') != 'default' ? $request->get('language') : null;
 
-        $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE, $filterPrepareEvent);
+        $eventDispatcher->dispatch($filterPrepareEvent, AdminEvents::ASSET_LIST_BEFORE_FILTER_PREPARE);
 
         $allParams = $filterPrepareEvent->getArgument('requestParams');
+
+        $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
         if (isset($allParams['data']) && $allParams['data']) {
             $this->checkCsrfToken($request);
             if ($allParams['xaction'] == 'update') {
                 try {
                     $data = $this->decodeJson($allParams['data']);
+
+                    $updateEvent = new GenericEvent($this, [
+                        'data' => $data,
+                        'processed' => false,
+                    ]);
+
+                    $eventDispatcher->dispatch($updateEvent, AdminEvents::ASSET_LIST_BEFORE_UPDATE);
+
+                    $processed = $updateEvent->getArgument('processed');
+
+                    if ($processed) {
+                        // update already processed by event handler
+                        return $this->adminJson(['success' => true]);
+                    }
+
+                    $data = $updateEvent->getArgument('data');
 
                     // save
                     $asset = Asset::getById($data['id']);
@@ -2416,7 +2448,7 @@ class AssetController extends ElementControllerBase implements EventedController
                         throw $this->createAccessDeniedException("Permission denied. You don't have the rights to save this asset.");
                     }
 
-                    $metadata = $asset->getMetadata();
+                    $metadata = $asset->getMetadata(null, null, false, true);
                     $dirty = false;
 
                     unset($data['id']);
@@ -2429,6 +2461,13 @@ class AssetController extends ElementControllerBase implements EventedController
 
                         foreach ($metadata as $idx => &$em) {
                             if ($em['name'] == $key && $em['language'] == $language) {
+                                try {
+                                    $dataImpl = $loader->build($em['type']);
+                                    $value = $dataImpl->getDataFromListfolderGrid($value, $em);
+                                } catch (UnsupportedException $le) {
+                                    Logger::error('could not resolve metadata implementation for ' . $em['type']);
+                                }
+
                                 $em['data'] = $value;
                                 $dirty = true;
                                 break;
@@ -2438,23 +2477,42 @@ class AssetController extends ElementControllerBase implements EventedController
                         if (!$dirty) {
                             $defaulMetadata = ['title', 'alt', 'copyright'];
                             if (in_array($key, $defaulMetadata)) {
-                                $metadata[] = [
+                                $newEm = [
                                     'name' => $key,
                                     'language' => $language,
                                     'type' => 'input',
                                     'data' => $value,
                                 ];
+
+                                try {
+                                    $dataImpl = $loader->build($newEm['type']);
+                                    $newEm['data'] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
+                                } catch (UnsupportedException $le) {
+                                    Logger::error('could not resolve metadata implementation for ' . $newEm['type']);
+                                }
+
+                                $metadata[] = $newEm;
+
                                 $dirty = true;
                             } else {
                                 $predefined = Model\Metadata\Predefined::getByName($key);
                                 if ($predefined && (empty($predefined->getTargetSubtype())
                                         || $predefined->getTargetSubtype() == $asset->getType())) {
-                                    $metadata[] = [
+                                    $newEm = [
                                         'name' => $key,
                                         'language' => $language,
                                         'type' => $predefined->getType(),
                                         'data' => $value,
                                     ];
+
+                                    try {
+                                        $dataImpl = $loader->build($newEm['type']);
+                                        $newEm['data'] = $dataImpl->getDataFromListfolderGrid($value, $newEm);
+                                    } catch (UnsupportedException $le) {
+                                        Logger::error('could not resolve metadata implementation for ' . $newEm['type']);
+                                    }
+
+                                    $metadata[] = $newEm;
                                     $dirty = true;
                                 }
                             }
@@ -2462,8 +2520,8 @@ class AssetController extends ElementControllerBase implements EventedController
                     }
 
                     if ($dirty) {
-                        $metadata = Asset\Service::minimizeMetadata($metadata);
-                        $asset->setMetadata($metadata);
+                        // $metadata = Asset\Service::minimizeMetadata($metadata, "grid");
+                        $asset->setMetadataRaw($metadata);
                         $asset->save();
 
                         return $this->adminJson(['success' => true]);
@@ -2481,7 +2539,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 'list' => $list,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD, $beforeListLoadEvent);
+            $eventDispatcher->dispatch($beforeListLoadEvent, AdminEvents::ASSET_LIST_BEFORE_LIST_LOAD);
             /** @var Asset\Listing $list */
             $list = $beforeListLoadEvent->getArgument('list');
 
@@ -2492,7 +2550,7 @@ class AssetController extends ElementControllerBase implements EventedController
 
                 // Like for treeGetChildsByIdAction, so we respect isAllowed method which can be extended (object DI) for custom permissions, so relying only users_workspaces_asset is insufficient and could lead security breach
                 if ($asset->isAllowed('list')) {
-                    $a = Asset\Service::gridAssetData($asset, $allParams['fields'], $allParams['language']);
+                    $a = Asset\Service::gridAssetData($asset, $allParams['fields'], $allParams['language'] ?? '');
                     $assets[] = $a;
                 }
             }
@@ -2503,7 +2561,7 @@ class AssetController extends ElementControllerBase implements EventedController
                 'list' => $result,
                 'context' => $allParams,
             ]);
-            $eventDispatcher->dispatch(AdminEvents::ASSET_LIST_AFTER_LIST_LOAD, $afterListLoadEvent);
+            $eventDispatcher->dispatch($afterListLoadEvent, AdminEvents::ASSET_LIST_AFTER_LIST_LOAD);
             $result = $afterListLoadEvent->getArgument('list');
 
             return $this->adminJson($result);
@@ -2591,9 +2649,9 @@ class AssetController extends ElementControllerBase implements EventedController
     }
 
     /**
-     * @param FilterControllerEvent $event
+     * @param ControllerEvent $event
      */
-    public function onKernelController(FilterControllerEvent $event)
+    public function onKernelControllerEvent(ControllerEvent $event)
     {
         $isMasterRequest = $event->isMasterRequest();
         if (!$isMasterRequest) {
@@ -2605,13 +2663,5 @@ class AssetController extends ElementControllerBase implements EventedController
         ]);
 
         $this->_assetService = new Asset\Service($this->getAdminUser());
-    }
-
-    /**
-     * @param FilterResponseEvent $event
-     */
-    public function onKernelResponse(FilterResponseEvent $event)
-    {
-        // nothing to do
     }
 }

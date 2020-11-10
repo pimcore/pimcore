@@ -75,6 +75,12 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
                     fieldLabel: t("title"),
                     value: this.data.title
                 },
+                {
+                    xtype: "checkbox",
+                    fieldLabel: t("generate_type_declarations"),
+                    name: "generateTypeDeclarations",
+                    checked: this.data.generateTypeDeclarations
+                },
                 this.groupField,
                 this.getClassDefinitionPanel()
             ]
@@ -364,8 +370,9 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
                 success: function (response) {
                     this.data = Ext.decode(response.responseText);
                     this.parentPanel.getEditPanel().removeAll();
-                    this.addLayout();
+                    this.addTree();
                     this.initLayoutFields();
+                    this.addLayout();
                     pimcore.layout.refresh();
                 }.bind(this)
             });

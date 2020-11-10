@@ -80,6 +80,11 @@ class Newsletter extends Model\Document\PageSnippet
     protected $sendingMode = \Pimcore\Tool\Newsletter::SENDING_MODE_SINGLE;
 
     /**
+     * @inheritdoc
+     */
+    protected $supportsContentMaster = false;
+
+    /**
      * Contains the email subject
      *
      * @param string $subject

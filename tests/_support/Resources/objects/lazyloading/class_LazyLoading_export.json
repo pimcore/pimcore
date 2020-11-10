@@ -1,6 +1,6 @@
 {
-    "id": "50",
-    "description": "class for lazy loading tests",
+    "id": "LL",
+    "description": null,
     "parentClass": null,
     "listingParentClass": null,
     "useTraits": null,
@@ -8,11 +8,14 @@
     "allowInherit": true,
     "allowVariants": false,
     "showVariants": false,
+    "generateTypeDeclarations": true,
+    "implementsInterfaces": null,
     "layoutDefinitions": {
         "fieldtype": "panel",
         "labelWidth": 100,
         "layout": null,
-        "name": "pimcore_root",
+        "border": false,
+        "name": null,
         "type": null,
         "region": null,
         "title": null,
@@ -25,479 +28,74 @@
         "permissions": null,
         "childs": [
             {
-                "fieldtype": "panel",
-                "labelWidth": 100,
-                "layout": null,
+                "fieldtype": "tabpanel",
+                "border": false,
+                "tabPosition": "top",
                 "name": "Layout",
                 "type": null,
                 "region": null,
-                "title": "",
+                "title": null,
                 "width": null,
                 "height": null,
                 "collapsible": false,
                 "collapsed": false,
-                "bodyStyle": "",
+                "bodyStyle": null,
                 "datatype": "layout",
                 "permissions": null,
                 "childs": [
                     {
-                        "fieldtype": "manyToManyObjectRelation",
-                        "width": "",
-                        "height": "",
-                        "maxItems": "",
-                        "queryColumnType": "text",
-                        "phpdocType": "array",
-                        "relationType": true,
-                        "visibleFields": [],
-                        "lazyLoading": true,
-                        "classes": [
-                            {
-                                "classes": "RelationTest"
-                            }
-                        ],
-                        "pathFormatterClass": "",
-                        "name": "objects",
-                        "title": "objects",
-                        "tooltip": "",
-                        "mandatory": false,
-                        "noteditable": false,
-                        "index": false,
-                        "locked": false,
-                        "style": "",
-                        "permissions": null,
-                        "datatype": "data",
-                        "invisible": false,
-                        "visibleGridView": false,
-                        "visibleSearch": false
-                    },
-                    {
-                        "fieldtype": "manyToOneRelation",
-                        "width": "",
-                        "assetUploadPath": "",
-                        "relationType": true,
-                        "queryColumnType": {
-                            "id": "int(11)",
-                            "type": "enum('document','asset','object')"
-                        },
-                        "phpdocType": "\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject",
-                        "objectsAllowed": true,
-                        "assetsAllowed": false,
-                        "assetTypes": [],
-                        "documentsAllowed": false,
-                        "documentTypes": [],
-                        "lazyLoading": true,
-                        "classes": [
-                            {
-                                "classes": "RelationTest"
-                            }
-                        ],
-                        "pathFormatterClass": "",
-                        "name": "relation",
-                        "title": "relation",
-                        "tooltip": "",
-                        "mandatory": false,
-                        "noteditable": false,
-                        "index": false,
-                        "locked": false,
-                        "style": "",
-                        "permissions": null,
-                        "datatype": "data",
-                        "invisible": false,
-                        "visibleGridView": false,
-                        "visibleSearch": false
-                    },
-                    {
-                        "fieldtype": "manyToManyRelation",
-                        "width": "",
-                        "height": "",
-                        "maxItems": "",
-                        "assetUploadPath": "",
-                        "queryColumnType": "text",
-                        "phpdocType": "array",
-                        "relationType": true,
-                        "objectsAllowed": true,
-                        "assetsAllowed": false,
-                        "assetTypes": [],
-                        "documentsAllowed": false,
-                        "documentTypes": [],
-                        "lazyLoading": true,
-                        "classes": [
-                            {
-                                "classes": "RelationTest"
-                            }
-                        ],
-                        "pathFormatterClass": "",
-                        "name": "relations",
-                        "title": "relations",
-                        "tooltip": "",
-                        "mandatory": false,
-                        "noteditable": false,
-                        "index": false,
-                        "locked": false,
-                        "style": "",
-                        "permissions": null,
-                        "datatype": "data",
-                        "invisible": false,
-                        "visibleGridView": false,
-                        "visibleSearch": false
-                    },
-                    {
-                        "allowedClassId": "RelationTest",
-                        "visibleFields": null,
-                        "columns": [
-                            {
-                                "type": "text",
-                                "position": 1,
-                                "key": "metadata",
-                                "id": "extModel10012-1",
-                                "label": "metadata"
-                            }
-                        ],
-                        "fieldtype": "advancedManyToManyObjectRelation",
-                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]",
-                        "enableBatchEdit": false,
-                        "width": "",
-                        "height": "",
-                        "maxItems": "",
-                        "queryColumnType": "text",
-                        "relationType": true,
-                        "lazyLoading": true,
-                        "classes": [
-                            {
-                                "classes": "RelationTest"
-                            }
-                        ],
-                        "pathFormatterClass": "",
-                        "name": "advancedObjects",
-                        "title": "advancedObjects",
-                        "tooltip": "",
-                        "mandatory": false,
-                        "noteditable": false,
-                        "index": false,
-                        "locked": false,
-                        "style": "",
-                        "permissions": null,
-                        "datatype": "data",
-                        "invisible": false,
-                        "visibleGridView": false,
-                        "visibleSearch": false,
-                        "columnKeys": [
-                            "metadata"
-                        ]
-                    },
-                    {
-                        "columns": [
-                            {
-                                "type": "text",
-                                "position": 1,
-                                "key": "metadata",
-                                "id": "extModel10012-1",
-                                "label": "metadata"
-                            }
-                        ],
-                        "fieldtype": "advancedManyToManyRelation",
-                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]",
-                        "width": "",
-                        "height": "",
-                        "maxItems": "",
-                        "assetUploadPath": "",
-                        "queryColumnType": "text",
-                        "relationType": true,
-                        "objectsAllowed": true,
-                        "assetsAllowed": false,
-                        "assetTypes": [],
-                        "documentsAllowed": false,
-                        "documentTypes": [],
-                        "lazyLoading": true,
-                        "classes": [
-                            {
-                                "classes": "RelationTest"
-                            }
-                        ],
-                        "pathFormatterClass": "",
-                        "name": "advancedRelations",
-                        "title": "advancedRelations",
-                        "tooltip": "",
-                        "mandatory": false,
-                        "noteditable": false,
-                        "index": false,
-                        "locked": false,
-                        "style": "",
-                        "permissions": null,
-                        "datatype": "data",
-                        "invisible": false,
-                        "visibleGridView": false,
-                        "visibleSearch": false,
-                        "columnKeys": [
-                            "metadata"
-                        ]
-                    },
-                    {
-                        "fieldtype": "localizedfields",
-                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Localizedfield",
-                        "childs": [
-                            {
-                                "fieldtype": "manyToManyObjectRelation",
-                                "width": "",
-                                "height": "",
-                                "maxItems": "",
-                                "queryColumnType": "text",
-                                "phpdocType": "array",
-                                "relationType": true,
-                                "visibleFields": [],
-                                "lazyLoading": true,
-                                "classes": [
-                                    {
-                                        "classes": "RelationTest"
-                                    }
-                                ],
-                                "pathFormatterClass": "",
-                                "name": "lobjects",
-                                "title": "lobjects",
-                                "tooltip": "",
-                                "mandatory": false,
-                                "noteditable": false,
-                                "index": false,
-                                "locked": false,
-                                "style": "",
-                                "permissions": null,
-                                "datatype": "data",
-                                "invisible": false,
-                                "visibleGridView": false,
-                                "visibleSearch": false
-                            },
-                            {
-                                "fieldtype": "manyToOneRelation",
-                                "width": "",
-                                "assetUploadPath": "",
-                                "relationType": true,
-                                "queryColumnType": {
-                                    "id": "int(11)",
-                                    "type": "enum('document','asset','object')"
-                                },
-                                "phpdocType": "\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject",
-                                "objectsAllowed": true,
-                                "assetsAllowed": false,
-                                "assetTypes": [],
-                                "documentsAllowed": false,
-                                "documentTypes": [],
-                                "lazyLoading": true,
-                                "classes": [
-                                    {
-                                        "classes": "RelationTest"
-                                    }
-                                ],
-                                "pathFormatterClass": "",
-                                "name": "lrelation",
-                                "title": "relation",
-                                "tooltip": "",
-                                "mandatory": false,
-                                "noteditable": false,
-                                "index": false,
-                                "locked": false,
-                                "style": "",
-                                "permissions": null,
-                                "datatype": "data",
-                                "invisible": false,
-                                "visibleGridView": false,
-                                "visibleSearch": false
-                            },
-                            {
-                                "fieldtype": "manyToManyRelation",
-                                "width": "",
-                                "height": "",
-                                "maxItems": "",
-                                "assetUploadPath": "",
-                                "queryColumnType": "text",
-                                "phpdocType": "array",
-                                "relationType": true,
-                                "objectsAllowed": true,
-                                "assetsAllowed": false,
-                                "assetTypes": [],
-                                "documentsAllowed": false,
-                                "documentTypes": [],
-                                "lazyLoading": true,
-                                "classes": [
-                                    {
-                                        "classes": "RelationTest"
-                                    }
-                                ],
-                                "pathFormatterClass": "",
-                                "name": "lrelations",
-                                "title": "relations",
-                                "tooltip": "",
-                                "mandatory": false,
-                                "noteditable": false,
-                                "index": false,
-                                "locked": false,
-                                "style": "",
-                                "permissions": null,
-                                "datatype": "data",
-                                "invisible": false,
-                                "visibleGridView": false,
-                                "visibleSearch": false
-                            },
-                            {
-                                "allowedClassId": "RelationTest",
-                                "visibleFields": null,
-                                "columns": [
-                                    {
-                                        "type": "text",
-                                        "position": 1,
-                                        "key": "metadata",
-                                        "id": "extModel10012-1",
-                                        "label": "metadata"
-                                    }
-                                ],
-                                "fieldtype": "advancedManyToManyObjectRelation",
-                                "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]",
-                                "enableBatchEdit": false,
-                                "width": "",
-                                "height": "",
-                                "maxItems": "",
-                                "queryColumnType": "text",
-                                "relationType": true,
-                                "lazyLoading": true,
-                                "classes": [
-                                    {
-                                        "classes": "RelationTest"
-                                    }
-                                ],
-                                "pathFormatterClass": "",
-                                "name": "ladvancedObjects",
-                                "title": "advancedObjects",
-                                "tooltip": "",
-                                "mandatory": false,
-                                "noteditable": false,
-                                "index": false,
-                                "locked": false,
-                                "style": "",
-                                "permissions": null,
-                                "datatype": "data",
-                                "invisible": false,
-                                "visibleGridView": false,
-                                "visibleSearch": false,
-                                "columnKeys": [
-                                    "metadata"
-                                ]
-                            },
-                            {
-                                "columns": [
-                                    {
-                                        "type": "text",
-                                        "position": 1,
-                                        "key": "metadata",
-                                        "id": "extModel10012-1",
-                                        "label": "metadata"
-                                    }
-                                ],
-                                "fieldtype": "advancedManyToManyRelation",
-                                "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]",
-                                "width": "",
-                                "height": "",
-                                "maxItems": "",
-                                "assetUploadPath": "",
-                                "queryColumnType": "text",
-                                "relationType": true,
-                                "objectsAllowed": true,
-                                "assetsAllowed": false,
-                                "assetTypes": [],
-                                "documentsAllowed": false,
-                                "documentTypes": [],
-                                "lazyLoading": true,
-                                "classes": [
-                                    {
-                                        "classes": "RelationTest"
-                                    }
-                                ],
-                                "pathFormatterClass": "",
-                                "name": "ladvancedRelations",
-                                "title": "advancedRelations",
-                                "tooltip": "",
-                                "mandatory": false,
-                                "noteditable": false,
-                                "index": false,
-                                "locked": false,
-                                "style": "",
-                                "permissions": null,
-                                "datatype": "data",
-                                "invisible": false,
-                                "visibleGridView": false,
-                                "visibleSearch": false,
-                                "columnKeys": [
-                                    "metadata"
-                                ]
-                            }
-                        ],
-                        "name": "localizedfields",
+                        "fieldtype": "panel",
+                        "labelWidth": 100,
+                        "layout": null,
+                        "border": false,
+                        "name": "MyLayout",
+                        "type": null,
                         "region": null,
-                        "layout": null,
-                        "title": "",
-                        "width": "",
-                        "height": "",
-                        "maxTabs": null,
-                        "labelWidth": null,
-                        "hideLabelsWhenTabsReached": null,
-                        "fieldDefinitionsCache": null,
-                        "tooltip": "",
-                        "mandatory": false,
-                        "noteditable": false,
-                        "index": null,
-                        "locked": false,
-                        "style": "",
-                        "permissions": null,
-                        "datatype": "data",
-                        "relationType": false,
-                        "invisible": false,
-                        "visibleGridView": true,
-                        "visibleSearch": true
-                    },
-                    {
-                        "fieldtype": "block",
-                        "lazyLoading": false,
-                        "disallowAddRemove": false,
-                        "disallowReorder": false,
+                        "title": null,
+                        "width": null,
+                        "height": null,
                         "collapsible": false,
                         "collapsed": false,
-                        "maxItems": null,
-                        "columnType": "longtext",
-                        "styleElement": "",
-                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\BlockElement[][]",
+                        "bodyStyle": null,
+                        "datatype": "layout",
+                        "permissions": null,
                         "childs": [
                             {
                                 "fieldtype": "manyToManyObjectRelation",
-                                "width": "",
-                                "height": "",
-                                "maxItems": "",
+                                "width": null,
+                                "height": null,
+                                "maxItems": null,
                                 "queryColumnType": "text",
                                 "phpdocType": "array",
                                 "relationType": true,
-                                "visibleFields": [],
-                                "lazyLoading": true,
+                                "visibleFields": null,
+                                "allowToCreateNewObject": true,
+                                "optimizedAdminLoading": false,
+                                "visibleFieldDefinitions": [],
                                 "classes": [
                                     {
                                         "classes": "RelationTest"
                                     }
                                 ],
-                                "pathFormatterClass": "",
-                                "name": "blockobjects",
-                                "title": "blockobjects",
-                                "tooltip": "",
+                                "pathFormatterClass": null,
+                                "name": "objects",
+                                "title": "objects",
+                                "tooltip": null,
                                 "mandatory": false,
-                                "noteditable": false,
-                                "index": false,
-                                "locked": false,
-                                "style": "",
+                                "noteditable": null,
+                                "index": true,
+                                "locked": null,
+                                "style": null,
                                 "permissions": null,
                                 "datatype": "data",
                                 "invisible": false,
-                                "visibleGridView": false,
-                                "visibleSearch": false
+                                "visibleGridView": true,
+                                "visibleSearch": true
                             },
                             {
                                 "fieldtype": "manyToOneRelation",
-                                "width": "",
-                                "assetUploadPath": "",
+                                "width": null,
+                                "assetUploadPath": null,
                                 "relationType": true,
                                 "queryColumnType": {
                                     "id": "int(11)",
@@ -509,33 +107,32 @@
                                 "assetTypes": [],
                                 "documentsAllowed": false,
                                 "documentTypes": [],
-                                "lazyLoading": true,
                                 "classes": [
                                     {
                                         "classes": "RelationTest"
                                     }
                                 ],
-                                "pathFormatterClass": "",
-                                "name": "blockrelation",
+                                "pathFormatterClass": null,
+                                "name": "relation",
                                 "title": "relation",
-                                "tooltip": "",
+                                "tooltip": null,
                                 "mandatory": false,
-                                "noteditable": false,
-                                "index": false,
-                                "locked": false,
-                                "style": "",
+                                "noteditable": null,
+                                "index": true,
+                                "locked": null,
+                                "style": null,
                                 "permissions": null,
                                 "datatype": "data",
                                 "invisible": false,
-                                "visibleGridView": false,
-                                "visibleSearch": false
+                                "visibleGridView": true,
+                                "visibleSearch": true
                             },
                             {
                                 "fieldtype": "manyToManyRelation",
-                                "width": "",
-                                "height": "",
-                                "maxItems": "",
-                                "assetUploadPath": "",
+                                "width": null,
+                                "height": null,
+                                "maxItems": null,
+                                "assetUploadPath": null,
                                 "queryColumnType": "text",
                                 "phpdocType": "array",
                                 "relationType": true,
@@ -544,87 +141,89 @@
                                 "assetTypes": [],
                                 "documentsAllowed": false,
                                 "documentTypes": [],
-                                "lazyLoading": true,
                                 "classes": [
                                     {
                                         "classes": "RelationTest"
                                     }
                                 ],
-                                "pathFormatterClass": "",
-                                "name": "blockrelations",
+                                "pathFormatterClass": null,
+                                "name": "relations",
                                 "title": "relations",
-                                "tooltip": "",
+                                "tooltip": null,
                                 "mandatory": false,
-                                "noteditable": false,
-                                "index": false,
-                                "locked": false,
-                                "style": "",
+                                "noteditable": null,
+                                "index": true,
+                                "locked": null,
+                                "style": null,
                                 "permissions": null,
                                 "datatype": "data",
                                 "invisible": false,
-                                "visibleGridView": false,
-                                "visibleSearch": false
+                                "visibleGridView": true,
+                                "visibleSearch": true
                             },
                             {
                                 "allowedClassId": "RelationTest",
                                 "visibleFields": null,
                                 "columns": [
                                     {
-                                        "type": "text",
                                         "position": 1,
-                                        "key": "metadata",
-                                        "id": "extModel10012-1",
+                                        "key": "metadataUpper",
+                                        "type": "text",
                                         "label": "metadata"
                                     }
+                                ],
+                                "columnKeys": [
+                                    "metadataUpper"
                                 ],
                                 "fieldtype": "advancedManyToManyObjectRelation",
                                 "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]",
-                                "enableBatchEdit": false,
-                                "width": "",
-                                "height": "",
-                                "maxItems": "",
+                                "enableBatchEdit": null,
+                                "allowMultipleAssignments": false,
+                                "visibleFieldDefinitions": [],
+                                "width": null,
+                                "height": null,
+                                "maxItems": null,
                                 "queryColumnType": "text",
                                 "relationType": true,
-                                "lazyLoading": true,
-                                "classes": [
-                                    {
-                                        "classes": "RelationTest"
-                                    }
-                                ],
-                                "pathFormatterClass": "",
-                                "name": "blockadvancedObjects",
+                                "allowToCreateNewObject": true,
+                                "optimizedAdminLoading": false,
+                                "classes": [],
+                                "pathFormatterClass": null,
+                                "name": "advancedObjects",
                                 "title": "advancedObjects",
-                                "tooltip": "",
+                                "tooltip": null,
                                 "mandatory": false,
-                                "noteditable": false,
-                                "index": false,
-                                "locked": false,
-                                "style": "",
+                                "noteditable": null,
+                                "index": true,
+                                "locked": null,
+                                "style": null,
                                 "permissions": null,
                                 "datatype": "data",
                                 "invisible": false,
-                                "visibleGridView": false,
-                                "visibleSearch": false,
-                                "columnKeys": [
-                                    "metadata"
-                                ]
+                                "visibleGridView": true,
+                                "visibleSearch": true
                             },
                             {
                                 "columns": [
                                     {
-                                        "type": "text",
                                         "position": 1,
-                                        "key": "metadata",
-                                        "id": "extModel10012-1",
-                                        "label": "metadata"
+                                        "key": "metadataUpper",
+                                        "type": "text",
+                                        "label": "meta"
                                     }
+                                ],
+                                "columnKeys": [
+                                    "metadataUpper"
                                 ],
                                 "fieldtype": "advancedManyToManyRelation",
                                 "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]",
-                                "width": "",
-                                "height": "",
-                                "maxItems": "",
-                                "assetUploadPath": "",
+                                "optimizedAdminLoading": false,
+                                "enableBatchEdit": null,
+                                "allowMultipleAssignments": false,
+                                "width": null,
+                                "height": null,
+                                "maxItems": null,
+                                "assetUploadPath": null,
                                 "queryColumnType": "text",
                                 "relationType": true,
                                 "objectsAllowed": true,
@@ -632,335 +231,791 @@
                                 "assetTypes": [],
                                 "documentsAllowed": false,
                                 "documentTypes": [],
-                                "lazyLoading": true,
                                 "classes": [
                                     {
                                         "classes": "RelationTest"
                                     }
                                 ],
-                                "pathFormatterClass": "",
-                                "name": "blockadvancedRelations",
+                                "pathFormatterClass": null,
+                                "name": "advancedRelations",
                                 "title": "advancedRelations",
-                                "tooltip": "",
+                                "tooltip": null,
                                 "mandatory": false,
-                                "noteditable": false,
-                                "index": false,
-                                "locked": false,
-                                "style": "",
+                                "noteditable": null,
+                                "index": true,
+                                "locked": null,
+                                "style": null,
                                 "permissions": null,
                                 "datatype": "data",
                                 "invisible": false,
-                                "visibleGridView": false,
-                                "visibleSearch": false,
-                                "columnKeys": [
-                                    "metadata"
-                                ]
+                                "visibleGridView": true,
+                                "visibleSearch": true
+                            },
+                            {
+                                "fieldtype": "localizedfields",
+                                "phpdocType": "\\Pimcore\\Model\\DataObject\\Localizedfield",
+                                "childs": [
+                                    {
+                                        "fieldtype": "manyToManyObjectRelation",
+                                        "width": null,
+                                        "height": null,
+                                        "maxItems": null,
+                                        "queryColumnType": "text",
+                                        "phpdocType": "array",
+                                        "relationType": true,
+                                        "visibleFields": null,
+                                        "allowToCreateNewObject": true,
+                                        "optimizedAdminLoading": false,
+                                        "visibleFieldDefinitions": [],
+                                        "classes": [
+                                            {
+                                                "classes": "RelationTest"
+                                            }
+                                        ],
+                                        "pathFormatterClass": null,
+                                        "name": "lobjects",
+                                        "title": "lobjects",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    },
+                                    {
+                                        "fieldtype": "manyToOneRelation",
+                                        "width": null,
+                                        "assetUploadPath": null,
+                                        "relationType": true,
+                                        "queryColumnType": {
+                                            "id": "int(11)",
+                                            "type": "enum('document','asset','object')"
+                                        },
+                                        "phpdocType": "\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject",
+                                        "objectsAllowed": true,
+                                        "assetsAllowed": false,
+                                        "assetTypes": [],
+                                        "documentsAllowed": false,
+                                        "documentTypes": [],
+                                        "classes": [
+                                            {
+                                                "classes": "RelationTest"
+                                            }
+                                        ],
+                                        "pathFormatterClass": null,
+                                        "name": "lrelation",
+                                        "title": "lrelation",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    },
+                                    {
+                                        "fieldtype": "manyToManyRelation",
+                                        "width": null,
+                                        "height": null,
+                                        "maxItems": null,
+                                        "assetUploadPath": null,
+                                        "queryColumnType": "text",
+                                        "phpdocType": "array",
+                                        "relationType": true,
+                                        "objectsAllowed": true,
+                                        "assetsAllowed": false,
+                                        "assetTypes": [],
+                                        "documentsAllowed": false,
+                                        "documentTypes": [],
+                                        "classes": [
+                                            {
+                                                "classes": "RelationTest"
+                                            }
+                                        ],
+                                        "pathFormatterClass": null,
+                                        "name": "lrelations",
+                                        "title": "lrelations",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    },
+                                    {
+                                        "allowedClassId": "RelationTest",
+                                        "visibleFields": null,
+                                        "columns": [
+                                            {
+                                                "position": 1,
+                                                "key": "metadata",
+                                                "type": "text",
+                                                "label": "metadata"
+                                            }
+                                        ],
+                                        "columnKeys": [
+                                            "metadata"
+                                        ],
+                                        "fieldtype": "advancedManyToManyObjectRelation",
+                                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]",
+                                        "enableBatchEdit": null,
+                                        "allowMultipleAssignments": false,
+                                        "visibleFieldDefinitions": [],
+                                        "width": null,
+                                        "height": null,
+                                        "maxItems": null,
+                                        "queryColumnType": "text",
+                                        "relationType": true,
+                                        "allowToCreateNewObject": true,
+                                        "optimizedAdminLoading": false,
+                                        "classes": [],
+                                        "pathFormatterClass": null,
+                                        "name": "ladvancedObjects",
+                                        "title": "ladvancedObjects",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    },
+                                    {
+                                        "columns": [
+                                            {
+                                                "position": 1,
+                                                "key": "metadata",
+                                                "type": "text",
+                                                "label": "meta"
+                                            }
+                                        ],
+                                        "columnKeys": [
+                                            "metadata"
+                                        ],
+                                        "fieldtype": "advancedManyToManyRelation",
+                                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]",
+                                        "optimizedAdminLoading": false,
+                                        "enableBatchEdit": null,
+                                        "allowMultipleAssignments": false,
+                                        "width": null,
+                                        "height": null,
+                                        "maxItems": null,
+                                        "assetUploadPath": null,
+                                        "queryColumnType": "text",
+                                        "relationType": true,
+                                        "objectsAllowed": true,
+                                        "assetsAllowed": false,
+                                        "assetTypes": [],
+                                        "documentsAllowed": false,
+                                        "documentTypes": [],
+                                        "classes": [
+                                            {
+                                                "classes": "RelationTest"
+                                            }
+                                        ],
+                                        "pathFormatterClass": null,
+                                        "name": "ladvancedRelations",
+                                        "title": "ladvancedRelations",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    },
+                                    {
+                                        "fieldtype": "manyToManyObjectRelation",
+                                        "width": null,
+                                        "height": null,
+                                        "maxItems": null,
+                                        "queryColumnType": "text",
+                                        "phpdocType": "array",
+                                        "relationType": true,
+                                        "visibleFields": null,
+                                        "allowToCreateNewObject": true,
+                                        "optimizedAdminLoading": false,
+                                        "visibleFieldDefinitions": [],
+                                        "classes": [
+                                            {
+                                                "classes": "RelationTest"
+                                            }
+                                        ],
+                                        "pathFormatterClass": null,
+                                        "name": "lobjects",
+                                        "title": "lobjects",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    }
+                                ],
+                                "name": "localizedfields",
+                                "region": null,
+                                "layout": null,
+                                "title": null,
+                                "width": null,
+                                "height": null,
+                                "maxTabs": null,
+                                "labelWidth": null,
+                                "border": false,
+                                "provideSplitView": null,
+                                "tabPosition": "top",
+                                "hideLabelsWhenTabsReached": null,
+                                "fieldDefinitionsCache": null,
+                                "tooltip": null,
+                                "mandatory": null,
+                                "noteditable": null,
+                                "index": null,
+                                "locked": null,
+                                "style": null,
+                                "permissions": null,
+                                "datatype": "data",
+                                "relationType": false,
+                                "invisible": false,
+                                "visibleGridView": true,
+                                "visibleSearch": true
+                            },
+                            {
+                                "fieldtype": "block",
+                                "lazyLoading": null,
+                                "disallowAddRemove": null,
+                                "disallowReorder": null,
+                                "collapsible": null,
+                                "collapsed": null,
+                                "maxItems": null,
+                                "columnType": "longtext",
+                                "styleElement": "",
+                                "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\BlockElement[][]",
+                                "childs": [
+                                    {
+                                        "fieldtype": "manyToManyObjectRelation",
+                                        "width": null,
+                                        "height": null,
+                                        "maxItems": null,
+                                        "queryColumnType": "text",
+                                        "phpdocType": "array",
+                                        "relationType": true,
+                                        "visibleFields": null,
+                                        "allowToCreateNewObject": true,
+                                        "optimizedAdminLoading": false,
+                                        "visibleFieldDefinitions": [],
+                                        "classes": [
+                                            {
+                                                "classes": "RelationTest"
+                                            }
+                                        ],
+                                        "pathFormatterClass": null,
+                                        "name": "blockobjects",
+                                        "title": "blockobjects",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    },
+                                    {
+                                        "fieldtype": "manyToOneRelation",
+                                        "width": null,
+                                        "assetUploadPath": null,
+                                        "relationType": true,
+                                        "queryColumnType": {
+                                            "id": "int(11)",
+                                            "type": "enum('document','asset','object')"
+                                        },
+                                        "phpdocType": "\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject",
+                                        "objectsAllowed": true,
+                                        "assetsAllowed": false,
+                                        "assetTypes": [],
+                                        "documentsAllowed": false,
+                                        "documentTypes": [],
+                                        "classes": [
+                                            {
+                                                "classes": "RelationTest"
+                                            }
+                                        ],
+                                        "pathFormatterClass": null,
+                                        "name": "blockrelation",
+                                        "title": "blockrelation",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    },
+                                    {
+                                        "fieldtype": "manyToManyRelation",
+                                        "width": null,
+                                        "height": null,
+                                        "maxItems": null,
+                                        "assetUploadPath": null,
+                                        "queryColumnType": "text",
+                                        "phpdocType": "array",
+                                        "relationType": true,
+                                        "objectsAllowed": true,
+                                        "assetsAllowed": false,
+                                        "assetTypes": [],
+                                        "documentsAllowed": false,
+                                        "documentTypes": [],
+                                        "classes": [
+                                            {
+                                                "classes": "RelationTest"
+                                            }
+                                        ],
+                                        "pathFormatterClass": null,
+                                        "name": "blockrelations",
+                                        "title": "blockrelations",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    },
+                                    {
+                                        "allowedClassId": "RelationTest",
+                                        "visibleFields": null,
+                                        "columns": [
+                                            {
+                                                "position": 1,
+                                                "key": "metadata",
+                                                "type": "text",
+                                                "label": "metadata"
+                                            }
+                                        ],
+                                        "columnKeys": [
+                                            "metadata"
+                                        ],
+                                        "fieldtype": "advancedManyToManyObjectRelation",
+                                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]",
+                                        "enableBatchEdit": null,
+                                        "allowMultipleAssignments": false,
+                                        "visibleFieldDefinitions": [],
+                                        "width": null,
+                                        "height": null,
+                                        "maxItems": null,
+                                        "queryColumnType": "text",
+                                        "relationType": true,
+                                        "allowToCreateNewObject": true,
+                                        "optimizedAdminLoading": false,
+                                        "classes": [],
+                                        "pathFormatterClass": null,
+                                        "name": "blockadvancedObjects",
+                                        "title": "blockadvancedObjects",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    },
+                                    {
+                                        "columns": [
+                                            {
+                                                "position": 1,
+                                                "key": "meta",
+                                                "type": "text",
+                                                "label": "meta"
+                                            }
+                                        ],
+                                        "columnKeys": [
+                                            "meta"
+                                        ],
+                                        "fieldtype": "advancedManyToManyRelation",
+                                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]",
+                                        "optimizedAdminLoading": false,
+                                        "enableBatchEdit": null,
+                                        "allowMultipleAssignments": false,
+                                        "width": null,
+                                        "height": null,
+                                        "maxItems": null,
+                                        "assetUploadPath": null,
+                                        "queryColumnType": "text",
+                                        "relationType": true,
+                                        "objectsAllowed": true,
+                                        "assetsAllowed": false,
+                                        "assetTypes": [],
+                                        "documentsAllowed": false,
+                                        "documentTypes": [],
+                                        "classes": [
+                                            {
+                                                "classes": "RelationTest"
+                                            }
+                                        ],
+                                        "pathFormatterClass": null,
+                                        "name": "blockadvancedRelations",
+                                        "title": "blockadvancedRelations",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    }
+                                ],
+                                "layout": null,
+                                "fieldDefinitionsCache": null,
+                                "name": "testblock",
+                                "title": null,
+                                "tooltip": null,
+                                "mandatory": null,
+                                "noteditable": null,
+                                "index": null,
+                                "locked": null,
+                                "style": null,
+                                "permissions": null,
+                                "datatype": "data",
+                                "relationType": false,
+                                "invisible": false,
+                                "visibleGridView": true,
+                                "visibleSearch": true
+                            },
+                            {
+                                "fieldtype": "block",
+                                "lazyLoading": true,
+                                "disallowAddRemove": null,
+                                "disallowReorder": null,
+                                "collapsible": null,
+                                "collapsed": null,
+                                "maxItems": null,
+                                "columnType": "longtext",
+                                "styleElement": "",
+                                "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\BlockElement[][]",
+                                "childs": [
+                                    {
+                                        "fieldtype": "manyToManyObjectRelation",
+                                        "width": null,
+                                        "height": null,
+                                        "maxItems": null,
+                                        "queryColumnType": "text",
+                                        "phpdocType": "array",
+                                        "relationType": true,
+                                        "visibleFields": null,
+                                        "allowToCreateNewObject": true,
+                                        "optimizedAdminLoading": false,
+                                        "visibleFieldDefinitions": [],
+                                        "classes": [
+                                            {
+                                                "classes": "RelationTest"
+                                            }
+                                        ],
+                                        "pathFormatterClass": null,
+                                        "name": "blockobjectsLazyLoaded",
+                                        "title": "blockobjectsLazyLoaded",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    },
+                                    {
+                                        "fieldtype": "manyToOneRelation",
+                                        "width": null,
+                                        "assetUploadPath": null,
+                                        "relationType": true,
+                                        "queryColumnType": {
+                                            "id": "int(11)",
+                                            "type": "enum('document','asset','object')"
+                                        },
+                                        "phpdocType": "\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject",
+                                        "objectsAllowed": true,
+                                        "assetsAllowed": false,
+                                        "assetTypes": [],
+                                        "documentsAllowed": false,
+                                        "documentTypes": [],
+                                        "classes": [
+                                            {
+                                                "classes": "RelationTest"
+                                            }
+                                        ],
+                                        "pathFormatterClass": null,
+                                        "name": "blockrelationLazyLoaded",
+                                        "title": "blockrelationLazyLoaded",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    },
+                                    {
+                                        "fieldtype": "manyToManyRelation",
+                                        "width": null,
+                                        "height": null,
+                                        "maxItems": null,
+                                        "assetUploadPath": null,
+                                        "queryColumnType": "text",
+                                        "phpdocType": "array",
+                                        "relationType": true,
+                                        "objectsAllowed": true,
+                                        "assetsAllowed": false,
+                                        "assetTypes": [],
+                                        "documentsAllowed": false,
+                                        "documentTypes": [],
+                                        "classes": [
+                                            {
+                                                "classes": "RelationTest"
+                                            }
+                                        ],
+                                        "pathFormatterClass": null,
+                                        "name": "blockrelationsLazyLoaded",
+                                        "title": "blockrelationsLazyLoaded",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    },
+                                    {
+                                        "allowedClassId": "RelationTest",
+                                        "visibleFields": null,
+                                        "columns": [
+                                            {
+                                                "position": 1,
+                                                "key": "metadata",
+                                                "type": "text",
+                                                "label": "metadata"
+                                            }
+                                        ],
+                                        "columnKeys": [
+                                            "metadata"
+                                        ],
+                                        "fieldtype": "advancedManyToManyObjectRelation",
+                                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]",
+                                        "enableBatchEdit": null,
+                                        "allowMultipleAssignments": false,
+                                        "visibleFieldDefinitions": [],
+                                        "width": null,
+                                        "height": null,
+                                        "maxItems": null,
+                                        "queryColumnType": "text",
+                                        "relationType": true,
+                                        "allowToCreateNewObject": true,
+                                        "optimizedAdminLoading": false,
+                                        "classes": [],
+                                        "pathFormatterClass": null,
+                                        "name": "blockadvancedObjectsLazyLoaded",
+                                        "title": "blockadvancedObjectsLazyLoaded",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    },
+                                    {
+                                        "columns": [
+                                            {
+                                                "position": 1,
+                                                "key": "meta",
+                                                "type": "text",
+                                                "label": "meta"
+                                            }
+                                        ],
+                                        "columnKeys": [
+                                            "meta"
+                                        ],
+                                        "fieldtype": "advancedManyToManyRelation",
+                                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]",
+                                        "optimizedAdminLoading": false,
+                                        "enableBatchEdit": null,
+                                        "allowMultipleAssignments": false,
+                                        "width": null,
+                                        "height": null,
+                                        "maxItems": null,
+                                        "assetUploadPath": null,
+                                        "queryColumnType": "text",
+                                        "relationType": true,
+                                        "objectsAllowed": true,
+                                        "assetsAllowed": false,
+                                        "assetTypes": [],
+                                        "documentsAllowed": false,
+                                        "documentTypes": [],
+                                        "classes": [
+                                            {
+                                                "classes": "RelationTest"
+                                            }
+                                        ],
+                                        "pathFormatterClass": null,
+                                        "name": "blockadvancedRelationsLazyLoaded",
+                                        "title": "blockadvancedRelationsLazyLoaded",
+                                        "tooltip": null,
+                                        "mandatory": false,
+                                        "noteditable": null,
+                                        "index": true,
+                                        "locked": null,
+                                        "style": null,
+                                        "permissions": null,
+                                        "datatype": "data",
+                                        "invisible": false,
+                                        "visibleGridView": true,
+                                        "visibleSearch": true
+                                    }
+                                ],
+                                "layout": null,
+                                "fieldDefinitionsCache": null,
+                                "name": "testblockLazyloaded",
+                                "title": null,
+                                "tooltip": null,
+                                "mandatory": null,
+                                "noteditable": null,
+                                "index": null,
+                                "locked": null,
+                                "style": null,
+                                "permissions": null,
+                                "datatype": "data",
+                                "relationType": false,
+                                "invisible": false,
+                                "visibleGridView": true,
+                                "visibleSearch": true
+                            },
+                            {
+                                "fieldtype": "fieldcollections",
+                                "phpdocType": "\\Pimcore\\Model\\DataObject\\Fieldcollection",
+                                "allowedTypes": [
+                                    "LazyLoadingTest",
+                                    "LazyLoadingLocalizedTest"
+                                ],
+                                "lazyLoading": null,
+                                "maxItems": null,
+                                "disallowAddRemove": null,
+                                "disallowReorder": null,
+                                "collapsed": null,
+                                "collapsible": null,
+                                "border": false,
+                                "name": "fieldcollection",
+                                "title": "fieldcollection",
+                                "tooltip": null,
+                                "mandatory": false,
+                                "noteditable": null,
+                                "index": true,
+                                "locked": null,
+                                "style": null,
+                                "permissions": null,
+                                "datatype": "data",
+                                "relationType": false,
+                                "invisible": false,
+                                "visibleGridView": true,
+                                "visibleSearch": true
+                            },
+                            {
+                                "fieldtype": "objectbricks",
+                                "phpdocType": "\\Pimcore\\Model\\DataObject\\Objectbrick",
+                                "allowedTypes": [],
+                                "maxItems": null,
+                                "border": false,
+                                "name": "bricks",
+                                "title": "bricks",
+                                "tooltip": null,
+                                "mandatory": false,
+                                "noteditable": null,
+                                "index": true,
+                                "locked": null,
+                                "style": null,
+                                "permissions": null,
+                                "datatype": "data",
+                                "relationType": false,
+                                "invisible": false,
+                                "visibleGridView": true,
+                                "visibleSearch": true
                             }
                         ],
-                        "layout": null,
-                        "fieldDefinitionsCache": null,
-                        "name": "testblock",
-                        "title": "testblock",
-                        "tooltip": "",
-                        "mandatory": false,
-                        "noteditable": false,
-                        "index": false,
                         "locked": false,
-                        "style": "",
-                        "permissions": null,
-                        "datatype": "data",
-                        "relationType": false,
-                        "invisible": false,
-                        "visibleGridView": false,
-                        "visibleSearch": false
-                    },
-                    {
-                        "fieldtype": "block",
-                        "lazyLoading": true,
-                        "disallowAddRemove": false,
-                        "disallowReorder": false,
-                        "collapsible": false,
-                        "collapsed": false,
-                        "maxItems": null,
-                        "columnType": "longtext",
-                        "styleElement": "",
-                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\BlockElement[][]",
-                        "childs": [
-                            {
-                                "fieldtype": "manyToManyObjectRelation",
-                                "width": "",
-                                "height": "",
-                                "maxItems": "",
-                                "queryColumnType": "text",
-                                "phpdocType": "array",
-                                "relationType": true,
-                                "visibleFields": [],
-                                "lazyLoading": true,
-                                "classes": [
-                                    {
-                                        "classes": "RelationTest"
-                                    }
-                                ],
-                                "pathFormatterClass": "",
-                                "name": "blockobjectsLazyloaded",
-                                "title": "blockobjects",
-                                "tooltip": "",
-                                "mandatory": false,
-                                "noteditable": false,
-                                "index": false,
-                                "locked": false,
-                                "style": "",
-                                "permissions": null,
-                                "datatype": "data",
-                                "invisible": false,
-                                "visibleGridView": false,
-                                "visibleSearch": false
-                            },
-                            {
-                                "fieldtype": "manyToOneRelation",
-                                "width": "",
-                                "assetUploadPath": "",
-                                "relationType": true,
-                                "queryColumnType": {
-                                    "id": "int(11)",
-                                    "type": "enum('document','asset','object')"
-                                },
-                                "phpdocType": "\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject",
-                                "objectsAllowed": true,
-                                "assetsAllowed": false,
-                                "assetTypes": [],
-                                "documentsAllowed": false,
-                                "documentTypes": [],
-                                "lazyLoading": true,
-                                "classes": [
-                                    {
-                                        "classes": "RelationTest"
-                                    }
-                                ],
-                                "pathFormatterClass": "",
-                                "name": "blockrelationLazyLoaded",
-                                "title": "relation",
-                                "tooltip": "",
-                                "mandatory": false,
-                                "noteditable": false,
-                                "index": false,
-                                "locked": false,
-                                "style": "",
-                                "permissions": null,
-                                "datatype": "data",
-                                "invisible": false,
-                                "visibleGridView": false,
-                                "visibleSearch": false
-                            },
-                            {
-                                "fieldtype": "manyToManyRelation",
-                                "width": "",
-                                "height": "",
-                                "maxItems": "",
-                                "assetUploadPath": "",
-                                "queryColumnType": "text",
-                                "phpdocType": "array",
-                                "relationType": true,
-                                "objectsAllowed": true,
-                                "assetsAllowed": false,
-                                "assetTypes": [],
-                                "documentsAllowed": false,
-                                "documentTypes": [],
-                                "lazyLoading": true,
-                                "classes": [
-                                    {
-                                        "classes": "RelationTest"
-                                    }
-                                ],
-                                "pathFormatterClass": "",
-                                "name": "blockrelationsLazyLoaded",
-                                "title": "relations",
-                                "tooltip": "",
-                                "mandatory": false,
-                                "noteditable": false,
-                                "index": false,
-                                "locked": false,
-                                "style": "",
-                                "permissions": null,
-                                "datatype": "data",
-                                "invisible": false,
-                                "visibleGridView": false,
-                                "visibleSearch": false
-                            },
-                            {
-                                "allowedClassId": "RelationTest",
-                                "visibleFields": null,
-                                "columns": [
-                                    {
-                                        "type": "text",
-                                        "position": 1,
-                                        "key": "metadata",
-                                        "id": "extModel10012-1",
-                                        "label": "metadata"
-                                    }
-                                ],
-                                "fieldtype": "advancedManyToManyObjectRelation",
-                                "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]",
-                                "enableBatchEdit": false,
-                                "width": "",
-                                "height": "",
-                                "maxItems": "",
-                                "queryColumnType": "text",
-                                "relationType": true,
-                                "lazyLoading": true,
-                                "classes": [
-                                    {
-                                        "classes": "RelationTest"
-                                    }
-                                ],
-                                "pathFormatterClass": "",
-                                "name": "blockadvancedObjectsLazyLoaded",
-                                "title": "advancedObjects",
-                                "tooltip": "",
-                                "mandatory": false,
-                                "noteditable": false,
-                                "index": false,
-                                "locked": false,
-                                "style": "",
-                                "permissions": null,
-                                "datatype": "data",
-                                "invisible": false,
-                                "visibleGridView": false,
-                                "visibleSearch": false,
-                                "columnKeys": [
-                                    "metadata"
-                                ]
-                            },
-                            {
-                                "columns": [
-                                    {
-                                        "type": "text",
-                                        "position": 1,
-                                        "key": "metadata",
-                                        "id": "extModel10012-1",
-                                        "label": "metadata"
-                                    }
-                                ],
-                                "fieldtype": "advancedManyToManyRelation",
-                                "phpdocType": "\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]",
-                                "width": "",
-                                "height": "",
-                                "maxItems": "",
-                                "assetUploadPath": "",
-                                "queryColumnType": "text",
-                                "relationType": true,
-                                "objectsAllowed": true,
-                                "assetsAllowed": false,
-                                "assetTypes": [],
-                                "documentsAllowed": false,
-                                "documentTypes": [],
-                                "lazyLoading": true,
-                                "classes": [
-                                    {
-                                        "classes": "RelationTest"
-                                    }
-                                ],
-                                "pathFormatterClass": "",
-                                "name": "blockadvancedRelationsLazyLoaded",
-                                "title": "advancedRelations",
-                                "tooltip": "",
-                                "mandatory": false,
-                                "noteditable": false,
-                                "index": false,
-                                "locked": false,
-                                "style": "",
-                                "permissions": null,
-                                "datatype": "data",
-                                "invisible": false,
-                                "visibleGridView": false,
-                                "visibleSearch": false,
-                                "columnKeys": [
-                                    "metadata"
-                                ]
-                            }
-                        ],
-                        "layout": null,
-                        "fieldDefinitionsCache": null,
-                        "name": "testblockLazyloaded",
-                        "title": "testblock",
-                        "tooltip": "",
-                        "mandatory": false,
-                        "noteditable": false,
-                        "index": false,
-                        "locked": false,
-                        "style": "",
-                        "permissions": null,
-                        "datatype": "data",
-                        "relationType": false,
-                        "invisible": false,
-                        "visibleGridView": false,
-                        "visibleSearch": false
-                    },
-                    {
-                        "fieldtype": "fieldcollections",
-                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Fieldcollection",
-                        "allowedTypes": [
-                            "LazyLoadingTest",
-                            "LazyLoadingLocalizedTest"
-                        ],
-                        "lazyLoading": true,
-                        "maxItems": "",
-                        "disallowAddRemove": false,
-                        "disallowReorder": false,
-                        "collapsed": false,
-                        "collapsible": false,
-                        "name": "fieldcollection",
-                        "title": "fieldcollection",
-                        "tooltip": "",
-                        "mandatory": false,
-                        "noteditable": false,
-                        "index": false,
-                        "locked": false,
-                        "style": "",
-                        "permissions": null,
-                        "datatype": "data",
-                        "relationType": false,
-                        "invisible": false,
-                        "visibleGridView": false,
-                        "visibleSearch": false
-                    },
-                    {
-                        "fieldtype": "objectbricks",
-                        "phpdocType": "\\Pimcore\\Model\\DataObject\\Objectbrick",
-                        "allowedTypes": [
-                            "LazyLoadingTest",
-                            "LazyLoadingLocalizedTest"
-                        ],
-                        "maxItems": "",
-                        "name": "bricks",
-                        "title": "bricks",
-                        "tooltip": "",
-                        "mandatory": false,
-                        "noteditable": false,
-                        "index": false,
-                        "locked": false,
-                        "style": "",
-                        "permissions": null,
-                        "datatype": "data",
-                        "relationType": false,
-                        "invisible": false,
-                        "visibleGridView": false,
-                        "visibleSearch": false
+                        "icon": null
                     }
                 ],
                 "locked": false
             }
         ],
-        "locked": false
+        "locked": false,
+        "icon": null
     },
     "icon": null,
     "previewUrl": null,
     "group": null,
     "linkGeneratorReference": null,
+    "compositeIndices": null,
     "propertyVisibility": {
         "grid": {
             "id": true,
-            "key": false,
             "path": true,
             "published": true,
             "modificationDate": true,
@@ -968,7 +1023,6 @@
         },
         "search": {
             "id": true,
-            "key": false,
             "path": true,
             "published": true,
             "modificationDate": true,

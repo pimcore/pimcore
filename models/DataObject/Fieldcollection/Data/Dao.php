@@ -22,6 +22,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data\CustomResourcePersistingInterf
 use Pimcore\Model\DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -62,6 +64,11 @@ class Dao extends Model\Dao\AbstractDao
                     ],
                 ]);
 
+                if ($fd instanceof Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations
+                            && ($params['saveRelationalData']['saveFieldcollectionRelations'] ?? false)) {
+                    $params['forceSave'] = true;
+                }
+
                 $fd->save(
                     $this->model, $params
                 );
@@ -75,7 +82,7 @@ class Dao extends Model\Dao\AbstractDao
                 } else {
                     $data[$fd->getName()] = $fd->getDataForResource($this->model->$getter(), $object, [
                         'owner' => $this->model, //\Pimcore\Model\DataObject\Fieldcollection\Data\Dao
-                        'fieldname' => $fd->getName()
+                        'fieldname' => $fd->getName(),
                     ]);
                 }
             }

@@ -16,7 +16,7 @@ namespace Pimcore\Event\Model;
 
 use Pimcore\Event\Traits\ArgumentsAwareTrait;
 use Pimcore\Model\Notification;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class NotificationEvent extends Event implements ElementEventInterface
 {
@@ -56,6 +56,8 @@ class NotificationEvent extends Event implements ElementEventInterface
     }
 
     /**
+     * @deprecated use getNotification() instead - will be removed in Pimcore v7
+     *
      * @return Notification
      */
     public function getElement()

@@ -21,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\DataObject\ClassDefinition $model
  */
 class Dao extends Model\Dao\AbstractDao
@@ -131,6 +133,7 @@ class Dao extends Model\Dao\AbstractDao
 			) DEFAULT CHARSET=utf8mb4;");
 
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $objectDatastoreTableRelation . "` (
+              `id` BIGINT(20) NOT NULL PRIMARY KEY  AUTO_INCREMENT,
               `src_id` int(11) NOT NULL DEFAULT '0',
               `dest_id` int(11) NOT NULL DEFAULT '0',
               `type` varchar(50) NOT NULL DEFAULT '',
@@ -156,9 +159,8 @@ class Dao extends Model\Dao\AbstractDao
         // add non existing columns in the table
         if (is_array($this->model->getFieldDefinitions()) && count($this->model->getFieldDefinitions())) {
             foreach ($this->model->getFieldDefinitions() as $key => $value) {
-                if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
+                if ($value instanceof DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface) {
                     // if a datafield requires more than one column in the datastore table => only for non-relation types
-                    /** @var Data&DataObject\ClassDefinition\Data\ResourcePersistenceAwareInterface $value */
                     if (!$value->isRelationType()) {
                         if (is_array($value->getColumnType())) {
                             foreach ($value->getColumnType() as $fkey => $fvalue) {

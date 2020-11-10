@@ -151,7 +151,7 @@ class Api
     }
 
     /**
-     * @return \Google_Client
+     * @return \Google_Client|false
      */
     public static function getSimpleClient()
     {

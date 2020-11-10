@@ -19,9 +19,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Model\DataObject\Traits\DefaultValueTrait;
+    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType {
@@ -348,11 +349,11 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $scale = self::DECIMAL_PRECISION_DEFAULT;
 
         if (null !== $this->decimalSize) {
-            $precision = intval($this->decimalSize);
+            $precision = (int)$this->decimalSize;
         }
 
         if (null !== $this->decimalPrecision) {
-            $scale = intval($this->decimalPrecision);
+            $scale = (int)$this->decimalPrecision;
         }
 
         if ($precision < 1 || $precision > 65) {
@@ -526,7 +527,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     {
         $data = $this->getDataFromObjectParam($object, $params);
 
-        return strval($data);
+        return (string)$data;
     }
 
     /**
@@ -616,5 +617,16 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     protected function doGetDefaultValue($object, $context = [])
     {
         return $this->getDefaultValue() ?? null;
+    }
+
+    /**
+     * @param float|int|string $oldValue
+     * @param float|int|string $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        return $this->toNumeric($oldValue) == $this->toNumeric($newValue);
     }
 }

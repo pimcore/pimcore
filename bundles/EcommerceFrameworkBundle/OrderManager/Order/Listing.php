@@ -59,6 +59,7 @@ class Listing extends AbstractOrderList implements OrderListInterface
     }
 
     /**
+     * @deprecated
      * get select query
      *
      * @return Db\ZendCompatibility\QueryBuilder

@@ -14,8 +14,8 @@
 
 namespace Pimcore\Helper;
 
-use Doctrine\Common\Persistence\ConnectionRegistry;
 use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ConnectionRegistry;
 use Monolog\Handler\HandlerInterface;
 use Psr\Log\LoggerAwareTrait;
 
@@ -63,8 +63,9 @@ class LongRunningHelper
                 if (!($connection instanceof Connection)) {
                     throw new \LogicException('Expected only instances of Connection');
                 }
-
-                $connection->close();
+                if ($connection->isTransactionActive() === false) {
+                    $connection->close();
+                }
             }
         } catch (\Exception $e) {
             // connection couldn't be established, this is e.g. the case when Pimcore isn't installed yet

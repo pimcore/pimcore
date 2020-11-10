@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Admin\Report;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class SettingsEvent extends Event
 {

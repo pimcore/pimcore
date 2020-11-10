@@ -49,9 +49,9 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('pimcore');
 
-        $rootNode = $treeBuilder->root('pimcore');
+        $rootNode = $treeBuilder->getRootNode();
         $rootNode->addDefaultsIfNotSet();
         $rootNode->ignoreExtraKeys();
 
@@ -279,15 +279,6 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('instance_identifier')
                     ->defaultNull()->end()
-                ->booleanNode('show_cookie_notice')
-                    ->setDeprecated('The cookie bar will be removed in Pimcore 7')
-                    ->beforeNormalization()
-                        ->ifString()
-                        ->then(function ($v) {
-                            return (bool)$v;
-                        })
-                    ->end()
-                    ->defaultFalse()
                 ->end()
             ->end();
     }
@@ -318,9 +309,6 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->end()
                 ->end()
-            ->end()
-            ->arrayNode('webservice')
-                ->canBeEnabled()
             ->end();
     }
 
@@ -403,6 +391,9 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('archive_alternative_database')
                             ->defaultValue('')
                         ->end()
+                        ->scalarNode('delete_archive_threshold')
+                            ->defaultValue('6')
+                        ->end()
                     ->end()
             ->end();
     }
@@ -457,6 +448,15 @@ class Configuration implements ConfigurationInterface
                                         ->end()
                                         ->defaultTrue()
                                     ->end()
+                                    ->booleanNode('clip_auto_support')
+                                        ->beforeNormalization()
+                                            ->ifString()
+                                            ->then(function ($v) {
+                                                return (bool)$v;
+                                            })
+                                        ->end()
+                                        ->defaultTrue()
+                                    ->end()
                                     ->booleanNode('auto_clear_temp_files')
                                         ->beforeNormalization()
                                             ->ifString()
@@ -500,6 +500,15 @@ class Configuration implements ConfigurationInterface
                                     })
                                 ->end()
                                 ->defaultTrue()
+                            ->end()
+                            ->booleanNode('disable_stack_trace')
+                                ->beforeNormalization()
+                                    ->ifString()
+                                    ->then(function ($v) {
+                                        return (bool)$v;
+                                    })
+                                ->end()
+                                ->defaultFalse()
                             ->end()
                         ->end()
                     ->end()
@@ -560,6 +569,15 @@ class Configuration implements ConfigurationInterface
                             ->children()
                                 ->scalarNode('days')->defaultNull()->end()
                                 ->scalarNode('steps')->defaultNull()->end()
+                                ->booleanNode('disable_stack_trace')
+                                    ->beforeNormalization()
+                                    ->ifString()
+                                        ->then(function ($v) {
+                                            return (bool)$v;
+                                        })
+                                    ->end()
+                                    ->defaultFalse()
+                                ->end()
                             ->end()
                         ->end()
                     ->end();
@@ -601,10 +619,21 @@ class Configuration implements ConfigurationInterface
                     ->ignoreExtraKeys()
                     ->addDefaultsIfNotSet();
 
-        $this->addImplementationLoaderNode($documentsNode, 'tags');
-
         $documentsNode
             ->children()
+                ->arrayNode('tags')
+                    ->setDeprecated('The "%node%" option is deprecated. Use "editables" instead.')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('map')
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')->end()
+                        ->end()
+                        ->arrayNode('prefixes')
+                            ->prototype('scalar')->end()
+                        ->end()
+                    ->end()
+                ->end()
                 ->arrayNode('versions')
                     ->children()
                         ->scalarNode('days')
@@ -612,6 +641,15 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('steps')
                             ->defaultNull()
+                        ->end()
+                        ->booleanNode('disable_stack_trace')
+                            ->beforeNormalization()
+                            ->ifString()
+                                ->then(function ($v) {
+                                    return (bool)$v;
+                                })
+                            ->end()
+                            ->defaultFalse()
                         ->end()
                     ->end()
                 ->end()
@@ -650,10 +688,12 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('editables')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->enumNode('naming_strategy')
-                            ->info('Sets naming strategy used to build editable names')
-                            ->values(['legacy', 'nested'])
-                            ->defaultValue('nested')
+                        ->arrayNode('map')
+                            ->useAttributeAsKey('name')
+                            ->prototype('scalar')->end()
+                        ->end()
+                        ->arrayNode('prefixes')
+                            ->prototype('scalar')->end()
                         ->end()
                     ->end()
                 ->end()
@@ -1643,7 +1683,7 @@ class Configuration implements ConfigurationInterface
                                                                         ->scalarNode('name')->isRequired()->info('The technical name used in the input form.')->end()
                                                                         ->enumNode('fieldType')
                                                                             ->isRequired()
-                                                                            ->values(['input', 'textarea', 'select', 'datetime', 'date', 'user', 'checkbox'])
+                                                                            ->values(['input', 'numeric', 'textarea', 'select', 'datetime', 'date', 'user', 'checkbox'])
                                                                             ->info('The data component name/field type.')
                                                                         ->end()
                                                                         ->scalarNode('title')->info('The label used by the field')->end()

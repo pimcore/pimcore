@@ -219,7 +219,7 @@ class DocumentTargetingConfigurator
         if (!$document instanceof TargetingDocumentInterface) {
             return [];
         }
-
+        /** @var Document\TargetingDocument $document */
         $cacheKey = sprintf('document_target_groups_%d', $document->getId());
 
         if ($targetGroups = $this->cache->load($cacheKey)) {
@@ -227,8 +227,8 @@ class DocumentTargetingConfigurator
         }
 
         $targetGroups = [];
-        foreach ($document->getElements() as $key => $tag) {
-            $pattern = '/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_PREFIX, '/') . '([0-9]+)' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_ELEMENT_SUFFIX, '/') . '/';
+        foreach ($document->getEditables() as $key => $tag) {
+            $pattern = '/^' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_EDITABLE_PREFIX, '/') . '([0-9]+)' . preg_quote(TargetingDocumentInterface::TARGET_GROUP_EDITABLE_SUFFIX, '/') . '/';
             if (preg_match($pattern, (string) $key, $matches)) {
                 $targetGroups[] = (int)$matches[1];
             }

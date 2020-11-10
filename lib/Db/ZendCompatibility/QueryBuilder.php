@@ -37,9 +37,13 @@
 
 namespace Pimcore\Db\ZendCompatibility;
 
+use Doctrine\DBAL\Driver\ResultStatement;
 use Exception;
 use Pimcore\Db\ConnectionInterface;
 
+/**
+ * @deprecated
+ */
 class QueryBuilder
 {
     const DISTINCT = 'distinct';
@@ -827,10 +831,10 @@ class QueryBuilder
     /**
      * Executes the current select object and returns the result
      *
-     * @param int $fetchMode OPTIONAL
-     * @param  mixed  $bind An array of data to bind to the placeholders.
+     * @param int|null $fetchMode
+     * @param mixed $bind An array of data to bind to the placeholders.
      *
-     * @return \Doctrine\DBAL\Driver\Statement
+     * @return ResultStatement
      */
     public function query($fetchMode = null, $bind = [])
     {
@@ -853,7 +857,7 @@ class QueryBuilder
      *
      * Uses {@see Connection::executeQuery}
      *
-     * @return \Doctrine\DBAL\Driver\Statement|int
+     * @return ResultStatement
      */
     public function execute()
     {
@@ -1409,12 +1413,12 @@ class QueryBuilder
             $order = [];
             foreach ($this->_parts[self::ORDER] as $term) {
                 if (is_array($term)) {
-                    if (is_numeric($term[0]) && strval(intval($term[0])) == $term[0]) {
+                    if (is_numeric($term[0]) && (string)(int)$term[0] == $term[0]) {
                         $order[] = (int)trim($term[0]) . ' ' . $term[1];
                     } else {
                         $order[] = $this->_adapter->quoteIdentifier($term[0]) . ' ' . $term[1];
                     }
-                } elseif (is_numeric($term) && strval(intval($term)) == $term) {
+                } elseif (is_numeric($term) && (string)(int)$term == $term) {
                     $order[] = (int)trim($term);
                 } else {
                     $order[] = $this->_adapter->quoteIdentifier($term);

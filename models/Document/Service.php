@@ -142,8 +142,8 @@ class Service extends Model\Element\Service
             return null;
         }
 
-        if (method_exists($source, 'getElements')) {
-            $source->getElements();
+        if ($source instanceof Document\PageSnippet) {
+            $source->getEditables();
         }
 
         $source->getProperties();
@@ -175,9 +175,10 @@ class Service extends Model\Element\Service
         $this->updateChildren($target, $new);
 
         // triggers actions after the complete document cloning
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
+        $event = new DocumentEvent($new, [
             'base_element' => $source, // the element used to make a copy
-        ]));
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::POST_COPY);
 
         return $new;
     }
@@ -194,8 +195,8 @@ class Service extends Model\Element\Service
      */
     public function copyAsChild($target, $source, $enableInheritance = false, $resetIndex = false, $language = false)
     {
-        if (method_exists($source, 'getElements')) {
-            $source->getElements();
+        if ($source instanceof Document\PageSnippet) {
+            $source->getEditables();
         }
 
         $source->getProperties();
@@ -223,8 +224,8 @@ class Service extends Model\Element\Service
             $new->setPrettyUrl(null);
         }
 
-        if ($enableInheritance && ($new instanceof Document\PageSnippet)) {
-            $new->setElements([]);
+        if ($enableInheritance && ($new instanceof Document\PageSnippet) && $new->supportsContentMaster()) {
+            $new->setEditables([]);
             $new->setContentMasterDocumentId($source->getId());
         }
 
@@ -242,9 +243,10 @@ class Service extends Model\Element\Service
         }
 
         // triggers actions after the complete document cloning
-        \Pimcore::getEventDispatcher()->dispatch(DocumentEvents::POST_COPY, new DocumentEvent($new, [
+        $event = new DocumentEvent($new, [
             'base_element' => $source, // the element used to make a copy
-        ]));
+        ]);
+        \Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::POST_COPY);
 
         return $new;
     }
@@ -267,7 +269,7 @@ class Service extends Model\Element\Service
 
         if ($source instanceof Document\PageSnippet) {
             /** @var PageSnippet $target */
-            $target->setElements($source->getElements());
+            $target->setEditables($source->getEditables());
 
             $target->setTemplate($source->getTemplate());
             $target->setAction($source->getAction());
@@ -326,7 +328,7 @@ class Service extends Model\Element\Service
         $doc->getProperties();
 
         if ($doc instanceof Document\PageSnippet) {
-            foreach ($doc->getElements() as $name => $data) {
+            foreach ($doc->getEditables() as $name => $data) {
                 if (method_exists($data, 'load')) {
                     $data->load();
                 }
@@ -395,36 +397,36 @@ class Service extends Model\Element\Service
         // rewriting elements only for snippets and pages
         if ($document instanceof Document\PageSnippet) {
             if (array_key_exists('enableInheritance', $params) && $params['enableInheritance']) {
-                $elements = $document->getElements();
-                $changedElements = [];
+                $editables = $document->getEditables();
+                $changedEditables = [];
                 $contentMaster = $document->getContentMasterDocument();
                 if ($contentMaster instanceof Document\PageSnippet) {
-                    $contentMasterElements = $contentMaster->getElements();
-                    foreach ($contentMasterElements as $contentMasterElement) {
-                        if (method_exists($contentMasterElement, 'rewriteIds')) {
-                            $element = clone $contentMasterElement;
-                            $element->rewriteIds($rewriteConfig);
+                    $contentMasterEditables = $contentMaster->getEditables();
+                    foreach ($contentMasterEditables as $contentMasterEditable) {
+                        if (method_exists($contentMasterEditable, 'rewriteIds')) {
+                            $editable = clone $contentMasterEditable;
+                            $editable->rewriteIds($rewriteConfig);
 
-                            if (Serialize::serialize($element) != Serialize::serialize($contentMasterElement)) {
-                                $changedElements[] = $element;
+                            if (Serialize::serialize($editable) != Serialize::serialize($contentMasterEditable)) {
+                                $changedEditables[] = $editable;
                             }
                         }
                     }
                 }
 
-                if (count($changedElements) > 0) {
-                    $elements = $changedElements;
+                if (count($changedEditables) > 0) {
+                    $editables = $changedEditables;
                 }
             } else {
-                $elements = $document->getElements();
-                foreach ($elements as &$element) {
-                    if (method_exists($element, 'rewriteIds')) {
-                        $element->rewriteIds($rewriteConfig);
+                $editables = $document->getEditables();
+                foreach ($editables as &$editable) {
+                    if (method_exists($editable, 'rewriteIds')) {
+                        $editable->rewriteIds($rewriteConfig);
                     }
                 }
             }
 
-            $document->setElements($elements);
+            $document->setEditables($editables);
         } elseif ($document instanceof Document\Hardlink) {
             if (array_key_exists('document', $rewriteConfig) && $document->getSourceId() && array_key_exists((int) $document->getSourceId(), $rewriteConfig['document'])) {
                 $document->setSourceId($rewriteConfig['document'][(int) $document->getSourceId()]);

@@ -26,7 +26,8 @@ use Pimcore\Model\Element;
 abstract class AbstractRelations extends Data implements
     CustomResourcePersistingInterface,
     DataObject\ClassDefinition\PathFormatterAwareInterface,
-    Data\LazyLoadingSupportInterface
+    Data\LazyLoadingSupportInterface,
+    Data\EqualComparisonInterface
 {
     use DataObject\Traits\ContextPersistenceTrait;
 
@@ -103,12 +104,12 @@ abstract class AbstractRelations extends Data implements
             }
         }
 
-        $db = Db::get();
-
         $data = $this->getDataFromObjectParam($object, $params);
         $relations = $this->prepareDataForPersistence($data, $object, $params);
 
         if (is_array($relations) && !empty($relations)) {
+            $db = Db::get();
+
             foreach ($relations as $relation) {
                 $this->enrichDataRow($object, $params, $classId, $relation);
 
@@ -346,7 +347,7 @@ abstract class AbstractRelations extends Data implements
      *
      * @return bool
      */
-    public function isEqual($array1, $array2)
+    public function isEqual($array1, $array2): bool
     {
         $array1 = array_filter(is_array($array1) ? $array1 : []);
         $array2 = array_filter(is_array($array2) ? $array2 : []);
@@ -476,11 +477,7 @@ abstract class AbstractRelations extends Data implements
                 } elseif (!isset($relationItems[$elementHash])) {
                     $relationItems[$elementHash] = $item;
                 } else {
-                    @trigger_error(
-                            'Passing relations multiple times is deprecated since version 6.5.2 and will throw exception in 7.0.0, tried to assign ' . $elementHash
-                            . ' multiple times in field' . $fieldName . ' of object id: ' . $objectId,
-                            E_USER_DEPRECATED
-                        );
+                    throw new \Exception(sprintf('Passing relations multiple times is not allowed: %s in field %s of object id: %s', $elementHash, $fieldName, $objectId));
                 }
             }
 
@@ -492,5 +489,21 @@ abstract class AbstractRelations extends Data implements
         }
 
         return $data;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return 'array';
     }
 }

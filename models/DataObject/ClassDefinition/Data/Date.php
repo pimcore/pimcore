@@ -22,9 +22,10 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use DataObject\Traits\DefaultValueTrait;
+    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -251,7 +252,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      */
     public function setDefaultValue($defaultValue)
     {
-        if (strlen(strval($defaultValue)) > 0) {
+        if (strlen((string)$defaultValue) > 0) {
             if (is_numeric($defaultValue)) {
                 $this->defaultValue = (int)$defaultValue;
             } else {
@@ -311,46 +312,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     }
 
     /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return string
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        return $this->getForCsvExport($object, $params);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return \Carbon\Carbon|null
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        $timestamp = strtotime($value);
-        if (empty($value)) {
-            return null;
-        }
-        if ($timestamp !== false) {
-            return $this->getDateFromTimestamp($timestamp);
-        }
-
-        throw new \Exception('cannot get values from web service import - invalid data');
-    }
-
-    /**
      * @param bool $useCurrentDate
      *
      * @return $this
@@ -386,7 +347,7 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
-     * @return null|\Carbon\Carbon
+     * @return mixed
      */
     public function getDiffDataFromEditmode($data, $object = null, $params = [])
     {
@@ -486,5 +447,19 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
         }
 
         return null;
+    }
+
+    /**
+     * @param \DateTimeInterface|null $oldValue
+     * @param \DateTimeInterface|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldValue = $oldValue instanceof \DateTimeInterface ? $oldValue->format('Y-m-d') : null;
+        $newValue = $newValue instanceof \DateTimeInterface ? $newValue->format('Y-m-d') : null;
+
+        return $oldValue === $newValue;
     }
 }

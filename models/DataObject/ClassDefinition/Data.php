@@ -56,6 +56,8 @@ abstract class Data
     public $index;
 
     /**
+     * @deprecated implement getPhpdocInputType() and getPhpdocReturnType() instead
+     *
      * @var string
      */
     public $phpdocType;
@@ -215,38 +217,6 @@ abstract class Data
     {
         // this is the default, but csv doesn't work for all data types
         return $this->getForCsvExport($object, $params);
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        return $this->getDataFromObjectParam($object, $params);
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|Model\DataObject\AbstractObject $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        return $value;
     }
 
     /**
@@ -418,6 +388,8 @@ abstract class Data
     }
 
     /**
+     * @deprecated use getPhpdocInputType() and getPhpdocReturnType() instead
+     *
      * @return string
      */
     public function getPhpdocType()
@@ -655,6 +627,54 @@ abstract class Data
     }
 
     /**
+     * @return string|null
+     */
+    public function getParameterTypeDeclaration(): ?string
+    {
+        if ($this->getPhpdocInputType()) {
+            return '?' . $this->getPhpdocInputType();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getReturnTypeDeclaration(): ?string
+    {
+        if ($this->getPhpdocReturnType()) {
+            return '?' . $this->getPhpdocReturnType();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhpdocInputType(): ?string
+    {
+        if ($this->getPhpdocType()) {
+            return $this->getPhpdocType();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhpdocReturnType(): ?string
+    {
+        if ($this->getPhpdocType()) {
+            return $this->getPhpdocType();
+        }
+
+        return null;
+    }
+
+    /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
      * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
@@ -664,13 +684,20 @@ abstract class Data
     public function getGetterCode($class)
     {
         $key = $this->getName();
+
+        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
         $code = '';
 
         $code .= '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " () {\n";
+        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
 
         $code .= $this->getPreGetValueHookCode($key);
 
@@ -719,14 +746,20 @@ abstract class Data
         }
 
         $key = $this->getName();
-        $code = '';
 
+        if ($class->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
+        } else {
+            $typeDeclaration = '';
+        }
+
+        $code = '';
         $code .= '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
+        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ") {\n";
         $code .= "\t" . '$fd = $this->getClass()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -781,12 +814,19 @@ abstract class Data
     public function getGetterCodeObjectbrick($brickClass)
     {
         $key = $this->getName();
+
+        if ($brickClass->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
         $code = '';
         $code .= '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " () {\n";
+        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
 
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
@@ -825,13 +865,19 @@ abstract class Data
     {
         $key = $this->getName();
 
+        if ($brickClass->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
+        } else {
+            $typeDeclaration = '';
+        }
+
         $code = '';
         $code .= '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
+        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Objectbrick\\Data\\' . ucfirst($brickClass->getKey()) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ") {\n";
         $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -888,12 +934,18 @@ abstract class Data
     {
         $key = $this->getName();
 
+        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
         $code = '';
         $code .= '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . " () {\n";
+        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
 
         if (method_exists($this, 'preGetData')) {
             $code .= "\t" . '$container = $this;' . "\n";
@@ -923,14 +975,20 @@ abstract class Data
     public function getSetterCodeFieldcollection($fieldcollectionDefinition)
     {
         $key = $this->getName();
-        $code = '';
 
+        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
+        } else {
+            $typeDeclaration = '';
+        }
+
+        $code = '';
         $code .= '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
+        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\Fieldcollection\\Data\\' . ucfirst($fieldcollectionDefinition->getKey()) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ") {\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ") {\n";
         $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
 
         if ($this instanceof DataObject\ClassDefinition\Data\EncryptedField) {
@@ -977,11 +1035,18 @@ abstract class Data
     public function getGetterCodeLocalizedfields($class)
     {
         $key = $this->getName();
+
+        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
         $code = '/**' . "\n";
         $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @return ' . $this->getPhpdocType() . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function get' . ucfirst($key) . ' ($language = null) {' . "\n";
+        $code .= 'public function get' . ucfirst($key) . ' ($language = null)' . $typeDeclaration . ' {' . "\n";
 
         $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
 
@@ -1022,12 +1087,18 @@ abstract class Data
             $containerGetter = 'getClass';
         }
 
+        if ($class->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+            $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
+        } else {
+            $typeDeclaration = '';
+        }
+
         $code = '/**' . "\n";
         $code .= '* Set ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
-        $code .= '* @param ' . $this->getPhpdocType() . ' $' . $key . "\n";
+        $code .= '* @param ' . $this->getPhpdocInputType() . ' $' . $key . "\n";
         $code .= '* @return \\Pimcore\\Model\\DataObject\\' . ucfirst($classname) . "\n";
         $code .= '*/' . "\n";
-        $code .= 'public function set' . ucfirst($key) . ' (' . '$' . $key . ', $language = null) {' . "\n";
+        $code .= 'public function set' . ucfirst($key) . ' (' . $typeDeclaration . '$' . $key . ', $language = null) {' . "\n";
         if ($this->supportsDirtyDetection()) {
             $code .= "\t" . '$fd = $this->' . $containerGetter . '()->getFieldDefinition("localizedfields")->getFieldDefinition("' . $key . '");' . "\n";
         }
@@ -1057,6 +1128,10 @@ abstract class Data
                 $code .= "\t" . 'self::setGetInheritedValues($inheritValues);'."\n";
             }
             $code .= "\t" . '$isEqual = $fd->isEqual($currentData, $' . $key . ');' . "\n";
+
+            $code .= "\t" . 'if (!$isEqual) {' . "\n";
+            $code .= "\t\t" . '$this->markFieldDirty("' . $key . '", true);' . "\n";
+            $code .= "\t" . '}' . "\n";
         } else {
             $code .= "\t" . '$isEqual = false;' . "\n";
         }
@@ -1158,14 +1233,14 @@ abstract class Data
         return false;
     }
 
-    /** Converts the data sent from the object merger plugin back to the internal object. Similar to
+    /** Converts the data sent from the object merger back to the internal object. Similar to
      * getDiffDataForEditMode() an array of data elements is passed in containing the following attributes:
      *  - "field" => the name of (this) field
      *  - "key" => the key of the data element
      *  - "data" => the data
      *
      * @param array $data
-     * @param null $object
+     * @param DataObject\Concrete|null $object
      * @param mixed $params
      *
      * @return mixed
@@ -1586,6 +1661,9 @@ abstract class Data
      */
     public function isEqual($oldValue, $newValue)
     {
+        @trigger_error('Calling '.__METHOD__.' is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+            'Implement `' . DataObject\ClassDefinition\Data\EqualComparisonInterface::class . '` instead.', E_USER_DEPRECATED);
+
         return false;
     }
 

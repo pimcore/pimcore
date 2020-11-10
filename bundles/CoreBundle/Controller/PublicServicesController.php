@@ -20,7 +20,6 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Site;
-use Pimcore\Model\Tool;
 use Pimcore\Model\Tool\TmpStore;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -156,10 +155,6 @@ class PublicServicesController extends Controller
                         // this method of bypassing the session listener was introduced in Symfony 4, so we need
                         // to check for the constant first
                         $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
-                    } else {
-                        // @TODO to be removed in Pimcore 7
-                        // Symfony 3.4 doesn't support bypassing the session listener, so we just remove it
-                        \Pimcore::getEventDispatcher()->removeSubscriber($sessionListener);
                     }
 
                     return new BinaryFileResponse($thumbnailFile, 200, $headers);
@@ -226,46 +221,18 @@ class PublicServicesController extends Controller
 
     /**
      * @param Request $request
-     */
-    public function hybridauthAction(Request $request)
-    {
-        \Pimcore\Tool\HybridAuth::process();
-    }
-
-    /**
-     * @param Request $request
-     *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    public function qrcodeAction(Request $request)
-    {
-        $code = Tool\Qrcode\Config::getByName($request->get('key'));
-        if ($code) {
-            $url = $code->getUrl();
-            if ($code->getGoogleAnalytics()) {
-                $glue = '?';
-                if (strpos($url, '?')) {
-                    $glue = '&';
-                }
-
-                $url .= $glue;
-                $url .= 'utm_source=Mobile&utm_medium=QR-Code&utm_campaign=' . $code->getName();
-            }
-
-            return $this->redirect($url);
-        } else {
-            Logger::error("called an QR code but '" . $request->get('key') . ' is not a code in the system.');
-        }
-    }
-
-    /**
-     * @param Request $request
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function customAdminEntryPointAction(Request $request)
     {
-        $url = $this->generateUrl('pimcore_admin_login');
+        $params = $request->query->all();
+        if (isset($params['token'])) {
+            $url = $this->generateUrl('pimcore_admin_login_check', $params);
+        } else {
+            $url = $this->generateUrl('pimcore_admin_login', $params);
+        }
+
         $redirect = new RedirectResponse($url);
 
         $customAdminPathIdentifier = $this->getParameter('pimcore_admin.custom_admin_path_identifier');

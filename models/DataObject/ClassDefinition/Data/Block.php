@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Layout;
 use Pimcore\Model\Element;
 use Pimcore\Tool\Serialize;
 
-class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface
+class Block extends Data implements CustomResourcePersistingInterface, ResourcePersistenceAwareInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface
 {
     use Element\ChildsCompatibilityTrait;
     use Extension\ColumnType;
@@ -462,88 +462,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         return null;
     }
 
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param mixed $params
-     *
-     * @return array
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-        $result = [];
-        $idx = -1;
-
-        if (is_array($data)) {
-            foreach ($data as $blockElements) {
-                $resultElement = [];
-                $idx++;
-
-                /** @var DataObject\Data\BlockElement $blockElement */
-                foreach ($blockElements as $elementName => $blockElement) {
-                    $fd = $this->getFieldDefinition($elementName);
-                    if (!$fd) {
-                        // class definition seems to have changed
-                        Logger::warn('class definition seems to have changed, element name: ' . $elementName);
-                        continue;
-                    }
-
-                    $params['context']['containerType'] = 'block';
-                    $params['injectedData'] = $blockElement->getData();
-                    $dataForEditMode = $fd->getForWebserviceExport($object, $params);
-                    $resultElement[$elementName] = $dataForEditMode;
-                }
-                $result[] = $resultElement;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param Element\AbstractElement $relatedObject
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return array
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $relatedObject = null, $params = [], $idMapper = null)
-    {
-        $result = [];
-
-        if (is_array($value)) {
-            foreach ($value as $blockElementsData) {
-                $resultElement = [];
-
-                foreach ($blockElementsData as $elementName => $blockElementDataRaw) {
-                    $fd = $this->getFieldDefinition($elementName);
-                    if (!$fd) {
-                        // class definition seems to have changed
-                        Logger::warn('class definition seems to have changed, element name: ' . $elementName);
-                        continue;
-                    }
-
-                    $data = $fd->getFromWebserviceImport($blockElementDataRaw, $relatedObject, $params, $idMapper);
-                    $blockElement = new DataObject\Data\BlockElement($elementName, $fd->getFieldtype(), $data);
-
-                    $resultElement[$elementName] = $blockElement;
-                }
-                $result[] = $resultElement;
-            }
-        }
-
-        return $result;
-    }
-
     /** True if change is allowed in edit mode.
      *
      * @param DataObject\Concrete $object
@@ -684,7 +602,15 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         }
 
         if ($def instanceof DataObject\ClassDefinition\Data) {
-            $fields[$def->getName()] = $def;
+            $existing = $fields[$def->getName()] ?? false;
+            if ($existing && method_exists($existing, 'addReferencedField')) {
+                // this is especially for localized fields which get aggregated here into one field definition
+                // in the case that there are more than one localized fields in the class definition
+                // see also pimcore.object.edit.addToDataFields();
+                $existing->addReferencedField($def);
+            } else {
+                $fields[$def->getName()] = $def;
+            }
         }
 
         return $fields;
@@ -994,9 +920,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
         } elseif ($container instanceof DataObject\Localizedfield) {
             $context = $params['context'];
             $object = $context['object'];
+            $containerType = $context['containerType'] ?? null;
 
-            if (isset($context['containerType']) && $context['containerType'] === 'fieldcollection') {
+            if ($containerType === 'fieldcollection') {
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_collection_' . $context['containerKey'] . '_localized_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($context['fieldname']) . ' and `index` =  ' . $context['index'];
+            } elseif ($containerType === 'objectbrick') {
+                $query = 'select ' . $db->quoteIdentifier($field) . ' from object_brick_localized_' . $context['containerKey'] . '_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId() . ' and fieldname = ' . $db->quote($context['fieldname']);
             } else {
                 $query = 'select ' . $db->quoteIdentifier($field) . ' from object_localized_data_' . $object->getClassId() . ' where language = ' . $db->quote($params['language']) . ' and  ooo_id  = ' . $object->getId();
             }
@@ -1047,10 +976,12 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public function preGetData($object, $params = [])
     {
         $data = null;
+        $params['owner'] = $object;
+        $params['fieldname'] = $this->getName();
         if ($object instanceof DataObject\Concrete) {
             $data = $object->getObjectVar($this->getName());
             if ($this->getLazyLoading() && !$object->isLazyKeyLoaded($this->getName())) {
-                $data = $this->load($object);
+                $data = $this->load($object, $params);
 
                 $setter = 'set' . ucfirst($this->getName());
                 if (method_exists($object, $setter)) {
@@ -1181,8 +1112,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
         if (is_array($blockDefinitions)) {
             foreach ($blockDefinitions as $field) {
-                if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
-                                                        && $field->getLazyLoading()) {
+                if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
 
                     // Lazy loading inside blocks isn't supported, turn it off if possible
                     if (method_exists($field, 'setLazyLoading')) {
@@ -1191,6 +1121,22 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                 }
             }
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?array';
     }
 
     private function setBlockElementOwner(DataObject\Data\BlockElement $blockElement, $params = [])

@@ -15,7 +15,7 @@
 namespace Pimcore\Event\Model\DataObject\ClassificationStore;
 
 use Pimcore\Model\DataObject\Classificationstore\KeyConfig;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class KeyConfigEvent extends Event
 {

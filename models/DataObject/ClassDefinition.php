@@ -167,6 +167,11 @@ class ClassDefinition extends Model\AbstractModel
     /**
      * @var bool
      */
+    public $generateTypeDeclarations = false;
+
+    /**
+     * @var bool
+     */
     public $showFieldLookup = false;
 
     /**
@@ -347,15 +352,9 @@ class ClassDefinition extends Model\AbstractModel
         $isUpdate = $this->exists();
 
         if (!$isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::PRE_ADD,
-                new ClassDefinitionEvent($this)
-            );
+            \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_ADD);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::PRE_UPDATE,
-                new ClassDefinitionEvent($this)
-            );
+            \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_UPDATE);
         }
 
         $this->setModificationDate(time());
@@ -371,15 +370,9 @@ class ClassDefinition extends Model\AbstractModel
         }
 
         if ($isUpdate) {
-            \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::POST_UPDATE,
-                new ClassDefinitionEvent($this)
-            );
+            \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_UPDATE);
         } else {
-            \Pimcore::getEventDispatcher()->dispatch(
-                DataObjectClassDefinitionEvents::POST_ADD,
-                new ClassDefinitionEvent($this)
-            );
+            \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_ADD);
         }
     }
 
@@ -643,10 +636,7 @@ class ClassDefinition extends Model\AbstractModel
 
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(
-            DataObjectClassDefinitionEvents::PRE_DELETE,
-            new ClassDefinitionEvent($this)
-        );
+        \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::PRE_DELETE);
 
         // delete all objects using this class
         $list = new Listing();
@@ -702,10 +692,7 @@ class ClassDefinition extends Model\AbstractModel
 
         $this->getDao()->delete();
 
-        \Pimcore::getEventDispatcher()->dispatch(
-            DataObjectClassDefinitionEvents::POST_DELETE,
-            new ClassDefinitionEvent($this)
-        );
+        \Pimcore::getEventDispatcher()->dispatch(new ClassDefinitionEvent($this), DataObjectClassDefinitionEvents::POST_DELETE);
     }
 
     /**
@@ -1420,6 +1407,26 @@ class ClassDefinition extends Model\AbstractModel
     public function setCompositeIndices($compositeIndices)
     {
         $this->compositeIndices = $compositeIndices ?? [];
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getGenerateTypeDeclarations()
+    {
+        return (bool) $this->generateTypeDeclarations;
+    }
+
+    /**
+     * @param bool $generateTypeDeclarations
+     *
+     * @return $this
+     */
+    public function setGenerateTypeDeclarations($generateTypeDeclarations)
+    {
+        $this->generateTypeDeclarations = (bool) $generateTypeDeclarations;
 
         return $this;
     }

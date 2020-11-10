@@ -14,9 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
+use Laminas\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * @method Token[] load()
@@ -26,18 +26,6 @@ use Zend\Paginator\AdapterAggregateInterface;
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
-    /**
-     * @var Token[]|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    public $tokens;
-
-    public function __construct()
-    {
-        $this->tokens = & $this->data;
-    }
-
     /**
      * @param string $key
      *
@@ -66,7 +54,7 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
             throw new \Exception('Unable to load series tokens: no VoucherSeriesId given.', 100);
         }
 
-        if (sizeof($filter)) {
+        if (count($filter)) {
             if (!empty($filter['token'])) {
                 $this->addConditionParam('token LIKE ?', '%' . $filter['token'] . '%');
             }
@@ -302,10 +290,10 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
             $queryParts[] = 't.timestamp < STR_TO_DATE(' . $param . ",'%Y-%m-%d')";
         }
 
-        if (sizeof($queryParts) == 1) {
+        if (count($queryParts) == 1) {
             $reservationsQuery = $reservationsQuery . ' AND ' . $queryParts[0];
             $tokensQuery = $tokensQuery . ' AND ' . $queryParts[0];
-        } elseif (sizeof($queryParts) > 1) {
+        } elseif (count($queryParts) > 1) {
             $reservationsQuery = $reservationsQuery . ' AND (' . implode(' AND ', $queryParts) . ')';
             $tokensQuery = $tokensQuery . ' AND (' . implode(' AND ', $queryParts) . ')';
         }

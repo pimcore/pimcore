@@ -29,6 +29,27 @@ use Pimcore\Tool;
 class Service
 {
     /**
+     * @var bool
+     */
+    public static $doRemoveDynamicOptions = false;
+
+    /**
+     * @return bool
+     */
+    public static function doRemoveDynamicOptions(): bool
+    {
+        return self::$doRemoveDynamicOptions;
+    }
+
+    /**
+     * @param bool $doRemoveDynamicOptions
+     */
+    public static function setDoRemoveDynamicOptions(bool $doRemoveDynamicOptions): void
+    {
+        self::$doRemoveDynamicOptions = $doRemoveDynamicOptions;
+    }
+
+    /**
      * @static
      *
      * @param  DataObject\ClassDefinition $class
@@ -38,34 +59,16 @@ class Service
     public static function generateClassDefinitionJson($class)
     {
         $class = clone $class;
+        self::setDoRemoveDynamicOptions(true);
         $data = json_decode(json_encode($class));
+        self::setDoRemoveDynamicOptions(false);
         unset($data->name);
         unset($data->creationDate);
-        unset($data->modificationDate);
         unset($data->userOwner);
         unset($data->userModification);
         unset($data->fieldDefinitions);
 
-        self::removeDynamicOptionsFromLayoutDefinition($data->layoutDefinitions);
-
         return json_encode($data, JSON_PRETTY_PRINT);
-    }
-
-    public static function removeDynamicOptionsFromLayoutDefinition(&$layout)
-    {
-        if (method_exists($layout, 'getChildren')) {
-            $children = $layout->getChildren();
-            if (is_array($children)) {
-                foreach ($children as $child) {
-                    if ($child instanceof DataObject\ClassDefinition\Data\Select) {
-                        if ($child->getOptionsProviderClass()) {
-                            $child->options = null;
-                        }
-                    }
-                    self::removeDynamicOptionsFromLayoutDefinition($child);
-                }
-            }
-        }
     }
 
     /**
@@ -104,7 +107,7 @@ class Service
 
         foreach (['description', 'icon', 'group', 'allowInherit', 'allowVariants', 'showVariants', 'parentClass',
                     'implementsInterfaces', 'listingParentClass', 'useTraits', 'listingUseTraits', 'previewUrl', 'propertyVisibility',
-                    'linkGeneratorReference', 'compositeIndices', ] as $importPropertyName) {
+                    'linkGeneratorReference', 'compositeIndices', 'generateTypeDeclarations', ] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $class->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
@@ -145,7 +148,7 @@ class Service
             $fieldCollection->setLayoutDefinitions($layout);
         }
 
-        foreach (['parentClass', 'implementsInterfaces', 'title', 'group'] as $importPropertyName) {
+        foreach (['parentClass', 'implementsInterfaces', 'title', 'group', 'generateTypeDeclarations'] as $importPropertyName) {
             if (isset($importData[$importPropertyName])) {
                 $fieldCollection->{'set' . ucfirst($importPropertyName)}($importData[$importPropertyName]);
             }
@@ -224,6 +227,7 @@ class Service
         $objectBrick->setClassDefinitions($toAssignClassDefinitions);
         $objectBrick->setParentClass($importData['parentClass']);
         $objectBrick->setImplementsInterfaces($importData['implementsInterfaces'] ?? null);
+        $objectBrick->setGenerateTypeDeclarations($importData['generateTypeDeclarations'] ?? null);
         if (isset($importData['title'])) {
             $objectBrick->setTitle($importData['title']);
         }
@@ -346,8 +350,9 @@ class Service
                     $default = null;
                 }
 
-                if ($colDefinition['Type'] == $type && strtolower($colDefinition['Null']) == strtolower($null)
-                    && $colDefinition['Default'] == $default) {
+                if (str_replace(' ', '', strtolower($colDefinition['Type'])) === str_replace(' ', '', strtolower($type)) &&
+                        strtolower($colDefinition['Null']) == strtolower($null) &&
+                        $colDefinition['Default'] == $default) {
                     return true;
                 }
             }

@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Sitemap\Element;
 
-use Pimcore\Model\Element\AbstractElement;
+use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Sitemap\GeneratorInterface;
 use Presta\SitemapBundle\Sitemap\Url\Url;
 
@@ -76,12 +76,12 @@ abstract class AbstractElementGenerator implements GeneratorInterface
     /**
      * Determines if the element can be added.
      *
-     * @param AbstractElement $element
+     * @param ElementInterface $element
      * @param GeneratorContextInterface $context
      *
      * @return bool
      */
-    protected function canBeAdded(AbstractElement $element, GeneratorContextInterface $context): bool
+    protected function canBeAdded(ElementInterface $element, GeneratorContextInterface $context): bool
     {
         foreach ($this->filters as $filter) {
             if (!$filter->canBeAdded($element, $context)) {
@@ -96,12 +96,12 @@ abstract class AbstractElementGenerator implements GeneratorInterface
      * Determines if the element handles children (only used from generators
      * supporting tree structures).
      *
-     * @param AbstractElement $element
+     * @param ElementInterface $element
      * @param GeneratorContextInterface $context
      *
      * @return bool
      */
-    protected function handlesChildren(AbstractElement $element, GeneratorContextInterface $context): bool
+    protected function handlesChildren(ElementInterface $element, GeneratorContextInterface $context): bool
     {
         foreach ($this->filters as $filter) {
             if (!$filter->handlesChildren($element, $context)) {
@@ -117,12 +117,12 @@ abstract class AbstractElementGenerator implements GeneratorInterface
      * or null to exclude the Url.
      *
      * @param Url $url
-     * @param AbstractElement $element
+     * @param ElementInterface $element
      * @param GeneratorContextInterface $context
      *
      * @return null|Url
      */
-    protected function process(Url $url, AbstractElement $element, GeneratorContextInterface $context)
+    protected function process(Url $url, ElementInterface $element, GeneratorContextInterface $context)
     {
         foreach ($this->processors as $processor) {
             $url = $processor->process($url, $element, $context);

@@ -1,7 +1,7 @@
 # Document Inheritance 
 
 The *Content Master Document* setting, allows a document to inherit all of its contents from any other document which can 
-then be overwritten individually on field level. 
+then be overwritten individually on field level. Notice: Properties are not inherited via Content Master Documents.
 
 If this setting is selected and *Apply new master document* is clicked, all contents will be erased from the current 
 document and inherited from the master document. 

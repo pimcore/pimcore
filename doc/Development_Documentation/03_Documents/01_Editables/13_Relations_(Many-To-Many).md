@@ -34,23 +34,6 @@ The relations editable provides many to many relation to other Pimcore elements 
 
 The code below is responsible for showing a list of elements types related to the relations editable. 
 
-<div class="code-section">
-
-```php
-<p><?= $this->translate("Types of elements"); ?>:</p>
-<?php if($this->editmode): ?>
-    <?= $this->relations("objectPaths"); ?>
-<?php else: ?>
-    <ul>
-        <?php foreach($this->relations("objectPaths") as $element):
-            /** @var \Pimcore\Model\Element\ElementInterface $element */
-            ?>
-            <li><?= $element->getType(); ?></li>
-        <?php endforeach; ?>
-    </ul>
-<?php endif; ?>
-```
-
 ```twig
 <p>{{ "Types of elements" | trans }}:</p>
 {% if editmode %}
@@ -63,7 +46,7 @@ The code below is responsible for showing a list of elements types related to th
 </ul>
 {% endif %}
 ```
-</div>
+
 
 Picture below, presents the editmode preview:
 
@@ -86,23 +69,10 @@ array(6) {
 }
 ```
 
-
-
 ### Example with allowed types and subtypes
 Similar to the single relation editable, this editable also could specify allowed `types`, `subtypes` and `classes`. 
 For example:
-<div class="code-section">
 
-```php
-<?= $this->relations("objectPaths", [
-    "types" => ["asset","object"],
-    "subtypes" => [
-        "asset" => ["video","image"],
-        "object" => ["object"]
-     ],
-    "classes" => ["person"]
-]); ?>
-```
 ```twig
 {{ pimcore_relations("objectPaths", {
     "types": ["asset","object"],
@@ -113,6 +83,6 @@ For example:
     "classes": ["person"]
 }) }}
 ```
-</div>
+
 Now, a user is not able to add other elements than specified in the types configuration part.
 

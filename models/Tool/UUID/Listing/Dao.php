@@ -21,6 +21,8 @@ use Pimcore\Model;
 use Pimcore\Model\Tool\UUID;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Tool\UUID\Listing $model
  */
 class Dao extends Model\Listing\Dao\AbstractDao
@@ -48,13 +50,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function getTotalCount()
     {
-        $amount = 0;
-
         try {
-            $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . UUID\Dao::TABLE_NAME .' ' . $this->getCondition(), $this->model->getConditionVariables());
+            return (int) $this->db->fetchOne('SELECT COUNT(*) FROM ' . UUID\Dao::TABLE_NAME .' ' . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
+            return 0;
         }
-
-        return $amount;
     }
 }

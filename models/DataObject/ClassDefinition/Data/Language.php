@@ -17,12 +17,11 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Pimcore\Model;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Tool;
 
 class Language extends Model\DataObject\ClassDefinition\Data\Select
 {
-    use Model\DataObject\Traits\SimpleComparisonTrait;
-
     /**
      * Static type of this element
      *
@@ -88,6 +87,18 @@ class Language extends Model\DataObject\ClassDefinition\Data\Select
         $obj->configureOptions();
 
         return $obj;
+    }
+
+    /**
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        if (Service::doRemoveDynamicOptions()) {
+            $this->options = null;
+        }
+
+        return $this;
     }
 
     public function isFilterable(): bool

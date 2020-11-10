@@ -646,16 +646,23 @@ class DataObjectHelperController extends AdminController
         $settings['shareGlobally'] = $sharedGlobally ?? null;
         $settings['isShared'] = !$gridConfigId || ($shared ?? null);
 
+        $context = $gridConfig['context'] ?? null;
+        if ($context) {
+            $context = json_decode($context, true);
+        }
+
         return [
-            'sortinfo' => isset($gridConfig['sortinfo']) ? $gridConfig['sortinfo'] : false,
+            'sortinfo' => $gridConfig['sortinfo'] ?? false,
             'language' => $language,
             'availableFields' => $availableFields,
             'settings' => $settings,
-            'onlyDirectChildren' => isset($gridConfig['onlyDirectChildren']) ? $gridConfig['onlyDirectChildren'] : false,
-            'pageSize' => isset($gridConfig['pageSize']) ? $gridConfig['pageSize'] : false,
+            'onlyDirectChildren' => $gridConfig['onlyDirectChildren'] ?? false,
+            'pageSize' => $gridConfig['pageSize'] ?? false,
             'availableConfigs' => $availableConfigs,
             'sharedConfigs' => $sharedConfigs,
-
+            'context' => $context,
+            'sqlFilter' => $gridConfig['sqlFilter'] ?? '',
+            'searchFilter' => $gridConfig['searchFilter'] ?? '',
         ];
     }
 
@@ -1067,6 +1074,7 @@ class DataObjectHelperController extends AdminController
         if ($object->isAllowed('list')) {
             try {
                 $classId = $request->get('class_id');
+                $context = $request->get('context');
 
                 $searchType = $request->get('searchType');
 
@@ -1074,6 +1082,9 @@ class DataObjectHelperController extends AdminController
                 $gridConfigData = $this->decodeJson($request->get('gridconfig'));
                 $gridConfigData['pimcore_version'] = Version::getVersion();
                 $gridConfigData['pimcore_revision'] = Version::getRevision();
+
+                $gridConfigData['context'] = $context;
+
                 unset($gridConfigData['settings']['isShared']);
 
                 $metadata = $request->get('settings');
@@ -1403,7 +1414,7 @@ class DataObjectHelperController extends AdminController
             $eventData->setAdditionalData($additionalData);
             $eventData->setContext($context);
 
-            $eventDispatcher->dispatch(DataObjectImportEvents::PREVIEW, $eventData);
+            $eventDispatcher->dispatch($eventData, DataObjectImportEvents::PREVIEW);
 
             $context = $eventData->getContext();
 
@@ -1412,8 +1423,9 @@ class DataObjectHelperController extends AdminController
             $paramsBag['object1'] = $object1;
             $paramsBag['object2'] = $object2;
             $paramsBag['isImportPreview'] = true;
+            $paramsBag['validLanguages'] = Tool::getValidLanguages();
 
-            $response = $this->render('PimcoreAdminBundle:Admin/DataObject/DataObject:diffVersions.html.php', $paramsBag);
+            $response = $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/diffVersions.html.twig', $paramsBag);
 
             return $response;
         } catch (\Exception $e) {
@@ -1562,11 +1574,10 @@ class DataObjectHelperController extends AdminController
             } elseif ($nbFields === count($fields)) {
                 $rows++;
             } else {
-                $translator = $this->get('translator');
 
                 return $this->adminJson([
                     'success' => false,
-                    'message' => $translator->trans('different_number_of_columns', [], 'admin'),
+                    'message' => $this->trans('different_number_of_columns', [], 'admin'),
                 ]);
             }
         }
@@ -1682,7 +1693,7 @@ class DataObjectHelperController extends AdminController
         $eventData->setContext($context);
 
         if ($job == 1) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::BEFORE_START, $eventData);
+            $eventDispatcher->dispatch($eventData, DataObjectImportEvents::BEFORE_START);
 
             if (!copy($originalFile, $file)) {
                 throw new \Exception('failed to copy file');
@@ -1732,15 +1743,15 @@ class DataObjectHelperController extends AdminController
                 $eventData->setObject($object);
                 $eventData->setRowData($rowData);
 
-                $eventDispatcher->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
+                $eventDispatcher->dispatch($eventData, DataObjectImportEvents::PRE_SAVE);
 
                 $object->setUserModification($this->getAdminUser()->getId());
                 $object->save();
 
-                $eventDispatcher->dispatch(DataObjectImportEvents::POST_SAVE, $eventData);
+                $eventDispatcher->dispatch($eventData, DataObjectImportEvents::POST_SAVE);
 
                 if ($job >= $importJobTotal) {
-                    $eventDispatcher->dispatch(DataObjectImportEvents::DONE, $eventData);
+                    $eventDispatcher->dispatch($eventData, DataObjectImportEvents::DONE);
                 }
 
                 return $this->adminJson(['success' => true, 'rowId' => $rowId, 'message' => $object->getFullPath(), 'objectId' => $object->getId()]);
@@ -1857,12 +1868,30 @@ class DataObjectHelperController extends AdminController
         $addTitles = $request->get('initial');
 
         $requestedLanguage = $this->extractLanguage($request);
-        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $addTitles);
+
+        $contextFromRequest = $request->get('context');
+        if ($contextFromRequest) {
+            $contextFromRequest = json_decode($contextFromRequest, true);
+        }
+
+        $context = [
+            'source' => 'pimcore-export',
+        ];
+
+        if (is_array($contextFromRequest)) {
+            $context = array_merge($context, $contextFromRequest);
+        }
+
+        $csv = DataObject\Service::getCsvData($requestedLanguage, $localeService, $list, $fields, $addTitles, $context);
 
         $fp = fopen($this->getCsvFile($fileHandle), 'a');
 
         $firstLine = true;
         $lineCount = count($csv);
+
+        if (!$addTitles) {
+            fwrite($fp, "\r\n");
+        }
 
         for ($i = 0; $i < $lineCount; $i++) {
             $line = $csv[$i];
@@ -1871,7 +1900,7 @@ class DataObjectHelperController extends AdminController
                 $line = implode($delimiter, $line);
                 fwrite($fp, $line);
             } else {
-                fputs($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)));
+                fwrite($fp, implode($delimiter, array_map([$this, 'encodeFunc'], $line)));
             }
             if ($i < $lineCount - 1) {
                 fwrite($fp, "\r\n");
@@ -2038,7 +2067,6 @@ class DataObjectHelperController extends AdminController
                             $requestedLanguage = $params['language'];
                             if ($requestedLanguage) {
                                 if ($requestedLanguage != 'default') {
-                                    //                $this->get('translator')->setLocale($requestedLanguage);
                                     $request->setLocale($requestedLanguage);
                                 }
                             } else {

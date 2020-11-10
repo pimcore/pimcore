@@ -69,7 +69,7 @@ class Thumbnail
                 'filesystemPath' => $fsPath,
                 'frontendPath' => $path,
             ]);
-            \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
+            \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
             $path = $event->getArgument('frontendPath');
         }
 
@@ -134,10 +134,11 @@ class Thumbnail
         }
 
         if ($this->hasListeners(AssetEvents::IMAGE_THUMBNAIL)) {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::IMAGE_THUMBNAIL, new GenericEvent($this, [
+            $event = new GenericEvent($this, [
                 'deferred' => $deferred,
                 'generated' => $generated,
-            ]));
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::IMAGE_THUMBNAIL);
         }
     }
 
@@ -204,7 +205,7 @@ class Thumbnail
         $w3cImgAttributes = ['alt', 'align', 'border', 'height', 'hspace', 'ismap', 'longdesc', 'usemap',
             'vspace', 'width', 'class', 'dir', 'id', 'lang', 'style', 'title', 'xml:lang', 'onmouseover',
             'onabort', 'onclick', 'ondblclick', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseup',
-            'onkeydown', 'onkeypress', 'onkeyup', 'itemprop', 'itemscope', 'itemtype', ];
+            'onkeydown', 'onkeypress', 'onkeyup', 'itemprop', 'itemscope', 'itemtype', 'loading', ];
 
         $customAttributes = [];
         if (isset($options['attributes']) && is_array($options['attributes'])) {
@@ -320,8 +321,9 @@ class Thumbnail
         // $this->getConfig() can be empty, the original image is returned
         if ($this->getConfig() && ($this->getConfig()->hasMedias() || $this->getConfig()->getForcePictureTag())) {
             // output the <picture> - element
-            $isWebPAutoSupport = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
-            $isAutoFormat = (strtolower($this->getConfig()->getFormat()) === 'source' && $isWebPAutoSupport) ? true : false;
+            $config = \Pimcore\Config::getSystemConfiguration('assets');
+            $isWebPAutoSupport = $config['image']['thumbnails']['webp_auto_support'] ?? false;
+            $isAutoFormat = ($isWebPAutoSupport && strtolower($this->getConfig()->getFormat()) === 'source') ? true : false;
             $webpSupportBackup = null;
 
             if ($isAutoFormat) {

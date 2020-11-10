@@ -71,7 +71,7 @@ class InputQuantityValue extends QuantityValue
             $dataObject = $this->getNewDataObject($data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
 
             if (isset($params['owner'])) {
-                $dataObject->setOwner($params['owner'], $params['fieldname'], $params['language']);
+                $dataObject->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
             }
 
             return $dataObject;
@@ -146,44 +146,6 @@ class InputQuantityValue extends QuantityValue
         }
 
         return $value;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param Model\DataObject\Concrete|null $object
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return null|InputQuantityValueDataObject
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } else {
-            $value = (array) $value;
-            if (array_key_exists('value', $value) && array_key_exists('unit', $value) && array_key_exists('unitAbbreviation', $value)) {
-                $unitId = $value['unit'];
-                if ($idMapper) {
-                    $unitId = $idMapper->getMappedId('unit', $unitId);
-                }
-
-                $unit = Model\DataObject\QuantityValue\Unit::getById($unitId);
-                if ($unit && $unit->getAbbreviation() == $value['unitAbbreviation']) {
-                    return $this->getNewDataObject($value, $unitId);
-                } elseif (!$unit && is_null($value['unit'])) {
-                    return $this->getNewDataObject($value);
-                } else {
-                    throw new \Exception(get_class($this).': cannot get values from web service import - unit id and unit abbreviation do not match with local database');
-                }
-            } else {
-                throw new \Exception(get_class($this).': cannot get values from web service import - invalid data');
-            }
-        }
     }
 
     /**

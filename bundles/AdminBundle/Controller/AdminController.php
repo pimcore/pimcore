@@ -18,16 +18,31 @@ use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
 use Pimcore\Controller\Controller;
+use Pimcore\Extension\Bundle\PimcoreBundleManager;
+use Pimcore\Logger;
 use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AdminController extends Controller implements AdminControllerInterface
 {
+
+    public static function getSubscribedServices()
+    {
+        $services = parent::getSubscribedServices();
+        $services['translator'] = TranslatorInterface::class;
+        $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
+        $services[PimcoreBundleManager::class] = PimcoreBundleManager::class;
+        $services['pimcore_admin.serializer'] = '?Pimcore\\Admin\\Serializer';
+
+        return $services;
+    }
+
     /**
      * @inheritDoc
      */
@@ -72,7 +87,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     protected function checkPermission($permission)
     {
         if (!$this->getAdminUser() || !$this->getAdminUser()->isAllowed($permission)) {
-            $this->get('monolog.logger.security')->error(
+            Logger::error(
                 'User {user} attempted to access {permission}, but has no permission to do so',
                 [
                     'user' => $this->getAdminUser()->getName(),
@@ -113,7 +128,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
         }
 
         if (!$this->getAdminUser() || !$allowed) {
-            $this->get('monolog.logger.security')->error(
+            Logger::error(
                 'User {user} attempted to access {permission}, but has no permission to do so',
                 [
                     'user' => $this->getAdminUser()->getName(),
@@ -128,11 +143,11 @@ abstract class AdminController extends Controller implements AdminControllerInte
     /**
      * Check permission against all controller actions. Can optionally exclude a list of actions.
      *
-     * @param FilterControllerEvent $event
+     * @param ControllerEvent $event
      * @param string $permission
      * @param array $unrestrictedActions
      */
-    protected function checkActionPermission(FilterControllerEvent $event, string $permission, array $unrestrictedActions = [])
+    protected function checkActionPermission(ControllerEvent $event, string $permission, array $unrestrictedActions = [])
     {
         $actionName = null;
         $controller = $event->getController();
@@ -153,6 +168,8 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @param array $context Context to pass to serializer when using serializer component
      * @param int $options   Options passed to json_encode
      * @param bool $useAdminSerializer
+     *
+     * @TODO check if $useAdminSerializer still required?
      *
      * @return string
      */

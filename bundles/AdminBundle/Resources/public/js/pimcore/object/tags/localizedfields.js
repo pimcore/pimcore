@@ -20,7 +20,7 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
     tabPanelDefaultConfig: {
         monitorResize: true,
-        cls: "object_field",
+        cls: "object_field object_field_type_localizedfields",
         activeTab: 0,
         height: "auto",
         items: [],
@@ -191,6 +191,10 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
 
                         if (this.fieldConfig.labelWidth) {
                             item.labelWidth = this.fieldConfig.labelWidth;
+                        }
+
+                        if (this.fieldConfig.labelAlign) {
+                            item.labelAlign = this.fieldConfig.labelAlign;
                         }
 
                         if (side == "left") {
@@ -433,9 +437,12 @@ pimcore.object.tags.localizedfields = Class.create(pimcore.object.tags.abstract,
                                 for (var i = 0; i < l.childs.length; i++) {
                                     var childConfig = l.childs[i];
 
-                                    // inherit label width from localized fields configuration
+                                    // inherit label width/align from localized fields configuration
                                     if (this.fieldConfig.labelWidth) {
                                         childConfig.labelWidth = this.fieldConfig.labelWidth;
+                                    }
+                                    if (this.fieldConfig.labelAlign) {
+                                        childConfig.labelAlign = this.fieldConfig.labelAlign;
                                     }
 
                                     var children = this.getRecursiveLayout(childConfig, !editable, runtimeContext, false, false, dataProvider, true);

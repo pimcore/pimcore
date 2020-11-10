@@ -19,14 +19,16 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\ClassDefinition\Service;
 
-class Select extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class Select extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, \JsonSerializable
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
     use DataObject\Traits\DefaultValueTrait;
+    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -518,9 +520,9 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         $name = $params['name'] ?: $this->name;
 
         if ($operator === '=') {
-            return '`'.$name.'` = '."'$value'".' ';
+            return '`'.$name.'` = '."\"$value\"".' ';
         } elseif ($operator === 'LIKE') {
-            return '`'.$name.'` LIKE '."'%$value%'".' ';
+            return '`'.$name.'` LIKE '."\"%$value%\"".' ';
         }
 
         return null;
@@ -559,5 +561,17 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
         }
 
         return $this->getDefaultValue();
+    }
+
+    /**
+     * @return $this
+     */
+    public function jsonSerialize()
+    {
+        if ($this->getOptionsProviderClass() && Service::doRemoveDynamicOptions()) {
+            $this->options = null;
+        }
+
+        return $this;
     }
 }

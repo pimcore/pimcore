@@ -33,6 +33,9 @@ use Pimcore\Localization\LocaleService;
 use Pimcore\Model\DataObject\Objectbrick\Data\PaymentProviderHeidelPay;
 use Pimcore\Model\DataObject\OnlineShopOrder;
 
+/**
+ * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-heidelpay" in Pimcore 7.
+ */
 class Heidelpay extends AbstractPayment implements PaymentInterface
 {
     /**

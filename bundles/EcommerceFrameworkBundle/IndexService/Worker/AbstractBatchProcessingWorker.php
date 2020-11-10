@@ -83,7 +83,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
           KEY `update_worker_index` (`tenant`,`crc_current`,`crc_index`,`worker_timestamp`),
           KEY `preparation_status_index` (`tenant`,`preparation_status`),
           KEY `in_preparation_queue_index` (`tenant`,`in_preparation_queue`),
-          KEY `worker_id_index` (`worker_id`)        
+          KEY `worker_id_index` (`worker_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
     }
 
@@ -240,7 +240,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                     } catch (\Throwable $e) {
                         $event = new PreprocessAttributeErrorEvent($attribute, $e);
                         $event->setSubObjectId($subObjectId);
-                        $this->eventDispatcher->dispatch(IndexServiceEvents::ATTRIBUTE_PROCESSING_ERROR, $event);
+                        $this->eventDispatcher->dispatch($event, IndexServiceEvents::ATTRIBUTE_PROCESSING_ERROR);
 
                         if ($event->doSkipAttribute()) {
                             Logger::err(
@@ -278,7 +278,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                     $e = new \Exception("Could not encode product data for updating index. Json encode error code was {$jsonLastError}, ObjectId was {$subObjectId}.");
                     $event = new PreprocessErrorEvent($e);
                     $event->setSubObjectId($subObjectId);
-                    $this->eventDispatcher->dispatch(IndexServiceEvents::GENERAL_PREPROCESSING_ERROR, $event);
+                    $this->eventDispatcher->dispatch($event, IndexServiceEvents::GENERAL_PREPROCESSING_ERROR);
                     if ($event->doThrowException()) {
                         throw $e;
                     } else {
@@ -385,7 +385,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
         if ($object instanceof Concrete) {
 
             //need check, if there are sub objects because update on empty result set is too slow
-            $objects = $this->db->fetchCol('SELECT o_id FROM objects WHERE o_path LIKE ?', [$object->getFullPath() . '/%']);
+            $objects = $this->db->fetchCol('SELECT o_id FROM objects WHERE o_path LIKE ?', [$this->db->escapeLike($object->getFullPath()) . '/%']);
             if ($objects) {
                 $this->executeTransactionalQuery(function () use ($objects) {
                     $updateStatement = 'UPDATE ' . $this->getStoreTableName() . ' SET in_preparation_queue = 1 WHERE tenant = ? AND o_id IN ('.implode(',', $objects).')';
@@ -418,7 +418,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
         $workerTimestamp = time();
         $this->db->query(
             'UPDATE ' . $this->getStoreTableName() . ' SET preparation_worker_id = ?, preparation_worker_timestamp = ? WHERE tenant = ? AND in_preparation_queue = 1 '
-           .'AND (ISNULL(preparation_worker_timestamp) OR preparation_worker_timestamp < ?) ORDER BY preparation_status ASC LIMIT ' . intval($limit),
+           .'AND (ISNULL(preparation_worker_timestamp) OR preparation_worker_timestamp < ?) ORDER BY preparation_status ASC LIMIT ' .(int)$limit,
             [$workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()]
         );
 
@@ -476,9 +476,9 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             //statement can take several seconds on large-scale systems.
 
             $this->db->beginTransaction();
-            $query = "SELECT o_id, data, metadata FROM {$this->getStoreTableName()} 
+            $query = "SELECT o_id, data, metadata FROM {$this->getStoreTableName()}
                   WHERE (crc_current != crc_index OR ISNULL(crc_index)) AND tenant = ? AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT "
-                . intval($limit) . ' FOR UPDATE';
+                .(int)$limit. ' FOR UPDATE';
 
             $entries = $this->db->fetchAll($query, [$this->name, $workerTimestamp - $this->getWorkerTimeout()]);
 

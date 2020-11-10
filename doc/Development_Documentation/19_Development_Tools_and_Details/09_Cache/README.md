@@ -6,7 +6,7 @@ Every cache item is tagged with dependencies so the system is able to evict depe
 a referenced object changes.
 
 The second cache is the output cache, which you can use either as pure page cache (configurable 
-in system settings), or as in-template cache (see more at [view helpers](../../02_MVC/02_Template/02_Templating_Helpers/README.md)).
+in system settings), or as in-template cache (see more at [template extensions](../../02_MVC/02_Template/02_Template_Extensions/README.md)).
 
 The third cache is used for add-ons like the glossary, translations, database schemes, and so on. 
 The behavior of the caches is controlled by the add-on itself.
@@ -109,7 +109,7 @@ If you don't need the transactional tagging functionality as used in the core yo
 integrated with Pimcore's cache clearing functionality.
  
 #### Example of custom usage in an action
-```php 
+```php
 $lifetime = 99999;
 $cacheKey = md5($uri);
 if(!$data = \Pimcore\Cache::load($cacheKey)) {
@@ -123,7 +123,7 @@ if(!$data = \Pimcore\Cache::load($cacheKey)) {
 ```
 
 #### Overview of functionalities
-```php 
+```php
 // disable the cache globally
 \Pimcore\Cache::disable();
  

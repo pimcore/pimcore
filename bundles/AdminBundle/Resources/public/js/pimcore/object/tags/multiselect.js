@@ -142,7 +142,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
             editable: false,
             fieldLabel: this.fieldConfig.title,
             store: store,
-            componentCls: "object_field",
+            componentCls: "object_field object_field_type_" + this.type,
             valueField: 'id',
             labelWidth: this.fieldConfig.labelWidth ? this.fieldConfig.labelWidth : 100,
             listeners: {
@@ -167,7 +167,13 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
             options.width = 300;
         }
 
-        options.width += options.labelWidth;
+        if (this.fieldConfig.labelAlign) {
+            options.labelAlign = this.fieldConfig.labelAlign;
+        }
+
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
+            options.width += options.labelWidth;
+        }
 
         if (this.fieldConfig.height) {
             options.height = this.fieldConfig.height;
@@ -210,6 +216,13 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
         if(this.isRendered()) {
             return this.component.getValue();
         }
+
+        let res = [];
+        if (this.data) {
+            res = [this.data];
+        }
+
+        return res;
     },
 
     getName: function () {

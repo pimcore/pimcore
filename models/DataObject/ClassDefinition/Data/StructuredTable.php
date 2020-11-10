@@ -20,8 +20,9 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
-class StructuredTable extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class StructuredTable extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
+    use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
@@ -273,7 +274,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         $structuredTable = new DataObject\Data\StructuredTable($structuredData);
 
         if (isset($params['owner'])) {
-            $structuredTable->setOwner($params['owner'], $params['fieldname'], $params['language']);
+            $structuredTable->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
         }
 
         return $structuredTable;
@@ -469,72 +470,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $webserviceArray = [];
-        $table = $this->getDataFromObjectParam($object, $params);
-
-        if ($table instanceof DataObject\Data\StructuredTable) {
-            $dataArray = $table->getData();
-            foreach ($this->getRows() as $r) {
-                foreach ($this->getCols() as $c) {
-                    $name = $r['key'] . '#' . $c['key'];
-                    $webserviceArray[$name] = $dataArray[$r['key']][$c['key']];
-                }
-            }
-
-            return $webserviceArray;
-        }
-
-        return null;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param DataObject\Concrete|null $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed|void
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } else {
-            if ($value instanceof \stdClass) {
-                $value = (array) $value;
-            }
-            if (is_array($value)) {
-                $dataArray = [];
-                foreach ($this->getRows() as $r) {
-                    foreach ($this->getCols() as $c) {
-                        $name = $r['key'] . '#' . $c['key'];
-                        $dataArray[$r['key']][$c['key']] = $value[$name];
-                    }
-                }
-
-                return new DataObject\Data\StructuredTable($dataArray);
-            } else {
-                throw new \Exception('cannot get values from web service import - invalid data');
-            }
-        }
-    }
-
-    /**
      * @return array|string
      */
     public function getColumnType()
@@ -658,5 +593,20 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         $this->labelFirstCell = $masterDefinition->labelFirstCell;
         $this->cols = $masterDefinition->cols;
         $this->rows = $masterDefinition->rows;
+    }
+
+    /**
+     *
+     * @param DataObject\Data\StructuredTable|null $oldValue
+     * @param DataObject\Data\StructuredTable|null $newValue
+     *
+     * @return bool
+     */
+    public function isEqual($oldValue, $newValue): bool
+    {
+        $oldData = $oldValue instanceof DataObject\Data\StructuredTable ? $oldValue->getData() : [];
+        $newData = $newValue instanceof DataObject\Data\StructuredTable ? $newValue->getData() : [];
+
+        return $this->isEqualArray($oldData, $newData);
     }
 }

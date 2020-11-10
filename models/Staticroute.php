@@ -156,7 +156,7 @@ class Staticroute extends AbstractModel
         } catch (\Exception $e) {
             try {
                 $route = new self();
-                $route->setId(intval($id));
+                $route->setId((int)$id);
                 $route->getDao()->getById();
                 \Pimcore\Cache\Runtime::set($cacheKey, $route);
             } catch (\Exception $e) {
@@ -601,7 +601,7 @@ class Staticroute extends AbstractModel
             'reset' => $reset,
             'encode' => $encode,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::STATICROUTE_PATH, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::STATICROUTE_PATH);
         $url = $event->getArgument('frontendPath');
 
         return $url;

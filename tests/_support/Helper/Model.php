@@ -307,6 +307,69 @@ class Model extends AbstractDefinitionHelper
     }
 
     /**
+     * Set up a class used for Block Test.
+     *
+     * @param string $name
+     * @param string $filename
+     *
+     * @return ClassDefinition|null
+     *
+     * @throws \Exception
+     */
+    public function setupPimcoreClass_Block($name = 'unittestBlock', $filename = 'block-import.json')
+    {
+        /** @var ClassManager $cm */
+        $cm = $this->getClassManager();
+
+        if (!$class = $cm->getClass($name)) {
+            $root = new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel('root');
+            $panel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Panel())->setName('MyLayout');
+            $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
+            $rootPanel->addChild($panel);
+
+            $block = new ClassDefinition\Data\Block();
+            $block->setName('testblock');
+
+            $block->addChild($this->createDataChild('input', 'blockinput'));
+            $block->addChild($this->createDataChild('link', 'blocklink'));
+            $block->addChild($this->createDataChild('hotspotimage', 'blockhotspotimage'));
+
+            $block->addChild($this->createDataChild('advancedManyToManyRelation', 'blockadvancedRelations')
+                ->setAllowMultipleAssignments(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
+                ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta'],
+                ]));
+
+            $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
+            $lFields->setName('localizedfields');
+
+            $lblock = new ClassDefinition\Data\Block();
+            $lblock->setName('ltestblock');
+
+            $lblock->addChild($this->createDataChild('input', 'lblockinput'));
+            $lblock->addChild($this->createDataChild('link', 'lblocklink'));
+            $lblock->addChild($this->createDataChild('hotspotimage', 'lblockhotspotimage'));
+
+            $lblock->addChild($this->createDataChild('advancedManyToManyRelation', 'lblockadvancedRelations')
+                ->setAllowMultipleAssignments(false)
+                ->setDocumentTypes([])->setAssetTypes([])->setClasses(['Unittest'])
+                ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true)
+                ->setColumns([ ['position' => 1, 'key' => 'meta', 'type' => 'text', 'label' => 'meta'],
+                ]));
+
+            $lFields->addChild($lblock);
+
+            $panel->addChild($block);
+            $panel->addChild($lFields);
+            $root->addChild($rootPanel);
+            $class = $this->createClass($name, $root, $filename, true);
+        }
+
+        return $class;
+    }
+
+    /**
      * Set up a class which (hopefully) contains all data types
      *
      * @param string $name
@@ -393,6 +456,7 @@ class Model extends AbstractDefinitionHelper
             $panel->addChild($this->createDataChild('image'));
             $panel->addChild($this->createDataChild('hotspotimage'));
             $panel->addChild($this->createDataChild('checkbox'));
+            $panel->addChild($this->createDataChild('booleanSelect'));
             $panel->addChild($this->createDataChild('table'));
             $panel->addChild($this->createDataChild('structuredTable', 'structuredtable')
                 ->setCols([
@@ -525,6 +589,7 @@ class Model extends AbstractDefinitionHelper
         $def->setName($name);
         $def->setLayoutDefinitions($layout);
         $def->setAllowInherit($inheritanceAllowed);
+        $def->setGenerateTypeDeclarations(true);
         $json = ClassDefinition\Service::generateClassDefinitionJson($def);
         $cm->saveJson($filename, $json);
 
@@ -656,8 +721,12 @@ class Model extends AbstractDefinitionHelper
             $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
             $rootPanel->addChild($panel);
 
+            $panel->addChild($this->createDataChild('input', 'normalInput'));
+
             $lFields = new \Pimcore\Model\DataObject\ClassDefinition\Data\Localizedfields();
             $lFields->setName('localizedfields');
+
+            $lFields->addChild($this->createDataChild('input', 'linput'));
 
             $lFields->addChild($this->createDataChild('manyToManyObjectRelation', 'lobjects')
                 ->setClasses(['RelationTest'])
@@ -787,6 +856,8 @@ class Model extends AbstractDefinitionHelper
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses(['RelationTest'])
                 ->setDocumentsAllowed(false)->setAssetsAllowed(false)->setObjectsAllowed(true));
 
+            $lFields->addChild($this->createDataChild('input', 'linput'));
+
             $lFields->addChild($this->createDataChild('advancedManyToManyObjectRelation', 'ladvancedObjects')
                 ->setAllowMultipleAssignments(false)
                 ->setAllowedClassId('RelationTest')
@@ -864,6 +935,7 @@ class Model extends AbstractDefinitionHelper
         $def = new Definition();
         $def->setKey($name);
         $def->setLayoutDefinitions($layout);
+        $def->setGenerateTypeDeclarations(true);
         $json = ClassDefinition\Service::generateFieldCollectionJson($def);
         $cm->saveJson($filename, $json);
 
@@ -885,6 +957,7 @@ class Model extends AbstractDefinitionHelper
         $def->setKey($name);
         $def->setLayoutDefinitions($layout);
         $def->setClassDefinitions($classDefinitions);
+        $def->setGenerateTypeDeclarations(true);
         $json = ClassDefinition\Service::generateObjectBrickJson($def);
         $cm->saveJson($filename, $json);
 

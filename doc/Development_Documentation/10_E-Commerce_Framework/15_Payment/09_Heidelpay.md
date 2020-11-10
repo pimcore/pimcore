@@ -33,7 +33,7 @@ definition [here](https://github.com/pimcore/pimcore/blob/master/bundles/Ecommer
 Setup payment provider in e-commerce framework configuration. The access keys you find
 in heidelpay documentation (or you will get them from heidelpay for production integrations). 
 
-```yml 
+```yml
 heidelpay:
     provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\Heidelpay
     profile: sandbox
@@ -52,8 +52,8 @@ Create view template for payment method selection. This view template
 - has an additional form that submits successful payment information (heidelpay payment id) back to Pimcore.  
 
 **Sample template with Creditcard, Paypal and Sofort** 
-```twig 
 
+```twig
 {% do pimcore_head_link().appendStylesheet('https://static.heidelpay.com/v1/heidelpay.css') %}
 {% do pimcore_head_script().appendFile('https://static.heidelpay.com/v1/heidelpay.js') %}
 {% do pimcore_inline_script().appendFile(asset('static/js/payment.js')) %} {# custom payment js, see below #}
@@ -161,10 +161,9 @@ Create view template for payment method selection. This view template
 </form>
 ```
 
-
 **Sample Javascript (payment.js) with Creditcard, Paypal and Sofort**
-```javascript
 
+```javascript
 $(document).ready(function() {
 
     let heidelpayInstance = new heidelpay(_config.accessKey, {locale: 'en-GB'});
@@ -255,16 +254,14 @@ $(document).ready(function() {
 
 
 });
-
 ```
-
 
 5) **Create Controller Action for Payment Selection**
 
 The only special thing in this controller action is to get public access key out of
 payment provider and assign it to the template. 
 
-```php 
+```php
 /**
  * @Route("/checkout-payment", name="shop-checkout-payment")
  *
@@ -351,14 +348,13 @@ public function paymentErrorAction(Request $request, LoggerInterface $logger)
 
     return $this->redirectToRoute('shop-checkout-payment');
 }
-
 ```
 
 
 7) **Create Controller Action for Commit Order**
 Finally commit order and redirect user to order success page. 
 
-```php 
+```php
 /**
  * @Route("/payment-commit-order", name="shop-commit-order")
  *

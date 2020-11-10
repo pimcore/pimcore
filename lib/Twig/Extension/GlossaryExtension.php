@@ -17,31 +17,24 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension;
 
-use Pimcore\Templating\Helper\Glossary;
+use Pimcore\Tool\Glossary\Processor;
 use Pimcore\Twig\TokenParser\GlossaryTokenParser;
 use Twig\Extension\AbstractExtension;
 
 class GlossaryExtension extends AbstractExtension
 {
     /**
-     * @var Glossary
+     * @var \Pimcore\Tool\Glossary\Processor
      */
-    private $glossaryHelper;
+    private $glossaryProcessor;
 
     /**
-     * @param Glossary $glossaryHelper
+     * @param \Pimcore\Tool\Glossary\Processor $glossaryProcessor
+     *
      */
-    public function __construct(Glossary $glossaryHelper)
+    public function __construct(Processor $glossaryProcessor)
     {
-        $this->glossaryHelper = $glossaryHelper;
-    }
-
-    /**
-     * @return Glossary
-     */
-    public function getGlossaryHelper(): Glossary
-    {
-        return $this->glossaryHelper;
+        $this->glossaryProcessor = $glossaryProcessor;
     }
 
     public function getTokenParsers(): array
@@ -49,5 +42,26 @@ class GlossaryExtension extends AbstractExtension
         return [
             new GlossaryTokenParser(),
         ];
+    }
+
+    public function start()
+    {
+        ob_start();
+    }
+
+    /**
+     * @param array $options
+     */
+    public function stop(array $options = [])
+    {
+        $contents = ob_get_clean();
+
+        if (empty($contents) || !is_string($contents)) {
+            $result = $contents;
+        } else {
+            $result = $this->glossaryProcessor->process($contents, $options);
+        }
+
+        echo $result;
     }
 }

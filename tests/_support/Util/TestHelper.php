@@ -2,13 +2,13 @@
 
 namespace Pimcore\Tests\Util;
 
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject as ObjectModel;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Model\Document;
-use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\Property;
 use Pimcore\Tests\Helper\DataType\TestDataHelper;
@@ -151,19 +151,19 @@ class TestHelper
             $d = [];
 
             if ($document instanceof Document\PageSnippet) {
-                $elements = $document->getElements();
+                $editables = $document->getEditables();
 
-                ksort($elements);
+                ksort($editables);
 
-                /** @var Document\Tag $value */
-                foreach ($elements as $key => $value) {
-                    if ($value instanceof Document\Tag\Video) {
+                /** @var Document\Editable $value */
+                foreach ($editables as $key => $value) {
+                    if ($value instanceof Document\Editable\Video) {
                         // with video can't use frontend(), it includes random id
-                        $d['element_' . $key] = $value->getName() . ':' . $value->type . '_' . $value->id;
-                    } elseif (!$value instanceof Document\Tag\Block) {
-                        $d['element_' . $key] = $value->getName() . ':' . $value->frontend();
+                        $d['editable_' . $key] = $value->getName() . ':' . $value->type . '_' . $value->id;
+                    } elseif (!$value instanceof Document\Editable\Block) {
+                        $d['editable_' . $key] = $value->getName() . ':' . $value->frontend();
                     } else {
-                        $d['element_' . $key] = $value->getName();
+                        $d['editable_' . $key] = $value->getName();
                     }
                 }
 
@@ -277,7 +277,7 @@ class TestHelper
                 return [];
             }
 
-            $localeService = \Pimcore::getContainer()->get('pimcore.locale');
+            $localeService = \Pimcore::getContainer()->get(LocaleServiceInterface::class);
             $localeBackup = $localeService->getLocale();
 
             $validLanguages = Tool::getValidLanguages();
@@ -486,6 +486,7 @@ class TestHelper
         $testDataHelper->fillMultiSelect($object, 'multiselect', $seed);
         $testDataHelper->fillUser($object, 'user', $seed);
         $testDataHelper->fillCheckbox($object, 'checkbox', $seed);
+        $testDataHelper->fillBooleanSelect($object, 'booleanSelect', $seed);
         $testDataHelper->fillWysiwyg($object, 'wysiwyg', $seed);
         $testDataHelper->fillPassword($object, 'password', $seed);
         $testDataHelper->fillMultiSelect($object, 'countries', $seed);
@@ -782,10 +783,10 @@ class TestHelper
     }
 
     /**
-     * @param AbstractElement $root
+     * @param ElementInterface $root
      * @param string $type
      */
-    public static function cleanUpTree(AbstractElement $root, $type)
+    public static function cleanUpTree(ElementInterface $root, $type)
     {
         if (!($root instanceof AbstractObject || $root instanceof Document || $root instanceof Asset)) {
             throw new \InvalidArgumentException(sprintf('Cleanup root type for %s needs to be one of: AbstractObject, Document, Asset', $type));
@@ -799,7 +800,7 @@ class TestHelper
             $children = $root->getChildren();
         }
 
-        /** @var AbstractElement|AbstractObject|Document|Asset $child */
+        /** @var ElementInterface $child */
         foreach ($children as $child) {
             codecept_debug(sprintf('Deleting %s %s (%d)', $type, $child->getFullPath(), $child->getId()));
             $child->delete();

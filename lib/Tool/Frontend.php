@@ -14,6 +14,7 @@
 
 namespace Pimcore\Tool;
 
+use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
 use Pimcore\Document\DocumentStack;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
@@ -128,13 +129,11 @@ class Frontend
     public static function isOutputCacheEnabled()
     {
         $container = \Pimcore::getContainer();
-
-        $serviceId = 'pimcore.event_listener.frontend.full_page_cache';
-        if (!$container->has($serviceId)) {
+        if (!$container->has(FullPageCacheListener::class)) {
             return false;
         }
 
-        $cacheService = $container->get($serviceId);
+        $cacheService = $container->get(FullPageCacheListener::class);
         if ($cacheService && $cacheService->isEnabled()) {
             return [
                 'enabled' => true,
@@ -150,8 +149,9 @@ class Frontend
      */
     public static function hasWebpSupport()
     {
-        $config = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['webp_auto_support'];
-        if ($config) {
+        $config = \Pimcore\Config::getSystemConfiguration('assets');
+        $isWebPAutoSupport = $config['image']['thumbnails']['webp_auto_support'] ?? false;
+        if ($isWebPAutoSupport) {
             if (self::hasClientWebpSupport() && self::hasDocumentWebpSupport()) {
                 return true;
             }
@@ -195,7 +195,7 @@ class Frontend
                 foreach ($browsersToCheck as $browser => $version) {
                     if (preg_match('@(' . $browser . ')/([\d]+)@', $userAgent, $matches)) {
                         if ($matches[1] == $browser) {
-                            if (intval($matches[2]) >= $version) {
+                            if ((int)$matches[2] >= $version) {
                                 return true;
                             } else {
 

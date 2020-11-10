@@ -14,6 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
+use Laminas\Paginator\Adapter\ArrayAdapter;
+use Laminas\Paginator\Paginator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -23,8 +25,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Statistic;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypeSingle;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
-use Zend\Paginator\Adapter\ArrayAdapter;
-use Zend\Paginator\Paginator;
 
 class Single extends AbstractTokenManager implements ExportableTokenManagerInterface
 {
@@ -34,7 +34,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
     {
         parent::__construct($configuration);
         if ($configuration instanceof VoucherTokenTypeSingle) {
-            $this->template = 'PimcoreEcommerceFrameworkBundle:voucher:voucher_code_tab_single.html.twig';
+            $this->template = '@PimcoreEcommerceFramework/voucher/voucher_code_tab_single.html.twig';
         } else {
             throw new InvalidConfigException('Invalid Configuration Class for type VoucherTokenTypeSingle.');
         }
@@ -77,7 +77,7 @@ class Single extends AbstractTokenManager implements ExportableTokenManagerInter
 
         if ($codes = $this->getCodes()) {
             $viewParamsBag['paginator'] = new Paginator(new ArrayAdapter($codes));
-            $viewParamsBag['count'] = sizeof($codes);
+            $viewParamsBag['count'] = count($codes);
         }
 
         $viewParamsBag['msg']['error'] = $params['error'];

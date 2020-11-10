@@ -1027,7 +1027,7 @@ pimcore.document.tree = Class.create({
             if(typeRecord.get("group")) {
                 if(!groups[menuOption][typeRecord.get("group")]) {
                     groups[menuOption][typeRecord.get("group")] = {
-                        text: typeRecord.get("group"),
+                        text: Ext.util.Format.htmlEncode(typeRecord.get("group")),
                         iconCls: "pimcore_icon_folder",
                         hideOnClick: false,
                         menu: {

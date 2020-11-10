@@ -19,10 +19,8 @@ namespace Pimcore\Model\Document\Targeting;
 
 interface TargetingDocumentInterface
 {
-    // this was kept "persona" for BC reasons and is one of the
-    // few parts where the term "persona" refers to a "target group"
-    const TARGET_GROUP_ELEMENT_PREFIX = 'persona_-';
-    const TARGET_GROUP_ELEMENT_SUFFIX = '-_';
+    const TARGET_GROUP_EDITABLE_PREFIX = 'persona_-';
+    const TARGET_GROUP_EDITABLE_SUFFIX = '-_';
 
     /**
      * Build target group element prefix for a given target group or for
@@ -33,7 +31,7 @@ interface TargetingDocumentInterface
      *
      * @return string
      */
-    public function getTargetGroupElementPrefix(int $targetGroupId = null): string;
+    public function getTargetGroupEditablePrefix(int $targetGroupId = null): string;
 
     /**
      * Adds target group prefix to element name if it is not already prefixed and
@@ -43,7 +41,7 @@ interface TargetingDocumentInterface
      *
      * @return string
      */
-    public function getTargetGroupElementName(string $name): string;
+    public function getTargetGroupEditableName(string $name): string;
 
     /**
      * Sets the target group to use
@@ -64,12 +62,12 @@ interface TargetingDocumentInterface
      *
      * @return bool
      */
-    public function hasTargetGroupSpecificElements(): bool;
+    public function hasTargetGroupSpecificEditables(): bool;
 
     /**
      * Returns targeting specific element names
      *
      * @return array
      */
-    public function getTargetGroupSpecificElementNames(): array;
+    public function getTargetGroupSpecificEditableNames(): array;
 }

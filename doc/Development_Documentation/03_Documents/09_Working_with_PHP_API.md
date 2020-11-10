@@ -53,8 +53,8 @@ if($document) {
     //the logic when the type of the document is page
     /** @var \Pimcore\Model\Document\Page $document */
 
-    /** @var \Pimcore\Model\Document\Tag\Wysiwyg $wysiwygElement */
-    $wysiwygElement = $document->getElement('content');
+    /** @var \Pimcore\Model\Document\Editable\Wysiwyg $wysiwygElement */
+    $wysiwygElement = $document->getEditable('content');
     var_dump($wysiwygElement->getData());
 
 }
@@ -64,8 +64,8 @@ You've probably guessed that if you want to change value of a chosen editable or
 
 ```php
 //...
-/** @var \Pimcore\Model\Document\Tag\Wysiwyg $wysiwygElement */
-$wysiwygElement = $document->getElement('content');
+/** @var \Pimcore\Model\Document\Editable\Wysiwyg $wysiwygElement */
+$wysiwygElement = $document->getEditable('content');
 $wysiwygElement->setDataFromResource('<p>Lorem Ipsum is simply dummy text of the printing and typesetting.</p>');
 $document->save(); //save changes in the document
 ```

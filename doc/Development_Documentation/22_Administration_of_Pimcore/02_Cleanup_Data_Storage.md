@@ -45,7 +45,7 @@ Delete: After 30 days
 
 Logs can be deleted manually at any time.  
 It's also possible to use a custom log rotator, for this purpose please deactivate the `logmaintenance` job in your
-maintenance command: `./bin/console pimcore:maintenance -e logmaintenance`
+maintenance command: `./bin/console pimcore:maintenance -J logmaintenance`
 
 ## Temporary Files
 Pimcore stores temporary files in 2 different locations, depending on whether they are public accessible or not.   

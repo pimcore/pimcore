@@ -174,8 +174,12 @@ class Csv
 
         if ($data['id']) {
             $redirect = Redirect::getById($data['id']);
-            $stats['updated']++;
-        } else {
+            if ($redirect instanceof Redirect) {
+                $stats['updated']++;
+            }
+        }
+
+        if (!$redirect instanceof Redirect) {
             $redirect = new Redirect();
             $stats['created']++;
         }

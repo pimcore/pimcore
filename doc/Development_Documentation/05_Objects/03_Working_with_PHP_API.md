@@ -7,7 +7,7 @@ with these objects via a comfortable PHP API and take full advantage of a IDE (e
 ## CRUD Operations
 The following code snippet indicates how to access, create and modify an object programmatically:
 
-```php 
+```php
 <?php
 
 use \Pimcore\Model\DataObject;
@@ -369,52 +369,61 @@ public function testAction( Request $request )
     $paginator = new \Zend\Paginator\Paginator($list);
     $paginator->setCurrentPageNumber( $request->get('page') );
     $paginator->setItemCountPerPage(10);
-    $this->view->paginator  = $paginator;
+
+    return $this->render('Test/Test.html.twig', [
+        'paginator' => $paginator,
+        'paginationVariables' => $paginator->getPages('Sliding')
+    ]);
 }
 ```
 ##### View
-```php
-<?php foreach($this->paginator as $item) { ?>
-    <h2>- <?= $item->getName(); ?></h2>
-<?php } ?>
- 
+```twig
+{% for item in paginator %}
+    <h2>{{ item.name }}</h2>
+{% endfor %}
 <br />
  
-<!-- pagination start -->
-<?=     $this->render("Backend/Includes/paging.html.php", get_object_vars($this->paginator->getPages("Sliding")), [
-       'urlprefix' => $this->document->getFullPath() . '?page=', // just example (this parameter could be used in paging.php to construct the URL)
-       'appendQueryString' => true // just example (this parameter could be used in paging.php to construct the URL)
-    ]); ?>
-<!-- pagination end -->
+{% include 'includes/pagination.html.twig' %}
 ```
 
-##### Partial Script (includes/paging.php)
-```php
-<div>
-    <ul class="pagination">
-        <!-- First page link -->
-        <li class="<?= (!isset($this->previous)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->first]); ?>">Start</a></li>
-  
-        <!-- Previous page link -->
-        <li class="<?= (!isset($this->previous)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->previous]); ?>">&lt; Previous</a></li>
- 
-        <!-- Numbered page links -->
-        <?php foreach ($this->pagesInRange as $page): ?>
-            <?php if ($page != $this->current): ?>
-                <li><a href="<?= $this->pimcoreUrl(['page' => $page]); ?>"><?= $page; ?></a></li>
-            <?php else: ?>
-                <li class="disabled"><a href="#"><?= $page; ?></a></li>
-            <?php endif; ?>
-        <?php endforeach; ?>
-         
-        <!-- Next page link -->
-        <li class="<?= (!isset($this->next)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->next]); ?>">Next &gt;</a></li>
-         
-        <!-- Last page link -->
-        <li class="<?= (!isset($this->next)) ? 'disabled' : ''; ?>"><a href="<?= $this->pimcoreUrl(['page' => $this->last]); ?>">End</a></li>
-         
+##### Partial Script (`includes/pagination.html.twig`)
+```twig
+<nav aria-label="Pagination">
+    <ul class="pagination justify-content-center">
+        {%  if(paginationVariables.previous is defined) %}
+            <li class="page-item">
+                <a class="page-link prev" href="{{  pimcore_url({'page': paginationVariables.previous}) }}" aria-label="Previous">
+                    <span aria-hidden="true"></span>
+                </a>
+            </li>
+        {%  endif %}
+
+        {%  for page in paginationVariables.pagesInRange %}
+
+            {%  if(paginationVariables.current == page) %}
+
+                <li class="page-item active" aria-current="page">
+                                  <span class="page-link">
+                                    {{  page }}
+                                    <span class="sr-only">(current)</span>
+                                  </span>
+                </li>
+
+            {%  else %}
+                <li class="page-item"><a class="page-link" href="{{  pimcore_url({'page': page}) }}">{{ page }}</a></li>
+            {%  endif %}
+
+        {% endfor %}
+
+        {%  if(paginationVariables.next is defined) %}
+            <li class="page-item">
+                <a class="page-link next" href="{{  pimcore_url({'page': paginationVariables.next}) }}" aria-label="Next">
+                    <span class="flip" aria-hidden="true"></span>
+                </a>
+            </li>
+        {%  endif %}
     </ul>
- </div>
+</nav>
 ```
 
 ### Access and modify internal object list query
@@ -453,8 +462,18 @@ You can access and print the internal query which is based on `\Pimcore\Db\ZendC
 $list = new Pimcore\Model\DataObject\News\Listing();
  
 // set onCreateQuery callback
-$list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder query) {
+$list->onCreateQuery(function (\Pimcore\Db\ZendCompatibility\QueryBuilder $query) {
     // echo query
     echo $query;
 });
 ```
+
+### PHP Type Declarations
+
+> Experimental Feature
+
+If you want to add [type declarations as described here](https://github.com/pimcore/pimcore/issues/6387) on the generated PHP code for your classes,
+please enable this feature in the class definition.
+
+If you have custom data types please implement the `Pimcore\Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface` interface. 
+

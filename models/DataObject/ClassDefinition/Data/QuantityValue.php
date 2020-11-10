@@ -24,12 +24,13 @@ use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 
-class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface
+class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
 
     use Model\DataObject\Traits\DefaultValueTrait;
+    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -150,7 +151,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function setDefaultValue($defaultValue)
     {
-        if (strlen(strval($defaultValue)) > 0) {
+        if (strlen((string)$defaultValue) > 0) {
             $this->defaultValue = $defaultValue;
         }
     }
@@ -256,8 +257,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        if ($data[$this->getName() . '__value'] || $data[$this->getName() . '__unit']) {
-            $quantityValue = new Model\DataObject\Data\QuantityValue((float)$data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
+        if ($data[$this->getName() . '__value'] !== null || $data[$this->getName() . '__unit']) {
+            $value = $data[$this->getName() . '__value'];
+            $quantityValue = new Model\DataObject\Data\QuantityValue($value !== null ? (float)$value : null, $data[$this->getName() . '__unit']);
 
             if (isset($params['owner'])) {
                 $quantityValue->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
@@ -327,7 +329,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getDataFromEditmode($data, $object = null, $params = [])
     {
-        if ($data['value'] || $data['unit']) {
+        if (strlen($data['value']) > 0 || $data['unit']) {
             if (is_numeric($data['unit'])) {
                 if ($data['unit'] == -1 || $data['unit'] == null || empty($data['unit'])) {
                     return new Model\DataObject\Data\QuantityValue($data['value'], null);
@@ -485,71 +487,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         }
 
         return null;
-    }
-
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param Model\DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return array|null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        $data = $this->getDataFromObjectParam($object, $params);
-
-        if ($data instanceof \Pimcore\Model\DataObject\Data\QuantityValue) {
-            return [
-                'value' => $data->getValue(),
-                'unit' => $data->getUnitId(),
-                'unitAbbreviation' => is_object($data->getUnit()) ? $data->getUnit()->getAbbreviation() : '',
-            ];
-        }
-
-        return null;
-    }
-
-    /**
-     * converts data to be imported via webservices
-     *
-     * @deprecated
-     *
-     * @param mixed $value
-     * @param null|Model\DataObject\Concrete $object
-     * @param mixed $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @return mixed
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($value, $object = null, $params = [], $idMapper = null)
-    {
-        if (empty($value)) {
-            return null;
-        } else {
-            $value = (array) $value;
-            if (array_key_exists('value', $value) && array_key_exists('unit', $value) && array_key_exists('unitAbbreviation', $value)) {
-                $unitId = $value['unit'];
-                if ($idMapper) {
-                    $unitId = $idMapper->getMappedId('unit', $unitId);
-                }
-
-                $unit = Model\DataObject\QuantityValue\Unit::getById($unitId);
-                if ($unit && $unit->getAbbreviation() == $value['unitAbbreviation']) {
-                    return new \Pimcore\Model\DataObject\Data\QuantityValue($value['value'], $unitId);
-                } elseif (!$unit && is_null($value['unit'])) {
-                    return new \Pimcore\Model\DataObject\Data\QuantityValue($value['value']);
-                } else {
-                    throw new \Exception(get_class($this).': cannot get values from web service import - unit id and unit abbreviation do not match with local database');
-                }
-            } else {
-                throw new \Exception(get_class($this).': cannot get values from web service import - invalid data');
-            }
-        }
     }
 
     /** Encode value for packing it into a single column.
@@ -732,7 +669,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      *
      * @return bool
      */
-    public function isEqual($oldValue, $newValue)
+    public function isEqual($oldValue, $newValue): bool
     {
         if ($oldValue === null && $newValue === null) {
             return true;

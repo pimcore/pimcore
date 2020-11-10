@@ -143,6 +143,39 @@ class Imagick extends Adapter
             if (!$this->isPreserveColor()) {
                 $this->setColorspaceToRGB();
             }
+
+            if ($this->checkPreserveAnimation($i->getImageFormat(), $i, false)) {
+                if (!$this->resource->readImage($imagePath) || !filesize($imagePath)) {
+                    return false;
+                }
+                $this->resource = $this->resource->coalesceImages();
+            }
+
+            $isClipAutoSupport = \Pimcore::getContainer()->getParameter('pimcore.config')['assets']['image']['thumbnails']['clip_auto_support'];
+            if ($isClipAutoSupport) {
+                // check for the existence of an embedded clipping path (8BIM / Adobe profile meta data)
+                $identifyRaw = $i->identifyImage(true)['rawOutput'];
+                if (strpos($identifyRaw, 'Clipping path') && strpos($identifyRaw, '<svg')) {
+                    // if there's a clipping path embedded, apply the first one
+
+                    // known issues:
+                    // - it seems that -clip doesnt work with the ImageMagick version
+                    //   ImageMagick 6.9.7-4 Q16 x86_64 20170114 (which is used in Debian 9)
+                    // - Imagick 3.4.4 with ImageMagick 7 on OSX has horrible broken clipping support
+                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
+                    $i->clipImage();
+
+                    // Imagick version compatibility
+                    // Since Imagick 3.4.4 compiled against ImageMagick 7 ALPHACHANNEL_OPAQUE was removed for whatever reason
+                    // ImageMagick is still defining and using OpaqueAlphaChannel in ImageMagick 7 releases
+                    // Let's hardcode the current ImageMagick 7 enum number to workaround this issue
+                    $alphaChannel = 11;
+                    if (defined('Imagick::ALPHACHANNEL_OPAQUE')) {
+                        $alphaChannel = \Imagick::ALPHACHANNEL_OPAQUE;
+                    }
+                    $i->setImageAlphaChannel($alphaChannel);
+                }
+            }
         } catch (\Exception $e) {
             Logger::error('Unable to load image: ' . $imagePath);
             Logger::error($e);
@@ -258,7 +291,11 @@ class Imagick extends Adapter
             $i->setImageFormat($format);
             $success = File::put($path, $i->getImageBlob());
         } else {
-            $success = $i->writeImage($format . ':' . $path);
+            if ($this->checkPreserveAnimation($format, $i)) {
+                $success = $i->writeImages('GIF:' . $path, true);
+            } else {
+                $success = $i->writeImage($format . ':' . $path);
+            }
         }
 
         if (!$success) {
@@ -270,6 +307,34 @@ class Imagick extends Adapter
         }
 
         return $this;
+    }
+
+    /**
+     * @param string $format
+     * @param \Imagick|null $i
+     * @param bool $checkNumberOfImages
+     *
+     * @return bool
+     */
+    protected function checkPreserveAnimation(string $format = '', \Imagick $i = null, bool $checkNumberOfImages = true)
+    {
+        if (!$this->isPreserveAnimation()) {
+            return false;
+        }
+
+        if (!$i) {
+            $i = $this->resource;
+        }
+
+        if ($i && $checkNumberOfImages && $i->getNumberImages() <= 1) {
+            return false;
+        }
+
+        if ($format && !in_array(strtolower($format), ['gif', 'original', 'auto'])) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -316,13 +381,25 @@ class Imagick extends Adapter
     {
         $imageColorspace = $this->resource->getImageColorspace();
 
+        $profiles = $this->resource->getImageProfiles('icc', true);
+
+        // Workaround for ImageMagick (e.g. 6.9.10-23) bug, that let's it crash immediately if the tagged colorspace is
+        // different from the colorspace of the embedded icc color profile
+        // If that is the case we just ignore the color profiles
+        if (isset($profiles['icc']) && in_array($imageColorspace, [\Imagick::COLORSPACE_CMYK, \Imagick::COLORSPACE_SRGB])) {
+            if (strpos($profiles['icc'], 'CMYK') !== false && $imageColorspace !== \Imagick::COLORSPACE_CMYK) {
+                return $this;
+            }
+
+            if (strpos($profiles['icc'], 'RGB') !== false && $imageColorspace !== \Imagick::COLORSPACE_SRGB) {
+                return $this;
+            }
+        }
+
         if ($imageColorspace == \Imagick::COLORSPACE_CMYK) {
             if (self::getCMYKColorProfile() && self::getRGBColorProfile()) {
-                $profiles = $this->resource->getImageProfiles('*', false);
-                // we're only interested if ICC profile(s) exist
-                $has_icc_profile = (array_search('icc', $profiles) !== false);
                 // if it doesn't have a CMYK ICC profile, we add one
-                if ($has_icc_profile === false) {
+                if (!isset($profiles['icc'])) {
                     $this->resource->profileImage('icc', self::getCMYKColorProfile());
                 }
                 // then we add an RGB profile
@@ -337,9 +414,7 @@ class Imagick extends Adapter
             $this->resource->setImageColorspace(\Imagick::COLORSPACE_SRGB);
         } else {
             // this is to handle embedded icc profiles in the RGB/sRGB colorspace
-            $profiles = $this->resource->getImageProfiles('*', false);
-            $has_icc_profile = (array_search('icc', $profiles) !== false);
-            if ($has_icc_profile) {
+            if (isset($profiles['icc'])) {
                 try {
                     // if getImageColorspace() says SRGB but the embedded icc profile is CMYK profileImage() will throw an exception
                     $this->resource->profileImage('icc', self::getRGBColorProfile());
@@ -466,8 +541,13 @@ class Imagick extends Adapter
         $width = (int)$width;
         $height = (int)$height;
 
-        $this->resource->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
-
+        if ($this->checkPreserveAnimation()) {
+            foreach ($this->resource as $i => $frame) {
+                $frame->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
+            }
+        } else {
+            $this->resource->resizeimage($width, $height, \Imagick::FILTER_UNDEFINED, 1, false);
+        }
         $this->setWidth($width);
         $this->setHeight($height);
 
@@ -515,8 +595,7 @@ class Imagick extends Adapter
         $x = ($width - $this->getWidth()) / 2;
         $y = ($height - $this->getHeight()) / 2;
 
-        $newImage = $this->createImage($width, $height);
-        $newImage->compositeImage($this->resource, \Imagick::COMPOSITE_DEFAULT, $x, $y);
+        $newImage = $this->createCompositeImageFromResource($width, $height, $x, $y);
         $this->resource = $newImage;
 
         $this->setWidth($width);
@@ -557,9 +636,7 @@ class Imagick extends Adapter
     public function setBackgroundColor($color)
     {
         $this->preModify();
-
-        $newImage = $this->createImage($this->getWidth(), $this->getHeight(), $color);
-        $newImage->compositeImage($this->resource, \Imagick::COMPOSITE_DEFAULT, 0, 0);
+        $newImage = $this->createCompositeImageFromResource($this->getWidth(), $this->getHeight(), 0, 0, $color);
         $this->resource = $newImage;
 
         $this->postModify();
@@ -581,6 +658,37 @@ class Imagick extends Adapter
         $newImage = new \Imagick();
         $newImage->newimage($width, $height, $color);
         $newImage->setImageFormat($this->resource->getImageFormat());
+
+        return $newImage;
+    }
+
+    /**
+     * @param int $width
+     * @param int $height
+     * @param int $x
+     * @param int $y
+     * @param string $color
+     * @param int $composite
+     *
+     * @return \Imagick
+     */
+    protected function createCompositeImageFromResource($width, $height, $x, $y, $color = 'transparent', $composite = \Imagick::COMPOSITE_DEFAULT)
+    {
+        $newImage = null;
+        if ($this->checkPreserveAnimation()) {
+            foreach ($this->resource as $i => $frame) {
+                $imageFrame = $this->createImage($width, $height, $color);
+                $imageFrame->compositeImage($frame, $composite, $x, $y);
+                if (!$newImage) {
+                    $newImage = $imageFrame;
+                } else {
+                    $newImage->addImage($imageFrame);
+                }
+            }
+        } else {
+            $newImage = $this->createImage($width, $height, $color);
+            $newImage->compositeImage($this->resource, $composite, $x, $y);
+        }
 
         return $newImage;
     }

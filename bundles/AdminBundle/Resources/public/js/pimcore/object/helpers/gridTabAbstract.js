@@ -67,6 +67,12 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             objectId = this.element.id;
         }
 
+
+        var classStore = pimcore.globalmanager.get("object_types_store");
+        var klassIndex = classStore.findExact("id", this.classId);
+        var klass = classStore.getAt(klassIndex);
+        var className = klass.get("text");
+
         var columnConfig = {
             language: gridConfig.language,
             pageSize: gridConfig.pageSize,
@@ -74,10 +80,10 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             objectId: objectId,
             selectedGridColumns: visibleColumns
         };
-        var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function (data, settings, save) {
+        var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function (data, settings, save, context) {
                 this.gridLanguage = data.language;
                 this.gridPageSize = data.pageSize;
-                this.createGrid(true, data.columns, settings, save);
+                this.createGrid(true, data.columns, settings, save, context);
             }.bind(this),
             function () {
                 Ext.Ajax.request({
@@ -111,8 +117,17 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             {
                 allowPreview: true,
                 classId: this.classId,
-                objectId: objectId
-            }
+                objectId: objectId,
+                csvMode: 0,
+                showPreviewSelector: true,
+                previewSelectorTypes: ['object'],
+                previewSelectorSubTypes: {
+                    'object' : ['object', 'variant']},
+                previewSelectorSpecific: {
+                    classes: [className]
+                }
+            },
+            null
         )
 
     },
@@ -154,29 +169,22 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             xtype: "textfield",
             width: 500,
             name: "condition",
-            hidden: true,
+            hidden: !this.sqlFilter,
             enableKeyEvents: true,
+            value: this.sqlFilter,
             listeners: {
+                "change": function() {
+                    this.saveColumnConfigButton.show();
+                }.bind(this),
                 "keydown": function (field, key) {
                     if (key.getKey() == key.ENTER) {
-                        var proxy = this.store.getProxy();
-                        proxy.setExtraParams(
-                            {
-                                class: proxy.extraParams.class,
-                                objectId: proxy.extraParams.objectId,
-                                "fields[]": proxy.extraParams["fields[]"],
-                                language: proxy.extraParams.language
-                            }
-                        );
-                        proxy.setExtraParam("condition", field.getValue());
-                        this.grid.filters.clearFilters();
-
-                        this.pagingtoolbar.moveFirst();
+                        this.updateSqlFilter();
                     }
                 }.bind(this)
             }
         });
 
+        this.updateSqlFilter();
 
         this.sqlButton = new Ext.Button({
             iconCls: "pimcore_icon_sql",
@@ -212,6 +220,26 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
         });
     },
 
+    updateSqlFilter: function() {
+        var proxy = this.store.getProxy();
+        proxy.setExtraParams(
+            {
+                class: proxy.extraParams.class,
+                objectId: proxy.extraParams.objectId,
+                "fields[]": proxy.extraParams["fields[]"],
+                language: proxy.extraParams.language
+            }
+        );
+        proxy.setExtraParam("condition", this.sqlEditor.getValue());
+        if (this.grid && this.grid.filters) {
+            this.grid.filters.clearFilters();
+        }
+
+        if (this.pagingtoolbar) {
+            this.pagingtoolbar.moveFirst();
+        }
+    },
+
     getToolbar: function (fromConfig, save) {
         if (!fromConfig) {
             this.searchQuery = function(field) {
@@ -225,6 +253,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                     width: 200,
                     hideLabel: true,
                     enableKeyEvents: true,
+                    value: this.searchFilter,
                     triggers: {
                         search: {
                             weight: 1,
@@ -236,6 +265,9 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                         }
                     },
                     listeners: {
+                        "change": function() {
+                            this.saveColumnConfigButton.show();
+                        }.bind(this),
                         "keydown" : function (field, key) {
                             if (key.getKey() == key.ENTER) {
                                 this.searchQuery(field);
@@ -270,6 +302,7 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
             });
 
             this.createSqlEditor();
+            this.store.getProxy().setExtraParam("query", this.searchFilter);
 
             this.checkboxOnlyDirectChildren = new Ext.form.Checkbox({
                 name: "onlyDirectChildren",
@@ -287,6 +320,8 @@ pimcore.object.helpers.gridTabAbstract = Class.create({
                         this.pagingtoolbar.moveFirst();
 
                         this.grid.getStore().setRemoteFilter(true);
+
+                        this.saveColumnConfigButton.show();
                     }.bind(this)
                 }
             });

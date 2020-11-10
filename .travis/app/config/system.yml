@@ -16,7 +16,6 @@ pimcore:
         debug_admin_translations: false
         devmode: false
         instance_identifier: ''
-        show_cookie_notice: false
     documents:
         versions:
             days: null
@@ -49,8 +48,6 @@ pimcore:
         lifetime: null
         exclude_patterns: ''
         exclude_cookie: ''
-    webservice:
-        enabled: true
     httpclient:
         adapter: Socket
         proxy_host: ''

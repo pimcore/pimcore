@@ -114,7 +114,7 @@ pimcore.object.tags.reverseManyToManyObjectRelation = Class.create(pimcore.objec
             autoHeight = true;
         }
 
-        var cls = 'object_field';
+        var cls = 'object_field object_field_type_' + this.type;
 
         var classStore = pimcore.globalmanager.get("object_types_store");
         var record = classStore.getAt(classStore.findExact('text', this.fieldConfig.ownerClassName));

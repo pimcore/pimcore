@@ -14,8 +14,8 @@
 
 namespace Pimcore\Twig\Extension;
 
-use Pimcore\Templating\Helper\Action;
-use Pimcore\Templating\Helper\Inc;
+use Pimcore\Twig\Extension\Templating\Action;
+use Pimcore\Twig\Extension\Templating\Inc;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -46,7 +46,7 @@ class SubrequestExtension extends AbstractExtension
      */
     public function getFunctions()
     {
-        // as helpers are invokablem, we can pass them directly as callable
+        // as runtime extension classes are invokable, we can pass them directly as callable
         return [
             new TwigFunction('pimcore_inc', $this->incHelper, [
                 'is_safe' => ['html'],

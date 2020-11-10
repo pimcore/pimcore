@@ -1,13 +1,13 @@
 # Payment Integration
 
-To integrate payment into the checkout process, instead of calling ```$manager->commitOrder();``` like described 
+To integrate payment into the checkout process, instead of calling `$manager->commitOrder();` like described 
 in [Committing Orders](./05_Committing_Orders.md), a few more steps are necessary. 
 
 
 ## Initialize Payment in Controller
 After all checkout steps are completed, the payment can be started. This is done as follows: 
+
 ```php
-<?php
 /**
  * @Route("/checkout-init-payment", name="shop-checkout-init-payment")
  */
@@ -30,7 +30,10 @@ public function initPaymentAction(Request $request, Factory $factory) {
  
     // depending on response type handle start payment response - e.g. render form, render snippet, etc.
     $paymentForm = $startPaymentResponse->getForm();
-    $this->view->form = $paymentForm->getForm()->createView();
+    
+    return $this->render('payment/init_payment.html.twig', [
+        'form' => $paymentForm->getForm()->createView() 
+    ]);
 }
 ```
 
@@ -42,6 +45,7 @@ payment provider, also other data structures can be created:
 <p>{{ 'Starting Payment' }}</p>
 {{ form(form) }}
 ```
+
 For more samples see [E-Commerce Demo](https://github.com/pimcore/demo-ecommerce/blob/master/app/Resources/views/Payment/paymentFrame.html.php)
 
 
@@ -50,8 +54,8 @@ When the user finishes the payment, the given response (either via redirect or v
 as follows. If payment handling was successful, the order needs to be committed.
 
 A client side handling could look like as follows: 
+
 ```php
-<?php
 /**
  * @Route("/checkout-payment-response", name="shop-checkout-payment-response")
  */
@@ -75,15 +79,17 @@ public function paymentResponseAction(Request $request, Factory $factory, Sessio
         // $orderAgent->updatePayment($paymentStatus);
  
         $session->set("last_order_id", $order->getId());
-        $this->view->goto = $this->generateUrl('shop-checkout-completed');
+        $goto = $this->generateUrl('shop-checkout-completed');
          
     } catch (\Exception $e) {
  
         $this->addFlash('danger', $e->getMessage());
-        $this->view->goto = $this->generateUrl('shop-checkout-address');
+        $goto = $this->generateUrl('shop-checkout-address');
  
     }
 
+    return $this->render('payment/payment_response.html.twig', ['goto' => $goto]);
+}
 ```
 
 A server side handling could look as follows: 
@@ -116,9 +122,7 @@ A server side handling could look as follows:
 
         exit("success");
     }
-
 ```
-
 
 ## Dealing with Pending Payments (Starting with Pimcore 6.1)
 

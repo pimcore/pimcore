@@ -189,7 +189,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
         if ($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
             Logger::info('Index-Actions - Resetting index queue');
             $className = (new \ReflectionClass($this))->getShortName();
-            $query = 'UPDATE '. $this->getStoreTableName() .' SET 
+            $query = 'UPDATE '. $this->getStoreTableName() .' SET
                         trigger_info = ?,
                         crc_index = 0 WHERE tenant = ?';
             $this->db->query($query, [

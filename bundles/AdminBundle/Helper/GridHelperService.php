@@ -549,11 +549,16 @@ class GridHelperService
         }
 
         $conditionFilters = [];
+
+        if ($requestParams['specificId'] ?? false) {
+            $conditionFilters[] = 'oo_id = ' . $requestParams['specificId'];
+        }
+
         if (isset($requestParams['only_direct_children']) && $requestParams['only_direct_children'] === 'true') {
             $conditionFilters[] = 'o_parentId = ' . $folder->getId();
         } else {
             $quotedPath = $list->quote($folder->getRealFullPath());
-            $quotedWildcardPath = $list->quote(str_replace('//', '/', $folder->getRealFullPath() . '/') . '%');
+            $quotedWildcardPath = $list->quote($list->escapeLike(str_replace('//', '/', $folder->getRealFullPath() . '/')) . '%');
             $conditionFilters[] = '(o_path = ' . $quotedPath . ' OR o_path LIKE ' . $quotedWildcardPath . ')';
         }
 
@@ -691,7 +696,7 @@ class GridHelperService
         if (isset($allParams['only_direct_children']) && $allParams['only_direct_children'] == 'true') {
             $conditionFilters[] = 'parentId = ' . $folder->getId();
         } else {
-            $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() === '/' ? "'/%'" : $list->quote($folder->getRealFullPath() . '/%'));
+            $conditionFilters[] = 'path LIKE ' . ($folder->getRealFullPath() === '/' ? "'/%'" : $list->quote($list->escapeLike($folder->getRealFullPath()) . '/%'));
         }
 
         if (isset($allParams['only_unreferenced']) && $allParams['only_unreferenced'] === 'true') {
@@ -787,10 +792,10 @@ class GridHelperService
                     $tag = Model\Element\Tag::getById($tagId);
                     if ($tag) {
                         $tagPath = $tag->getFullIdPath();
-                        $conditionFilters[] = 'id IN (SELECT cId FROM `tags_assignment` INNER JOIN `tags` ON tags.id = tags_assignment.tagid WHERE `ctype` = "asset" AND (`id` = ' . intval($tagId) . ' OR `idPath` LIKE ' . $db->quote($tagPath . '%') . '))';
+                        $conditionFilters[] = 'id IN (SELECT cId FROM `tags_assignment` INNER JOIN `tags` ON tags.id = tags_assignment.tagid WHERE `ctype` = "asset" AND (`id` = ' .(int)$tagId. ' OR `idPath` LIKE ' . $db->quote($tagPath . '%') . '))';
                     }
                 } else {
-                    $conditionFilters[] = 'id IN (SELECT cId FROM `tags_assignment` WHERE `ctype` = "asset" AND tagid = ' . intval($tagId) . ')';
+                    $conditionFilters[] = 'id IN (SELECT cId FROM `tags_assignment` WHERE `ctype` = "asset" AND tagid = ' .(int)$tagId. ')';
                 }
             }
         }

@@ -119,14 +119,18 @@ class Builder
         }
 
         // set active path
-        $request = $this->requestHelper->getMasterRequest();
+        $activePages = [];
 
-        // try to find a page matching exactly the request uri
-        $activePages = $navigation->findAllBy('uri', $request->getRequestUri());
+        if ($this->requestHelper->hasMasterRequest()) {
+            $request = $this->requestHelper->getMasterRequest();
 
-        if (empty($activePages)) {
-            // try to find a page matching the path info
-            $activePages = $navigation->findAllBy('uri', $request->getPathInfo());
+            // try to find a page matching exactly the request uri
+            $activePages = $navigation->findAllBy('uri', $request->getRequestUri());
+
+            if (empty($activePages)) {
+                // try to find a page matching the path info
+                $activePages = $navigation->findAllBy('uri', $request->getPathInfo());
+            }
         }
 
         if ($activeDocument instanceof Document) {
@@ -329,7 +333,7 @@ class Builder
                 $page->setClass($page->getClass() . $classes);
 
                 if ($child->hasChildren() && (!$maxDepth || $maxDepth > $this->currentLevel)) {
-                    $childPages = $this->buildNextLevel($child, false, $pageCallback, $parents);
+                    $childPages = $this->buildNextLevel($child, false, $pageCallback, $parents, $maxDepth);
                     $page->setPages($childPages);
                 }
 

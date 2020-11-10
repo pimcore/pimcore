@@ -91,7 +91,7 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
             $user = $adminSession->get('user');
             if ($user && $user instanceof User) {
                 $event = new LogoutEvent($request, $user);
-                $this->eventDispatcher->dispatch(AdminEvents::LOGIN_LOGOUT, $event);
+                $this->eventDispatcher->dispatch($event, AdminEvents::LOGIN_LOGOUT);
 
                 $adminSession->remove('user');
             }

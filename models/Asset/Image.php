@@ -224,6 +224,13 @@ class Image extends Model\Asset
         if (class_exists('Imagick')) {
             // Imagick fallback
             $path = $this->getThumbnail(Image\Thumbnail\Config::getPreviewConfig())->getFileSystemPath();
+
+            if (!stream_is_local($path)) {
+                // imagick is only able to deal with local files
+                // if your're using custom stream wrappers this wouldn't work, so we create a temp. local copy
+                $path = $this->getTemporaryFile();
+            }
+
             $imagick = new \Imagick($path);
             $imagick->setImageFormat('jpg');
             $imagick->setOption('jpeg:extent', '1kb');
@@ -272,7 +279,7 @@ EOT;
             'filesystemPath' => $fsPath,
             'frontendPath' => $path,
         ]);
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_IMAGE_THUMBNAIL, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_IMAGE_THUMBNAIL);
         $path = $event->getArgument('frontendPath');
 
         return $path;
@@ -471,7 +478,7 @@ EOT;
             $exif = @exif_read_data($path);
             if (is_array($exif)) {
                 if (array_key_exists('Orientation', $exif)) {
-                    $orientation = intval($exif['Orientation']);
+                    $orientation = (int)$exif['Orientation'];
                     if (in_array($orientation, [5, 6, 7, 8])) {
                         // flip height & width
                         $dimensions = [

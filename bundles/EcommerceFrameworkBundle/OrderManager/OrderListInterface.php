@@ -16,10 +16,10 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 use ArrayAccess;
 use Countable;
+use Laminas\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Db\ZendCompatibility\QueryBuilder;
 use SeekableIterator;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * Interface OrderListInterface
@@ -32,6 +32,8 @@ interface OrderListInterface extends SeekableIterator, Countable, ArrayAccess, A
     const LIST_TYPE_ORDER_ITEM = 'item';
 
     /**
+     * @deprecated
+     *
      * @return QueryBuilder
      */
     public function getQuery();

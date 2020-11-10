@@ -14,6 +14,7 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\TokenManager;
 
+use Laminas\Paginator\Paginator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\InvalidConfigException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\VoucherServiceException;
@@ -27,7 +28,6 @@ use Pimcore\File;
 use Pimcore\Model\DataObject\Fieldcollection\Data\VoucherTokenTypePattern;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Pimcore\Model\DataObject\OnlineShopVoucherToken;
-use Zend\Paginator\Paginator;
 
 /**
  * Class Pattern
@@ -50,7 +50,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
     {
         parent::__construct($configuration);
         if ($configuration instanceof VoucherTokenTypePattern) {
-            $this->template = 'PimcoreEcommerceFrameworkBundle:voucher:voucher_code_tab_pattern.html.twig';
+            $this->template = '@PimcoreEcommerceFramework/voucher/voucher_code_tab_pattern.html.twig';
         } else {
             throw new InvalidConfigException('Invalid Configuration Class for Type VoucherTokenTypePattern.');
         }
@@ -393,7 +393,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         $finalLength = $this->getFinalTokenLength();
         $insertParts = [];
 
-        if (sizeof($insertTokens) > 0) {
+        if (count($insertTokens) > 0) {
             foreach ($insertTokens as $token) {
                 $insertParts[] =
                     "('" .
@@ -490,7 +490,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             }
 
             // If there are tokens to insert add them to query.
-            if (sizeof($insertTokens)) {
+            if (count($insertTokens)) {
                 $resultTokenSet[] = $insertTokens;
             }
 
@@ -535,7 +535,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         try {
             $tokens->setFilterConditions($params['id'], $params);
         } catch (\Exception $e) {
-            $this->template = 'PimcoreEcommerceFrameworkBundle:Voucher:voucherCodeTabError.html.php';
+            $this->template = '@PimcoreEcommerceFramework/voucher/voucher_code_tab_error.html.twig';
             $viewParamsBag['errors'][] = $e->getMessage() . ' | Error-Code: ' . $e->getCode();
         }
 
@@ -551,7 +551,7 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             $paginator->setCurrentPageNumber($params['page']);
 
             $viewParamsBag['paginator'] = $paginator;
-            $viewParamsBag['count'] = sizeof($tokens);
+            $viewParamsBag['count'] = count($tokens);
         } else {
             $viewParamsBag['msg']['result'] = 'bundle_ecommerce_voucherservice_msg-error-token-noresult';
         }

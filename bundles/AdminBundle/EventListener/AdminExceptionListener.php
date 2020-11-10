@@ -17,14 +17,14 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\AdminBundle\EventListener;
 
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
 use Pimcore\Bundle\CoreBundle\EventListener\Traits\PimcoreContextAwareTrait;
 use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Element\ValidationException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -43,14 +43,12 @@ class AdminExceptionListener implements EventSubscriberInterface
     }
 
     /**
-     * Return JSON error responses from webservice context
-     *
-     * @param GetResponseForExceptionEvent $event
+     * @param ExceptionEvent $event
      */
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event)
     {
         $request = $event->getRequest();
-        $ex = $event->getException();
+        $ex = $event->getThrowable();
 
         if ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_ADMIN)) {
             // only return JSON error for XHR requests
@@ -82,27 +80,6 @@ class AdminExceptionListener implements EventSubscriberInterface
                 $code = 422;
 
                 $this->recursiveAddValidationExceptionSubItems($ex->getSubItems(), $message, $data['traceString']);
-            }
-
-            $response = new JsonResponse($data, $code, $headers);
-            $event->setResponse($response);
-
-            return;
-        } elseif ($this->matchesPimcoreContext($request, PimcoreContextResolver::CONTEXT_WEBSERVICE)) {
-            list($code, $headers, $message) = $this->getResponseData($ex);
-
-            if ($ex instanceof DBALException) {
-                $message = 'Database error, see logs for details';
-            }
-
-            $data = [
-                'success' => false,
-                'msg' => $message,
-            ];
-
-            if (\Pimcore::inDebugMode()) {
-                $data['trace'] = $ex->getTrace();
-                $data['traceString'] = $ex->getTraceAsString();
             }
 
             $response = new JsonResponse($data, $code, $headers);
