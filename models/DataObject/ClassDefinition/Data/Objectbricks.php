@@ -139,6 +139,11 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
         if ($object) {
             $parent = DataObject\Service::hasInheritableParentObject($object);
         }
+
+        if(!method_exists($data, $getter)) {
+            return null;
+        }
+
         /** @var DataObject\Objectbrick\Definition $item */
         $item = $data->$getter();
         if (!$item && !empty($parent)) {
