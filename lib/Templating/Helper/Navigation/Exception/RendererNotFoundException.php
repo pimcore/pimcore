@@ -17,7 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Templating\Helper\Navigation\Exception;
 
-use Pimcore\Navigation\Renderer\RendererInterface;
 
 @trigger_error(
     'Pimcore\Templating\Helper\Navigation\Exception\RendererNotFoundException is deprecated since version 6.8.0 and will be removed in 7.0.0. '.
@@ -36,5 +35,4 @@ if (false) {
 
     }
 }
-
 
