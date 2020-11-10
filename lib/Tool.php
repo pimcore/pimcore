@@ -384,7 +384,7 @@ class Tool
 
         $requestKeys = array_merge(
             array_keys($request->query->all()),
-            array_keys($request->request->all()),
+            array_keys($request->request->all())
         );
 
         // check for manually disabled ?pimcore_outputfilters_disabled=true
