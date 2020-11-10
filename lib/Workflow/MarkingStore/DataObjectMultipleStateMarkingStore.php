@@ -7,9 +7,9 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Workflow\Exception\LogicException;
 use Symfony\Component\Workflow\Marking;
-use Symfony\Component\Workflow\MarkingStore\MultipleStateMarkingStore;
+use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 
-class DataObjectMultipleStateMarkingStore extends MultipleStateMarkingStore
+class DataObjectMultipleStateMarkingStore implements MarkingStoreInterface
 {
     private $property;
     private $propertyAccessor;
@@ -20,7 +20,6 @@ class DataObjectMultipleStateMarkingStore extends MultipleStateMarkingStore
      */
     public function __construct($property = 'marking', PropertyAccessorInterface $propertyAccessor = null)
     {
-        parent::__construct($property, $propertyAccessor);
         $this->property = $property;
         $this->propertyAccessor = $propertyAccessor ?: PropertyAccess::createPropertyAccessor();
     }
@@ -30,7 +29,7 @@ class DataObjectMultipleStateMarkingStore extends MultipleStateMarkingStore
      *
      * @throws LogicException
      */
-    public function getMarking($subject)
+    public function getMarking($subject): Marking
     {
         $this->checkIfSubjectIsValid($subject);
 
@@ -50,7 +49,7 @@ class DataObjectMultipleStateMarkingStore extends MultipleStateMarkingStore
      * @throws LogicException
      * @throws \Exception
      */
-    public function setMarking($subject, Marking $marking)
+    public function setMarking($subject, Marking $marking, array $context = [])
     {
         $subject = $this->checkIfSubjectIsValid($subject);
 
