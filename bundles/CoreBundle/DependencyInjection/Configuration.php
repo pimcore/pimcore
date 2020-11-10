@@ -1508,11 +1508,6 @@ class Configuration implements ConfigurationInterface
                                         ],
                                     ])
                                 ->end()
-                                ->scalarNode('initial_place')
-                                    ->defaultNull()
-                                    ->setDeprecated('The "%node%" option is deprecated. Use "initial_markings" instead.')
-                                    ->info('Will be applied when the current place is empty.')
-                                ->end()
                                 ->arrayNode('initial_markings')
                                     ->info('Can be used to set the initial places (markings) for a workflow. Note that this option is Symfony 4.3+ only')
                                     ->beforeNormalization()
