@@ -24,6 +24,7 @@ use Pimcore\Extension\Bundle\PimcoreBundleInterface;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Extension\Document\Areabrick\AreabrickInterface;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
+use Pimcore\Logger;
 use Pimcore\Routing\RouteReferenceInterface;
 use Pimcore\Tool\AssetsInstaller;
 use SensioLabs\AnsiConverter\AnsiToHtmlConverter;
@@ -295,7 +296,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
                 $results[$bm->getBundleIdentifier($bundle)] = $this->buildBundleInfo($bundle, true, $bm->isInstalled($bundle));
             } catch (\Throwable $e) {
-                $this->get('monolog.logger.pimcore')->error($e);
+                Logger::error($e);
             }
         }
 
@@ -357,7 +358,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
             return $bundle;
         } catch (\Exception $e) {
-            $this->get('monolog.logger.pimcore')->error('Failed to build instance of bundle {bundle}: {error}', [
+            Logger::error('Failed to build instance of bundle {bundle}: {error}', [
                 'bundle' => $bundleName,
                 'error' => $e->getMessage(),
             ]);
@@ -426,7 +427,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
     {
         if ($iframePath = $bundle->getAdminIframePath()) {
             if ($iframePath instanceof RouteReferenceInterface) {
-                return $this->get('router')->generate(
+                return $this->generateUrl(
                     $iframePath->getRoute(),
                     $iframePath->getParameters(),
                     $iframePath->getType()

@@ -82,12 +82,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      * @Route("/delete-info", name="pimcore_admin_dataobject_dataobject_deleteinfo", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function deleteInfoAction(Request $request)
+    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        return parent::deleteInfoAction($request);
+        return parent::deleteInfoAction($request, $eventDispatcher);
     }
 
     /**
@@ -774,10 +775,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      * @Route("/add", name="pimcore_admin_dataobject_dataobject_add", methods={"POST"})
      *
      * @param Request $request
+     * @param Model\FactoryInterface $modelFactory
      *
      * @return JsonResponse
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request, Model\FactoryInterface $modelFactory)
     {
         $success = false;
 
@@ -791,7 +793,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             if (!DataObject\Service::pathExists($intendedPath)) {
                 /** @var DataObject\Concrete $object */
-                $object = $this->get('pimcore.model.factory')->build($className);
+                $object = $modelFactory->build($className);
                 $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
 
                 if ($request->get('variantViaTree')) {
@@ -1559,7 +1561,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $requestedLanguage = $allParams['language'] ?? null;
         if ($requestedLanguage) {
             if ($requestedLanguage != 'default') {
-                //                $this->get('translator')->setLocale($requestedLanguage);
                 $request->setLocale($requestedLanguage);
             }
         } else {
