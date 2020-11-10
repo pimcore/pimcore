@@ -13,7 +13,7 @@ services:
 
     Pimcore\Analytics\Google\Config\ConfigProvider: ~
     Pimcore\Analytics\Google\Config\Config:
-        factory: 'Pimcore\Analytics\Google\Config\ConfigProvider:getConfig'
+        factory: ['@Pimcore\Analytics\Google\Config\ConfigProvider', 'getConfig']
 
     Pimcore\Analytics\Google\Config\SiteConfigProvider: ~
 
@@ -39,7 +39,7 @@ services:
 
     Pimcore\Analytics\Piwik\Config\ConfigProvider: ~
     Pimcore\Analytics\Piwik\Config\Config:
-        factory: 'Pimcore\Analytics\Piwik\Config\ConfigProvider:getConfig'
+        factory: ['@Pimcore\Analytics\Google\Config\ConfigProvider', 'getConfig']
 
     Pimcore\Analytics\Piwik\ReportBroker: ~
     Pimcore\Analytics\Piwik\WidgetBroker: ~
