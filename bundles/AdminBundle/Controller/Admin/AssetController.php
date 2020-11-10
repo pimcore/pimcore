@@ -72,12 +72,13 @@ class AssetController extends ElementControllerBase implements KernelControllerE
      * @Route("/delete-info", name="pimcore_admin_asset_deleteinfo", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function deleteInfoAction(Request $request)
+    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        return parent::deleteInfoAction($request);
+        return parent::deleteInfoAction($request, $eventDispatcher);
     }
 
     /**
@@ -546,11 +547,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $newType = Asset::getTypeFromMimeMapping($mimetype, $newFilename);
 
         if ($newType != $asset->getType()) {
-            $translator = $this->get('translator');
 
             return $this->adminJson([
                 'success' => false,
-                'message' => sprintf($translator->trans('asset_type_change_not_allowed', [], 'admin'), $asset->getType(), $newType),
+                'message' => sprintf($this->trans('asset_type_change_not_allowed', [], 'admin'), $asset->getType(), $newType),
             ]);
         }
 

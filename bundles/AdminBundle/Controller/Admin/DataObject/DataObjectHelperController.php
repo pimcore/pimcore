@@ -1574,11 +1574,10 @@ class DataObjectHelperController extends AdminController
             } elseif ($nbFields === count($fields)) {
                 $rows++;
             } else {
-                $translator = $this->get('translator');
 
                 return $this->adminJson([
                     'success' => false,
-                    'message' => $translator->trans('different_number_of_columns', [], 'admin'),
+                    'message' => $this->trans('different_number_of_columns', [], 'admin'),
                 ]);
             }
         }
@@ -2068,7 +2067,6 @@ class DataObjectHelperController extends AdminController
                             $requestedLanguage = $params['language'];
                             if ($requestedLanguage) {
                                 if ($requestedLanguage != 'default') {
-                                    //                $this->get('translator')->setLocale($requestedLanguage);
                                     $request->setLocale($requestedLanguage);
                                 }
                             } else {

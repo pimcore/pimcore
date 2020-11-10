@@ -29,6 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/misc")
@@ -154,14 +155,14 @@ class MiscController extends AdminController
      *
      * @return Response
      */
-    public function jsonTranslationsSystemAction(Request $request)
+    public function jsonTranslationsSystemAction(Request $request, TranslatorInterface $translator)
     {
         $language = $request->get('language');
 
-        $translator = $this->get('translator');
+        /** @var Translator $translator */
         $translator->lazyInitialize('admin', $language);
 
-        $translations = $translator->getCatalogue($language)->all('admin');
+        $translations =  $translator->getCatalogue($language)->all('admin');
         if ($language != 'en') {
             // add en as a fallback
             $translator->lazyInitialize('admin', 'en');
@@ -172,7 +173,7 @@ class MiscController extends AdminController
             }
         }
 
-        $caseInsensitive = $translator instanceof Translator && $translator->getCaseInsensitive();
+        $caseInsensitive =  $translator instanceof Translator && $translator->getCaseInsensitive();
         $response = new Response('pimcore.system_i18n = ' . $this->encodeJson($translations) . ';pimcore.system_i18n_case_insensitive='. json_encode($caseInsensitive));
         $response->headers->set('Content-Type', 'text/javascript');
 
