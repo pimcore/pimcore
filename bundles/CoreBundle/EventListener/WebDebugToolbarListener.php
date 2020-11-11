@@ -49,7 +49,7 @@ class WebDebugToolbarListener implements EventSubscriberInterface
     protected $excludeMatchers;
 
     /**
-     * @var SymfonyWebDebugToolbarListener
+     * @var SymfonyWebDebugToolbarListener|null
      */
     protected $debugToolbarListener;
 
@@ -61,7 +61,7 @@ class WebDebugToolbarListener implements EventSubscriberInterface
     public function __construct(
         RequestHelper $requestHelper,
         RequestMatcherFactory $requestMatcherFactory,
-        SymfonyWebDebugToolbarListener $debugToolbarListener,
+        ?SymfonyWebDebugToolbarListener $debugToolbarListener,
         EventDispatcherInterface $eventDispatcher,
         array $excludeRoutes
     )
@@ -121,6 +121,8 @@ class WebDebugToolbarListener implements EventSubscriberInterface
 
     protected function disableWebDebugToolbar(): void
     {
-        $this->eventDispatcher->removeSubscriber($this->debugToolbarListener);
+        if($this->debugToolbarListener) {
+            $this->eventDispatcher->removeSubscriber($this->debugToolbarListener);
+        }
     }
 }
