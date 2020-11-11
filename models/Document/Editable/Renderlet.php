@@ -117,7 +117,7 @@ class Renderlet extends Model\Document\Editable
             return '';
         }
 
-        if (!$this->config['controller'] && !$this->config['action']) {
+        if (empty($this->config['controller']) && empty($this->config['action'])) {
             if (is_null($this->config)) {
                 $this->config = [];
             }
@@ -164,7 +164,7 @@ class Renderlet extends Model\Document\Editable
             return $editableHandler->renderAction(
                 $this->view,
                 $this->config['controller'],
-                $this->config['action'],
+                $this->config['action'] ?? null,
                 $moduleOrBundle,
                 $params
             );
