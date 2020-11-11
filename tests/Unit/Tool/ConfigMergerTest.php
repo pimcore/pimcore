@@ -113,7 +113,6 @@ class ConfigMergerTest extends TestCase
                         'target' => 'demo_login',
                         'invalidate_session' => false,
                     ],
-                    'logout_on_user_change' => true,
                 ],
             ],
             'access_control' => [
@@ -176,7 +175,6 @@ class ConfigMergerTest extends TestCase
                         'target' => 'demo_login',
                         'invalidate_session' => false,
                     ],
-                    'logout_on_user_change' => true,
                 ],
             ],
             'access_control' => [
@@ -325,7 +323,6 @@ class ConfigMergerTest extends TestCase
                         'target' => 'demo_login',
                         'invalidate_session' => false,
                     ],
-                    'logout_on_user_change' => true,
                 ],
             ],
         ];
@@ -361,7 +358,6 @@ class ConfigMergerTest extends TestCase
                         'target' => 'demo_login',
                         'invalidate_session' => false,
                     ],
-                    'logout_on_user_change' => true,
                 ],
             ],
         ];

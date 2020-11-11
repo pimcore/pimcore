@@ -15,7 +15,6 @@ security:
             pattern: ^/admin/asset/webdav
             provider: pimcore_admin
             http_basic: ~
-            logout_on_user_change: true
 
         # admin form login
         admin:
