@@ -43,7 +43,7 @@ jobs:
     - os: linux
       php: nightly
       env:
-          - DATABASE_SERVER="mariadb-10.3"
+          - DATABASE_SERVER="mariadb-10.2"
 
   include:
 
