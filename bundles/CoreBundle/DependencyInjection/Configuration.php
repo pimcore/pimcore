@@ -621,19 +621,6 @@ class Configuration implements ConfigurationInterface
 
         $documentsNode
             ->children()
-                ->arrayNode('tags')
-                    ->setDeprecated('The "%node%" option is deprecated. Use "editables" instead.')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('map')
-                            ->useAttributeAsKey('name')
-                            ->prototype('scalar')->end()
-                        ->end()
-                        ->arrayNode('prefixes')
-                            ->prototype('scalar')->end()
-                        ->end()
-                    ->end()
-                ->end()
                 ->arrayNode('versions')
                     ->children()
                         ->scalarNode('days')
@@ -659,16 +646,6 @@ class Configuration implements ConfigurationInterface
                             ->defaultNull()
                         ->end()
                     ->end()
-                ->end()
-                ->booleanNode('create_redirect_when_moved')
-                    ->setDeprecated('The "%node%" option is deprecated and not used anymore, it is just there for compatibility.')
-                    ->beforeNormalization()
-                        ->ifString()
-                        ->then(function ($v) {
-                            return (bool)$v;
-                        })
-                    ->end()
-                    ->defaultFalse()
                 ->end()
                 ->scalarNode('allow_trailing_slash')
                     ->defaultValue('no')
@@ -1530,11 +1507,6 @@ class Configuration implements ConfigurationInterface
                                             'subject.getProductType() == "article" and is_fully_authenticated() and "ROLE_PIMCORE_ADMIN" in roles',
                                         ],
                                     ])
-                                ->end()
-                                ->scalarNode('initial_place')
-                                    ->defaultNull()
-                                    ->setDeprecated('The "%node%" option is deprecated. Use "initial_markings" instead.')
-                                    ->info('Will be applied when the current place is empty.')
                                 ->end()
                                 ->arrayNode('initial_markings')
                                     ->info('Can be used to set the initial places (markings) for a workflow. Note that this option is Symfony 4.3+ only')

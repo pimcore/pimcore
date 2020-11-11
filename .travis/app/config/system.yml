@@ -22,7 +22,6 @@ pimcore:
             steps: 10
         error_pages:
             default: /error
-        create_redirect_when_moved: false
         allow_trailing_slash: 'no'
         generate_preview: true
     objects:

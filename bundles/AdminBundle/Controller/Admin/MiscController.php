@@ -162,7 +162,7 @@ class MiscController extends AdminController
         /** @var Translator $translator */
         $translator->lazyInitialize('admin', $language);
 
-        $translations =  $translator->getCatalogue($language)->all('admin');
+        $translations = $translator->getCatalogue($language)->all('admin');
         if ($language != 'en') {
             // add en as a fallback
             $translator->lazyInitialize('admin', 'en');
@@ -173,7 +173,7 @@ class MiscController extends AdminController
             }
         }
 
-        $caseInsensitive =  $translator instanceof Translator && $translator->getCaseInsensitive();
+        $caseInsensitive = $translator instanceof Translator && $translator->getCaseInsensitive();
         $response = new Response('pimcore.system_i18n = ' . $this->encodeJson($translations) . ';pimcore.system_i18n_case_insensitive='. json_encode($caseInsensitive));
         $response->headers->set('Content-Type', 'text/javascript');
 
