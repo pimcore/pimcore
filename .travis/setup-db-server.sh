@@ -54,7 +54,7 @@ if [ $DATABASE_SERVER = "percona-server-5.7" ]; then
     sudo apt-get update --allow-unauthenticated
     sudo apt-get install -y --allow-unauthenticated percona-server-server-5.7
     sudo systemctl start mysql
-    sudo mysql -e "SET GLOBAL innodb_file_format=Barracuda; SET GLOBAL innodb_large_prefix=1;"
+    sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';  flush privileges;"
 fi
 
 if [ $DATABASE_SERVER = "mysql-5.7" ]; then
