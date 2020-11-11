@@ -16,15 +16,17 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Http\RequestHelper;
 use Pimcore\Http\RequestMatcherFactory;
-use Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener as BaseWebDebugToolbarListener;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener as SymfonyWebDebugToolbarListener;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Disables the web debug toolbar for frontend requests by admins (iframes inside admin interface)
  */
-class WebDebugToolbarListener extends BaseWebDebugToolbarListener
+class WebDebugToolbarListener implements EventSubscriberInterface
 {
     /**
      * @var RequestHelper
@@ -47,55 +49,62 @@ class WebDebugToolbarListener extends BaseWebDebugToolbarListener
     protected $excludeMatchers;
 
     /**
-     * @param RequestHelper $requestHelper
+     * @var SymfonyWebDebugToolbarListener|null
      */
-    public function setRequestHelper(RequestHelper $requestHelper)
+    protected $debugToolbarListener;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    public function __construct(
+        RequestHelper $requestHelper,
+        RequestMatcherFactory $requestMatcherFactory,
+        ?SymfonyWebDebugToolbarListener $debugToolbarListener,
+        EventDispatcherInterface $eventDispatcher,
+        array $excludeRoutes
+    )
     {
         $this->requestHelper = $requestHelper;
-    }
-
-    /**
-     * @param RequestMatcherFactory $requestMatcherFactory
-     */
-    public function setRequestMatcherFactory(RequestMatcherFactory $requestMatcherFactory)
-    {
         $this->requestMatcherFactory = $requestMatcherFactory;
-    }
-
-    /**
-     * @param array $excludeRoutes
-     */
-    public function setExcludeRoutes(array $excludeRoutes)
-    {
         $this->excludeRoutes = $excludeRoutes;
+        $this->debugToolbarListener = $debugToolbarListener;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
      * @inheritDoc
      */
-    protected function injectToolbar(Response $response, Request $request, array $nonces)
+    public static function getSubscribedEvents()
     {
-        // only show toolbar for frontend-admin requests if requested
-        $request = $this->requestHelper->getCurrentRequest();
+        return [
+            KernelEvents::REQUEST => ['onKernelResponse', -118],
+        ];
+    }
 
-        // parameter pimcore_enable_wdt allows us to override if toolbar is shown or not
-        $enableParam = (bool)$request->get('pimcore_enable_wdt');
-
-        if (!$enableParam) {
-            // do not show toolbar on frontend-admin requests
-            if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
-                return;
-            }
-
-            // do not show toolbar on excluded routes (pimcore.web_profiler.toolbar.excluded_routes config entry)
-            foreach ($this->getExcludeMatchers() as $excludeMatcher) {
-                if ($excludeMatcher->matches($request)) {
-                    return;
-                }
-            }
+    /**
+     * @param RequestEvent $event
+     */
+    public function onKernelResponse(RequestEvent $event)
+    {
+        if (!$event->isMasterRequest()) {
+            return;
         }
 
-        parent::injectToolbar($response, $request, $nonces);
+        $request = $event->getRequest();
+
+        // do not show toolbar on frontend-admin requests
+        if ($this->requestHelper->isFrontendRequestByAdmin($request)) {
+            $this->disableWebDebugToolbar();
+        }
+
+        // do not show toolbar on excluded routes (pimcore.web_profiler.toolbar.excluded_routes config entry)
+        foreach ($this->getExcludeMatchers() as $excludeMatcher) {
+            if ($excludeMatcher->matches($request)) {
+                $this->disableWebDebugToolbar();
+            }
+        }
     }
 
     /**
@@ -108,5 +117,12 @@ class WebDebugToolbarListener extends BaseWebDebugToolbarListener
         }
 
         return $this->excludeMatchers;
+    }
+
+    protected function disableWebDebugToolbar(): void
+    {
+        if($this->debugToolbarListener) {
+            $this->eventDispatcher->removeSubscriber($this->debugToolbarListener);
+        }
     }
 }
