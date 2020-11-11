@@ -29,7 +29,6 @@ use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\RoutingLoaderPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\ServiceControllersPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\SessionConfiguratorPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\TargetingOverrideHandlersPass;
-use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WebDebugToolbarListenerPass;
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Compiler\WorkflowPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
@@ -70,7 +69,6 @@ class PimcoreCoreBundle extends Bundle
         $container->addCompilerPass(new CacheCollectorPass());
         $container->addCompilerPass(new ServiceControllersPass());
         $container->addCompilerPass(new SessionConfiguratorPass());
-        $container->addCompilerPass(new WebDebugToolbarListenerPass());
         $container->addCompilerPass(new TargetingOverrideHandlersPass());
         $container->addCompilerPass(new DoctrineMigrationsParametersPass());
         $container->addCompilerPass(new MonologPublicLoggerPass());

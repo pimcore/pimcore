@@ -144,3 +144,8 @@ services:
 
 
     Pimcore\Bundle\CoreBundle\EventListener\Frontend\OutputTimestampListener: ~
+
+    Pimcore\Bundle\CoreBundle\EventListener\WebDebugToolbarListener:
+        arguments:
+            $excludeRoutes: '%pimcore.web_profiler.toolbar.excluded_routes%'
+            $debugToolbarListener: '@?web_profiler.debug_toolbar'
