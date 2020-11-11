@@ -31,7 +31,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AdminController extends Controller implements AdminControllerInterface
 {
-
     public static function getSubscribedServices()
     {
         $services = parent::getSubscribedServices();
