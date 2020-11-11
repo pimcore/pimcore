@@ -16,12 +16,12 @@ namespace Pimcore\Bundle\CoreBundle\EventListener;
 
 use Pimcore\Http\RequestHelper;
 use Pimcore\Http\RequestMatcherFactory;
+use Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener as SymfonyWebDebugToolbarListener;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener as SymfonyWebDebugToolbarListener;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Disables the web debug toolbar for frontend requests by admins (iframes inside admin interface)
@@ -64,8 +64,7 @@ class WebDebugToolbarListener implements EventSubscriberInterface
         ?SymfonyWebDebugToolbarListener $debugToolbarListener,
         EventDispatcherInterface $eventDispatcher,
         array $excludeRoutes
-    )
-    {
+    ) {
         $this->requestHelper = $requestHelper;
         $this->requestMatcherFactory = $requestMatcherFactory;
         $this->excludeRoutes = $excludeRoutes;
@@ -121,7 +120,7 @@ class WebDebugToolbarListener implements EventSubscriberInterface
 
     protected function disableWebDebugToolbar(): void
     {
-        if($this->debugToolbarListener) {
+        if ($this->debugToolbarListener) {
             $this->eventDispatcher->removeSubscriber($this->debugToolbarListener);
         }
     }

@@ -547,7 +547,6 @@ class AssetController extends ElementControllerBase implements KernelControllerE
         $newType = Asset::getTypeFromMimeMapping($mimetype, $newFilename);
 
         if ($newType != $asset->getType()) {
-
             return $this->adminJson([
                 'success' => false,
                 'message' => sprintf($this->trans('asset_type_change_not_allowed', [], 'admin'), $asset->getType(), $newType),

@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
-use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Config;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Logger;
@@ -806,7 +805,7 @@ class UserController extends AdminController implements KernelControllerEventInt
         $user = $this->getAdminUser();
         $proxyUser = $this->getAdminUser(true);
 
-        $newSecret   = $twoFactor->generateSecret();
+        $newSecret = $twoFactor->generateSecret();
         $user->setTwoFactorAuthentication('enabled', true);
         $user->setTwoFactorAuthentication('type', 'google');
         $user->setTwoFactorAuthentication('secret', $newSecret);
