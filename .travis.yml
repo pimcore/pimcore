@@ -43,7 +43,7 @@ jobs:
     - os: linux
       php: nightly
       env:
-          - DATABASE_SERVER="mariadb-10.3"
+          - DATABASE_SERVER="mariadb-10.2"
 
   include:
 
@@ -56,26 +56,26 @@ jobs:
       env:
           - DATABASE_SERVER="mariadb-10.4"
 
-    - name: "All Tests - PHP 7.4 | Percona 5.6"
+    - name: "All Tests - PHP 7.4 | Percona 5.7"
       os: linux
       sudo: required
       php: 7.4
       env:
-          - DATABASE_SERVER="percona-server-5.6"
+          - DATABASE_SERVER="percona-server-5.7"
 
-    - name: "All Tests - PHP 8 | MariaDB 10.3"
+    - name: "All Tests - PHP 8 | MariaDB 10.2"
       os: linux
       sudo: required
       php: nightly
       env:
-          - DATABASE_SERVER="mariadb-10.3"
+          - DATABASE_SERVER="mariadb-10.2"
 
-    - name: "All Tests - PHP 7.3 | MariaDB 10.4 | Lowest dependencies"
+    - name: "All Tests - PHP 7.3 | MySQL 8.0 | Lowest dependencies"
       os: linux
       sudo: required
       php: 7.3
       env:
-        - DATABASE_SERVER="mariadb-10.4"
+        - DATABASE_SERVER="mysql-8.0"
         - COMPOSER_PREFER_LOWEST=1
 
     # Test Stan - see https://github.com/phpstan/phpstan
