@@ -1574,7 +1574,6 @@ class DataObjectHelperController extends AdminController
             } elseif ($nbFields === count($fields)) {
                 $rows++;
             } else {
-
                 return $this->adminJson([
                     'success' => false,
                     'message' => $this->trans('different_number_of_columns', [], 'admin'),
