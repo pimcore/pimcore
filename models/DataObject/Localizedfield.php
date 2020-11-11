@@ -371,7 +371,8 @@ class Localizedfield extends Model\AbstractModel implements
             $container = $block->getFieldDefinition('localizedfields');
         } else {
             /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $container */
-            $container = $this->getObject()->getClass()->getFieldDefinition('localizedfields');
+            $class = $this->getClass();
+            $container = $class->getFieldDefinition('localizedfields');
         }
 
         return $container->getFieldDefinitions($params);
