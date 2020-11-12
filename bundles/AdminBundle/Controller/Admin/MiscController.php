@@ -29,6 +29,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/misc")
@@ -154,11 +155,11 @@ class MiscController extends AdminController
      *
      * @return Response
      */
-    public function jsonTranslationsSystemAction(Request $request)
+    public function jsonTranslationsSystemAction(Request $request, TranslatorInterface $translator)
     {
         $language = $request->get('language');
 
-        $translator = $this->get('translator');
+        /** @var Translator $translator */
         $translator->lazyInitialize('admin', $language);
 
         $translations = $translator->getCatalogue($language)->all('admin');

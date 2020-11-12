@@ -28,6 +28,7 @@ use Pimcore\Model\Tool\CustomReport\Config;
 use Pimcore\Tool\Console;
 use Pimcore\Tool\Newsletter;
 use RuntimeException;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -377,17 +378,16 @@ class NewsletterController extends DocumentControllerBase
      * @Route("/calculate", name="pimcore_admin_document_newsletter_calculate", methods={"POST"})
      *
      * @param Request $request
+     * @param ServiceLocator $addressSourceAdapterFactory
      *
      * @return JsonResponse
      */
-    public function calculateAction(Request $request): JsonResponse
+    public function calculateAction(Request $request, ServiceLocator $addressSourceAdapterFactory): JsonResponse
     {
         $addressSourceAdapterName = $request->get('addressAdapterName');
         $adapterParams = json_decode($request->get('adapterParams'), true);
 
-        $serviceLocator = $this->get('pimcore.newsletter.address_source_adapter.factories');
-
-        if (!$serviceLocator->has($addressSourceAdapterName)) {
+        if (!$addressSourceAdapterFactory->has($addressSourceAdapterName)) {
             $msg = sprintf(
                 'Cannot send newsletters because Address Source Adapter with identifier %s could not be found',
                 $addressSourceAdapterName
@@ -397,7 +397,7 @@ class NewsletterController extends DocumentControllerBase
         }
 
         /** @var AddressSourceAdapterFactoryInterface $addressAdapterFactory */
-        $addressAdapterFactory = $serviceLocator->get($addressSourceAdapterName);
+        $addressAdapterFactory = $addressSourceAdapterFactory->get($addressSourceAdapterName);
         $addressAdapter = $addressAdapterFactory->create($adapterParams);
 
         return $this->adminJson(['success' => true, 'count' => $addressAdapter->getTotalRecordCount()]);
@@ -407,12 +407,13 @@ class NewsletterController extends DocumentControllerBase
      * @Route("/send-test", name="pimcore_admin_document_newsletter_sendtest", methods={"POST"})
      *
      * @param Request $request
+     * @param ServiceLocator $addressSourceAdapterFactory
      *
      * @return JsonResponse
      *
      * @throws Exception
      */
-    public function sendTestAction(Request $request): JsonResponse
+    public function sendTestAction(Request $request, ServiceLocator $addressSourceAdapterFactory): JsonResponse
     {
         $document = Document\Newsletter::getById($request->get('id'));
         $addressSourceAdapterName = $request->get('addressAdapterName');
@@ -426,9 +427,7 @@ class NewsletterController extends DocumentControllerBase
             ]);
         }
 
-        $serviceLocator = $this->get('pimcore.newsletter.address_source_adapter.factories');
-
-        if (!$serviceLocator->has($addressSourceAdapterName)) {
+        if (!$addressSourceAdapterFactory->has($addressSourceAdapterName)) {
             return $this->adminJson([
                 'success' => false,
                 'error' => sprintf(
@@ -439,7 +438,7 @@ class NewsletterController extends DocumentControllerBase
         }
 
         /** @var AddressSourceAdapterFactoryInterface $addressAdapterFactory */
-        $addressAdapterFactory = $serviceLocator->get($addressSourceAdapterName);
+        $addressAdapterFactory = $addressSourceAdapterFactory->get($addressSourceAdapterName);
         $addressAdapter = $addressAdapterFactory->create($adapterParams);
 
         $sendingContainer = $addressAdapter->getParamsForTestSending($testMailAddress);

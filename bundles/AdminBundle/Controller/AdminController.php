@@ -19,6 +19,7 @@ use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
 use Pimcore\Controller\Controller;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
+use Pimcore\Logger;
 use Pimcore\Model\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
@@ -36,7 +37,8 @@ abstract class AdminController extends Controller implements AdminControllerInte
         $services['translator'] = TranslatorInterface::class;
         $services[TokenStorageUserResolver::class] = TokenStorageUserResolver::class;
         $services[PimcoreBundleManager::class] = PimcoreBundleManager::class;
-        $services['pimcore_admin.serializer'] = SerializerInterface::class;
+        $services['pimcore_admin.serializer'] = '?Pimcore\\Admin\\Serializer';
+
         return $services;
     }
 
@@ -84,7 +86,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
     protected function checkPermission($permission)
     {
         if (!$this->getAdminUser() || !$this->getAdminUser()->isAllowed($permission)) {
-            $this->get('monolog.logger.security')->error(
+            Logger::error(
                 'User {user} attempted to access {permission}, but has no permission to do so',
                 [
                     'user' => $this->getAdminUser()->getName(),
@@ -125,7 +127,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
         }
 
         if (!$this->getAdminUser() || !$allowed) {
-            $this->get('monolog.logger.security')->error(
+            Logger::error(
                 'User {user} attempted to access {permission}, but has no permission to do so',
                 [
                     'user' => $this->getAdminUser()->getName(),
@@ -165,6 +167,8 @@ abstract class AdminController extends Controller implements AdminControllerInte
      * @param array $context Context to pass to serializer when using serializer component
      * @param int $options   Options passed to json_encode
      * @param bool $useAdminSerializer
+     *
+     * @TODO check if $useAdminSerializer still required?
      *
      * @return string
      */

@@ -75,7 +75,7 @@ class AppBundle extends AbstractPimcoreBundle
     public function getEditmodeJsPaths()
     {
         return [
-            '/bundles/app/js/pimcore/document/tags/markdown.js'
+            '/bundles/app/js/pimcore/document/editables/markdown.js'
         ];
     }
 }
