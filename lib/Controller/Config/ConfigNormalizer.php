@@ -87,7 +87,7 @@ class ConfigNormalizer
         // check if controller is a service (prefixed with @)
         if (null !== $controller && 0 === strpos($controller, '@')) {
             return sprintf(
-                '%s:%sAction',
+                '%s::%sAction',
                 substr($controller, 1),
                 $action
             );

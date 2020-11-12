@@ -126,7 +126,10 @@ pimcore.settings.staticroutes = Class.create({
                     forceSelection: false,
                     triggerAction:"all",
                     displayField:'name',
-                    valueField:'name'
+                    valueField:'name',
+                    listConfig: {
+                        maxWidth: 400
+                    }
                 })},
             {text: t('bundle') + " (" + t('deprecated') + ")", flex: 50, sortable: false, dataIndex: 'module',
                 editor: new Ext.form.field.Text()
