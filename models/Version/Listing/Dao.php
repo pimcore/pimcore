@@ -59,7 +59,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * @return array
+     * @return int[]
      */
     public function loadIdList(){
         return (array)$this->db->fetchCol('SELECT id FROM versions' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
