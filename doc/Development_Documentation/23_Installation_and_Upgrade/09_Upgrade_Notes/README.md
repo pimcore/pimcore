@@ -1,6 +1,6 @@
 # Upgrade Notes
-
-## 6.9.0 
+## 6.9.0
+- [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 7. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 7. 
 - Config option and container parameter `pimcore.routing.defaults` is deprecated, use `pimcore.documents.default_controller` instead. 
 - Method `\Pimcore\Tool::getRoutingDefaults()` is deprecated and will be removed in Pimcore v7. 
 - `PageSnippet::$module|$action|get/setAction()|get/setModule()` are deprecated and will be removed in Pimcore v7.

@@ -423,7 +423,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @return Asset|Document|Object
+     * @return Asset|Document|Object|null
      */
     public function getO()
     {
