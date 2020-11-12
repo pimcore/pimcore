@@ -17,6 +17,9 @@
 
 namespace Pimcore\Model\Element\Reference;
 
+/**
+ * @deprecated
+ */
 class Placeholder
 {
     /**
