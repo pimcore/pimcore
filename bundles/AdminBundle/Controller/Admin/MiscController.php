@@ -38,7 +38,7 @@ class MiscController extends AdminController
 {
     /**
      * @Route("/get-available-modules", name="pimcore_admin_misc_getavailablemodules", methods={"GET"})
-     *
+     * @deprecated
      * @param ControllerDataProvider $provider
      *
      * @return JsonResponse
@@ -63,7 +63,7 @@ class MiscController extends AdminController
 
     /**
      * @Route("/get-available-controllers", name="pimcore_admin_misc_getavailablecontrollers", methods={"GET"})
-     *
+     * @deprecated
      * @param Request $request
      * @param ControllerDataProvider $provider
      *
@@ -82,6 +82,29 @@ class MiscController extends AdminController
         }, $controllers);
 
         sort($result);
+
+        return $this->adminJson([
+            'data' => $result,
+        ]);
+    }
+
+    /**
+     * @Route("/get-available-controller-references", name="pimcore_admin_misc_getavailablecontroller_references", methods={"GET"})
+     * @deprecated
+     * @param Request $request
+     * @param ControllerDataProvider $provider
+     *
+     * @return JsonResponse
+     */
+    public function getAvailableControllerReferencesAction(Request $request, ControllerDataProvider $provider)
+    {
+        $controllerReferences = $provider->getControllerReferences();
+
+        $result = array_map(function ($controller) {
+            return [
+                'name' => $controller,
+            ];
+        }, $controllerReferences);
 
         return $this->adminJson([
             'data' => $result,
