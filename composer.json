@@ -173,10 +173,7 @@
     "symfony-var-dir": "var",
     "symfony-web-dir": "web",
     "symfony-tests-dir": "tests",
-    "symfony-assets-install": "relative",
-    "branch-alias": {
-      "dev-master": "6.8-dev"
-    }
+    "symfony-assets-install": "relative"
   },
   "bin": ["bin/pimcore-install"],
   "config": {
