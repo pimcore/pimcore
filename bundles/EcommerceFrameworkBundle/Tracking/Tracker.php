@@ -78,6 +78,12 @@ abstract class Tracker implements TrackerInterface
 
     protected function configureOptions(OptionsResolver $resolver)
     {
+        @trigger_error(
+            '*.js.php templates are deprecated since version 6.9 and will not be supported in 7.0. ' .
+            'Use Twig(*.js.twig) templates instead.',
+            E_USER_DEPRECATED
+        );
+
         $resolver->setRequired(['template_prefix']);
 
         $resolver->setAllowedTypes('template_prefix', 'string');

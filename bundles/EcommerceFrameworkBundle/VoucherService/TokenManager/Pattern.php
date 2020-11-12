@@ -542,13 +542,13 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
         if ($tokens) {
             $paginator = new Paginator($tokens);
 
-            if ($params['tokensPerPage']) {
+            if ($params['tokensPerPage'] ?? false) {
                 $paginator->setItemCountPerPage((int)$params['tokensPerPage']);
             } else {
                 $paginator->setItemCountPerPage(25);
             }
 
-            $paginator->setCurrentPageNumber($params['page']);
+            $paginator->setCurrentPageNumber($params['page'] ?? 1);
 
             $viewParamsBag['paginator'] = $paginator;
             $viewParamsBag['count'] = count($tokens);
@@ -556,8 +556,8 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             $viewParamsBag['msg']['result'] = 'bundle_ecommerce_voucherservice_msg-error-token-noresult';
         }
 
-        $viewParamsBag['msg']['error'] = $params['error'];
-        $viewParamsBag['msg']['success'] = $params['success'];
+        $viewParamsBag['msg']['error'] = $params['error'] ?? "";
+        $viewParamsBag['msg']['success'] = $params['success'] ?? "";
 
         // Settings parsed via foreach in view -> key is translation
         $viewParamsBag['settings'] = [

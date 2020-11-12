@@ -384,10 +384,10 @@ class Tool
             return false;
         }
 
-        $requestKeys = array_merge([
+        $requestKeys = array_merge(
             array_keys($request->query->all()),
-            array_keys($request->request->all()),
-        ]);
+            array_keys($request->request->all())
+        );
 
         // check for manually disabled ?pimcore_outputfilters_disabled=true
         if (array_key_exists('pimcore_outputfilters_disabled', $requestKeys) && \Pimcore::inDebugMode()) {

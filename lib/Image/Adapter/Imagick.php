@@ -158,12 +158,16 @@ class Imagick extends Adapter
                 if (strpos($identifyRaw, 'Clipping path') && strpos($identifyRaw, '<svg')) {
                     // if there's a clipping path embedded, apply the first one
 
-                    // known issues:
-                    // - it seems that -clip doesnt work with the ImageMagick version
-                    //   ImageMagick 6.9.7-4 Q16 x86_64 20170114 (which is used in Debian 9)
-                    // - Imagick 3.4.4 with ImageMagick 7 on OSX has horrible broken clipping support
-                    $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
-                    $i->clipImage();
+                    try {
+                        // known issues:
+                        // - it seems that -clip doesnt work with the ImageMagick version
+                        //   ImageMagick 6.9.7-4 Q16 x86_64 20170114 (which is used in Debian 9)
+                        // - Imagick 3.4.4 with ImageMagick 7 on OSX has horrible broken clipping support
+                        $i->setImageAlphaChannel(\Imagick::ALPHACHANNEL_TRANSPARENT);
+                        $i->clipImage();
+                    } catch (\Exception $e) {
+                        Logger::info(sprintf('Although automatic clipping support is enabled, your current ImageMagick / Imagick version does not support this operation on the image %s', $imagePath));
+                    }
 
                     // Imagick version compatibility
                     // Since Imagick 3.4.4 compiled against ImageMagick 7 ALPHACHANNEL_OPAQUE was removed for whatever reason
@@ -174,6 +178,7 @@ class Imagick extends Adapter
                         $alphaChannel = \Imagick::ALPHACHANNEL_OPAQUE;
                     }
                     $i->setImageAlphaChannel($alphaChannel);
+
                 }
             }
         } catch (\Exception $e) {
