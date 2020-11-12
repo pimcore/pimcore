@@ -34,6 +34,30 @@ class Listing extends Model\Listing\AbstractListing
      */
     protected $versions = null;
 
+    /**
+     * @var bool
+     */
+    protected $loadDrafts = false;
+
+    /**
+     * @return bool
+     */
+    public function getLoadDrafts(): bool
+    {
+        return $this->loadDrafts;
+    }
+
+    /**
+     * @param bool $loadDrafts
+     * @return $this
+     */
+    public function setLoadDrafts($loadDrafts)
+    {
+        $this->loadDrafts = $loadDrafts;
+        return $this;
+    }
+
+
     public function __construct()
     {
         $this->versions = & $this->data;

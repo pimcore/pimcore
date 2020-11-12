@@ -30,6 +30,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Pimcore\Model\Version;
 
 abstract class DocumentControllerBase extends AdminController implements EventedControllerInterface
 {
@@ -50,6 +51,20 @@ abstract class DocumentControllerBase extends AdminController implements Evented
         ];
 
         $this->addAdminStyle($document, ElementAdminStyleEvent::CONTEXT_EDITOR, $data);
+
+        $list = new Version\Listing();
+        $list->setLoadDrafts(true);
+        $list->setCondition("cid = ? AND ctype=? AND draft=1 AND userId = ? ",[$document->getId(),Element\Service::getType($document),$this->getUser()->getId()])
+            ->setOrderKey('date')
+            ->setOrder('DESC');
+        $activeDraft = $list->current();
+
+        //only display user daft is a other user has not saved the document later on...
+        if($activeDraft && $document->getModificationDate() < $activeDraft->getDate()){
+            $data['draft'] = ['id' => $activeDraft->getId(),'modificationDate' => $activeDraft->getDate()];
+            Model\Document\Service::saveElementToSession($activeDraft->loadData());
+        }
+
 
         $event = new GenericEvent($this, [
             'data' => $data,
@@ -326,4 +341,15 @@ abstract class DocumentControllerBase extends AdminController implements Evented
      * @param Model\Document $page
      */
     abstract protected function setValuesToDocument(Request $request, Model\Document $page);
+
+    /**
+     * @param string $task
+     * @param Model\Document\Snippet $page
+     */
+    protected function handleTask($task,$page) {
+
+        if($task == 'publish' || $task == 'null'){ //null when only a version is saved
+            $page->deleteDraftVersions($this->getUser()->getId());
+        }
+    }
 }

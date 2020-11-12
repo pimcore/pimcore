@@ -302,6 +302,26 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
 
             buttons.push(this.newerVersionNotification);
 
+            this.draftVersionNotification = new Ext.Button({
+                text: t('delete_draft'),
+                tooltip: t('this_is_a_draft_version'),
+                iconCls: "pimcore_icon_delete pimcore_material_icon",
+                scale: "medium",
+                hidden: true,
+                handler: this.deleteDraft.bind(this)
+            });
+
+            /*
+            this.draftVersionNotification = new Ext.Toolbar.TextItem({
+                xtype: 'tbtext',
+                text: '&nbsp;&nbsp;<img src="/bundles/pimcoreadmin/img/flat-color-icons/medium_priority.svg" style="height: 16px;" align="absbottom" />&nbsp;&nbsp;'
+                    + t("this_is_a_draft_version"),
+                scale: "medium",
+                hidden: true
+            });*/
+
+            buttons.push(this.draftVersionNotification);
+
             // check for newer version than the published
             if (this.data.versions.length > 0) {
                 if (this.data.documentFromVersion) {
@@ -309,6 +329,9 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
                 }
             }
 
+            if (this.data.draft){
+                this.draftVersionNotification.show();
+            }
 
             this.toolbar = new Ext.Toolbar({
                 id: "document_toolbar_" + this.id,
@@ -458,7 +481,7 @@ pimcore.document.page_snippet = Class.create(pimcore.document.document, {
     },
 
     save: function ($super, task, only, callback, successCallback) {
-        if (task !== "publish") {
+        if (task !== "publish" && task !== "draft") {
             this.validateRequiredEditables(true);
         }
 

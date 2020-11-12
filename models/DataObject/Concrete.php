@@ -258,10 +258,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      * @param bool $setModificationDate
      * @param bool $saveOnlyVersion
      * @param string $versionNote version note
+     * @param bool $isDraft
      *
      * @return Model\Version
      */
-    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null)
+    public function saveVersion($setModificationDate = true, $saveOnlyVersion = true, $versionNote = null, $isDraft = false)
     {
         try {
             if ($setModificationDate) {
@@ -272,6 +273,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::PRE_UPDATE, new DataObjectEvent($this, [
                     'saveVersionOnly' => true,
+                    'isDraft' => $isDraft
                 ]));
             }
 
@@ -287,13 +289,14 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
                 || !empty($objectsConfig['versions']['days'])
                 || $setModificationDate) {
                 $saveStackTrace = !($objectsConfig['versions']['disable_stack_trace'] ?? false);
-                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace);
+                $version = $this->doSaveVersion($versionNote, $saveOnlyVersion, $saveStackTrace, $isDraft);
             }
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
                 \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE, new DataObjectEvent($this, [
                     'saveVersionOnly' => true,
+                    'isDraft' => $isDraft
                 ]));
             }
 
@@ -302,6 +305,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             \Pimcore::getEventDispatcher()->dispatch(DataObjectEvents::POST_UPDATE_FAILURE, new DataObjectEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e,
+                'isDraft' => $isDraft
             ]));
 
             throw $e;
@@ -764,7 +768,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         $fields = $this->getClass()->getFieldDefinitions(['suppressEnrichment' => true]);
         foreach ($fields as $field) {
             if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
-                                && $field->getLazyLoading()) {
+                && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }
@@ -841,13 +845,19 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
      * @param int $modificationDate
      * @param int $versionCount
      * @param bool $force
+     * @param int $draftUserId
      *
      * @return Model\Version|void
      */
-    public static function getLatestVersionByObjectIdAndLatestModificationDate($objectId, $modificationDate, $versionCount, $force = false)
+    public static function getLatestVersionByObjectIdAndLatestModificationDate($objectId, $modificationDate, $versionCount, $force = false, $draftUserId = null)
     {
         $db = Db::get();
-        $versionData = $db->fetchRow("SELECT id,date,versionCount FROM versions WHERE cid = ? AND ctype='object' ORDER BY `versionCount` DESC, `id` DESC LIMIT 1", $objectId);
+
+        if($draftUserId){
+            $versionData = $db->fetchRow("SELECT id,date,versionCount FROM versions WHERE cid = ? AND ctype='object' AND (draft = 0 OR (draft = 1 AND userid = ?)) ORDER BY `versionCount` DESC, `id` DESC LIMIT 1", [$objectId,$draftUserId]);
+        }else{
+            $versionData = $db->fetchRow("SELECT id,date,versionCount FROM versions WHERE cid = ? AND ctype='object' AND draft = 0 ORDER BY `versionCount` DESC, `id` DESC LIMIT 1", $objectId);
+        }
 
         if (!empty($versionData['id']) && ($versionData['date'] > $modificationDate || $versionData['versionCount'] > $versionCount || $force)) {
             $version = Model\Version::getById($versionData['id']);

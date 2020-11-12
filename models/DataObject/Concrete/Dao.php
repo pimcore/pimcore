@@ -177,8 +177,8 @@ class Dao extends Model\DataObject\AbstractObject\Dao
                     $this->model->setValue($key, $value->getDataFromResource($multidata));
                 } else {
                     $this->model->setValue($key, $value->getDataFromResource($data[$key], $this->model,
-                            ['owner' => $this->model,
-                                'fieldname' => $key, ]));
+                        ['owner' => $this->model,
+                            'fieldname' => $key, ]));
                 }
             }
         }
@@ -200,7 +200,7 @@ class Dao extends Model\DataObject\AbstractObject\Dao
 
         foreach ($fieldDefinitions as $key => $fd) {
             if (($fd instanceof LazyLoadingSupportInterface || method_exists($fd, 'getLazyLoading'))
-                                    && $fd->getLazyLoading()) {
+                && $fd->getLazyLoading()) {
                 if (!$this->model->isLazyKeyLoaded($key) || $fd instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
                     //this is a relation subject to lazy loading - it has not been loaded
                     $untouchable[] = $key;
@@ -453,16 +453,17 @@ class Dao extends Model\DataObject\AbstractObject\Dao
      * Get latest available version, using $force always returns a version no matter if it is the same as the published one
      *
      * @param bool $force
+     * @param int $draftUserId
      *
      * @return Model\Version|null
      *
      * @todo: should return null or false explicit
      */
-    public function getLatestVersion($force = false)
+    public function getLatestVersion($force = false,$draftUserId = null)
     {
         if ($this->model instanceof DataObject\Concrete) {
             return DataObject\Concrete::getLatestVersionByObjectIdAndLatestModificationDate($this->model->getId(),
-                $this->model->getModificationDate(), $this->model->getVersionCount(), $force);
+                $this->model->getModificationDate(), $this->model->getVersionCount(), $force,$draftUserId);
         }
 
         return;

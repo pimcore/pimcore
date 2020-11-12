@@ -43,7 +43,7 @@ use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\Routing\Annotation\Route;
-
+use Pimcore\Model\Version;
 /**
  * @Route("/object")
  */
@@ -396,7 +396,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $objectFromDatabase = clone $objectFromDatabase;
 
         // set the latest available version for editmode
-        $object = $this->getLatestVersion($objectFromDatabase);
+        $latestVersion = $this->getLatestVersion($objectFromDatabase);
+
+        $object = $latestVersion ? $latestVersion->getData() : $objectFromDatabase;
+
 
         // check for lock
         if ($object->isAllowed('save') || $object->isAllowed('publish') || $object->isAllowed('unpublish') || $object->isAllowed('delete')) {
@@ -410,6 +413,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         // we need to know if the latest version is published or not (a version), because of lazy loaded fields in $this->getDataForObject()
         $objectFromVersion = $object !== $objectFromDatabase;
 
+
         if ($object->isAllowed('view')) {
             $objectData = [];
 
@@ -422,6 +426,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             if ($objectFromDatabase->getClass()->getPreviewUrl() || $objectFromDatabase->getClass()->getLinkGeneratorReference()) {
                 $objectData['hasPreview'] = true;
             }
+
+            if($latestVersion && $latestVersion->isDraft()){
+                $objectData['draft'] = ['id' => $latestVersion->getId(),'modificationDate' => $latestVersion->getDate()];
+            }
+
+            $objectData['elementType'] = Element\Service::getType($object);
 
             $objectData['general'] = [];
             $objectData['general']['objectFromVersion'] = $objectFromVersion;
@@ -1179,8 +1189,12 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         $originalModificationDate = $object->getModificationDate();
 
         // set the latest available version for editmode
-        $object = $this->getLatestVersion($object);
+        $latestVersion = $this->getLatestVersion($object);
+        if($latestVersion){
+            $object = $latestVersion->getData();
+        }
         $object->setUserModification($this->getAdminUser()->getId());
+
 
         // data
         $data = [];
@@ -1246,7 +1260,7 @@ class DataObjectController extends ElementControllerBase implements EventedContr
         }
 
         // unpublish and save version is possible without checking mandatory fields
-        if ($request->get('task') == 'unpublish' || $request->get('task') == 'version') {
+        if (in_array($request->get('task'),['unpublish','version','draft'])) {
             $object->setOmitMandatoryCheck(true);
         }
 
@@ -1261,6 +1275,10 @@ class DataObjectController extends ElementControllerBase implements EventedContr
             $treeData = $this->getTreeNodeConfig($object);
 
             $newObject = DataObject\AbstractObject::getById($object->getId(), true);
+
+            if($request->get('task') == 'publish'){
+                $object->deleteDraftVersions($this->getUser()->getId());
+            }
 
             return $this->adminJson([
                 'success' => true,
@@ -1281,10 +1299,16 @@ class DataObjectController extends ElementControllerBase implements EventedContr
                 return $this->adminJson(['success' => true]);
             }
         } elseif ($object->isAllowed('save')) {
-            if ($object->isPublished()) {
-                $object->saveVersion();
+            $isDraft = $request->get('task') == "draft";
+
+            if ($object->isPublished() || $isDraft) {
+                $object->saveVersion(true,true,null,$isDraft);
             } else {
                 $object->save();
+            }
+
+            if($request->get('task') == 'version'){
+                $object->deleteDraftVersions($this->getUser()->getId());
             }
 
             $treeData = $this->getTreeNodeConfig($object);
@@ -2145,19 +2169,19 @@ class DataObjectController extends ElementControllerBase implements EventedContr
     /**
      * @param  DataObject\Concrete $object
      *
-     * @return DataObject\Concrete
+     * @return Version | null
      */
     protected function getLatestVersion(DataObject\Concrete $object)
     {
-        $latestVersion = $object->getLatestVersion();
+        $latestVersion = $object->getLatestVersion(false,$this->getUser()->getId());
         if ($latestVersion) {
             $latestObj = $latestVersion->loadData();
             if ($latestObj instanceof DataObject\Concrete) {
-                $object = $latestObj;
+                return $latestVersion;
             }
         }
 
-        return $object;
+        return null;
     }
 
     /**

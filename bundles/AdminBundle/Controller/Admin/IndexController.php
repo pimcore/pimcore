@@ -270,6 +270,7 @@ class IndexController extends AdminController implements EventedControllerInterf
         // flags
         $namingStrategy = $this->get('pimcore.document.tag.naming.strategy');
 
+
         $settings->getParameters()->add([
             'showCloseConfirmation' => true,
             'debug_admin_translations' => (bool)$config['general']['debug_admin_translations'],
@@ -288,6 +289,8 @@ class IndexController extends AdminController implements EventedControllerInterf
             'document_tree_paging_limit' => $config['documents']['tree_paging_limit'],
             'object_tree_paging_limit' => $config['objects']['tree_paging_limit'],
             'maxmind_geoip_installed' => (bool) $this->getParameter('pimcore.geoip.db_file'),
+            'draft_saving_interval_document' => $this->getParameter('pimcore.admin.draft_saving_interval_document'),
+            'draft_saving_interval_object' => $this->getParameter('pimcore.admin.draft_saving_interval_object')
         ]);
 
         $dashboardHelper = new \Pimcore\Helper\Dashboard($user);

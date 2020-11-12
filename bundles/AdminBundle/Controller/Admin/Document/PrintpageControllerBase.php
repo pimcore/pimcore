@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin\Document;
 use Pimcore\Config;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Model\Document;
+use Pimcore\Model\Element;
 use Pimcore\Web2Print\Processor;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -60,6 +61,7 @@ class PrintpageControllerBase extends DocumentControllerBase
         $page->setChildren(null);
 
         $data = $page->getObjectVars();
+        $data['elementType'] = Element\Service::getType($page);
 
         $this->addTranslationsData($page, $data);
         $this->minimizeProperties($page, $data);
@@ -123,6 +125,7 @@ class PrintpageControllerBase extends DocumentControllerBase
 
             $treeData = $this->getTreeNodeConfig($page);
 
+            $this->handleTask($request->get('task'),$page);
             return $this->adminJson([
                 'success' => true,
                 'data' => [
@@ -133,8 +136,10 @@ class PrintpageControllerBase extends DocumentControllerBase
             ]);
         } elseif ($page->isAllowed('save')) {
             $this->setValuesToDocument($request, $page);
-            $page->saveVersion();
 
+            $page->saveVersion(true,true,null,$request->get('task') == "draft");
+
+            $this->handleTask($request->get('task'),$page);
             return $this->adminJson(['success' => true]);
         } else {
             throw $this->createAccessDeniedHttpException();

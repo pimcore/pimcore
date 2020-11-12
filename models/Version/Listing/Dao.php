@@ -24,6 +24,21 @@ use Pimcore\Model;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
+
+    public function getCondition()
+    {
+        $condition = parent::getCondition();
+        if($this->model->getLoadDrafts() == false){
+            if(trim($condition)){
+                $condition .=' AND draft = 0';
+            }else{
+                $condition = ' WHERE draft = 0';
+            }
+        }
+
+        return $condition;
+    }
+
     /**
      * Loads a list of versions for the specicified parameters, returns an array of Version elements
      *
@@ -32,7 +47,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function load()
     {
         $versions = [];
-        $data = $this->db->fetchCol('SELECT id FROM versions' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $data = $this->loadIdList();
 
         foreach ($data as $id) {
             $versions[] = Model\Version::getById($id);
@@ -41,6 +56,10 @@ class Dao extends Model\Listing\Dao\AbstractDao
         $this->model->setVersions($versions);
 
         return $versions;
+    }
+
+    public function loadIdList(){
+        return $this->db->fetchCol('SELECT id FROM versions' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
     }
 
     /**
