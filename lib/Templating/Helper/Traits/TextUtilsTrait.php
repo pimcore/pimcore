@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,66 +17,19 @@
 
 namespace Pimcore\Templating\Helper\Traits;
 
-trait TextUtilsTrait
-{
+@trigger_error(
+    'Pimcore\Templating\Helper\Traits\TextUtilsTrait is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    ' Use ' . \Pimcore\Twig\Extension\Templating\Traits\TextUtilsTrait::class . ' instead.',
+    E_USER_DEPRECATED
+);
+
+class_exists(\Pimcore\Twig\Extension\Templating\Traits\TextUtilsTrait::class);
+
+if (false) {
     /**
-     * @param string $string
-     * @param int|null $length
-     * @param string $suffix
-     *
-     * @return string
+     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Traits\TextUtilsTrait
      */
-    public function normalizeString($string, $length = null, $suffix = '')
-    {
-        $string = strip_tags($string);
-        $string = $this->getStringAsOneLine($string);
-
-        if ($length) {
-            $truncated = $this->truncateString($string, $length);
-
-            if ($suffix && $truncated !== $string) {
-                $truncated .= $suffix;
-            }
-
-            $string = $truncated;
-        }
-
-        return $string;
-    }
-
-    /**
-     * @param string $string
-     *
-     * @return string
-     */
-    public function getStringAsOneLine($string)
-    {
-        $string = str_replace("\r\n", ' ', $string);
-        $string = str_replace("\n", ' ', $string);
-        $string = str_replace("\r", ' ', $string);
-        $string = str_replace("\t", '', $string);
-        $string = preg_replace('#[ ]+#', ' ', $string);
-
-        return $string;
-    }
-
-    /**
-     * @param string $string
-     * @param int $length
-     *
-     * @return string
-     */
-    public function truncateString($string, $length)
-    {
-        if ($length < mb_strlen($string)) {
-            $text = mb_substr($string, 0, $length);
-            if (false !== ($length = mb_strrpos($text, ' '))) {
-                $text = mb_substr($text, 0, $length);
-            }
-
-            $string = $text;
-        }
-
-        return $string;
+    trait TextUtilsTrait {
+        use \Pimcore\Twig\Extension\Templating\Traits\TextUtilsTrait;
     }
 }

@@ -17,10 +17,22 @@ declare(strict_types=1);
 
 namespace Pimcore\Templating\Helper\Navigation\Exception;
 
-class RendererNotFoundException extends \InvalidArgumentException
-{
-    public static function create(string $name): self
+
+@trigger_error(
+    'Pimcore\Templating\Helper\Navigation\Exception\RendererNotFoundException is deprecated since version 6.8.0 and will be removed in 7.0.0. '.
+    ' Use '.\Pimcore\Twig\Extension\Templating\Navigation\Exception\RendererNotFoundException::class.' instead.',
+    E_USER_DEPRECATED
+);
+
+class_exists(\Pimcore\Twig\Extension\Templating\Navigation\Exception\RendererNotFoundException::class);
+
+if (false) {
+    /**
+     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Navigation\Exception\RendererNotFoundException
+     */
+    class RendererNotFoundException extends \Pimcore\Twig\Extension\Templating\Navigation\Exception\RendererNotFoundException
     {
-        return new static(sprintf('The navigation renderer "%s" was not found', $name));
+
     }
 }
+
