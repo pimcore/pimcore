@@ -28,7 +28,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
  * Most of the normalizations here could be removed when we do not need to support legacy ZF1 notations (e.g. DB was
  * fully migrated).
  *
- * TODO use a config switch to enable/disable ZF1 compatibility
+ * @deprecated Only the default Symfony controller references are supported anymore service_id|fqcn::method_name
  */
 class ConfigNormalizer
 {
@@ -77,12 +77,17 @@ class ConfigNormalizer
      */
     public function formatControllerReference(string $bundle = null, string $controller = null, string $action = null): string
     {
+        if(strpos($controller, '::')) {
+            // new reference style (AppBundle\Controller\FooController::barAction), just return
+            return $controller;
+        }
+
         $action = $this->normalizeActionName($action);
 
         // check if controller is a service (prefixed with @)
         if (null !== $controller && 0 === strpos($controller, '@')) {
             return sprintf(
-                '%s:%sAction',
+                '%s::%sAction',
                 substr($controller, 1),
                 $action
             );

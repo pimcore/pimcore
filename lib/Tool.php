@@ -285,8 +285,8 @@ class Tool
     }
 
     /**
+     * @deprecated will be removed in Pimcore v7
      * @static
-     *
      * @return array
      */
     public static function getRoutingDefaults()

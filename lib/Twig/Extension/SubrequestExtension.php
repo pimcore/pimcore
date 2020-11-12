@@ -52,8 +52,10 @@ class SubrequestExtension extends AbstractExtension
                 'is_safe' => ['html'],
             ]),
 
+            // @TODO: remove in Pimcore v7
             new TwigFunction('pimcore_action', $this->actionHelper, [
                 'is_safe' => ['html'],
+                'deprecated' => true,
             ]),
         ];
     }

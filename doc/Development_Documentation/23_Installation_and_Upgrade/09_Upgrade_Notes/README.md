@@ -1,6 +1,22 @@
 # Upgrade Notes
 ## 6.9.0
 - [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 7. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 7. 
+- Config option and container parameter `pimcore.routing.defaults` is deprecated, use `pimcore.documents.default_controller` instead. 
+- Method `\Pimcore\Tool::getRoutingDefaults()` is deprecated and will be removed in Pimcore v7. 
+- `PageSnippet::$module|$action|get/setAction()|get/setModule()` are deprecated and will be removed in Pimcore v7 - see below for migration.
+- `DocType::$module|$action|get/setAction()|get/setModule()` are deprecated and will be removed in Pimcore v7 - see below for migration.
+- `Staticroute::$module|$action|get/setAction()|get/setModule()` are deprecated and will be removed in Pimcore v7 - see below for migration.
+- Using dynamic modules, controllers and actions in static routes (e.g. `%controller`) is deprecated and will not continue to work in Pimcore v7.
+- `\Pimcore\Controller\Config\ConfigNormalizer` is deprecated and will be removed in Pimcore v7. 
+- Templating helper `$this->action()` as well as the Twig extension `pimcore_action()` are deprecated and will be removed in Pimcore v7. Use Twig `render()` instead.
+
+#### Migrating legacy module/controller/action configurations to new controller references
+You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 
+Staticroutes and Document Types to the new controller references in the format: `AppBundle\Controller\FooController::barAction`.
+The migration has to be done **before** upgrading to the next major version! We recomment to perform the migration 
+right after the upgrade to version 6.9.0. 
+If there are some errors during the execution of the command, don't panic. 
+You can run the command as often as you want, since it doesn't touch already migrated entities. 
 
 ## 6.8.0
 - HybridAuth integration is deprecated and will be removed in Pimcore 7.

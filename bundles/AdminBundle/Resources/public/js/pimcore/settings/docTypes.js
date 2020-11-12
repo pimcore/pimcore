@@ -72,38 +72,17 @@ pimcore.settings.document.doctypes = Class.create({
                 editor: new Ext.form.TextField({})
             },
             {
-                text: t('bundle') + "(" + t('optional') + ")",
-                flex: 50,
-                sortable: true,
-                dataIndex: 'module',
-                editor: new Ext.form.ComboBox({
-                    store: new Ext.data.JsonStore({
-                        autoDestroy: true,
-                        proxy: {
-                            type: 'ajax',
-                            url: Routing.generate('pimcore_admin_misc_getavailablemodules'),
-                            reader: {
-                                type: 'json',
-                                rootProperty: 'data'
-                            }
-                        },
-                        fields: ["name"]
-                    }),
-                    triggerAction: "all",
-                    displayField: 'name'
-                })
-            },
-            {
                 text: t("controller"),
-                flex: 50,
+                flex: 200,
                 sortable: true,
                 dataIndex: 'controller',
                 editor: new Ext.form.ComboBox({
                     store: new Ext.data.JsonStore({
                         autoDestroy: true,
+                        autoLoad: true,
                         proxy: {
                             type: 'ajax',
-                            url: Routing.generate('pimcore_admin_misc_getavailablecontrollers'),
+                            url: Routing.generate('pimcore_admin_misc_getavailablecontroller_references'),
                             reader: {
                                 type: 'json',
                                 rootProperty: 'data'
@@ -111,68 +90,17 @@ pimcore.settings.document.doctypes = Class.create({
                         },
                         fields: ["name"]
                     }),
-                    queryMode: 'local',
                     triggerAction: "all",
+                    typeAhead: true,
+                    queryMode: "local",
+                    anyMatch: true,
+                    editable: true,
+                    forceSelection: false,
                     displayField: 'name',
                     valueField: 'name',
                     matchFieldWidth: false,
                     listConfig: {
                         maxWidth: 400
-                    },
-                    listeners: {
-                        "focus": function (el) {
-                            var currentRecord = this.grid.getSelection();
-                            el.getStore().reload({
-                                params: {
-                                    moduleName: currentRecord[0].data.module
-                                },
-                                callback: function () {
-                                    el.expand();
-                                }
-                            });
-                        }.bind(this)
-                    }
-                })
-            },
-            {
-                text: t("action"),
-                flex: 50,
-                sortable: true,
-                dataIndex: 'action',
-                editor: new Ext.form.ComboBox({
-                    store: new Ext.data.Store({
-                        autoDestroy: true,
-                        proxy: {
-                            type: 'ajax',
-                            url: Routing.generate('pimcore_admin_misc_getavailableactions'),
-                            reader: {
-                                type: 'json',
-                                rootProperty: 'data'
-                            }
-                        },
-                        fields: ["name"]
-                    }),
-                    queryMode: 'local',
-                    triggerAction: "all",
-                    displayField: 'name',
-                    valueField: 'name',
-                    matchFieldWidth: false,
-                    listConfig: {
-                        maxWidth: 400
-                    },
-                    listeners: {
-                        "focus": function (el) {
-                            var currentRecord = this.grid.getSelection();
-                            el.getStore().reload({
-                                params: {
-                                    controllerName: currentRecord[0].data.controller,
-                                    moduleName: currentRecord[0].data.module
-                                },
-                                callback: function () {
-                                    el.expand();
-                                }
-                            });
-                        }.bind(this)
                     }
                 })
             },
@@ -201,17 +129,22 @@ pimcore.settings.document.doctypes = Class.create({
                     matchFieldWidth: false,
                     listConfig: {
                         maxWidth: 400
-                    },
-                    listeners: {
-                        "focus": function (el) {
-                            el.getStore().reload({
-                                callback: function () {
-                                    el.expand();
-                                }
-                            });
-                        }.bind(this)
                     }
                 })
+            },
+            {
+                text: t('bundle') + " (" + t('deprecated') + ")",
+                flex: 50,
+                sortable: true,
+                dataIndex: 'module',
+                editor: new Ext.form.field.Text()
+            },
+            {
+                text: t("action") + " (" + t('deprecated') + ")",
+                flex: 50,
+                sortable: true,
+                dataIndex: 'action',
+                editor: new Ext.form.field.Text()
             },
             {
                 text: t("type"),
