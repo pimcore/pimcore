@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -12,6 +15,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+<<<<<<<< HEAD:lib/Twig/Extension/Templating/HeadScript.php
 /**
  * ----------------------------------------------------------------------------------
  * based on @author ZF1 Zend_View_Helper_HeadScript
@@ -571,23 +575,23 @@ class HeadScript extends CacheBusterAware implements RuntimeExtensionInterface
             }
         }
     }
+========
+namespace Pimcore\Templating\Helper;
 
+@trigger_error(
+    'Pimcore\Templating\Helper\HeadScript is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    ' Use ' . \Pimcore\Twig\Extension\Templating\HeadScript::class . ' instead.',
+    E_USER_DEPRECATED
+);
+
+class_exists(\Pimcore\Twig\Extension\Templating\HeadScript::class);
+>>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/HeadScript.php
+
+if (false) {
     /**
-     * Create data item containing all necessary components of script
-     *
-     * @param  string $type
-     * @param  array $attributes
-     * @param  string $content
-     *
-     * @return \stdClass
+     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\HeadScript
      */
-    public function createData($type, array $attributes, $content = null)
-    {
-        $data = new \stdClass();
-        $data->type = $type;
-        $data->attributes = $attributes;
-        $data->source = $content;
+    class HeadScript extends \Pimcore\Twig\Extension\Templating\HeadScript {
 
-        return $data;
     }
 }

@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Twig\Extension\Templating\Traits;
 
+<<<<<<<< HEAD:lib/Twig/Extension/Templating/Traits/WebLinksTrait.php
 use Symfony\Bridge\Twig\Extension\WebLinkExtension;
 
 trait WebLinksTrait
@@ -25,13 +26,21 @@ trait WebLinksTrait
      * @var WebLinkExtension
      */
     protected $webLinkExtension;
+========
+@trigger_error(
+    'Pimcore\Templating\Helper\Traits\WebLinksTrait is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    ' Use ' . \Pimcore\Twig\Extension\Templating\Traits\WebLinksTrait::class . ' instead.',
+    E_USER_DEPRECATED
+);
 
+class_exists(\Pimcore\Twig\Extension\Templating\Traits\WebLinksTrait::class);
+>>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/Traits/WebLinksTrait.php
+
+if (false) {
     /**
-     * Whether to use WebLinks (HTTP/2 push) for every item. Can be
-     * overridden on an item level.
-     *
-     * @var bool
+     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Traits\WebLinksTrait
      */
+<<<<<<<< HEAD:lib/Twig/Extension/Templating/Traits/WebLinksTrait.php
     protected $webLinksEnabled = false;
 
     public function webLinksEnabled(bool $enabled = null)
@@ -92,5 +101,9 @@ trait WebLinksTrait
         }
 
         call_user_func([$this->webLinkExtension, $method], $source, $attributes);
+========
+    trait WebLinksTrait {
+        use \Pimcore\Twig\Extension\Templating\Traits\WebLinksTrait;
+>>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/Traits/WebLinksTrait.php
     }
 }

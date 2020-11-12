@@ -1842,4 +1842,7 @@ parameters:
 			count: 2
 			path: lib/Controller/KernelResponseEventInterface.php
 
-
+		-
+			message: "#^Cannot access property \\$type on string\\.$#"
+			count: 2
+			path: lib/Twig/Extension/Templating/HeadMeta.php

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,6 +17,7 @@
 
 namespace Pimcore\Twig\Extension\Templating\Placeholder;
 
+<<<<<<<< HEAD:lib/Twig/Extension/Templating/Placeholder/CacheBusterAware.php
 /**
  * Class CacheBusterAware
  *
@@ -25,25 +29,21 @@ abstract class CacheBusterAware extends AbstractExtension
      * @var bool
      */
     protected $cacheBuster = true;
+========
+@trigger_error(
+    'Pimcore\Templating\Helper\Placeholder\CacheBusterAware is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    ' Use ' . \Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware::class . ' instead.',
+    E_USER_DEPRECATED
+);
+>>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/Placeholder/CacheBusterAware.php
 
-    /**
-     * prepares entries with cache buster prefix
-     */
-    abstract protected function prepareEntries();
+class_exists(\Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware::class);
 
+if (false) {
     /**
-     * @return bool
+     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware
      */
-    public function isCacheBuster()
-    {
-        return $this->cacheBuster;
-    }
+    abstract class CacheBusterAware extends \Pimcore\Twig\Extension\Templating\Placeholder\CacheBusterAware {
 
-    /**
-     * @param bool $cacheBuster
-     */
-    public function setCacheBuster($cacheBuster)
-    {
-        $this->cacheBuster = $cacheBuster;
     }
 }

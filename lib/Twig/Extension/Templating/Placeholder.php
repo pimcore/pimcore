@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -12,6 +15,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+<<<<<<<< HEAD:lib/Twig/Extension/Templating/Placeholder.php
 /**
  * ----------------------------------------------------------------------------------
  * based on @author ZF1 Zend_View_Helper_Placeholder
@@ -61,20 +65,23 @@ class Placeholder extends AbstractExtension
      */
     protected $containers = [];
 
-    /**
-     * Retrieve object instance; optionally add meta tag
-     *
-     * @param string $containerName
-     *
-     * @return Container
-     */
-    public function __invoke($containerName = null)
-    {
-        $containerName = (string) $containerName;
-        if (empty($this->containers[$containerName])) {
-            $this->containers[$containerName] = $this->containerService->getContainer($this->_regKey . '_' . $containerName);
-        }
+========
+namespace Pimcore\Templating\Helper;
 
-        return $this->containers[$containerName];
+@trigger_error(
+    'Pimcore\Templating\Helper\Placeholder is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    ' Use ' . \Pimcore\Twig\Extension\Templating\Placeholder::class . ' instead.',
+    E_USER_DEPRECATED
+);
+
+class_exists(\Pimcore\Twig\Extension\Templating\Placeholder::class);
+
+if (false) {
+>>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/Placeholder.php
+    /**
+     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Placeholder
+     */
+    class Placeholder extends \Pimcore\Twig\Extension\Templating\Placeholder {
+
     }
 }

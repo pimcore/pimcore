@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,6 +17,7 @@
 
 namespace Pimcore\Twig\Extension\Templating;
 
+<<<<<<<< HEAD:lib/Twig/Extension/Templating/Action.php
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
 use Pimcore\Templating\Renderer\ActionRenderer;
@@ -25,15 +29,21 @@ class Action implements RuntimeExtensionInterface
      * @var ActionRenderer
      */
     protected $actionRenderer;
+========
+@trigger_error(
+    'Pimcore\Templating\Helper\Action is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    ' Use ' . \Pimcore\Twig\Extension\Templating\Action::class . ' instead.',
+    E_USER_DEPRECATED
+);
+>>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/Action.php
 
-    /**
-     * @var DocumentTargetingConfigurator
-     */
-    private $targetingConfigurator;
+class_exists(\Pimcore\Twig\Extension\Templating\Action::class);
 
+if (false) {
     /**
-     * @var array
+     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Action
      */
+<<<<<<<< HEAD:lib/Twig/Extension/Templating/Action.php
     private $routingDefaults = [];
 
     public function __construct(
@@ -80,7 +90,9 @@ class Action implements RuntimeExtensionInterface
             $attributes,
             $query
         );
+========
+    class Action extends \Pimcore\Twig\Extension\Templating\Action {
+>>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/Action.php
 
-        return $this->actionRenderer->render($uri, $options);
     }
 }

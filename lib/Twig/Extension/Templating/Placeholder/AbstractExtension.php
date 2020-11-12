@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -12,6 +15,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+<<<<<<<< HEAD:lib/Twig/Extension/Templating/Placeholder/AbstractExtension.php
 /**
  * ----------------------------------------------------------------------------------
  * based on @author ZF1 Zend_View_Helper_Placeholder_Container_Standalone
@@ -67,27 +71,25 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
      * @var Container
      */
     protected $_container;
+========
+namespace Pimcore\Templating\Helper\Placeholder;
 
+@trigger_error(
+    'Pimcore\Templating\Helper\Placeholder\AbstractHelper is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    ' Use ' . \Pimcore\Twig\Extension\Templating\Placeholder\AbstractExtension::class . ' instead.',
+    E_USER_DEPRECATED
+);
+>>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/Placeholder/AbstractHelper.php
+
+class_exists(\Pimcore\Twig\Extension\Templating\Placeholder\AbstractExtension::class);
+
+if (false) {
     /**
-     * Registry key under which container registers itself
-     *
-     * @var string
+     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Placeholder\AbstractExtension
      */
-    protected $_regKey;
+    class AbstractHelper extends \Pimcore\Twig\Extension\Templating\Placeholder\AbstractExtension {
 
-    /**
-     * Flag whether to automatically escape output, must also be
-     * enforced in the child class if __toString/toString is overwritten
-     *
-     * @var bool
-     */
-    protected $_autoEscape = true;
-
-    public function __construct(ContainerService $containerService)
-    {
-        $this->containerService = $containerService;
-    }
-
+<<<<<<<< HEAD:lib/Twig/Extension/Templating/Placeholder/AbstractExtension.php
     /**
      * Set whether or not auto escaping should be used
      *
@@ -323,5 +325,7 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     public function getIterator()
     {
         return $this->getContainer()->getIterator();
+========
+>>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/Placeholder/AbstractHelper.php
     }
 }

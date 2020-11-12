@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -12,6 +15,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+<<<<<<<< HEAD:lib/Twig/Extension/Templating/Placeholder/ContainerService.php
 /**
  * ----------------------------------------------------------------------------------
  * based on @author ZF1 Zend_View_Helper_Placeholder_Registry
@@ -76,97 +80,23 @@ class ContainerService
         if (0 === $this->currentIndex) {
             throw new \OutOfBoundsException('Current index is already at 0');
         }
+========
+namespace Pimcore\Templating\Helper\Placeholder;
 
-        if (isset($this->_items[$this->currentIndex])) {
-            unset($this->_items[$this->currentIndex]);
-        }
+@trigger_error(
+    'Pimcore\Templating\Helper\Placeholder\ContainerService is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    ' Use ' . \Pimcore\Twig\Extension\Templating\Placeholder\ContainerService::class . ' instead.',
+    E_USER_DEPRECATED
+);
+>>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/Placeholder/ContainerService.php
 
-        --$this->currentIndex;
-    }
+class_exists(\Pimcore\Twig\Extension\Templating\Placeholder\ContainerService::class);
 
+if (false) {
     /**
-     * createContainer
-     *
-     * @param  string $key
-     * @param  array $value
-     *
-     * @return Container
+     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Placeholder\ContainerService
      */
-    public function createContainer($key, array $value = [])
-    {
-        $key = (string) $key;
+    class ContainerService extends \Pimcore\Twig\Extension\Templating\Placeholder\ContainerService {
 
-        $this->_items[$this->currentIndex][$key] = new Container($value);
-
-        return $this->_items[$this->currentIndex][$key];
-    }
-
-    /**
-     * Retrieve a placeholder container
-     *
-     * @param  string $key
-     *
-     * @return Container
-     */
-    public function getContainer($key)
-    {
-        $key = (string) $key;
-        if (isset($this->_items[$this->currentIndex][$key])) {
-            return $this->_items[$this->currentIndex][$key];
-        }
-
-        $container = $this->createContainer($key);
-
-        return $container;
-    }
-
-    /**
-     * Does a particular container exist?
-     *
-     * @param  string $key
-     *
-     * @return bool
-     */
-    public function containerExists($key)
-    {
-        $key = (string) $key;
-        $return = array_key_exists($key, $this->_items[$this->currentIndex]);
-
-        return $return;
-    }
-
-    /**
-     * Set the container for an item in the registry
-     *
-     * @param  string $key
-     * @param  Container $container
-     *
-     * @return ContainerService
-     */
-    public function setContainer($key, Container $container)
-    {
-        $key = (string) $key;
-        $this->_items[$this->currentIndex][$key] = $container;
-
-        return $this;
-    }
-
-    /**
-     * Delete a container
-     *
-     * @param  string $key
-     *
-     * @return bool
-     */
-    public function deleteContainer($key)
-    {
-        $key = (string) $key;
-        if (isset($this->_items[$this->currentIndex][$key])) {
-            unset($this->_items[$this->currentIndex][$key]);
-
-            return true;
-        }
-
-        return false;
     }
 }

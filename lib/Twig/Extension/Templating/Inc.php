@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -14,6 +17,7 @@
 
 namespace Pimcore\Twig\Extension\Templating;
 
+<<<<<<<< HEAD:lib/Twig/Extension/Templating/Inc.php
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Templating\Renderer\IncludeRenderer;
@@ -48,13 +52,21 @@ class Inc implements RuntimeExtensionInterface
      * @param bool|null $editmode
      *
      * @return string
-     */
-    public function __invoke($include, array $params = [], $cacheEnabled = true, $editmode = null)
-    {
-        if (null === $editmode) {
-            $editmode = $this->editmodeResolver->isEditmode();
-        }
+========
+@trigger_error(
+    'Pimcore\Templating\Helper\Inc is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    ' Use ' . \Pimcore\Twig\Extension\Templating\Inc::class . ' instead.',
+    E_USER_DEPRECATED
+);
 
-        return $this->includeRenderer->render($include, $params, $editmode, $cacheEnabled);
+class_exists(\Pimcore\Twig\Extension\Templating\Inc::class);
+
+if (false) {
+    /**
+     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\Inc
+>>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/Inc.php
+     */
+    class Inc extends \Pimcore\Twig\Extension\Templating\Inc {
+
     }
 }

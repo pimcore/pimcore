@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -12,6 +15,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+<<<<<<<< HEAD:lib/Twig/Extension/Templating/HeadTitle.php
 /**
  * ----------------------------------------------------------------------------------
  * based on @author ZF1 Zend_View_Helper_HeadTitle
@@ -63,102 +67,23 @@ class HeadTitle extends AbstractExtension implements RuntimeExtensionInterface
      * @param string|null $setType
      *
      * @return $this
-     */
-    public function __invoke($title = null, $setType = null)
-    {
-        if (null === $setType) {
-            $setType = (null === $this->getDefaultAttachOrder())
-                ? Container::APPEND
-                : $this->getDefaultAttachOrder();
-        }
+========
+namespace Pimcore\Templating\Helper;
 
-        $title = (string) $title;
+@trigger_error(
+    'Pimcore\Templating\Helper\HeadTitle is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    ' Use ' . \Pimcore\Twig\Extension\Templating\HeadTitle::class . ' instead.',
+    E_USER_DEPRECATED
+);
 
-        if ($title !== '') {
-            if ($setType == Container::SET) {
-                $this->set($title);
-            } elseif ($setType == Container::PREPEND) {
-                $this->prepend($title);
-            } else {
-                $this->append($title);
-            }
-        }
+class_exists(\Pimcore\Twig\Extension\Templating\HeadTitle::class);
 
-        return $this;
-    }
-
+if (false) {
     /**
-     * Set a default order to add titles
-     *
-     * @param string $setType
-     *
-     * @return $this
+     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\HeadTitle
+>>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/HeadTitle.php
      */
-    public function setDefaultAttachOrder($setType)
-    {
-        if (!in_array($setType, [
-            Container::APPEND,
-            Container::SET,
-            Container::PREPEND,
-        ])) {
-            throw new Exception("You must use a valid attach order: 'PREPEND', 'APPEND' or 'SET'");
-        }
+    class HeadTitle extends \Pimcore\Twig\Extension\Templating\HeadTitle {
 
-        $this->_defaultAttachOrder = $setType;
-
-        return $this;
-    }
-
-    /**
-     * Get the default attach order, if any.
-     *
-     * @return mixed
-     */
-    public function getDefaultAttachOrder()
-    {
-        return $this->_defaultAttachOrder;
-    }
-
-    /**
-     * Turn helper into string
-     *
-     * @param  string|null $indent
-     * @param  string|null $locale
-     *
-     * @return string
-     */
-    public function toString($indent = null, $locale = null)
-    {
-        $indent = (null !== $indent)
-            ? $this->getWhitespace($indent)
-            : $this->getIndent();
-
-        $output = '';
-        if (($prefix = $this->getPrefix())) {
-            $output .= $prefix;
-        }
-
-        $output .= $this->getRawContent();
-
-        if (($postfix = $this->getPostfix())) {
-            $output .= $postfix;
-        }
-
-        $output = ($this->_autoEscape) ? $this->_escape($output) : $output;
-
-        return $indent . '<title>' . $output . '</title>';
-    }
-
-    /**
-     * Get container content without indentation, prefix or postfix
-     *
-     * @return string
-     */
-    public function getRawContent()
-    {
-        return implode(
-            $this->getContainer()->getSeparator(),
-            $this->getContainer()->getArrayCopy()
-        );
     }
 }

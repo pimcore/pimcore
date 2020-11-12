@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Pimcore
  *
@@ -12,6 +15,7 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
+<<<<<<<< HEAD:lib/Twig/Extension/Templating/HeadMeta.php
 /**
  * ----------------------------------------------------------------------------------
  * based on @author ZF1 Zend_View_Helper_HeadMeta
@@ -220,234 +224,23 @@ class HeadMeta extends AbstractExtension implements RuntimeExtensionInterface
     {
         return true;
     }
+========
+namespace Pimcore\Templating\Helper;
 
+@trigger_error(
+    'Pimcore\Templating\Helper\HeadMeta is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    ' Use ' . \Pimcore\Twig\Extension\Templating\HeadMeta::class . ' instead.',
+    E_USER_DEPRECATED
+);
+>>>>>>>> f48440fd1b... [Templating] ease migration with template helpers (#7463):lib/Templating/Helper/HeadMeta.php
+
+class_exists(\Pimcore\Twig\Extension\Templating\HeadMeta::class);
+
+if (false) {
     /**
-     * Append
-     *
-     * @param  string $value
-     *
-     * @return void
-     *
-     * @throws Exception
+     * @deprecated since Pimcore 6.8, use Pimcore\Twig\Extension\Templating\HeadMeta
      */
-    public function append($value)
-    {
-        if (!$this->_isValid($value)) {
-            throw new Exception('Invalid value passed to append; please use appendMeta()');
-        }
+    class HeadMeta extends \Pimcore\Twig\Extension\Templating\HeadMeta {
 
-        $this->getContainer()->append($value);
-    }
-
-    /**
-     * OffsetSet
-     *
-     * @param  string|int $index
-     * @param  string $value
-     *
-     * @return void
-     *
-     * @throws Exception
-     */
-    public function offsetSet($index, $value)
-    {
-        if (!$this->_isValid($value)) {
-            throw new Exception('Invalid value passed to offsetSet; please use offsetSetName() or offsetSetHttpEquiv()');
-        }
-
-        $this->getContainer()->offsetSet($index, $value);
-    }
-
-    /**
-     * OffsetUnset
-     *
-     * @param  string|int $index
-     *
-     * @return void
-     *
-     * @throws Exception
-     */
-    public function offsetUnset($index)
-    {
-        if (!in_array($index, $this->getContainer()->getKeys())) {
-            throw new Exception('Invalid index passed to offsetUnset()');
-        }
-
-        $this->getContainer()->offsetUnset($index);
-    }
-
-    /**
-     * Prepend
-     *
-     * @param  string $value
-     *
-     * @return void
-     *
-     * @throws Exception
-     */
-    public function prepend($value)
-    {
-        if (!$this->_isValid($value)) {
-            throw new Exception('Invalid value passed to prepend; please use prependMeta()');
-        }
-
-        $this->getContainer()->prepend($value);
-    }
-
-    /**
-     * Set
-     *
-     * @param  string $value
-     *
-     * @return void
-     *
-     * @throws Exception
-     */
-    public function set($value)
-    {
-        if (!$this->_isValid($value)) {
-            throw new Exception('Invalid value passed to set; please use setMeta()');
-        }
-
-        $container = $this->getContainer();
-        foreach ($container->getArrayCopy() as $index => $item) {
-            if ($item->type == $value->type && $item->{$item->type} == $value->{$value->type}) {
-                $this->offsetUnset($index);
-            }
-        }
-
-        $this->append($value);
-    }
-
-    /**
-     * Build meta HTML string
-     *
-     * @param \stdClass $item
-     *
-     * @return string
-     */
-    public function itemToString(\stdClass $item)
-    {
-        if (!in_array($item->type, $this->_typeKeys)) {
-            throw new Exception(sprintf('Invalid type "%s" provided for meta', $item->type));
-        }
-        $type = $item->type;
-
-        $modifiersString = '';
-        foreach ($item->modifiers as $key => $value) {
-            if (!in_array($key, $this->_modifierKeys)) {
-                continue;
-            }
-            $modifiersString .= $key . '="' . $this->_escape($value) . '" ';
-        }
-
-        $tpl = '<meta %s="%s" content="%s" %s/>';
-
-        $meta = sprintf(
-            $tpl,
-            $type,
-            $this->_escape($item->$type),
-            $this->_escape($item->content),
-            $modifiersString
-        );
-
-        if (isset($item->modifiers['conditional'])
-            && !empty($item->modifiers['conditional'])
-            && is_string($item->modifiers['conditional'])) {
-            if (str_replace(' ', '', $item->modifiers['conditional']) === '!IE') {
-                $meta = '<!-->' . $meta . '<!--';
-            }
-            $meta = '<!--[if ' . $this->_escape($item->modifiers['conditional']) . ']>' . $meta . '<![endif]-->';
-        }
-
-        return $meta;
-    }
-
-    /**
-     * Render placeholder as string
-     *
-     * @param  string|int $indent
-     *
-     * @return string
-     */
-    public function toString($indent = null)
-    {
-        $indent = (null !== $indent)
-            ? $this->getWhitespace($indent)
-            : $this->getIndent();
-
-        $items = [];
-        $this->getContainer()->ksort();
-        try {
-            foreach ($this as $item) {
-                $items[] = $this->itemToString($item);
-            }
-        } catch (Exception $e) {
-            trigger_error($e->getMessage(), E_USER_WARNING);
-
-            return '';
-        }
-        $metaString = $indent . implode($this->_escape($this->getSeparator()) . $indent, $items);
-
-        // add raw items
-        $separator = $this->_escape($this->getSeparator()) . $indent;
-        $metaString .= ($separator . implode($separator, $this->rawItems));
-
-        return $metaString;
-    }
-
-    /**
-     * Create data item for inserting into stack
-     *
-     * @param  string $type
-     * @param  string $typeValue
-     * @param  string $content
-     * @param  array $modifiers
-     *
-     * @return \stdClass
-     */
-    public function createData($type, $typeValue, $content, array $modifiers)
-    {
-        $data = new \stdClass;
-        $data->type = $type;
-        $data->$type = $typeValue;
-        $data->content = $content;
-        $data->modifiers = $modifiers;
-
-        return $data;
-    }
-
-    /**
-     * @param string $html
-     *
-     * @return $this
-     */
-    public function addRaw($html)
-    {
-        $this->rawItems[] = $html;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRaw()
-    {
-        return $this->rawItems;
-    }
-
-    /**
-     * @param string $string
-     * @param int $length
-     * @param string $suffix
-     *
-     * @return $this
-     */
-    public function setDescription($string, $length = null, $suffix = '')
-    {
-        $string = $this->normalizeString($string, $length, $suffix);
-
-        return $this->setName('description', $string);
     }
 }
