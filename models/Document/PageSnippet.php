@@ -278,10 +278,6 @@ abstract class PageSnippet extends Model\Document
      */
     public function getAction()
     {
-        if (empty($this->action)) {
-            return 'default';
-        }
-
         return $this->action;
     }
 
