@@ -7,9 +7,10 @@
 - `DocType::$module|$action|get/setAction()|get/setModule()` are deprecated and will be removed in Pimcore v7 - see below for migration.
 - `Staticroute::$module|$action|get/setAction()|get/setModule()` are deprecated and will be removed in Pimcore v7 - see below for migration.
 - Using dynamic modules, controllers and actions in static routes (e.g. `%controller`) is deprecated and will not continue to work in Pimcore v7.
-- `\Pimcore\Controller\Config\ConfigNormalizer` is deprecated and will be removed in Pimcore v7. 
+- `\Pimcore\Controller\Config\ConfigNormalizer` has been deprecated and will be removed in Pimcore v7. 
 - Templating helper `$this->action()` as well as the Twig extension `pimcore_action()` are deprecated and will be removed in Pimcore v7. Use Twig `render()` instead.
-- `\Pimcore\Model\Element\Reference\Placeholder` is deprecated and will be removed in Pimcore v7. Use `\Pimcore\Model\Element\ElementDescriptor` instead.
+- `\Pimcore\Model\Element\Reference\Placeholder` has been deprecated and will be removed in Pimcore v7. Use `\Pimcore\Model\Element\ElementDescriptor` instead.
+- `WebDebugToolbarListenerPass` has been deprecated and will be removed in Pimcore v7. 
 
 #### Migrating legacy module/controller/action configurations to new controller references
 You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 
