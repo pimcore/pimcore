@@ -48,6 +48,7 @@ class Staticroute extends AbstractModel
     public $reverse;
 
     /**
+     * @deprecated
      * @var string
      */
     public $module;
@@ -58,6 +59,7 @@ class Staticroute extends AbstractModel
     public $controller;
 
     /**
+     * @deprecated
      * @var string
      */
     public $action;
@@ -250,6 +252,7 @@ class Staticroute extends AbstractModel
     }
 
     /**
+     * @deprecated
      * @return string
      */
     public function getModule()
@@ -266,6 +269,7 @@ class Staticroute extends AbstractModel
     }
 
     /**
+     * @deprecated
      * @return string
      */
     public function getAction()
@@ -314,8 +318,8 @@ class Staticroute extends AbstractModel
     }
 
     /**
+     * @deprecated
      * @param string $module
-     *
      * @return $this
      */
     public function setModule($module)
@@ -338,8 +342,8 @@ class Staticroute extends AbstractModel
     }
 
     /**
+     * @deprecated
      * @param string $action
-     *
      * @return $this
      */
     public function setAction($action)
@@ -664,6 +668,7 @@ class Staticroute extends AbstractModel
             $module = trim($this->getModule());
 
             // check for dynamic controller / action / module
+            // @TODO: remove in Pimcore v7 - not supported anymore
             $dynamicRouteReplace = function ($item, $params) {
                 if (strpos($item, '%') !== false) {
                     uksort($params, function ($a, $b) {
