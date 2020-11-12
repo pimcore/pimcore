@@ -21,7 +21,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\Version\Listing\Dao getDao()
- * @method \Pimcore\Model\Version\Listing\Dao loadIdList()
+ * @method array loadIdList()
  * @method Model\Version[] load()
  * @method Model\Version current()
  * @method int getTotalCount()
