@@ -266,7 +266,7 @@ class DocumentController extends ElementControllerBase implements EventedControl
                     $createValues['action'] = $translationsBaseDocument->getAction();
                     $createValues['module'] = $translationsBaseDocument->getModule();
                 } elseif ($request->get('type') == 'page' || $request->get('type') == 'snippet' || $request->get('type') == 'email') {
-                    $createValues += Tool::getRoutingDefaults();
+                    $createValues['controller'] = $this->getParameter('pimcore.documents.default_controller');
                 }
 
                 if ($request->get('inheritanceSource')) {

@@ -89,6 +89,8 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_tmp_files_atime_older_than']);
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
 
+        $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
+
         // register pimcore config on container
         // TODO is this bad practice?
         // TODO only extract what we need as parameter?
@@ -251,10 +253,12 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
     private function configureRouting(ContainerBuilder $container, array $config)
     {
+        // @TODO remove in Pimcore v7
         $container->setParameter(
             'pimcore.routing.defaults',
             $config['defaults']
         );
+
         $container->setParameter(
             'pimcore.routing.static.locale_params',
             $config['static']['locale_params']

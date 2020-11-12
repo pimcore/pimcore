@@ -32,7 +32,9 @@ use Pimcore\Model\Document\Editable\Loader\EditableLoaderInterface;
 abstract class PageSnippet extends Model\Document
 {
     use Document\Traits\ScheduledTasksTrait;
+
     /**
+     * @deprecated
      * @var string
      */
     protected $module;
@@ -40,12 +42,13 @@ abstract class PageSnippet extends Model\Document
     /**
      * @var string
      */
-    protected $controller = 'default';
+    protected $controller;
 
     /**
+     * @deprecated
      * @var string
      */
-    protected $action = 'default';
+    protected $action;
 
     /**
      * @var string
@@ -270,14 +273,11 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
+     * @deprecated
      * @return string
      */
     public function getAction()
     {
-        if (empty($this->action)) {
-            return 'default';
-        }
-
         return $this->action;
     }
 
@@ -287,7 +287,7 @@ abstract class PageSnippet extends Model\Document
     public function getController()
     {
         if (empty($this->controller)) {
-            return 'default';
+            $this->controller = \Pimcore::getContainer()->getParameter('pimcore.documents.default_controller');
         }
 
         return $this->controller;
@@ -302,8 +302,8 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
+     * @deprecated
      * @param string $action
-     *
      * @return $this
      */
     public function setAction($action)
@@ -315,7 +315,6 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param string $controller
-     *
      * @return $this
      */
     public function setController($controller)
@@ -327,7 +326,6 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param string $template
-     *
      * @return $this
      */
     public function setTemplate($template)
@@ -338,8 +336,8 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
+     * @deprecated
      * @param string $module
-     *
      * @return $this
      */
     public function setModule($module)
@@ -350,6 +348,7 @@ abstract class PageSnippet extends Model\Document
     }
 
     /**
+     * @deprecated
      * @return string
      */
     public function getModule()
