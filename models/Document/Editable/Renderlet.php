@@ -117,11 +117,11 @@ class Renderlet extends Model\Document\Editable
             return '';
         }
 
-        if (empty($this->config['controller']) && empty($this->config['action'])) {
+        if (empty($this->config['controller'])) {
             if (is_null($this->config)) {
                 $this->config = [];
             }
-            $this->config += Tool::getRoutingDefaults();
+            $this->config['controller'] = $container->getParameter('pimcore.documents.default_controller');
         }
 
         if (method_exists($this->o, 'isPublished')) {

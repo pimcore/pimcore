@@ -314,7 +314,7 @@ pimcore.document.settings_abstract = Class.create({
             ],
             defaults: {
                 labelWidth: 300,
-                width: 700,
+                width: 850,
                 listeners: {
                     "change": function (field, checked) {
                         Ext.getCmp("pimcore_document_settings_" + this.document.id).dirty = true;

@@ -1,4 +1,15 @@
 # Upgrade Notes
+
+## 6.9.0 
+- Config option and container parameter `pimcore.routing.defaults` is deprecated, use `pimcore.documents.default_controller` instead. 
+- Method `\Pimcore\Tool::getRoutingDefaults()` is deprecated and will be removed in Pimcore v7. 
+- `PageSnippet::$module|$action|get/setAction()|get/setModule()` are deprecated and will be removed in Pimcore v7.
+- `DocType::$module|$action|get/setAction()|get/setModule()` are deprecated and will be removed in Pimcore v7.
+- `Staticroute::$module|$action|get/setAction()|get/setModule()` are deprecated and will be removed in Pimcore v7.
+- Using dynamic modules, controllers and actions in static routes (e.g. `%controller`) is deprecated and will not continue to work in Pimcore v7.
+- `\Pimcore\Controller\Config\ConfigNormalizer` is deprecated and will be removed in Pimcore v7. 
+- Templating helper `$this->action()` as well as the Twig extension `pimcore_action()` are deprecated and will be removed in Pimcore v7. Use Twig `render()` instead.
+
 ## 6.8.0
 - HybridAuth integration is deprecated and will be removed in Pimcore 7.
 - `Pimcore\Browser` is deprecated and will be replaced by `\Browser` in Pimcore 7. [#7084](https://github.com/pimcore/pimcore/pull/7084)
