@@ -7,6 +7,10 @@ services:
     pimcore.twig.extension.document_tag: '@Pimcore\Twig\Extension\DocumentTagExtension'
     pimcore.twig.extension.subrequest: '@Pimcore\Twig\Extension\SubrequestExtension'
     pimcore.twig.extension.pimcore_object: '@Pimcore\Twig\Extension\PimcoreObjectExtension'
-    pimcore.twig.extension.templating_helper: '@Pimcore\Twig\Extension\TemplatingHelperExtension'
+    pimcore.twig.extension.templating_helper: '@Pimcore\Twig\Extension\HeaderExtension'
     pimcore.twig.extension.navigation: '@Pimcore\Twig\Extension\NavigationExtension'
     pimcore.twig.extension.glossary: '@Pimcore\Twig\Extension\GlossaryExtension'
+
+    Pimcore\Twig\Extension\TemplatingHelperExtension:
+        alias: 'Pimcore\Twig\Extension\HeaderExtension'
+        deprecated: 'The "%alias_id%" service is deprecated.'

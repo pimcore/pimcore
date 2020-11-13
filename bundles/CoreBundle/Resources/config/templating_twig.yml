@@ -22,11 +22,6 @@ services:
 
     Pimcore\Twig\Extension\PimcoreObjectExtension: ~
 
-    Pimcore\Twig\Extension\TemplatingHelperExtension:
-        arguments:
-            $phpEngine: '@templating.engine.php'
-        deprecated: 'The "%service_id%" service is deprecated.'
-
     Pimcore\Twig\Extension\NavigationExtension: ~
 
     Pimcore\Twig\Extension\GlossaryExtension: ~
@@ -59,6 +54,8 @@ services:
     Pimcore\Twig\Extension\Templating\Inc: ~
 
     Pimcore\Twig\Extension\Templating\InlineScript: ~
+
+    Pimcore\Twig\Extension\HeaderExtension: ~
 
     Pimcore\Twig\Extension\Templating\Navigation:
         lazy: true
