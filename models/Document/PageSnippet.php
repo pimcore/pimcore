@@ -36,6 +36,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @deprecated
+     *
      * @var string
      */
     protected $module;
@@ -47,6 +48,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @deprecated
+     *
      * @var string
      */
     protected $action;
@@ -256,6 +258,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @deprecated
+     *
      * @return string
      */
     public function getAction()
@@ -285,7 +288,9 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @deprecated
+     *
      * @param string $action
+     *
      * @return $this
      */
     public function setAction($action)
@@ -297,6 +302,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param string $controller
+     *
      * @return $this
      */
     public function setController($controller)
@@ -308,6 +314,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param string $template
+     *
      * @return $this
      */
     public function setTemplate($template)
@@ -319,7 +326,9 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @deprecated
+     *
      * @param string $module
+     *
      * @return $this
      */
     public function setModule($module)
@@ -331,6 +340,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @deprecated
+     *
      * @return string
      */
     public function getModule()

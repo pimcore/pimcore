@@ -226,7 +226,7 @@ class Hotspotimage implements OwnerAwareFieldInterface
     {
         if ($this->image instanceof ElementDescriptor) {
             $image = Service::getElementById($this->image->getType(), $this->image->getId());
-            if($image instanceof Asset\Image) {
+            if ($image instanceof Asset\Image) {
                 $this->image = $image;
             } else {
                 $this->image = null;

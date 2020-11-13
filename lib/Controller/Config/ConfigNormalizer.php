@@ -77,7 +77,7 @@ class ConfigNormalizer
      */
     public function formatControllerReference(string $bundle = null, string $controller = null, string $action = null): string
     {
-        if(strpos($controller, '::')) {
+        if (strpos($controller, '::')) {
             // new reference style (AppBundle\Controller\FooController::barAction), just return
             return $controller;
         }

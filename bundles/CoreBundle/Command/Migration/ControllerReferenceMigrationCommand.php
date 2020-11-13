@@ -64,7 +64,7 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
         // document types
         $docTypes = new DocType\Listing();
         $docTypes->load();
-        foreach($docTypes->getDocTypes() as $docType) {
+        foreach ($docTypes->getDocTypes() as $docType) {
             $this->migrate($docType);
         }
 
@@ -85,13 +85,13 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
             'printcontainer',
         ]]);
 
-        foreach($documents as $document) {
-            if($document instanceof Document\PageSnippet) {
+        foreach ($documents as $document) {
+            if ($document instanceof Document\PageSnippet) {
                 $this->migrate($document);
             }
         }
 
-        if($this->errors) {
+        if ($this->errors) {
             $output->writeln("\n\n");
             $output->writeln('<comment>There were some errors during the migration (see above in <error>red</error>), however, all possible migrations have been applied.</comment>');
             $output->writeln('<comment>You can now fix those issues if necessary and run this command again (as many times as you like, as it ignores already migrated controller references.</comment>');
@@ -100,16 +100,16 @@ class ControllerReferenceMigrationCommand extends AbstractCommand
         return 0;
     }
 
-
-    private function migrate($entity) {
+    private function migrate($entity)
+    {
         /**
          * @var Document\PageSnippet|DocType|Staticroute $entity
          */
-        if(!strpos($entity->getController(), '::')) {
-            if($entity->getAction() || $entity->getController() || $entity->getModule()) {
+        if (!strpos($entity->getController(), '::')) {
+            if ($entity->getAction() || $entity->getController() || $entity->getModule()) {
                 try {
                     $controllerReference = $this->configNormalizer->formatControllerReference($entity->getModule(), $entity->getController(), $entity->getAction());
-                    if(!strpos($controllerReference, '::')) {
+                    if (!strpos($controllerReference, '::')) {
                         $controllerReference = $this->controllerNameParser->parse($controllerReference);
                     }
 

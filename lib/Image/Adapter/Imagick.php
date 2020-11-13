@@ -178,7 +178,6 @@ class Imagick extends Adapter
                         $alphaChannel = \Imagick::ALPHACHANNEL_OPAQUE;
                     }
                     $i->setImageAlphaChannel($alphaChannel);
-
                 }
             }
         } catch (\Exception $e) {

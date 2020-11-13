@@ -49,6 +49,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @deprecated
+     *
      * @var string
      */
     public $module;
@@ -60,6 +61,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @deprecated
+     *
      * @var string
      */
     public $action;
@@ -253,6 +255,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @deprecated
+     *
      * @return string
      */
     public function getModule()
@@ -270,6 +273,7 @@ class Staticroute extends AbstractModel
 
     /**
      * @deprecated
+     *
      * @return string
      */
     public function getAction()
@@ -319,7 +323,9 @@ class Staticroute extends AbstractModel
 
     /**
      * @deprecated
+     *
      * @param string $module
+     *
      * @return $this
      */
     public function setModule($module)
@@ -343,7 +349,9 @@ class Staticroute extends AbstractModel
 
     /**
      * @deprecated
+     *
      * @param string $action
+     *
      * @return $this
      */
     public function setAction($action)

@@ -272,7 +272,6 @@ CONDITION
                     ''
                 );
 
-
                 if ($brickDefinition->getFieldDefinition('localizedfields')) {
                     $langugage = $this->getLocalizedBrickLanguage();
                     //TODO wrong pattern

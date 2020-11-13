@@ -38,7 +38,9 @@ class MiscController extends AdminController
 {
     /**
      * @Route("/get-available-modules", name="pimcore_admin_misc_getavailablemodules", methods={"GET"})
+     *
      * @deprecated
+     *
      * @param ControllerDataProvider $provider
      *
      * @return JsonResponse
@@ -63,7 +65,9 @@ class MiscController extends AdminController
 
     /**
      * @Route("/get-available-controllers", name="pimcore_admin_misc_getavailablecontrollers", methods={"GET"})
+     *
      * @deprecated
+     *
      * @param Request $request
      * @param ControllerDataProvider $provider
      *
@@ -113,7 +117,9 @@ class MiscController extends AdminController
 
     /**
      * @Route("/get-available-actions", name="pimcore_admin_misc_getavailableactions", methods={"GET"})
+     *
      * @deprecated
+     *
      * @param Request $request
      * @param ControllerDataProvider $provider
      *
