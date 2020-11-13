@@ -49,6 +49,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @deprecated
+     *
      * @var string
      */
     protected $module;
@@ -62,6 +63,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @deprecated
+     *
      * @var string
      */
     protected $action;
@@ -129,6 +131,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @deprecated
+     *
      * @return string
      */
     public function getAction()
@@ -178,7 +181,9 @@ class DocType extends Model\AbstractModel
 
     /**
      * @deprecated
+     *
      * @param string $action
+     *
      * @return $this
      */
     public function setAction($action)
@@ -290,7 +295,9 @@ class DocType extends Model\AbstractModel
 
     /**
      * @deprecated
+     *
      * @param string $module
+     *
      * @return $this
      */
     public function setModule($module)
@@ -302,6 +309,7 @@ class DocType extends Model\AbstractModel
 
     /**
      * @deprecated
+     *
      * @return string
      */
     public function getModule()
