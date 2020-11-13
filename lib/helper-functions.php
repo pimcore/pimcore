@@ -235,6 +235,8 @@ function array_to_html_attribute_string($array)
                 $data .= ' ';
             }
             $data .= $key . '="' . htmlspecialchars($value) . '"';
+        } elseif (is_string($key) && is_null($value)) {
+            $data .= $key;
         }
     }
 
