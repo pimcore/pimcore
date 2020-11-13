@@ -90,7 +90,7 @@ class MiscController extends AdminController
 
     /**
      * @Route("/get-available-controller-references", name="pimcore_admin_misc_getavailablecontroller_references", methods={"GET"})
-     * @deprecated
+     *
      * @param Request $request
      * @param ControllerDataProvider $provider
      *
@@ -113,7 +113,7 @@ class MiscController extends AdminController
 
     /**
      * @Route("/get-available-actions", name="pimcore_admin_misc_getavailableactions", methods={"GET"})
-     *
+     * @deprecated
      * @param Request $request
      * @param ControllerDataProvider $provider
      *
