@@ -74,6 +74,17 @@ class NotificationEmailService extends AbstractNotificationService
             if (!count($recipients)) {
                 return;
             }
+            
+            // Decide what kind of link to create
+            $objectType = $type = "object";
+            if ($subject instanceof \Pimcore\Model\Document) {
+                $objectType = "document";
+                $type = $subject->getType();
+            }
+            if ($subject instanceof \Pimcore\Model\Asset) {
+                $objectType = "asset";
+                $type = $subject->getType();
+            }
 
             $deeplink = '';
             $hostUrl = Tool::getHostUrl();
