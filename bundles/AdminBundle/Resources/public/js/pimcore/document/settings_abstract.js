@@ -19,7 +19,7 @@ pimcore.document.settings_abstract = Class.create({
     },
 
     setDocumentType: function (field, newValue, oldValue) {
-        var allowedFields = ["module","controller","action","template"];
+        var allowedFields = ["controller", "template"];
         var form = this.getLayout().getForm();
         var element = null;
 
@@ -206,7 +206,7 @@ pimcore.document.settings_abstract = Class.create({
                     rootProperty: "docTypes"
                 }
             },
-            fields: ["id","module","controller","action","template",{
+            fields: ["id","controller", "template",{
                name: 'name',
                convert: function(v, rec) {
                    return (rec['data']['group'] ? t(rec['data']['group']) + ' > ' : '') + t(rec['data']['name']);
@@ -300,16 +300,6 @@ pimcore.document.settings_abstract = Class.create({
                     listConfig: {
                         maxWidth: 600
                     }
-                },
-                {
-                    fieldLabel: t('bundle') + " (" + t('deprecated') + ")",
-                    name: "module",
-                    value: this.document.data.module
-                },
-                {
-                    fieldLabel: t('action') + " (" + t('deprecated') + ")",
-                    name: "action",
-                    value: this.document.data.action
                 }
             ],
             defaults: {

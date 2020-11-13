@@ -133,7 +133,7 @@ class Renderlet extends Model\Document\Editable
                 $targetingConfigurator->configureTargetGroup($this->o);
             }
 
-            $blockparams = ['action', 'controller', 'module', 'bundle', 'template'];
+            $blockparams = ['controller', 'template'];
 
             $params = [
                 'template' => isset($this->config['template']) ? $this->config['template'] : null,
@@ -149,18 +149,8 @@ class Renderlet extends Model\Document\Editable
                 }
             }
 
-            $moduleOrBundle = null;
-
-            if (isset($this->config['bundle'])) {
-                $moduleOrBundle = $this->config['bundle'];
-            } elseif (isset($this->config['module'])) {
-                $moduleOrBundle = $this->config['module'];
-            }
-
             return $editableHandler->renderAction(
                 $this->config['controller'],
-                $this->config['action'] ?? null,
-                $moduleOrBundle,
                 $params
             );
         }

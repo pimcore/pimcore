@@ -133,20 +133,6 @@ pimcore.settings.document.doctypes = Class.create({
                 })
             },
             {
-                text: t('bundle') + " (" + t('deprecated') + ")",
-                flex: 50,
-                sortable: true,
-                dataIndex: 'module',
-                editor: new Ext.form.field.Text()
-            },
-            {
-                text: t("action") + " (" + t('deprecated') + ")",
-                flex: 50,
-                sortable: true,
-                dataIndex: 'action',
-                editor: new Ext.form.field.Text()
-            },
-            {
                 text: t("type"),
                 flex: 50,
                 sortable: true,
