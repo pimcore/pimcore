@@ -86,4 +86,12 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     {
         $this->delegate = $delegate;
     }
+
+    /**
+     * @return bool $delegate
+     */
+    public function isDelegate()
+    {
+        return $this->delegate;
+    }
 }
