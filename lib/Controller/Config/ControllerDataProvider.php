@@ -90,6 +90,7 @@ class ControllerDataProvider
 
     /**
      * @return array
+     *
      * @throws \ReflectionException
      */
     public function getControllerReferences(): array
@@ -111,7 +112,7 @@ class ControllerDataProvider
         }
 
         $bundles = $this->getBundles();
-        foreach($bundles as $bundle) {
+        foreach ($bundles as $bundle) {
             $controllerDirectory = rtrim($bundle->getPath(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'Controller';
             if (!file_exists($controllerDirectory)) {
                 continue;

@@ -264,6 +264,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param string $controller
+     *
      * @return $this
      */
     public function setController($controller)
@@ -275,6 +276,7 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @param string $template
+     *
      * @return $this
      */
     public function setTemplate($template)

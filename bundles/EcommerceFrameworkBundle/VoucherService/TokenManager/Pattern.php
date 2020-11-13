@@ -556,8 +556,8 @@ class Pattern extends AbstractTokenManager implements ExportableTokenManagerInte
             $viewParamsBag['msg']['result'] = 'bundle_ecommerce_voucherservice_msg-error-token-noresult';
         }
 
-        $viewParamsBag['msg']['error'] = $params['error'] ?? "";
-        $viewParamsBag['msg']['success'] = $params['success'] ?? "";
+        $viewParamsBag['msg']['error'] = $params['error'] ?? '';
+        $viewParamsBag['msg']['success'] = $params['success'] ?? '';
 
         // Settings parsed via foreach in view -> key is translation
         $viewParamsBag['settings'] = [

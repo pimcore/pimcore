@@ -25,7 +25,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
-use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
