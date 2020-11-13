@@ -11,7 +11,7 @@ A typical use-case would be to render product objects within a document.
 
 | Name           | Type      | Description                                                                        | Mandatory   |
 |----------------|-----------|------------------------------------------------------------------------------------|-------------|
-| `controller`   | string    | Specify controller reference, e.g. `AppBundle\Controller\FooController::myAction   | X           |
+| `controller`   | string    | Specify controller reference, e.g. `AppBundle\Controller\FooController::myAction`  | X           |
 | `template`     | string    | Specify template                                                                   |             |
 | `action`       | string    | **[DEPRECATED]** Specify action                                                    |             |
 | `bundle`       | string    | **[DEPRECATED]** Specify bundle (default: `AppBundle`)                             |             |
