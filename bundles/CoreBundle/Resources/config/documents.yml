@@ -17,6 +17,7 @@ services:
             $templating: '@pimcore.templating.engine.delegating'
             $translator: '@Pimcore\Bundle\AdminBundle\Translation\AdminUserTranslator'
             $responseStack: '@Pimcore\Http\ResponseStack'
+            $httpKernelRuntime: '@twig.runtime.httpkernel'
         calls:
             - [setLogger, ['@logger']]
         tags:

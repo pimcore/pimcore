@@ -292,9 +292,7 @@ Ext.onReady(function () {
                 },
                 depends : ['name']
             },
-            'module',
             'controller',
-            'action',
             'template',
             {name: 'type', allowBlank: false},
             'priority',

@@ -85,8 +85,3 @@ services:
             - [setClassLayoutDefinitionManager, ['@Pimcore\Model\DataObject\ClassDefinition\ClassLayoutDefinitionManager']]
         tags:
             - { name: console.command, command: 'pimcore:deployment:custom-layouts-rebuild' }
-
-    Pimcore\Bundle\CoreBundle\Command\Migration\ControllerReferenceMigrationCommand:
-        deprecated: 'The service/command with the id "%service_id%" is deprecated and will be removed in Pimcore v7.'
-        arguments:
-            $controllerNameParser: '@controller_name_converter'

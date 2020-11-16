@@ -63,9 +63,7 @@ pimcore.settings.staticroutes = Class.create({
                 {name:'name'},
                 {name:'pattern', allowBlank:false},
                 {name:'reverse', allowBlank:true},
-                {name:'module'},
                 {name:'controller'},
-                {name:'action'},
                 {name:'variables'},
                 {name:'defaults'},
                 {name:'siteId'},
@@ -131,12 +129,6 @@ pimcore.settings.staticroutes = Class.create({
                         maxWidth: 400
                     }
                 })},
-            {text: t('bundle') + " (" + t('deprecated') + ")", flex: 50, sortable: false, dataIndex: 'module',
-                editor: new Ext.form.field.Text()
-                },
-            {text:t("action") + " (" + t('deprecated') + ")", flex:50, sortable:false, dataIndex:'action',
-                editor: new Ext.form.field.Text()
-            },
             {text:t("variables"), flex:50, sortable:false, dataIndex:'variables',
                 editor:new Ext.form.TextField({})},
             {text:t("defaults"), flex:50, sortable:false, dataIndex:'defaults',

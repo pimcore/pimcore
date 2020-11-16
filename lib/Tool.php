@@ -285,21 +285,6 @@ class Tool
     }
 
     /**
-     * @deprecated will be removed in Pimcore v7
-     * @static
-     *
-     * @return array
-     */
-    public static function getRoutingDefaults()
-    {
-        $container = \Pimcore::getContainer();
-        $routingDefaults = $container->getParameter('pimcore.routing.defaults');
-        $routingDefaults['module'] = $routingDefaults['bundle'];
-
-        return $routingDefaults;
-    }
-
-    /**
      * @param Request|null $request
      *
      * @return null|Request

@@ -14,7 +14,6 @@
 
 namespace Pimcore\Twig\Extension;
 
-use Pimcore\Twig\Extension\Templating\Action;
 use Pimcore\Twig\Extension\Templating\Inc;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -27,18 +26,11 @@ class SubrequestExtension extends AbstractExtension
     protected $incHelper;
 
     /**
-     * @var Action
-     */
-    protected $actionHelper;
-
-    /**
      * @param Inc $incHelper
-     * @param Action $actionHelper
      */
-    public function __construct(Inc $incHelper, Action $actionHelper)
+    public function __construct(Inc $incHelper)
     {
         $this->incHelper = $incHelper;
-        $this->actionHelper = $actionHelper;
     }
 
     /**
@@ -50,12 +42,6 @@ class SubrequestExtension extends AbstractExtension
         return [
             new TwigFunction('pimcore_inc', $this->incHelper, [
                 'is_safe' => ['html'],
-            ]),
-
-            // @TODO: remove in Pimcore v7
-            new TwigFunction('pimcore_action', $this->actionHelper, [
-                'is_safe' => ['html'],
-                'deprecated' => true,
             ]),
         ];
     }

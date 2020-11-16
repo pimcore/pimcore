@@ -35,10 +35,6 @@ services:
 
     Pimcore\Twig\Extension\CacheExtension: ~
 
-    Pimcore\Twig\Extension\Templating\Action:
-        calls:
-            - [setRoutingDefaults, ['%pimcore.routing.defaults%']]
-
     Pimcore\Twig\Extension\Templating\PimcoreUrl:
         class: Pimcore\Twig\Extension\Templating\PimcoreUrl
         arguments:

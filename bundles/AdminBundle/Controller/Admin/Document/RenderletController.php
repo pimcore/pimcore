@@ -95,7 +95,7 @@ class RenderletController extends AdminController
             $localeService->setLocale($attributes['_locale']);
         }
 
-        $result = $editableHandler->renderAction($controller, $action, $moduleOrBundle, $attributes, $query);
+        $result = $editableHandler->renderAction($controller, $attributes, $query);
 
         return new Response($result);
     }

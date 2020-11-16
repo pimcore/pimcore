@@ -741,8 +741,7 @@ class Installer
         ]);
         $db->insert('documents_page', [
             'id' => 1,
-            'controller' => 'default',
-            'action' => 'default',
+            'controller' => 'AppBundle\\Controller\\DefaultController::defaultAction',
             'template' => '',
             'title' => '',
             'description' => '',

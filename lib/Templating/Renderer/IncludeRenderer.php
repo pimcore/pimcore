@@ -156,9 +156,7 @@ class IncludeRenderer
      */
     protected function renderAction(PageSnippet $include, $params)
     {
-        $controller = $this->actionRenderer->createDocumentReference($include, $params);
-
-        return $this->actionRenderer->render($controller);
+        return $this->actionRenderer->render($include, $params);
     }
 
     /**
