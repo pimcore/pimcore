@@ -27,40 +27,40 @@ final class DocumentHelperExtensions extends AbstractExtension
     {
         return [
             new TwigTest('pimcore_document', static function ($object) {
-                return is_object($object) && $object instanceof Document;
+                return $object instanceof Document;
             }),
             new TwigTest('pimcore_document_email', static function ($object) {
-                return is_object($object) && $object instanceof Document\Email;
+                return $object instanceof Document\Email;
             }),
             new TwigTest('pimcore_document_folder', static function ($object) {
-                return is_object($object) && $object instanceof Document\Folder;
+                return $object instanceof Document\Folder;
             }),
             new TwigTest('pimcore_document_hardlink', static function ($object) {
-                return is_object($object) && $object instanceof Document\Hardlink;
+                return $object instanceof Document\Hardlink;
             }),
             new TwigTest('pimcore_document_newsletter', static function ($object) {
-                return is_object($object) && $object instanceof Document\Newsletter;
+                return $object instanceof Document\Newsletter;
             }),
             new TwigTest('pimcore_document_page', static function ($object) {
-                return is_object($object) && $object instanceof Document\Page;
+                return $object instanceof Document\Page;
             }),
             new TwigTest('pimcore_document_link', static function ($object) {
-                return is_object($object) && $object instanceof Document\Link;
+                return $object instanceof Document\Link;
             }),
             new TwigTest('pimcore_document_page_snippet', static function ($object) {
-                return is_object($object) && $object instanceof Document\PageSnippet;
+                return $object instanceof Document\PageSnippet;
             }),
             new TwigTest('pimcore_document_print',static  function ($object) {
-                return is_object($object) && $object instanceof Document\PrintAbstract;
+                return $object instanceof Document\PrintAbstract;
             }),
             new TwigTest('pimcore_document_print_container', static function ($object) {
-                return is_object($object) && $object instanceof Document\Printcontainer;
+                return $object instanceof Document\Printcontainer;
             }),
             new TwigTest('pimcore_document_print_page', static function ($object) {
-                return is_object($object) && $object instanceof Document\Printpage;
+                return $object instanceof Document\Printpage;
             }),
             new TwigTest('pimcore_document_snippet', static function ($object) {
-                return is_object($object) && $object instanceof Document\Snippet;
+                return $object instanceof Document\Snippet;
             }),
         ];
     }

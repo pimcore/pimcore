@@ -27,31 +27,31 @@ final class AssetHelperExtensions extends AbstractExtension
     {
         return [
             new TwigTest('pimcore_asset', static function ($object) {
-                return is_object($object) && $object instanceof Asset;
+                return $object instanceof Asset;
             }),
             new TwigTest('pimcore_asset_archive', static function ($object) {
-                return is_object($object) && $object instanceof Asset\Archive;
+                return $object instanceof Asset\Archive;
             }),
             new TwigTest('pimcore_asset_audio',static  function ($object) {
-                return is_object($object) && $object instanceof Asset\Audio;
+                return $object instanceof Asset\Audio;
             }),
             new TwigTest('pimcore_asset_document', static function ($object) {
-                return is_object($object) && $object instanceof Asset\Document;
+                return $object instanceof Asset\Document;
             }),
             new TwigTest('pimcore_asset_folder', static function ($object) {
-                return is_object($object) && $object instanceof Asset\Folder;
+                return $object instanceof Asset\Folder;
             }),
             new TwigTest('pimcore_asset_image', static function ($object) {
-                return is_object($object) && $object instanceof Asset\Image;
+                return $object instanceof Asset\Image;
             }),
             new TwigTest('pimcore_asset_text', static function ($object) {
-                return is_object($object) && $object instanceof Asset\Text;
+                return $object instanceof Asset\Text;
             }),
             new TwigTest('pimcore_asset_unknown', static function ($object) {
-                return is_object($object) && $object instanceof Asset\Unknown;
+                return $object instanceof Asset\Unknown;
             }),
             new TwigTest('pimcore_asset_video', static function ($object) {
-                return is_object($object) && $object instanceof Asset\Video;
+                return $object instanceof Asset\Video;
             }),
         ];
     }

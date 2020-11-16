@@ -32,10 +32,10 @@ final class DataObjectHelperExtensions extends AbstractExtension
     {
         return [
             new TwigTest('pimcore_data_object', static function ($object) {
-                return is_object($object) && $object instanceof DataObject\Concrete;
+                return $object instanceof DataObject\Concrete;
             }),
             new TwigTest('pimcore_data_object_folder', static function ($object) {
-                return is_object($object) && $object instanceof DataObject\Folder;
+                return $object instanceof DataObject\Folder;
             }),
             new TwigTest('pimcore_data_object_class', static function ($object, $className) {
                 $className = ucfirst($className);
