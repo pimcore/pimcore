@@ -14,15 +14,31 @@
 
 namespace Pimcore\Twig\Extension;
 
-@trigger_error(sprintf('Class "%s" is deprecated since v6.9 and will be removed in 7. Use "%s" instead.', TemplatingHelperExtension::class, HeaderExtension::class), E_USER_DEPRECATED);
+@trigger_error(
+    sprintf(
+        'Class "%s" is deprecated since v6.9 and will be removed in 7. Use one of these "%s", "%s", "%s", "%s" instead.',
+        TemplatingHelperExtension::class,
+        HeaderExtension::class,
+        PimcoreToolExtension::class,
+        HelpersExtension::class,
+        CacheExtension::class
+    ),
+    E_USER_DEPRECATED
+);
 
-class_exists(DocumentEditableExtension::class);
+class_exists(HeaderExtension::class);
+class_exists(CacheExtension::class);
+class_exists(PimcoreToolExtension::class);
+class_exists(HelpersExtension::class);
 
 if (false) {
     /**
      * @deprecated use \Pimcore\Twig\Extension\HeaderExtension instead.
+     * @deprecated use \Pimcore\Twig\Extension\PimcoreToolExtension instead.
+     * @deprecated use \Pimcore\Twig\Extension\HelpersExtension instead.
+     * @deprecated use \Pimcore\Twig\Extension\CacheExtension instead.
      */
-    class TemplatingHelperExtension extends HeaderExtension
+    class TemplatingHelperExtension
     {
     }
 }
