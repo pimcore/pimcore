@@ -159,11 +159,7 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         $copier->addFilter(new \DeepCopy\Filter\KeepFilter(), new class() implements \DeepCopy\Matcher\Matcher {
             public function matches($object, $property)
             {
-                if ($object instanceof AbstractElement) {
-                    return true;
-                }
-
-                return false;
+                return $object instanceof AbstractElement;
             }
 
         });
