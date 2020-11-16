@@ -155,12 +155,7 @@ class Snippet extends Model\Document\Editable
             }
         }
 
-        $content = $editableHandler->renderAction(
-            $this->snippet->getController(),
-            $this->snippet->getAction(),
-            $this->snippet->getModule(),
-            $params
-        );
+        $content = $editableHandler->renderAction($this->snippet->getController(), $params);
 
         // write contents to the cache, if output-cache is enabled
         if (isset($params['cache']) && $params['cache'] === true) {

@@ -783,10 +783,10 @@ class TestHelper
     }
 
     /**
-     * @param ElementInterface $root
+     * @param ElementInterface|null $root
      * @param string $type
      */
-    public static function cleanUpTree(ElementInterface $root, $type)
+    public static function cleanUpTree(?ElementInterface $root, $type)
     {
         if (!($root instanceof AbstractObject || $root instanceof Document || $root instanceof Asset)) {
             throw new \InvalidArgumentException(sprintf('Cleanup root type for %s needs to be one of: AbstractObject, Document, Asset', $type));

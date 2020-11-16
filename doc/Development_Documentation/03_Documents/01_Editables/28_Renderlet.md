@@ -13,8 +13,6 @@ A typical use-case would be to render product objects within a document.
 |----------------|-----------|------------------------------------------------------------------------------------|-------------|
 | `controller`   | string    | Specify controller reference, e.g. `AppBundle\Controller\FooController::myAction`  | X           |
 | `template`     | string    | Specify template                                                                   |             |
-| `action`       | string    | **[DEPRECATED]** Specify action                                                    |             |
-| `bundle`       | string    | **[DEPRECATED]** Specify bundle (default: `AppBundle`)                             |             |
 | `className`    | string or string[] | Specify class name (if type **object** chosen) as single string or as string array |    |
 | `height`       | integer or string   | Height of the renderlet in pixel or 'auto'                               |             |
 | `reload`       | bool      | Reload document on change                                                          |             |

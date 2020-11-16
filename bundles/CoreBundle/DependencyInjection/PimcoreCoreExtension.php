@@ -225,12 +225,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
     private function configureRouting(ContainerBuilder $container, array $config)
     {
-        // @TODO remove in Pimcore v7
-        $container->setParameter(
-            'pimcore.routing.defaults',
-            $config['defaults']
-        );
-
         $container->setParameter(
             'pimcore.routing.static.locale_params',
             $config['static']['locale_params']

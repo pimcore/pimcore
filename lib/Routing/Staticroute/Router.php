@@ -15,7 +15,6 @@
 namespace Pimcore\Routing\Staticroute;
 
 use Pimcore\Config;
-use Pimcore\Controller\Config\ConfigNormalizer;
 use Pimcore\Model\Site;
 use Pimcore\Model\Staticroute;
 use Pimcore\Tool;
@@ -44,11 +43,6 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
     protected $context;
 
     /**
-     * @var ConfigNormalizer
-     */
-    protected $configNormalizer;
-
-    /**
      * @var Staticroute[]
      */
     protected $staticRoutes;
@@ -70,10 +64,9 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
      */
     protected $config;
 
-    public function __construct(RequestContext $context, ConfigNormalizer $configNormalizer, Config $config)
+    public function __construct(RequestContext $context, Config $config)
     {
         $this->context = $context;
-        $this->configNormalizer = $configNormalizer;
         $this->config = $config;
     }
 
@@ -244,9 +237,6 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
         $params = $this->context->getParameters();
 
-        // @TODO: remove in Pimcore v7 not supported anymore
-        $params = array_merge(Tool::getRoutingDefaults(), $params);
-
         foreach ($this->getStaticRoutes() as $route) {
             if (null !== $request && null !== $route->getMethods() && 0 !== count($route->getMethods())) {
                 $method = $request->getMethod();
@@ -299,13 +289,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
             $controllerParams[$key] = $value;
         }
 
-        $controller = $this->configNormalizer->formatControllerReference(
-            $controllerParams['module'],
-            $controllerParams['controller'],
-            $controllerParams['action']
-        );
-
-        $routeParams['_controller'] = $controller;
+        $routeParams['_controller'] = $controllerParams['controller'];
 
         // map common language properties (e.g. language) to _locale if not set
         if (!isset($routeParams['_locale'])) {
