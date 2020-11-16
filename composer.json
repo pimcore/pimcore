@@ -102,6 +102,7 @@
   },
   "conflict": {
     "monolog/monolog": ">=2",
+    "phpstan/phpstan": "^0.12.55",
     "symfony/monolog-bundle": "3.6.0"
   },
   "require-dev": {
