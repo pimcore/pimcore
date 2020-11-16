@@ -108,6 +108,7 @@
   "require-dev": {
     "cache/integration-tests": "^0.16.0",
     "codeception/codeception": "^4.1.12",
+    "codeception/module-symfony": "^1",
     "phpstan/phpstan": "^0.12.53",
     "phpstan/phpstan-symfony": "^0.12.11",
     "phpunit/phpunit": "^7.5",
