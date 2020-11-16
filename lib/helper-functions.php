@@ -222,7 +222,7 @@ function array_toquerystring($args)
 }
 
 /**
- * @param array $array
+ * @param array $array with attribute names as keys, and values as values
  *
  * @return string
  */
