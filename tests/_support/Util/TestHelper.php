@@ -788,8 +788,9 @@ class TestHelper
      */
     public static function cleanUpTree(?ElementInterface $root, $type)
     {
-        if (!($root instanceof AbstractObject || $root instanceof Document || $root instanceof Asset)) {
-            throw new \InvalidArgumentException(sprintf('Cleanup root type for %s needs to be one of: AbstractObject, Document, Asset', $type));
+        if(!$root) {
+            codecept_debug('Something went wrong earlier, so element root node does not exist. Skipping cleanup.');
+            return;
         }
 
         if ($root instanceof AbstractObject) {
