@@ -85,14 +85,6 @@ abstract class Tracker implements TrackerInterface
 
     protected function getTemplatePath(string $name)
     {
-        if ($this->templateExtension == 'php') {
-            @trigger_error(
-                '*.js.php templates are deprecated since version 6.9 and will not be supported in 7.0. ' .
-                'Use Twig(*.js.twig) templates instead.',
-                E_USER_DEPRECATED
-            );
-        }
-
         return sprintf(
             '%s/%s.js.twig',
             $this->templatePrefix,

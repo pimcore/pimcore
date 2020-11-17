@@ -37,62 +37,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class MiscController extends AdminController
 {
     /**
-     * @Route("/get-available-modules", name="pimcore_admin_misc_getavailablemodules", methods={"GET"})
-     *
-     * @deprecated
-     *
-     * @param ControllerDataProvider $provider
-     *
-     * @return JsonResponse
-     */
-    public function getAvailableModulesAction(ControllerDataProvider $provider)
-    {
-        // convert to normal array
-        $bundles = array_values($provider->getBundles());
-
-        sort($bundles, SORT_NATURAL | SORT_FLAG_CASE);
-
-        $result = array_map(static function (BundleInterface $bundle) {
-            return [
-                'name' => $bundle->getName(),
-            ];
-        }, $bundles);
-
-        return $this->adminJson([
-            'data' => $result,
-        ]);
-    }
-
-    /**
-     * @Route("/get-available-controllers", name="pimcore_admin_misc_getavailablecontrollers", methods={"GET"})
-     *
-     * @deprecated
-     *
-     * @param Request $request
-     * @param ControllerDataProvider $provider
-     *
-     * @return JsonResponse
-     */
-    public function getAvailableControllersAction(Request $request, ControllerDataProvider $provider)
-    {
-        $routingDefaults = $this->getParameter('pimcore.routing.defaults');
-        $bundle = $request->get('moduleName');
-        $controllers = $provider->getControllers($bundle, $routingDefaults['bundle']);
-
-        sort($controllers, SORT_NATURAL | SORT_FLAG_CASE);
-
-        $result = array_map(static function ($controller) {
-            return [
-                'name' => $controller,
-            ];
-        }, $controllers);
-
-        return $this->adminJson([
-            'data' => $result,
-        ]);
-    }
-
-    /**
      * @Route("/get-available-controller-references", name="pimcore_admin_misc_getavailablecontroller_references", methods={"GET"})
      *
      * @param Request $request
@@ -109,44 +53,6 @@ class MiscController extends AdminController
                 'name' => $controller,
             ];
         }, $controllerReferences);
-
-        return $this->adminJson([
-            'data' => $result,
-        ]);
-    }
-
-    /**
-     * @Route("/get-available-actions", name="pimcore_admin_misc_getavailableactions", methods={"GET"})
-     *
-     * @deprecated
-     *
-     * @param Request $request
-     * @param ControllerDataProvider $provider
-     *
-     * @return JsonResponse
-     */
-    public function getAvailableActionsAction(Request $request, ControllerDataProvider $provider)
-    {
-        $routingDefaults = $this->getParameter('pimcore.routing.defaults');
-        $bundle = $request->get('moduleName');
-        if (empty($bundle)) {
-            $bundle = $routingDefaults['bundle'];
-        }
-
-        $controller = $request->get('controllerName');
-        if (empty($controller)) {
-            $controller = $routingDefaults['controller'];
-        }
-
-        $actions = $provider->getActions($controller, $bundle);
-
-        sort($actions, SORT_NATURAL | SORT_FLAG_CASE);
-
-        $result = array_map(static function ($action) {
-            return [
-                'name' => $action,
-            ];
-        }, $actions);
 
         return $this->adminJson([
             'data' => $result,

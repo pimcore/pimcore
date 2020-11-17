@@ -48,23 +48,9 @@ class Staticroute extends AbstractModel
     public $reverse;
 
     /**
-     * @deprecated
-     *
-     * @var string
-     */
-    public $module;
-
-    /**
      * @var string
      */
     public $controller;
-
-    /**
-     * @deprecated
-     *
-     * @var string
-     */
-    public $action;
 
     /**
      * @var string
@@ -254,31 +240,11 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @deprecated
-     *
-     * @return string
-     */
-    public function getModule()
-    {
-        return $this->module;
-    }
-
-    /**
      * @return string
      */
     public function getController()
     {
         return $this->controller;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @return string
-     */
-    public function getAction()
-    {
-        return $this->action;
     }
 
     /**
@@ -322,20 +288,6 @@ class Staticroute extends AbstractModel
     }
 
     /**
-     * @deprecated
-     *
-     * @param string $module
-     *
-     * @return $this
-     */
-    public function setModule($module)
-    {
-        $this->module = $module;
-
-        return $this;
-    }
-
-    /**
      * @param string $controller
      *
      * @return $this
@@ -343,20 +295,6 @@ class Staticroute extends AbstractModel
     public function setController($controller)
     {
         $this->controller = $controller;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param string $action
-     *
-     * @return $this
-     */
-    public function setAction($action)
-    {
-        $this->action = $action;
 
         return $this;
     }
@@ -499,7 +437,7 @@ class Staticroute extends AbstractModel
     public function assemble(array $urlOptions = [], $reset = false, $encode = true)
     {
         // get request parameters
-        $blockedRequestParams = ['controller', 'action', 'module', 'document'];
+        $blockedRequestParams = ['controller', 'document'];
 
         // allow blocked params if we use it as variables
         $variables = explode(',', $this->getVariables());
@@ -531,7 +469,7 @@ class Staticroute extends AbstractModel
 
         $defaultValues = $this->getDefaultsArray();
 
-        // apply values (controller,action,module, ... ) from previous match if applicable (only when )
+        // apply values (controller, ... ) from previous match if applicable (only when )
         if ($reset) {
             if (self::$_currentRoute && (self::$_currentRoute->getName() == $this->getName())) {
                 $defaultValues = array_merge($defaultValues, self::$_currentRoute->_values);
@@ -650,12 +588,6 @@ class Staticroute extends AbstractModel
                 }
             }
 
-            // we need to unset this 3 params here, because otherwise the defaults wouldn't have an effect if used
-            // in combination with dynamic action/controller/module configurations
-            unset($params['controller'], $params['action'], $params['module']);
-
-            $params = array_merge($this->getDefaultsArray(), $params);
-
             $variables = explode(',', $this->getVariables());
 
             preg_match_all($this->getPattern(), $path, $matches);
@@ -671,40 +603,8 @@ class Staticroute extends AbstractModel
                 }
             }
 
-            $controller = $this->getController();
-            $action = $this->getAction();
-            $module = trim($this->getModule());
+            $params['controller'] = $this->getController();
 
-            // check for dynamic controller / action / module
-            // @TODO: remove in Pimcore v7 - not supported anymore
-            $dynamicRouteReplace = function ($item, $params) {
-                if (strpos($item, '%') !== false) {
-                    uksort($params, function ($a, $b) {
-                        // order by key length, longer key have priority
-                        // (%abcd prior %ab, so that %ab doesn't replace %ab in [%ab]cd)
-                        return strlen($b) - strlen($a);
-                    });
-
-                    foreach ($params as $key => $value) {
-                        $dynKey = '%' . $key;
-                        if (strpos($item, $dynKey) !== false) {
-                            return str_replace($dynKey, $value, $item);
-                        }
-                    }
-                }
-
-                return $item;
-            };
-
-            $controller = $dynamicRouteReplace($controller, $params);
-            $action = $dynamicRouteReplace($action, $params);
-            $module = $dynamicRouteReplace($module, $params);
-
-            $params['controller'] = $controller;
-            $params['action'] = $action;
-            if (!empty($module)) {
-                $params['module'] = $module;
-            }
             // remember for reverse assemble
             $this->_values = $params;
 
@@ -719,7 +619,7 @@ class Staticroute extends AbstractModel
      */
     public function getMethods()
     {
-        if ($this->methods && !is_array($this->methods)) {
+        if ($this->methods && is_string($this->methods)) {
             $this->methods = explode(',', $this->methods);
         }
 
@@ -733,7 +633,7 @@ class Staticroute extends AbstractModel
      */
     public function setMethods($methods)
     {
-        if (!is_array($methods)) {
+        if (is_string($methods)) {
             $methods = strlen($methods) ? explode(',', $methods) : [];
             $methods = array_map('trim', $methods);
         }
