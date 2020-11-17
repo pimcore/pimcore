@@ -152,8 +152,7 @@ class Pimcore
     public static function isInstalled()
     {
         try {
-            \Pimcore\Db::get();
-
+            \Pimcore\Db::get()->fetchOne('SELECT VERSION()');
             return true;
         } catch (\Exception $e) {
             return false;

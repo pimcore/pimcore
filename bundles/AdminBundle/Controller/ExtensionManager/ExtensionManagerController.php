@@ -483,7 +483,7 @@ class ExtensionManagerController extends AdminController implements KernelContro
 
         $installer = $this->bundleManager->getInstaller($bundle);
         if (null !== $installer) {
-            $output = $installer->getOutputWriter()->getOutput();
+            $output = $installer->getOutput();
             if (!empty($output)) {
                 $converter = new AnsiToHtmlConverter(null);
 

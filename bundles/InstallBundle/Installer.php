@@ -115,7 +115,7 @@ class Installer
         'install_assets' => 'Installing assets...',
         'install_classes' => 'Installing classes ...',
         'install_custom_layouts' => 'Installing custom layouts ...',
-        'migrations' => 'Mark existing migrations as done ...',
+        'migrations' => 'Marking all migrations as done ...',
         'complete' => 'Install complete!',
     ];
 
@@ -391,45 +391,33 @@ class Installer
         $this->installAssets($kernel);
 
         $this->dispatchStepEvent('install_classes');
-        $this->installClasses($kernel);
+        $this->installClasses();
 
         $this->dispatchStepEvent('install_custom_layouts');
-        $this->installCustomLayouts($kernel);
+        $this->installCustomLayouts();
 
         $this->dispatchStepEvent('migrations');
-        $this->markMigrationsAsDone($kernel);
+        $this->markMigrationsAsDone();
 
         $this->clearKernelCacheDir($kernel);
 
         return $errors;
     }
 
-    private function markMigrationsAsDone(KernelInterface $kernel)
+    private function runCommand(array $arguments, string $taskName)
     {
-        /** @var \Pimcore\Migrations\MigrationManager $manager */
-        $manager = $kernel->getContainer()->get(\Pimcore\Migrations\MigrationManager::class);
-        $config = $manager->getConfiguration('pimcore_core');
-        $config->registerMigrationsFromDirectory($config->getMigrationsDirectory());
-        $migrations = $config->getMigrations();
-        $latest = end($migrations);
-        $manager->markVersionAsMigrated($latest);
-    }
-
-    private function installClasses(KernelInterface $kernel)
-    {
-        $this->logger->info('Running {command} command', ['command' => 'pimcore:deployment:classes-rebuild']);
         $io = $this->commandLineOutput;
 
         try {
-            $arguments = [
+            array_splice($arguments, 0, 0, [
                 Console::getPhpCli(),
                 PIMCORE_PROJECT_ROOT . '/bin/console',
-                'pimcore:deployment:classes-rebuild',
-                '-c',
-            ];
+            ]);
 
             $partsBuilder = new PartsBuilder($arguments);
             $parts = $partsBuilder->getParts();
+
+            $this->logger->info('Running {command} command', ['command' => $parts]);
 
             $process = new Process($parts);
             $process->setTimeout(0);
@@ -460,59 +448,38 @@ class Installer
 
             $stdErr->write($process->getOutput());
             $stdErr->write($process->getErrorOutput());
-            $stdErr->note('Installing classes failed. Please run the following command manually:');
+            $stdErr->note($taskName . ' failed. Please run the following command manually:');
             $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
         }
     }
 
-    private function installCustomLayouts(KernelInterface $kernel)
+    private function markMigrationsAsDone()
     {
-        $this->logger->info('Running {command} command', ['command' => 'pimcore:deployment:custom-layouts-rebuild']);
-        $io = $this->commandLineOutput;
+        $this->runCommand([
+            'doctrine:migrations:sync-metadata-storage',
+            '-q',
+        ], 'Sync migrations metadata storage');
 
-        try {
-            $arguments = [
-                Console::getPhpCli(),
-                PIMCORE_PROJECT_ROOT . '/bin/console',
-                'pimcore:deployment:custom-layouts-rebuild',
-                '-c',
-            ];
+        $this->runCommand([
+            'doctrine:migrations:version',
+            '--all', '--add', '-n', '-q',
+        ], 'Marking all migrations as done');
+    }
 
-            $partsBuilder = new PartsBuilder($arguments);
-            $parts = $partsBuilder->getParts();
+    private function installClasses()
+    {
+        $this->runCommand([
+            'pimcore:deployment:classes-rebuild',
+            '-c',
+        ], 'Installing class definitions');
+    }
 
-            $process = new Process($parts);
-            $process->setTimeout(0);
-            $process->setWorkingDirectory(PIMCORE_PROJECT_ROOT);
-            $process->run();
-
-            if (!$process->isSuccessful()) {
-                throw new ProcessFailedException($process);
-            }
-
-            if (null !== $io) {
-                $io->writeln($process->getOutput());
-            }
-        } catch (ProcessFailedException $e) {
-            $this->logger->error($e->getMessage());
-
-            if (null === $io) {
-                return;
-            }
-
-            $stdErr = $io->getErrorStyle();
-            $process = $e->getProcess();
-
-            $errorOutput = trim($process->getErrorOutput());
-            if (!empty($errorOutput)) {
-                $stdErr->write($errorOutput);
-            }
-
-            $stdErr->write($process->getOutput());
-            $stdErr->write($process->getErrorOutput());
-            $stdErr->note('Installing custom layouts failed. Please run the following command manually:');
-            $stdErr->writeln('  ' . str_replace("'", '', $process->getCommandLine()));
-        }
+    private function installCustomLayouts()
+    {
+        $this->runCommand([
+            'pimcore:deployment:custom-layouts-rebuild',
+            '-c',
+        ], 'Installing custom layout definitions');
     }
 
     private function installAssets(KernelInterface $kernel)

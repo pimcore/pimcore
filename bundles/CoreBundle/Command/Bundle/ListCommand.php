@@ -49,7 +49,6 @@ class ListCommand extends AbstractBundleCommand
                 'Installed',
                 $input->hasOption('json') ? 'Installable' : 'I?',
                 $input->hasOption('json') ? 'Uninstallable' : 'UI?',
-                $input->hasOption('json') ? 'Updatable' : 'UP?',
                 'Priority',
             ],
         ];
@@ -77,7 +76,6 @@ class ListCommand extends AbstractBundleCommand
                 $row[] = $this->bundleManager->isInstalled($bundle);
                 $row[] = $this->bundleManager->canBeInstalled($bundle);
                 $row[] = $this->bundleManager->canBeUninstalled($bundle);
-                $row[] = $this->bundleManager->canBeUpdated($bundle);
 
                 $bundleState = $this->bundleManager->getState($bundle);
                 $row[] = $bundleState['priority'];
