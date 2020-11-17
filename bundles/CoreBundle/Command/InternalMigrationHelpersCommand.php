@@ -48,7 +48,11 @@ class InternalMigrationHelpersCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         if($input->getOption('is-installed')) {
-            $output->write((string) \Pimcore::isInstalled());
+            try {
+                $output->write((string) \Pimcore::isInstalled());
+            } catch (\Throwable $e) {
+                // nothing to do
+            }
         }
 
         return 0;
