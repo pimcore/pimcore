@@ -2,7 +2,7 @@
 
 > **Important**  
 > The REST API is deprecated as of Pimcore 6.4 ([see why](https://github.com/pimcore/pimcore/pull/5517)) and will be removed in Pimcore 7. 
-> If you're using this API, please consider migrating to the [Pimcore Data-Hub](https://github.com/pimcore/data-hub)
+> If you're using this API, please consider migrating to the [Pimcore Datahub](https://github.com/pimcore/data-hub)
 
 Pimcore provides a REST web service interface to many entities of the system, such as assets, documents, objects, class definitions, translations, etc. 
 The webservices are not enabled by default, you have to do this in *Settings* > *System Settings* > *Web Service API*.
@@ -24,7 +24,7 @@ add the `X-API-Key` HTTP header or the `apikey` parameter to the request if you 
   
 > **Important: Frontend Applications**  
 > The Pimcore REST API is not intended to be used as a data provider for frontend applications (Vue.js, React, Angular, ...), 
-> please use the [Pimcore Data-Hub](https://github.com/pimcore/data-hub) (GraphQL interface) or build your own actions for that purpose or use any existing bundles. 
+> please use the [Pimcore Datahub](https://github.com/pimcore/data-hub) (GraphQL interface) or build your own actions for that purpose or use any existing bundles. 
   
 [TOC]
 
