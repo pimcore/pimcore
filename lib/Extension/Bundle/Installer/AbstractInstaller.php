@@ -14,6 +14,8 @@
 
 namespace Pimcore\Extension\Bundle\Installer;
 
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class AbstractInstaller implements InstallerInterface
@@ -111,6 +113,10 @@ class AbstractInstaller implements InstallerInterface
 
     public function getOutput(): OutputInterface
     {
-        return $this->getOutputWriter()->getOutputInstance();
+        if($this->getOutputWriter() instanceof OutputWriter) {
+            return $this->getOutputWriter()->getOutputInstance();
+        }
+
+        return new BufferedOutput(Output::VERBOSITY_NORMAL, true);
     }
 }
