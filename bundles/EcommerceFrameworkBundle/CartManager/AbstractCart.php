@@ -41,9 +41,9 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected $userId;
 
     /**
-     * @var CartItemInterface[]
+     * @var CartItemInterface[]|null
      */
-    protected $items = null;
+    protected $items;
 
     /**
      * @var array
@@ -554,7 +554,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @param CartItemInterface[] $items
+     * @param CartItemInterface[]|null $items
      */
     public function setItems($items)
     {
