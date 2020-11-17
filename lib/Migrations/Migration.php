@@ -20,6 +20,9 @@ namespace Pimcore\Migrations;
 use Doctrine\DBAL\Migrations\OutputWriter;
 use Pimcore\Migrations\Configuration\Configuration;
 
+/**
+ * @deprecated will be removed in Pimcore v7
+ */
 class Migration extends \Doctrine\DBAL\Migrations\Migration
 {
     /**

@@ -8,6 +8,9 @@ use Pimcore\Migrations\MigrationManager;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @deprecated will be removed in Pimcore v7, please use Doctrine Migrations commands directly
+ */
 class MarkAllDoneCommand extends AbstractCommand
 {
     use PimcoreMigrationsConfiguration;

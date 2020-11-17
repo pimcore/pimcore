@@ -22,6 +22,9 @@ use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Doctrine\DBAL\Migrations\OutputWriter;
 use Pimcore\Migrations\Configuration\Configuration;
 
+/**
+ * @deprecated will be removed in Pimcore v7
+ */
 class SqlFileWriter
 {
     /**

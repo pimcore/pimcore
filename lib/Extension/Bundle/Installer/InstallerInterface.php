@@ -63,28 +63,28 @@ interface InstallerInterface
 
     /**
      * Determine if bundle can be updated
-     *
+     * @deprecated
      * @return bool
      */
     public function canBeUpdated();
 
     /**
      * Updates the bundle
-     *
+     * @deprecated
      * @throws UpdateException
      */
     public function update();
 
     /**
      * Returns the output writer
-     *
+     * @deprecated
      * @return OutputWriterInterface
      */
     public function getOutputWriter(): OutputWriterInterface;
 
     /**
      * Sets the output writer to use
-     *
+     * @deprecated
      * @param OutputWriterInterface $outputWriter
      */
     public function setOutputWriter(OutputWriterInterface $outputWriter);
