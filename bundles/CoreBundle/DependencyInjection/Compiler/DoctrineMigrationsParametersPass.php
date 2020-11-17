@@ -28,6 +28,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  * which are not set if the bundle is not loaded.
  *
  * This pass adds missing parameters which are needed by the bootstrap and initializes them with default values.
+ * @deprecated
  */
 class DoctrineMigrationsParametersPass implements CompilerPassInterface
 {

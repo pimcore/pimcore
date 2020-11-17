@@ -10,6 +10,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @deprecated will be removed in Pimcore v7, please use Doctrine Migrations commands directly
+ */
 class StatusCommand extends MigrationsStatusDoctrineCommand
 {
     use PimcoreMigrationsConfiguration;
@@ -24,7 +27,7 @@ class StatusCommand extends MigrationsStatusDoctrineCommand
             'only',
             'o',
             InputOption::VALUE_OPTIONAL,
-            'Retrieve only a specific value, possible values: current_version, next_version, 
+            'Retrieve only a specific value, possible values: current_version, next_version,
             number_new_migrations, number_available_migrations, number_executed_migrations, prev_version, latest_version'
         );
     }

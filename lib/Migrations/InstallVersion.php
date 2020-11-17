@@ -21,6 +21,9 @@ use Pimcore\Extension\Bundle\Installer\MigrationInstallerInterface;
 use Pimcore\Migrations\Configuration\Configuration;
 use Pimcore\Migrations\Migration\InstallMigration;
 
+/**
+ * @deprecated will be removed in Pimcore v7
+ */
 class InstallVersion extends Version
 {
     const INSTALL_VERSION = '00000001';

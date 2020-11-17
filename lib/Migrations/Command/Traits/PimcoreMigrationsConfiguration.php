@@ -29,6 +29,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
+ * @deprecated will be removed in Pimcore v7
  * @method Application getApplication()
  */
 trait PimcoreMigrationsConfiguration

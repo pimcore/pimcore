@@ -21,6 +21,8 @@ namespace Pimcore\Migrations\Migration;
  * Used in migrations handling something else than DB migrations (e.g. changing class definitions). As a normal
  * doctrine migration does not know about the dry-run switch (SQL is simply not executed), we need to pass the
  * dry-run state to the migration itself.
+ *
+ * @deprecated will be removed in Pimcore v7
  */
 interface DryRunMigrationInterface
 {

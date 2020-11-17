@@ -30,6 +30,9 @@ use Pimcore\Migrations\MigrationManager;
 use Pimcore\Migrations\Version;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
+/**
+ * @deprecated will be removed in Pimcore v7, use AbstractInstaller instead
+ */
 abstract class MigrationInstaller extends AbstractInstaller implements MigrationInstallerInterface
 {
     /**

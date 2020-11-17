@@ -1257,6 +1257,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('migrations')
+                    ->setDeprecated('The "%node%" option is deprecated and will be removed in Pimcore v7')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('sets')

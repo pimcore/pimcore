@@ -22,6 +22,9 @@ use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Migrations\Configuration\Configuration;
 use Pimcore\Migrations\Configuration\InstallConfiguration;
 
+/**
+ * @deprecated will be removed in Pimcore v7, use InstallerInterface instead
+ */
 interface MigrationInstallerInterface extends InstallerInterface
 {
     /**
