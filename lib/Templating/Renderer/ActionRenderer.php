@@ -66,6 +66,7 @@ class ActionRenderer
     public function createDocumentReference(Document\PageSnippet $document, array $attributes = [], array $query = [])
     {
         $attributes = $this->addDocumentAttributes($document, $attributes);
+
         return new ControllerReference($document->getController(), $attributes, $query);
     }
 

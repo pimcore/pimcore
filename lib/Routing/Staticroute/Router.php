@@ -17,7 +17,6 @@ namespace Pimcore\Routing\Staticroute;
 use Pimcore\Config;
 use Pimcore\Model\Site;
 use Pimcore\Model\Staticroute;
-use Pimcore\Tool;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;

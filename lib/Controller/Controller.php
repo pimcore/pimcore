@@ -50,7 +50,6 @@ abstract class Controller extends AbstractController
     {
         $templatingEngine = $this->container->get('pimcore.templating');
         if ($templatingEngine->isDelegate()) {
-
             $callback = function () use ($templatingEngine, $view, $parameters) {
                 $templatingEngine->stream($view, $parameters);
             };
