@@ -14,13 +14,11 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tools;
 
-use Doctrine\DBAL\Migrations\AbortMigrationException;
-use Doctrine\DBAL\Migrations\Version;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Schema;
 use Pimcore\Db\ConnectionInterface;
-use Pimcore\Extension\Bundle\Installer\MigrationInstaller;
-use Pimcore\Migrations\Migration\InstallMigration;
-use Pimcore\Migrations\MigrationManager;
+use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
+use Pimcore\Extension\Bundle\Installer\Exception\InstallationException;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\ClassDefinition\Service;
 use Pimcore\Model\DataObject\Fieldcollection;
@@ -30,7 +28,7 @@ use Pimcore\Model\User\Permission;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
-class Installer extends MigrationInstaller
+class Installer extends AbstractInstaller
 {
     /**
      * @var string
@@ -139,46 +137,84 @@ class Installer extends MigrationInstaller
         'bundle_ecommerce_back-office_order',
     ];
 
+    /**
+     * @var BundleInterface
+     */
+    protected $bundle;
+
+    /**
+     * @var ConnectionInterface
+     */
+    protected $db;
+
+    /**
+     * @var Schema
+     */
+    protected $schema;
+
     public function __construct(
         BundleInterface $bundle,
-        ConnectionInterface $connection,
-        MigrationManager $migrationManager
-    ) {
-        $this->installSourcesPath = __DIR__ . '/../Resources/install';
-
-        parent::__construct($bundle, $connection, $migrationManager);
-    }
-
-    public function migrateInstall(Schema $schema, Version $version)
+        ConnectionInterface $connection
+    )
     {
-        /** @var InstallMigration $migration */
-        $migration = $version->getMigration();
-        if ($migration->isDryRun()) {
-            $this->outputWriter->write('<fg=cyan>DRY-RUN:</> Skipping installation');
-
-            return;
+        $this->installSourcesPath = __DIR__ . '/../Resources/install';
+        $this->bundle = $bundle;
+        $this->db = $connection;
+        if($this->db instanceof Connection) {
+            $this->schema = $this->db->getSchemaManager()->createSchema();
         }
 
+        parent::__construct();
+    }
+
+    public function install()
+    {
         $this->installFieldCollections();
         $this->installClasses();
         $this->installObjectBricks();
-        $this->installTables($schema, $version);
+        $this->installTables();
         $this->installTranslations();
         $this->installPermissions();
     }
 
-    public function migrateUninstall(Schema $schema, Version $version)
+    public function uninstall()
     {
-        /** @var InstallMigration $migration */
-        $migration = $version->getMigration();
-        if ($migration->isDryRun()) {
-            $this->outputWriter->write('<fg=cyan>DRY-RUN:</> Skipping uninstallation');
+        $this->uninstallPermissions();
+        $this->uninstallTables();
+    }
 
-            return;
+    /**
+     * {@inheritdoc}
+     */
+    public function isInstalled()
+    {
+        $installed = false;
+        try {
+            // check if if first permission is installed
+            $installed = $this->db->fetchOne('SELECT `key` FROM users_permission_definitions WHERE `key` = :key', [
+                'key' => $this->permissionsToInstall[0]
+            ]);
+        } catch (\Exception $e) {
+            // nothing to do
         }
 
-        $this->uninstallPermissions($version);
-        $this->uninstallTables($schema);
+        return (bool) $installed;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function canBeInstalled()
+    {
+        return !$this->isInstalled();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function canBeUninstalled()
+    {
+        return $this->isInstalled();
     }
 
     private function getClassesToInstall(): array
@@ -190,7 +226,7 @@ class Installer extends MigrationInstaller
             $path = realpath($path);
 
             if (false === $path || !is_file($path)) {
-                throw new AbortMigrationException(sprintf(
+                throw new InstallationException(sprintf(
                     'Class export for class "%s" was expected in "%s" but file does not exist',
                     $className,
                     $path
@@ -213,7 +249,7 @@ class Installer extends MigrationInstaller
             $class = ClassDefinition::getByName($key);
 
             if ($class) {
-                $this->outputWriter->write(sprintf(
+                $this->output->write(sprintf(
                     '     <comment>WARNING:</comment> Skipping class "%s" as it already exists',
                     $key
                 ));
@@ -232,7 +268,7 @@ class Installer extends MigrationInstaller
             $success = Service::importClassDefinitionFromJson($class, $data, false, true);
 
             if (!$success) {
-                throw new AbortMigrationException(sprintf(
+                throw new InstallationException(sprintf(
                     'Failed to create class "%s"',
                     $key
                 ));
@@ -250,7 +286,7 @@ class Installer extends MigrationInstaller
         foreach ($fieldCollections as $key => $path) {
             if ($fieldCollection = Fieldcollection\Definition::getByKey($key)) {
                 if ($fieldCollection) {
-                    $this->outputWriter->write(sprintf(
+                    $this->output->write(sprintf(
                         '     <comment>WARNING:</comment> Skipping field collection "%s" as it already exists',
                         $key
                     ));
@@ -266,7 +302,7 @@ class Installer extends MigrationInstaller
             $success = Service::importFieldCollectionFromJson($fieldCollection, $data);
 
             if (!$success) {
-                throw new AbortMigrationException(sprintf(
+                throw new InstallationException(sprintf(
                     'Failed to create field collection "%s"',
                     $key
                 ));
@@ -283,7 +319,7 @@ class Installer extends MigrationInstaller
 
         foreach ($bricks as $key => $path) {
             if ($brick = Objectbrick\Definition::getByKey($key)) {
-                $this->outputWriter->write(sprintf(
+                $this->output->write(sprintf(
                     '     <comment>WARNING:</comment> Skipping object brick "%s" as it already exists',
                     $key
                 ));
@@ -298,7 +334,7 @@ class Installer extends MigrationInstaller
             $success = Service::importObjectBrickFromJson($brick, $data);
 
             if (!$success) {
-                throw new AbortMigrationException(sprintf(
+                throw new InstallationException(sprintf(
                     'Failed to create object brick "%s"',
                     $key
                 ));
@@ -312,7 +348,7 @@ class Installer extends MigrationInstaller
             $definition = Permission\Definition::getByKey($permission);
 
             if ($definition) {
-                $this->outputWriter->write(sprintf(
+                $this->output->write(sprintf(
                     '     <comment>WARNING:</comment> Skipping permission "%s" as it already exists',
                     $permission
                 ));
@@ -323,7 +359,7 @@ class Installer extends MigrationInstaller
             try {
                 Permission\Definition::create($permission);
             } catch (\Throwable $e) {
-                throw new AbortMigrationException(sprintf(
+                throw new InstallationException(sprintf(
                     'Failed to create permission "%s": %s',
                     $permission, $e->getMessage()
                 ));
@@ -331,20 +367,20 @@ class Installer extends MigrationInstaller
         }
     }
 
-    private function uninstallPermissions(Version $version)
+    private function uninstallPermissions()
     {
         foreach ($this->permissionsToInstall as $permission) {
-            $version->addSql('DELETE FROM users_permission_definitions WHERE `key` = :key', [
+            $this->db->executeQuery('DELETE FROM users_permission_definitions WHERE `key` = :key', [
                 'key' => $permission,
             ]);
         }
     }
 
-    private function installTables(Schema $schema, Version $version)
+    private function installTables()
     {
         foreach ($this->tablesToInstall as $name => $statement) {
-            if ($schema->hasTable($name)) {
-                $this->outputWriter->write(sprintf(
+            if ($this->schema->hasTable($name)) {
+                $this->output->write(sprintf(
                     '     <comment>WARNING:</comment> Skipping table "%s" as it already exists',
                     $name
                 ));
@@ -352,15 +388,16 @@ class Installer extends MigrationInstaller
                 continue;
             }
 
-            $version->addSql($statement);
+
+            $this->db->executeQuery($statement);
         }
     }
 
-    private function uninstallTables(Schema $schema)
+    private function uninstallTables()
     {
         foreach (array_keys($this->tablesToInstall) as $table) {
-            if (!$schema->hasTable($table)) {
-                $this->outputWriter->write(sprintf(
+            if (!$this->schema->hasTable($table)) {
+                $this->output->write(sprintf(
                     '     <comment>WARNING:</comment> Not dropping table "%s" as it doesn\'t exist',
                     $table
                 ));
@@ -368,7 +405,7 @@ class Installer extends MigrationInstaller
                 continue;
             }
 
-            $schema->dropTable($table);
+            $this->schema->dropTable($table);
         }
     }
 
