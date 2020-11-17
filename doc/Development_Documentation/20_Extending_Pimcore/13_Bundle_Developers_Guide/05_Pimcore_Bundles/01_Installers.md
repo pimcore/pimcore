@@ -57,7 +57,7 @@ Pimcore has added an additional option (`--prefix=`) to the migration commands o
 for a specific namespace. This gives you the possibility to control which migrations should be executed or not. 
 A typical use case for that would be to just run the Pimcore core migrations or just the migrations for a specific bundle. 
 
-#### Examples 
+#### Console Examples 
 
 ```bash
 # only run migrations for the Pimcore core
@@ -69,3 +69,11 @@ A typical use case for that would be to just run the Pimcore core migrations or 
 # run all migrations
 ./bin/console doctrine:migrations:migrate 
 ```  
+
+#### Config Examples (`config.yml`)
+```yml
+doctrine_migrations:
+    migrations_paths:
+        'Pimcore\Bundle\DataHubBundle\Migrations': '@PimcoreDataHubBundle/Migrations'
+        'CustomerManagementFrameworkBundle\Migrations': '@PimcoreCustomerManagementFrameworkBundle/Migrations'
+```
