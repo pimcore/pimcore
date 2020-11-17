@@ -354,9 +354,9 @@ class EditableHandler implements LoggerAwareInterface
         }
 
         $uri = new ControllerReference($controller, $attributes, $query);
+
         return $this->httpKernelRuntime->renderFragment($uri, $attributes);
     }
-
 
     /**
      * @param PageSnippet $document

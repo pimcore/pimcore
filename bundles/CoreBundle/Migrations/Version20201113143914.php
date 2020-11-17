@@ -8,14 +8,14 @@ use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 class Version20201113143914 extends AbstractPimcoreMigration
 {
     private $tables = ['documents_email', 'documents_newsletter', 'documents_page',
-        'documents_snippet', 'documents_printpage'];
+        'documents_snippet', 'documents_printpage', ];
 
     /**
      * @param Schema $schema
      */
     public function up(Schema $schema)
     {
-        foreach($this->tables as $table) {
+        foreach ($this->tables as $table) {
             $this->addSql(sprintf('ALTER TABLE `%s` DROP COLUMN `action`;', $table));
             $this->addSql(sprintf('ALTER TABLE `%s` DROP COLUMN `module`;', $table));
         }

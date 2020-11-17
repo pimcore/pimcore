@@ -31,6 +31,7 @@ class TemplateResolver extends AbstractRequestResolver
         }
 
         $template = $request->get(DynamicRouter::CONTENT_TEMPLATE, null);
+
         return $template;
     }
 
