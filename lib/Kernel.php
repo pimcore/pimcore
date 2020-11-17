@@ -367,12 +367,5 @@ abstract class Kernel extends SymfonyKernel
         if (!$defaultTimezone) {
             date_default_timezone_set('UTC'); // UTC -> default timezone
         }
-
-        // check some system variables
-        $requiredVersion = '7.3';
-        if (version_compare(PHP_VERSION, $requiredVersion, '<')) {
-            $m = "pimcore requires at least PHP version $requiredVersion your PHP version is: " . PHP_VERSION;
-            Tool::exitWithError($m);
-        }
     }
 }
