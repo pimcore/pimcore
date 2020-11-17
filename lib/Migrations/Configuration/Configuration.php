@@ -28,6 +28,9 @@ use Pimcore\Extension\Bundle\Installer\MigrationInstallerInterface;
 use Pimcore\Migrations\InstallVersion;
 use Pimcore\Migrations\Version;
 
+/**
+ * @deprecated will be removed in Pimcore v7
+ */
 class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuration
 {
     /**

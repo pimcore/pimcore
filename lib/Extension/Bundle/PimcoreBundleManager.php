@@ -578,6 +578,7 @@ class PimcoreBundleManager
 
     /**
      * Determines if a bundle can be updated
+     * @deprecated will be removed in Pimcore v7
      *
      * @param PimcoreBundleInterface $bundle
      *
@@ -598,6 +599,7 @@ class PimcoreBundleManager
 
     /**
      * Runs update routine for a bundle
+     * @deprecated will be removed in Pimcore v7
      *
      * @param PimcoreBundleInterface $bundle
      *

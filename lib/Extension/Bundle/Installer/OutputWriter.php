@@ -19,7 +19,11 @@ namespace Pimcore\Extension\Bundle\Installer;
 
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\Output;
+use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @deprecated will be removed in Pimcore v7, use OutputInterface instead
+ */
 class OutputWriter implements OutputWriterInterface
 {
     /**
@@ -54,6 +58,11 @@ class OutputWriter implements OutputWriterInterface
             $closure = $this->closure;
             $closure($message);
         }
+    }
+
+    public function getOutputInstance(): OutputInterface
+    {
+        return $this->output;
     }
 
     public function getOutput()

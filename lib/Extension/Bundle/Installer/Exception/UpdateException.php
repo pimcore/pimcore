@@ -14,6 +14,9 @@
 
 namespace Pimcore\Extension\Bundle\Installer\Exception;
 
+/**
+ * @deprecated
+ */
 class UpdateException extends \RuntimeException
 {
 }
