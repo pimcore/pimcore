@@ -39,6 +39,11 @@ interface CartInterface
     public function getItems();
 
     /**
+     * @param CartItemInterface[]|null $items
+     */
+    public function setItems($items);
+
+    /**
      * @return bool
      */
     public function isEmpty();
