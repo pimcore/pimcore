@@ -82,55 +82,22 @@ class Composer
         }
 
         // execute migrations
-        $currentVersion = null;
+        $isInstalled = null;
         try {
             $process = static::executeCommand($event, $consoleDir,
-                'pimcore:migrations:status -s pimcore_core -o current_version', 30, false);
-            $currentVersion = trim($process->getOutput());
+                'internal:migration-helpers --is-installed', 30, false);
+            $isInstalled = (bool) trim($process->getOutput());
         } catch (\Throwable $e) {
             // noting to do
         }
 
-        if (!empty($currentVersion) && is_numeric($currentVersion)) {
+        if ($isInstalled) {
             self::clearDataCache($event, $consoleDir);
-            static::executeCommand($event, $consoleDir, 'pimcore:migrations:migrate -s pimcore_core -n');
+            static::executeCommand($event, $consoleDir, 'doctrine:migrations:migrate -n --prefix=' . escapeshellarg('Pimcore\\Bundle\\CoreBundle'));
             self::clearDataCache($event, $consoleDir);
         } else {
             $event->getIO()->write('<comment>Skipping migrations ... (either Pimcore is not installed yet or current status of migrations is not available)</comment>', true);
         }
-    }
-
-    /**
-     * @param Event $event
-     */
-    public static function executeBundleMigrationsUp(Event $event)
-    {
-        $consoleDir = static::getConsoleDir($event, 'bundle migrations');
-
-        if (null === $consoleDir) {
-            return;
-        }
-
-        $process = static::executeCommand($event, $consoleDir, 'pimcore:bundle:list --json', 30, false);
-        $bundles = \json_decode($process->getOutput(), true);
-
-        usort($bundles, static function ($bundle1, $bundle2) {
-            return $bundle1['Priority'] <=> $bundle2['Priority'];
-        });
-
-        $updatableBundles = array_filter($bundles, static function ($bundle) {
-            return $bundle['Updatable'];
-        });
-
-        foreach ($updatableBundles as $bundle) {
-            try {
-                static::executeCommand($event, $consoleDir, 'pimcore:migrations:migrate -b '.$bundle['Bundle']);
-            } catch (\Throwable $e) {
-                $event->getIO()->write('<comment>Skipping migrations for bundle "'.$bundle.'": '.PHP_EOL.$e.'</comment>', true);
-            }
-        }
-
-        self::clearDataCache($event, $consoleDir);
     }
 
     /**

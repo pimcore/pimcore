@@ -1338,16 +1338,6 @@ parameters:
 			path: lib/Extension/Bundle/Config/StateConfig.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Db\\\\ConnectionInterface\\:\\:getSchemaManager\\(\\)\\.$#"
-			count: 1
-			path: lib/Extension/Bundle/Installer/MigrationInstaller.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Console\\\\Output\\\\Output\\:\\:fetch\\(\\)\\.$#"
-			count: 1
-			path: lib/Extension/Bundle/Installer/OutputWriter.php
-
-		-
 			message: "#^Access to an undefined property Pimcore\\\\Config\\\\Config\\:\\:\\$areabrick\\.$#"
 			count: 1
 			path: lib/Extension/Document/Areabrick/AreabrickManager.php

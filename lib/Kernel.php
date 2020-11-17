@@ -15,6 +15,7 @@
 namespace Pimcore;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
 use FOS\JsRoutingBundle\FOSJsRoutingBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
@@ -264,6 +265,7 @@ abstract class Kernel extends SymfonyKernel
             new MonologBundle(),
             new SwiftmailerBundle(),
             new DoctrineBundle(),
+            new DoctrineMigrationsBundle(),
             new SensioFrameworkExtraBundle(),
             new CmfRoutingBundle(),
             new PrestaSitemapBundle(),

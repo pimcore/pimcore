@@ -22,7 +22,6 @@ use Pimcore\DependencyInjection\ServiceCollection;
 use Pimcore\Http\Context\PimcoreContextGuesser;
 use Pimcore\Loader\ImplementationLoader\ClassMapLoader;
 use Pimcore\Loader\ImplementationLoader\PrefixLoader;
-use Pimcore\Migrations\Configuration\ConfigurationFactory;
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 use Pimcore\Model\Document\Editable\Loader\PrefixLoader as DocumentEditablePrefixLoader;
 use Pimcore\Model\Factory;
@@ -137,7 +136,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $this->configurePasswordEncoders($container, $config);
         $this->configureAdapterFactories($container, $config['newsletter']['source_adapters'], 'pimcore.newsletter.address_source_adapter.factories');
         $this->configureAdapterFactories($container, $config['custom_report']['adapters'], 'pimcore.custom_report.adapter.factories');
-        $this->configureMigrations($container, $config['migrations']);
         $this->configureGoogleAnalyticsFallbackServiceLocator($container);
         $this->configureSitemaps($container, $config['sitemaps']);
 
@@ -408,22 +406,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         }
 
         $definition->replaceArgument(1, $factoryMapping);
-    }
-
-    private function configureMigrations(ContainerBuilder $container, array $config)
-    {
-        $configurations = [];
-        foreach ($config['sets'] as $identifier => $set) {
-            $configurations[] = array_merge([
-                'identifier' => $identifier,
-            ], $set);
-        }
-
-        $factory = $container->findDefinition(ConfigurationFactory::class);
-        $factory->setArgument(
-            '$migrationSetConfigurations',
-            $configurations
-        );
     }
 
     /**
