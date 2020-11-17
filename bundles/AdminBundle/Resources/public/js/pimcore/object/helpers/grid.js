@@ -289,6 +289,10 @@ pimcore.object.helpers.grid = Class.create({
                     if (tag) {
                         var fc = tag.prototype.getGridColumnConfig(field);
                         fc.width = this.getColumnWidth(field, 100);
+                        
+                        if (field.layout.decimalPrecision) {
+                            fc.decimalPrecision = field.layout.decimalPrecision;
+                        }
 
                         if (typeof gridFilters[field.key] !== 'undefined') {
                             fc.filter = gridFilters[field.key];
