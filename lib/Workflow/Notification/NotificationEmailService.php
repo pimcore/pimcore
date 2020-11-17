@@ -90,7 +90,7 @@ class NotificationEmailService extends AbstractNotificationService
                     $type = $subject->getType();
                 }
 
-                $deeplink = $hostUrl . $this->router->generate('pimcore_admin_login') . '/deeplink?'.$objectType.'_' . $subject->getId() . '_'. $type;
+                $deeplink = $hostUrl . $this->router->generate('pimcore_admin_login_deeplink') . '?'.$objectType.'_' . $subject->getId() . '_'. $type;
             }
 
             foreach ($recipients as $language => $recipientsPerLanguage) {
