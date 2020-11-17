@@ -25,7 +25,6 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Pimcore\Model\Element;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
-use Pimcore\Tool;
 
 /**
  * @method \Pimcore\Model\Document\Editable\Dao getDao()
@@ -113,11 +112,11 @@ class Renderlet extends Model\Document\Editable
         $container = \Pimcore::getContainer();
         $editableHandler = $container->get(EditableHandler::class);
 
-        if (!$this->config['controller'] && !$this->config['action']) {
+        if (empty($this->config['controller'])) {
             if (is_null($this->config)) {
                 $this->config = [];
             }
-            $this->config += Tool::getRoutingDefaults();
+            $this->config['controller'] = $container->getParameter('pimcore.documents.default_controller');
         }
 
         if (method_exists($this->o, 'isPublished')) {
@@ -133,7 +132,7 @@ class Renderlet extends Model\Document\Editable
                 $targetingConfigurator->configureTargetGroup($this->o);
             }
 
-            $blockparams = ['action', 'controller', 'module', 'bundle', 'template'];
+            $blockparams = ['controller', 'template'];
 
             $params = [
                 'template' => isset($this->config['template']) ? $this->config['template'] : null,
@@ -149,18 +148,8 @@ class Renderlet extends Model\Document\Editable
                 }
             }
 
-            $moduleOrBundle = null;
-
-            if (isset($this->config['bundle'])) {
-                $moduleOrBundle = $this->config['bundle'];
-            } elseif (isset($this->config['module'])) {
-                $moduleOrBundle = $this->config['module'];
-            }
-
             return $editableHandler->renderAction(
                 $this->config['controller'],
-                $this->config['action'],
-                $moduleOrBundle,
                 $params
             );
         }
@@ -360,7 +349,7 @@ class Renderlet extends Model\Document\Editable
     }
 
     /**
-     * @return Asset|Document|Object
+     * @return Asset|Document|Object|null
      */
     public function getO()
     {
