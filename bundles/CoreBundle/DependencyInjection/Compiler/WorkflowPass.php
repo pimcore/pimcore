@@ -168,7 +168,7 @@ class WorkflowPass implements CompilerPassInterface
                         [$supportedClassName]
                     );
                     $strategyDefinition->setPublic(false);
-                    $registryDefinition->addMethodCall('add', [new Reference($workflowId), $strategyDefinition]);
+                    $registryDefinition->addMethodCall('addWorkflow', [new Reference($workflowId), $strategyDefinition]);
                 }
             } elseif (isset($workflowConfig['support_strategy'])) {
                 $supportStrategyType = $workflowConfig['support_strategy']['type'] ?? null;
@@ -179,10 +179,10 @@ class WorkflowPass implements CompilerPassInterface
                     foreach ($workflowConfig['support_strategy']['arguments'] ?? [] as $argument) {
                         $supportStrategyDefinition->addArgument($argument);
                     }
-                    $registryDefinition->addMethodCall('add', [new Reference($workflowId), $supportStrategyDefinition]);
+                    $registryDefinition->addMethodCall('addWorkflow', [new Reference($workflowId), $supportStrategyDefinition]);
                 } elseif (isset($workflowConfig['support_strategy']['service'])) {
                     $registryDefinition->addMethodCall(
-                        'add',
+                        'addWorkflow',
                         [new Reference($workflowId), new Reference($workflowConfig['support_strategy']['service'])]
                     );
                 }
