@@ -324,7 +324,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @param null|DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return array|null
+     * @return array
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
