@@ -114,11 +114,6 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
     }
 
     /**
-     * @param Model\Property[] $properties
-     */
-    abstract public function setProperties($properties);
-
-    /**
      * @param string $name
      */
     public function removeProperty($name)
@@ -180,15 +175,12 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
 
         // check for properties
         if (method_exists($this, 'getProperties')) {
-            $properties = $this->getProperties();
-            foreach ($properties as $property) {
+            foreach ($this->getProperties() as $property) {
                 $dependencies[] = $property->resolveDependencies();
             }
         }
 
-        $dependencies = array_merge(...$dependencies);
-
-        return $dependencies;
+        return array_merge(...$dependencies);
     }
 
     /**
@@ -255,7 +247,7 @@ abstract class AbstractElement extends Model\AbstractModel implements ElementInt
         $isAllowed = $this->getDao()->isAllowed($type, $user);
 
         $event = new ElementEvent($this, ['isAllowed' => $isAllowed, 'permissionType' => $type, 'user' => $user]);
-        \Pimcore::getEventDispatcher()->dispatch(AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, AdminEvents::ELEMENT_PERMISSION_IS_ALLOWED);
 
         return (bool) $event->getArgument('isAllowed');
     }

@@ -1,0 +1,6 @@
+{% for call, callData in calls %}
+ga('ec:addProduct', {{ callData|json_encode|raw }});
+{% endfor %}
+
+ga('ec:setAction', 'checkout', {{ actionData|json_encode()|raw }});
+ga('send', 'event', 'Checkout', 'Step');

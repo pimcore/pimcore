@@ -5,7 +5,7 @@
 The glossary module is a powerful tool making internal linking easy and smart.
 In a special editor you can define your terms which are replaced automatically with a link to the defined page.
 
-But the glossary is not only useful for internal linking, it's also perfect for explaining abbreviations and/or acronyms.
+But the glossary is not only useful for internal linking, it's also perfect for explaining abbreviations.
 
 ## How it Works
 
@@ -19,17 +19,6 @@ Open the glossary editor ![Tools](../img/Icon_tools.png) **Tools -> Glossary** a
 
 Then you have to define one or more regions in your views, telling the glossary where you want it to replace your terms.
 
-<div class="code-section">
-
-```php
-<?php $this->glossary()->start(); ?>
-<div>
-    <?= $this->wysiwyg("content", [
-        "height" => 200
-    ]); ?>
-</div>
-<?php $this->glossary()->stop() ?>
-```
 
 ```twig
 {% pimcoreglossary %}
@@ -38,8 +27,6 @@ Then you have to define one or more regions in your views, telling the glossary 
 </div>
 {% endpimcoreglossary %}
 ```
-
-</div>
 
 Now the output of the WYSIWYG field will look like this.
 

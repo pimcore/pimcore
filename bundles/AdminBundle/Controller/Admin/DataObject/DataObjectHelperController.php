@@ -1417,7 +1417,7 @@ class DataObjectHelperController extends AdminController
             $eventData->setAdditionalData($additionalData);
             $eventData->setContext($context);
 
-            $eventDispatcher->dispatch(DataObjectImportEvents::PREVIEW, $eventData);
+            $eventDispatcher->dispatch($eventData, DataObjectImportEvents::PREVIEW);
 
             $context = $eventData->getContext();
 
@@ -1426,8 +1426,9 @@ class DataObjectHelperController extends AdminController
             $paramsBag['object1'] = $object1;
             $paramsBag['object2'] = $object2;
             $paramsBag['isImportPreview'] = true;
+            $paramsBag['validLanguages'] = Tool::getValidLanguages();
 
-            $response = $this->render('PimcoreAdminBundle:Admin/DataObject/DataObject:diffVersions.html.php', $paramsBag);
+            $response = $this->render('@PimcoreAdmin/Admin/DataObject/DataObject/diffVersions.html.twig', $paramsBag);
 
             return $response;
         } catch (\Exception $e) {
@@ -1576,11 +1577,9 @@ class DataObjectHelperController extends AdminController
             } elseif ($nbFields === count($fields)) {
                 $rows++;
             } else {
-                $translator = $this->get('translator');
-
                 return $this->adminJson([
                     'success' => false,
-                    'message' => $translator->trans('different_number_of_columns', [], 'admin'),
+                    'message' => $this->trans('different_number_of_columns', [], 'admin'),
                 ]);
             }
         }
@@ -1696,7 +1695,7 @@ class DataObjectHelperController extends AdminController
         $eventData->setContext($context);
 
         if ($job == 1) {
-            \Pimcore::getEventDispatcher()->dispatch(DataObjectImportEvents::BEFORE_START, $eventData);
+            $eventDispatcher->dispatch($eventData, DataObjectImportEvents::BEFORE_START);
 
             if (!copy($originalFile, $file)) {
                 throw new \Exception('failed to copy file');
@@ -1746,15 +1745,15 @@ class DataObjectHelperController extends AdminController
                 $eventData->setObject($object);
                 $eventData->setRowData($rowData);
 
-                $eventDispatcher->dispatch(DataObjectImportEvents::PRE_SAVE, $eventData);
+                $eventDispatcher->dispatch($eventData, DataObjectImportEvents::PRE_SAVE);
 
                 $object->setUserModification($this->getAdminUser()->getId());
                 $object->save();
 
-                $eventDispatcher->dispatch(DataObjectImportEvents::POST_SAVE, $eventData);
+                $eventDispatcher->dispatch($eventData, DataObjectImportEvents::POST_SAVE);
 
                 if ($job >= $importJobTotal) {
-                    $eventDispatcher->dispatch(DataObjectImportEvents::DONE, $eventData);
+                    $eventDispatcher->dispatch($eventData, DataObjectImportEvents::DONE);
                 }
 
                 return $this->adminJson(['success' => true, 'rowId' => $rowId, 'message' => $object->getFullPath(), 'objectId' => $object->getId()]);
@@ -2070,7 +2069,6 @@ class DataObjectHelperController extends AdminController
                             $requestedLanguage = $params['language'];
                             if ($requestedLanguage) {
                                 if ($requestedLanguage != 'default') {
-                                    //                $this->get('translator')->setLocale($requestedLanguage);
                                     $request->setLocale($requestedLanguage);
                                 }
                             } else {

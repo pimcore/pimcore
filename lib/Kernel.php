@@ -18,7 +18,6 @@ use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use FOS\JsRoutingBundle\FOSJsRoutingBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
-use Pimcore\Bundle\GeneratorBundle\PimcoreGeneratorBundle;
 use Pimcore\Cache\Runtime;
 use Pimcore\Config\BundleConfigLocator;
 use Pimcore\Event\SystemEvents;
@@ -29,7 +28,6 @@ use Pimcore\HttpKernel\BundleCollection\LazyLoadedItem;
 use Presta\SitemapBundle\PrestaSitemapBundle;
 use Scheb\TwoFactorBundle\SchebTwoFactorBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
-use Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle;
 use Symfony\Bundle\DebugBundle\DebugBundle;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\MonologBundle\MonologBundle;
@@ -43,6 +41,7 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileExistenceResource;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Kernel as SymfonyKernel;
 
@@ -197,7 +196,7 @@ abstract class Kernel extends SymfonyKernel
             // check if container still exists at this point as it could already
             // be cleared (e.g. when running tests which boot multiple containers)
             if (null !== $container = $this->getContainer()) {
-                $container->get('event_dispatcher')->dispatch(SystemEvents::SHUTDOWN);
+                $container->get('event_dispatcher')->dispatch(new GenericEvent(), SystemEvents::SHUTDOWN);
             }
 
             \Pimcore::shutdown();
@@ -284,25 +283,12 @@ abstract class Kernel extends SymfonyKernel
                 new DebugBundle(),
                 new WebProfilerBundle(),
             ], 80);
-
-            // PimcoreGeneratorBundle depends on SensioGeneratorBundle
-            $generatorEnvironments = $this->getEnvironmentsForDevGeneratorBundles();
-            $collection->addBundle(
-                new PimcoreGeneratorBundle(),
-                60,
-                $generatorEnvironments
-            );
         }
     }
 
     protected function getEnvironmentsForDevBundles(): array
     {
         return ['dev', 'test'];
-    }
-
-    protected function getEnvironmentsForDevGeneratorBundles(): array
-    {
-        return ['dev'];
     }
 
     /**
@@ -381,7 +367,7 @@ abstract class Kernel extends SymfonyKernel
         }
 
         // check some system variables
-        $requiredVersion = '7.2';
+        $requiredVersion = '7.3';
         if (version_compare(PHP_VERSION, $requiredVersion, '<')) {
             $m = "pimcore requires at least PHP version $requiredVersion your PHP version is: " . PHP_VERSION;
             Tool::exitWithError($m);

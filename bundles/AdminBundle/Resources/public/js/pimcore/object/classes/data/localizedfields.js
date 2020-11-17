@@ -144,6 +144,14 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
             ]
         });
 
+        var labelAligns = Ext.create('Ext.data.Store', {
+            fields: ['abbr', 'name'],
+            data : [
+                {"abbr": "left", "name": t("left")},
+                {"abbr": "top", "name": t("top")}
+            ]
+        });
+
         this.layout.add({
             xtype: "form",
             defaults: {
@@ -157,6 +165,17 @@ pimcore.object.classes.data.localizedfields = Class.create(pimcore.object.classe
                     name: "labelWidth",
                     fieldLabel: t("label_width"),
                     value: this.datax.labelWidth
+                },
+                {
+                    xtype: "combo",
+                    fieldLabel: t("label_align"),
+                    name: "labelAlign",
+                    value: this.datax.labelAlign,
+                    store: labelAligns,
+                    triggerAction: 'all',
+                    editable: false,
+                    displayField: 'name',
+                    valueField: 'abbr',
                 },
                 {
                     xtype: "checkbox",

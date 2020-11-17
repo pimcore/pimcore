@@ -18,7 +18,7 @@
 namespace Pimcore\Model\Document\Editable;
 
 use Pimcore\Document\Editable\Block\BlockName;
-use Pimcore\Document\Editable\EditableHandlerInterface;
+use Pimcore\Document\Editable\EditableHandler;
 use Pimcore\Extension\Document\Areabrick\AreabrickManagerInterface;
 use Pimcore\Extension\Document\Areabrick\EditableDialogBoxInterface;
 use Pimcore\Logger;
@@ -38,19 +38,19 @@ class Areablock extends Model\Document\Editable implements BlockInterface
      *
      * @var array
      */
-    public $indices = [];
+    protected $indices = [];
 
     /**
      * Current step of the block while iteration
      *
      * @var int
      */
-    public $current = 0;
+    protected $current = 0;
 
     /**
      * @var array
      */
-    public $currentIndex;
+    protected $currentIndex;
 
     /**
      * @var bool
@@ -124,6 +124,16 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         $this->blockDestruct();
         $this->blockEnd();
         $this->end();
+    }
+
+    /**
+     * @return \Generator
+     */
+    public function getIterator()
+    {
+        while ($this->loop()) {
+            yield $this->getCurrentIndex();
+        }
     }
 
     public function loop()
@@ -233,12 +243,12 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
-     * @return EditableHandlerInterface
+     * @return EditableHandler
      */
     private function getEditableHandler()
     {
         // TODO inject area handler via DI when editables are built through container
-        return \Pimcore::getContainer()->get(EditableHandlerInterface::class);
+        return \Pimcore::getContainer()->get(EditableHandler::class);
     }
 
     /**
@@ -307,11 +317,11 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     /**
      * @inheritDoc
      */
-    protected function getEditmodeOptions(): array
+    protected function getEditmodeConfig(): array
     {
         $config = array_merge($this->getToolBarDefaultConfig(), $this->getConfig());
 
-        $options = parent::getEditmodeOptions();
+        $options = parent::getEditmodeConfig();
         $options = array_merge($options, [
             'config' => $config,
         ]);
@@ -343,8 +353,8 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     {
         reset($this->indices);
 
-        $options = $this->getEditmodeOptions();
-        $this->outputEditmodeOptions($options);
+        $options = $this->getEditmodeConfig();
+        $this->outputEditmodeConfig($options);
 
         // set name suffix for the whole block element, this will be added to all child elements of the block
         $this->getBlockState()->pushBlock(BlockName::createFromEditable($this));
@@ -463,7 +473,7 @@ class Areablock extends Model\Document\Editable implements BlockInterface
             }
 
             $editable->setInDialogBox($dialogId);
-            $editable->setOption('dialogBoxConfig', $config);
+            $editable->addConfig('dialogBoxConfig', $config);
             $this->outputEditmode($editable->admin());
         } elseif (is_array($config) && isset($config[0])) {
             foreach ($config as $item) {
@@ -491,57 +501,55 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         // we need to set this here otherwise custom areaDir's won't work
         $this->config = $config;
 
-        if ($this->getView()) {
-            $translator = \Pimcore::getContainer()->get('translator');
-            if (!isset($config['allowed']) || !is_array($config['allowed'])) {
-                $config['allowed'] = [];
-            }
-
-            $availableAreas = $this->getEditableHandler()->getAvailableAreablockAreas($this, $config);
-            $availableAreas = $this->sortAvailableAreas($availableAreas, $config);
-
-            $config['types'] = $availableAreas;
-
-            if (isset($config['group']) && is_array($config['group'])) {
-                $groupingareas = [];
-                foreach ($availableAreas as $area) {
-                    $groupingareas[$area['type']] = $area['type'];
-                }
-
-                $groups = [];
-                foreach ($config['group'] as $name => $areas) {
-                    $n = $name;
-                    if ($this->editmode) {
-                        $n = $translator->trans($name, [], 'admin');
-                    }
-                    $groups[$n] = $areas;
-
-                    foreach ($areas as $area) {
-                        unset($groupingareas[$area]);
-                    }
-                }
-
-                if (count($groupingareas) > 0) {
-                    $uncatAreas = [];
-                    foreach ($groupingareas as $area) {
-                        $uncatAreas[] = $area;
-                    }
-                    $n = 'Uncategorized';
-                    if ($this->editmode) {
-                        $n = $translator->trans($n, [], 'admin');
-                    }
-                    $groups[$n] = $uncatAreas;
-                }
-
-                $config['group'] = $groups;
-            }
-
-            if (empty($config['limit'])) {
-                $config['limit'] = 1000000;
-            }
-
-            $this->config = $config;
+        $translator = \Pimcore::getContainer()->get('translator');
+        if (!isset($config['allowed']) || !is_array($config['allowed'])) {
+            $config['allowed'] = [];
         }
+
+        $availableAreas = $this->getEditableHandler()->getAvailableAreablockAreas($this, $config);
+        $availableAreas = $this->sortAvailableAreas($availableAreas, $config);
+
+        $config['types'] = $availableAreas;
+
+        if (isset($config['group']) && is_array($config['group'])) {
+            $groupingareas = [];
+            foreach ($availableAreas as $area) {
+                $groupingareas[$area['type']] = $area['type'];
+            }
+
+            $groups = [];
+            foreach ($config['group'] as $name => $areas) {
+                $n = $name;
+                if ($this->editmode) {
+                    $n = $translator->trans($name, [], 'admin');
+                }
+                $groups[$n] = $areas;
+
+                foreach ($areas as $area) {
+                    unset($groupingareas[$area]);
+                }
+            }
+
+            if (count($groupingareas) > 0) {
+                $uncatAreas = [];
+                foreach ($groupingareas as $area) {
+                    $uncatAreas[] = $area;
+                }
+                $n = 'Uncategorized';
+                if ($this->editmode) {
+                    $n = $translator->trans($n, [], 'admin');
+                }
+                $groups[$n] = $uncatAreas;
+            }
+
+            $config['group'] = $groups;
+        }
+
+        if (empty($config['limit'])) {
+            $config['limit'] = 1000000;
+        }
+
+        $this->config = $config;
 
         return $this;
     }
@@ -640,6 +648,14 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     }
 
     /**
+     * @return array
+     */
+    public function getIndices()
+    {
+        return $this->indices;
+    }
+
+    /**
      * If object was serialized, set the counter back to 0
      */
     public function __wakeup()
@@ -654,32 +670,6 @@ class Areablock extends Model\Document\Editable implements BlockInterface
     public function isEmpty()
     {
         return !(bool) count($this->indices);
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if (($data->indices === null || is_array($data->indices)) && ($data->current == null || is_numeric($data->current))
-            && ($data->currentIndex == null || is_numeric($data->currentIndex))) {
-            $indices = $data->indices;
-            $indices = json_decode(json_encode($indices), true);
-
-            $this->indices = $indices;
-            $this->current = $data->current;
-            $this->currentIndex = $data->currentIndex;
-        } else {
-            throw new \Exception('cannot get  values from web service import - invalid data');
-        }
     }
 
     /**
@@ -704,5 +694,3 @@ class Areablock extends Model\Document\Editable implements BlockInterface
         return $list;
     }
 }
-
-class_alias(Areablock::class, 'Pimcore\Model\Document\Tag\Areablock');

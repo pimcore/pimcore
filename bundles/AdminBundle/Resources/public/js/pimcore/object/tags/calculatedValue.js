@@ -47,8 +47,13 @@ pimcore.object.tags.calculatedValue = Class.create(pimcore.object.tags.abstract,
             input.labelWidth = this.fieldConfig.labelWidth;
         }
 
-        input.width += input.labelWidth;
+        if (this.fieldConfig.labelAlign) {
+            input.labelAlign = this.fieldConfig.labelAlign;
+        }
 
+        if (!this.fieldConfig.labelAlign || 'left' === this.fieldConfig.labelAlign) {
+            input.width += input.labelWidth;
+        }
 
         if (this.data) {
             input.value = this.data;

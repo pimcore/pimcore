@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject;
 
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface;
 use Pimcore\Model\Element\DirtyIndicatorInterface;
@@ -287,7 +288,7 @@ class Localizedfield extends Model\AbstractModel implements
 
         // try to get the language from the service container
         try {
-            $locale = \Pimcore::getContainer()->get('pimcore.locale')->getLocale();
+            $locale = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->getLocale();
 
             if (Tool::isValidLanguage($locale)) {
                 return (string) $locale;
@@ -370,8 +371,9 @@ class Localizedfield extends Model\AbstractModel implements
             /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $container */
             $container = $block->getFieldDefinition('localizedfields');
         } else {
+            $class = $this->getClass();
             /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $container */
-            $container = $this->getObject()->getClass()->getFieldDefinition('localizedfields');
+            $container = $class->getFieldDefinition('localizedfields');
         }
 
         return $container->getFieldDefinitions($params);
@@ -573,8 +575,7 @@ class Localizedfield extends Model\AbstractModel implements
         // if a lazy loaded field hasn't been loaded we cannot rely on the dirty check
         // note that preSetData will just overwrite it with the new data and mark it as loaded
         $forceLanguageDirty = false;
-        $isLazyLoadedField = ($fieldDefinition instanceof LazyLoadingSupportInterface || method_exists($fieldDefinition, 'getLazyLoading'))
-                                    && $fieldDefinition->getLazyLoading();
+        $isLazyLoadedField = $fieldDefinition instanceof LazyLoadingSupportInterface && $fieldDefinition->getLazyLoading();
         $lazyKey = $name . LazyLoadedFieldsInterface::LAZY_KEY_SEPARATOR . $language;
 
         if ($isLazyLoadedField) {
@@ -756,8 +757,7 @@ class Localizedfield extends Model\AbstractModel implements
 
         $fields = $this->getFieldDefinitions($this->getContext(), ['suppressEnrichment' => true]);
         foreach ($fields as $field) {
-            if (($field instanceof LazyLoadingSupportInterface || method_exists($field, 'getLazyLoading'))
-                                            && $field->getLazyLoading()) {
+            if ($field instanceof LazyLoadingSupportInterface && $field->getLazyLoading()) {
                 $lazyLoadedFieldNames[] = $field->getName();
             }
         }

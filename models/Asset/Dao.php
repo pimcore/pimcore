@@ -25,6 +25,8 @@ use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Tool\Serialize;
 
 /**
+ * @internal
+ *
  * @property \Pimcore\Model\Asset $model
  */
 class Dao extends Model\Element\Dao
@@ -139,7 +141,7 @@ class Dao extends Model\Element\Dao
 
                 $metadataItem['language'] = (string) $metadataItem['language']; // language column cannot be NULL -> see SQL schema
 
-                if (is_scalar($metadataItem['data']) && strlen($metadataItem['data']) > 0) {
+                if (is_scalar($metadataItem['data'])) {
                     $this->db->insert('assets_metadata', $metadataItem);
                     $data['hasMetaData'] = 1;
                 }

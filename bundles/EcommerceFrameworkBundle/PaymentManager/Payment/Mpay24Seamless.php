@@ -36,16 +36,16 @@ class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\Ecommerc
     private $ecommerceConfig;
 
     /** @var EngineInterface */
-    private $templatingEngine;
+    private $template;
 
     private $successURL;
     private $errorURL;
     private $confirmationURL;
     private $authorizedData;
 
-    public function __construct(array $options, EngineInterface $templatingEngine)
+    public function __construct(array $options, EngineInterface $template)
     {
-        $this->templatingEngine = $templatingEngine;
+        $this->template = $template;
         $this->configureOptions(new OptionsResolver())->resolve($options);
         $this->ecommerceConfig = $options;
         $this->confirmationURL = '';
@@ -163,7 +163,7 @@ class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\Ecommerc
         $params['paymentMethods'] = $this->ecommerceConfig['payment_methods'];
         $params['enabledPaymentMethods'] = isset($config['enabledPaymentMethods']) ? $config['enabledPaymentMethods'] : array_keys($params['paymentMethods']);
 
-        return $this->templatingEngine->render($this->ecommerceConfig['partial'], $params);
+        return $this->template->render($this->ecommerceConfig['partial'], $params);
     }
 
     /**

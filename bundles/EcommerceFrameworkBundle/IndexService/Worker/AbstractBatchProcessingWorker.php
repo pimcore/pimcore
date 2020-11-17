@@ -240,7 +240,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                     } catch (\Throwable $e) {
                         $event = new PreprocessAttributeErrorEvent($attribute, $e);
                         $event->setSubObjectId($subObjectId);
-                        $this->eventDispatcher->dispatch(IndexServiceEvents::ATTRIBUTE_PROCESSING_ERROR, $event);
+                        $this->eventDispatcher->dispatch($event, IndexServiceEvents::ATTRIBUTE_PROCESSING_ERROR);
 
                         if ($event->doSkipAttribute()) {
                             Logger::err(
@@ -278,7 +278,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
                     $e = new \Exception("Could not encode product data for updating index. Json encode error code was {$jsonLastError}, ObjectId was {$subObjectId}.");
                     $event = new PreprocessErrorEvent($e);
                     $event->setSubObjectId($subObjectId);
-                    $this->eventDispatcher->dispatch(IndexServiceEvents::GENERAL_PREPROCESSING_ERROR, $event);
+                    $this->eventDispatcher->dispatch($event, IndexServiceEvents::GENERAL_PREPROCESSING_ERROR);
                     if ($event->doThrowException()) {
                         throw $e;
                     } else {
@@ -418,7 +418,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
         $workerTimestamp = time();
         $this->db->query(
             'UPDATE ' . $this->getStoreTableName() . ' SET preparation_worker_id = ?, preparation_worker_timestamp = ? WHERE tenant = ? AND in_preparation_queue = 1 '
-           .'AND (ISNULL(preparation_worker_timestamp) OR preparation_worker_timestamp < ?) ORDER BY preparation_status ASC LIMIT ' . intval($limit),
+           .'AND (ISNULL(preparation_worker_timestamp) OR preparation_worker_timestamp < ?) ORDER BY preparation_status ASC LIMIT ' .(int)$limit,
             [$workerId, $workerTimestamp, $this->name, $workerTimestamp - $this->getWorkerTimeout()]
         );
 
@@ -478,7 +478,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
             $this->db->beginTransaction();
             $query = "SELECT o_id, data, metadata FROM {$this->getStoreTableName()}
                   WHERE (crc_current != crc_index OR ISNULL(crc_index)) AND tenant = ? AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT "
-                . intval($limit) . ' FOR UPDATE';
+                .(int)$limit. ' FOR UPDATE';
 
             $entries = $this->db->fetchAll($query, [$this->name, $workerTimestamp - $this->getWorkerTimeout()]);
 

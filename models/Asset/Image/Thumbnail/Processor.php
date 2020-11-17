@@ -210,6 +210,8 @@ class Processor
         // transform image
         $image->setPreserveColor($config->isPreserveColor());
         $image->setPreserveMetaData($config->isPreserveMetaData());
+        $image->setPreserveAnimation($config->getPreserveAnimation());
+
         if (!$image->load($fileSystemPath, ['asset' => $asset])) {
             return self::returnPath($errorImage, $returnAbsolutePath);
         }
@@ -224,7 +226,7 @@ class Processor
             $exif = @exif_read_data($fileSystemPath);
             if (is_array($exif)) {
                 if (array_key_exists('Orientation', $exif)) {
-                    $orientation = intval($exif['Orientation']);
+                    $orientation = (int)$exif['Orientation'];
 
                     if ($orientation > 1) {
                         $angleMappings = [

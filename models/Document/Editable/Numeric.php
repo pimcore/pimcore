@@ -29,7 +29,7 @@ class Numeric extends Model\Document\Editable
      *
      * @var string
      */
-    public $number = '';
+    protected $number = '';
 
     /**
      * @see EditableInterface::getType
@@ -49,6 +49,16 @@ class Numeric extends Model\Document\Editable
     public function getData()
     {
         return $this->number;
+    }
+
+    /**
+     * @see EditableInterface::getData
+     *
+     * @return string
+     */
+    public function getNumber()
+    {
+        return $this->getData();
     }
 
     /**
@@ -100,26 +110,4 @@ class Numeric extends Model\Document\Editable
 
         return empty($this->number);
     }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if (empty($data->number) or is_numeric($data->number)) {
-            $this->number = $data->number;
-        } else {
-            throw new \Exception('cannot get values from web service import - invalid data');
-        }
-    }
 }
-
-class_alias(Numeric::class, 'Pimcore\Model\Document\Tag\Numeric');

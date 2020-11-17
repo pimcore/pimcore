@@ -159,9 +159,9 @@ class Newsletter
                 'mailer' => $mailer,
             ]);
 
-            Pimcore::getEventDispatcher()->dispatch(DocumentEvents::NEWSLETTER_PRE_SEND, $event);
+            Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::NEWSLETTER_PRE_SEND);
             $mail->sendWithoutRendering($mailer);
-            Pimcore::getEventDispatcher()->dispatch(DocumentEvents::NEWSLETTER_POST_SEND, $event);
+            Pimcore::getEventDispatcher()->dispatch($event, DocumentEvents::NEWSLETTER_POST_SEND);
 
             Logger::info(
                 sprintf(
@@ -190,89 +190,6 @@ class Newsletter
         $email = substr_replace($email, '.xxx', strrpos($email, '.'));
 
         return $email;
-    }
-
-    /**
-     * @param Model\Document\Newsletter $newsletter
-     * @param DataObject\Concrete $object
-     * @param string|null $emailAddress
-     * @param string|null $hostUrl
-     *
-     * @throws Exception
-     *
-     * @deprecated Pimcore\Tool\Newsletter::sendMail is deprecated and will be removed with 7.0,
-     * please use the internal:newsletter-document-send command instead.
-     */
-    public static function sendMail($newsletter, $object, $emailAddress = null, $hostUrl = null): void
-    {
-        trigger_error(
-            sprintf(
-                '%s::%s is deprecated and will be removed with 7.0, please use the %s command instead.',
-                static::class,
-                __METHOD__,
-                'internal:newsletter-document-send'
-            ),
-            E_USER_DEPRECATED
-        );
-
-        $config = Config::getSystemConfiguration('newsletter');
-
-        $params = [
-            'gender' => $object->getGender(),
-            'firstname' => $object->getFirstname(),
-            'lastname' => $object->getLastname(),
-            'email' => $object->getEmail(),
-            'token' => $object->getProperty('token'),
-            'object' => $object,
-        ];
-
-        $mail = new Mail();
-        $mail->setIgnoreDebugMode(true);
-
-        if ($config['use_specific']) {
-            $mail->init('newsletter');
-        }
-
-        if ($hostUrl) {
-            $mail->setHostUrl($hostUrl);
-        }
-
-        if ($emailAddress) {
-            $mail->addTo($emailAddress);
-        } else {
-            $mail->addTo($object->getEmail());
-        }
-        $mail->setDocument(Document::getById($newsletter->getDocument()));
-        $mail->setParams($params);
-
-        // render the document and rewrite the links (if analytics is enabled)
-        if ($newsletter->getGoogleAnalytics() && $content = $mail->getBodyHtmlRendered()) {
-            $html = str_get_html($content);
-            if ($html) {
-                $links = $html->find('a');
-                foreach ($links as $link) {
-                    if (preg_match('/^(mailto)/i', trim($link->href))) {
-                        continue;
-                    }
-
-                    $glue = strpos($link->href, '?') ? '&' : '?';
-
-                    $link->href .= sprintf(
-                        '%sutm_source=Newsletter&utm_medium=Email&utm_campaign=%s',
-                        $glue,
-                        $newsletter->getName()
-                    );
-                }
-                $content = $html->save();
-
-                $html->clear();
-                unset($html);
-            }
-
-            $mail->setBodyHtml($content);
-        }
-
-        $mail->send();
     }
 
     /**

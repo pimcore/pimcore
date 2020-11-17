@@ -58,8 +58,8 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
                 overflow: "auto"
             });
 
-            this.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
-            this.getBody().addCls("pimcore_tag_snippet_empty pimcore_editable_snippet_empty");
+            this.getBody().insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget"></div>');
+            this.getBody().addCls("pimcore_editable_snippet_empty");
 
             el.getEl().on("contextmenu", this.onContextMenu.bind(this));
 
@@ -149,7 +149,7 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
     updateContent: function () {
         var self = this;
 
-        this.getBody().removeCls("pimcore_tag_snippet_empty pimcore_editable_snippet_empty");
+        this.getBody().removeCls("pimcore_editable_snippet_empty");
         this.getBody().dom.innerHTML = '<br />&nbsp;&nbsp;Loading ...';
 
         var params = this.data;
@@ -169,7 +169,7 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
 
         var setContent = function(content) {
             self.getBody().dom.innerHTML = content;
-            self.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
+            self.getBody().insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget"></div>');
             self.updateDimensions();
         };
 
@@ -222,8 +222,8 @@ pimcore.document.editables.renderlet = Class.create(pimcore.document.editable, {
                     }
                     this.data = {};
                     this.getBody().update('');
-                    this.getBody().insertHtml("beforeEnd",'<div class="pimcore_tag_droptarget pimcore_editable_droptarget"></div>');
-                    this.getBody().addCls("pimcore_tag_snippet_empty pimcore_editable_snippet_empty");
+                    this.getBody().insertHtml("beforeEnd",'<div class="pimcore_editable_droptarget"></div>');
+                    this.getBody().addCls("pimcore_editable_snippet_empty");
                     this.getBody().setHeight(height + "px");
 
                     if (this.config.reload) {

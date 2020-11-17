@@ -29,7 +29,7 @@ class Pdf extends Model\Document\Editable
     /**
      * @var int|null
      */
-    public $id;
+    protected $id;
 
     /**
      * @see EditableInterface::getType
@@ -223,8 +223,8 @@ HTML;
         }
 
         $code = '
-        <div id="pimcore_pdf_' . $this->getName() . '" class="pimcore_tag_pdf pimcore_editable_pdf">
-            <div class="pimcore_tag_video_error pimcore_editable_video_error" style="line-height: 50px; text-align:center; width: 100%; min-height: 50px; background: #ececec;">
+        <div id="pimcore_pdf_' . $this->getName() . '" class="pimcore_editable_pdf">
+            <div class="pimcore_editable_video_error" style="line-height: 50px; text-align:center; width: 100%; min-height: 50px; background: #ececec;">
                 ' . $message . '
             </div>
         </div>';
@@ -242,29 +242,6 @@ HTML;
         }
 
         return true;
-    }
-
-    /**
-     * @deprecated
-     *
-     * @param Model\Webservice\Data\Document\Element $wsElement
-     * @param Model\Document\PageSnippet $document
-     * @param array $params
-     * @param Model\Webservice\IdMapperInterface|null $idMapper
-     *
-     * @throws \Exception
-     */
-    public function getFromWebserviceImport($wsElement, $document = null, $params = [], $idMapper = null)
-    {
-        $data = $this->sanitizeWebserviceData($wsElement->value);
-        if ($data->id) {
-            $asset = Asset::getById($data->id);
-            if (!$asset) {
-                throw new \Exception('Referencing unknown asset with id [ '.$data->id.' ] in webservice import field [ '.$data->name.' ]');
-            } else {
-                $this->id = $data->id;
-            }
-        }
     }
 
     /**
@@ -293,5 +270,3 @@ HTML;
         return (int)  $this->id;
     }
 }
-
-class_alias(Pdf::class, 'Pimcore\Model\Document\Tag\Pdf');

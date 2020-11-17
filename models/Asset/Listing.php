@@ -17,9 +17,9 @@
 
 namespace Pimcore\Model\Asset;
 
+use Laminas\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Model;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * @method Model\Asset[] load()
@@ -32,18 +32,6 @@ use Zend\Paginator\AdapterAggregateInterface;
  */
 class Listing extends Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
-    /**
-     * @var array|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    protected $assets = null;
-
-    public function __construct()
-    {
-        $this->assets = & $this->data;
-    }
-
     /**
      * @return Model\Asset[]
      */

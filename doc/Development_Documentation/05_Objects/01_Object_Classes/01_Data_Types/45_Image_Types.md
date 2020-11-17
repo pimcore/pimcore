@@ -25,39 +25,27 @@ in the class settings as follows:
 #### Working with images in frontend
 The get a thumbnail of an image field, just call `getThumbnail()` on the returned asset object.
 
-```php
-<?php if ($object->getMyImage() instanceof Asset\Image) {?>
-    <img src="<?= $object->getMyImage()->getThumbnail("myThumbnailName") ?>" />
-<?php } ?>
+```twig
+{% if object.myImage is instanceif('Pimcore\Model\Asset\Image') %}
+    {{ object.myImage.thumbnail('myThumbnailDefinitionName').html }}
+{% endif %}
 ```
 
 Since `$object->getImage()` just returns an asset object, you can of course use all other thumbnail features of `Pimcore\Model\Asset\Image`.
 
 
 
-## External Image (ExtJS6 only)
+## External Image
 
 This one allows you to enter an external image URL which is then shown as a preview.
 
 ![External Image Field](../../../img/classes-datatypes-image3.jpg)
-
-
-
-<div class="code-section">
-
-```php
-<?php if ($object->getExternalImage() instanceof Pimcore\Model\DataObject\Data\ExternalImage) {?>
-    <img src="<?= $object->getExternalImage()->getUrl() ?>" />
-<?php } ?>
-```
 
 ```twig
 {% if object.getExternalImage() is instanceof('\\Pimcore\\Model\\DataObject\\Data\\ExternalImage') %}
     <img src="{{ object.getExternalImage().getUrl() }}" />
 {% endif %}
 ```
-
-</div>
 
 ## Image Gallery
 
@@ -73,7 +61,7 @@ Populate an ImageGallery
 $galleryData = [
 	AssetImage,
 	AssetImage,
-	....
+	//....
 ];
 
 $items = [];
@@ -115,7 +103,7 @@ $hotspots = $hotspotImage->getHotspots();
 
 The content of `$hotspots` could look like:
 
-```php
+```
 Array
 (
     [0] => Array
@@ -153,7 +141,7 @@ $marker = $hotspotImage->getMarker();
 
 The content of $marker could look like:
 
-```php
+```
 Array
 (
     [0] => Array

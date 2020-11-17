@@ -208,7 +208,7 @@ class Layout
     public function setWidth($width)
     {
         if (!empty($width) && is_numeric($width)) {
-            $this->width = intval($width);
+            $this->width = (int)$width;
         } else {
             $this->width = $width;
         }
@@ -224,7 +224,7 @@ class Layout
     public function setHeight($height)
     {
         if (!empty($height) && is_numeric($height)) {
-            $this->height = intval($height);
+            $this->height = (int)$height;
         } else {
             $this->height = $height;
         }
@@ -308,7 +308,7 @@ class Layout
     {
         foreach ($data as $key => $value) {
             if (!in_array($key, $blockedKeys)) {
-                $method = 'set' . $key;
+                $method = 'set' . ucfirst($key);
                 if (method_exists($this, $method)) {
                     $this->$method($value);
                 }

@@ -55,7 +55,6 @@ abstract class Concrete extends Model\DataObject\Listing
      */
     public function __construct()
     {
-        parent::__construct();
         $this->initDao(__CLASS__);
     }
 

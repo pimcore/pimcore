@@ -111,5 +111,3 @@ class BlockState implements \JsonSerializable
         ];
     }
 }
-
-class_alias(BlockState::class, 'Pimcore\Document\Tag\Block\BlockState');

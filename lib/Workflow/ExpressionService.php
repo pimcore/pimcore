@@ -22,6 +22,7 @@ use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Workflow\EventListener\ExpressionLanguage;
 use Symfony\Component\Workflow\Workflow;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class ExpressionService
 {
@@ -65,7 +66,7 @@ class ExpressionService
         $this->validator = $validator;
     }
 
-    public function evaluateExpression(Workflow $workflow, $subject, string $expression)
+    public function evaluateExpression(WorkflowInterface $workflow, $subject, string $expression)
     {
         return $this->expressionLanguage->evaluate($expression, $this->getVariables($workflow, $subject));
     }

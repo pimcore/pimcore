@@ -14,9 +14,9 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 
+use Laminas\Paginator\Adapter\AdapterInterface;
+use Laminas\Paginator\AdapterAggregateInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
-use Zend\Paginator\Adapter\AdapterInterface;
-use Zend\Paginator\AdapterAggregateInterface;
 
 /**
  * @method Token[] load()
@@ -26,18 +26,6 @@ use Zend\Paginator\AdapterAggregateInterface;
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterInterface, AdapterAggregateInterface
 {
-    /**
-     * @var Token[]|null
-     *
-     * @deprecated use getter/setter methods or $this->data
-     */
-    public $tokens;
-
-    public function __construct()
-    {
-        $this->tokens = & $this->data;
-    }
-
     /**
      * @param string $key
      *

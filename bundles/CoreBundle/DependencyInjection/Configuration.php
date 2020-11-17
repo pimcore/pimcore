@@ -49,9 +49,9 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
+        $treeBuilder = new TreeBuilder('pimcore');
 
-        $rootNode = $treeBuilder->root('pimcore');
+        $rootNode = $treeBuilder->getRootNode();
         $rootNode->addDefaultsIfNotSet();
         $rootNode->ignoreExtraKeys();
 
@@ -279,15 +279,6 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('instance_identifier')
                     ->defaultNull()->end()
-                ->booleanNode('show_cookie_notice')
-                    ->setDeprecated('The cookie bar will be removed in Pimcore 7')
-                    ->beforeNormalization()
-                        ->ifString()
-                        ->then(function ($v) {
-                            return (bool)$v;
-                        })
-                    ->end()
-                    ->defaultFalse()
                 ->end()
             ->end();
     }
@@ -318,9 +309,6 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->end()
                 ->end()
-            ->end()
-            ->arrayNode('webservice')
-                ->canBeEnabled()
             ->end();
     }
 
@@ -402,6 +390,9 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->scalarNode('archive_alternative_database')
                             ->defaultValue('')
+                        ->end()
+                        ->scalarNode('delete_archive_threshold')
+                            ->defaultValue('6')
                         ->end()
                     ->end()
             ->end();
@@ -630,19 +621,6 @@ class Configuration implements ConfigurationInterface
 
         $documentsNode
             ->children()
-                ->arrayNode('tags')
-                    ->setDeprecated('The "%node%" option is deprecated. Use "editables" instead.')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('map')
-                            ->useAttributeAsKey('name')
-                            ->prototype('scalar')->end()
-                        ->end()
-                        ->arrayNode('prefixes')
-                            ->prototype('scalar')->end()
-                        ->end()
-                    ->end()
-                ->end()
                 ->arrayNode('versions')
                     ->children()
                         ->scalarNode('days')
@@ -662,22 +640,15 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->scalarNode('default_controller')
+                    ->defaultValue('AppBundle\\Controller\\DefaultController::defaultAction')
+                ->end()
                 ->arrayNode('error_pages')
                     ->children()
                         ->scalarNode('default')
                             ->defaultNull()
                         ->end()
                     ->end()
-                ->end()
-                ->booleanNode('create_redirect_when_moved')
-                    ->setDeprecated('The "%node%" option is deprecated and not used anymore, it is just there for compatibility.')
-                    ->beforeNormalization()
-                        ->ifString()
-                        ->then(function ($v) {
-                            return (bool)$v;
-                        })
-                    ->end()
-                    ->defaultFalse()
                 ->end()
                 ->scalarNode('allow_trailing_slash')
                     ->defaultValue('no')
@@ -703,12 +674,6 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('prefixes')
                             ->prototype('scalar')->end()
-                        ->end()
-                        ->enumNode('naming_strategy')
-                            ->info('Sets naming strategy used to build editable names')
-                            ->values(['legacy', 'nested'])
-                            ->defaultValue('nested')
-                            ->setDeprecated('The "%node%" option is deprecated. Migrate to the new editable naming scheme!')
                         ->end()
                     ->end()
                 ->end()
@@ -777,20 +742,6 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('routing')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->arrayNode('defaults')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->scalarNode('bundle')
-                                    ->defaultValue('AppBundle')
-                                ->end()
-                                ->scalarNode('controller')
-                                    ->defaultValue('Default')
-                                ->end()
-                                ->scalarNode('action')
-                                    ->defaultValue('default')
-                                ->end()
-                            ->end()
-                        ->end()
                         ->arrayNode('static')
                             ->addDefaultsIfNotSet()
                             ->children()
@@ -1546,11 +1497,6 @@ class Configuration implements ConfigurationInterface
                                         ],
                                     ])
                                 ->end()
-                                ->scalarNode('initial_place')
-                                    ->defaultNull()
-                                    ->setDeprecated('The "%node%" option is deprecated. Use "initial_markings" instead.')
-                                    ->info('Will be applied when the current place is empty.')
-                                ->end()
                                 ->arrayNode('initial_markings')
                                     ->info('Can be used to set the initial places (markings) for a workflow. Note that this option is Symfony 4.3+ only')
                                     ->beforeNormalization()
@@ -1698,7 +1644,7 @@ class Configuration implements ConfigurationInterface
                                                                         ->scalarNode('name')->isRequired()->info('The technical name used in the input form.')->end()
                                                                         ->enumNode('fieldType')
                                                                             ->isRequired()
-                                                                            ->values(['input', 'textarea', 'select', 'datetime', 'date', 'user', 'checkbox'])
+                                                                            ->values(['input', 'numeric', 'textarea', 'select', 'datetime', 'date', 'user', 'checkbox'])
                                                                             ->info('The data component name/field type.')
                                                                         ->end()
                                                                         ->scalarNode('title')->info('The label used by the field')->end()

@@ -9,7 +9,7 @@ For production we highly recommend a *nix based system.
 - Nginx
 
 
-### PHP >= 7.2
+### PHP >= 7.3
 Both **mod_php** and **FCGI (FPM)** are supported.  
 
 #### Required Settings and Modules & Extensions
@@ -37,10 +37,10 @@ Both **mod_php** and **FCGI (FPM)** are supported.
 - [graphviz](https://www.graphviz.org/) (for rendering workflow overview)
 
 ### Database Server
-- MariaDB >= 10.0.0.5
-- MySQL >= 5.6.4 
-- AWS Aurora (MySQL)
-- Percona Server
+- MariaDB >= 10.2
+- MySQL >= 5.7
+- AWS Aurora (supported versions see MySQL)
+- Percona Server (supported versions see MySQL)
 
 #### Features
 - InnoDB / XtraDB storage engine

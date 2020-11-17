@@ -68,11 +68,6 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    Pimcore\Controller\Config\ConfigNormalizer:
-        calls:
-            - [setRoutingDefaults, ['%pimcore.routing.defaults%']]
-
-
     Pimcore\Controller\Config\ControllerDataProvider:
         public : true
         arguments:
@@ -94,17 +89,6 @@ services:
         public: true
         class: \GuzzleHttp\Client
         factory: ['@Pimcore\Http\ClientFactory', createClient]
-
-    pimcore.rest_client:
-        deprecated: ~
-        alias: Pimcore\Tool\RestClient
-        public: true
-
-    Pimcore\Tool\RestClient:
-        deprecated: ~
-        public: true
-        arguments:
-            - '@pimcore.http_client'
 
     # Newsletter Adapter
     pimcore.document.newsletter.factory.default:
@@ -215,10 +199,7 @@ services:
 
     Symfony\Component\Lock\LockFactory:
         public: true
-        class: Symfony\Component\Lock\Factory
+        class: Symfony\Component\Lock\LockFactory
         arguments:
             - '@Symfony\Component\Lock\Store\RetryTillSaveStore'
 
-    Symfony\Component\Lock\Factory:
-        public: true
-        alias: Symfony\Component\Lock\LockFactory

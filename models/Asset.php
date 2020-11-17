@@ -23,6 +23,7 @@ use Pimcore\Event\FrontendEvents;
 use Pimcore\Event\Model\AssetEvent;
 use Pimcore\File;
 use Pimcore\Loader\ImplementationLoader\Exception\UnsupportedException;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Logger;
 use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
@@ -266,7 +267,7 @@ class Asset extends Element\AbstractElement
             return null;
         }
 
-        $id = intval($id);
+        $id = (int)$id;
         $cacheKey = self::getCacheKey($id);
 
         if (!$force && \Pimcore\Cache\Runtime::isRegistered($cacheKey)) {
@@ -488,9 +489,9 @@ class Asset extends Element\AbstractElement
 
             if ($this->getId()) {
                 $isUpdate = true;
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, $preEvent);
+                \Pimcore::getEventDispatcher()->dispatch($preEvent, AssetEvents::PRE_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_ADD, $preEvent);
+                \Pimcore::getEventDispatcher()->dispatch($preEvent, AssetEvents::PRE_ADD);
             }
 
             $params = $preEvent->getArguments();
@@ -582,9 +583,9 @@ class Asset extends Element\AbstractElement
                 if ($differentOldPath) {
                     $updateEvent->setArgument('oldPath', $differentOldPath);
                 }
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, $updateEvent);
+                \Pimcore::getEventDispatcher()->dispatch($updateEvent, AssetEvents::POST_UPDATE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD, new AssetEvent($this));
+                \Pimcore::getEventDispatcher()->dispatch(new AssetEvent($this), AssetEvents::POST_ADD);
             }
 
             return $this;
@@ -592,9 +593,9 @@ class Asset extends Element\AbstractElement
             $failureEvent = new AssetEvent($this);
             $failureEvent->setArgument('exception', $e);
             if ($isUpdate) {
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE_FAILURE, $failureEvent);
+                \Pimcore::getEventDispatcher()->dispatch($failureEvent, AssetEvents::POST_UPDATE_FAILURE);
             } else {
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_ADD_FAILURE, $failureEvent);
+                \Pimcore::getEventDispatcher()->dispatch($failureEvent, AssetEvents::POST_ADD_FAILURE);
             }
 
             throw $e;
@@ -826,9 +827,10 @@ class Asset extends Element\AbstractElement
         try {
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_UPDATE, new AssetEvent($this, [
+                $event = new AssetEvent($this, [
                     'saveVersionOnly' => true,
-                ]));
+                ]);
+                \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::PRE_UPDATE);
             }
 
             // set date
@@ -854,17 +856,19 @@ class Asset extends Element\AbstractElement
 
             // hook should be also called if "save only new version" is selected
             if ($saveOnlyVersion) {
-                \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE, new AssetEvent($this, [
+                $event = new AssetEvent($this, [
                     'saveVersionOnly' => true,
-                ]));
+                ]);
+                \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::POST_UPDATE);
             }
 
             return $version;
         } catch (\Exception $e) {
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_UPDATE_FAILURE, new AssetEvent($this, [
+            $event = new AssetEvent($this, [
                 'saveVersionOnly' => true,
                 'exception' => $e,
-            ]));
+            ]);
+            \Pimcore::getEventDispatcher()->dispatch($event, AssetEvents::POST_UPDATE_FAILURE);
 
             throw $e;
         }
@@ -902,7 +906,7 @@ class Asset extends Element\AbstractElement
             'frontendPath' => $path,
         ]);
 
-        \Pimcore::getEventDispatcher()->dispatch(FrontendEvents::ASSET_PATH, $event);
+        \Pimcore::getEventDispatcher()->dispatch($event, FrontendEvents::ASSET_PATH);
 
         return $event->getArgument('frontendPath');
     }
@@ -1032,7 +1036,7 @@ class Asset extends Element\AbstractElement
             throw new \Exception('root-node cannot be deleted');
         }
 
-        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_DELETE, new AssetEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new AssetEvent($this), AssetEvents::PRE_DELETE);
 
         $this->beginTransaction();
 
@@ -1084,7 +1088,7 @@ class Asset extends Element\AbstractElement
             $this->rollBack();
             $failureEvent = new AssetEvent($this);
             $failureEvent->setArgument('exception', $e);
-            \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE_FAILURE, $failureEvent);
+            \Pimcore::getEventDispatcher()->dispatch($failureEvent, AssetEvents::POST_DELETE_FAILURE);
             Logger::crit($e);
             throw $e;
         }
@@ -1095,7 +1099,7 @@ class Asset extends Element\AbstractElement
         // clear asset from registry
         \Pimcore\Cache\Runtime::set(self::getCacheKey($this->getId()), null);
 
-        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::POST_DELETE, new AssetEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new AssetEvent($this), AssetEvents::POST_DELETE);
     }
 
     /**
@@ -1439,11 +1443,9 @@ class Asset extends Element\AbstractElement
     }
 
     /**
-     * @param Property[] $properties
-     *
-     * @return $this
+     * @inheritdoc
      */
-    public function setProperties($properties)
+    public function setProperties(array $properties)
     {
         $this->properties = $properties;
 
@@ -1685,7 +1687,7 @@ class Asset extends Element\AbstractElement
         $this->setHasMetaData(false);
         if (!empty($metadata)) {
             foreach ((array)$metadata as $metaItem) {
-                $metaItem = (array)$metaItem; // also allow object with appropriate keys (as it comes from Pimcore\Model\Webservice\Data\Asset\reverseMap)
+                $metaItem = (array)$metaItem; // also allow object with appropriate keys
                 $this->addMetadata($metaItem['name'], $metaItem['type'], $metaItem['data'] ?? null, $metaItem['language'] ?? null);
             }
         }
@@ -1774,7 +1776,7 @@ class Asset extends Element\AbstractElement
     {
         $preEvent = new AssetEvent($this);
         $preEvent->setArgument('metadata', $this->metadata);
-        \Pimcore::getEventDispatcher()->dispatch(AssetEvents::PRE_GET_METADATA, $preEvent);
+        \Pimcore::getEventDispatcher()->dispatch($preEvent, AssetEvents::PRE_GET_METADATA);
         $this->metadata = $preEvent->getArgument('metadata');
 
         $convert = function ($metaData) {
@@ -1793,7 +1795,7 @@ class Asset extends Element\AbstractElement
 
         if ($name) {
             if ($language === null) {
-                $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+                $language = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
             }
 
             $data = null;
@@ -2056,28 +2058,28 @@ class Asset extends Element\AbstractElement
      */
     public function resolveDependencies()
     {
-        $dependencies = parent::resolveDependencies();
+        $dependencies = [parent::resolveDependencies()];
 
         if ($this->hasMetaData) {
-            $metaData = $this->getMetadata();
+            $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
-            foreach ($metaData as $md) {
-                if (isset($md['data']) && $md['data']) {
+            foreach ($this->getMetadata() as $metaData) {
+                if (!empty($metaData['data'])) {
                     /** @var ElementInterface $elementData */
-                    $elementData = $md['data'];
-                    $elementType = $md['type'];
-                    $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
-                    /** @var DataDefinitionInterface $implementation */
+                    $elementData = $metaData['data'];
+                    $elementType = $metaData['type'];
+
                     try {
+                        /** @var DataDefinitionInterface $implementation */
                         $implementation = $loader->build($elementType);
-                        $dependencies = array_merge($dependencies, $implementation->resolveDependencies($elementData, $md));
+                        $dependencies[] = $implementation->resolveDependencies($elementData, $metaData);
                     } catch (UnsupportedException $e) {
                     }
                 }
             }
         }
 
-        return $dependencies;
+        return array_merge(...$dependencies);
     }
 
     public function __clone()

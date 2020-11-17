@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Translation;
 
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
 
 /**
@@ -53,7 +54,7 @@ class Admin extends AbstractTranslation
         }
 
         if (!$language) {
-            $language = \Pimcore::getContainer()->get('pimcore.locale')->findLocale();
+            $language = \Pimcore::getContainer()->get(LocaleServiceInterface::class)->findLocale();
         }
 
         if (!in_array($language, Tool\Admin::getLanguages())) {

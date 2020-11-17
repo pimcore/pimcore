@@ -89,6 +89,8 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_tmp_files_atime_older_than']);
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
 
+        $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
+
         // register pimcore config on container
         // TODO is this bad practice?
         // TODO only extract what we need as parameter?
@@ -128,7 +130,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
-        $this->configureDocumentEditableNamingStrategy($container, $config);
         $this->configureRouting($container, $config['routing']);
         $this->configureCache($container, $loader, $config);
         $this->configureTranslations($container, $config['translations']);
@@ -143,17 +144,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $container->setParameter('pimcore.workflow', $config['workflows']);
 
         // load engine specific configuration only if engine is active
-        $configuredEngines = ['twig', 'php'];
-
-        if ($container->hasParameter('templating.engines')) {
-            $engines = $container->getParameter('templating.engines');
-
-            foreach ($engines as $engine) {
-                if (in_array($engine, $configuredEngines)) {
-                    $loader->load(sprintf('templating_%s.yml', $engine));
-                }
-            }
-        }
+        $loader->load('templating_twig.yml');
 
         $this->addContextRoutes($container, $config['context']);
     }
@@ -176,22 +167,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @param array $config
-     */
-    private function configureDocumentEditableNamingStrategy(ContainerBuilder $container, array $config)
-    {
-        $strategyName = $config['documents']['editables']['naming_strategy'];
-
-        $container
-            ->setAlias(
-                'pimcore.document.tag.naming.strategy',
-                sprintf('pimcore.document.tag.naming.strategy.%s', $strategyName)
-            )
-            ->setPublic(true);
-    }
-
-    /**
      * Configure implementation loaders from config
      *
      * @param ContainerBuilder $container
@@ -201,8 +176,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     {
         $services = [
             EditableLoader::class => [
-                //@TODO just use $config['documents']['editables'] in Pimcore 7
-                'config' => array_replace_recursive($config['documents']['tags'], $config['documents']['editables']),
+                'config' => $config['documents']['editables'],
                 'prefixLoader' => DocumentEditablePrefixLoader::class,
             ],
             'pimcore.implementation_loader.object.data' => [
@@ -251,10 +225,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
     private function configureRouting(ContainerBuilder $container, array $config)
     {
-        $container->setParameter(
-            'pimcore.routing.defaults',
-            $config['defaults']
-        );
         $container->setParameter(
             'pimcore.routing.static.locale_params',
             $config['static']['locale_params']

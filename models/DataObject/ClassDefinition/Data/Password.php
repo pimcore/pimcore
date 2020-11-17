@@ -382,22 +382,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
         return '';
     }
 
-    /**
-     * converts data to be exposed via webservices
-     *
-     * @deprecated
-     *
-     * @param DataObject\Concrete $object
-     * @param array $params
-     *
-     * @return null
-     */
-    public function getForWebserviceExport($object, $params = [])
-    {
-        //neither hash nor password is exported via WS
-        return null;
-    }
-
     /** True if change is allowed in edit mode.
      * @param DataObject\Concrete $object
      * @param array $params
