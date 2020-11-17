@@ -100,7 +100,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      *
      * @var string
      */
-    public $phpdocType = 'array|string';
+    public $phpdocType = 'array';
 
     /**
      * @return int
@@ -304,6 +304,11 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public function getDataForResource($data, $object = null, $params = [])
     {
+        if (empty($data)) {
+            // if it is empty then there is no need to serialize anything
+            return null;
+        }
+
         if (is_array($data)) {
             //make sure only array values are stored to DB
             $data = $this->convertDataToValueArray($data);
@@ -326,7 +331,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $unserializedData = Serialize::unserialize((string) $data);
 
         if ($data === null || $unserializedData === null) {
-            return null;
+            return [];
         }
 
         //set array keys based on column configuration if set
