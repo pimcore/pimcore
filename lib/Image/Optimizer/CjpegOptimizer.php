@@ -50,6 +50,6 @@ final class CjpegOptimizer extends AbstractCommandOptimizer
      */
     public function supports(string $input): bool
     {
-        return $this->mimeTypeGuesser->guess($input) === 'image/jpeg';
+        return $this->mimeTypeGuesser->guessMimeType($input) === 'image/jpeg';
     }
 }

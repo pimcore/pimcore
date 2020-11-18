@@ -50,6 +50,6 @@ final class PngCrushOptimizer extends AbstractCommandOptimizer
      */
     public function supports(string $input): bool
     {
-        return $this->mimeTypeGuesser->guess($input) === 'image/png';
+        return $this->mimeTypeGuesser->guessMimeType($input) === 'image/png';
     }
 }
