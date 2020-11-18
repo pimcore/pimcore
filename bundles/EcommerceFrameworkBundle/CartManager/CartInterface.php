@@ -62,11 +62,6 @@ interface CartInterface
     public function getItem($itemKey);
 
     /**
-     * @param CartItemInterface[] $items
-     */
-    public function setItems($items);
-
-    /**
      * @return CartItemInterface[]
      */
     public function getGiftItems();
