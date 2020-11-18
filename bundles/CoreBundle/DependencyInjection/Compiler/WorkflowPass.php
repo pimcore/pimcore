@@ -164,7 +164,7 @@ class WorkflowPass implements CompilerPassInterface
             if ($workflowConfig['supports']) {
                 foreach ((array)$workflowConfig['supports'] as $supportedClassName) {
                     $strategyDefinition = new Definition(
-                        Workflow\SupportStrategy\ClassInstanceSupportStrategy::class,
+                        Workflow\SupportStrategy\InstanceOfSupportStrategy::class,
                         [$supportedClassName]
                     );
                     $strategyDefinition->setPublic(false);
