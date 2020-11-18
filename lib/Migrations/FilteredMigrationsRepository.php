@@ -7,7 +7,6 @@ use Doctrine\Migrations\FilesystemMigrationsRepository;
 use Doctrine\Migrations\Metadata\AvailableMigration;
 use Doctrine\Migrations\Metadata\AvailableMigrationsSet;
 use Doctrine\Migrations\Version\Version;
-use phpDocumentor\Reflection\Types\Self_;
 
 class FilteredMigrationsRepository implements \Doctrine\Migrations\MigrationsRepository
 {
@@ -31,10 +30,12 @@ class FilteredMigrationsRepository implements \Doctrine\Migrations\MigrationsRep
         );
 
         $this->setFileSystemRepo($filesystemRepo);
+
         return $this;
     }
 
-    private function setFileSystemRepo(FilesystemMigrationsRepository $repository) {
+    private function setFileSystemRepo(FilesystemMigrationsRepository $repository)
+    {
         $this->filesystemRepo = $repository;
     }
 
@@ -43,27 +44,27 @@ class FilteredMigrationsRepository implements \Doctrine\Migrations\MigrationsRep
         $this->prefix = $prefix;
     }
 
-    public function hasMigration(string $version) : bool
+    public function hasMigration(string $version): bool
     {
         return $this->filesystemRepo->hasMigration($version);
     }
 
-    public function getMigration(Version $version) : AvailableMigration
+    public function getMigration(Version $version): AvailableMigration
     {
         return $this->filesystemRepo->getMigration($version);
     }
 
-    public function getMigrations() : AvailableMigrationsSet
+    public function getMigrations(): AvailableMigrationsSet
     {
         $migrations = $this->filesystemRepo->getMigrations();
-        if(!$this->prefix) {
+        if (!$this->prefix) {
             return $migrations;
         }
 
         $filteredMigrations = [];
         $items = $migrations->getItems();
-        foreach($items as $migration) {
-            if(strpos(get_class($migration->getMigration()), $this->prefix) === 0) {
+        foreach ($items as $migration) {
+            if (strpos(get_class($migration->getMigration()), $this->prefix) === 0) {
                 $filteredMigrations[] = $migration;
             }
         }

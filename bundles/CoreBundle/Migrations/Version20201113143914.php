@@ -16,11 +16,11 @@ class Version20201113143914 extends AbstractMigration
     public function up(Schema $schema): void
     {
         foreach ($this->tables as $table) {
-            if($schema->getTable($table)->hasColumn('action')) {
+            if ($schema->getTable($table)->hasColumn('action')) {
                 $this->addSql(sprintf('ALTER TABLE `%s` DROP COLUMN `action`;', $table));
             }
 
-            if($schema->getTable($table)->hasColumn('module')) {
+            if ($schema->getTable($table)->hasColumn('module')) {
                 $this->addSql(sprintf('ALTER TABLE `%s` DROP COLUMN `module`;', $table));
             }
         }

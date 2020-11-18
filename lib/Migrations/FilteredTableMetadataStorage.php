@@ -30,6 +30,7 @@ class FilteredTableMetadataStorage implements MetadataStorage
         );
 
         $this->setStorage($storage);
+
         return $this;
     }
 
@@ -46,22 +47,22 @@ class FilteredTableMetadataStorage implements MetadataStorage
         $this->prefix = $prefix;
     }
 
-    public function ensureInitialized() : void
+    public function ensureInitialized(): void
     {
-        $this->storage->ensureInitialized();;
+        $this->storage->ensureInitialized();
     }
 
-    public function getExecutedMigrations() : ExecutedMigrationsList
+    public function getExecutedMigrations(): ExecutedMigrationsList
     {
         $migrations = $this->storage->getExecutedMigrations();
-        if(!$this->prefix) {
+        if (!$this->prefix) {
             return $migrations;
         }
 
         $filteredMigrations = [];
         $items = $migrations->getItems();
-        foreach($items as $migration) {
-            if(strpos($migration->getVersion(), $this->prefix) === 0) {
+        foreach ($items as $migration) {
+            if (strpos($migration->getVersion(), $this->prefix) === 0) {
                 $filteredMigrations[] = $migration;
             }
         }
@@ -69,12 +70,12 @@ class FilteredTableMetadataStorage implements MetadataStorage
         return new ExecutedMigrationsList($filteredMigrations);
     }
 
-    public function complete(ExecutionResult $migration) : void
+    public function complete(ExecutionResult $migration): void
     {
         $this->storage->complete($migration);
     }
 
-    public function reset() : void
+    public function reset(): void
     {
         $this->storage->reset();
     }

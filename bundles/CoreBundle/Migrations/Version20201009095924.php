@@ -12,7 +12,7 @@ class Version20201009095924 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        if($schema->getTable('users')->hasColumn('apiKey')) {
+        if ($schema->getTable('users')->hasColumn('apiKey')) {
             $this->addSql('ALTER TABLE `users` DROP COLUMN `apiKey`;');
         }
     }

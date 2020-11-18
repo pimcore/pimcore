@@ -1188,8 +1188,8 @@ class TestDataHelper extends Module
     protected function assertObjectMetadataEqual($expected, $value)
     {
         // see https://github.com/sebastianbergmann/phpunit/commit/50ad7e1c4e74dce3beff17bf9c9f5a458cbe9958
-        $this->assertTrue(is_array($expected), "expected an array");
-        $this->assertTrue(is_array($value), "expected an array");
+        $this->assertTrue(is_array($expected), 'expected an array');
+        $this->assertTrue(is_array($value), 'expected an array');
 
         $this->assertCount(count($expected), $value);
 

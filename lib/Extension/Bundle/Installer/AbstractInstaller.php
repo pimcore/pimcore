@@ -25,9 +25,6 @@ class AbstractInstaller implements InstallerInterface
      */
     protected $output;
 
-    /**
-     *
-     */
     public function __construct()
     {
         $this->output = new BufferedOutput(Output::VERBOSITY_NORMAL, true);

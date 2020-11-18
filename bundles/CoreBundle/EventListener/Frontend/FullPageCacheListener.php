@@ -168,7 +168,7 @@ class FullPageCacheListener
      */
     public function onKernelRequest(RequestEvent $event)
     {
-        if(!$this->isEnabled()) {
+        if (!$this->isEnabled()) {
             return;
         }
 
