@@ -49,7 +49,7 @@ class AssetMetadataGetter extends AbstractOperator
 
             foreach ($childs as $c) {
                 $childResult = $c->getLabeledValue($element);
-                $childValues = $childResult->value;
+                $childValues = $childResult->value ?? null;
                 if ($childValues && !is_array($childValues)) {
                     $childValues = [$childValues];
                 }
