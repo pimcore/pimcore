@@ -72,13 +72,13 @@ class ExpressionService
     }
 
     // code should be sync with Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter
-    private function getVariables(Workflow $workflow, $subject)
+    private function getVariables(WorkflowInterface $workflow, $subject)
     {
         $token = $this->tokenStorage->getToken() ?: new AnonymousToken('', 'anonymous', []);
 
         $roles = $token ? $token->getRoleNames() : [];
         if (null !== $this->roleHierarchy) {
-            $roles = $this->roleHierarchy->getReachableRoles($roles);
+            $roles = $this->roleHierarchy->getReachableRoleNames($roles);
         }
 
         $variables = [
