@@ -8,7 +8,7 @@ framework:
     serializer:
         enabled: true
     router:
-        resource: "%kernel.root_dir%/config/routing.yml"
+        resource: "%kernel.project_dir%/config/routing.yml"
         strict_requirements: ~
     form: ~
     csrf_protection: ~
@@ -252,13 +252,13 @@ pimcore:
             app:
                 name: Migrations
                 namespace: App\Migrations
-                directory: "%kernel.root_dir%/Migrations"
+                directory: "%kernel.project_dir%/Migrations"
 
             # this is the core migration set used for Composer post-package-update event
             pimcore_core:
                 name: Pimcore Core Migrations
                 namespace: Pimcore\Bundle\CoreBundle\Migrations
-                directory: "%kernel.root_dir%/../vendor/pimcore/pimcore/bundles/CoreBundle/Migrations"
+                directory: "%kernel.project_dir%/../vendor/pimcore/pimcore/bundles/CoreBundle/Migrations"
 
     sitemaps:
         generators:

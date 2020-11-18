@@ -14,8 +14,8 @@
 
 namespace Pimcore\Image\Optimizer;
 
-use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesser;
-use Symfony\Component\HttpFoundation\File\MimeType\MimeTypeGuesserInterface;
+use Symfony\Component\Mime\MimeTypeGuesserInterface;
+use Symfony\Component\Mime\MimeTypes;
 
 final class JpegoptimOptimizer extends AbstractCommandOptimizer
 {
@@ -26,7 +26,7 @@ final class JpegoptimOptimizer extends AbstractCommandOptimizer
 
     public function __construct()
     {
-        $this->mimeTypeGuesser = MimeTypeGuesser::getInstance();
+        $this->mimeTypeGuesser = MimeTypes::getDefault();
     }
 
     /**
@@ -56,6 +56,6 @@ final class JpegoptimOptimizer extends AbstractCommandOptimizer
      */
     public function supports(string $input): bool
     {
-        return $this->mimeTypeGuesser->guess($input) === 'image/jpeg';
+        return $this->mimeTypeGuesser->guessMimeType($input) === 'image/jpeg';
     }
 }

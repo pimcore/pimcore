@@ -7,8 +7,7 @@ parameters:
     reportUnmatchedIgnoredErrors: false
 
     symfony:
-        container_xml_path: var/cache/dev/appAppKernelDevDebugContainer.xml # Symfony ^4.0
-        #container_xml_path: var/cache/dev/appDevDebugProjectContainer.xml # Symfony ^3.4
+        container_xml_path: var/cache/dev/AppKernelDevDebugContainer.xml
 
     excludes_analyse:
         - '**/DependencyInjection/Configuration.php'

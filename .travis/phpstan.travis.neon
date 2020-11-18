@@ -6,4 +6,4 @@ parameters:
     bootstrapFiles:
         - phpstan-bootstrap.php
     symfony:
-        container_xml_path: ../var/cache/test/appAppKernelTestDebugContainer.xml
+        container_xml_path: ../var/cache/test/AppKernelTestDebugContainer.xml

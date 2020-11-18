@@ -217,7 +217,7 @@ To use the former handler use the following config:
 framework:
     session:
         handler_id:  session.handler.native_file
-        save_path:   "%kernel.root_dir%/../var/sessions"
+        save_path:   "%kernel.project_dir%/../var/sessions"
 ```
 If you have configured your own session handler nothing will change. 
 

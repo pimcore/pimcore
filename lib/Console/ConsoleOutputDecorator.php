@@ -19,6 +19,7 @@ namespace Pimcore\Console;
 
 use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
+use Symfony\Component\Console\Output\ConsoleSectionOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -116,5 +117,12 @@ class ConsoleOutputDecorator implements OutputInterface, ConsoleOutputInterface
     public function setErrorOutput(OutputInterface $error)
     {
         $this->errorOutput = $error;
+    }
+
+    public function section(): ConsoleSectionOutput
+    {
+        $sections = [];
+        $stream = @fopen('php://stdout', 'w') ?: fopen('php://output', 'w');
+        return new ConsoleSectionOutput($stream, $sections, $this->getVerbosity(), $this->isDecorated(), $this->getFormatter());
     }
 }

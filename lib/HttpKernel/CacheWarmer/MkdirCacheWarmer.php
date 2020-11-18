@@ -71,5 +71,7 @@ class MkdirCacheWarmer implements CacheWarmerInterface
                 $fs->mkdir($directory, $this->mode);
             }
         }
+
+        return [];
     }
 }
