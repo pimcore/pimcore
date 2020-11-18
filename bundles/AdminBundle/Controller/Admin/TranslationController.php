@@ -517,7 +517,7 @@ class TranslationController extends AdminController
                     foreach ($joins as $join) {
                         $fieldname = $join['language'];
 
-                        if ($alreadyJoined[$fieldname]) {
+                        if (isset($alreadyJoined[$fieldname])) {
                             continue;
                         }
                         $alreadyJoined[$fieldname] = 1;
