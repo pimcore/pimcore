@@ -1165,6 +1165,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $vars = get_object_vars($this);
         unset($vars['fieldDefinitionsCache']);
         unset($vars['referencedFields']);
+        unset($vars['permissionView']);
+        unset($vars['permissionEdit']);
 
         return array_keys($vars);
     }
