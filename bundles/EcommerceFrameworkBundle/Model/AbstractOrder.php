@@ -720,7 +720,7 @@ class AbstractOrder extends \Pimcore\Model\DataObject\Concrete
             && $this->getDeliveryStreet()
             && $this->getDeliveryCity()
             && $this->getDeliveryZip()
-            ;
+        ;
     }
 
     /**

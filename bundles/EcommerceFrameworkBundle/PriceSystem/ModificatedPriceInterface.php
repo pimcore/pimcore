@@ -17,8 +17,6 @@ declare(strict_types=1);
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem;
 
-use Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\RuleInterface;
-
 /**
  * Interface for prices returned by price modifcators
  */
