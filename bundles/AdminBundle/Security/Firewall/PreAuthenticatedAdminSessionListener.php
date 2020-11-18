@@ -20,18 +20,17 @@ namespace Pimcore\Bundle\AdminBundle\Security\Firewall;
 use Pimcore\Bundle\AdminBundle\Security\Authentication\Token\PreAuthenticatedAdminToken;
 use Pimcore\Bundle\AdminBundle\Security\User\User;
 use Pimcore\Tool\Authentication;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Http\Firewall\ListenerInterface;
 
 /**
  * Checks if there's an existing admin session and stores its token on the security token storage.
  *
  * @package Pimcore\Bundle\AdminBundle\Security\Firewall
  */
-class PreAuthenticatedAdminSessionListener implements ListenerInterface
+class PreAuthenticatedAdminSessionListener
 {
     /**
      * @var TokenStorageInterface
@@ -66,7 +65,7 @@ class PreAuthenticatedAdminSessionListener implements ListenerInterface
     /**
      * @inheritDoc
      */
-    public function handle(GetResponseEvent $event)
+    public function __invoke(RequestEvent $event)
     {
         $request = $event->getRequest();
 

@@ -119,6 +119,12 @@ Ext.define('pimcore.filters', {
             theFilter.lt.config.type = type;
             theFilter.gt.config.type = type;
             theFilter.eq.config.type = type;
+
+            if (column.decimalPrecision) {
+                column.filter.fields.lt.decimalPrecision = column.decimalPrecision;
+                column.filter.fields.gt.decimalPrecision = column.decimalPrecision;
+                column.filter.fields.eq.decimalPrecision = column.decimalPrecision;
+            }
         } else {
             theFilter.config.type = type;
         }

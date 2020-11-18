@@ -15,6 +15,7 @@
 namespace Pimcore;
 
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
+use Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle;
 use FOS\JsRoutingBundle\FOSJsRoutingBundle;
 use Pimcore\Bundle\AdminBundle\PimcoreAdminBundle;
 use Pimcore\Bundle\CoreBundle\PimcoreCoreBundle;
@@ -264,6 +265,7 @@ abstract class Kernel extends SymfonyKernel
             new MonologBundle(),
             new SwiftmailerBundle(),
             new DoctrineBundle(),
+            new DoctrineMigrationsBundle(),
             new SensioFrameworkExtraBundle(),
             new CmfRoutingBundle(),
             new PrestaSitemapBundle(),
@@ -364,13 +366,6 @@ abstract class Kernel extends SymfonyKernel
         $defaultTimezone = @date_default_timezone_get();
         if (!$defaultTimezone) {
             date_default_timezone_set('UTC'); // UTC -> default timezone
-        }
-
-        // check some system variables
-        $requiredVersion = '7.3';
-        if (version_compare(PHP_VERSION, $requiredVersion, '<')) {
-            $m = "pimcore requires at least PHP version $requiredVersion your PHP version is: " . PHP_VERSION;
-            Tool::exitWithError($m);
         }
     }
 }

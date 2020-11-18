@@ -291,12 +291,13 @@ abstract class AbstractCacheItemPool implements PimcoreCacheItemPoolInterface
     }
 
     /**
-     * Deletes all items in the pool.
+     * {@inheritdoc}
+     *
+     * @param string $prefix
      *
      * @return bool
-     *   True if the pool was successfully cleared. False if there was an error.
      */
-    public function clear(/*string $prefix = ''*/)
+    public function clear(string $prefix = '')
     {
         $this->deferred = [];
 

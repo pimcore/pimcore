@@ -500,8 +500,9 @@ class DataObjectHelperController extends AdminController
                             'key' => $key,
                             'type' => 'system',
                             'label' => $key,
-                            'locked' => $sc['locked'],
-                            'position' => $sc['position'], ];
+                            'locked' => $sc['locked'] ?? null,
+                            'position' => $sc['position'],
+                        ];
                         if (isset($sc['width'])) {
                             $colConfig['width'] = $sc['width'];
                         }
@@ -551,6 +552,7 @@ class DataObjectHelperController extends AdminController
 
                             $brickClass = DataObject\Objectbrick\Definition::getByKey($brick);
 
+                            $fd = null;
                             if ($brickClass instanceof DataObject\Objectbrick\Definition) {
                                 if ($brickDescriptor) {
                                     $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
@@ -562,7 +564,7 @@ class DataObjectHelperController extends AdminController
                                 }
                             }
 
-                            if (!empty($fd)) {
+                            if ($fd !== null) {
                                 $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, $keyPrefix, $class, $objectId);
                                 if (!empty($fieldConfig)) {
                                     if (isset($sc['width'])) {
@@ -598,8 +600,9 @@ class DataObjectHelperController extends AdminController
                                         if (isset($sc['width'])) {
                                             $fieldConfig['width'] = $sc['width'];
                                         }
-
-                                        $fieldConfig['locked'] = $sc['locked'];
+                                        if (isset($sc['locked'])) {
+                                            $fieldConfig['locked'] = $sc['locked'];
+                                        }
                                         $availableFields[] = $fieldConfig;
                                     }
                                 }
@@ -1574,11 +1577,9 @@ class DataObjectHelperController extends AdminController
             } elseif ($nbFields === count($fields)) {
                 $rows++;
             } else {
-                $translator = $this->get('translator');
-
                 return $this->adminJson([
                     'success' => false,
-                    'message' => $translator->trans('different_number_of_columns', [], 'admin'),
+                    'message' => $this->trans('different_number_of_columns', [], 'admin'),
                 ]);
             }
         }
@@ -2068,7 +2069,6 @@ class DataObjectHelperController extends AdminController
                             $requestedLanguage = $params['language'];
                             if ($requestedLanguage) {
                                 if ($requestedLanguage != 'default') {
-                                    //                $this->get('translator')->setLocale($requestedLanguage);
                                     $request->setLocale($requestedLanguage);
                                 }
                             } else {

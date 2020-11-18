@@ -173,7 +173,6 @@ class Configuration implements ConfigurationInterface
         $this->addEmailNode($rootNode);
         $this->addNewsletterNode($rootNode);
         $this->addCustomReportsNode($rootNode);
-        $this->addMigrationsNode($rootNode);
         $this->addTargetingNode($rootNode);
         $this->addSitemapsNode($rootNode);
         $this->addMimeNode($rootNode);
@@ -621,19 +620,6 @@ class Configuration implements ConfigurationInterface
 
         $documentsNode
             ->children()
-                ->arrayNode('tags')
-                    ->setDeprecated('The "%node%" option is deprecated. Use "editables" instead.')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('map')
-                            ->useAttributeAsKey('name')
-                            ->prototype('scalar')->end()
-                        ->end()
-                        ->arrayNode('prefixes')
-                            ->prototype('scalar')->end()
-                        ->end()
-                    ->end()
-                ->end()
                 ->arrayNode('versions')
                     ->children()
                         ->scalarNode('days')
@@ -653,22 +639,15 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->scalarNode('default_controller')
+                    ->defaultValue('AppBundle\\Controller\\DefaultController::defaultAction')
+                ->end()
                 ->arrayNode('error_pages')
                     ->children()
                         ->scalarNode('default')
                             ->defaultNull()
                         ->end()
                     ->end()
-                ->end()
-                ->booleanNode('create_redirect_when_moved')
-                    ->setDeprecated('The "%node%" option is deprecated and not used anymore, it is just there for compatibility.')
-                    ->beforeNormalization()
-                        ->ifString()
-                        ->then(function ($v) {
-                            return (bool)$v;
-                        })
-                    ->end()
-                    ->defaultFalse()
                 ->end()
                 ->scalarNode('allow_trailing_slash')
                     ->defaultValue('no')
@@ -762,20 +741,6 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('routing')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->arrayNode('defaults')
-                            ->addDefaultsIfNotSet()
-                            ->children()
-                                ->scalarNode('bundle')
-                                    ->defaultValue('AppBundle')
-                                ->end()
-                                ->scalarNode('controller')
-                                    ->defaultValue('Default')
-                                ->end()
-                                ->scalarNode('action')
-                                    ->defaultValue('default')
-                                ->end()
-                            ->end()
-                        ->end()
                         ->arrayNode('static')
                             ->addDefaultsIfNotSet()
                             ->children()
@@ -1228,72 +1193,6 @@ class Configuration implements ConfigurationInterface
             ->end();
     }
 
-    /**
-     * Adds configuration tree node for migrations
-     *
-     * @param ArrayNodeDefinition $rootNode
-     */
-    private function addMigrationsNode(ArrayNodeDefinition $rootNode)
-    {
-        $rootNode
-            ->children()
-                ->arrayNode('migrations')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->arrayNode('sets')
-                            ->useAttributeAsKey('identifier')
-                            ->defaultValue([])
-                            ->info('Migration sets which can be used apart from bundle migrations. Use the -s option in migration commands to select a specific set.')
-                            ->example([
-                                [
-                                    'custom_set' => [
-                                        'name' => 'Custom Migrations',
-                                        'namespace' => 'App\\Migrations\\Custom',
-                                        'directory' => 'src/App/Migrations/Custom',
-                                    ],
-                                    'custom_set_2' => [
-                                        'name' => 'Custom Migrations 2',
-                                        'namespace' => 'App\\Migrations\\Custom2',
-                                        'directory' => 'src/App/Migrations/Custom2',
-                                        'connection' => 'custom_connection',
-                                    ],
-                                ],
-                            ])
-                            ->prototype('array')
-                                ->children()
-                                    ->scalarNode('identifier')->end()
-                                    ->scalarNode('name')
-                                        ->isRequired()
-                                        ->cannotBeEmpty()
-                                    ->end()
-                                    ->scalarNode('namespace')
-                                        ->isRequired()
-                                        ->cannotBeEmpty()
-                                    ->end()
-                                    ->scalarNode('directory')
-                                        ->isRequired()
-                                        ->cannotBeEmpty()
-                                    ->end()
-                                    ->scalarNode('connection')
-                                        ->info('If defined, the DBAL connection defined here will be used')
-                                        ->defaultNull()
-                                        ->beforeNormalization()
-                                            ->ifTrue(function ($v) {
-                                                return empty(trim($v));
-                                            })
-                                            ->then(function () {
-                                                return null;
-                                            })
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end();
-    }
-
     private function addTargetingNode(ArrayNodeDefinition $rootNode)
     {
         $rootNode
@@ -1530,11 +1429,6 @@ class Configuration implements ConfigurationInterface
                                             'subject.getProductType() == "article" and is_fully_authenticated() and "ROLE_PIMCORE_ADMIN" in roles',
                                         ],
                                     ])
-                                ->end()
-                                ->scalarNode('initial_place')
-                                    ->defaultNull()
-                                    ->setDeprecated('The "%node%" option is deprecated. Use "initial_markings" instead.')
-                                    ->info('Will be applied when the current place is empty.')
                                 ->end()
                                 ->arrayNode('initial_markings')
                                     ->info('Can be used to set the initial places (markings) for a workflow. Note that this option is Symfony 4.3+ only')

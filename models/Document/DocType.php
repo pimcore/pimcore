@@ -48,23 +48,11 @@ class DocType extends Model\AbstractModel
     protected $group;
 
     /**
-     * @var string
-     */
-    protected $module;
-
-    /**
      * The specified controller
      *
      * @var string
      */
     protected $controller;
-
-    /**
-     * The specified action
-     *
-     * @var string
-     */
-    protected $action;
 
     /**
      * The specified template
@@ -130,14 +118,6 @@ class DocType extends Model\AbstractModel
     /**
      * @return string
      */
-    public function getAction()
-    {
-        return $this->action;
-    }
-
-    /**
-     * @return string
-     */
     public function getController()
     {
         return $this->controller;
@@ -173,18 +153,6 @@ class DocType extends Model\AbstractModel
     public function getTemplate()
     {
         return $this->template;
-    }
-
-    /**
-     * @param string $action
-     *
-     * @return $this
-     */
-    public function setAction($action)
-    {
-        $this->action = $action;
-
-        return $this;
     }
 
     /**
@@ -285,26 +253,6 @@ class DocType extends Model\AbstractModel
     public function getPriority()
     {
         return $this->priority;
-    }
-
-    /**
-     * @param string $module
-     *
-     * @return $this
-     */
-    public function setModule($module)
-    {
-        $this->module = $module;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getModule()
-    {
-        return $this->module;
     }
 
     /**
