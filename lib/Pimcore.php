@@ -153,6 +153,7 @@ class Pimcore
     {
         try {
             \Pimcore\Db::get()->fetchOne('SELECT VERSION()');
+
             return true;
         } catch (\Exception $e) {
             return false;

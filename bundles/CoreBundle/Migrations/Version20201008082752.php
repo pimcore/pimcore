@@ -12,7 +12,7 @@ class Version20201008082752 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        if($schema->hasTable('tracking_events')) {
+        if ($schema->hasTable('tracking_events')) {
             $this->addSql('RENAME TABLE tracking_events TO PLEASE_DELETE__tracking_events;');
         }
     }

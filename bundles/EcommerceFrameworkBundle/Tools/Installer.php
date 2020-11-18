@@ -155,12 +155,11 @@ class Installer extends AbstractInstaller
     public function __construct(
         BundleInterface $bundle,
         ConnectionInterface $connection
-    )
-    {
+    ) {
         $this->installSourcesPath = __DIR__ . '/../Resources/install';
         $this->bundle = $bundle;
         $this->db = $connection;
-        if($this->db instanceof Connection) {
+        if ($this->db instanceof Connection) {
             $this->schema = $this->db->getSchemaManager()->createSchema();
         }
 
@@ -192,7 +191,7 @@ class Installer extends AbstractInstaller
         try {
             // check if if first permission is installed
             $installed = $this->db->fetchOne('SELECT `key` FROM users_permission_definitions WHERE `key` = :key', [
-                'key' => $this->permissionsToInstall[0]
+                'key' => $this->permissionsToInstall[0],
             ]);
         } catch (\Exception $e) {
             // nothing to do
@@ -387,7 +386,6 @@ class Installer extends AbstractInstaller
 
                 continue;
             }
-
 
             $this->db->executeQuery($statement);
         }

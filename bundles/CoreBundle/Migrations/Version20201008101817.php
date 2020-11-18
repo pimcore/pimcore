@@ -12,7 +12,7 @@ class Version20201008101817 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        if($schema->hasTable('documents_elements')) {
+        if ($schema->hasTable('documents_elements')) {
             $this->addSql('RENAME TABLE documents_elements TO documents_editables;');
         }
     }

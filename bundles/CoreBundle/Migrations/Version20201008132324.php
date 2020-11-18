@@ -12,7 +12,7 @@ class Version20201008132324 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
-        if($schema->hasTable('locks')) {
+        if ($schema->hasTable('locks')) {
             $this->addSql('RENAME TABLE locks TO PLEASE_DELETE__locks;');
         }
     }

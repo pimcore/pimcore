@@ -75,7 +75,7 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
                 Admin::activateMaintenanceMode($maintenanceModeId);
             }
 
-            if($event->getCommand() instanceof DoctrineCommand && $prefix = $event->getInput()->getOption('prefix')) {
+            if ($event->getCommand() instanceof DoctrineCommand && $prefix = $event->getInput()->getOption('prefix')) {
                 $kernel->getContainer()->get(FilteredMigrationsRepository::class)->setPrefix($prefix);
                 $kernel->getContainer()->get(FilteredTableMetadataStorage::class)->setPrefix($prefix);
             }
@@ -107,7 +107,7 @@ class Application extends \Symfony\Bundle\FrameworkBundle\Console\Application
     {
         $definition = $command->getDefinition();
 
-        if($command instanceof DoctrineCommand) {
+        if ($command instanceof DoctrineCommand) {
             // add filter option
             $definition->addOption(new InputOption(
                 'prefix',
