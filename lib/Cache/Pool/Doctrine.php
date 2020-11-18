@@ -15,6 +15,7 @@
 namespace Pimcore\Cache\Pool;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\Result;
 use Pimcore\Cache\Pool\Exception\CacheException;
 use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 use Pimcore\Db\ConnectionInterface;
@@ -206,14 +207,13 @@ INSERT INTO
     ON DUPLICATE KEY UPDATE data = VALUES(data), expire = VALUES(expire), mtime = VALUES(mtime)
 SQL;
 
-                $stmt = $this->db->executeQuery($insertQuery, [
+                $result = $this->db->insert($insertQuery, [
                     'id' => $item->getKey(),
                     'data' => $this->serializeData($item->get()),
                     'expire' => $item->getExpiry(),
                     'mtime' => time(),
                 ]);
 
-                $result = $stmt->execute();
                 if (!$result) {
                     throw new CacheException(sprintf('Failed to execute insert query for item %s', $item->getKey()));
                 }

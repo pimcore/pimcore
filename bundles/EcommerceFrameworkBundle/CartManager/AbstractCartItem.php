@@ -105,7 +105,12 @@ abstract class AbstractCartItem extends \Pimcore\Model\AbstractModel implements 
         if ($this->product) {
             return $this->product;
         }
-        $this->product = AbstractObject::getById($this->productId);
+
+        $product = AbstractObject::getById($this->productId);
+
+        if ($product instanceof CheckoutableInterface) {
+            $this->product = $product;
+        }
 
         return $this->product;
     }
