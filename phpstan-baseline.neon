@@ -1006,6 +1006,11 @@ parameters:
 			path: lib/Cache/Pool/AbstractCacheItemPool.php
 
 		-
+			message: "#^Call to an undefined method Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\:\\:execute\\(\\)\\.$#"
+			count: 1
+			path: lib/Cache/Pool/Doctrine.php
+
+		-
 			message: "#^Return type \\(Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\) of method Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemPoolInterface\\:\\:getItem\\(\\) should be compatible with return type \\(Symfony\\\\Component\\\\Cache\\\\CacheItem\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItem\\(\\)$#"
 			count: 1
 			path: lib/Cache/Pool/PimcoreCacheItemPoolInterface.php
