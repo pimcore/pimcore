@@ -19,5 +19,3 @@ then
 else
     composer install -o
 fi
-
-tree var/cache/
