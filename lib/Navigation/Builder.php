@@ -174,7 +174,11 @@ class Builder
                     if (strpos($activeDocument->getRealFullPath(), $page->getUri() . '/') === 0) {
                         $activeTrail = true;
                     }
-                    if (strpos($activeDocument->getFullPath(), $page->getUri() . '/') === 0) {
+                    if (
+                        $page instanceof DocumentPage &&
+                        $page->getDocumentType() === 'link' &&
+                        strpos($activeDocument->getFullPath(), $page->getUri() . '/') === 0
+                    ) {
                         $activeTrail = true;
                     }
                 }
