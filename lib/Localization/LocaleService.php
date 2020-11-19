@@ -140,7 +140,7 @@ class LocaleService implements LocaleServiceInterface
     {
         $this->locale = $locale;
 
-        if($locale && is_string($locale)) {
+        if ($locale && is_string($locale)) {
             if ($this->requestStack) {
                 $masterRequest = $this->requestStack->getMasterRequest();
                 if ($masterRequest) {

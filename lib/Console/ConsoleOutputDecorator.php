@@ -123,6 +123,7 @@ class ConsoleOutputDecorator implements OutputInterface, ConsoleOutputInterface
     {
         $sections = [];
         $stream = @fopen('php://stdout', 'w') ?: fopen('php://output', 'w');
+
         return new ConsoleSectionOutput($stream, $sections, $this->getVerbosity(), $this->isDecorated(), $this->getFormatter());
     }
 }
