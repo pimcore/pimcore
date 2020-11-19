@@ -62,9 +62,6 @@ class PreAuthenticatedAdminSessionListener
         $this->providerKey = $providerKey;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function __invoke(RequestEvent $event)
     {
         $request = $event->getRequest();
