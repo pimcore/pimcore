@@ -94,6 +94,8 @@ class Note extends Model\AbstractModel
      * @param string $name
      * @param string $type
      * @param mixed $data
+     *
+     * @return $this
      */
     public function addData($name, $type, $data)
     {
@@ -101,6 +103,8 @@ class Note extends Model\AbstractModel
             'type' => $type,
             'data' => $data,
         ];
+
+        return $this;
     }
 
     /**
