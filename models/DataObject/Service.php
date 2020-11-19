@@ -358,7 +358,7 @@ class Service extends Model\Element\Service
                         /** @var Model\DataObject\ClassDefinition\Data\Localizedfields $localizedFields */
                         $localizedFields = $brickClass->getFieldDefinition($innerContainer);
                         $def = $localizedFields->getFieldDefinition($brickDescriptor['brickfield']);
-                    } else {
+                    } elseif($brickClass instanceof Objectbrick\Definition) {
                         $def = $brickClass->getFieldDefinition($brickKey, $context);
                     }
                 }

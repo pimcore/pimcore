@@ -748,6 +748,21 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             return false;
         }
 
-        return $oldValue->getValue() === $newValue->getValue() && $oldValue->getUnitId() === $newValue->getUnitId();
+        return $oldValue->getValue() === $newValue->getValue()
+            && $this->prepareUnitIdForComparison($oldValue->getUnitId()) === $this->prepareUnitIdForComparison($newValue->getUnitId());
+    }
+
+    /**
+     * @param mixed $unitId
+     * @return string
+     */
+    private function prepareUnitIdForComparison($unitId): string
+    {
+        $unitId = (string) $unitId;
+        if(empty($unitId)) {
+            $unitId = '';
+        }
+
+        return $unitId;
     }
 }

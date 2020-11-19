@@ -500,8 +500,9 @@ class DataObjectHelperController extends AdminController
                             'key' => $key,
                             'type' => 'system',
                             'label' => $key,
-                            'locked' => $sc['locked'],
-                            'position' => $sc['position'], ];
+                            'locked' => $sc['locked'] ?? null,
+                            'position' => $sc['position'],
+                        ];
                         if (isset($sc['width'])) {
                             $colConfig['width'] = $sc['width'];
                         }
@@ -551,6 +552,7 @@ class DataObjectHelperController extends AdminController
 
                             $brickClass = DataObject\Objectbrick\Definition::getByKey($brick);
 
+                            $fd = null;
                             if ($brickClass instanceof DataObject\Objectbrick\Definition) {
                                 if ($brickDescriptor) {
                                     $innerContainer = $brickDescriptor['innerContainer'] ?? 'localizedfields';
@@ -562,7 +564,7 @@ class DataObjectHelperController extends AdminController
                                 }
                             }
 
-                            if (!empty($fd)) {
+                            if ($fd !== null) {
                                 $fieldConfig = $this->getFieldGridConfig($fd, $gridType, $sc['position'], true, $keyPrefix, $class, $objectId);
                                 if (!empty($fieldConfig)) {
                                     if (isset($sc['width'])) {
@@ -598,8 +600,9 @@ class DataObjectHelperController extends AdminController
                                         if (isset($sc['width'])) {
                                             $fieldConfig['width'] = $sc['width'];
                                         }
-
-                                        $fieldConfig['locked'] = $sc['locked'];
+                                        if (isset($sc['locked'])) {
+                                            $fieldConfig['locked'] = $sc['locked'];
+                                        }
                                         $availableFields[] = $fieldConfig;
                                     }
                                 }

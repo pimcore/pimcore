@@ -312,8 +312,8 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         $relations = $this->loadMetadataRelations('ladvancedObjects');
         $brick = new LazyLoadingLocalizedTest($object);
 
-        $brick->getLocalizedfields()->setLocalizedValue('ladvancedObjects',$relations,'en');
-        $brick->getLocalizedfields()->setLocalizedValue('ladvancedObjects',$relations,'de');
+        $brick->getLocalizedfields()->setLocalizedValue('ladvancedObjects', $relations, 'en');
+        $brick->getLocalizedfields()->setLocalizedValue('ladvancedObjects', $relations, 'de');
 
         $object->getBricks()->setLazyLoadingLocalizedTest($brick);
         $object->save();
@@ -334,7 +334,6 @@ class AdvancedManyToManyObjectRelationTest extends AbstractLazyLoadingTest
         $object = Concrete::getById($object->getId(), true);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedObjects('en')) > 0);
         $this->assertTrue(count($object->getBricks()->getLazyLoadingLocalizedTest()->getLadvancedObjects('de')) > 0);
-
 
         $parentId = $object->getId();
         $childId = $this->createChildDataObject($object)->getId();
