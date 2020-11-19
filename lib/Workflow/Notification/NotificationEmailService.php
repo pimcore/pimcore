@@ -78,7 +78,19 @@ class NotificationEmailService extends AbstractNotificationService
             $deeplink = '';
             $hostUrl = Tool::getHostUrl();
             if ($hostUrl !== '') {
-                $deeplink = $hostUrl . $this->router->generate('pimcore_admin_login') . '/deeplink?object_' . $subject->getId() . '_object';
+                
+                // Decide what kind of link to create
+                $objectType = $type = "object";
+                if ($subject instanceof \Pimcore\Model\Document) {
+                    $objectType = "document";
+                    $type = $subject->getType();
+                }
+                if ($subject instanceof \Pimcore\Model\Asset) {
+                    $objectType = "asset";
+                    $type = $subject->getType();
+                }
+
+                $deeplink = $hostUrl . $this->router->generate('pimcore_admin_login_deeplink') . '?'.$objectType.'_' . $subject->getId() . '_'. $type;
             }
 
             foreach ($recipients as $language => $recipientsPerLanguage) {
