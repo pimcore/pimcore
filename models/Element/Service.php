@@ -1507,22 +1507,23 @@ class Service extends Model\AbstractModel
                     ),
                     new MarshalMatcher($sourceType, $sourceId)
                 );
-            } elseif (($context['conversion'] ?? false) === 'unmarshal') {
-                $copier->addTypeFilter(
-                    new \DeepCopy\TypeFilter\ReplaceFilter(
-                        function ($currentValue) {
-                            if ($currentValue instanceof ElementDescriptor) {
-                                $value = Service::getElementById($currentValue->getType(), $currentValue->getId());
-
-                                return $value;
-                            }
-
-                            return $currentValue;
-                        }
-                    ),
-                    new UnmarshalMatcher()
-                );
             }
+        }
+        elseif (($context['conversion'] ?? false) === 'unmarshal') {
+            $copier->addTypeFilter(
+                new \DeepCopy\TypeFilter\ReplaceFilter(
+                    function ($currentValue) {
+                        if ($currentValue instanceof ElementDescriptor) {
+                            $value = Service::getElementById($currentValue->getType(), $currentValue->getId());
+
+                            return $value;
+                        }
+
+                        return $currentValue;
+                    }
+                ),
+                new UnmarshalMatcher()
+            );
         }
 
         if ($context['defaultFilters'] ?? false) {
