@@ -16,7 +16,7 @@ trait AllowDocumentRelationTrait
      */
     protected function allowDocumentRelation($document)
     {
-        if ($document instanceof Document && $document->getId() <= 0) {
+        if (!$document instanceof Document || $document->getId() <= 0) {
             return false;
         }
 

@@ -16,7 +16,7 @@ trait AllowAssetRelationTrait
      */
     protected function allowAssetRelation($asset)
     {
-        if ($asset instanceof Asset && $asset->getId() <= 0) {
+        if (!$asset instanceof Asset || $asset->getId() <= 0) {
             return false;
         }
 
