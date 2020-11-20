@@ -160,7 +160,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 handler: function (grid, rowIndex) {
                     var data = grid.getStore().getAt(rowIndex);
                     var subtype = data.data.subtype;
-                    if (data.data.type == "object" && data.data.subtype != "folder") {
+                    if (data.data.type == "object" && data.data.subtype != "folder" && data.data.subtype != null) {
                         subtype = "object";
                     }
                     pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
@@ -390,7 +390,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 handler: function (grid, rowIndex) {
                     var data = grid.getStore().getAt(rowIndex);
                     var subtype = data.data.subtype;
-                    if (data.data.type == "object" && data.data.subtype != "folder") {
+                    if (data.data.type == "object" && data.data.subtype != "folder" && data.data.subtype != null) {
                         subtype = "object";
                     }
                     pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
@@ -468,7 +468,7 @@ pimcore.object.tags.manyToManyRelation = Class.create(pimcore.object.tags.abstra
                 item.parentMenu.destroy();
 
                 var subtype = data.data.subtype;
-                if (data.data.type == "object" && data.data.subtype != "folder") {
+                if (data.data.type == "object" && data.data.subtype != "folder" && data.data.subtype != null) {
                     subtype = "object";
                 }
                 pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
