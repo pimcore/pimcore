@@ -1551,39 +1551,6 @@ class DocumentController extends ElementControllerBase implements KernelControll
     }
 
     /**
-     * @Route("/qr-code", name="pimcore_admin_document_document_qrcode", methods={"GET"})
-     *
-     * @param Request $request
-     *
-     * @return BinaryFileResponse
-     */
-    public function qrCodeAction(Request $request)
-    {
-        $document = Document::getById($request->query->get('id'));
-        $url = $request->getScheme() . '://' . $request->getHttpHost() . $document->getFullPath();
-
-        $code = new \Endroid\QrCode\QrCode;
-        $code->setWriterByName('png');
-        $code->setText($url);
-        $code->setSize(500);
-
-        $tmpFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
-        $code->writeFile($tmpFile);
-
-        $response = new BinaryFileResponse($tmpFile);
-        $response->headers->set('Content-Type', 'image/png');
-
-        if ($request->query->get('download')) {
-            $code->setSize(4000);
-            $response->setContentDisposition('attachment', 'qrcode-preview.png');
-        }
-
-        $response->deleteFileAfterSend(true);
-
-        return $response;
-    }
-
-    /**
      * @param ControllerEvent $event
      */
     public function onKernelControllerEvent(ControllerEvent $event)
