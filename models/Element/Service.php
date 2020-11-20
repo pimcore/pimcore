@@ -1507,7 +1507,9 @@ class Service extends Model\AbstractModel
                     ),
                     new MarshalMatcher($sourceType, $sourceId)
                 );
-            } elseif (($context['conversion'] ?? false) === 'unmarshal') {
+            }
+        } 
+        elseif (($context['conversion'] ?? false) === 'unmarshal') {
                 $copier->addTypeFilter(
                     new \DeepCopy\TypeFilter\ReplaceFilter(
                         function ($currentValue) {
@@ -1523,7 +1525,6 @@ class Service extends Model\AbstractModel
                     new UnmarshalMatcher()
                 );
             }
-        }
 
         if ($context['defaultFilters'] ?? false) {
             $copier->addFilter(new DoctrineCollectionFilter(), new PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
