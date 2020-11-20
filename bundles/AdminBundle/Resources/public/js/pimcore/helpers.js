@@ -2586,6 +2586,8 @@ pimcore.helpers.requestNicePathData = function (source, targets, config, fieldCo
             }
         }.bind(this)
     });
+
+    return true;
 };
 
 pimcore.helpers.getNicePathHandlerStore = function (store, config, gridView, responseData) {
