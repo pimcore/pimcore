@@ -47,21 +47,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
     }
 
     /**
-     * @inheritDoc
-     */
-    protected function needsDb()
-    {
-        return true;
-    }
-
-    /**
-     * @param array|string $fields
-     *
-     * @return Unittest
-     */
-    abstract protected function createTestObject($fields = []);
-
-    /**
      * Calls fill* methods on the object as needed in test
      *
      * @param Concrete     $object
@@ -105,91 +90,38 @@ abstract class AbstractDataTypeTestCase extends TestCase
         }
     }
 
-    public function testInput()
+    /**
+     * @inheritDoc
+     */
+    protected function needsDb()
     {
-        $this->createTestObject('input');
-
-        $this->testDataHelper->assertInput($this->testObject, 'input', $this->seed);
+        return true;
     }
 
-    public function testNumber()
+    public function testBooleanSelect()
     {
-        $this->createTestObject('number');
+        $this->createTestObject('booleanSelect');
 
-        $this->testDataHelper->assertNumber($this->testObject, 'number', $this->seed);
+        $this->testDataHelper->assertBooleanSelect($this->testObject, 'booleanSelect', $this->seed);
     }
 
-    public function testTextarea()
-    {
-        $this->createTestObject('textarea');
-
-        $this->testDataHelper->assertTextarea($this->testObject, 'textarea', $this->seed);
-    }
-
-    public function testSlider()
-    {
-        $this->createTestObject('slider');
-
-        $this->testDataHelper->assertSlider($this->testObject, 'slider', $this->seed);
-    }
-
-    public function testHref()
-    {
-        TestHelper::createEmptyObjects();
-        $this->createTestObject('href');
-
-        $this->testDataHelper->assertHref($this->testObject, 'href', $this->seed);
-    }
-
-    public function testMultiHref()
-    {
-        TestHelper::createEmptyObjects();
-        $this->createTestObject('multihref');
-
-        $this->testDataHelper->assertMultihref($this->testObject, 'multihref', $this->seed);
-    }
-
-    public function testImage()
-    {
-        $this->createTestObject('image');
-
-        $this->assertNotNull($this->testObject->getImage());
-
-        if (null !== $this->comparisonObject) {
-            $this->assertNotNull($this->comparisonObject->getImage());
-        }
-
-        $this->testDataHelper->assertImage($this->testObject, 'image', $this->seed);
-    }
-
-    public function testHotspotImage()
+    public function testBricks()
     {
         $this->createTestObject([
             [
-                'method' => 'fillHotspotImage',
-                'field' => 'hotspotimage',
+                'method' => 'fillBricks',
+                'field' => 'mybricks',
             ],
         ]);
 
-        $this->assertNotNull($this->testObject->getHotspotImage());
-
-        if (null !== $this->comparisonObject) {
-            $this->assertNotNull($this->comparisonObject->getHotspotImage());
-        }
-
-        $this->testDataHelper->assertHotspotImage($this->testObject, 'hotspotimage', $this->seed);
+        $this->testDataHelper->assertBricks($this->testObject, 'mybricks', $this->seed);
     }
 
-    public function testLanguage()
+    public function testCheckbox()
     {
-        $this->createTestObject([
-            [
-                'method' => 'fillLanguage',
-                'field' => 'languagex',
-            ],
-        ]);
+        $this->createTestObject('checkbox');
 
-        $this->testDataHelper->assertLanguage($this->testObject, 'languagex', $this->seed);
+        $this->testDataHelper->assertCheckbox($this->testObject, 'checkbox', $this->seed);
     }
 
     public function testCountry()
@@ -197,6 +129,18 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->createTestObject('country');
 
         $this->testDataHelper->assertCountry($this->testObject, 'country', $this->seed);
+    }
+
+    public function testCountryMultiSelect()
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillMultiSelect',
+                'field' => 'countries',
+            ],
+        ]);
+
+        $this->testDataHelper->assertCountryMultiSelect($this->testObject, 'countries', $this->seed);
     }
 
     public function testDate()
@@ -218,101 +162,16 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertDate($this->testObject, 'datetime', $this->seed);
     }
 
-    public function testTime()
-    {
-        $this->createTestObject('time');
-
-        $this->testDataHelper->assertTime($this->testObject, 'time', $this->seed);
-    }
-
-    public function testSelect()
-    {
-        $this->createTestObject('select');
-
-        $this->testDataHelper->assertSelect($this->testObject, 'select', $this->seed);
-    }
-
-    public function testMultiSelect()
+    public function testFieldCollection()
     {
         $this->createTestObject([
             [
-                'method' => 'fillMultiSelect',
-                'field' => 'multiselect',
+                'method' => 'fillFieldCollection',
+                'field' => 'myfieldcollection',
             ],
         ]);
 
-        $this->testDataHelper->assertMultiSelect($this->testObject, 'multiselect', $this->seed);
-    }
-
-    public function testUser()
-    {
-        $this->createTestObject('user');
-
-        $this->testDataHelper->assertUser($this->testObject, 'user', $this->seed);
-    }
-
-    public function testCheckbox()
-    {
-        $this->createTestObject('checkbox');
-
-        $this->testDataHelper->assertCheckbox($this->testObject, 'checkbox', $this->seed);
-    }
-
-    public function testBooleanSelect()
-    {
-        $this->createTestObject('booleanSelect');
-
-        $this->testDataHelper->assertBooleanSelect($this->testObject, 'booleanSelect', $this->seed);
-    }
-
-    public function testWysiwyg()
-    {
-        $this->createTestObject('wysiwyg');
-
-        $this->testDataHelper->assertWysiwyg($this->testObject, 'wysiwyg', $this->seed);
-    }
-
-    public function testPassword()
-    {
-        $this->createTestObject('password');
-
-        $this->testDataHelper->assertPassword($this->testObject, 'password', $this->seed);
-    }
-
-    public function testCountryMultiSelect()
-    {
-        $this->createTestObject([
-            [
-                'method' => 'fillMultiSelect',
-                'field' => 'countries',
-            ],
-        ]);
-
-        $this->testDataHelper->assertCountryMultiSelect($this->testObject, 'countries', $this->seed);
-    }
-
-    public function testLanguageMultiSelect()
-    {
-        $this->createTestObject([
-            [
-                'method' => 'fillMultiSelect',
-                'field' => 'languages',
-            ],
-        ]);
-
-        $this->testDataHelper->assertCountryMultiSelect($this->testObject, 'languages', $this->seed);
-    }
-
-    public function testGeopoint()
-    {
-        $this->createTestObject([
-            [
-                'method' => 'fillGeopoint',
-                'field' => 'point',
-            ],
-        ]);
-
-        $this->testDataHelper->assertGeopoint($this->testObject, 'point', $this->seed);
+        $this->testDataHelper->assertFieldCollection($this->testObject, 'myfieldcollection', $this->seed);
     }
 
     public function testGeobounds()
@@ -327,6 +186,18 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertGeobounds($this->testObject, 'bounds', $this->comparisonObject, $this->seed);
     }
 
+    public function testGeopoint()
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillGeopoint',
+                'field' => 'point',
+            ],
+        ]);
+
+        $this->testDataHelper->assertGeopoint($this->testObject, 'point', $this->seed);
+    }
+
     public function testGeopolygon()
     {
         $this->createTestObject([
@@ -339,11 +210,110 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertGeopolygon($this->testObject, 'poly', $this->comparisonObject, $this->seed);
     }
 
-    public function testTable()
+    public function testHotspotImage()
     {
-        $this->createTestObject('table');
+        $this->createTestObject([
+            [
+                'method' => 'fillHotspotImage',
+                'field' => 'hotspotimage',
+            ],
+        ]);
 
-        $this->testDataHelper->assertTable($this->testObject, 'table', $this->comparisonObject, $this->seed);
+        $this->assertNotNull($this->testObject->getHotspotImage());
+
+        if (null !== $this->comparisonObject) {
+            $this->assertNotNull($this->comparisonObject->getHotspotImage());
+        }
+
+        $this->testDataHelper->assertHotspotImage($this->testObject, 'hotspotimage', $this->seed);
+    }
+
+    public function testHref()
+    {
+        TestHelper::createEmptyObjects();
+        $this->createTestObject('href');
+
+        $this->testDataHelper->assertHref($this->testObject, 'href', $this->seed);
+    }
+
+    public function testImage()
+    {
+        $this->createTestObject('image');
+
+        $this->assertNotNull($this->testObject->getImage());
+
+        if (null !== $this->comparisonObject) {
+            $this->assertNotNull($this->comparisonObject->getImage());
+        }
+
+        $this->testDataHelper->assertImage($this->testObject, 'image', $this->seed);
+    }
+
+    public function testInput()
+    {
+        $this->createTestObject('input');
+
+        $this->testDataHelper->assertInput($this->testObject, 'input', $this->seed);
+    }
+
+    /**
+     * @param array|string $fields
+     *
+     * @return Unittest
+     */
+    abstract protected function createTestObject($fields = []);
+
+    public function testLanguage()
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillLanguage',
+                'field' => 'languagex',
+            ],
+        ]);
+
+        $this->testDataHelper->assertLanguage($this->testObject, 'languagex', $this->seed);
+    }
+
+    public function testLanguageMultiSelect()
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillMultiSelect',
+                'field' => 'languages',
+            ],
+        ]);
+
+        $this->testDataHelper->assertCountryMultiSelect($this->testObject, 'languages', $this->seed);
+    }
+
+    public function testLazyLocalizedMultihref()
+    {
+        TestHelper::createEmptyObjects();
+
+        $this->createTestObject([
+            [
+                'method' => 'fillObjects',
+                'field' => 'lmultihrefLazy',
+                'arguments' => ['de'],
+            ],
+            [
+                'method' => 'fillObjects',
+                'field' => 'lmultihrefLazy',
+                'arguments' => ['en'],
+            ],
+        ]);
+
+        $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'en');
+        $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'de');
+
+        Cache::clearAll();
+        Cache\Runtime::clear();
+
+        $this->testObject = AbstractObject::getById($this->testObject->getId());
+
+        $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'en');
+        $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'de');
     }
 
     public function testLink()
@@ -351,42 +321,6 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->createTestObject('link');
 
         $this->testDataHelper->assertLink($this->testObject, 'link', $this->seed);
-    }
-
-    public function testStructuredTable()
-    {
-        $this->createTestObject([
-            [
-                'method' => 'fillStructuredTable',
-                'field' => 'structuredtable',
-            ],
-        ]);
-
-        $this->testDataHelper->assertStructuredTable($this->testObject, 'structuredtable', $this->comparisonObject, $this->seed);
-    }
-
-    public function testObjects()
-    {
-        // // this will create a couple of objects which can be used for references
-        TestHelper::createEmptyObjects();
-
-        $this->createTestObject('objects');
-
-        $this->testDataHelper->assertObjects($this->testObject, 'objects', $this->seed);
-    }
-
-    public function testObjectsWithMetadata()
-    {
-        TestHelper::createEmptyObjects();
-
-        $this->createTestObject([
-            [
-                'method' => 'fillObjectsWithMetadata',
-                'field' => 'objectswithmetadata',
-            ],
-        ]);
-
-        $this->testDataHelper->assertObjectsWithmetadata($this->testObject, 'objectswithmetadata', $this->comparisonObject, $this->seed);
     }
 
     public function testLocalizedInput()
@@ -429,57 +363,129 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->testDataHelper->assertObjects($this->testObject, 'lobjects', $this->seed, 'de');
     }
 
-    public function testLazyLocalizedMultihref()
+    public function testLocalizedUrlSlug()
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillUrlSlug',
+                'field' => 'lurlSlug',
+                'arguments' => ['de'],
+            ],
+            [
+                'method' => 'fillUrlSlug',
+                'field' => 'lurlSlug',
+                'arguments' => ['en'],
+            ],
+        ]);
+
+        $this->testObject = Concrete::getById($this->testObject->getId(), true);
+        $this->testDataHelper->assertUrlSlug($this->testObject, 'lurlSlug', $this->seed, 'en');
+        $this->testDataHelper->assertUrlSlug($this->testObject, 'lurlSlug', $this->seed, 'de');
+    }
+
+    public function testMultiHref()
+    {
+        TestHelper::createEmptyObjects();
+        $this->createTestObject('multihref');
+
+        $this->testDataHelper->assertMultihref($this->testObject, 'multihref', $this->seed);
+    }
+
+    public function testMultiSelect()
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillMultiSelect',
+                'field' => 'multiselect',
+            ],
+        ]);
+
+        $this->testDataHelper->assertMultiSelect($this->testObject, 'multiselect', $this->seed);
+    }
+
+    public function testNumber()
+    {
+        $this->createTestObject('number');
+
+        $this->testDataHelper->assertNumber($this->testObject, 'number', $this->seed);
+    }
+
+    public function testObjects()
+    {
+        // // this will create a couple of objects which can be used for references
+        TestHelper::createEmptyObjects();
+
+        $this->createTestObject('objects');
+
+        $this->testDataHelper->assertObjects($this->testObject, 'objects', $this->seed);
+    }
+
+    public function testObjectsWithMetadata()
     {
         TestHelper::createEmptyObjects();
 
         $this->createTestObject([
             [
-                'method' => 'fillObjects',
-                'field' => 'lmultihrefLazy',
-                'arguments' => ['de'],
-            ],
-            [
-                'method' => 'fillObjects',
-                'field' => 'lmultihrefLazy',
-                'arguments' => ['en'],
+                'method' => 'fillObjectsWithMetadata',
+                'field' => 'objectswithmetadata',
             ],
         ]);
 
-        $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'en');
-        $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'de');
-
-        Cache::clearAll();
-        Cache\Runtime::clear();
-
-        $this->testObject = AbstractObject::getById($this->testObject->getId());
-
-        $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'en');
-        $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'de');
+        $this->testDataHelper->assertObjectsWithmetadata($this->testObject, 'objectswithmetadata', $this->comparisonObject, $this->seed);
     }
 
-    public function testBricks()
+    public function testPassword()
+    {
+        $this->createTestObject('password');
+
+        $this->testDataHelper->assertPassword($this->testObject, 'password', $this->seed);
+    }
+
+    public function testSelect()
+    {
+        $this->createTestObject('select');
+
+        $this->testDataHelper->assertSelect($this->testObject, 'select', $this->seed);
+    }
+
+    public function testSlider()
+    {
+        $this->createTestObject('slider');
+
+        $this->testDataHelper->assertSlider($this->testObject, 'slider', $this->seed);
+    }
+
+    public function testStructuredTable()
     {
         $this->createTestObject([
             [
-                'method' => 'fillBricks',
-                'field' => 'mybricks',
+                'method' => 'fillStructuredTable',
+                'field' => 'structuredtable',
             ],
         ]);
 
-        $this->testDataHelper->assertBricks($this->testObject, 'mybricks', $this->seed);
+        $this->testDataHelper->assertStructuredTable($this->testObject, 'structuredtable', $this->comparisonObject, $this->seed);
     }
 
-    public function testFieldCollection()
+    public function testTable()
     {
-        $this->createTestObject([
-            [
-                'method' => 'fillFieldCollection',
-                'field' => 'myfieldcollection',
-            ],
-        ]);
+        $this->createTestObject('table');
 
-        $this->testDataHelper->assertFieldCollection($this->testObject, 'myfieldcollection', $this->seed);
+        $this->testDataHelper->assertTable($this->testObject, 'table', $this->comparisonObject, $this->seed);
+    }
+
+    public function testTextarea()
+    {
+        $this->createTestObject('textarea');
+
+        $this->testDataHelper->assertTextarea($this->testObject, 'textarea', $this->seed);
+    }
+
+    public function testTime()
+    {
+        $this->createTestObject('time');
+
+        $this->testDataHelper->assertTime($this->testObject, 'time', $this->seed);
     }
 
     public function testUrlSlug()
@@ -527,23 +533,17 @@ abstract class AbstractDataTypeTestCase extends TestCase
         $this->assertNotNull($ex, 'duplicate slug, expected an exception');
     }
 
-    public function testLocalizedUrlSlug()
+    public function testUser()
     {
-        $this->createTestObject([
-            [
-                'method' => 'fillUrlSlug',
-                'field' => 'lurlSlug',
-                'arguments' => ['de'],
-            ],
-            [
-                'method' => 'fillUrlSlug',
-                'field' => 'lurlSlug',
-                'arguments' => ['en'],
-            ],
-        ]);
+        $this->createTestObject('user');
 
-        $this->testObject = Concrete::getById($this->testObject->getId(), true);
-        $this->testDataHelper->assertUrlSlug($this->testObject, 'lurlSlug', $this->seed, 'en');
-        $this->testDataHelper->assertUrlSlug($this->testObject, 'lurlSlug', $this->seed, 'de');
+        $this->testDataHelper->assertUser($this->testObject, 'user', $this->seed);
+    }
+
+    public function testWysiwyg()
+    {
+        $this->createTestObject('wysiwyg');
+
+        $this->testDataHelper->assertWysiwyg($this->testObject, 'wysiwyg', $this->seed);
     }
 }
