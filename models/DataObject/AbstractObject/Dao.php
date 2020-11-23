@@ -54,7 +54,7 @@ class Dao extends Model\Element\Dao
      *
      * @param string $path
      *
-     * @throws \Exception
+     * @throws Model\Element\Exception\ElementNotFoundException
      */
     public function getByPath($path)
     {
@@ -64,7 +64,7 @@ class Dao extends Model\Element\Dao
         if (!empty($data['o_id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception("object doesn't exist");
+            throw new Model\Element\Exception\ElementNotFoundException("object doesn't exist");
         }
     }
 
@@ -367,10 +367,16 @@ class Dao extends Model\Element\Dao
      * @param int $id
      *
      * @return array
+     *
+     * @throws Model\Element\Exception\ElementNotFoundException
      */
     public function getTypeById($id)
     {
         $t = $this->db->fetchRow('SELECT o_type,o_className,o_classId FROM objects WHERE o_id = ?', $id);
+
+        if (!$t) {
+            throw new Model\Element\Exception\ElementNotFoundException("object with ID " . $id . " not found");
+        }
 
         return $t;
     }
