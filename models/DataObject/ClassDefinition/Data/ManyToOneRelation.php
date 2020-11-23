@@ -65,13 +65,6 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     ];
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\Document\\Page | \\Pimcore\\Model\\Document\\Snippet | \\Pimcore\\Model\\Document | \\Pimcore\\Model\\Asset | \\Pimcore\\Model\\DataObject\\AbstractObject';
-
-    /**
      *
      * @var bool
      */
@@ -600,7 +593,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /**
      * @return string
      */
-    public function getPhpdocType()
+    protected function getPhpdocType()
     {
         return implode(' | ', $this->getPhpDocClassString(false));
     }

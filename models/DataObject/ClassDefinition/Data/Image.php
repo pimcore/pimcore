@@ -25,7 +25,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -64,13 +63,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @var string
      */
     public $columnType = 'int(11)';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\Asset\\Image';
 
     /**
      * @return int
@@ -479,4 +471,25 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
         return $oldValue === $newValue;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\Pimcore\\Model\\Asset\\Image';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\Pimcore\\Model\\Asset\\Image';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\Pimcore\\Model\\Asset\\Image|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\Pimcore\\Model\\Asset\\Image|null';
+    }
+
 }

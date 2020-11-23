@@ -23,21 +23,12 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class Fieldcollections extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface
 {
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
-
     /**
      * Static type of this element
      *
      * @var string
      */
     public $fieldtype = 'fieldcollections';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Fieldcollection';
 
     /**
      * @var array
@@ -852,4 +843,26 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     {
         return false;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\Pimcore\\Model\\DataObject\\Fieldcollection';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Fieldcollection';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Fieldcollection|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Fieldcollection|null';
+    }
+
+
 }

@@ -56,13 +56,6 @@ abstract class Data
     public $index;
 
     /**
-     * @deprecated implement getPhpdocInputType() and getPhpdocReturnType() instead
-     *
-     * @var string
-     */
-    public $phpdocType;
-
-    /**
      * @var bool
      */
     public $locked;
@@ -388,16 +381,6 @@ abstract class Data
     }
 
     /**
-     * @deprecated use getPhpdocInputType() and getPhpdocReturnType() instead
-     *
-     * @return string
-     */
-    public function getPhpdocType()
-    {
-        return $this->phpdocType;
-    }
-
-    /**
      *
      * @return string
      */
@@ -627,52 +610,29 @@ abstract class Data
     }
 
     /**
+     * @abstract
+     *
      * @return string|null
      */
-    public function getParameterTypeDeclaration(): ?string
-    {
-        if ($this->getPhpdocInputType()) {
-            return '?' . $this->getPhpdocInputType();
-        }
-
-        return null;
-    }
+    abstract public function getParameterTypeDeclaration(): ?string;
 
     /**
      * @return string|null
      */
-    public function getReturnTypeDeclaration(): ?string
-    {
-        if ($this->getPhpdocReturnType()) {
-            return '?' . $this->getPhpdocReturnType();
-        }
-
-        return null;
-    }
+    abstract public function getReturnTypeDeclaration(): ?string;
 
     /**
+     * @abstract
+     *
      * @return string|null
      */
-    public function getPhpdocInputType(): ?string
-    {
-        if ($this->getPhpdocType()) {
-            return $this->getPhpdocType();
-        }
-
-        return null;
-    }
+    abstract public function getPhpdocInputType(): ?string;
 
     /**
+     * @abstract
      * @return string|null
      */
-    public function getPhpdocReturnType(): ?string
-    {
-        if ($this->getPhpdocType()) {
-            return $this->getPhpdocType();
-        }
-
-        return null;
-    }
+    abstract public function getPhpdocReturnType(): ?string;
 
     /**
      * Creates getter code which is used for generation of php file for object classes using this data type

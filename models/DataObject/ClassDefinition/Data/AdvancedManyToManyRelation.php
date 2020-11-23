@@ -984,14 +984,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @return string
-     */
-    public function getPhpdocType()
-    {
-        return $this->phpdocType;
-    }
-
-    /**
      * @inheritdoc
      */
     public function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])

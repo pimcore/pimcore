@@ -38,13 +38,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public $fieldtype = 'localizedfields';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Localizedfield';
-
-    /**
      * @var array
      */
     public $childs = [];
@@ -1358,4 +1351,26 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     {
         $this->tabPosition = $tabPosition;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\Pimcore\\Model\\DataObject\\Localizedfield';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\Pimcore\\Model\\DataObject\\Localizedfield';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Localizedfield';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Localizedfield';
+    }
+
+
 }

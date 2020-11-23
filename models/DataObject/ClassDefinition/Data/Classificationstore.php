@@ -35,13 +35,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public $fieldtype = 'classificationstore';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Classificationstore';
-
-    /**
      * @var array
      */
     public $childs = [];
@@ -1239,4 +1232,26 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
         return $this;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\Pimcore\\Model\\DataObject\\Classificationstore';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\Pimcore\\Model\\DataObject\\Classificationstore';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Classificationstore|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Classificationstore|null';
+    }
+
+
 }

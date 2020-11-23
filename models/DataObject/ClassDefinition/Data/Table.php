@@ -96,13 +96,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $columnType = 'longtext';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'array|string';
-
-    /**
      * @return int
      */
     public function getWidth()
@@ -638,4 +631,25 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         return $this->isEqualArray($oldValue, $newValue);
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?array|string';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return 'array';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'array|string';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'array';
+    }
+
 }

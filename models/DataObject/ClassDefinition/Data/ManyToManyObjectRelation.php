@@ -673,7 +673,7 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     /**
      * @return string
      */
-    public function getPhpdocType()
+    protected function getPhpdocType()
     {
         return implode(' | ', $this->getPhpDocClassString(true));
     }

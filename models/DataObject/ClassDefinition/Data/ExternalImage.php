@@ -24,7 +24,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -61,13 +60,6 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
      * @var string
      */
     public $columnType = 'longtext';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ExternalImage';
 
     /**
      * @return int
@@ -337,4 +329,25 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
 
         return $oldValue == $newValue;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\Pimcore\\Model\\DataObject\\Data\\ExternalImage';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\Pimcore\\Model\\DataObject\\Data\\ExternalImage';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Data\\ExternalImage|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Data\\ExternalImage|null';
+    }
+
 }

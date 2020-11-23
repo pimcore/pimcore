@@ -28,7 +28,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -60,13 +59,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @var string
      */
     public $columnType = 'longtext';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'string';
 
     /**
      * @var string
@@ -400,4 +392,25 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     {
         return true;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'string|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'string|null';
+    }
+
 }

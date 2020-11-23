@@ -80,13 +80,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public $styleElement = '';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\BlockElement[][]';
-
-    /**
      * @var array
      */
     public $childs = [];
@@ -1159,4 +1152,16 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $blockElement->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
         }
     }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Data\\BlockElement[][]';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Data\\BlockElement[][]';;
+    }
+
+
 }
