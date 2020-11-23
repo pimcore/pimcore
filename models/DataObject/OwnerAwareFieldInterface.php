@@ -41,15 +41,15 @@ interface OwnerAwareFieldInterface
     /**
      * @return mixed
      */
-    public function __getOwner();
+    public function _getOwner();
 
     /**
      * @return string|null
      */
-    public function __getOwnerFieldname(): ?string;
+    public function _getOwnerFieldname(): ?string;
 
     /**
      * @return string|null
      */
-    public function __getOwnerLanguage(): ?string;
+    public function _getOwnerLanguage(): ?string;
 }
