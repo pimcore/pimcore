@@ -60,13 +60,6 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
     public $queryColumnType = 'text';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'array';
-
-    /**
      * @var bool
      */
     public $relationType = true;

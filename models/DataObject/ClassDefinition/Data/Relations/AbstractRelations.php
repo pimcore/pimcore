@@ -530,4 +530,9 @@ abstract class AbstractRelations extends Data implements
 
         return null;
     }
+
+    /**
+     * @return string
+     */
+    abstract protected function getPhpdocType();
 }
