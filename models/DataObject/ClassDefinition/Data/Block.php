@@ -216,8 +216,8 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         $data = $blockElementRaw['data'];
                         if ($data) {
                             $data->setObject($object);
-                            $data->__setOwner($blockElement);
-                            $data->__setOwnerFieldname('localizedfields');
+                            $data->_setOwner($blockElement);
+                            $data->_setOwnerFieldname('localizedfields');
 
                             $data->setContext(['containerType' => 'block',
                                 'fieldname' => $this->getName(),
@@ -1158,9 +1158,9 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                     throw new \Error('language param missing');
                 }
             }
-            $blockElement->__setOwner($params['owner']);
-            $blockElement->__setOwnerFieldname($params['fieldname']);
-            $blockElement->__setOwnerLanguage($params['language'] ?? null);
+            $blockElement->_setOwner($params['owner']);
+            $blockElement->_setOwnerFieldname($params['fieldname']);
+            $blockElement->_setOwnerLanguage($params['language'] ?? null);
         }
     }
 }

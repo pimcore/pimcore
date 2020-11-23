@@ -79,7 +79,7 @@ trait OwnerAwareFieldTrait
      *
      * @return $this;
      */
-    public function __setOwnerFieldname(?string $fieldname) {
+    public function _setOwnerFieldname(?string $fieldname) {
         $this->_fieldname = $fieldname;
         return $this;
     }
@@ -91,7 +91,7 @@ trait OwnerAwareFieldTrait
      *
      * @return $this
      */
-    public function __setOwnerLanguage(?string $language) {
+    public function _setOwnerLanguage(?string $language) {
         $this->_language = $language;
         return $this;
     }

@@ -24,19 +24,19 @@ interface OwnerAwareFieldInterface
      *
      * @return $this;
      */
-    public function __setOwner($owner);
+    public function _setOwner($owner);
 
     /**
      * @param string|null $fieldname
      * @return $this
      */
-    public function __setOwnerFieldname(?string $fieldname);
+    public function _setOwnerFieldname(?string $fieldname);
 
     /**
      * @param string|null $language
      * @return $this
      */
-    public function __setOwnerLanguage(?string $language);
+    public function _setOwnerLanguage(?string $language);
 
     /**
      * @return mixed

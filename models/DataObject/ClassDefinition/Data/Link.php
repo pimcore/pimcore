@@ -71,9 +71,9 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         if ($data instanceof DataObject\Data\Link) {
             $data = clone $data;
-            $data->__setOwner(null);
-            $data->__setOwnerFieldname('');
-            $data->__setOwnerLanguage(null);
+            $data->_setOwner(null);
+            $data->_setOwnerFieldname('');
+            $data->_setOwnerLanguage(null);
 
             if ($data->getLinktype() == 'internal' && !$data->getPath()) {
                 $data->setLinktype(null);
@@ -113,9 +113,9 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         if ($link instanceof DataObject\Data\Link) {
             if (isset($params['owner'])) {
-                $link->__setOwner($params['owner']);
-                $link->__setOwnerFieldname($params['fieldname']);
-                $link->__setOwnerLanguage($params['language'] ?? null);
+                $link->_setOwner($params['owner']);
+                $link->_setOwnerFieldname($params['fieldname']);
+                $link->_setOwnerLanguage($params['language'] ?? null);
             }
 
             try {
