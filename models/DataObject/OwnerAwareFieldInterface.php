@@ -21,8 +21,35 @@ interface OwnerAwareFieldInterface
 {
     /**
      * @param mixed $owner
-     * @param string $fieldname
-     * @param string|null $language
+     *
+     * @return $this;
      */
-    public function setOwner($owner, string $fieldname, $language = null);
+    public function __setOwner($owner);
+
+    /**
+     * @param string|null $fieldname
+     * @return $this
+     */
+    public function __setOwnerFieldname(?string $fieldname);
+
+    /**
+     * @param string|null $language
+     * @return $this
+     */
+    public function __setOwnerLanguage(?string $language);
+
+    /**
+     * @return mixed
+     */
+    public function __getOwner();
+
+    /**
+     * @return string|null
+     */
+    public function __getOwnerFieldname(): ?string;
+
+    /**
+     * @return string|null
+     */
+    public function __getOwnerLanguage(): ?string;
 }

@@ -208,7 +208,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
             $field = new Model\DataObject\Data\EncryptedField($this->delegate, $data);
 
             if (isset($params['owner'])) {
-                $field->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                $field->__setOwner($params['owner']);
+                $field->__setOwnerFieldname($params['fieldname']);
+                $field->__setOwnerLanguage($params['language'] ?? null);
             }
 
             return $field;

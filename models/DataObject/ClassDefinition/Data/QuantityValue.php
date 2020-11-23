@@ -262,7 +262,9 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
             $quantityValue = new Model\DataObject\Data\QuantityValue($value !== null ? (float)$value : null, $data[$this->getName() . '__unit']);
 
             if (isset($params['owner'])) {
-                $quantityValue->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                $quantityValue->__setOwner($params['owner']);
+                $quantityValue->__setOwnerFieldname($params['fieldname']);
+                $quantityValue->__setOwnerLanguage($params['language'] ?? null);
             }
 
             return $quantityValue;

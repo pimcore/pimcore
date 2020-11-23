@@ -41,14 +41,59 @@ trait OwnerAwareFieldTrait
      * @internal
      *
      * @param mixed $owner
-     * @param string $fieldname
-     * @param string|null $language
+     *
+     * @return $this;
      */
-    public function setOwner($owner, string $fieldname, $language = null)
+    public function __setOwner($owner)
     {
         $this->_owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function __getOwner() {
+        return $this->_owner;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function __getOwnerFieldname(): ?string {
+        return $this->_fieldname;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function __getOwnerLanguage(): ?string {
+        return $this->_language;
+    }
+
+    /**
+     * @internal
+     *
+     * @param string|null $fieldname
+     *
+     * @return $this;
+     */
+    public function __setOwnerFieldname(?string $fieldname) {
         $this->_fieldname = $fieldname;
+        return $this;
+    }
+
+    /**
+     * @internal
+     *
+     * @param string|null $language
+     *
+     * @return $this
+     */
+    public function __setOwnerLanguage(?string $language) {
         $this->_language = $language;
+        return $this;
     }
 
     /**

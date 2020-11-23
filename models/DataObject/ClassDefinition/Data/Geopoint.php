@@ -97,7 +97,9 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
             $geopoint = new DataObject\Data\Geopoint($data[$this->getName() . '__longitude'], $data[$this->getName() . '__latitude']);
 
             if (isset($params['owner'])) {
-                $geopoint->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                $geopoint->__setOwner($params['owner']);
+                $geopoint->__setOwnerFieldname($params['fieldname']);
+                $geopoint->__setOwnerLanguage($params['language'] ?? null);
             }
 
             return $geopoint;

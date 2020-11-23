@@ -108,7 +108,9 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
             $geobounds = new DataObject\Data\Geobounds($ne, $sw);
 
             if (isset($params['owner'])) {
-                $geobounds->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                $geobounds->__setOwner($params['owner']);
+                $geobounds->__setOwnerFieldname($params['fieldname']);
+                $geobounds->__setOwnerLanguage($params['language'] ?? null);
             }
 
             return $geobounds;

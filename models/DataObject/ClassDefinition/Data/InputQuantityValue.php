@@ -71,7 +71,9 @@ class InputQuantityValue extends QuantityValue
             $dataObject = $this->getNewDataObject($data[$this->getName() . '__value'], $data[$this->getName() . '__unit']);
 
             if (isset($params['owner'])) {
-                $dataObject->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                $dataObject->__setOwner($params['owner']);
+                $dataObject->__setOwnerFieldname($params['fieldname']);
+                $dataObject->__setOwnerLanguage($params['language'] ?? null);
             }
 
             return $dataObject;

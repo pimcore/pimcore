@@ -170,7 +170,9 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
         $this->needsRenewReferences = true;
 
         if ($this->data instanceof OwnerAwareFieldInterface) {
-            $this->data->setOwner($this, $this->getName());
+            $this->data->__setOwner($this);
+            $this->data->__setOwnerFieldname($this->getName());
+            $this->data->__setOwnerLanguage(null);
         }
     }
 

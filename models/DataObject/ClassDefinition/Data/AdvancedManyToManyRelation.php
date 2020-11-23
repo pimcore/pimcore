@@ -154,7 +154,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                                 ]
                             );
 
-                        $metaData->setOwner($object, $this->getName());
+                        $metaData->__setOwner($object);
+                        $metaData->__setOwnerFieldname($this->getName());
 
                         $metaData->setElementTypeAndId($element['type'], $element['dest_id']);
 
@@ -382,7 +383,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                             ]
                         );
 
-                    $metaData->setOwner($object, $this->getName());
+                    $metaData->__setOwner($object);
+                    $metaData->__setOwnerFieldname($this->getName());
 
                     foreach ($this->getColumns() as $columnConfig) {
                         $key = $columnConfig['key'];
@@ -559,7 +561,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                         ]
                     );
 
-                $metaObject->setOwner($object, $this->getName());
+                $metaObject->__setOwner($object);
+                $metaObject->__setOwnerFieldname($this->getName());
                 $value[] = $metaObject;
             }
         }
@@ -973,7 +976,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $data = $elementMetadata['data'];
 
                     $item = new DataObject\Data\ElementMetadata($fieldname, $columns, $element);
-                    $item->setOwner($object, $this->getName());
+                    $item->__setOwner($object);
+                    $item->__setOwnerFieldname($this->getName());
                     $item->setData($data);
                     $result[] = $item;
                 }
