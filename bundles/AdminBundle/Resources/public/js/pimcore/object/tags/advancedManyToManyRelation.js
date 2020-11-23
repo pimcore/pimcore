@@ -297,7 +297,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         var subtype = data.data.subtype;
-                        if (data.data.type == "object" && data.data.subtype != "folder") {
+                        if (data.data.type === "object" && data.data.subtype !== "folder" && record.get('subtype') !== null) {
                             subtype = "object";
                         }
                         pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
@@ -702,7 +702,7 @@ pimcore.object.tags.advancedManyToManyRelation = Class.create(pimcore.object.tag
                 item.parentMenu.destroy();
 
                 var subtype = data.data.subtype;
-                if (data.data.type == "object" && data.data.subtype != "folder") {
+                if (data.data.type === "object" && data.data.subtype !== "folder" && record.get('subtype') !== null) {
                     subtype = "object";
                 }
                 pimcore.helpers.openElement(data.data.id, data.data.type, subtype);
