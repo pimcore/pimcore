@@ -305,7 +305,7 @@ pimcore.helpers.recordElement = function (id, type, name) {
 };
 
 pimcore.helpers.openElement = function (idOrPath, type, subtype) {
-    if (typeof subtype != "undefined") {
+    if (typeof subtype != "undefined" && subtype !== null) {
         if (type == "document") {
             pimcore.helpers.openDocument(idOrPath, subtype);
         }

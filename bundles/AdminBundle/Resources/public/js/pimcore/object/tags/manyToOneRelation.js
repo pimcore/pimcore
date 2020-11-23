@@ -109,7 +109,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
 
             el.getEl().on('dblclick', function(){
                 var subtype = this.data.subtype;
-                if (this.data.type == "object" && this.data.subtype != "folder") {
+                if (this.data.type === "object" && this.data.subtype !== "folder" && this.data.subtype !== null) {
                     subtype = "object";
                 }
 
@@ -391,7 +391,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
     },
 
     openElement: function () {
-        if (this.data.id && this.data.type && this.data.subtype) {
+        if (this.data.id && this.data.type) {
             pimcore.helpers.openElement(this.data.id, this.data.type, this.data.subtype);
         }
     },
