@@ -52,7 +52,6 @@ These tables are created during Pimcore install and are always the same.
 | objects | List of all objects with metadata like id, class name, path, parent, ...|
 | object_url_slugs | [URL Slug](../05_Objects/01_Object_Classes/01_Data_Types/65_Others.md) data|
 | properties | Data from the `properties` tab |
-| qr_codes | Edit QR Code configurations | 
 | quantityvalue_units | Available quantities for quantity value object data type |
 | recyclebin | Stores metadata of deleted elements |
 | redirects | Stores redirects | 
