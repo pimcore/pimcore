@@ -2047,9 +2047,10 @@ class AssetController extends ElementControllerBase implements KernelControllerE
                         if (!$a instanceof Asset\Folder) {
                             if($a instanceof Asset\Image && $request->get('thumbnail')) {
                                 $fileSystemPath = $a->getThumbnail($request->get('thumbnail'), false)->getFileSystemPath();
-                                $pathInZip = basename($fileSystemPath);
+                                $pathInZip = $a->getPath().'/'.basename($a->getThumbnail($request->get('thumbnail'), false)->getFileSystemPath());
                             } else {
                                 $fileSystemPath = $a->getFilename();
+                                $pathInZip = $a->getFullPath();
                             }
 
                             // add the file with the relative path to the parent directory
