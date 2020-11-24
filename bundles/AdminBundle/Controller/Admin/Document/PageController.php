@@ -362,6 +362,44 @@ class PageController extends DocumentControllerBase
     }
 
     /**
+     * @Route("/qr-code", name="pimcore_admin_document_page_qrcode", methods={"GET"})
+     *
+     * @param Request $request
+     *
+     * @return BinaryFileResponse
+     */
+    public function qrCodeAction(Request $request)
+    {
+        $page = Document\Page::getById($request->query->get('id'));
+
+        if (!$page) {
+            throw $this->createNotFoundException('Page not found');
+        }
+
+        $url = $request->getScheme() . '://' . $request->getHttpHost() . $page->getFullPath();
+
+        $code = new \Endroid\QrCode\QrCode;
+        $code->setWriterByName('png');
+        $code->setText($url);
+        $code->setSize(500);
+
+        $tmpFile = PIMCORE_PRIVATE_VAR . '/qr-code-' . uniqid() . '.png';
+        $code->writeFile($tmpFile);
+
+        $response = new BinaryFileResponse($tmpFile);
+        $response->headers->set('Content-Type', 'image/png');
+
+        if ($request->query->get('download')) {
+            $code->setSize(4000);
+            $response->setContentDisposition('attachment', 'qrcode-preview.png');
+        }
+
+        $response->deleteFileAfterSend(true);
+
+        return $response;
+    }
+
+    /**
      * @param Request $request
      * @param Document $page
      */
