@@ -26,11 +26,13 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPayme
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\SnippetResponse;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentResponse\StartPaymentResponseInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceInterface;
+use Pimcore\Model\DataObject\OnlineShopOrder;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Intl\Exception\NotImplementedException;
+use Symfony\Component\Lock\Factory as LockFactory;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Templating\EngineInterface;
 
@@ -40,6 +42,9 @@ use Symfony\Component\Templating\EngineInterface;
 class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
+
+    const LOCK_KEY = 'hobex-handleresponse-lock';
+
 
     const HOST_URL_TESTSYSTEM = 'https://test.oppwa.com';
     const HOST_URL_LIVESYSTEM = 'https://oppwa.com';
@@ -53,6 +58,11 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
     const TRANSACTION_CATEGORY_ECOMMERCE = 'EC';
 
+    /**
+     * @var LockFactory
+     */
+    protected $lockFactory;
+
     /** @var EngineInterface */
     private $template;
 
@@ -61,7 +71,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
     /** @var HobexConfig */
     private $config;
 
-    public function __construct(array $options, EngineInterface $template, LoggerInterface $hobexLogger)
+    public function __construct(array $options, EngineInterface $template, LoggerInterface $hobexLogger, LockFactory $lockFactory)
     {
         $this->setLogger($hobexLogger);
         $this->template = $template;
@@ -75,6 +85,8 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
             ->setHostURL($options['testSystem'] ? static::HOST_URL_TESTSYSTEM : static::HOST_URL_LIVESYSTEM)
             ->setPaymentMethods($options['payment_methods']) //Hobex terminology: "paymentBrands"
         ;
+        $this->lockFactory = $lockFactory;
+
     }
 
     /**
@@ -176,6 +188,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
             //result codes: see https://hobex.docs.oppwa.com/reference/resultCodes
             if ($jsonResponse && isset($jsonResponse['id'])) {
+                $this->handleStartPaymentResponse($orderAgent, $jsonResponse, $requestConfig);
                 $renderedWidget = $this->renderWidget($requestConfig, $jsonResponse['id']);
                 $response = new SnippetResponse($orderAgent->getOrder(), $renderedWidget);
 
@@ -189,7 +202,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
         }
     }
 
-    private function logException(string $message, string $method, \Exception $e, array $logParams)
+    protected function logException(string $message, string $method, \Exception $e, array $logParams)
     {
         $this->logger->alert($message, array_merge([
             'class' => self::class,
@@ -248,18 +261,28 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
     public function handleResponse($response)
     {
         $responseStatus = StatusInterface::STATUS_PENDING;
+        $checkoutId = $response['id'];
+        $lock = $this->lockFactory->createLock(self::LOCK_KEY . $checkoutId);
+        $lock->acquire(true);
 
-        $resourcePath = $response['resourcePath'];
-
-        $client = new Client([
-                'base_uri' => $this->config->getHostURL().$resourcePath,
-                'headers' => [
-                    'Authorization:Bearer' => $this->config->getAuthorizationBearer(),
-                ],
-            ]
-        );
 
         try {
+            $transactionId = $this->getExistingTransactionId($checkoutId);
+            if ($transactionId){
+                $resourcePath = sprintf("/v1/query/%s", $transactionId);
+            } else {
+                $resourcePath = $response['resourcePath'];
+                if (!$resourcePath){
+                    $resourcePath = sprintf("/v1/checkouts/%s/payment", $checkoutId);
+                }
+            }
+            $client = new Client([
+                    'base_uri' => $this->config->getHostURL().$resourcePath,
+                    'headers' => [
+                        'Authorization:Bearer' => $this->config->getAuthorizationBearer(),
+                    ],
+                ]
+            );
             $response = $client->request('get', '?entityId='.$this->config->getEntityId());
             $jsonResponse = json_decode($response->getBody()->getContents(), true);
 
@@ -303,6 +326,8 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
         } catch (\Exception $e) {
             $this->logException('Could not process payment response.', 'handleResponse', $e, ['response' => $response]);
             throw $e;
+        } finally {
+            $lock->release();
         }
 
         return $responseStatus;
@@ -442,4 +467,51 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
         return $providerData;
     }
+
+    /** hook to customized handle jsonResponse of start payment */
+    protected function handleStartPaymentResponse(
+        OrderAgentInterface $orderAgent,
+        $jsonResponse,
+        \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\HobexRequest $requestConfig
+    ) {
+
+    }
+
+    /**
+     * @param $checkoutId
+     *
+     * @return string|null
+     * @throws \Exception
+     */
+    protected function getExistingTransactionId($checkoutId)
+    {
+        $transactionId = null;
+        $list = OnlineShopOrder::getList([
+            "objectbricks" => ["PaymentProviderHobex"],
+
+        ]);
+        $list->setCondition("PaymentProviderHobex.auth_checkoutId = ?", $checkoutId);
+        if ($list->count()>0) {
+            /** @var OnlineShopOrder $order */
+            $order = $list->current();
+            $hobex = $order->getPaymentProvider()->getPaymentProviderHobex();
+            $status = $hobex->getAuth_paymentState();
+            if (!$this->isStatusPending($status)){
+                $transactionId =  $hobex->getAuth_extId();
+            }
+        }
+        return $transactionId;
+
+    }
+
+    /**
+     * @param $status
+     *
+     * @return bool
+     */
+    protected function isStatusPending($status)
+    {
+        return strpos($status, '000.200.') === 0;
+    }
+
 }
