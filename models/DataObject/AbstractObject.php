@@ -313,7 +313,7 @@ class AbstractObject extends Model\Element\AbstractElement
                 } else {
                     throw new \Exception('No entry for object id ' . $id);
                 }
-            } catch (Element\Exception\ElementNotFoundException $e) {
+            } catch (Model\Exception\NotFoundException $e) {
                 return null;
             }
         } else {
@@ -343,7 +343,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $object->getDao()->getByPath($path);
 
             return static::getById($object->getId(), $force);
-        } catch (Element\Exception\ElementNotFoundException $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

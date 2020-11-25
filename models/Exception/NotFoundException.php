@@ -15,8 +15,8 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Model\Element\Exception;
+namespace Pimcore\Model\Exception;
 
-class ElementNotFoundException extends \RuntimeException
+class NotFoundException extends \RuntimeException
 {
 }

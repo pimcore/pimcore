@@ -29,7 +29,7 @@ use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Element\Exception\ElementNotFoundException;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Mime;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -232,7 +232,7 @@ class Asset extends Element\AbstractElement
             $asset->getDao()->getByPath($path);
 
             return static::getById($asset->getId(), $force);
-        } catch (ElementNotFoundException $e) {
+        } catch (NotFoundExceptio $e) {
             return null;
         }
     }
@@ -294,7 +294,7 @@ class Asset extends Element\AbstractElement
                 $asset->resetDirtyMap();
 
                 \Pimcore\Cache::save($asset, $cacheKey);
-            } catch (ElementNotFoundException $e) {
+            } catch (NotFoundException $e) {
                 return null;
             }
         } else {

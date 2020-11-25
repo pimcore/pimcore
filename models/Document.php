@@ -27,7 +27,7 @@ use Pimcore\Model\Document\Hardlink;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Document\Listing;
 use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Element\Exception\ElementNotFoundException;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Frontend as FrontendTool;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
@@ -223,7 +223,7 @@ class Document extends Element\AbstractElement
             $helperDoc->getDao()->getByPath($path);
             $doc = static::getById($helperDoc->getId(), $force);
             \Pimcore\Cache\Runtime::set($cacheKey, $doc);
-        } catch (ElementNotFoundException $e) {
+        } catch (NotFoundException $e) {
             $doc = null;
         }
 
@@ -275,7 +275,7 @@ class Document extends Element\AbstractElement
             $document = new Document();
             try {
                 $document->getDao()->getById($id);
-            } catch (ElementNotFoundException $e) {
+            } catch (NotFoundException $e) {
                 return null;
             }
 

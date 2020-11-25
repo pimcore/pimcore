@@ -33,7 +33,7 @@ class Dao extends Model\Element\Dao
      *
      * @param int $id
      *
-     * @throws Model\Element\Exception\ElementNotFoundException
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id)
     {
@@ -44,7 +44,7 @@ class Dao extends Model\Element\Dao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new  Model\Element\Exception\ElementNotFoundException("document with id " . $id . " not found");
+            throw new  Model\Exception\NotFoundException("document with id " . $id . " not found");
         }
     }
 
@@ -53,7 +53,7 @@ class Dao extends Model\Element\Dao
      *
      * @param string $path
      *
-     * @throws Model\Element\Exception\ElementNotFoundException
+     * @throws Model\Exception\NotFoundException
      */
     public function getByPath($path)
     {
@@ -71,7 +71,7 @@ class Dao extends Model\Element\Dao
             if (!empty($data['id'])) {
                 $this->assignVariablesToModel($data);
             } else {
-                throw new Model\Element\Exception\ElementNotFoundException("document with path $path doesn't exist");
+                throw new Model\Exception\NotFoundException("document with path $path doesn't exist");
             }
         }
     }

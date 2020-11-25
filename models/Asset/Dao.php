@@ -36,7 +36,7 @@ class Dao extends Model\Element\Dao
      *
      * @param int $id
      *
-     * @throws Model\Element\Exception\ElementNotFoundException
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id)
     {
@@ -69,7 +69,7 @@ class Dao extends Model\Element\Dao
                 $this->model->setMetadataRaw($metadata);
             }
         } else {
-            throw new Model\Element\Exception\ElementNotFoundException('Asset with ID ' . $id . " doesn't exists");
+            throw new Model\Exception\NotFoundException('Asset with ID ' . $id . " doesn't exists");
         }
     }
 
@@ -78,7 +78,7 @@ class Dao extends Model\Element\Dao
      *
      * @param string $path
      *
-     * @throws Model\Element\Exception\ElementNotFoundException
+     * @throws Model\Exception\NotFoundException
      */
     public function getByPath($path)
     {
@@ -88,7 +88,7 @@ class Dao extends Model\Element\Dao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new Model\Element\Exception\ElementNotFoundException('asset with path: ' . $path . " doesn't exist");
+            throw new Model\Exception\NotFoundException('asset with path: ' . $path . " doesn't exist");
         }
     }
 
