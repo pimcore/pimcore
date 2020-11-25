@@ -620,7 +620,7 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\StructuredTable';
+        return '\\Pimcore\\Model\\DataObject\\Data\\StructuredTable|null';
     }
 
 
