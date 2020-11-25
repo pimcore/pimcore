@@ -641,7 +641,7 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\ImageGallery';
+        return '\\Pimcore\\Model\\DataObject\\Data\\ImageGallery|null';
     }
 
 
