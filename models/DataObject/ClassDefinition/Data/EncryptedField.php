@@ -488,7 +488,8 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      */
     public function getDelegateDatatypeDefinition()
     {
-        return $this->getDelegate();    }
+        return $this->getDelegate();
+    }
 
     /**
      * @param mixed $data
