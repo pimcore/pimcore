@@ -646,32 +646,45 @@ class Dao extends Model\Dao\AbstractDao
         /**
          * macro for creating ifnull statement
          *
-         * @param string $field
+         * @param string $row
          * @param array $languages
          *
          * @return string
          */
-        $getFallbackValue = function ($field, array $languages) use (&$getFallbackValue, $db) {
+        $getFallbackValue = function ($row, array $languages) use (&$getFallbackValue, $db) {
 
             // init
             $lang = array_shift($languages);
-
+            $field = $row['Field'];
             // get fallback for current language
             $fallback = count($languages) > 0
-                ? $getFallbackValue($field, $languages)
+                ? $getFallbackValue($row, $languages)
                 : 'null';
 
             // create query
-            $sql = sprintf(
-                'IF(`%s`.`%s` IS NULL OR `%s`.`%s` = "", %s, `%s`.`%s`)',
-                $lang,
-                $field,
-                $lang,
-                $field,
-                $fallback,
-                $lang,
-                $field
-            );
+            if ($row['Type'] === 'tinyint(1)' || $row['Type'] === 'int(4}') {
+                // create query
+                $sql = sprintf(
+                    'IF(`%s`.`%s` IS NULL, %s, `%s`.`%s`)',
+                    $lang,
+                    $field,
+                    $fallback,
+                    $lang,
+                    $field
+                );
+            } else {
+                // create query
+                $sql = sprintf(
+                    'IF(`%s`.`%s` IS NULL OR `%s`.`%s` = "", %s, `%s`.`%s`)',
+                    $lang,
+                    $field,
+                    $lang,
+                    $field,
+                    $fallback,
+                    $lang,
+                    $field
+                );
+            }
 
             return $fallback !== 'null'
                 ? $sql
@@ -703,7 +716,7 @@ class Dao extends Model\Dao\AbstractDao
                     if ($row['Field'] == 'language' || $row['Field'] == 'ooo_id') {
                         $localizedFields[] = $db->quoteIdentifier($language).'.'.$db->quoteIdentifier($row['Field']);
                     } else {
-                        $localizedFields[] = $getFallbackValue($row['Field'], $fallbackLanguages).sprintf(
+                        $localizedFields[] = $getFallbackValue($row, $fallbackLanguages).sprintf(
                                 ' as "%s"',
                                 $row['Field']
                             );
