@@ -1160,7 +1160,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\BlockElement[][]';;
+        return '\\Pimcore\\Model\\DataObject\\Data\\BlockElement[][]';
     }
 
 
