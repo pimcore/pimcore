@@ -319,7 +319,7 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
 
     public function getPhpdocReturnType(): ?string
     {
-        return 'string';
+        return 'string|null';
     }
 
 
