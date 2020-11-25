@@ -284,9 +284,9 @@ class AbstractObject extends Model\Element\AbstractElement
             }
         }
 
-        try {
-            if ($force || !($object = Cache::load($cacheKey))) {
-                $object = new Model\DataObject();
+        if ($force || !($object = Cache::load($cacheKey))) {
+            $object = new Model\DataObject();
+            try {
                 $typeInfo = $object->getDao()->getTypeById($id);
 
                 if ($typeInfo['o_type'] == 'object' || $typeInfo['o_type'] == 'variant' || $typeInfo['o_type'] == 'folder') {
@@ -313,12 +313,13 @@ class AbstractObject extends Model\Element\AbstractElement
                 } else {
                     throw new \Exception('No entry for object id ' . $id);
                 }
-            } else {
-                Runtime::set($cacheKey, $object);
+            } catch (Model\Exception\NotFoundException $e) {
+                return null;
             }
-        } catch (\Exception $e) {
-            return null;
+        } else {
+            Runtime::set($cacheKey, $object);
         }
+
 
         if (!$object || !static::typeMatch($object)) {
             return null;
@@ -342,7 +343,7 @@ class AbstractObject extends Model\Element\AbstractElement
             $object->getDao()->getByPath($path);
 
             return static::getById($object->getId(), $force);
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
