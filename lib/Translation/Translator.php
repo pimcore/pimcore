@@ -121,6 +121,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
         // only check for empty translation on original ID - we don't want to create empty
         // translations for normalized IDs when case insensitive
         $term = $this->checkForEmptyTranslation($originalId, $term, $parameters, $domain, $locale);
+        $term = strtr($term, $parameters);
 
         // check for an indexed array, that used the ZF1 vsprintf() notation for parameters
         if (isset($parameters[0])) {
@@ -279,6 +280,10 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
      */
     protected function checkForEmptyTranslation($id, $translated, $parameters, $domain, $locale)
     {
+        if (empty($id)) {
+            return $translated;
+        }
+
         $normalizedId = $id;
         if ($this->caseInsensitive) {
             $normalizedId = mb_strtolower($id);
@@ -288,21 +293,17 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             $normalizedId = $translated;
         }
 
-        $comparisonId = $normalizedId;
-        if (!empty($parameters)) {
-            $comparisonId = strtr($normalizedId, $parameters);
-        }
-
-        $lookForFallback = $comparisonId == $translated;
-        if (empty($id)) {
+        $lookForFallback = $normalizedId == $translated;
+        if ($normalizedId != $translated && $translated) {
             return $translated;
-        } elseif ($comparisonId != $translated && $translated) {
-            return $translated;
-        } elseif ($comparisonId == $translated) {
+        } elseif ($normalizedId == $translated) {
             if ($this->getCatalogue($locale)->has($normalizedId, $domain)) {
-                return $this->getCatalogue($locale)->get($normalizedId, $domain);
+                $translated =  $this->getCatalogue($locale)->get($normalizedId, $domain);
+                if ($translated != $normalizedId) {
+                    return $translated;
+                }
             } elseif ($backend = $this->getBackendForDomain($domain)) {
-                if (strlen($id) > 190) {
+                if (strlen($normalizedId) > 190) {
                     throw new \Exception("Message ID's longer than 190 characters are invalid!");
                 }
 
@@ -312,18 +313,18 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                 if ($class::isValidLanguage($locale)) {
 
                     /** @var AbstractTranslation|null $t */
-                    $t = $class::getByKey($id);
+                    $t = $class::getByKey($normalizedId);
                     if ($t) {
                         if (!$t->hasTranslation($locale)) {
                             $t->addTranslation($locale, '');
                         } else {
                             // return the original not lowercased ID
-                            return $id;
+                            return $normalizedId;
                         }
                     } else {
                         /** @var AbstractTranslation $t */
                         $t = new $class();
-                        $t->setKey($id);
+                        $t->setKey($normalizedId);
 
                         // add all available languages
                         $availableLanguages = (array)$class::getLanguages();
