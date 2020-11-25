@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use ProxyManager\Proxy\LazyLoadingInterface;
 
-abstract class Data
+abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface
 {
     use DataObject\ClassDefinition\Helper\VarExport;
 
