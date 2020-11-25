@@ -971,7 +971,7 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\' . Objectbrick::class;
+        return '\\' . Objectbrick::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
