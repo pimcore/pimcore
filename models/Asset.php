@@ -29,6 +29,7 @@ use Pimcore\Model\Asset\Listing;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\Data;
 use Pimcore\Model\Asset\MetaData\ClassDefinition\Data\DataDefinitionInterface;
 use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Exception\NotFoundException;
 use Pimcore\Tool;
 use Pimcore\Tool\Mime;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -231,7 +232,7 @@ class Asset extends Element\AbstractElement
             $asset->getDao()->getByPath($path);
 
             return static::getById($asset->getId(), $force);
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             return null;
         }
     }
@@ -277,10 +278,10 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        try {
-            if ($force || !($asset = \Pimcore\Cache::load($cacheKey))) {
-                $asset = new Asset();
-                $asset->getDao()->getById($id);
+        if ($force || !($asset = \Pimcore\Cache::load($cacheKey))) {
+            $asset = new Asset();
+            $asset->getDao()->getById($id);
+            try {
 
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
 
@@ -293,11 +294,11 @@ class Asset extends Element\AbstractElement
                 $asset->resetDirtyMap();
 
                 \Pimcore\Cache::save($asset, $cacheKey);
-            } else {
-                \Pimcore\Cache\Runtime::set($cacheKey, $asset);
+            } catch (NotFoundException $e) {
+                return null;
             }
-        } catch (\Exception $e) {
-            return null;
+        } else {
+            \Pimcore\Cache\Runtime::set($cacheKey, $asset);
         }
 
         if (!$asset || !static::typeMatch($asset)) {

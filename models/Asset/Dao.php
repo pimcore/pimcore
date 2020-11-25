@@ -36,7 +36,7 @@ class Dao extends Model\Element\Dao
      *
      * @param int $id
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getById($id)
     {
@@ -44,7 +44,7 @@ class Dao extends Model\Element\Dao
             LEFT JOIN tree_locks ON assets.id = tree_locks.id AND tree_locks.type = 'asset'
                 WHERE assets.id = ?", $id);
 
-        if ($data['id'] > 0) {
+        if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
 
             if ($data['hasMetaData']) {
@@ -69,7 +69,7 @@ class Dao extends Model\Element\Dao
                 $this->model->setMetadataRaw($metadata);
             }
         } else {
-            throw new \Exception('Asset with ID ' . $id . " doesn't exists");
+            throw new Model\Exception\NotFoundException('Asset with ID ' . $id . " doesn't exists");
         }
     }
 
@@ -78,7 +78,7 @@ class Dao extends Model\Element\Dao
      *
      * @param string $path
      *
-     * @throws \Exception
+     * @throws Model\Exception\NotFoundException
      */
     public function getByPath($path)
     {
@@ -88,7 +88,7 @@ class Dao extends Model\Element\Dao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new \Exception('asset with path: ' . $path . " doesn't exist");
+            throw new Model\Exception\NotFoundException('asset with path: ' . $path . " doesn't exist");
         }
     }
 
