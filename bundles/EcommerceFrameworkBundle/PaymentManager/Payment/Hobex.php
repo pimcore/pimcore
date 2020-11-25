@@ -478,7 +478,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
     }
 
     /**
-     * @param $checkoutId
+     * @param string $checkoutId
      *
      * @return string|null
      * @throws \Exception
@@ -505,7 +505,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
     }
 
     /**
-     * @param $status
+     * @param string $status
      *
      * @return bool
      */
