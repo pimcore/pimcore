@@ -17,6 +17,7 @@ namespace Pimcore\Twig\Extension;
 use Pimcore\Cache as CacheManager;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Tool;
+use Pimcore\ViewCache;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -47,9 +48,13 @@ class CacheExtension extends AbstractExtension
      */
     protected $editmodeResolver;
 
-    public function __construct(EditmodeResolver $editmodeResolver)
+    /** @var ViewCache */
+    protected $viewCacheHelper;
+
+    public function __construct(EditmodeResolver $editmodeResolver, ViewCache $viewCacheHelper)
     {
         $this->editmodeResolver = $editmodeResolver;
+        $this->viewCacheHelper = $viewCacheHelper;
     }
 
     public function getFunctions(): array
@@ -68,12 +73,8 @@ class CacheExtension extends AbstractExtension
      */
     public function init($name, $lifetime = null, $force = false)
     {
-        $this->key = 'pimcore_viewcache_' . $name;
+        $this->key = $name;
         $this->force = $force;
-
-        if (Tool\Frontend::hasWebpSupport()) {
-            $this->key .= 'webp';
-        }
 
         if (!$lifetime) {
             $lifetime = null;
@@ -93,13 +94,13 @@ class CacheExtension extends AbstractExtension
             return false;
         }
 
-        if ($content = CacheManager::load($this->key)) {
-            $this->outputContent($content, $this->key, true);
+        if ($content = $this->viewCacheHelper->loadFromViewCache($this->key)) {
+            $this->viewCacheHelper->outputContent($content, $this->key, true);
 
             return true;
         }
 
-        $this->captureEnabled[$this->key] = true;
+        $this->viewCacheHelper->enableCapture($this->key);
         ob_start();
 
         return false;
@@ -110,8 +111,8 @@ class CacheExtension extends AbstractExtension
      */
     public function end()
     {
-        if ($this->captureEnabled[$this->key]) {
-            $this->captureEnabled[$this->key] = false;
+        if ($this->viewCacheHelper->isCaptureEnabled($this->key)) {
+            $this->viewCacheHelper->disableCapture($this->key);
 
             $tags = ['in_template'];
             if (!$this->lifetime) {
@@ -119,8 +120,8 @@ class CacheExtension extends AbstractExtension
             }
 
             $content = ob_get_clean();
-            $this->saveContentToCache($content, $this->key, $tags);
-            $this->outputContent($content, $this->key, false);
+            $this->viewCacheHelper->saveToViewCache($content, $this->key, $tags, $this->lifetime);
+            $this->viewCacheHelper->outputContent($content, $this->key, false);
         }
     }
 
@@ -130,29 +131,5 @@ class CacheExtension extends AbstractExtension
     public function stop()
     {
         $this->end();
-    }
-
-    /**
-     * Output the content.
-     *
-     * @param string $content the content, either rendered or retrieved directly from the cache.
-     * @param string $key the cache key
-     * @param bool $isLoadedFromCache true if the content origins from the cache and hasn't been created "live".
-     */
-    protected function outputContent($content, string $key, bool $isLoadedFromCache)
-    {
-        echo $content;
-    }
-
-    /**
-     * Save the (rendered) content to to cache. May be overriden to add custom markup / code, or specific tags, etc.
-     *
-     * @param string $content
-     * @param string $key
-     * @param array $tags
-     */
-    protected function saveContentToCache($content, string $key, array $tags)
-    {
-        CacheManager::save($content, $key, $tags, $this->lifetime, 996, true);
     }
 }

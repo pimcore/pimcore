@@ -90,3 +90,7 @@ services:
             - [setLogger, ['@logger']]
         tags:
             - { name: monolog.logger, channel: cache }
+
+    # View Cache
+    Pimcore\ViewCache:
+        public: true
