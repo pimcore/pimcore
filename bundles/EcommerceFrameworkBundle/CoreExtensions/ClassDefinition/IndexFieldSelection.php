@@ -342,7 +342,7 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
 
     public function getPhpdocInputType(): ?string
     {
-        return '?\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ObjectData\\IndexFieldSelection|null';
+        return '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ObjectData\\IndexFieldSelection|null';
     }
 
     public function getPhpdocReturnType(): ?string
