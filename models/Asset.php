@@ -232,7 +232,7 @@ class Asset extends Element\AbstractElement
             $asset->getDao()->getByPath($path);
 
             return static::getById($asset->getId(), $force);
-        } catch (NotFoundExceptio $e) {
+        } catch (NotFoundException $e) {
             return null;
         }
     }
