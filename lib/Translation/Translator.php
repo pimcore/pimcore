@@ -82,7 +82,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     /**
      * {@inheritdoc}
      */
-    public function trans($id, array $parameters = [], $domain = null, $locale = null)
+    public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null)
     {
         $id = trim($id);
 
