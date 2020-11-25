@@ -639,7 +639,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?array|string';
+        return '?array';
     }
 
     public function getReturnTypeDeclaration(): ?string
@@ -649,7 +649,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     public function getPhpdocInputType(): ?string
     {
-        return 'array|string';
+        return '?array';
     }
 
     public function getPhpdocReturnType(): ?string
