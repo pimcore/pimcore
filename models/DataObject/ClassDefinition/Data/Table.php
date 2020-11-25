@@ -95,6 +95,7 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
      */
     public $columnType = 'longtext';
 
+    /**
      * @return int
      */
     public function getWidth()
