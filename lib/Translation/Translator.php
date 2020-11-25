@@ -121,7 +121,6 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
         // only check for empty translation on original ID - we don't want to create empty
         // translations for normalized IDs when case insensitive
         $term = $this->checkForEmptyTranslation($originalId, $term, $parameters, $domain, $locale);
-        $term = strtr($term, $parameters);
 
         // check for an indexed array, that used the ZF1 vsprintf() notation for parameters
         if (isset($parameters[0])) {
