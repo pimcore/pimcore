@@ -610,31 +610,6 @@ abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSu
     }
 
     /**
-     * @abstract
-     *
-     * @return string|null
-     */
-    abstract public function getParameterTypeDeclaration(): ?string;
-
-    /**
-     * @return string|null
-     */
-    abstract public function getReturnTypeDeclaration(): ?string;
-
-    /**
-     * @abstract
-     *
-     * @return string|null
-     */
-    abstract public function getPhpdocInputType(): ?string;
-
-    /**
-     * @abstract
-     * @return string|null
-     */
-    abstract public function getPhpdocReturnType(): ?string;
-
-    /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
      * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
