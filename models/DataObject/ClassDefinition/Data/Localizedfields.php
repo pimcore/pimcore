@@ -1364,7 +1364,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Localizedfield';
+        return '\\Pimcore\\Model\\DataObject\\Localizedfield|null';
     }
 
     public function getPhpdocReturnType(): ?string
