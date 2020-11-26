@@ -320,7 +320,6 @@ class AbstractObject extends Model\Element\AbstractElement
             Runtime::set($cacheKey, $object);
         }
 
-
         if (!$object || !static::typeMatch($object)) {
             return null;
         }

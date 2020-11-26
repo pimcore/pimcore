@@ -375,7 +375,7 @@ class Dao extends Model\Element\Dao
         $t = $this->db->fetchRow('SELECT o_type,o_className,o_classId FROM objects WHERE o_id = ?', $id);
 
         if (!$t) {
-            throw new Model\Exception\NotFoundException("object with ID " . $id . " not found");
+            throw new Model\Exception\NotFoundException('object with ID ' . $id . ' not found');
         }
 
         return $t;
