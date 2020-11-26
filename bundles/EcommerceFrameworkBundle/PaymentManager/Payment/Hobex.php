@@ -268,6 +268,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
 
         try {
+            $jsonResponse = null;
             if ($response['base64Content']){
                 $jsonResponse = $this->handleWebhookResponse($response);
             }
