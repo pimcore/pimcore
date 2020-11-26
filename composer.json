@@ -179,7 +179,7 @@
     "symfony-tests-dir": "tests",
     "symfony-assets-install": "relative",
     "branch-alias": {
-      "dev-master": "7.0-dev"
+      "dev-master": "10.0-dev"
     }
   },
   "bin": ["bin/pimcore-install"],
