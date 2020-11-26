@@ -289,7 +289,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
         }
 
         if (isset($parameters['%count%'])) {
-            $normalizedId = $translated;
+            $normalizedId = $id = $translated;
         }
 
         $lookForFallback = $normalizedId == $translated;
@@ -302,7 +302,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                     return $translated;
                 }
             } elseif ($backend = $this->getBackendForDomain($domain)) {
-                if (strlen($normalizedId) > 190) {
+                if (strlen($id) > 190) {
                     throw new \Exception("Message ID's longer than 190 characters are invalid!");
                 }
 
@@ -312,18 +312,18 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                 if ($class::isValidLanguage($locale)) {
 
                     /** @var AbstractTranslation|null $t */
-                    $t = $class::getByKey($normalizedId);
+                    $t = $class::getByKey($id);
                     if ($t) {
                         if (!$t->hasTranslation($locale)) {
                             $t->addTranslation($locale, '');
                         } else {
                             // return the original not lowercased ID
-                            return $normalizedId;
+                            return $id;
                         }
                     } else {
                         /** @var AbstractTranslation $t */
                         $t = new $class();
-                        $t->setKey($normalizedId);
+                        $t->setKey($id);
 
                         // add all available languages
                         $availableLanguages = (array)$class::getLanguages();
@@ -353,12 +353,16 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                     $fallbackValue = $catalogue->get($normalizedId, $domain);
                 }
 
-                if ($fallbackValue) {
+                if ($fallbackValue && $normalizedId != $fallbackValue) {
                     // update fallback value in original catalogue otherwise multiple calls to the same id will not work
                     $this->getCatalogue($locale)->set($normalizedId, $fallbackValue, $domain);
 
                     return $fallbackValue;
                 }
+            }
+
+            if ($this->caseInsensitive) {
+                return $id;
             }
         }
 
