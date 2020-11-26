@@ -84,6 +84,7 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
             ->setTestSystem($options['testSystem'])
             ->setHostURL($options['testSystem'] ? static::HOST_URL_TESTSYSTEM : static::HOST_URL_LIVESYSTEM)
             ->setPaymentMethods($options['payment_methods']) //Hobex terminology: "paymentBrands"
+            ->setWebhookSecret($options['webhookSecret'])
         ;
         $this->lockFactory = $lockFactory;
 
@@ -267,25 +268,30 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
 
         try {
-            $transactionId = $this->getExistingTransactionId($checkoutId);
-            if ($transactionId){
-                $resourcePath = sprintf("/v1/query/%s", $transactionId);
-            } else {
-                $resourcePath = $response['resourcePath'];
-                if (!$resourcePath){
-                    $resourcePath = sprintf("/v1/checkouts/%s/payment", $checkoutId);
-                }
+            if ($response['base64Content']){
+                $jsonResponse = $this->handleWebhookResponse($response);
             }
-            $client = new Client([
-                    'base_uri' => $this->config->getHostURL().$resourcePath,
-                    'headers' => [
-                        'Authorization:Bearer' => $this->config->getAuthorizationBearer(),
-                    ],
-                ]
-            );
-            $response = $client->request('get', '?entityId='.$this->config->getEntityId());
-            $jsonResponse = json_decode($response->getBody()->getContents(), true);
+            if (!$jsonResponse) {
 
+                $transactionId = $this->getExistingTransactionId($checkoutId);
+                if ($transactionId) {
+                    $resourcePath = sprintf("/v1/query/%s", $transactionId);
+                } else {
+                    $resourcePath = $response['resourcePath'];
+                    if (!$resourcePath) {
+                        $resourcePath = sprintf("/v1/checkouts/%s/payment", $checkoutId);
+                    }
+                }
+                $client = new Client([
+                        'base_uri' => $this->config->getHostURL() . $resourcePath,
+                        'headers'  => [
+                            'Authorization:Bearer' => $this->config->getAuthorizationBearer(),
+                        ],
+                    ]
+                );
+                $response = $client->request('get', '?entityId=' . $this->config->getEntityId());
+                $jsonResponse = json_decode($response->getBody()->getContents(), true);
+            }
             $this->logger->debug('Received JSON response in ' . self::class . '::handleResponse', $jsonResponse);
 
             $internalPaymentId = $jsonResponse['customParameters']['internalTransactionId'];
@@ -514,4 +520,29 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
         return strpos($status, '000.200.') === 0;
     }
 
+    /**
+     * @parama array  $response
+     *
+     * @return array|null
+     */
+    protected function handleWebhookResponse( $response)
+    {
+        $secret = '33872F92850E251B932321DEE1618800967D5295786D4CD1076DFF68489C49FA';
+        $authTag = $response['authTag'];
+        $initVector = $response['initVector'];
+        if ($authTag && $initVector && $response){
+            $key = hex2bin($secret);
+            $iv = hex2bin($initVector);
+            $auth_tag = hex2bin($authTag);
+            $cipher_text = hex2bin($response['base64Content']);
+            $jsonResult = openssl_decrypt($cipher_text, "aes-256-gcm", $key, OPENSSL_RAW_DATA, $iv, $auth_tag);
+            $result = json_decode($jsonResult, true);
+            $this->logger->debug('Received JSON webhook response in ' . self::class . '::handleWebhookResponse', $result);
+
+            if ($result['type'] == 'PAYMENT'){
+                return $result['payload'];
+            }
+        }
+        return null;
+    }
 }
