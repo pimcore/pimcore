@@ -304,7 +304,6 @@ class Document extends Element\AbstractElement
             \Pimcore\Cache\Runtime::set($cacheKey, $document);
         }
 
-
         if (!$document || !static::typeMatch($document)) {
             return null;
         }

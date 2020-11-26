@@ -282,7 +282,6 @@ class Asset extends Element\AbstractElement
             $asset = new Asset();
             $asset->getDao()->getById($id);
             try {
-
                 $className = 'Pimcore\\Model\\Asset\\' . ucfirst($asset->getType());
 
                 /** @var Asset $asset */
