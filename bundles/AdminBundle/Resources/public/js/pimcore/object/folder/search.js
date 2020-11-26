@@ -289,7 +289,16 @@ pimcore.object.search = Class.create(pimcore.object.helpers.gridTabAbstract, {
             viewConfig: {
                 forceFit: false,
                 xtype: 'patchedgridview',
-                enableTextSelection: true
+                enableTextSelection: true,
+                listeners: {
+                    refresh: function (dataview) {
+                        Ext.each(dataview.panel.columns, function (column) {
+                            if (column.autoSizeColumn === true) {
+                                column.autoSize();
+                            }
+                        })
+                    }
+                },
             },
             listeners: {
                 celldblclick: function(grid, td, cellIndex, record, tr, rowIndex, e, eOpts) {
