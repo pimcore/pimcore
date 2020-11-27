@@ -14,12 +14,34 @@
 
 namespace Pimcore\Cache\Pool;
 
-use Cache\TagInterop\TaggableCacheItemPoolInterface;
+use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 use Psr\Log\LoggerAwareInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 
-interface PimcoreCacheItemPoolInterface extends AdapterInterface, TaggableCacheItemPoolInterface, LoggerAwareInterface
+interface PimcoreCacheItemPoolInterface extends AdapterInterface, LoggerAwareInterface
 {
+    /**
+     * Invalidates cached items using a tag.
+     *
+     * @param string $tag The tag to invalidate
+     *
+     * @throws InvalidArgumentException When $tags is not valid
+     *
+     * @return bool True on success
+     */
+    public function invalidateTag($tag);
+
+    /**
+     * Invalidates cached items using tags.
+     *
+     * @param string[] $tags An array of tags to invalidate
+     *
+     * @throws InvalidArgumentException When $tags is not valid
+     *
+     * @return bool True on success
+     */
+    public function invalidateTags(array $tags);
+
     /**
      * {@inheritdoc}
      *

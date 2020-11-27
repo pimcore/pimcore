@@ -44,7 +44,6 @@
     "ext-zlib": "*",
     "psr/simple-cache": "^1.0.0",
     "amnuts/opcache-gui": "^3.0.1",
-    "cache/tag-interop": "^1",
     "cbschuld/browser.php": "^1.9.6",
     "colinmollenhour/credis": "^1.10.0",
     "composer/ca-bundle": "^1",
