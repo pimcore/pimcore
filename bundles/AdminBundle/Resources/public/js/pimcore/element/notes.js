@@ -39,7 +39,7 @@ pimcore.element.notes = Class.create({
 
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate(this.getLayout());
+        tabPanel.setActiveTab(this.getLayout());
     },
 
     getLayout: function () {
