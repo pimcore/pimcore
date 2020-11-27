@@ -54,5 +54,3 @@ interface BatchProcessingWorkerInterface extends WorkerInterface
      */
     public function processUpdateIndexQueue($limit = 200);
 }
-
-class_alias(BatchProcessingWorkerInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker\IBatchProcessingWorker');

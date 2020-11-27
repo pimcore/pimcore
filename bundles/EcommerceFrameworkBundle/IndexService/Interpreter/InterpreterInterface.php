@@ -18,5 +18,3 @@ interface InterpreterInterface
 {
     public function interpret($value, $config = null);
 }
-
-class_alias(InterpreterInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Interpreter\IInterpreter');

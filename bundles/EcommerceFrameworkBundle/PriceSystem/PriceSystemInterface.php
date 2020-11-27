@@ -71,5 +71,3 @@ interface PriceSystemInterface
      */
     public function getTaxClassForPriceModification(CartPriceModificatorInterface $modificator);
 }
-
-class_alias(PriceSystemInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IPriceSystem');

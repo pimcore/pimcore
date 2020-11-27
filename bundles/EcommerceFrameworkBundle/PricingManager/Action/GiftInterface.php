@@ -36,5 +36,3 @@ interface GiftInterface extends ActionInterface
      */
     public function getProduct();
 }
-
-class_alias(GiftInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\IGift');

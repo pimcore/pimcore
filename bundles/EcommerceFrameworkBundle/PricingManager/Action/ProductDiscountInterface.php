@@ -20,5 +20,3 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action;
 interface ProductDiscountInterface extends DiscountInterface
 {
 }
-
-class_alias(ProductDiscountInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\Action\IProductDiscount');

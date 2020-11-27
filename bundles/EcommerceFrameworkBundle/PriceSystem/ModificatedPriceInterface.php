@@ -34,5 +34,3 @@ interface ModificatedPriceInterface extends PriceInterface
      */
     public function getRule();
 }
-
-class_alias(ModificatedPriceInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\IModificatedPrice');
