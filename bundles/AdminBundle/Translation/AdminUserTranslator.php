@@ -48,7 +48,7 @@ class AdminUserTranslator implements TranslatorInterface
     /**
      * @inheritDoc
      */
-    public function trans($id, array $parameters = [], $domain = null, $locale = null)
+    public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null)
     {
         $domain = $domain ?? 'admin';
         $locale = $locale ?? $this->getUserLocale();
