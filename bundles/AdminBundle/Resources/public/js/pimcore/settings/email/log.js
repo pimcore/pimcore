@@ -52,7 +52,7 @@ pimcore.settings.email.log = Class.create({
     activate: function () {
         // this is only for standalone mode (without document set)
         var tabPanel = Ext.getCmp('pimcore_panel_tabs');
-        tabPanel.setActiveItem("sent_emails");
+        tabPanel.setActiveTab(this.getLayout());
     },
 
     load: function () {
