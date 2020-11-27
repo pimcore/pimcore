@@ -14,6 +14,7 @@
 
 namespace Pimcore\Templating;
 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Templating\DelegatingEngine as BaseDelegatingEngine;
 use Symfony\Component\Templating\EngineInterface;
 use Twig\Environment;
@@ -93,5 +94,24 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     public function isDelegate()
     {
         return $this->delegate;
+    }
+
+    /**
+     * @param $view
+     * @param array $parameters
+     * @param Response|null $response
+     *
+     * @return Response
+     * @throws \Exception
+     */
+    public function renderResponse($view, array $parameters = [], Response $response = null)
+    {
+        if (null === $response) {
+            $response = new Response();
+        }
+
+        $response->setContent($this->render($view, $parameters));
+
+        return $response;
     }
 }
