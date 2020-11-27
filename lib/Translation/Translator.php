@@ -151,7 +151,7 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             return $this->translator->getLocale();
         }
 
-        return 'en';
+        return \Pimcore\Tool::getDefaultLanguage();
     }
 
     /**
