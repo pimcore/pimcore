@@ -50,7 +50,6 @@ class RedirectsController extends AdminController
         $this->checkPermission('redirects');
 
         if ($request->get('data')) {
-            $this->checkPermission('redirects');
 
             if ($request->get('xaction') == 'destroy') {
                 $data = $this->decodeJson($request->get('data'));
