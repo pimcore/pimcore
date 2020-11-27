@@ -332,22 +332,22 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ObjectData\\IndexFieldSelection';
+        return '?\\' . IndexFieldSelection::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ObjectData\\IndexFieldSelection';
+        return '?\\' . IndexFieldSelection::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ObjectData\\IndexFieldSelection|null';
+        return '\\' . IndexFieldSelection::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ObjectData\\IndexFieldSelection|null';
+        return '\\' . IndexFieldSelection::class . '|null';
     }
 
 
