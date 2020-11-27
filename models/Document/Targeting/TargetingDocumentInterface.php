@@ -17,7 +17,9 @@ declare(strict_types=1);
 
 namespace Pimcore\Model\Document\Targeting;
 
-interface TargetingDocumentInterface
+use Pimcore\Model\Element\ElementInterface;
+
+interface TargetingDocumentInterface extends ElementInterface
 {
     const TARGET_GROUP_EDITABLE_PREFIX = 'persona_-';
     const TARGET_GROUP_EDITABLE_SUFFIX = '-_';

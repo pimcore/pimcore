@@ -794,15 +794,15 @@ class Mail extends \Swift_Message
      */
     public function setDocument($document)
     {
-        if ($document instanceof Model\Document) { //document passed
+        if ($document instanceof Model\Document\Email) { //document passed
             $this->document = $document;
             $this->setDocumentSettings();
         } elseif ((int)$document > 0) { //id of document passed
-            $this->setDocument(Model\Document::getById($document));
+            $this->setDocument(Model\Document\Email::getById($document));
         } elseif (is_string($document) && $document != '') { //path of document passed
-            $this->setDocument(Model\Document::getByPath($document));
+            $this->setDocument(Model\Document\Email::getByPath($document));
         } else {
-            throw new \Exception("$document is not an instance of \\Document\\Email or at least \\Document");
+            throw new \Exception("$document is not an instance of " . Model\Document\Email::class);
         }
 
         return $this;

@@ -386,7 +386,7 @@ class Version extends AbstractModel
             Logger::err('Version: cannot read version data from file system.');
             $this->delete();
 
-            return;
+            return null;
         }
 
         if ($this->getSerialized()) {
@@ -394,7 +394,7 @@ class Version extends AbstractModel
             if ($data instanceof \__PHP_Incomplete_Class) {
                 Logger::err('Version: cannot read version data from file system because of incompatible class.');
 
-                return;
+                return null;
             }
 
             $data = $this->unmarshalData($data);

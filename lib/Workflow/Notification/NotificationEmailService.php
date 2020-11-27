@@ -22,6 +22,7 @@ use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Workflow\Workflow;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NotificationEmailService extends AbstractNotificationService
@@ -198,8 +199,11 @@ class NotificationEmailService extends AbstractNotificationService
         $inheritanceBackup = AbstractObject::getGetInheritedValues();
         AbstractObject::setGetInheritedValues(true);
 
-        $translatorLocaleBackup = $this->translator->getLocale();
-        $this->translator->setLocale($language);
+        $translatorLocaleBackup = null;
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $translatorLocaleBackup = $this->translator->getLocale();
+            $this->translator->setLocale($language);
+        }
 
         $emailTemplate = $this->template->render(
             $mailPath, $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)
@@ -208,8 +212,10 @@ class NotificationEmailService extends AbstractNotificationService
         //reset inheritance
         AbstractObject::setGetInheritedValues($inheritanceBackup);
 
-        //reset translation locale
-        $this->translator->setLocale($translatorLocaleBackup);
+        if ($this->translator instanceof LocaleAwareInterface) {
+            //reset translation locale
+            $this->translator->setLocale($translatorLocaleBackup);
+        }
 
         return $emailTemplate;
     }

@@ -112,7 +112,9 @@ class LogoutSuccessHandler implements LogoutSuccessHandlerInterface, LoggerAware
         $response->headers->setCookie(new Cookie('pimcore_opentabs', false, 315554400, '/'));
         $response->headers->clearCookie('pimcore_admin_sid', '/', null, false, true);
 
-        $this->logger->debug('Logout succeeded, redirecting to ' . $response->getTargetUrl());
+        if ($response instanceof RedirectResponse) {
+            $this->logger->debug('Logout succeeded, redirecting to ' . $response->getTargetUrl());
+        }
 
         return $response;
     }

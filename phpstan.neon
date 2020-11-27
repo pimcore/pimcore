@@ -47,4 +47,5 @@ parameters:
 
     # see https://phpstan.org/config-reference#universal-object-crates
     universalObjectCratesClasses:
+        -  Pimcore\Config\Config
         -  Pimcore\Templating\Model\ViewModel

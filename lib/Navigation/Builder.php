@@ -20,6 +20,7 @@ use Pimcore\Logger;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 use Pimcore\Navigation\Page\Document as DocumentPage;
+use Pimcore\Navigation\Page\Url;
 
 class Builder
 {
@@ -166,22 +167,19 @@ class Builder
             // we don't have an active document, so we try to build the trail on our own
             $allPages = $navigation->findAllBy('uri', '/.*/', true);
 
-            /** @var Page|Page\Document $page */
             foreach ($allPages as $page) {
                 $activeTrail = false;
 
-                if ($activeDocument instanceof Document) {
-                    if ($page->getUri() && strpos($activeDocument->getRealFullPath(), $page->getUri() . '/') === 0) {
+                if ($activeDocument instanceof Document && $page instanceof Url && $page->getUri()) {
+                    if (strpos($activeDocument->getRealFullPath(), $page->getUri() . '/') === 0) {
                         $activeTrail = true;
                     }
-
-                    if ($page instanceof DocumentPage) {
-                        if ($page->getDocumentType() == 'link') {
-                            if ($page->getUri() && strpos($activeDocument->getFullPath(),
-                                    $page->getUri() . '/') === 0) {
-                                $activeTrail = true;
-                            }
-                        }
+                    if (
+                        $page instanceof DocumentPage &&
+                        $page->getDocumentType() === 'link' &&
+                        strpos($activeDocument->getFullPath(), $page->getUri() . '/') === 0
+                    ) {
+                        $activeTrail = true;
                     }
                 }
 

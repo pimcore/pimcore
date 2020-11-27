@@ -33,7 +33,7 @@ class Imagick extends Adapter
     protected static $CMYKColorProfile;
 
     /**
-     * @var \Imagick
+     * @var \Imagick|null
      */
     protected $resource;
 

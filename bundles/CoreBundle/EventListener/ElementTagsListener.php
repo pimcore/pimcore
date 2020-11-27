@@ -44,7 +44,6 @@ class ElementTagsListener implements EventSubscriberInterface
     public function onPostCopy(ElementEventInterface $e)
     {
         $elementType = Service::getElementType($e->getElement());
-        /** @var \Pimcore\Model\Element\ElementInterface $copiedElement */
         $copiedElement = $e->getElement();
         /** @var \Pimcore\Model\Element\ElementInterface $baseElement */
         $baseElement = $e->getArgument('base_element');

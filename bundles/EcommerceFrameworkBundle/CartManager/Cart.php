@@ -17,6 +17,9 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 
+/**
+ * @method Cart\Dao getDao()
+ */
 class Cart extends AbstractCart implements CartInterface
 {
     /**

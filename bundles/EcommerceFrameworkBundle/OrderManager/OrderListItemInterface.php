@@ -25,7 +25,7 @@ interface OrderListItemInterface
     public function getId();
 
     /**
-     * @return Order|OrderItem
+     * @return Order|OrderItem|null
      */
     public function reference();
 }

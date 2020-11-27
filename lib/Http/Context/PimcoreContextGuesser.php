@@ -26,7 +26,7 @@ class PimcoreContextGuesser
     private $routes = [];
 
     /**
-     * @var RequestMatcherInterface[]
+     * @var RequestMatcherInterface[][]
      */
     private $matchers;
 
@@ -79,7 +79,7 @@ class PimcoreContextGuesser
     /**
      * Get request matchers to query admin pimcore context from
      *
-     * @return RequestMatcherInterface[]
+     * @return RequestMatcherInterface[][]
      */
     private function getMatchers(): array
     {

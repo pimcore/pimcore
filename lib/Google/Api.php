@@ -132,7 +132,7 @@ class Api
         $token = null;
         if ($tokenData = TmpStore::get($tokenId)) {
             $tokenInfo = json_decode($tokenData->getData(), true);
-            if (($tokenInfo['created'] + $tokenInfo['expires_in']) > (time() - 900)) {
+            if (((int)$tokenInfo['created'] + (int)$tokenInfo['expires_in']) > (time() - 900)) {
                 $token = $tokenData->getData();
             }
         }

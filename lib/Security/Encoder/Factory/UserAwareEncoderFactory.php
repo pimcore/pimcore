@@ -36,7 +36,7 @@ use Symfony\Component\Serializer\Encoder\EncoderInterface;
 class UserAwareEncoderFactory extends AbstractEncoderFactory
 {
     /**
-     * @var EncoderInterface[]
+     * @var PasswordEncoderInterface[]
      */
     private $encoders = [];
 
@@ -61,7 +61,6 @@ class UserAwareEncoderFactory extends AbstractEncoderFactory
             throw new ConfigurationException('An encoder built by the UserAwareEncoderFactory must implement UserAwareEncoderInterface');
         }
 
-        /** @var PasswordEncoderInterface $encoder */
         $encoder = $this->buildEncoder($reflector);
 
         if ($encoder instanceof UserAwarePasswordEncoderInterface) {

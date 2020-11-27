@@ -137,7 +137,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      */
     public function setLocale(string $locale)
     {
-        $this->translator->setLocale($locale);
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($locale);
+        }
     }
 
     /**
@@ -145,7 +147,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      */
     public function getLocale()
     {
-        return $this->translator->getLocale();
+        if ($this->translator instanceof LocaleAwareInterface) {
+            return $this->translator->getLocale();
+        }
+
+        return \Pimcore\Tool::getDefaultLanguage();
     }
 
     /**

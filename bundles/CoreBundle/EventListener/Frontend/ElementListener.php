@@ -252,7 +252,7 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
     /**
      * @param Document $document
      *
-     * @return mixed|Document|Document\PageSnippet
+     * @return Document
      */
     protected function handleEditmode(Document $document)
     {
@@ -269,12 +269,14 @@ class ElementListener implements EventSubscriberInterface, LoggerAwareInterface
             ]);
 
             // set the latest available version for editmode if there is no doc in the session
-            $latestVersion = $document->getLatestVersion();
-            if ($latestVersion) {
-                $latestDoc = $latestVersion->loadData();
+            if ($document instanceof Document\PageSnippet) {
+                $latestVersion = $document->getLatestVersion();
+                if ($latestVersion) {
+                    $latestDoc = $latestVersion->loadData();
 
-                if ($latestDoc instanceof Document\PageSnippet) {
-                    $document = $latestDoc;
+                    if ($latestDoc instanceof Document\PageSnippet) {
+                        $document = $latestDoc;
+                    }
                 }
             }
         }

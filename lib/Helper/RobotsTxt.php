@@ -24,9 +24,9 @@ use Pimcore\Cache;
 class RobotsTxt
 {
     /**
-     * @var null
+     * @var string
      */
-    private $_domain = null;
+    private $_domain;
 
     /**
      * @var array

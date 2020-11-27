@@ -276,7 +276,9 @@ class Newsletter
             $object->setParentId(1);
         }
 
-        $object->setNewsletterActive(true);
+        if (method_exists($object, 'setNewsletterActive')) {
+            $object->setNewsletterActive(true);
+        }
         $object->setCreationDate(time());
         $object->setModificationDate(time());
         $object->setUserModification(0);
@@ -318,18 +320,34 @@ class Newsletter
     public function sendConfirmationMail($object, $mailDocument, $params = []): void
     {
         $defaultParameters = [
-            'gender' => $object->getGender(),
-            'firstname' => $object->getFirstname(),
-            'lastname' => $object->getLastname(),
-            'email' => $object->getEmail(),
+            'gender' => null,
+            'firstname' => null,
+            'lastname' => null,
+            'email' => null,
             'token' => $object->getProperty('token'),
             'object' => $object,
         ];
 
+        if (method_exists($object, 'getGender')) {
+            $defaultParameters['gender'] = $object->getGender();
+        }
+
+        if (method_exists($object, 'getFirstname')) {
+            $defaultParameters['firstname'] = $object->getFirstname();
+        }
+
+        if (method_exists($object, 'getLastname')) {
+            $defaultParameters['lastname'] = $object->getLastname();
+        }
+
+        if (method_exists($object, 'getEmail')) {
+            $defaultParameters['email'] = $object->getEmail();
+        }
+
         $params = array_merge($defaultParameters, $params);
 
         $mail = new Mail();
-        $mail->addTo($object->getEmail());
+        $mail->addTo($params['email']);
         $mail->setDocument($mailDocument);
         $mail->setParams($params);
         $mail->send();
@@ -376,7 +394,9 @@ class Newsletter
                 $object->setPublished(true);
             }
 
-            $object->setNewsletterConfirmed(true);
+            if (method_exists($object, 'setNewsletterConfirmed')) {
+                $object->setNewsletterConfirmed(true);
+            }
             $object->save();
 
             $this->addNoteOnObject($object, 'confirm');
@@ -428,16 +448,18 @@ class Newsletter
     }
 
     /**
-     * @param DataObject\AbstractObject $object
+     * @param DataObject\Concrete $object
      *
      * @return bool
      *
      * @throws Exception
      */
-    public function unsubscribe(DataObject\AbstractObject $object): bool
+    public function unsubscribe(DataObject\Concrete $object): bool
     {
         if ($object) {
-            $object->setNewsletterActive(false);
+            if (method_exists($object, 'setNewsletterActive')) {
+                $object->setNewsletterActive(false);
+            }
             $object->save();
 
             $this->addNoteOnObject($object, 'unsubscribe');

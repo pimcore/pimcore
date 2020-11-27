@@ -381,8 +381,8 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     public function getVersionPreview($data, $object = null, $params = [])
     {
         // this is handled directly in the template
-        // /pimcore/modules/admin/views/scripts/object/preview-version.php
-        return $data;
+        // /bundles/AdminBundle/Resources/views/Admin/DataObject/DataObject/previewVersion.html.twig
+        return 'CLASSIFICATIONSTORE';
     }
 
     /**

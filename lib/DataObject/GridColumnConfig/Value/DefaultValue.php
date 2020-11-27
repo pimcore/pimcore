@@ -40,7 +40,7 @@ class DefaultValue extends AbstractValue
     private function getValueForObject($object, $key, $brickType = null, $brickKey = null, $fieldDefinition = null)
     {
         if (!$key) {
-            return;
+            throw new \Exception('Empty key');
         }
         $getter = 'get' . ucfirst($key);
 

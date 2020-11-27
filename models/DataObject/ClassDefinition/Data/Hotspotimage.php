@@ -124,7 +124,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param DataObject\Data\Hotspotimage $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
