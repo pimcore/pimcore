@@ -25,5 +25,3 @@ interface CheckoutInterface
      */
     public function trackCheckout(CartInterface $cart);
 }
-
-class_alias(CheckoutInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckout');

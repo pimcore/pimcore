@@ -23,5 +23,3 @@ interface OrderAgentFactoryInterface
 {
     public function createAgent(AbstractOrder $order): OrderAgentInterface;
 }
-
-class_alias(OrderAgentFactoryInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgentFactory');

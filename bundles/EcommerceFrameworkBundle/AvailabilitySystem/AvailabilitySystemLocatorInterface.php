@@ -23,5 +23,3 @@ interface AvailabilitySystemLocatorInterface
 
     public function hasAvailabilitySystem(string $name): bool;
 }
-
-class_alias(AvailabilitySystemLocatorInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailabilitySystemLocator');

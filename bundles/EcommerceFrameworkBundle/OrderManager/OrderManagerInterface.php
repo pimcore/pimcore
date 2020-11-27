@@ -91,5 +91,3 @@ interface OrderManagerInterface
      */
     public function buildOrderItemList();
 }
-
-class_alias(OrderManagerInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager');

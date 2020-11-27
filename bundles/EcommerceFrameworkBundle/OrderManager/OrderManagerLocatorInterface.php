@@ -23,5 +23,3 @@ interface OrderManagerLocatorInterface
 
     public function hasOrderManager(string $tenant): bool;
 }
-
-class_alias(OrderManagerLocatorInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManagerLocator');

@@ -284,5 +284,3 @@ interface ProductListInterface extends \Iterator, AdapterInterface, AdapterAggre
      */
     public function getGroupBySystemValues($fieldname, $countValues = false, $fieldnameShouldBeExcluded = true);
 }
-
-class_alias(ProductListInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\IProductList');

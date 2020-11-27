@@ -29,5 +29,3 @@ interface OrderListItemInterface
      */
     public function reference();
 }
-
-class_alias(OrderListItemInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderListItem');

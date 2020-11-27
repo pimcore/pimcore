@@ -204,5 +204,3 @@ interface CheckoutManagerInterface
      */
     public function cleanUpPendingOrders();
 }
-
-class_alias(CheckoutManagerInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICheckoutManager');

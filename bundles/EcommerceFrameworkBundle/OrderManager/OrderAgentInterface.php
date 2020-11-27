@@ -152,5 +152,3 @@ interface OrderAgentInterface
      */
     public function getFullChangeLog();
 }
-
-class_alias(OrderAgentInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderAgent');

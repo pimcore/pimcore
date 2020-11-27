@@ -25,5 +25,3 @@ interface ProductViewInterface
      */
     public function trackProductView(ProductInterface $product);
 }
-
-class_alias(ProductViewInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductView');

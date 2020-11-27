@@ -106,5 +106,3 @@ interface PriceInfoInterface extends PriceSystemPriceInfoInterface
      */
     public function hasRulesApplied(): bool;
 }
-
-class_alias(PriceInfoInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager\IPriceInfo');

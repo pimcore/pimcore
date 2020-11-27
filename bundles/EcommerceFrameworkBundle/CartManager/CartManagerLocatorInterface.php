@@ -23,5 +23,3 @@ interface CartManagerLocatorInterface
 
     public function hasCartManager(string $tenant): bool;
 }
-
-class_alias(CartManagerLocatorInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartManagerLocator');

@@ -81,5 +81,3 @@ interface CommitOrderProcessorInterface
      */
     public function cleanUpPendingOrders();
 }
-
-class_alias(CommitOrderProcessorInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\ICommitOrderProcessor');

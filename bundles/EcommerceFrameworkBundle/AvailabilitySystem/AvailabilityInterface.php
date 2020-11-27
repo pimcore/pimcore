@@ -21,5 +21,3 @@ interface AvailabilityInterface
      */
     public function getAvailable();
 }
-
-class_alias(AvailabilityInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\AvailabilitySystem\IAvailability');

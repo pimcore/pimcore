@@ -33,5 +33,3 @@ interface PaymentManagerInterface
      */
     public function getProvider(string $name): PaymentInterface;
 }
-
-class_alias(PaymentManagerInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager');

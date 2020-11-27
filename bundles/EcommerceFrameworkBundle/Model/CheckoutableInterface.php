@@ -92,5 +92,3 @@ interface CheckoutableInterface extends ProductInterface
      */
     public function getOSAvailabilityInfo($quantity = null);
 }
-
-class_alias(CheckoutableInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Model\ICheckoutable');
