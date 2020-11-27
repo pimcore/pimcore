@@ -1,3 +1,6 @@
+![Pimcore - Own the digital World](./doc/Development_Documentation/img/logo-readme.svg)
+  
+  
 Pimcore - Open Source Digital Experience Platform: MDM/PIM, CDP, DAM, CMS/UX & eCommerce
 
 [![Packagist](https://img.shields.io/packagist/v/pimcore/pimcore.svg)](https://packagist.org/packages/pimcore/pimcore)
