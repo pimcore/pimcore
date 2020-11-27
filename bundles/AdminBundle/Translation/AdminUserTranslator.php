@@ -92,6 +92,6 @@ class AdminUserTranslator implements TranslatorInterface, LocaleAwareInterface
             return $this->translator->getLocale();
         }
 
-        return 'en';
+        return \Pimcore\Tool::getDefaultLanguage();
     }
 }
