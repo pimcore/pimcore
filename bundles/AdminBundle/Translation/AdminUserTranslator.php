@@ -57,10 +57,13 @@ class AdminUserTranslator implements TranslatorInterface
     }
 
     /**
+     * @deprecated
      * @inheritDoc
      */
     public function transChoice($id, $number, array $parameters = [], $domain = null, $locale = null)
     {
+        @trigger_error(__METHOD__ . ' is deprecated, use trans() instead.', E_USER_DEPRECATED);
+
         $domain = $domain ?? 'admin';
         $locale = $locale ?? $this->getUserLocale();
 
