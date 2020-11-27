@@ -14,7 +14,6 @@
 
 namespace Pimcore\Cache\Pool;
 
-use Cache\TagInterop\TaggableCacheItemInterface;
 use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -189,7 +188,7 @@ class CacheItem implements PimcoreCacheItemInterface, ItemInterface
      *
      * @throws InvalidArgumentException When a tag is not valid.
      *
-     * @return TaggableCacheItemInterface
+     * @return PimcoreCacheItemInterface
      */
     public function setTags(array $tags)
     {
@@ -223,7 +222,7 @@ class CacheItem implements PimcoreCacheItemInterface, ItemInterface
      *
      * @param array $tags
      *
-     * @return TaggableCacheItemInterface
+     * @return PimcoreCacheItemInterface
      */
     public function mergeTags(array $tags)
     {

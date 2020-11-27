@@ -14,16 +14,36 @@
 
 namespace Pimcore\Cache\Pool;
 
-use Cache\TagInterop\TaggableCacheItemInterface;
+use Psr\Cache\CacheItemInterface;
+use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 
-interface PimcoreCacheItemInterface extends TaggableCacheItemInterface
+interface PimcoreCacheItemInterface extends CacheItemInterface
 {
+    /**
+     * Get all existing tags. These are the tags the item has when the item is
+     * returned from the pool.
+     *
+     * @return array
+     */
+    public function getPreviousTags();
+
+    /**
+     * Overwrite all tags with a new set of tags.
+     *
+     * @param string[] $tags An array of tags
+     *
+     * @throws InvalidArgumentException When a tag is not valid.
+     *
+     * @return PimcoreCacheItemInterface
+     */
+    public function setTags(array $tags);
+
     /**
      * Merge tags into currently set tags
      *
      * @param array $tags
      *
-     * @return TaggableCacheItemInterface
+     * @return PimcoreCacheItemInterface
      */
     public function mergeTags(array $tags);
 
