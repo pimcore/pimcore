@@ -23,6 +23,7 @@ use Pimcore\Cache\Runtime;
 use Pimcore\Model\AbstractModel;
 use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
+use Pimcore\Model\Element\AbstractElement;
 use Pimcore\Model\Element\ElementDescriptor;
 use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
@@ -154,6 +155,15 @@ class BlockElement extends AbstractModel implements OwnerAwareFieldInterface, Ca
             ),
             new UnmarshalMatcher()
         );
+
+        $copier->addFilter(new \DeepCopy\Filter\KeepFilter(), new class() implements \DeepCopy\Matcher\Matcher {
+            public function matches($object, $property)
+            {
+                return $object instanceof AbstractElement;
+            }
+
+        });
+
         $this->data = $copier->copy($this->data);
     }
 

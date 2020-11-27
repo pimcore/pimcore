@@ -574,7 +574,7 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
                             $keyId = $key->getKeyId();
                             $fd = DataObject\Classificationstore\Service::getFieldDefinitionFromKeyConfig($key);
 
-                            if ($fd->isEmpty($result[$language][$groupId][$keyId])) {
+                            if ($fd->isEmpty($result[$language][$groupId][$keyId] ?? null)) {
                                 $foundEmptyValue = true;
                             }
                         }
