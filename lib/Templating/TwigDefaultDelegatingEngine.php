@@ -97,7 +97,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
     }
 
     /**
-     * @param $view
+     * @param string $view
      * @param array $parameters
      * @param Response|null $response
      *
