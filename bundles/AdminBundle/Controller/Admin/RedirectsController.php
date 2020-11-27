@@ -47,6 +47,8 @@ class RedirectsController extends AdminController
      */
     public function redirectsAction(Request $request, RedirectHandler $redirectHandler)
     {
+        $this->checkPermission('redirects');
+
         if ($request->get('data')) {
             $this->checkPermission('redirects');
 
