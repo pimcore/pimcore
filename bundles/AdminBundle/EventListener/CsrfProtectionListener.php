@@ -111,7 +111,6 @@ class CsrfProtectionListener implements EventSubscriberInterface
     }
 
     /**
-     * @return string
      *
      * @deprecated use CsrfProtectionHandler::getCsrfToken() instead
      */
