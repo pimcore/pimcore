@@ -249,7 +249,7 @@ class Redis extends AbstractCacheItemPool implements PurgeableCacheItemPoolInter
      */
     protected function doClear($namespace)
     {
-        return $this->redis->flushDb();
+        return (bool)$this->redis->flushDb();
     }
 
     /**

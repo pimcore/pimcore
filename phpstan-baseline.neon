@@ -1,86 +1,9 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\Webservice\\\\Data\\:\\:\\$notes\\.$#"
-			count: 1
-			path: models/Webservice/Data.php
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Localizedfields\\:\\:\\$permissionView\\.$#"
-			count: 1
-			path: models/DataObject/Service.php
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Localizedfields\\:\\:\\$permissionEdit\\.$#"
-			count: 1
-			path: models/DataObject/Service.php
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\AdminBundle\\\\EventListener\\\\AdminExceptionListener\\:\\:getInnerStack\\(\\) should return Exception but returns Throwable\\|null\\.$#"
-			count: 1
-			path: bundles/AdminBundle/EventListener/AdminExceptionListener.php
-
-		-
-			message: "#^Offset 'object' does not exist on array\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
-
-		-
-			message: "#^Offset 'image' does not exist on array\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/GDPR/DataProvider/DataObjects.php
-
-		-
 			message: "#^Property Pimcore\\\\Bundle\\\\AdminBundle\\\\Security\\\\LogoutSuccessHandler\\:\\:\\$tokenStorage \\(Symfony\\\\Component\\\\Security\\\\Core\\\\Authentication\\\\Token\\\\Storage\\\\TokenStorage\\) does not accept Symfony\\\\Component\\\\Security\\\\Core\\\\Authentication\\\\Token\\\\Storage\\\\TokenStorageInterface\\.$#"
 			count: 1
 			path: bundles/AdminBundle/Security/LogoutSuccessHandler.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\HttpFoundation\\\\Response\\:\\:getTargetUrl\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Security/LogoutSuccessHandler.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:setLocale\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Translation/AdminUserTranslator.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:getLocale\\(\\)\\.$#"
-			count: 1
-			path: bundles/AdminBundle/Translation/AdminUserTranslator.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\CoreBundle\\\\Command\\\\Definition\\\\Import\\\\CustomLayoutCommand\\:\\:createDefinition\\(\\) should return Pimcore\\\\Model\\\\AbstractModel but returns null\\.$#"
-			count: 1
-			path: bundles/CoreBundle/Command/Definition/Import/CustomLayoutCommand.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\AbstractModel\\:\\:setLayoutDefinitions\\(\\)\\.$#"
-			count: 1
-			path: bundles/CoreBundle/Command/Definition/Import/CustomLayoutCommand.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\AbstractModel\\:\\:setDescription\\(\\)\\.$#"
-			count: 1
-			path: bundles/CoreBundle/Command/Definition/Import/CustomLayoutCommand.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\AbstractModel\\:\\:setUserModification\\(\\)\\.$#"
-			count: 1
-			path: bundles/CoreBundle/Command/Definition/Import/CustomLayoutCommand.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\AbstractModel\\:\\:setUserOwner\\(\\)\\.$#"
-			count: 1
-			path: bundles/CoreBundle/Command/Definition/Import/CustomLayoutCommand.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\AbstractModel\\:\\:save\\(\\)\\.$#"
-			count: 1
-			path: bundles/CoreBundle/Command/Definition/Import/CustomLayoutCommand.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getThumbnail\\(\\)\\.$#"
-			count: 2
-			path: bundles/CoreBundle/Command/ThumbnailsVideoCommand.php
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Event\\\\Model\\\\ElementEventInterface\\:\\:getArgument\\(\\)\\.$#"
@@ -88,78 +11,8 @@ parameters:
 			path: bundles/CoreBundle/EventListener/ElementTagsListener.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\:\\:getLatestVersion\\(\\)\\.$#"
-			count: 1
-			path: bundles/CoreBundle/EventListener/Frontend/ElementListener.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Templating\\\\EngineInterface\\:\\:stream\\(\\)\\.$#"
-			count: 1
-			path: bundles/CoreBundle/EventListener/LegacyTemplateListener.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Templating\\\\EngineInterface\\:\\:renderResponse\\(\\)\\.$#"
-			count: 1
-			path: bundles/CoreBundle/EventListener/LegacyTemplateListener.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\CoreBundle\\\\EventListener\\\\ResponseExceptionListener\\:\\:\\$documentRenderer \\(Pimcore\\\\Templating\\\\Renderer\\\\ActionRenderer\\) does not accept Pimcore\\\\Document\\\\Renderer\\\\DocumentRenderer\\.$#"
-			count: 1
-			path: bundles/CoreBundle/EventListener/ResponseExceptionListener.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:isPublished\\(\\)\\.$#"
-			count: 1
-			path: bundles/CoreBundle/Request/ParamConverter/DataObjectParamConverter.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\:\\:getId\\(\\)\\.$#"
 			count: 4
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:\\$creationDateTimestamp \\(int\\) does not accept null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:\\$creationDate \\(DateTime\\) does not accept null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:\\$modificationDateTimestamp \\(int\\) does not accept null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:\\$modificationDate \\(DateTime\\) does not accept null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:getCheckoutData\\(\\) should return string but returns null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:\\$itemAmount \\(int\\) does not accept null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:\\$subItemAmount \\(int\\) does not accept null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:\\$itemCount \\(int\\) does not accept null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:\\$subItemCount \\(int\\) does not accept null\\.$#"
-			count: 1
 			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
 
 		-
@@ -168,18 +21,8 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\CartItemInterface\\:\\:getProductId\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\:\\:getId\\(\\)\\.$#"
 			count: 2
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCartItem.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCartItem\\:\\:\\$product \\(Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\) does not accept null\\.$#"
-			count: 1
 			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCartItem.php
 
 		-
@@ -188,34 +31,9 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCartItem.php
 
 		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCartItem\\:\\:\\$addedDateTimestamp \\(int\\) does not accept null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCartItem.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Dao\\\\AbstractDao\\:\\:save\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/Cart.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Dao\\\\AbstractDao\\:\\:delete\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/Cart.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\CartItemInterface\\:\\:setSortIndex\\(\\)\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/CartManager/Cart.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\Cart\\\\Listing\\:\\:setCartClass\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/Cart.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Listing\\:\\:setCarts\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/Cart/Listing/Dao.php
 
 		-
 			message: "#^Access to an undefined property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\CartCheckoutData\\:\\:\\$cartId\\.$#"
@@ -241,26 +59,6 @@ parameters:
 			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\:\\:getId\\(\\)\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceCalculator.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:\\$itemCount \\(int\\) does not accept null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/SessionCart.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:\\$subItemCount \\(int\\) does not accept null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/SessionCart.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:\\$itemAmount \\(int\\) does not accept null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/SessionCart.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:\\$subItemAmount \\(int\\) does not accept null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/SessionCart.php
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\CartInterface\\:\\:setItems\\(\\)\\.$#"
@@ -311,11 +109,6 @@ parameters:
 			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Environment\\:\\:\\$currentTransientCheckoutTenant \\(string\\) does not accept null\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/Environment.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\EventListener\\\\Frontend\\\\TrackingCodeFlashMessageListener\\:\\:\\$session \\(Symfony\\\\Component\\\\HttpFoundation\\\\Session\\\\Session\\) does not accept Symfony\\\\Component\\\\HttpFoundation\\\\Session\\\\SessionInterface\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/EventListener/Frontend/TrackingCodeFlashMessageListener.php
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractFilterDefinitionType\\:\\:getPreSelect\\(\\)\\.$#"
@@ -953,11 +746,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/OrderManager/Order/Listing/Filter/AbstractSearch.php
 
 		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\Order\\\\Listing\\\\Item\\:\\:reference\\(\\) should return Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrder\\|Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrderItem but returns Pimcore\\\\Model\\\\DataObject\\\\Concrete\\|null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/OrderManager/Order/Listing/Item.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PriceSystem\\\\ModificatedPriceInterface\\:\\:getRule\\(\\)\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/OrderManager/OrderManager.php
@@ -1133,21 +921,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/PricingManager/Condition/TargetGroup.php
 
 		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\PriceInfo\\:\\:\\$priceInfo \\(Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\PriceInfoInterface\\) does not accept Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PriceSystem\\\\PriceInfoInterface\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PricingManager/PriceInfo.php
-
-		-
-			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\PriceInfo\\:\\:\\$validRules \\(array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\RuleInterface\\>\\) does not accept null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PricingManager/PriceInfo.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\PriceInfo\\:\\:getPrice\\(\\) should return Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PriceSystem\\\\PriceInterface but returns null\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/PricingManager/PriceInfo.php
-
-		-
 			message: "#^Property Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\PricingManager\\:\\:\\$rules \\(array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\Rule\\>\\) does not accept array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PricingManager\\\\RuleInterface\\>\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/PricingManager/PricingManager.php
@@ -1218,16 +991,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/VoucherService/TokenManager/Pattern.php
 
 		-
-			message: "#^Property Pimcore\\\\Analytics\\\\Piwik\\\\Api\\\\SitesManager\\:\\:\\$pimcoreConfig \\(Pimcore\\\\Analytics\\\\Piwik\\\\Config\\\\Config\\) does not accept Pimcore\\\\Config\\.$#"
-			count: 1
-			path: lib/Analytics/Piwik/Api/SitesManager.php
-
-		-
-			message: "#^Cannot access offset 'general' on Pimcore\\\\Analytics\\\\Piwik\\\\Config\\\\Config\\.$#"
-			count: 2
-			path: lib/Analytics/Piwik/Api/SitesManager.php
-
-		-
 			message: "#^Return type \\(Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\) of method Pimcore\\\\Cache\\\\Pool\\\\AbstractCacheItemPool\\:\\:getItem\\(\\) should be compatible with return type \\(Symfony\\\\Component\\\\Cache\\\\CacheItem\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItem\\(\\)$#"
 			count: 1
 			path: lib/Cache/Pool/AbstractCacheItemPool.php
@@ -1241,6 +1004,11 @@ parameters:
 			message: "#^Call to an undefined method Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\:\\:getMetadata\\(\\)\\.$#"
 			count: 1
 			path: lib/Cache/Pool/AbstractCacheItemPool.php
+
+		-
+			message: "#^Call to an undefined method Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\:\\:execute\\(\\)\\.$#"
+			count: 1
+			path: lib/Cache/Pool/Doctrine.php
 
 		-
 			message: "#^Return type \\(Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\) of method Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemPoolInterface\\:\\:getItem\\(\\) should be compatible with return type \\(Symfony\\\\Component\\\\Cache\\\\CacheItem\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItem\\(\\)$#"
@@ -1258,11 +1026,6 @@ parameters:
 			path: lib/Config.php
 
 		-
-			message: "#^Property Pimcore\\\\Console\\\\AbstractCommand\\:\\:\\$output \\(Symfony\\\\Component\\\\Console\\\\Output\\\\ConsoleOutput\\) does not accept Symfony\\\\Component\\\\Console\\\\Output\\\\OutputInterface\\.$#"
-			count: 1
-			path: lib/Console/AbstractCommand.php
-
-		-
 			message: "#^Method Pimcore\\\\DataObject\\\\GridColumnConfig\\\\Operator\\\\LFExpander\\:\\:getLabeledValue\\(\\) should return stdClass\\|null but returns Pimcore\\\\DataObject\\\\GridColumnConfig\\\\ResultContainer\\.$#"
 			count: 1
 			path: lib/DataObject/GridColumnConfig/Operator/LFExpander.php
@@ -1276,26 +1039,6 @@ parameters:
 			message: "#^Property Pimcore\\\\DataObject\\\\GridColumnConfig\\\\Operator\\\\TranslateValue\\:\\:\\$translator \\(Pimcore\\\\Translation\\\\Translator\\) does not accept Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\.$#"
 			count: 1
 			path: lib/DataObject/GridColumnConfig/Operator/TranslateValue.php
-
-		-
-			message: "#^Method Pimcore\\\\DataObject\\\\GridColumnConfig\\\\Value\\\\DefaultValue\\:\\:getValueForObject\\(\\) should return stdClass but empty return statement found\\.$#"
-			count: 1
-			path: lib/DataObject/GridColumnConfig/Value/DefaultValue.php
-
-		-
-			message: "#^Property Pimcore\\\\DataObject\\\\Import\\\\ColumnConfig\\\\Operator\\\\PHPCode\\:\\:\\$instance \\(Pimcore\\\\DataObject\\\\Import\\\\ColumnConfig\\\\Operator\\\\OperatorInterface\\) does not accept null\\.$#"
-			count: 1
-			path: lib/DataObject/Import/ColumnConfig/Operator/PHPCode.php
-
-		-
-			message: "#^Method Pimcore\\\\Db\\\\Connection\\:\\:query\\(\\) should return Doctrine\\\\DBAL\\\\Driver\\\\Statement but returns int\\.$#"
-			count: 1
-			path: lib/Db/Connection.php
-
-		-
-			message: "#^Method Pimcore\\\\Db\\\\Connection\\:\\:executeQuery\\(\\) should return Doctrine\\\\DBAL\\\\Driver\\\\Statement but returns Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\.$#"
-			count: 1
-			path: lib/Db/Connection.php
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Db\\\\ConnectionInterface\\:\\:getExpressionBuilder\\(\\)\\.$#"
@@ -1318,11 +1061,6 @@ parameters:
 			path: lib/Document/Newsletter/AddressSourceAdapter/DefaultAdapter.php
 
 		-
-			message: "#^Cannot access offset int on Pimcore\\\\Model\\\\DataObject\\\\Listing\\.$#"
-			count: 1
-			path: lib/Document/Newsletter/AddressSourceAdapter/ReportAdapter.php
-
-		-
 			message: "#^Property Pimcore\\\\Event\\\\Admin\\\\Login\\\\LoginFailedEvent\\:\\:\\$credentials \\(string\\) does not accept array\\.$#"
 			count: 1
 			path: lib/Event/Admin/Login/LoginFailedEvent.php
@@ -1331,46 +1069,6 @@ parameters:
 			message: "#^Cannot assign offset string to string\\.$#"
 			count: 1
 			path: lib/Event/Admin/Login/LoginFailedEvent.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Config\\\\Config\\:\\:\\$bundle\\.$#"
-			count: 1
-			path: lib/Extension/Bundle/Config/StateConfig.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Config\\\\Config\\:\\:\\$areabrick\\.$#"
-			count: 1
-			path: lib/Extension/Document/Areabrick/AreabrickManager.php
-
-		-
-			message: "#^Comparison operation \"\\>\" between \\(array\\|float\\|int\\) and int results in an error\\.$#"
-			count: 1
-			path: lib/Google/Api.php
-
-		-
-			message: "#^Method Pimcore\\\\Google\\\\Api\\:\\:getSimpleClient\\(\\) should return Google_Client but returns false\\.$#"
-			count: 1
-			path: lib/Google/Api.php
-
-		-
-			message: "#^Property Pimcore\\\\Helper\\\\RobotsTxt\\:\\:\\$_domain \\(null\\) does not accept string\\.$#"
-			count: 1
-			path: lib/Helper/RobotsTxt.php
-
-		-
-			message: "#^Array \\(array\\<Symfony\\\\Component\\\\HttpFoundation\\\\RequestMatcherInterface\\>\\) does not accept array\\<Symfony\\\\Component\\\\HttpFoundation\\\\RequestMatcherInterface\\>\\.$#"
-			count: 1
-			path: lib/Http/Context/PimcoreContextGuesser.php
-
-		-
-			message: "#^Method Pimcore\\\\Image\\\\Adapter\\\\GD\\:\\:load\\(\\) should return Pimcore\\\\Image\\\\Adapter\\\\GD but returns false\\.$#"
-			count: 1
-			path: lib/Image/Adapter/GD.php
-
-		-
-			message: "#^Property Pimcore\\\\Image\\\\Adapter\\\\Imagick\\:\\:\\$resource \\(Imagick\\) does not accept null\\.$#"
-			count: 2
-			path: lib/Image/Adapter/Imagick.php
 
 		-
 			message: "#^Parameter \\#1 \\$tolerance \\(float\\) of method Pimcore\\\\Image\\\\Adapter\\\\Imagick\\:\\:trim\\(\\) should be compatible with parameter \\$tolerance \\(int\\) of method Pimcore\\\\Image\\\\Adapter\\:\\:trim\\(\\)$#"
@@ -1383,31 +1081,6 @@ parameters:
 			path: lib/Localization/IntlFormatter.php
 
 		-
-			message: "#^Property Pimcore\\\\Log\\\\ApplicationLogger\\:\\:\\$component \\(null\\) does not accept string\\.$#"
-			count: 1
-			path: lib/Log/ApplicationLogger.php
-
-		-
-			message: "#^Property Pimcore\\\\Log\\\\ApplicationLogger\\:\\:\\$fileObject \\(null\\) does not accept Pimcore\\\\Log\\\\FileObject\\|string\\.$#"
-			count: 1
-			path: lib/Log/ApplicationLogger.php
-
-		-
-			message: "#^Property Pimcore\\\\Log\\\\ApplicationLogger\\:\\:\\$relatedObject \\(null\\) does not accept int\\|Pimcore\\\\Model\\\\Asset\\|Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\|Pimcore\\\\Model\\\\Document\\.$#"
-			count: 1
-			path: lib/Log/ApplicationLogger.php
-
-		-
-			message: "#^Property Pimcore\\\\Log\\\\Handler\\\\Mail\\:\\:\\$address \\(null\\) does not accept int\\.$#"
-			count: 1
-			path: lib/Log/Handler/Mail.php
-
-		-
-			message: "#^Property Pimcore\\\\Mail\\:\\:\\$document \\(Pimcore\\\\Model\\\\Document\\\\Email\\) does not accept Pimcore\\\\Model\\\\Document\\.$#"
-			count: 1
-			path: lib/Mail.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setPublished\\(\\)\\.$#"
 			count: 3
 			path: lib/Maintenance/Tasks/ScheduledTasksTask.php
@@ -1416,11 +1089,6 @@ parameters:
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Dao\\\\AbstractDao\\:\\:load\\(\\)\\.$#"
 			count: 1
 			path: lib/Model/Listing/AbstractListing.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Navigation\\\\Page\\:\\:getUri\\(\\)\\.$#"
-			count: 2
-			path: lib/Navigation/Builder.php
 
 		-
 			message: "#^Method Pimcore\\\\Navigation\\\\Container\\:\\:findBy\\(\\) should return \\(iterable\\<Pimcore\\\\Navigation\\\\Page\\>&Pimcore\\\\Navigation\\\\Page\\)\\|null but returns array\\<Pimcore\\\\Navigation\\\\Page\\>\\.$#"
@@ -1433,26 +1101,6 @@ parameters:
 			path: lib/Pimcore.php
 
 		-
-			message: "#^Method Pimcore\\\\Routing\\\\DataObjectRoute\\:\\:getContent\\(\\) should return object but returns null\\.$#"
-			count: 1
-			path: lib/Routing/DataObjectRoute.php
-
-		-
-			message: "#^Method Pimcore\\\\Security\\\\Encoder\\\\Factory\\\\UserAwareEncoderFactory\\:\\:getEncoder\\(\\) should return Symfony\\\\Component\\\\Security\\\\Core\\\\Encoder\\\\PasswordEncoderInterface but returns Symfony\\\\Component\\\\Serializer\\\\Encoder\\\\EncoderInterface\\.$#"
-			count: 1
-			path: lib/Security/Encoder/Factory/UserAwareEncoderFactory.php
-
-		-
-			message: "#^Array \\(array\\<Symfony\\\\Component\\\\Serializer\\\\Encoder\\\\EncoderInterface\\>\\) does not accept Symfony\\\\Component\\\\Security\\\\Core\\\\Encoder\\\\PasswordEncoderInterface\\.$#"
-			count: 1
-			path: lib/Security/Encoder/Factory/UserAwareEncoderFactory.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Targeting\\\\TargetingDocumentInterface\\:\\:getId\\(\\)\\.$#"
-			count: 2
-			path: lib/Targeting/Document/DocumentTargetingConfigurator.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Targeting\\\\ActionHandler\\\\ActionHandlerInterface\\:\\:getActionHandler\\(\\)\\.$#"
 			count: 2
 			path: lib/Targeting/EventListener/TargetingListener.php
@@ -1463,109 +1111,14 @@ parameters:
 			path: lib/Targeting/Storage/SessionStorage.php
 
 		-
-			message: "#^Cannot access property \\$type on string\\.$#"
-			count: 2
-			path: lib/Twig/Extension/Templating/HeadMeta.php
-
-		-
-			message: "#^Property Pimcore\\\\Templating\\\\Renderer\\\\EditableRenderer\\:\\:\\$editableLoader \\(Pimcore\\\\Model\\\\Document\\\\Editable\\\\Loader\\\\EditableLoader\\) does not accept Pimcore\\\\Model\\\\Document\\\\Editable\\\\Loader\\\\EditableLoaderInterface\\.$#"
-			count: 1
-			path: lib/Templating/Renderer/EditableRenderer.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\User\\:\\:setLastLoginDate\\(\\)\\.$#"
-			count: 1
-			path: lib/Tool/Authentication.php
-
-		-
 			message: "#^Call to an undefined method COM\\:\\:Run\\(\\)\\.$#"
 			count: 1
 			path: lib/Tool/Console.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Concrete\\:\\:getGender\\(\\)\\.$#"
-			count: 2
-			path: lib/Tool/Newsletter.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Concrete\\:\\:getFirstname\\(\\)\\.$#"
-			count: 2
-			path: lib/Tool/Newsletter.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Concrete\\:\\:getLastname\\(\\)\\.$#"
-			count: 2
-			path: lib/Tool/Newsletter.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Concrete\\:\\:getEmail\\(\\)\\.$#"
-			count: 4
-			path: lib/Tool/Newsletter.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Newsletter\\:\\:getDocument\\(\\)\\.$#"
-			count: 1
-			path: lib/Tool/Newsletter.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Newsletter\\:\\:getGoogleAnalytics\\(\\)\\.$#"
-			count: 1
-			path: lib/Tool/Newsletter.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Newsletter\\:\\:getName\\(\\)\\.$#"
-			count: 1
-			path: lib/Tool/Newsletter.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\:\\:setNewsletterActive\\(\\)\\.$#"
-			count: 1
-			path: lib/Tool/Newsletter.php
-
-		-
 			message: "#^Method Pimcore\\\\Tool\\\\Session\\:\\:get\\(\\) should return Symfony\\\\Component\\\\HttpFoundation\\\\Session\\\\Attribute\\\\AttributeBagInterface but returns Symfony\\\\Component\\\\HttpFoundation\\\\Session\\\\SessionBagInterface\\.$#"
 			count: 1
 			path: lib/Tool/Session.php
-
-		-
-			message: "#^Offset int does not exist on array\\(\\)\\.$#"
-			count: 1
-			path: lib/Tool/Transliteration.php
-
-		-
-			message: "#^Property Pimcore\\\\Translation\\\\AttributeSet\\\\AttributeSet\\:\\:\\$translationItem \\(Pimcore\\\\Translation\\\\TranslationItemCollection\\\\TranslationItem\\) does not accept Pimcore\\\\Model\\\\Element\\\\ElementInterface\\.$#"
-			count: 1
-			path: lib/Translation/AttributeSet/AttributeSet.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Document\\\\Editable\\:\\:setText\\(\\)\\.$#"
-			count: 1
-			path: lib/Translation/ImporterService/Importer/DocumentImporter.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Translation\\\\TranslatorBagInterface\\|Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:setLocale\\(\\)\\.$#"
-			count: 1
-			path: lib/Translation/Translator.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Translation\\\\TranslatorBagInterface\\|Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:getLocale\\(\\)\\.$#"
-			count: 1
-			path: lib/Translation/Translator.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Security\\\\Core\\\\Role\\\\RoleHierarchyInterface\\:\\:getReachableRoles\\(\\)\\.$#"
-			count: 1
-			path: lib/Workflow/ExpressionService.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:getLocale\\(\\)\\.$#"
-			count: 1
-			path: lib/Workflow/Notification/NotificationEmailService.php
-
-		-
-			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:setLocale\\(\\)\\.$#"
-			count: 2
-			path: lib/Workflow/Notification/NotificationEmailService.php
 
 		-
 			message: "#^Call to an undefined method Symfony\\\\Contracts\\\\Translation\\\\TranslatorInterface\\:\\:getLocale\\(\\)\\.$#"
@@ -1586,21 +1139,6 @@ parameters:
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\Asset\\:\\:getDuration\\(\\)\\.$#"
 			count: 1
 			path: models/Asset/Video/ImageThumbnail.php
-
-		-
-			message: "#^Method Pimcore\\\\Model\\\\Asset\\\\WebDAV\\\\Tree\\:\\:move\\(\\) should return int but return statement is missing\\.$#"
-			count: 1
-			path: models/Asset/WebDAV/Tree.php
-
-		-
-			message: "#^Method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Classificationstore\\:\\:getVersionPreview\\(\\) should return string but returns Pimcore\\\\Model\\\\DataObject\\\\Classificationstore\\|null\\.$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/Classificationstore.php
-
-		-
-			message: "#^Parameter \\#1 \\$data \\(Pimcore\\\\Model\\\\DataObject\\\\Data\\\\Hotspotimage\\) of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Hotspotimage\\:\\:getDataForResource\\(\\) should be compatible with parameter \\$data \\(Pimcore\\\\Model\\\\Asset\\) of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Image\\:\\:getDataForResource\\(\\)$#"
-			count: 1
-			path: models/DataObject/ClassDefinition/Data/Hotspotimage.php
 
 		-
 			message: "#^Return type \\(array\\) of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Hotspotimage\\:\\:getDataForResource\\(\\) should be compatible with return type \\(int\\|null\\) of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Image\\:\\:getDataForResource\\(\\)$#"
@@ -1651,9 +1189,4 @@ parameters:
 			message: "#^Return type \\(string\\) of method Pimcore\\\\Model\\\\DataObject\\\\Data\\\\InputQuantityValue\\:\\:getValue\\(\\) should be compatible with return type \\(float\\) of method Pimcore\\\\Model\\\\DataObject\\\\Data\\\\QuantityValue\\:\\:getValue\\(\\)$#"
 			count: 1
 			path: models/DataObject/Data/InputQuantityValue.php
-
-		-
-			message: "#^Access to an undefined property Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Fieldcollections\\:\\:\\$layoutId\\.$#"
-			count: 1
-			path: models/DataObject/Service.php
 

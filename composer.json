@@ -101,7 +101,6 @@
   },
   "conflict": {
     "monolog/monolog": ">=2",
-    "phpstan/phpstan": "^0.12.55",
     "symfony/monolog-bundle": "3.6.0"
   },
   "require-dev": {
@@ -109,7 +108,7 @@
     "codeception/codeception": "^4.1.12",
     "codeception/module-symfony": "^1.3.0",
     "codeception/phpunit-wrapper": "^7.8.1",
-    "phpstan/phpstan": "^0.12.53",
+    "phpstan/phpstan": "^0.12.56",
     "phpstan/phpstan-symfony": "^0.12.11",
     "phpunit/phpunit": "^7.5",
     "heidelpay/heidelpay-php": "^1.2.5.1",

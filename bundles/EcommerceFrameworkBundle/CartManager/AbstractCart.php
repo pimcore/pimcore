@@ -56,22 +56,22 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected $name;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     protected $creationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $creationDateTimestamp;
 
     /**
-     * @var \DateTime
+     * @var \DateTime|null
      */
     protected $modificationDate;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $modificationDateTimestamp;
 
@@ -91,22 +91,22 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     protected $priceCalculator;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $itemAmount;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $subItemAmount;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $itemCount;
 
     /**
-     * @var int
+     * @var int|null
      */
     protected $subItemCount;
 
@@ -751,16 +751,16 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     /**
      * @param string $key
      *
-     * @return string
+     * @return string|null
      */
     public function getCheckoutData($key)
     {
         $entry = $this->checkoutData[$key] ?? null;
         if ($entry) {
             return $this->checkoutData[$key]->getData();
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     /**
@@ -998,10 +998,10 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     {
         if ($item->getProduct() instanceof CheckoutableInterface) {
             return true;
-        } else {
-            Logger::warn('product ' . $item->getProductId() . ' not found');
-
-            return false;
         }
+
+        Logger::warn('product ' . $item->getProduct()->getId() . ' not found');
+
+        return false;
     }
 }

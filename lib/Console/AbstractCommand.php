@@ -39,7 +39,7 @@ abstract class AbstractCommand extends Command
     protected $input;
 
     /**
-     * @var ConsoleOutput
+     * @var OutputInterface
      */
     protected $output;
 

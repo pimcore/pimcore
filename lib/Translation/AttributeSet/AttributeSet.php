@@ -58,11 +58,11 @@ class AttributeSet
     }
 
     /**
-     * @param ElementInterface $translationItem
+     * @param TranslationItem $translationItem
      *
      * @return AttributeSet
      */
-    public function setTranslationItem(ElementInterface $translationItem): AttributeSet
+    public function setTranslationItem(TranslationItem $translationItem): AttributeSet
     {
         $this->translationItem = $translationItem;
 
