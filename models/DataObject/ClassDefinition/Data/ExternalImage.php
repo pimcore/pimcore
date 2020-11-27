@@ -332,22 +332,22 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\ExternalImage';
+        return '?\\' . DataObject\Data\ExternalImage::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\ExternalImage';
+        return '?\\' . DataObject\Data\ExternalImage::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\ExternalImage|null';
+        return '\\' . DataObject\Data\ExternalImage::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\ExternalImage|null';
+        return '\\' . DataObject\Data\ExternalImage::class . '|null';
     }
 
 }

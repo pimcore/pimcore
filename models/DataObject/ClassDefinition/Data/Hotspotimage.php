@@ -701,22 +701,22 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\Hotspotimage';
+        return '?\\' .DataObject\Data\Hotspotimage::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\Hotspotimage';
+        return '?\\' .DataObject\Data\Hotspotimage::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\Hotspotimage|null';
+        return '\\' . DataObject\Data\Hotspotimage::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\Hotspotimage|null';
+        return '\\' . DataObject\Data\Hotspotimage::class . '|null';
     }
 
 

@@ -535,22 +535,22 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\CalculatedValue';
+        return '?\\' . DataObject\Data\CalculatedValue::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\CalculatedValue';
+        return '?\\' . DataObject\Data\CalculatedValue::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\CalculatedValue|null';
+        return '\\' . DataObject\Data\CalculatedValue::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\CalculatedValue|null';
+        return '\\' . DataObject\Data\CalculatedValue::class . '|null';
     }
 
 

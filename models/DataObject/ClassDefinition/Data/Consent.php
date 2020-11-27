@@ -440,22 +440,22 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\Consent';
+        return '?\\' . DataObject\Data\Consent::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\Consent';
+        return '?\\' . DataObject\Data\Consent::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\Consent|null';
+        return '\\' . DataObject\Data\Consent::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\Consent|null';
+        return '\\' . DataObject\Data\Consent::class . '|null';
     }
 
 

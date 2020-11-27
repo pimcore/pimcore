@@ -625,22 +625,22 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\Video';
+        return '?\\' . DataObject\Data\Video::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\Video';
+        return '?\\' . DataObject\Data\Video::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\Video|null';
+        return '\\' . DataObject\Data\Video::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\Video|null';
+        return '\\' . DataObject\Data\Video::class . '|null';
     }
 
 

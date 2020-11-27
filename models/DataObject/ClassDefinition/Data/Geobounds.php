@@ -345,22 +345,22 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\Geobounds';
+        return '?\\' . DataObject\Data\Geobounds::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\Geobounds';
+        return '?\\' . DataObject\Data\Geobounds::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\Geobounds|null';
+        return '\\' . DataObject\Data\Geobounds::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\Geobounds|null';
+        return '\\' . DataObject\Data\Geobounds::class . '|null';
     }
 
 

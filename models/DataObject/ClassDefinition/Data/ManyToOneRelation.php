@@ -660,13 +660,13 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     /** @inheritDoc */
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\Pimcore\Model\Element\AbstractElement';
+        return '?\\' . Element\AbstractElement::class;
     }
 
     /** @inheritDoc */
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\Pimcore\Model\Element\AbstractElement';
+        return '?\\' . Element\AbstractElement::class;
     }
 
     /**
@@ -703,7 +703,7 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
     public function getPhpdocReturnType(): ?string
     {
         if ($this->getPhpdocType()) {
-            return $this->getPhpdocType() . '|null';
+            return '\\' . $this->getPhpdocType() . '|null';
         }
 
         return null;

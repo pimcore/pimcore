@@ -775,12 +775,12 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\UrlSlug[]';
+        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\UrlSlug[]';
+        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
     }
 
 }

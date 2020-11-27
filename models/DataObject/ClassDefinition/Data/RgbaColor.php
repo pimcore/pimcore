@@ -427,22 +427,22 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\RgbaColor';
+        return '?\\' . Model\DataObject\Data\RgbaColor::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\RgbaColor';
+        return '?\\' . Model\DataObject\Data\RgbaColor::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\RgbaColor|null';
+        return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\RgbaColor|null';
+        return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
     }
 
 }

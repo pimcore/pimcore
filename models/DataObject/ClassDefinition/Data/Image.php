@@ -474,22 +474,22 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\Asset\\Image';
+        return '?\\' . Asset\Image::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\Asset\\Image';
+        return '?\\' . Asset\Image::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\Asset\\Image|null';
+        return '\\' . Asset\Image::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\Asset\\Image|null';
+        return '\\' . Asset\Image::class . '|null';
     }
 
 }

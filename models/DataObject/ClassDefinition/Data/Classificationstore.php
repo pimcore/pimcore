@@ -1235,22 +1235,22 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Classificationstore';
+        return '?\\' . DataObject\Classificationstore::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Classificationstore';
+        return '?\\' . DataObject\Classificationstore::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Classificationstore|null';
+        return '\\' . DataObject\Classificationstore::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Classificationstore|null';
+        return '\\' . DataObject\Classificationstore::class . '|null';
     }
 
 

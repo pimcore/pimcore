@@ -626,22 +626,22 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\ImageGallery';
+        return '?\\' . DataObject\Data\ImageGallery::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\ImageGallery';
+        return '?\\' . DataObject\Data\ImageGallery::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\ImageGallery|null';
+        return '\\' . DataObject\Data\ImageGallery::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\ImageGallery|null';
+        return '\\' . DataObject\Data\ImageGallery::class . '|null';
     }
 
 

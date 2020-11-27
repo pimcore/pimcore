@@ -314,22 +314,22 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\Geopoint';
+        return '?\\' . DataObject\Data\Geopoint::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\Geopoint';
+        return '?\\' . DataObject\Data\Geopoint::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\Geopoint|null';
+        return '\\' . DataObject\Data\Geopoint::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\Geopoint|null';
+        return '\\' . DataObject\Data\Geopoint::class . '|null';
     }
 
 

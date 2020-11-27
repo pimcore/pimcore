@@ -846,22 +846,22 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Fieldcollection';
+        return '?\\' . DataObject\Fieldcollection::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Fieldcollection';
+        return '?\\' . DataObject\Fieldcollection::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Fieldcollection|null';
+        return '\\' . DataObject\Fieldcollection::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Fieldcollection|null';
+        return '\\' . DataObject\Fieldcollection::class . '|null';
     }
 
 

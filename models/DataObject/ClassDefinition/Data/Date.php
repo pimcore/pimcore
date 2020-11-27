@@ -457,22 +457,22 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Carbon\\Carbon';
+        return '?\\' . Carbon::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Carbon\\Carbon';
+        return '?\\' . Carbon::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Carbon\\Carbon|null';
+        return '\\' . Carbon::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Carbon\\Carbon|null';
+        return '\\' . Carbon::class . '|null';
     }
 
 }

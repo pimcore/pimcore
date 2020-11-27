@@ -184,22 +184,22 @@ class InputQuantityValue extends QuantityValue
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\InputQuantityValue';
+        return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\InputQuantityValue';
+        return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\InputQuantityValue|null';
+        return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\InputQuantityValue|null';
+        return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
     }
 
 }

@@ -696,22 +696,22 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\QuantityValue';
+        return '?\\' . Model\DataObject\Data\QuantityValue::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\QuantityValue';
+        return '?\\' . Model\DataObject\Data\QuantityValue::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\QuantityValue|null';
+        return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\QuantityValue|null';
+        return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
     }
 
 

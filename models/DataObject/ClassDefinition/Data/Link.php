@@ -474,22 +474,22 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
     public function getParameterTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\Link';
+        return '?\\' . DataObject\Data\Link::class;
     }
 
     public function getReturnTypeDeclaration(): ?string
     {
-        return '?\\Pimcore\\Model\\DataObject\\Data\\Link';
+        return '?\\' . DataObject\Data\Link::class;
     }
 
     public function getPhpdocInputType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\Link|null';
+        return '\\' . DataObject\Data\Link::class . '|null';
     }
 
     public function getPhpdocReturnType(): ?string
     {
-        return '\\Pimcore\\Model\\DataObject\\Data\\Link|null';
+        return '\\' . DataObject\Data\Link::class . '|null';
     }
 
 
