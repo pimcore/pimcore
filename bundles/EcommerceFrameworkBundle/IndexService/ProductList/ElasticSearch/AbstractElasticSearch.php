@@ -1173,7 +1173,6 @@ abstract class AbstractElasticSearch implements ProductListInterface
 
             // process result from elasticsearch
             $this->processResult($result);
-
         } else {
             $this->preparedGroupByValuesResults = [];
         }
