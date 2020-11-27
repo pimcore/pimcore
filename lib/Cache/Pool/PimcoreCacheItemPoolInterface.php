@@ -14,7 +14,7 @@
 
 namespace Pimcore\Cache\Pool;
 
-use Psr\Cache\InvalidArgumentException;
+use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 use Psr\Log\LoggerAwareInterface;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 

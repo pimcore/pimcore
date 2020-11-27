@@ -15,7 +15,7 @@
 namespace Pimcore\Cache\Pool;
 
 use Psr\Cache\CacheItemInterface;
-use Psr\Cache\InvalidArgumentException;
+use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
 
 interface PimcoreCacheItemInterface extends CacheItemInterface
 {
