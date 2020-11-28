@@ -18,7 +18,6 @@ use Pimcore\Security\Encoder\UserAwarePasswordEncoderInterface;
 use Pimcore\Security\Exception\ConfigurationException;
 use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Serializer\Encoder\EncoderInterface;
 
 /**
  * Encoder factory keeping a dedicated encoder instance per user object. This is needed as Pimcore Users and user
