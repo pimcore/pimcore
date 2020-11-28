@@ -102,6 +102,7 @@ class TwigDefaultDelegatingEngine extends BaseDelegatingEngine
      * @param Response|null $response
      *
      * @return Response
+     *
      * @throws \Exception
      */
     public function renderResponse($view, array $parameters = [], Response $response = null)
