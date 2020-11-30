@@ -177,8 +177,7 @@ class PageController extends DocumentControllerBase
 
             if ($request->get('task') == 'unpublish') {
                 $page->setPublished(false);
-            }
-            if ($request->get('task') == 'publish') {
+            } elseif ($request->get('task') == 'publish') {
                 $page->setPublished(true);
             }
 
