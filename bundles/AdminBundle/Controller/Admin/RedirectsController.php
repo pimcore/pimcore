@@ -47,8 +47,10 @@ class RedirectsController extends AdminController
      */
     public function redirectsAction(Request $request, RedirectHandler $redirectHandler)
     {
+        // check permission for both update and listing
+        $this->checkPermission('redirects');
+
         if ($request->get('data')) {
-            $this->checkPermission('redirects');
 
             if ($request->get('xaction') == 'destroy') {
                 $data = $this->decodeJson($request->get('data'));
