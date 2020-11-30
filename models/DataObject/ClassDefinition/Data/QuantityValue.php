@@ -572,7 +572,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
                     $list->setOrderKey('abbreviation');
                     $list->setOrder('asc');
                     $list = $list->load();
-                    /** @var Model\DataObject\QuantityValue\Unit $item */
                     foreach ($list as $item) {
                         $table[$item->getId()] = $item;
                     }

@@ -78,7 +78,6 @@ class RequirementsCheckCommand extends AbstractCommand
         $checksTab = [];
 
         foreach ($checks as $check) {
-            /** @var Requirements\Check $check */
             if (in_array($check->getState(), $this->levelsToDisplay)) {
                 $checksTab[] = [$check->getName(), $this->displayState($check->getState())];
             }

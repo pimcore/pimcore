@@ -49,7 +49,6 @@ class TargetingController extends AdminController implements KernelControllerEve
         $list->setOrderKey('prio');
         $list->setOrder('ASC');
 
-        /** @var Targeting\Rule $target */
         foreach ($list->load() as $target) {
             $targets[] = [
                 'id' => $target->getId(),
@@ -203,7 +202,6 @@ class TargetingController extends AdminController implements KernelControllerEve
             ];
         }
 
-        /** @var TargetGroup $targetGroup */
         foreach ($list->load() as $targetGroup) {
             $targetGroups[] = [
                 'id' => $targetGroup->getId(),
