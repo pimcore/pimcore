@@ -85,10 +85,6 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
         return $this->config;
     }
 
-
-
-
-
     /**
      * Check options that have been passed by the main configuration
      *
@@ -285,9 +281,9 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
             $this->setAuthorizedData($clearedParams);
 
             //https://hobex.docs.oppwa.com/reference/resultCodes
-            if ($this->isSuccess($jsonResponse['result']['code'])){
+            if ($this->isSuccess($jsonResponse['result']['code'])) {
                 $paymentType = $jsonResponse['paymentType'];
-                switch ($paymentType){
+                switch ($paymentType) {
                     case self::PAYMENT_TYPE_DEBIT:
                         $responseStatus = StatusInterface::STATUS_CLEARED;
                         break;
@@ -394,11 +390,10 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
      *
      * @return bool
      */
-    protected  function isSuccess($code)
+    protected function isSuccess($code)
     {
-        return strpos($code, '000.100.') === 0 || strpos($code,'000.000.') === 0;
+        return strpos($code, '000.100.') === 0 || strpos($code, '000.000.') === 0;
     }
-
 
     /**
      * unlike documented, merchantTransactionId only allows numeric values (N20)
@@ -411,13 +406,15 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
      */
     protected function createMerchantId(\Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder $order)
     {
-        if ($order->getLastPaymentInfo()){
+        if ($order->getLastPaymentInfo()) {
             $internalPaymentId = $order->getLastPaymentInfo()->getInternalPaymentId();
-            if ($internalPaymentId){
-                $txtId = (int) preg_replace('/\D/',0,str_replace('payment_','',$internalPaymentId));
+            if ($internalPaymentId) {
+                $txtId = (int) preg_replace('/\D/', 0, str_replace('payment_', '', $internalPaymentId));
+
                 return $txtId;
             }
         }
+
         return 0;
     }
 
@@ -425,25 +422,24 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
      * prefix all keys with 'hobex_' to allow pimcore to store the values in fieldcollection PaymentInfo
      *
      * @param array $jsonResponse
-     *
      * @param string $prefix
      *
      * @return array
      */
-    protected function createProviderData($jsonResponse, $prefix = 'hobex_'){
+    protected function createProviderData($jsonResponse, $prefix = 'hobex_')
+    {
         $providerData = [];
 
         // prefix keys with hobex_ to allow pimcore to store the values in Fieldcollection PaymentInfo
         foreach ($jsonResponse as $key => $value) {
-            if (is_array($value)){
+            if (is_array($value)) {
                 $data = $this->createProviderData($value, $prefix . $key . '_');
                 $providerData = $providerData + $data;
             } else {
                 $providerData[$prefix . $key] = $value;
             }
-
         }
+
         return $providerData;
     }
-
 }

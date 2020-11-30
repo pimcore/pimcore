@@ -297,7 +297,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             return $translated;
         } elseif ($normalizedId == $translated) {
             if ($this->getCatalogue($locale)->has($normalizedId, $domain)) {
-                $translated =  $this->getCatalogue($locale)->get($normalizedId, $domain);
+                $translated = $this->getCatalogue($locale)->get($normalizedId, $domain);
                 if ($translated != $normalizedId) {
                     return $translated;
                 }

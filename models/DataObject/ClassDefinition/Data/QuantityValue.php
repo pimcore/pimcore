@@ -754,12 +754,13 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
     /**
      * @param mixed $unitId
+     *
      * @return string
      */
     private function prepareUnitIdForComparison($unitId): string
     {
         $unitId = (string) $unitId;
-        if(empty($unitId)) {
+        if (empty($unitId)) {
             $unitId = '';
         }
 

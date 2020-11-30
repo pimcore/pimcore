@@ -797,7 +797,7 @@ QUERY;
 
         /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedFieldDefinition */
         $localizedFieldDefinition = $container->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
-        if($localizedFieldDefinition instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+        if ($localizedFieldDefinition instanceof DataObject\ClassDefinition\Data\Localizedfields) {
             foreach ($localizedFieldDefinition->getFieldDefinitions(['suppressEnrichment' => true]) as $value) {
                 if ($value instanceof ResourcePersistenceAwareInterface || method_exists($value, 'getDataForResource')) {
                     /** @var DataObject\ClassDefinition\Data & ResourcePersistenceAwareInterface $value */
@@ -861,7 +861,7 @@ QUERY;
                     /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
                     $localizedfields = $this->model->getClass()->getFieldDefinition('localizedfields', ['suppressEnrichment' => true]);
 
-                    if($localizedfields instanceof DataObject\ClassDefinition\Data\Localizedfields) {
+                    if ($localizedfields instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                         $fieldDefinitions = $localizedfields->getFieldDefinitions(['suppressEnrichment' => true]);
                     }
                 }
