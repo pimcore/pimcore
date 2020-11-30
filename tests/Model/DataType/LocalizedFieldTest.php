@@ -35,7 +35,7 @@ class LocalizedFieldTest extends ModelTestCase
         Localizedfield::setStrictMode(Localizedfield::STRICT_ENABLED);
 
         $this->expectException(\Exception::class);
-        $this->getExpectedExceptionMessage('Language  not accepted in strict mode');
+        $this->expectExceptionMessage('Language  not accepted in strict mode');
         $object->setLinput('Test');
     }
 
@@ -46,7 +46,7 @@ class LocalizedFieldTest extends ModelTestCase
         Localizedfield::setStrictMode(Localizedfield::STRICT_ENABLED);
 
         $this->expectException(\Exception::class);
-        $this->getExpectedExceptionMessage('Language ko not accepted in strict mode');
+        $this->expectExceptionMessage('Language ko not accepted in strict mode');
 
         $object->setLinput('Test', 'ko');
     }

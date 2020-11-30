@@ -20,7 +20,7 @@ class ObjectTest extends ModelTestCase
     public function testParentIdentical()
     {
         $this->expectException(\Exception::class);
-        $this->getExpectedExceptionMessage("ParentID and ID is identical, an element can't be the parent of itself.");
+        $this->expectExceptionMessage("ParentID and ID is identical, an element can't be the parent of itself.");
         $savedObject = TestHelper::createEmptyObject();
         $this->assertTrue($savedObject->getId() > 0);
 
@@ -34,7 +34,7 @@ class ObjectTest extends ModelTestCase
     public function testParentIs0()
     {
         $this->expectException(\Exception::class);
-        $this->getExpectedExceptionMessage("ParentID and ID is identical, an element can't be the parent of itself.");
+        $this->expectExceptionMessage("ParentID and ID is identical, an element can't be the parent of itself.");
         $savedObject = TestHelper::createEmptyObject('', false);
         $this->assertTrue($savedObject->getId() == 0);
 
