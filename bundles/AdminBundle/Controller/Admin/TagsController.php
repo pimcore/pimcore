@@ -109,13 +109,13 @@ class TagsController extends AdminController
     public function treeGetChildrenByIdAction(Request $request)
     {
         $showSelection = $request->get('showSelection') == 'true';
-        $assginmentCId = intval($request->get('assignmentCId'));
-        $assginmentCType = strip_tags($request->get('assignmentCType'));
+        $assignmentCId = intval($request->get('assignmentCId'));
+        $assignmentCType = strip_tags($request->get('assignmentCType'));
 
         $recursiveChildren = false;
         $assignedTagIds = [];
-        if ($assginmentCId && $assginmentCType) {
-            $assignedTags = Tag::getTagsForElement($assginmentCType, $assginmentCId);
+        if ($assignmentCId && $assignmentCType) {
+            $assignedTags = Tag::getTagsForElement($assignmentCType, $assignmentCId);
 
             foreach ($assignedTags as $assignedTag) {
                 $assignedTagIds[$assignedTag->getId()] = $assignedTag;
