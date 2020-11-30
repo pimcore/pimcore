@@ -122,7 +122,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     /**
      * @inheritDoc
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         static::setupLogger((new \ReflectionClass(__CLASS__))->getShortName());
     }
@@ -130,7 +130,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     /**
      * @inheritDoc
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         static::handleLogOutput();
     }
