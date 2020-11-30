@@ -34,7 +34,6 @@ class GeneralTest extends ModelTestCase
     {
         // According to the bootstrap file en and de are valid website languages
 
-        /** @var Inheritance $one */
         $one = new Inheritance();
         $one->setKey('one');
         $one->setParentId(1);
@@ -43,7 +42,6 @@ class GeneralTest extends ModelTestCase
         $one->setNormalInput('parenttext');
         $one->save();
 
-        /** @var Inheritance $two */
         $two = new Inheritance();
         $two->setKey('two');
         $two->setParentId($one->getId());
@@ -145,7 +143,6 @@ class GeneralTest extends ModelTestCase
         $target->setSomeAttribute('Some content 1');
         $target->save();
 
-        /** @var Inheritance $one */
         $one = new Inheritance();
         $one->setKey('one');
         $one->setParentId(1);
@@ -157,7 +154,6 @@ class GeneralTest extends ModelTestCase
 
         // create child "two", inherit relation from "one"
 
-        /** @var Inheritance $two */
         $two = new Inheritance();
         $two->setKey('one');
         $two->setParentId($one->getId());

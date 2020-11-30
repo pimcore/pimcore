@@ -64,7 +64,6 @@ class PimcoreContextGuesser
      */
     public function guess(Request $request, string $default): string
     {
-        /** @var RequestMatcherInterface[] $matchers */
         foreach ($this->getMatchers() as $context => $matchers) {
             foreach ($matchers as $matcher) {
                 if ($matcher->matches($request)) {

@@ -254,7 +254,6 @@ class CustomReportController extends ReportsControllerBase
         $list = new CustomReport\Config\Listing();
         $items = $list->getDao()->loadForGivenUser($this->getAdminUser());
 
-        /** @var CustomReport\Config $report */
         foreach ($items as $report) {
             $reports[] = [
                 'name' => $report->getName(),

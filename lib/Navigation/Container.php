@@ -223,7 +223,6 @@ class Container implements \RecursiveIterator, \Countable
         }
 
         if ($recursive) {
-            /** @var Page $childPage */
             foreach ($this->_pages as $childPage) {
                 if ($childPage->hasPage($page, true)) {
                     $childPage->removePage($page, true);

@@ -587,7 +587,6 @@ class Datatrans extends AbstractPayment implements \Pimcore\Bundle\EcommerceFram
         $transaction = $xml->body->transaction;
         $status = (string)$transaction->attributes()['trxStatus'];
 
-        /* @var \SimpleXMLElement $response */
         $response = $transaction->{$status};
 
         $message = null;

@@ -78,7 +78,6 @@ if (false) {
         }
 
         if (isset($parameters['object']) && $parameters['object'] instanceof Concrete) {
-            /** @var Concrete $object */
             $object = $parameters['object'];
             if ($linkGenerator = $object->getClass()->getLinkGenerator()) {
                 unset($parameters['object']);

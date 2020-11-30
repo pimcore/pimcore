@@ -989,7 +989,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
 
                     $keyGroupRelations = $groupDefinition->getRelations();
 
-                    /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
                     foreach ($keyGroupRelations as $keyGroupRelation) {
                         foreach ($validLanguages as $validLanguage) {
                             $keyId = $keyGroupRelation->getKeyId();
@@ -1254,7 +1253,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
         $groupList->setOrder(['ASC', 'ASC']);
         $groupList = $groupList->load();
 
-        /** @var DataObject\Classificationstore\GroupConfig $group */
         foreach ($groupList as $group) {
             $keyList = [];
 
@@ -1263,7 +1261,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $relation->setOrderKey(['sorter', 'id']);
             $relation->setOrder(['ASC', 'ASC']);
             $relation = $relation->load();
-            /** @var DataObject\Classificationstore\KeyGroupRelation $keyGroupRelation */
             foreach ($relation as $keyGroupRelation) {
                 if (!$keyGroupRelation->isEnabled()) {
                     continue;
@@ -1317,7 +1314,6 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
             $relation = $relation->load();
 
             $sorting = [];
-            /** @var DataObject\Classificationstore\CollectionGroupRelation $item */
             foreach ($relation as $item) {
                 $sorting[$item->getGroupId()] = $item->getSorter();
             }

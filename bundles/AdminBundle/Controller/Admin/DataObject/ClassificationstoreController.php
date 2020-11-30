@@ -861,7 +861,6 @@ class ClassificationstoreController extends AdminController implements KernelCon
         $rootElement = [];
 
         $data = [];
-        /** @var Classificationstore\KeyGroupRelation $config */
         foreach ($listItems as $config) {
             $type = $config->getType();
             $definition = json_decode($config->getDefinition());
@@ -1143,7 +1142,6 @@ class ClassificationstoreController extends AdminController implements KernelCon
                     $keyIdList = $keyIdList->load();
                     if ($keyIdList) {
                         $keyIds = [];
-                        /** @var Classificationstore\KeyGroupRelation $keyEntry */
                         foreach ($keyIdList as $keyEntry) {
                             $keyIds[] = $keyEntry->getKeyId();
                         }
@@ -1433,7 +1431,6 @@ class ClassificationstoreController extends AdminController implements KernelCon
         $result = [];
         $list = new Classificationstore\StoreConfig\Listing();
         $list = $list->load();
-        /** @var Classificationstore\StoreConfig $item */
         foreach ($list as $item) {
             $resultItem = [
                 'id' => $item->getId(),

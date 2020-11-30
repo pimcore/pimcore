@@ -252,7 +252,6 @@ class Config implements \ArrayAccess
                 $list = new Model\WebsiteSetting\Listing();
                 $list = $list->load();
 
-                /** @var WebsiteSetting $item */
                 foreach ($list as $item) {
                     $itemSiteId = $item->getSiteId();
 

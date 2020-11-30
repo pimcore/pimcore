@@ -261,9 +261,6 @@ class PortalController extends AdminController implements KernelControllerEventI
         $response['documents'] = [];
 
         foreach ($list as $doc) {
-            /**
-             * @var Document $doc
-             */
             if ($doc->isAllowed('view')) {
                 $response['documents'][] = [
                     'id' => $doc->getId(),
@@ -333,9 +330,6 @@ class PortalController extends AdminController implements KernelControllerEventI
         $response['objects'] = [];
 
         foreach ($list as $object) {
-            /**
-             * @var DataObject $object
-             */
             if ($object->isAllowed('view')) {
                 $response['objects'][] = [
                     'id' => $object->getId(),
@@ -411,7 +405,6 @@ class PortalController extends AdminController implements KernelControllerEventI
             ],
         ];
 
-        /** @var Site $site */
         foreach ($sites->load() as $site) {
             if ($siteConfigProvider->isSiteReportingConfigured($site)) {
                 $data[] = [

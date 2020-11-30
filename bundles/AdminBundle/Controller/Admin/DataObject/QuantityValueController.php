@@ -182,7 +182,6 @@ class QuantityValueController extends AdminController
 
         $units = $list->getUnits();
 
-        /** @var Unit $unit */
         foreach ($units as $unit) {
             try {
                 if ($unit->getAbbreviation()) {
@@ -255,7 +254,6 @@ class QuantityValueController extends AdminController
         $convertedValues = [];
         /** @var UnitConversionService $converter */
         $converter = $this->container->get(UnitConversionService::class);
-        /** @var Unit $targetUnit */
         foreach ($units as $targetUnit) {
             try {
                 $convertedValue = $converter->convert(new QuantityValue($request->get('value'), $fromUnit), $targetUnit);

@@ -240,7 +240,6 @@ class IndexUpdateService
      */
     protected function createBasicStoreTableSelectQuery(string $storeTableName, array $tenantNameFilterList): QueryBuilder
     {
-        /** @var QueryBuilder $qb */
         $qb = Db::get()->createQueryBuilder();
         $qb
             ->select('o_id as id')
@@ -275,7 +274,6 @@ class IndexUpdateService
      */
     protected function createBasicStoreTableUpdateQuery(string $storeTableName, array $tenantNameFilterList): QueryBuilder
     {
-        /** @var QueryBuilder $qb */
         $qb = Db::get()->createQueryBuilder();
         $qb->update($storeTableName);
 

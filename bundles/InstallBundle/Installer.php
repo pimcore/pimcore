@@ -627,7 +627,6 @@ class Installer
             $user->delete();
         }
 
-        /** @var User $user */
         $user = User::create([
             'parentId' => 0,
             'username' => $settings['username'],
