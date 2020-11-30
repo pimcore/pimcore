@@ -148,13 +148,6 @@ class PageController extends DocumentControllerBase
 
         $page->setUserModification($this->getAdminUser()->getId());
 
-        if ($request->get('task') == 'unpublish') {
-            $page->setPublished(false);
-        }
-        if ($request->get('task') == 'publish') {
-            $page->setPublished(true);
-        }
-
         if ($request->get('missingRequiredEditable') !== null) {
             $page->setMissingRequiredEditable(($request->get('missingRequiredEditable') == 'true') ? true : false);
         }
@@ -181,6 +174,12 @@ class PageController extends DocumentControllerBase
         // only save when publish or unpublish
         if (($request->get('task') == 'publish' && $page->isAllowed('publish')) || ($request->get('task') == 'unpublish' && $page->isAllowed('unpublish'))) {
             $this->setValuesToDocument($request, $page);
+
+            if ($request->get('task') == 'unpublish') {
+                $page->setPublished(false);
+            } elseif ($request->get('task') == 'publish') {
+                $page->setPublished(true);
+            }
 
             $page->save();
             $this->saveToSession($page);
