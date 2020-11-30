@@ -135,7 +135,7 @@ class TagsController extends AdminController
             $filterTagList = new Tag\Listing();
             $filterTagList->setCondition('LOWER(`name`) LIKE ?', ['%' . $filterTagList->escapeLike(mb_strtolower($request->get('filter'))) . '%']);
             foreach ($filterTagList->load() as $filterTag) {
-                if ($parentId = $filterTag->getParentId() == 0) {
+                if ($filterTag->getParentId() == 0) {
                     $filterIds[] = $filterTag->getId();
                 } else {
                     $ids = explode('/', $filterTag->getIdPath());
