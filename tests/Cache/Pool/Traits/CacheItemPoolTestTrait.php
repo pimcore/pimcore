@@ -20,7 +20,7 @@ trait CacheItemPoolTestTrait
      */
     protected $cache;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         static::setupLogger((new \ReflectionClass(__CLASS__))->getShortName());
