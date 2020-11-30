@@ -13,7 +13,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
 {
     const RELATION_COUNT = 5;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
@@ -21,7 +21,7 @@ class AbstractLazyLoadingTest extends ModelTestCase
         $this->createRelationObjects();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         TestHelper::cleanUp();
         parent::tearDown();

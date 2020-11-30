@@ -199,12 +199,12 @@ abstract class AbstractCoreHandlerTest extends TestCase
      * Invalid keys is defined on abstract CachePool test
      *
      * @dataProvider invalidKeys
-     * @expectedException InvalidArgumentException
      *
      * @param string $key
      */
     public function testExceptionOnInvalidItemKeySave($key)
     {
+        $this->expectException(InvalidArgumentException::class);
         $this->handler->save($key, 'foo');
     }
 
@@ -212,12 +212,12 @@ abstract class AbstractCoreHandlerTest extends TestCase
      * Invalid keys is defined on abstract CachePool test
      *
      * @dataProvider invalidKeys
-     * @expectedException InvalidArgumentException
      *
      * @param string $key
      */
     public function testExceptionOnInvalidItemKeyRemove($key)
     {
+        $this->expectException(InvalidArgumentException::class);
         $this->handler->remove($key);
     }
 
