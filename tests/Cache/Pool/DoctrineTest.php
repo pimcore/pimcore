@@ -21,4 +21,10 @@ class DoctrineTest extends CachePoolTest
     {
         return (new Factory())->createDoctrineItemPool($this->defaultLifetime);
     }
+
+    public function testBasicUsageWithLongKey() {
+        //TODO see https://github.com/pimcore/pimcore/issues/7609
+    }
+
+
 }
