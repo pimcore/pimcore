@@ -109,13 +109,13 @@ class TagsController extends AdminController
     public function treeGetChildrenByIdAction(Request $request)
     {
         $showSelection = $request->get('showSelection') == 'true';
-        $assginmentCId = intval($request->get('assignmentCId'));
-        $assginmentCType = strip_tags($request->get('assignmentCType'));
+        $assignmentCId = intval($request->get('assignmentCId'));
+        $assignmentCType = strip_tags($request->get('assignmentCType'));
 
         $recursiveChildren = false;
         $assignedTagIds = [];
-        if ($assginmentCId && $assginmentCType) {
-            $assignedTags = Tag::getTagsForElement($assginmentCType, $assginmentCId);
+        if ($assignmentCId && $assignmentCType) {
+            $assignedTags = Tag::getTagsForElement($assignmentCType, $assignmentCId);
 
             foreach ($assignedTags as $assignedTag) {
                 $assignedTagIds[$assignedTag->getId()] = $assignedTag;
@@ -133,9 +133,9 @@ class TagsController extends AdminController
         if (!empty($request->get('filter'))) {
             $filterIds = [0];
             $filterTagList = new Tag\Listing();
-            $filterTagList->setCondition('`name` LIKE '. $filterTagList->quote('%'. $request->get('filter') .'%'));
+            $filterTagList->setCondition('LOWER(`name`) LIKE ?', ['%' . $filterTagList->escapeLike(mb_strtolower($request->get('filter'))) . '%']);
             foreach ($filterTagList->load() as $filterTag) {
-                if ($parentId = $filterTag->getParentId() == 0) {
+                if ($filterTag->getParentId() == 0) {
                     $filterIds[] = $filterTag->getId();
                 } else {
                     $ids = explode('/', $filterTag->getIdPath());

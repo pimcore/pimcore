@@ -297,7 +297,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
             return $translated;
         } elseif ($normalizedId == $translated) {
             if ($this->getCatalogue($locale)->has($normalizedId, $domain)) {
-                $translated =  $this->getCatalogue($locale)->get($normalizedId, $domain);
+                $translated = $this->getCatalogue($locale)->get($normalizedId, $domain);
                 if ($translated != $normalizedId) {
                     return $translated;
                 }
@@ -357,7 +357,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                     // update fallback value in original catalogue otherwise multiple calls to the same id will not work
                     $this->getCatalogue($locale)->set($normalizedId, $fallbackValue, $domain);
 
-                    return $fallbackValue;
+                    return strtr($fallbackValue, $parameters);
                 }
             }
 
