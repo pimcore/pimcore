@@ -256,7 +256,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|DataObject\Objectbrick\Data\AbstractData $object
+     * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData $object
      * @param mixed $params
      *
      * @return string
