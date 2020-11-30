@@ -143,9 +143,9 @@ class SettingsController extends AdminController
      */
     public function metadataAction(Request $request)
     {
-        if ($request->get('data')) {
-            $this->checkPermission('asset_metadata');
+        $this->checkPermission('asset_metadata');
 
+        if ($request->get('data')) {
             if ($request->get('xaction') == 'destroy') {
                 $data = $this->decodeJson($request->get('data'));
                 $id = $data['id'];
@@ -1598,9 +1598,9 @@ class SettingsController extends AdminController
      */
     public function websiteSettingsAction(Request $request)
     {
-        if ($request->get('data')) {
-            $this->checkPermission('website_settings');
+        $this->checkPermission('website_settings');
 
+        if ($request->get('data')) {
             $data = $this->decodeJson($request->get('data'));
 
             if (is_array($data)) {
