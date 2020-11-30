@@ -17,8 +17,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 use Linfo;
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
@@ -67,7 +67,7 @@ class IndexController extends AdminController implements EventedControllerInterf
      * @param SiteConfigProvider $siteConfigProvider
      * @param KernelInterface $kernel
      * @param Executor $maintenanceExecutor
-     * @param CsrfProtectionListener $csrfProtectionListener
+     * @param CsrfProtectionHandler $csrfProtection
      * @param Config $config
      *
      * @return ViewModel
@@ -79,7 +79,7 @@ class IndexController extends AdminController implements EventedControllerInterf
         SiteConfigProvider $siteConfigProvider,
         KernelInterface $kernel,
         Executor $maintenanceExecutor,
-        CsrfProtectionListener $csrfProtectionListener,
+        CsrfProtectionHandler $csrfProtection,
         Config $config
     ) {
         $user = $this->getAdminUser();
@@ -92,7 +92,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             ->addReportConfig($view)
             ->addPluginAssets($view);
 
-        $settings = $this->buildPimcoreSettings($request, $view, $user, $kernel, $maintenanceExecutor, $csrfProtectionListener);
+        $settings = $this->buildPimcoreSettings($request, $view, $user, $kernel, $maintenanceExecutor, $csrfProtection);
         $this->buildGoogleAnalyticsSettings($view, $settings, $siteConfigProvider);
 
         if ($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
@@ -238,11 +238,11 @@ class IndexController extends AdminController implements EventedControllerInterf
      * @param User $user
      * @param KernelInterface $kernel
      * @param ExecutorInterface $maintenanceExecutor
-     * @param CsrfProtectionListener $csrfProtectionListener
+     * @param CsrfProtectionHandler $csrfProtection
      *
      * @return ViewModel
      */
-    protected function buildPimcoreSettings(Request $request, ViewModel $view, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionListener $csrfProtectionListener)
+    protected function buildPimcoreSettings(Request $request, ViewModel $view, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionHandler $csrfProtection)
     {
         $config = $view->config;
         $settings = new ViewModel([
@@ -305,7 +305,7 @@ class IndexController extends AdminController implements EventedControllerInterf
             ->addMailSettings($settings, $config)
             ->addCustomViewSettings($settings);
 
-        $settings->csrfToken = $csrfProtectionListener->getCsrfToken();
+        $settings->csrfToken = $csrfProtection->getCsrfToken();
 
         return $settings;
     }

@@ -2395,10 +2395,13 @@ class AssetController extends ElementControllerBase implements EventedController
      * @Route("/grid-proxy", name="pimcore_admin_asset_gridproxy", methods={"GET", "POST", "PUT"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param GridHelperService $gridHelperService
+     * @param CsrfProtectionHandler $csrfProtection
      *
      * @return JsonResponse
      */
-    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService)
+    public function gridProxyAction(Request $request, EventDispatcherInterface $eventDispatcher, GridHelperService $gridHelperService, CsrfProtectionHandler $csrfProtection)
     {
         $allParams = array_merge($request->request->all(), $request->query->all());
 
@@ -2414,7 +2417,7 @@ class AssetController extends ElementControllerBase implements EventedController
         $loader = \Pimcore::getContainer()->get('pimcore.implementation_loader.asset.metadata.data');
 
         if (isset($allParams['data']) && $allParams['data']) {
-            $this->checkCsrfToken($request);
+            $csrfProtection->checkCsrfToken($request);
             if ($allParams['xaction'] == 'update') {
                 try {
                     $data = $this->decodeJson($allParams['data']);

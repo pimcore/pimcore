@@ -16,8 +16,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Bundle\AdminBundle\Controller\BruteforceProtectedControllerInterface;
-use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\Security\BruteforceProtectionHandler;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\Configuration\TemplatePhp;
 use Pimcore\Controller\EventedControllerInterface;
@@ -81,13 +81,13 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      *
      * @TemplatePhp()
      */
-    public function loginAction(Request $request, CsrfProtectionListener $csrfProtectionListener, Config $config)
+    public function loginAction(Request $request, CsrfProtectionHandler $csrfProtection, Config $config)
     {
         if ($request->get('_route') === 'pimcore_admin_login_fallback') {
             return $this->redirectToRoute('pimcore_admin_login', $request->query->all(), Response::HTTP_MOVED_PERMANENTLY);
         }
 
-        $csrfProtectionListener->regenerateCsrfToken();
+        $csrfProtection->regenerateCsrfToken();
 
         $user = $this->getAdminUser();
         if ($user instanceof UserInterface) {
@@ -116,12 +116,12 @@ class LoginController extends AdminController implements BruteforceProtectedCont
     /**
      * @Route("/login/csrf-token", name="pimcore_admin_login_csrf_token")
      */
-    public function csrfTokenAction(Request $request, CsrfProtectionListener $csrfProtectionListener)
+    public function csrfTokenAction(Request $request, CsrfProtectionHandler $csrfProtection)
     {
-        $csrfProtectionListener->regenerateCsrfToken();
+        $csrfProtection->regenerateCsrfToken();
 
         return $this->json([
-           'csrfToken' => $csrfProtectionListener->getCsrfToken(),
+           'csrfToken' => $csrfProtection->getCsrfToken(),
         ]);
     }
 
@@ -150,7 +150,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
      * @Route("/login/lostpassword", name="pimcore_admin_login_lostpassword")
      * @TemplatePhp()
      */
-    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionListener $csrfProtectionListener, Config $config)
+    public function lostpasswordAction(Request $request, BruteforceProtectionHandler $bruteforceProtectionHandler, CsrfProtectionHandler $csrfProtection, Config $config)
     {
         $view = $this->buildLoginPageViewModel($config);
         $error = null;
@@ -209,7 +209,7 @@ class LoginController extends AdminController implements BruteforceProtectedCont
             }
         }
 
-        $csrfProtectionListener->regenerateCsrfToken();
+        $csrfProtection->regenerateCsrfToken();
 
         return $view;
     }
