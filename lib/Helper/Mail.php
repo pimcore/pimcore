@@ -135,7 +135,7 @@ CSS;
             if (strlen(trim($name)) > 0) {
                 $formatedReceiversArray[] = $name . ' <' . $mail . '>';
             } else {
-                $formatedReceiversArray[] = $mail; 
+                $formatedReceiversArray[] = $mail;
             }
         }
 

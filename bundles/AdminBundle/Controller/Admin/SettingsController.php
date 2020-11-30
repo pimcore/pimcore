@@ -146,7 +146,6 @@ class SettingsController extends AdminController
         $this->checkPermission('asset_metadata');
 
         if ($request->get('data')) {
-
             if ($request->get('xaction') == 'destroy') {
                 $data = $this->decodeJson($request->get('data'));
                 $id = $data['id'];
@@ -1762,7 +1761,6 @@ class SettingsController extends AdminController
         $this->checkPermission('website_settings');
 
         if ($request->get('data')) {
-
             $data = $this->decodeJson($request->get('data'));
 
             if (is_array($data)) {
