@@ -16,7 +16,6 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache;
-use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
 use Pimcore\Db\ConnectionInterface;
@@ -705,7 +704,7 @@ class SettingsController extends AdminController
      * @param Request $request
      * @param KernelInterface $kernel
      * @param EventDispatcherInterface $eventDispatcher
-     * @param CoreHandlerInterface $cache
+     * @param Cache\CoreCacheHandler $cache
      * @param ConnectionInterface $db
      * @param Filesystem $filesystem
      * @param CacheClearer $symfonyCacheClearer
@@ -716,7 +715,7 @@ class SettingsController extends AdminController
         Request $request,
         KernelInterface $kernel,
         EventDispatcherInterface $eventDispatcher,
-        CoreHandlerInterface $cache,
+        Cache\CoreCacheHandler $cache,
         ConnectionInterface $db,
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer

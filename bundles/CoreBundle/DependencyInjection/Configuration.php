@@ -15,8 +15,6 @@
 namespace Pimcore\Bundle\CoreBundle\DependencyInjection;
 
 use Pimcore\Bundle\CoreBundle\DependencyInjection\Config\Processor\PlaceholderProcessor;
-use Pimcore\Cache\Pool\Redis;
-use Pimcore\Storage\Redis\ConnectionFactory;
 use Pimcore\Targeting\Storage\CookieStorage;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Workflow\EventSubscriber\ChangePublishedStateSubscriber;
@@ -990,8 +988,6 @@ class Configuration implements ConfigurationInterface
      */
     private function addCacheNode(ArrayNodeDefinition $rootNode)
     {
-        $defaultOptions = ConnectionFactory::getDefaultOptions();
-
         $rootNode->children()
             ->arrayNode('full_page_cache')
                 ->ignoreExtraKeys()
@@ -1004,78 +1000,7 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('exclude_patterns')->end()
                     ->scalarNode('exclude_cookie')->end()
                 ->end()
-            ->end()
-            ->arrayNode('cache')
-                ->ignoreExtraKeys()
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->scalarNode('pool_service_id')
-                        ->defaultValue(null)
-                    ->end()
-                    ->integerNode('default_lifetime')
-                        ->defaultValue(2419200) // 28 days
-                    ->end()
-                    ->arrayNode('pools')
-                        ->addDefaultsIfNotSet()
-                        ->children()
-                            ->arrayNode('doctrine')
-                                ->canBeDisabled()
-                                ->children()
-                                    ->scalarNode('connection')
-                                        ->defaultValue('default')
-                                    ->end()
-                                ->end()
-                            ->end()
-                            ->arrayNode('redis')
-                                ->canBeEnabled()
-                                ->children()
-                                    ->arrayNode('connection')
-                                        ->info('Redis connection options. See ' . ConnectionFactory::class)
-                                        ->children()
-                                            ->scalarNode('server')->end()
-                                            ->integerNode('port')
-                                                ->defaultValue($defaultOptions['port'])
-                                            ->end()
-                                            ->scalarNode('database')
-                                                ->defaultValue($defaultOptions['database'])
-                                            ->end()
-                                            ->scalarNode('password')
-                                                ->defaultValue($defaultOptions['password'])
-                                            ->end()
-                                            ->scalarNode('persistent')
-                                                ->defaultValue($defaultOptions['persistent'])
-                                            ->end()
-                                            ->booleanNode('force_standalone')
-                                                ->defaultValue($defaultOptions['force_standalone'])
-                                            ->end()
-                                            ->integerNode('connect_retries')
-                                                ->defaultValue($defaultOptions['connect_retries'])
-                                            ->end()
-                                            ->floatNode('timeout')
-                                                ->defaultValue($defaultOptions['timeout'])
-                                            ->end()
-                                            ->floatNode('read_timeout')
-                                                ->defaultValue($defaultOptions['read_timeout'])
-                                            ->end()
-                                        ->end()
-                                    ->end()
-                                    ->arrayNode('options')
-                                        ->info('Redis cache pool options. See ' . Redis::class)
-                                        ->children()
-                                            ->booleanNode('notMatchingTags')->end()
-                                            ->integerNode('compress_tags')->end()
-                                            ->integerNode('compress_data')->end()
-                                            ->integerNode('compress_threshold')->end()
-                                            ->scalarNode('compression_lib')->end()
-                                            ->booleanNode('use_lua')->end()
-                                            ->integerNode('lua_max_c_stack')->end()
-                                        ->end()
-                                    ->end()
-                                ->end()
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end();
+            ->end();
     }
 
     /**
