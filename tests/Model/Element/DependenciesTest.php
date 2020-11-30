@@ -38,7 +38,6 @@ class DependenciesTest extends ModelTestCase
         $count = $db->fetchOne("SELECT count(*) from dependencies WHERE sourceType = 'object' AND sourceID = " . $sourceId);
         $this->assertEquals(0, $count);
 
-        /** @var Unittest[] $targets */
         $targets = TestHelper::createEmptyObjects('', true, 5);
         $source->setMultihref([$targets[0], $targets[1]]);
         $source->save();
@@ -102,7 +101,6 @@ class DependenciesTest extends ModelTestCase
      */
     public function testDocumentDependencies()
     {
-        /** @var Document $source */
         $source = TestHelper::createEmptyDocumentPage();
         /** @var Unittest[] $targets */
         for ($i = 0; $i <= 2; $i++) {
@@ -129,7 +127,6 @@ class DependenciesTest extends ModelTestCase
      */
     public function testAssetDependencies()
     {
-        /** @var Asset $source */
         $source = TestHelper::createImageAsset();
         /** @var Unittest[] $targets */
         $targets = [];
