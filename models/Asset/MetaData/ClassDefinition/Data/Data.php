@@ -167,6 +167,8 @@ abstract class Data implements DataDefinitionInterface
     /**
      * @param mixed $value
      * @param array $params
+     *
+     * @return mixed
      */
     public function getVersionPreview($value, $params = [])
     {
@@ -184,5 +186,7 @@ abstract class Data implements DataDefinitionInterface
         if (is_scalar($data)) {
             return $params['name'] . ':' . $data;
         }
+
+        return null;
     }
 }

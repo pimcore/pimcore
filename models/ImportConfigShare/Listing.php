@@ -36,6 +36,8 @@ class Listing extends Model\Listing\AbstractListing
 
     /**
      * @param array $importConfigShares
+     *
+     * @return static
      */
     public function setImportConfigShares(array $importConfigShares)
     {

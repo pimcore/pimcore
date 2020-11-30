@@ -37,6 +37,8 @@ class Date extends Data
     /**
      * @param mixed $value
      * @param array $params
+     *
+     * @return mixed
      */
     public function getVersionPreview($value, $params = [])
     {
