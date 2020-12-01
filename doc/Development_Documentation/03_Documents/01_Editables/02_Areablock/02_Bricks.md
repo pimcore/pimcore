@@ -475,11 +475,9 @@ class Iframe extends AbstractTemplateAreabrick
     // 
     public function action(Info $info)
     {
-        $myVar = $info->getRequest()->get('myParam');
-
-        $contents = $this->twig->render($this->getTemplate(), [
-            'myVar' => $myVar,
-        ]);
+        $params = $info->getParams();
+        $params['myVar'] = $info->getRequest()->get('myParam');
+        $contents = $this->twig->render($this->getTemplate(), $params);
 
         return new Response($contents);
     }
