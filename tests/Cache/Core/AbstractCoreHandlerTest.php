@@ -146,6 +146,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
             ->setConstructorArgs([
                 $this->cache,
                 $this->writeLock,
+                \Pimcore::getEventDispatcher()
             ])
             ->getMock();
 
