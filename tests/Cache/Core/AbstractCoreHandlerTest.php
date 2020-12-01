@@ -12,6 +12,7 @@ use Pimcore\Cache\Core\WriteLock;
 use Pimcore\Cache\Core\CoreCacheHandler;
 use Psr\Log\LoggerAwareInterface;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
+use Symfony\Component\Cache\CacheItem;
 
 abstract class AbstractCoreHandlerTest extends TestCase
 {
@@ -291,10 +292,10 @@ abstract class AbstractCoreHandlerTest extends TestCase
 
     public function testGetItemIsCacheMiss()
     {
-        /** @var PimcoreCacheItemInterface $item */
+        /** @var CacheItem $item */
         $item = $this->handler->getItem('not_existing');
 
-        $this->assertInstanceOf(PimcoreCacheItemInterface::class, $item);
+        $this->assertInstanceOf(CacheItem::class, $item);
         $this->assertFalse($item->isHit());
     }
 

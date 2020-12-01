@@ -695,11 +695,7 @@ class CoreCacheHandler implements LoggerAwareInterface
         $tags = $this->normalizeClearTags($tags);
         if (count($tags) > 0) {
             $result = $this->pool->invalidateTags($tags);
-
-            if ($result) {
-                $this->addClearedTags($tags);
-            }
-
+            $this->addClearedTags($tags);
             return $result;
         }
 
@@ -728,11 +724,8 @@ class CoreCacheHandler implements LoggerAwareInterface
         $this->logger->debug('Clearing shutdown cache tags', ['tags' => $this->tagsClearedOnShutdown]);
 
         $result = $this->pool->invalidateTags($this->tagsClearedOnShutdown);
-
-        if ($result) {
-            $this->addClearedTags($this->tagsClearedOnShutdown);
-            $this->tagsClearedOnShutdown = [];
-        }
+        $this->addClearedTags($this->tagsClearedOnShutdown);
+        $this->tagsClearedOnShutdown = [];
 
         return $result;
     }
@@ -774,7 +767,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     /**
      * Add tag to list of cleared tags (internal use only)
      *
-     * @param string $tags
+     * @param string|array $tags
      *
      * @return $this
      */
