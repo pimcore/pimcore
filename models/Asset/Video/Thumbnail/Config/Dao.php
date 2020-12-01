@@ -49,7 +49,10 @@ class Dao extends Model\Dao\PhpArrayTable
             $this->assignVariablesToModel($data);
             $this->model->setName($data['id']);
         } else {
-            throw new \Exception('Thumbnail with id: ' . $this->model->getName() . ' does not exist');
+            throw new Model\Exception\NotFoundException(sprintf(
+                'Thumbnail with id "%s" does not exist.',
+                $this->model->getName()
+            ));
         }
     }
 

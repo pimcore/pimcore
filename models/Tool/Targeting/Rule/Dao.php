@@ -67,7 +67,10 @@ class Dao extends Model\Dao\AbstractDao
         if (count($data) === 1) {
             $this->getById($data[0]['id']);
         } else {
-            throw new \Exception('target with name ' . $this->model->getId() . " doesn't exist or isn't unique");
+            throw new Model\Exception\NotFoundException(sprintf(
+                'Targeting rule with name "%s" does not exist.',
+                $this->model->getName()
+            ));
         }
     }
 
