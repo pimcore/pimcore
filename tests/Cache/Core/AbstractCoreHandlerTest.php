@@ -2,33 +2,32 @@
 
 namespace Pimcore\Tests\Cache\Core;
 
+use Monolog\Handler\BufferHandler;
+use Monolog\Handler\HandlerInterface;
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\TestHandler;
+use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
-use Pimcore\Cache\Core\CoreHandler;
-use Pimcore\Cache\Core\CoreHandlerInterface;
 use Pimcore\Cache\Core\WriteLock;
-use Pimcore\Cache\Core\WriteLockInterface;
-use Pimcore\Cache\Pool\AbstractCacheItemPool;
-use Pimcore\Cache\Pool\Exception\InvalidArgumentException;
-use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
-use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
-use Pimcore\Tests\Cache\Traits\LogHandlerTrait;
+use Pimcore\Cache\Core\CoreCacheHandler;
+use Psr\Log\LoggerAwareInterface;
+use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
+use Symfony\Component\Cache\CacheItem;
 
 abstract class AbstractCoreHandlerTest extends TestCase
 {
-    use LogHandlerTrait;
-
     /**
-     * @var PimcoreCacheItemPoolInterface|AbstractCacheItemPool
+     * @var TagAwareAdapterInterface
      */
     protected $cache;
 
     /**
-     * @var CoreHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var CoreCacheHandler|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $handler;
 
     /**
-     * @var WriteLockInterface
+     * @var WriteLock
      */
     protected $writeLock;
 
@@ -47,18 +46,64 @@ abstract class AbstractCoreHandlerTest extends TestCase
     ];
 
     /**
+     * @var Logger
+     */
+    protected static $logger;
+
+    /**
+     * @var HandlerInterface[]
+     */
+    protected static $logHandlers = [];
+
+    /**
      * @inheritDoc
      */
     protected function setUp()
     {
         $this->cache = $this->createCachePool();
-        $this->cache->setLogger(static::$logger);
 
         // make sure we start with a clean state
         $this->cache->clear();
 
         $this->writeLock = $this->createWriteLock();
         $this->handler = $this->createHandlerMock();
+    }
+
+    /**
+     * Set up a logger with a buffer and a test handler (can be printed to STDOUT on demand)
+     *
+     * @param string $name
+     */
+    protected static function setupLogger($name)
+    {
+        static::$logHandlers = [
+            'buffer' => new BufferHandler(new StreamHandler('php://stdout')),
+            'test' => new TestHandler(),
+        ];
+
+        static::$logger = new Logger($name, array_values(static::$logHandlers));
+    }
+
+    /**
+     * Flush buffer handler if TEST_LOG env var is set
+     */
+    protected static function handleLogOutput()
+    {
+        /** @var BufferHandler $bufferHandler */
+        $bufferHandler = static::$logHandlers['buffer'];
+        if (!$bufferHandler) {
+            return;
+        }
+
+        // call tests with TEST_LOG=1 if you need logs (e.g. during development)
+        if ((bool)getenv('TEST_LOG')) {
+            echo PHP_EOL;
+            $bufferHandler->flush();
+            echo PHP_EOL;
+        } else {
+            // just throw the logs away
+            $bufferHandler->clear();
+        }
     }
 
     /**
@@ -80,7 +125,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     }
 
     /**
-     * @return CoreHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return CoreCacheHandler|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function createHandlerMock()
     {
@@ -95,12 +140,13 @@ abstract class AbstractCoreHandlerTest extends TestCase
             );
         }
 
-        /** @var CoreHandler|\PHPUnit_Framework_MockObject_MockObject $handler */
-        $handler = $this->getMockBuilder(CoreHandler::class)
+        /** @var CoreCacheHandler|\PHPUnit_Framework_MockObject_MockObject $handler */
+        $handler = $this->getMockBuilder(CoreCacheHandler::class)
             ->setMethods($mockMethods)
             ->setConstructorArgs([
                 $this->cache,
                 $this->writeLock,
+                \Pimcore::getEventDispatcher()
             ])
             ->getMock();
 
@@ -137,11 +183,11 @@ abstract class AbstractCoreHandlerTest extends TestCase
 
     /**
      * @param string $property
-     * @param CoreHandlerInterface $handler
+     * @param CoreCacheHandler $handler
      *
      * @return mixed
      */
-    protected function getHandlerPropertyValue($property, CoreHandlerInterface $handler = null)
+    protected function getHandlerPropertyValue($property, CoreCacheHandler $handler = null)
     {
         if (null === $handler) {
             $handler = $this->handler;
@@ -246,10 +292,10 @@ abstract class AbstractCoreHandlerTest extends TestCase
 
     public function testGetItemIsCacheMiss()
     {
-        /** @var PimcoreCacheItemInterface $item */
+        /** @var CacheItem $item */
         $item = $this->handler->getItem('not_existing');
 
-        $this->assertInstanceOf(PimcoreCacheItemInterface::class, $item);
+        $this->assertInstanceOf(CacheItem::class, $item);
         $this->assertFalse($item->isHit());
     }
 

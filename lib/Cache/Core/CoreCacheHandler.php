@@ -15,10 +15,8 @@
 namespace Pimcore\Cache\Core;
 
 use DeepCopy\TypeMatcher\TypeMatcher;
-use Pimcore\Cache\Pool\CacheItem;
-use Pimcore\Cache\Pool\PimcoreCacheItemInterface;
-use Pimcore\Cache\Pool\PimcoreCacheItemPoolInterface;
-use Pimcore\Cache\Pool\PurgeableCacheItemPoolInterface;
+use Symfony\Component\Cache\CacheItem;
+use Pimcore\Event\CoreCacheEvents;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Element\ElementDumpStateInterface;
 use Pimcore\Model\Element\ElementInterface;
@@ -27,23 +25,31 @@ use Pimcore\Model\Version\SetDumpStateFilter;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
+use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Core pimcore cache handler with logic handling deferred save on shutdown (specialized for internal pimcore use). This
  * explicitely does not expose a PSR-6 API but is intended for internal use from Pimcore\Cache or directly. Actual
  * cache calls are forwarded to a PSR-6 cache implementation though.
  */
-class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
+class CoreCacheHandler implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
     /**
-     * @var PimcoreCacheItemPoolInterface
+     * @var EventDispatcherInterface
      */
-    protected $itemPool;
+    protected $dispatcher;
 
     /**
-     * @var WriteLockInterface
+     * @var TagAwareAdapterInterface
+     */
+    protected $pool;
+
+    /**
+     * @var WriteLock
      */
     protected $writeLock;
 
@@ -137,26 +143,23 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     protected $emptyCacheItemClosure;
 
     /**
-     * @param PimcoreCacheItemPoolInterface $adapter
-     * @param WriteLockInterface $writeLock
+     * @param TagAwareAdapterInterface $adapter
+     * @param WriteLock $writeLock
+     * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(PimcoreCacheItemPoolInterface $adapter, WriteLockInterface $writeLock)
+    public function __construct(TagAwareAdapterInterface $adapter, WriteLock $writeLock, EventDispatcherInterface $dispatcher)
     {
-        $this->setItemPool($adapter);
-
+        $this->pool = $adapter;
+        $this->dispatcher = $dispatcher;
         $this->writeLock = $writeLock;
     }
 
     /**
-     * @param PimcoreCacheItemPoolInterface $itemPool
-     *
-     * @return $this
+     * @param TagAwareAdapterInterface $pool
      */
-    protected function setItemPool(PimcoreCacheItemPoolInterface $itemPool)
+    public function setPool(TagAwareAdapterInterface $pool): void
     {
-        $this->itemPool = $itemPool;
-
-        return $this;
+        $this->pool = $pool;
     }
 
     /**
@@ -183,7 +186,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     public function enable()
     {
         $this->enabled = true;
-
+        $this->dispatchStatusEvent();
         return $this;
     }
 
@@ -193,7 +196,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     public function disable()
     {
         $this->enabled = false;
-
+        $this->dispatchStatusEvent();
         return $this;
     }
 
@@ -203,6 +206,18 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     public function isEnabled()
     {
         return $this->enabled;
+    }
+
+    /**
+     *
+     */
+    protected function dispatchStatusEvent()
+    {
+        $this->dispatcher->dispatch(new Event(),
+            $this->isEnabled()
+                ? CoreCacheEvents::ENABLE
+                : CoreCacheEvents::DISABLE
+        );
     }
 
     /**
@@ -295,18 +310,11 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
      *
      * @param string $key
      *
-     * @return PimcoreCacheItemInterface
+     * @return CacheItem
      */
     public function getItem($key)
     {
-        if (!$this->enabled) {
-            $this->logger->debug('Key {key} doesn\'t exist in cache (deactivated)', ['key' => $key]);
-
-            // create empty cache item
-            return $this->itemPool->createCacheItem($key);
-        }
-
-        $item = $this->itemPool->getItem($key);
+        $item = $this->pool->getItem($key);
         if ($item->isHit()) {
             $this->logger->debug('Successfully got data for key {key} from cache', ['key' => $key]);
         } else {
@@ -354,19 +362,19 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         }
 
         if ($force || $this->forceImmediateWrite) {
-            $item = $this->prepareCacheItem($key, $data, $lifetime);
-            if (null === $item) {
+            $data = $this->prepareCacheData($data);
+            if (null === $data) {
                 // logging is done in prepare method if item could not be created
                 return false;
             }
 
             // add cache tags to item
-            $item = $this->prepareCacheTags($item, $data, $tags);
-            if (null === $item) {
+            $tags = $this->prepareCacheTags($key, $data, $tags);
+            if (null === $tags) {
                 return false;
             }
 
-            return $this->storeCacheItem($item, $data, $force);
+            return $this->storeCacheData($key, $data, $tags, $lifetime, $force);
         } else {
             $cacheQueueItem = new CacheQueueItem($key, $data, $tags, $lifetime, $priority, $force);
 
@@ -390,7 +398,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             if ($a->getPriority() === $b->getPriority()) {
                 // records with serialized data have priority, to save cpu cycles. if the item has a CacheItem set, data
                 // was already serialized
-                if (null !== $a->getCacheItem()) {
+                if (is_scalar($a->getData())) {
                     return -1;
                 } else {
                     return 1;
@@ -405,10 +413,10 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         // check if item is still on queue and serialize the data into a CacheItem
         if (isset($this->saveQueue[$item->getKey()])) {
-            $cacheItem = $this->prepareCacheItem($item->getKey(), $item->getData(), $item->getLifetime());
-            if ($cacheItem) {
+            $data = $this->prepareCacheData($item->getData());
+            if ($data) {
                 // add cache item with serialized data to queue item
-                $item->setCacheItem($cacheItem);
+                $item->setData($data);
 
                 return true;
             } else {
@@ -434,21 +442,14 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     /**
      * Prepare data for cache item and handle items we don't want to save (e.g. hardlinks)
      *
-     * @param string $key
      * @param mixed $data
-     * @param int|\DateInterval|null $lifetime
      *
-     * @return PimcoreCacheItemInterface|null
+     * @return mixed
      */
-    protected function prepareCacheItem($key, $data, $lifetime = null)
+    protected function prepareCacheData($data)
     {
         // do not cache hardlink-wrappers
         if ($data instanceof WrapperInterface) {
-            $this->logger->warning(
-                'Not saving {key} to cache as it is a hardlink wrapper',
-                ['key' => $key]
-            );
-
             return null;
         }
 
@@ -469,22 +470,19 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             $itemData = serialize($data);
         }
 
-        $item = $this->itemPool->createCacheItem($key, $itemData);
-        $item->expiresAfter($lifetime);
-
-        return $item;
+        return $itemData;
     }
 
     /**
      * Create tags for cache item - do this as late as possible as this is potentially expensive (nested items, dependencies)
      *
-     * @param PimcoreCacheItemInterface $cacheItem
+     * @param string $key
      * @param mixed $data
      * @param array $tags
      *
-     * @return null|PimcoreCacheItemInterface
+     * @return null|string[]
      */
-    protected function prepareCacheTags(PimcoreCacheItemInterface $cacheItem, $data, array $tags = [])
+    protected function prepareCacheTags(string $key, $data, array $tags = [])
     {
         // clean up and prepare models
         if ($data instanceof ElementInterface) {
@@ -514,7 +512,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         foreach ($tags as $tag) {
             if (isset($this->clearedTags[$tag])) {
                 $this->logger->debug('Aborted caching for key {key} because tag {tag} is in the cleared tags list', [
-                    'key' => $cacheItem->getKey(),
+                    'key' => $key,
                     'tag' => $tag,
                 ]);
 
@@ -523,7 +521,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
             if (in_array($tag, $this->tagsIgnoredOnSave)) {
                 $this->logger->debug('Aborted caching for key {key} because tag {tag} is in the ignored tags on save list', [
-                    'key' => $cacheItem->getKey(),
+                    'key' => $key,
                     'tag' => $tag,
                     'tags' => $tags,
                     'tagsIgnoredOnSave' => $this->tagsIgnoredOnSave,
@@ -533,21 +531,18 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
             }
         }
 
-        $cacheItem->setTags($tags);
-
-        return $cacheItem;
+        return $tags;
     }
 
     /**
-     * Actually store the item in the cache
-     *
-     * @param PimcoreCacheItemInterface $item
+     * @param string $key
      * @param mixed $data
-     * @param bool $force
-     *
+     * @param array $tags
+     * @param null $lifetime
+     * @param false $force
      * @return bool
      */
-    protected function storeCacheItem(PimcoreCacheItemInterface $item, $data, $force = false)
+    protected function storeCacheData(string $key, $data, array $tags = [], $lifetime = null, $force = false)
     {
         if ($this->writeInProgress) {
             return false;
@@ -572,7 +567,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
             if (!$data->__isBasedOnLatestData()) {
                 $this->logger->warning('Not saving {key} to cache as element is not based on latest data', [
-                    'key' => $item->getKey(),
+                    'key' => $key,
                 ]);
 
                 $this->writeInProgress = false;
@@ -607,11 +602,14 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
             $data = $copier->copy($data);
 
-            $serializedData = serialize($data);
-            $item->set($serializedData);
+            $data = serialize($data);
         }
 
-        $result = $this->itemPool->save($item);
+        $item = $this->pool->getItem($key);
+        $item->set($data);
+        $item->expiresAfter($lifetime);
+        $item->tag($tags);
+        $result = $this->pool->save($item);
 
         if ($result) {
             $this->logger->debug('Added entry {key} to cache', ['key' => $item->getKey()]);
@@ -643,7 +641,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         $this->writeLock->lock();
 
-        return $this->itemPool->deleteItem($key);
+        return $this->pool->deleteItem($key);
     }
 
     /**
@@ -657,7 +655,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         $this->logger->info('Clearing the whole cache');
 
-        $result = $this->itemPool->clear();
+        $result = $this->pool->clear();
 
         // immediately acquire the write lock again (force), because the lock is in the cache too
         $this->writeLock->lock(true);
@@ -696,12 +694,8 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         $tags = $this->normalizeClearTags($tags);
         if (count($tags) > 0) {
-            $result = $this->itemPool->invalidateTags($tags);
-
-            if ($result) {
-                $this->addClearedTags($tags);
-            }
-
+            $result = $this->pool->invalidateTags($tags);
+            $this->addClearedTags($tags);
             return $result;
         }
 
@@ -729,12 +723,9 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         $this->logger->debug('Clearing shutdown cache tags', ['tags' => $this->tagsClearedOnShutdown]);
 
-        $result = $this->itemPool->invalidateTags($this->tagsClearedOnShutdown);
-
-        if ($result) {
-            $this->addClearedTags($this->tagsClearedOnShutdown);
-            $this->tagsClearedOnShutdown = [];
-        }
+        $result = $this->pool->invalidateTags($this->tagsClearedOnShutdown);
+        $this->addClearedTags($this->tagsClearedOnShutdown);
+        $this->tagsClearedOnShutdown = [];
 
         return $result;
     }
@@ -776,7 +767,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
     /**
      * Add tag to list of cleared tags (internal use only)
      *
-     * @param string $tags
+     * @param string|array $tags
      *
      * @return $this
      */
@@ -886,7 +877,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
 
         $processedKeys = [];
         foreach ($this->saveQueue as $queueItem) {
-            $key = $queueItem->getCacheItem()->getKey();
+            $key = $queueItem->getKey();
 
             // check if key was already processed and don't save it again
             if (in_array($key, $processedKeys)) {
@@ -895,14 +886,12 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 continue;
             }
 
-            $cacheItem = $queueItem->getCacheItem();
-            $cacheItem = $this->prepareCacheTags($cacheItem, $queueItem->getData(), $queueItem->getTags());
-
-            if (null === $cacheItem) {
+            $tags = $this->prepareCacheTags($queueItem->getKey(), $queueItem->getData(), $queueItem->getTags());
+            if (null === $tags) {
                 $result = false;
             // item shouldn't go to the cache (either because it's tags are ignored or were cleared within this process) -> see $this->prepareCacheTags();
             } else {
-                $result = $this->storeCacheItem($queueItem->getCacheItem(), $queueItem->getData(), $queueItem->isForce());
+                $result = $this->storeCacheData($queueItem->getKey(), $queueItem->getData(), $queueItem->getTags(), $queueItem->getLifetime(), $queueItem->isForce());
             }
 
             $processedKeys[] = $key;
@@ -955,21 +944,6 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
         $this->writeLock->removeLock();
 
         return $this;
-    }
-
-    /**
-     * Purge orphaned/invalid data
-     *
-     * @return bool
-     */
-    public function purge()
-    {
-        $result = true;
-        if ($this->itemPool instanceof PurgeableCacheItemPoolInterface) {
-            $result = $this->itemPool->purge();
-        }
-
-        return $result;
     }
 
     /**
