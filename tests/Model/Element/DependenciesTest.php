@@ -20,7 +20,7 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class DependenciesTest extends ModelTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
