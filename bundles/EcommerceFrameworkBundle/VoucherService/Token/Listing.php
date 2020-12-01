@@ -346,6 +346,8 @@ class Listing extends \Pimcore\Model\Listing\AbstractListing implements AdapterI
 
     /**
      * @param array $tokens
+     *
+     * @return static
      */
     public function setTokens($tokens)
     {
