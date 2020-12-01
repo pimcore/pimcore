@@ -17,6 +17,7 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\Controller;
 use GuzzleHttp\ClientInterface;
 use Laminas\Paginator\Paginator;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
@@ -361,9 +362,12 @@ class AdminOrderController extends AdminController implements KernelControllerEv
     /**
      * @Route("/item-cancel", name="pimcore_ecommerce_backend_admin-order_item-cancel", methods={"GET", "POST"})
      *
+     * @param Request $request
+     * @param CsrfProtectionHandler $csrfProtection
+     *
      * @return Response
      */
-    public function itemCancelAction(Request $request)
+    public function itemCancelAction(Request $request, CsrfProtectionHandler $csrfProtection)
     {
         // init
         $orderItem = OnlineShopOrderItem::getById($request->get('id'));
@@ -371,7 +375,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed') && $orderItem->isCancelAble()) {
-            $this->checkCsrfToken($request);
+            $csrfProtection->checkCsrfToken($request);
             // init
             $agent = $this->orderManager->createOrderAgent($order);
 
@@ -398,7 +402,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
      *
      * @return Response
      */
-    public function itemEditAction(Request $request)
+    public function itemEditAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
         $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
@@ -406,7 +410,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
-            $this->checkCsrfToken($request);
+            $csrfProtectionHandler->checkCsrfToken($request);
 
             // change item
             $agent = $this->orderManager->createOrderAgent($order);
@@ -432,7 +436,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
      *
      * @return Response
      */
-    public function itemComplaintAction(Request $request)
+    public function itemComplaintAction(Request $request, CsrfProtectionHandler $csrfProtectionHandler)
     {
         // init
         $orderItem = $orderItem = OnlineShopOrderItem::getById($request->get('id'));
@@ -440,7 +444,7 @@ class AdminOrderController extends AdminController implements KernelControllerEv
         $order = $orderItem->getOrder();
 
         if ($request->get('confirmed')) {
-            $this->checkCsrfToken($request);
+            $csrfProtectionHandler->checkCsrfToken($request);
 
             // change item
             $agent = $this->orderManager->createOrderAgent($order);

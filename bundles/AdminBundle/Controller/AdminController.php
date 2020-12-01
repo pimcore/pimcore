@@ -252,13 +252,4 @@ abstract class AdminController extends Controller implements AdminControllerInte
 
         return $translator->trans($id, $parameters, $domain, $locale);
     }
-
-    /**
-     * @param Request $request
-     */
-    public function checkCsrfToken(Request $request)
-    {
-        $csrfCheck = $this->container->get('Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener');
-        $csrfCheck->checkCsrfToken($request);
-    }
 }

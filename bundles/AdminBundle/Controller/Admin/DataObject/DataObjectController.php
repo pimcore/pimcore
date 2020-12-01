@@ -18,6 +18,7 @@ use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
@@ -1533,6 +1534,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      * @param EventDispatcherInterface $eventDispatcher
      * @param GridHelperService $gridHelperService
      * @param LocaleServiceInterface $localeService
+     * @param CsrfProtectionHandler $csrfProtection
      *
      * @return JsonResponse
      */
@@ -1540,7 +1542,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         Request $request,
         EventDispatcherInterface $eventDispatcher,
         GridHelperService $gridHelperService,
-        LocaleServiceInterface $localeService
+        LocaleServiceInterface $localeService,
+        CsrfProtectionHandler $csrfProtection
     ) {
         $allParams = array_merge($request->request->all(), $request->query->all());
         $csvMode = $allParams['csvMode'] ?? false;
@@ -1568,7 +1571,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         if (isset($allParams['data']) && $allParams['data']) {
-            $this->checkCsrfToken($request);
+            $csrfProtection->checkCsrfToken($request);
             if ($allParams['xaction'] == 'update') {
                 try {
                     $data = $this->decodeJson($allParams['data']);
