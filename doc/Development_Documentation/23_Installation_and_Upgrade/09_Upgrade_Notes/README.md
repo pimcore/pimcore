@@ -11,7 +11,7 @@
 - Templating helper `$this->action()` as well as the Twig extension `pimcore_action()` are deprecated and will be removed in Pimcore v7. Use Twig `render()` instead.
 - `\Pimcore\Model\Element\Reference\Placeholder` has been deprecated and will be removed in Pimcore v7. Use `\Pimcore\Model\Element\ElementDescriptor` instead.
 - `WebDebugToolbarListenerPass` has been deprecated and will be removed in Pimcore v7. 
-
+- `ClassMapLoader` now takes priority over `PrefixLoader` e.g. config `pimcore.document.editables.map` has higher priority than `pimcore.document.editables.prefixes`.
 #### Migrating legacy module/controller/action configurations to new controller references
 You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 
 Staticroutes and Document Types to the new controller references in the format: `AppBundle\Controller\FooController::barAction`.
