@@ -15,6 +15,7 @@
 namespace Pimcore\Bundle\AdminBundle\Controller;
 
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Bundle\AdminBundle\Security\User\User as UserProxy;
 use Pimcore\Controller\Controller;
@@ -239,9 +240,14 @@ abstract class AdminController extends Controller implements AdminControllerInte
 
     /**
      * @param Request $request
+     *
+     * @deprecated
      */
     public function checkCsrfToken(Request $request)
     {
+        @trigger_error(sprintf('Calling '.__METHOD__.' is deprecated since version 6.9.0 and will be removed in 7.0.0. ' .
+            'Use %s service instead.', CsrfProtectionHandler::class), E_USER_DEPRECATED);
+
         $csrfCheck = $this->container->get('Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener');
         $csrfCheck->checkCsrfToken($request);
     }
