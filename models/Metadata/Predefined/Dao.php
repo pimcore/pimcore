@@ -75,7 +75,7 @@ class Dao extends Model\Dao\PhpArrayTable
         if (count($data) && $data[0]['id']) {
             $this->assignVariablesToModel($data[0]);
         } else {
-            throw new Model\Exception\NotFoundException(sprintf('Predefined metadata config with name "%s" and language %s does not exist.', $name), $language);
+            throw new Model\Exception\NotFoundException(sprintf('Predefined metadata config with name "%s" and language %s does not exist.', $name, $language));
         }
     }
 
