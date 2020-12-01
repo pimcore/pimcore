@@ -17,7 +17,8 @@ class RedisCoreHandlerTest extends AbstractCoreHandlerTest
      */
     protected function createCachePool()
     {
-        $client = RedisAdapter::createConnection($_ENV['PIMCORE_TEST_REDIS_DSN']);
+        $dsn = getenv('PIMCORE_TEST_REDIS_DSN');
+        $client = RedisAdapter::createConnection($dsn);
         $adapter = new RedisTagAwareAdapter($client, '', $this->defaultLifetime);
         return $adapter;
     }
