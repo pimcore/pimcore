@@ -36,11 +36,4 @@ final class CoreCacheEvents
      * @var string
      */
     const DISABLE = 'pimcore.cache.core.disable';
-
-    /**
-     * @Event("Pimcore\Event\Cache\Core\ResultEvent")
-     *
-     * @var string
-     */
-    const PURGE = 'pimcore.cache.core.purge';
 }

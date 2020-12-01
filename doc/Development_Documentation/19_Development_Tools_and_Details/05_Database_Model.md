@@ -19,8 +19,6 @@ These tables are created during Pimcore install and are always the same.
 | application_logs | Contains all application logs. For more information see [Application Logger](../18_Tools_and_Features/17_Application_Logger.md). Additionally, there might be application_logs_archive* tables for old logging entries. | 
 | assets | Assets (Images, etc.), with system metadata |
 | assets_metadata | Additional user metadata (Metadata tab in the asset panel) |
-| cache | serialized data, used by the default Pimcore cache |
-| cache_tags | Tag store for cache entries. Used by some cache backends |
 | classes | List of all object classes with ID and name. Everything else is stored in PHP configuration files. |
 | classificationstore_collectionrelations | Relation Collection - Group for Classification Store | 
 | classificationstore_collections | Collections of Classification Store |

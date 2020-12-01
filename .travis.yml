@@ -141,7 +141,7 @@ env:
     - PIMCORE_TEST=1
     - PIMCORE_TEST_URL=http://pimcore-test.dev
     - PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test"
-    - PIMCORE_TEST_CACHE_REDIS_DATABASE=1
+    - PIMCORE_TEST_REDIS_DSN="redis://localhost"
     - DATABASE_SERVER="mariadb-10.4"
     - PIMCORE_PROJECT_ROOT=$TRAVIS_BUILD_DIR
 

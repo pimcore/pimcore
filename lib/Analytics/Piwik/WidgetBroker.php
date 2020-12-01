@@ -23,7 +23,7 @@ use Pimcore\Analytics\Piwik\Config\ConfigProvider;
 use Pimcore\Analytics\Piwik\Dto\WidgetConfig;
 use Pimcore\Analytics\Piwik\Dto\WidgetReference;
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
-use Pimcore\Cache\Core\CoreHandlerInterface;
+use Pimcore\Cache\Core\CoreCacheHandler;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -45,7 +45,7 @@ class WidgetBroker
     private $apiClient;
 
     /**
-     * @var CoreHandlerInterface
+     * @var CoreCacheHandler
      */
     private $cache;
 
@@ -72,7 +72,7 @@ class WidgetBroker
     public function __construct(
         ConfigProvider $configProvider,
         ApiClient $apiClient,
-        CoreHandlerInterface $cache,
+        CoreCacheHandler $cache,
         UserLoader $userLoader,
         LoggerInterface $logger,
         array $options = []

@@ -28,6 +28,6 @@ VHOSTCFG=/etc/apache2/sites-available/pimcore-test.dev.conf
 sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" -i $VHOSTCFG
 sudo sed -e "s?%PIMCORE_ENVIRONMENT%?$PIMCORE_ENVIRONMENT?g" -i $VHOSTCFG
 sudo sed -e "s?%PIMCORE_TEST_DB_DSN%?$PIMCORE_TEST_DB_DSN?g" -i $VHOSTCFG
-sudo sed -e "s?%PIMCORE_TEST_CACHE_REDIS_DATABASE%?$PIMCORE_TEST_CACHE_REDIS_DATABASE?g" -i $VHOSTCFG
+sudo sed -e "s?%PIMCORE_TEST_REDIS_DSN%?$PIMCORE_TEST_REDIS_DSN?g" -i $VHOSTCFG
 
 sudo service apache2 restart
