@@ -53,7 +53,7 @@ class Cache
                 ->dispatch(new GenericEvent(), CoreCacheEvents::INIT);
 
             if (isset($_REQUEST['pimcore_nocache']) && \Pimcore::inDebugMode()) {
-                self::getHandler()->setItemPool(\Pimcore::getContainer()->get('pimcore.cache.adapter.null'));
+                self::getHandler()->setPool(\Pimcore::getContainer()->get('pimcore.cache.adapter.null_tag_aware'));
             }
         }
     }

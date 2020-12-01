@@ -16,6 +16,7 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
 use Pimcore\Cache;
+use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Cache\Symfony\CacheClearer;
 use Pimcore\Config;
 use Pimcore\Db\ConnectionInterface;
@@ -704,7 +705,7 @@ class SettingsController extends AdminController
      * @param Request $request
      * @param KernelInterface $kernel
      * @param EventDispatcherInterface $eventDispatcher
-     * @param Cache\CoreCacheHandler $cache
+     * @param CoreCacheHandler $cache
      * @param ConnectionInterface $db
      * @param Filesystem $filesystem
      * @param CacheClearer $symfonyCacheClearer
@@ -715,7 +716,7 @@ class SettingsController extends AdminController
         Request $request,
         KernelInterface $kernel,
         EventDispatcherInterface $eventDispatcher,
-        Cache\CoreCacheHandler $cache,
+        CoreCacheHandler $cache,
         ConnectionInterface $db,
         Filesystem $filesystem,
         CacheClearer $symfonyCacheClearer
@@ -733,8 +734,7 @@ class SettingsController extends AdminController
             // empty document cache
             $cache->clearAll();
 
-            $db->query('truncate table cache_tags');
-            $db->query('truncate table cache');
+            $db->query('truncate table cache_items');
 
             if ($filesystem->exists(PIMCORE_CACHE_DIRECTORY)) {
                 $filesystem->remove(PIMCORE_CACHE_DIRECTORY);

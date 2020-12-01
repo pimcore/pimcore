@@ -135,5 +135,4 @@ It is also possible to just disable the output-cache in your code, read more [he
 
 ## Further Reading
 
-* Setup a custom caching-backend - see [Custom Cache Pools](./01_Custom_Cache_Pools.md).
 * Details about output-cache - see [Output Cache](./03_Full_Page_Cache.md).

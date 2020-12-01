@@ -209,7 +209,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     }
 
     /**
-     * @param bool $enabled
+     *
      */
     protected function dispatchStatusEvent()
     {
@@ -536,7 +536,7 @@ class CoreCacheHandler implements LoggerAwareInterface
 
     /**
      * @param string $key
-     * @param $data
+     * @param mixed $data
      * @param array $tags
      * @param null $lifetime
      * @param false $force
