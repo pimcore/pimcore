@@ -137,23 +137,23 @@ class Builder
             $request = $this->requestHelper->getMainRequest();
 
             // try to find a page matching exactly the request uri
-            $activePages = $navigation->findAllBy('uri', $request->getRequestUri());
+            $activePages = $navigation->findAllByUri($request->getRequestUri());
 
             if (empty($activePages)) {
                 // try to find a page matching the path info
-                $activePages = $navigation->findAllBy('uri', $request->getPathInfo());
+                $activePages = $navigation->findAllByUri($request->getPathInfo());
             }
         }
 
         if ($activeDocument instanceof Document) {
             if (empty($activePages)) {
                 // use the provided pimcore document
-                $activePages = $navigation->findAllBy('realFullPath', $activeDocument->getRealFullPath());
+                $activePages = $navigation->findAllByRealFullPath($activeDocument->getRealFullPath());
             }
 
             if (empty($activePages)) {
                 // find by link target
-                $activePages = $navigation->findAllBy('uri', $activeDocument->getFullPath());
+                $activePages = $navigation->findAllByUri($activeDocument->getFullPath());
             }
         }
 
@@ -176,7 +176,7 @@ class Builder
             }
         } elseif ($activeDocument instanceof Document) {
             // we didn't find the active document, so we try to build the trail on our own
-            $allPages = $navigation->findAllBy('uri', '/.*/', true);
+            $allPages = $navigation->findAll();
 
             foreach ($allPages as $page) {
                 $activeTrail = false;

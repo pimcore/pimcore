@@ -435,6 +435,90 @@ class Container implements \RecursiveIterator, \Countable
     }
 
     /**
+     * Returns all child pages matching $property == $value or
+     * preg_match($value, $property), or an empty array if no pages are found
+     *
+     * @param  mixed  $value     value to match property against
+     * @param  bool   $useRegex  [optional] if true PHP's preg_match is used.
+     *                           Default is false.
+     *
+     * @return Page[] array containing only Page instances
+     */
+    public function findAllByUri($value, $useRegex = false)
+    {
+        $property = 'uri';
+
+        return $useRegex || !is_string($value)
+            ? $this->findAllBy($property, $value, $useRegex)
+            : $this->findAllByPropertyThatStartsWith($property, $value);
+    }
+
+    /**
+     * Returns all child pages matching $property == $value or
+     * preg_match($value, $property), or an empty array if no pages are found
+     *
+     * @param  mixed  $value     value to match property against
+     * @param  bool   $useRegex  [optional] if true PHP's preg_match is used.
+     *                           Default is false.
+     *
+     * @return Page[] array containing only Page instances
+     */
+    public function findAllByRealFullPath($value, $useRegex = false)
+    {
+        $property = 'realFullPath';
+
+        return $useRegex || !is_string($value)
+            ? $this->findAllBy($property, $value, $useRegex)
+            : $this->findAllByPropertyThatStartsWith($property, $value);
+    }
+
+    private function findAllByPropertyThatStartsWith(string $property, string $value): array
+    {
+        $filter = new class($this, $property, $value) extends \RecursiveFilterIterator {
+            private $property;
+            private $value;
+
+            public function __construct(\RecursiveIterator $iterator, string $property, string $value)
+            {
+                parent::__construct($iterator);
+                $this->property = $property;
+                $this->value = $value;
+            }
+
+            public function accept(): bool
+            {
+                $property = $this->current()->get($this->property);
+
+                return $property && str_starts_with($this->value, $property);
+            }
+
+            public function getChildren(): self
+            {
+                return new self($this->getInnerIterator()->getChildren(), $this->property, $this->value);
+            }
+        };
+
+        $iterator = new \RecursiveIteratorIterator($filter, \RecursiveIteratorIterator::SELF_FIRST);
+
+        $found = [];
+        foreach ($iterator as $page) {
+            if ($page->get($property) === $value) {
+                $found[] = $page;
+            }
+        }
+
+        return $found;
+    }
+
+    /**
+     * @return Page[] iterable containing only Page instances
+     */
+    public function findAll(): iterable
+    {
+        return new \RecursiveIteratorIterator($this, \RecursiveIteratorIterator::SELF_FIRST);
+    }
+
+    /**
      * Returns page(s) matching $property == $value or
      * preg_match($value, $property)
      *
