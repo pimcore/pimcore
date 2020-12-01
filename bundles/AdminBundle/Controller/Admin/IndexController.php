@@ -16,8 +16,8 @@ namespace Pimcore\Bundle\AdminBundle\Controller\Admin;
 
 use Pimcore\Analytics\Google\Config\SiteConfigProvider;
 use Pimcore\Bundle\AdminBundle\Controller\AdminController;
-use Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener;
 use Pimcore\Bundle\AdminBundle\HttpFoundation\JsonResponse;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Config;
 use Pimcore\Controller\KernelResponseEventInterface;
 use Pimcore\Db\ConnectionInterface;
@@ -63,7 +63,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
      * @param SiteConfigProvider $siteConfigProvider
      * @param KernelInterface $kernel
      * @param Executor $maintenanceExecutor
-     * @param CsrfProtectionListener $csrfProtectionListener
+     * @param CsrfProtectionHandler $csrfProtection
      * @param Config $config
      *
      * @return Response
@@ -75,7 +75,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
         SiteConfigProvider $siteConfigProvider,
         KernelInterface $kernel,
         Executor $maintenanceExecutor,
-        CsrfProtectionListener $csrfProtectionListener,
+        CsrfProtectionHandler $csrfProtection,
         Config $config
     ) {
         $user = $this->getAdminUser();
@@ -87,7 +87,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             ->addRuntimePerspective($templateParams, $user)
             ->addPluginAssets($templateParams);
 
-        $this->buildPimcoreSettings($request, $templateParams, $user, $kernel, $maintenanceExecutor, $csrfProtectionListener, $siteConfigProvider);
+        $this->buildPimcoreSettings($request, $templateParams, $user, $kernel, $maintenanceExecutor, $csrfProtection, $siteConfigProvider);
 
         if ($user->getTwoFactorAuthentication('required') && !$user->getTwoFactorAuthentication('enabled')) {
             // only one login is allowed to setup 2FA by the user himself
@@ -198,12 +198,12 @@ class IndexController extends AdminController implements KernelResponseEventInte
      * @param User $user
      * @param KernelInterface $kernel
      * @param ExecutorInterface $maintenanceExecutor
-     * @param CsrfProtectionListener $csrfProtectionListener
+     * @param CsrfProtectionHandler $csrfProtection
      * @param SiteConfigProvider $siteConfigProvider
      *
      * @return $this
      */
-    protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionListener $csrfProtectionListener, SiteConfigProvider $siteConfigProvider)
+    protected function buildPimcoreSettings(Request $request, array &$templateParams, User $user, KernelInterface $kernel, ExecutorInterface $maintenanceExecutor, CsrfProtectionHandler $csrfProtection, SiteConfigProvider $siteConfigProvider)
     {
         $config = $templateParams['config'];
         $dashboardHelper = new \Pimcore\Helper\Dashboard($user);
@@ -262,7 +262,7 @@ class IndexController extends AdminController implements KernelResponseEventInte
             ->addMailSettings($settings, $config)
             ->addCustomViewSettings($settings);
 
-        $settings['csrfToken'] = $csrfProtectionListener->getCsrfToken();
+        $settings['csrfToken'] = $csrfProtection->getCsrfToken();
 
         $templateParams['settings'] = $settings;
 
