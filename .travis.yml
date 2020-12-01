@@ -49,10 +49,10 @@ jobs:
 
     # All tests
 
-    - name: "All Tests - PHP 7.3 | MariaDB 10.4"
+    - name: "All Tests - PHP 7.4 | MariaDB 10.4"
       os: linux
       sudo: required
-      php: 7.3
+      php: 7.4
       env:
           - DATABASE_SERVER="mariadb-10.4"
 
@@ -70,10 +70,10 @@ jobs:
       env:
           - DATABASE_SERVER="mariadb-10.2"
 
-    - name: "All Tests - PHP 7.3 | MySQL 8.0 | Lowest dependencies"
+    - name: "All Tests - PHP 7.4 | MySQL 8.0 | Lowest dependencies"
       os: linux
       sudo: required
-      php: 7.3
+      php: 7.4
       env:
         - DATABASE_SERVER="mysql-8.0"
         - COMPOSER_PREFER_LOWEST=1
@@ -86,9 +86,9 @@ jobs:
         - TASK_TESTS=0
         - TASK_STAN=1
 
-    - name: "PHPStan - PHP 7.3 | Level 3 | baseline | Lowest dependencies"
+    - name: "PHPStan - PHP 7.4 | Level 3 | baseline | Lowest dependencies"
       os: linux
-      php: 7.3
+      php: 7.4
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
