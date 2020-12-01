@@ -226,16 +226,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         foreach ($services as $serviceId => $cfg) {
             $loaders = [];
 
-            if ($cfg['config']['map']) {
-                $classMapLoader = new Definition(ClassMapLoader::class, [$cfg['config']['map']]);
-                $classMapLoader->setPublic(false);
-
-                $classMapLoaderId = $serviceId . '.class_map_loader';
-                $container->setDefinition($classMapLoaderId, $classMapLoader);
-
-                $loaders[] = new Reference($classMapLoaderId);
-            }
-
             if ($cfg['config']['prefixes']) {
                 $prefixLoader = new Definition($cfg['prefixLoader'], [$cfg['config']['prefixes']]);
                 $prefixLoader->setPublic(false);
@@ -244,6 +234,16 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
                 $container->setDefinition($prefixLoaderId, $prefixLoader);
 
                 $loaders[] = new Reference($prefixLoaderId);
+            }
+
+            if ($cfg['config']['map']) {
+                $classMapLoader = new Definition(ClassMapLoader::class, [$cfg['config']['map']]);
+                $classMapLoader->setPublic(false);
+
+                $classMapLoaderId = $serviceId . '.class_map_loader';
+                $container->setDefinition($classMapLoaderId, $classMapLoader);
+
+                $loaders[] = new Reference($classMapLoaderId);
             }
 
             $service = $container->getDefinition($serviceId);
