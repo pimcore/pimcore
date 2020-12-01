@@ -181,7 +181,7 @@ class EditableHandler implements EditableHandlerInterface, LoggerAwareInterface
                 }
             }
 
-            if ($view->getEditmode) {
+            if ($view->editmode) {
                 $name = $this->translator->trans($name);
                 $desc = $this->translator->trans($desc);
             }
