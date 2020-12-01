@@ -16,7 +16,7 @@ use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 abstract class AbstractCoreHandlerTest extends TestCase
 {
     /**
-     * @var TagAwareAdapterInterface|LoggerAwareInterface
+     * @var TagAwareAdapterInterface
      */
     protected $cache;
 
@@ -60,7 +60,6 @@ abstract class AbstractCoreHandlerTest extends TestCase
     protected function setUp()
     {
         $this->cache = $this->createCachePool();
-        $this->cache->setLogger(static::$logger);
 
         // make sure we start with a clean state
         $this->cache->clear();
