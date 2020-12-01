@@ -459,27 +459,24 @@ namespace AppBundle\Document\Areabrick;
 
 use Pimcore\Extension\Document\Areabrick\AbstractTemplateAreabrick;
 use Pimcore\Model\Document\Editable\Area\Info;
-use Symfony\Component\HttpFoundation\Response;
-use Twig\Environment;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class Iframe extends AbstractTemplateAreabrick
 {
-    private $twig;
-
-    public function __construct(Environment $twig)
-    {
-        $this->twig = $twig;
-    }
-
     // other methods defined above
     // 
     public function action(Info $info)
     {
-        $params = $info->getParams();
-        $params['myVar'] = $info->getRequest()->get('myParam');
-        $contents = $this->twig->render($this->getTemplate(), $params);
+        $myVar = $info->getRequest()->get('myParam');
 
-        return new Response($contents);
+        $info->setParam('myVar', $myVar);
+
+        // optionally return a response object
+        if ('POST' === $info->getRequest()->getMethod()) {
+            return new RedirectResponse('/foo');
+        }
+
+        return null;
     }
 
     // OPTIONAL METHODS
