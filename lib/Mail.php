@@ -59,6 +59,15 @@ class Mail extends \Swift_Message
     protected $params = [];
 
     /**
+     * Options passed to html2text
+     *
+     * @var array
+     */
+    protected $html2textOptions = [
+        'ignore_errors' => true
+    ];
+
+    /**
      * Prevent adding debug information
      *
      * @var bool
@@ -259,6 +268,30 @@ class Mail extends \Swift_Message
     public function getEnableLayoutOnRendering()
     {
         return $this->enableLayoutOnRendering;
+    }
+
+    /**
+     * Sets options that are passed to html2text
+     *
+     * @param array $options
+     *
+     * @return \Pimcore\Mail
+     */
+    public function setHtml2TextOptions(array $options = [])
+    {
+        $this->html2textOptions = $options;
+
+        return $this;
+    }
+
+    /**
+     * Returns options for html2text
+     *
+     * @return array
+     */
+    public function getHtml2TextOptions()
+    {
+        return $this->html2textOptions;
     }
 
     /**
@@ -800,9 +833,7 @@ class Mail extends \Swift_Message
 
         if (!empty($htmlContent)) {
             try {
-                $content = Html2Text::convert($content, [
-                    'ignore_errors' => true
-                ]);
+                $content = Html2Text::convert($content, $this->getHtml2TextOptions());
             } catch (\Exception $e) {
 
             }
