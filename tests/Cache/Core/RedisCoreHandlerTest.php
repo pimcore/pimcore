@@ -2,23 +2,24 @@
 
 namespace Pimcore\Tests\Cache\Core;
 
-use Pimcore\Cache\Pool\Redis;
-use Pimcore\Tests\Cache\Pool\Traits\RedisItemPoolTrait;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
+use Symfony\Component\Cache\Adapter\RedisTagAwareAdapter;
 
 /**
  * @group cache.core.redis
  */
 class RedisCoreHandlerTest extends AbstractCoreHandlerTest
 {
-    use RedisItemPoolTrait;
-
     /**
      * Initializes item pool
      *
-     * @return Redis
+     * @return RedisTagAwareAdapter
      */
     protected function createCachePool()
     {
-        return $this->buildCachePool();
+        $dsn = getenv('PIMCORE_TEST_REDIS_DSN');
+        $client = RedisAdapter::createConnection($dsn);
+        $adapter = new RedisTagAwareAdapter($client, '', $this->defaultLifetime);
+        return $adapter;
     }
 }

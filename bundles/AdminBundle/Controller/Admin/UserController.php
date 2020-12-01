@@ -1082,7 +1082,6 @@ class UserController extends AdminController implements KernelControllerEventInt
         $list->load();
         $roleList = $list->getRoles();
 
-        /** @var User\Role $role */
         foreach ($roleList as $role) {
             if (!$request->get('permission') || in_array($request->get('permission'), $role->getPermissions())) {
                 $roles[] = [

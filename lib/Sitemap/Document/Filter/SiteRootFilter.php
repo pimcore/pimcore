@@ -61,7 +61,6 @@ class SiteRootFilter implements FilterInterface
     private function isExcludedSiteRoot(Document $document, Site $site = null): bool
     {
         if (null === $this->siteRoots) {
-            /** @var Site[] $sites */
             $sites = (new Site\Listing())->load();
 
             $this->siteRoots = array_map(function (Site $site) {
