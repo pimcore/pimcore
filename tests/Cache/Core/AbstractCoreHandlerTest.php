@@ -250,7 +250,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
      */
     public function testExceptionOnInvalidItemKeySave($key)
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->handler->save($key, 'foo');
     }
 
@@ -263,7 +263,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
      */
     public function testExceptionOnInvalidItemKeyRemove($key)
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->handler->remove($key);
     }
 
