@@ -26,7 +26,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class LazyLoadedItemTest extends TestCase
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -59,11 +59,11 @@ class LazyLoadedItemTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage The class "FooBarBazingaDummyClassName" does not exist
      */
     public function testExceptionOnInvalidClass()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('The class "FooBarBazingaDummyClassName" does not exist');
         new LazyLoadedItem('FooBarBazingaDummyClassName');
     }
 

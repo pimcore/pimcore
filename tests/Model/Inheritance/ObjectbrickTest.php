@@ -16,7 +16,7 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class ObjectbrickTest extends ModelTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();

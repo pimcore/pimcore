@@ -39,7 +39,7 @@ class BundleCollectionTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -128,11 +128,11 @@ class BundleCollectionTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Bundle "Pimcore\Tests\Unit\HttpKernel\BundleCollection\BundleA" is not registered
      */
     public function testGetItemThrowsException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Bundle "Pimcore\Tests\Unit\HttpKernel\BundleCollection\BundleA" is not registered');
         $item = new Item($this->bundles[0]);
 
         $this->assertFalse($this->collection->hasItem($item->getBundleIdentifier()));
