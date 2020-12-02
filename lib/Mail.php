@@ -21,6 +21,7 @@ use Pimcore\Event\MailEvents;
 use Pimcore\Event\Model\MailEvent;
 use Pimcore\Helper\Mail as MailHelper;
 use Soundasleep\Html2Text;
+use Soundasleep\Html2TextException;
 
 class Mail extends \Swift_Message
 {
@@ -834,8 +835,8 @@ class Mail extends \Swift_Message
         if (!empty($htmlContent)) {
             try {
                 $content = Html2Text::convert($htmlContent, $this->getHtml2TextOptions());
-            } catch (\Exception $e) {
-
+            } catch (Html2TextException $e) {
+                Logger::warning('Converting HTML to plain text failed, no plain text part will be attached to the sent email');
             }
         }
 
