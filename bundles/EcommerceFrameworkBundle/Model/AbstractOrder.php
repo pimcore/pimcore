@@ -426,4 +426,11 @@ abstract class AbstractOrder extends Concrete
      * @return \Pimcore\Model\DataObject\OnlineShopOrder
      */
     abstract public function setVoucherTokens($voucherTokens);
+
+    /**
+     * Get cartHash - Cart Hash
+     *
+     * @return float|null
+     */
+    abstract public function getCartHash();
 }
