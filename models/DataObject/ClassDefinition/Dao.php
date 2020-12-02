@@ -63,6 +63,8 @@ class Dao extends Model\Dao\AbstractDao
      * @param string $name
      *
      * @return string|null
+     *
+     * @throws \Exception
      */
     public function getIdByName($name)
     {
@@ -72,6 +74,12 @@ class Dao extends Model\Dao\AbstractDao
                 $id = $this->db->fetchOne('SELECT id FROM classes WHERE name = ?', [$name]);
             }
         } catch (\Exception $e) {
+        }
+
+        if (empty($id)) {
+            throw new Model\Exception\NotFoundException(sprintf(
+                'Data object class definition with with name "%s" does not exist.',  $name
+            ));
         }
 
         return $id;

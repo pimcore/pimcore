@@ -11,7 +11,7 @@ use Pimcore\Tool;
 
 class LocalizedFieldTest extends ModelTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
@@ -165,11 +165,9 @@ class LocalizedFieldTest extends ModelTestCase
         $class->save();
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testInvalidLocaleList()
     {
+        $this->expectException(\Exception::class);
         $this->markTestSkipped('TODO: the following test should fail, but no exception is thrown');
 
         // invalid locale

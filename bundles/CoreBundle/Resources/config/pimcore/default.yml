@@ -8,7 +8,7 @@ framework:
     serializer:
         enabled: true
     router:
-        resource: "%kernel.project_dir%/config/routing.yml"
+        resource: "%kernel.project_dir%/app/config/routing.yml"
         strict_requirements: ~
     form: ~
     csrf_protection: ~
@@ -32,7 +32,7 @@ twig:
         # avoid fetching and using services from templates if possible
         # this is only here for compatibility/dev reasons and may be removed later
         container: '@service_container'
-        pimcore_csrf: '@Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener'
+        pimcore_csrf: '@Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler'
     paths:
         '%kernel.project_dir%/app/Resources/views': App
         

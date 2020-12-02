@@ -8,9 +8,8 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
-use Pimcore\Cache\Core\WriteLock;
 use Pimcore\Cache\Core\CoreCacheHandler;
-use Psr\Log\LoggerAwareInterface;
+use Pimcore\Cache\Core\WriteLock;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
 
@@ -58,7 +57,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->cache = $this->createCachePool();
 
@@ -146,7 +145,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
             ->setConstructorArgs([
                 $this->cache,
                 $this->writeLock,
-                \Pimcore::getEventDispatcher()
+                \Pimcore::getEventDispatcher(),
             ])
             ->getMock();
 
@@ -168,7 +167,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     /**
      * @inheritDoc
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         static::setupLogger((new \ReflectionClass(__CLASS__))->getShortName());
     }
@@ -176,7 +175,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
     /**
      * @inheritDoc
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         static::handleLogOutput();
     }
@@ -245,12 +244,12 @@ abstract class AbstractCoreHandlerTest extends TestCase
      * Invalid keys is defined on abstract CachePool test
      *
      * @dataProvider invalidKeys
-     * @expectedException InvalidArgumentException
      *
      * @param string $key
      */
     public function testExceptionOnInvalidItemKeySave($key)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->handler->save($key, 'foo');
     }
 
@@ -258,12 +257,12 @@ abstract class AbstractCoreHandlerTest extends TestCase
      * Invalid keys is defined on abstract CachePool test
      *
      * @dataProvider invalidKeys
-     * @expectedException InvalidArgumentException
      *
      * @param string $key
      */
     public function testExceptionOnInvalidItemKeyRemove($key)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $this->handler->remove($key);
     }
 
