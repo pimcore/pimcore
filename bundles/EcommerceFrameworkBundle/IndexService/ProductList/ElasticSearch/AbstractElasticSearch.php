@@ -1171,30 +1171,43 @@ abstract class AbstractElasticSearch implements ProductListInterface
             // send request
             $result = $this->sendRequest($params);
 
-            if ($result['aggregations']) {
-                foreach ($result['aggregations'] as $fieldname => $aggregation) {
-                    $buckets = $this->searchForBuckets($aggregation);
-
-                    $groupByValueResult = [];
-                    if ($buckets) {
-                        foreach ($buckets as $bucket) {
-                            if ($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
-                                $groupByValueResult[] = ['value' => $bucket['key'], 'count' => $bucket['objectCount']['value']];
-                            } else {
-                                $data = $this->convertBucketValues($bucket);
-                                $groupByValueResult[] = $data;
-                            }
-                        }
-                    }
-
-                    $this->preparedGroupByValuesResults[$fieldname] = $groupByValueResult;
-                }
-            }
+            // process result from elasticsearch
+            $this->processResult($result);
         } else {
             $this->preparedGroupByValuesResults = [];
         }
 
         $this->preparedGroupByValuesLoaded = true;
+    }
+
+    /**
+     * process the result array from elasticsearch
+     *
+     * @param array $result
+     *
+     * @return void
+     */
+    protected function processResult(array $result)
+    {
+        if ($result['aggregations']) {
+            foreach ($result['aggregations'] as $fieldname => $aggregation) {
+                $buckets = $this->searchForBuckets($aggregation);
+
+                $groupByValueResult = [];
+                if ($buckets) {
+                    foreach ($buckets as $bucket) {
+                        if ($this->getVariantMode() == self::VARIANT_MODE_INCLUDE_PARENT_OBJECT) {
+                            $groupByValueResult[] = ['value' => $bucket['key'], 'count' => $bucket['objectCount']['value']];
+                        } else {
+                            $data = $this->convertBucketValues($bucket);
+                            $groupByValueResult[] = $data;
+                        }
+                    }
+                }
+
+                $this->preparedGroupByValuesResults[$fieldname] = $groupByValueResult;
+            }
+        }
     }
 
     /**

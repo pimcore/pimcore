@@ -21,14 +21,14 @@ use Pimcore\Tool;
 class Mail extends MailHandler
 {
     /**
-     * @var null
+     * @var string
      */
-    protected $address = null;
+    protected $address;
 
     /**
      * Mail constructor.
      *
-     * @param int $address
+     * @param string $address
      * @param bool|int $level
      * @param bool|true $bubble
      */

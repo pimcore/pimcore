@@ -126,11 +126,11 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $loader->load('image_optimizers.yml');
         $loader->load('maintenance.yml');
         $loader->load('commands.yml');
+        $loader->load('cache.yml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
         $this->configureRouting($container, $config['routing']);
-        $this->configureCache($container, $loader, $config);
         $this->configureTranslations($container, $config['translations']);
         $this->configureTargeting($container, $loader, $config['targeting']);
         $this->configurePasswordEncoders($container, $config);
@@ -227,71 +227,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
             'pimcore.routing.static.locale_params',
             $config['static']['locale_params']
         );
-    }
-
-    /**
-     * Configure pimcore core cache
-     *
-     * @param ContainerBuilder $container
-     * @param LoaderInterface $loader
-     * @param array $config
-     */
-    private function configureCache(ContainerBuilder $container, LoaderInterface $loader, array $config)
-    {
-        $coreCachePool = null;
-        if (null !== $config['cache']['pool_service_id']) {
-            $coreCachePool = $config['cache']['pool_service_id'];
-        }
-
-        // default lifetime
-        $container->setParameter('pimcore.cache.core.default_lifetime', $config['cache']['default_lifetime']);
-
-        $loader->load('cache.yml');
-
-        $configuredCachePool = null;
-
-        // register doctrine cache if it is enabled
-        if ($config['cache']['pools']['doctrine']['enabled']) {
-            $loader->load('cache_doctrine.yml');
-
-            // load named connection
-            $connectionId = sprintf('doctrine.dbal.%s_connection', $config['cache']['pools']['doctrine']['connection']);
-
-            $doctrinePool = $container->findDefinition('pimcore.cache.core.pool.doctrine');
-            $doctrinePool->replaceArgument(0, new Reference($connectionId));
-
-            $configuredCachePool = 'pimcore.cache.core.pool.doctrine';
-        }
-
-        // register redis cache if it is enabled
-        if ($config['cache']['pools']['redis']['enabled']) {
-            $container->setParameter(
-                'pimcore.cache.core.redis.connection',
-                $config['cache']['pools']['redis']['connection'] ?? []
-            );
-
-            $container->setParameter(
-                'pimcore.cache.core.redis.options',
-                $config['cache']['pools']['redis']['options'] ?? []
-            );
-
-            $loader->load('cache_redis.yml');
-
-            $configuredCachePool = 'pimcore.cache.core.pool.redis';
-        }
-
-        if (null === $coreCachePool) {
-            if (null !== $configuredCachePool) {
-                // use one of the pools configured above
-                $coreCachePool = $configuredCachePool;
-            } else {
-                // default to filesystem cache
-                $coreCachePool = 'pimcore.cache.core.pool.filesystem';
-            }
-        }
-
-        // set core cache pool alias
-        $container->setAlias('pimcore.cache.core.pool', $coreCachePool)->setPublic(true);
     }
 
     private function configureTranslations(ContainerBuilder $container, array $config)

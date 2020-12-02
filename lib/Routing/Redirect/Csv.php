@@ -69,7 +69,6 @@ class Csv
 
         $writer->insertOne($this->columns);
 
-        /** @var Redirect $redirect */
         foreach ($list->getRedirects() as $redirect) {
             $target = $redirect->getTarget();
 
@@ -120,7 +119,6 @@ class Csv
 
         $dialect = Admin::determineCsvDialect($filename);
 
-        /** @var Reader $reader */
         $reader = Reader::createFromString($content);
         $reader->setOutputBOM(Reader::BOM_UTF8);
         $reader->setDelimiter($dialect->delimiter);

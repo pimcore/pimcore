@@ -43,5 +43,3 @@ interface CartFactoryInterface
      */
     public function getCartReadOnlyMode(): string;
 }
-
-class_alias(CartFactoryInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartFactory');

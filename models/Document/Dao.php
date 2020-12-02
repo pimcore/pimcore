@@ -44,7 +44,7 @@ class Dao extends Model\Element\Dao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new  Model\Exception\NotFoundException("document with id " . $id . " not found");
+            throw new  Model\Exception\NotFoundException('document with id ' . $id . ' not found');
         }
     }
 

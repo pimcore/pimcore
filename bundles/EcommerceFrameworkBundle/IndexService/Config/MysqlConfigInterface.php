@@ -63,5 +63,3 @@ interface MysqlConfigInterface extends ConfigInterface
      */
     public function getIdColumnType($isPrimary);
 }
-
-class_alias(MysqlConfigInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig');

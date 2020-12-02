@@ -35,7 +35,7 @@ class PHPCode extends AbstractOperator
     protected $additionalData;
 
     /**
-     * @var OperatorInterface
+     * @var OperatorInterface|null
      */
     private $instance;
 
@@ -115,11 +115,9 @@ class PHPCode extends AbstractOperator
         $phpClass = $this->getPhpClass();
 
         if ($phpClass && class_exists($phpClass)) {
-            $operatorInstance = new $phpClass($this->config, $this->context);
-
-            return $operatorInstance;
-        } else {
-            throw new \Exception('PHPCode operator class does not exist: ' . $phpClass);
+            return new $phpClass($this->config, $this->context);
         }
+
+        throw new \Exception('PHPCode operator class does not exist: ' . $phpClass);
     }
 }

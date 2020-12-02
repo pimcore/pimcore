@@ -32,7 +32,7 @@ class AbstractRenderer extends AbstractOperator
             $c = $childs[0];
             $childResult = $c->getLabeledValue($element);
             if ($childResult) {
-                $result->value = $childResult->value;
+                $result->value = $childResult->value ?? null;
             }
         }
 

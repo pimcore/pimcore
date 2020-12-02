@@ -110,6 +110,16 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public $fieldDefinitionsCache;
 
     /**
+     * @var array
+     */
+    public $permissionView = [];
+
+    /**
+     * @var array
+     */
+    public $permissionEdit = [];
+
+    /**
      * @see Data::getDataForEditmode
      *
      * @param DataObject\Localizedfield $localizedField
@@ -348,7 +358,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function getVersionPreview($data, $object = null, $params = [])
     {
         // this is handled directly in the template
-        // /pimcore/modules/admin/views/scripts/object/preview-version.php
+        // /bundles/AdminBundle/Resources/views/Admin/DataObject/DataObject/previewVersion.html.twig
         return 'LOCALIZED FIELDS';
     }
 
@@ -1148,6 +1158,8 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         $vars = get_object_vars($this);
         unset($vars['fieldDefinitionsCache']);
         unset($vars['referencedFields']);
+        unset($vars['permissionView']);
+        unset($vars['permissionEdit']);
 
         return array_keys($vars);
     }
@@ -1372,5 +1384,35 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
         return '\\' . DataObject\Localizedfield::class . '|null';
     }
 
+    /**
+     * @return array
+     */
+    public function getPermissionView(): array
+    {
+        return $this->permissionView;
+    }
 
+    /**
+     * @param array $permissionView
+     */
+    public function setPermissionView($permissionView): void
+    {
+        $this->permissionView = $permissionView;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionEdit(): array
+    {
+        return $this->permissionEdit;
+    }
+
+    /**
+     * @param array $permissionEdit
+     */
+    public function setPermissionEdit($permissionEdit): void
+    {
+        $this->permissionEdit = $permissionEdit;
+    }
 }

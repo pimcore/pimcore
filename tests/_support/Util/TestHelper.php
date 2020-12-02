@@ -159,7 +159,7 @@ class TestHelper
                 foreach ($editables as $key => $value) {
                     if ($value instanceof Document\Editable\Video) {
                         // with video can't use frontend(), it includes random id
-                        $d['editable_' . $key] = $value->getName() . ':' . $value->type . '_' . $value->id;
+                        $d['editable_' . $key] = $value->getName() . ':' . $value->getType() . '_' . $value->getId();
                     } elseif (!$value instanceof Document\Editable\Block) {
                         $d['editable_' . $key] = $value->getName() . ':' . $value->frontend();
                     } else {

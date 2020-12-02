@@ -10,7 +10,7 @@ use Pimcore\Tests\Util\TestHelper;
 
 class LocalizedFieldTest extends ModelTestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Localizedfield::setStrictMode(Localizedfield::STRICT_DISABLED);
     }
@@ -26,28 +26,25 @@ class LocalizedFieldTest extends ModelTestCase
         $this->assertEquals('TestKo', $object->getLinput('ko'));
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Language  not accepted in strict mode
-     */
     public function testExceptionInStrictMode()
     {
         $object = TestHelper::createEmptyObject();
 
         Localizedfield::setStrictMode(Localizedfield::STRICT_ENABLED);
 
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Language  not accepted in strict mode');
         $object->setLinput('Test');
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Language ko not accepted in strict mode
-     */
     public function testExceptionWithLocaleInStrictMode()
     {
         $object = TestHelper::createEmptyObject();
 
         Localizedfield::setStrictMode(Localizedfield::STRICT_ENABLED);
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Language ko not accepted in strict mode');
 
         $object->setLinput('Test', 'ko');
     }

@@ -209,7 +209,7 @@ interface CartInterface
      *
      * @param string $key
      *
-     * @return string
+     * @return string|null
      */
     public function getCheckoutData($key);
 
@@ -337,5 +337,3 @@ interface CartInterface
      */
     public function isVoucherErrorCode($errorCode);
 }
-
-class_alias(CartInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart');

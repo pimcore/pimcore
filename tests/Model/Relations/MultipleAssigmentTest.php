@@ -19,7 +19,7 @@ use Pimcore\Tests\Util\TestHelper;
  */
 class MultipleAssigmentTest extends ModelTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
@@ -39,7 +39,7 @@ class MultipleAssigmentTest extends ModelTestCase
         }
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         TestHelper::cleanUp();
         parent::tearDown();

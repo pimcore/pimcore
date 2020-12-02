@@ -40,5 +40,3 @@ interface ProductInterface
      */
     public function getOSProductNumber();
 }
-
-class_alias(ProductInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\Model\IProduct');

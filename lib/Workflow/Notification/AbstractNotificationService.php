@@ -79,9 +79,6 @@ class AbstractNotificationService
             }
 
             foreach ($userList->load() as $user) {
-                /**
-                 * @var User $user
-                 */
                 if ($includeAllUsers || $user->getEmail()) {
                     $notifyUsers[$user->getLanguage()][$user->getId()] = $user;
                 }

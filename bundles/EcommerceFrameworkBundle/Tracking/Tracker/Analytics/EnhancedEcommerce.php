@@ -24,8 +24,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CartProductActionRemoveInte
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutCompleteInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\CheckoutStepInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductActionAdd;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\IProductActionRemove;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductAction;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpression;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ProductImpressionInterface;
@@ -39,8 +37,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class EnhancedEcommerce extends AbstractAnalyticsTracker implements
     ProductViewInterface,
     ProductImpressionInterface,
-    IProductActionAdd,
-    IProductActionRemove,
     CartProductActionAddInterface,
     CartProductActionRemoveInterface,
     CheckoutInterface,

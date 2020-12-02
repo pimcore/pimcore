@@ -21,11 +21,6 @@ if [[ -n "$PIMCORE_TEST_ENV" ]]; then
     CMD="$CMD --env $PIMCORE_TEST_ENV"
 fi
 
-# skip file tests unless configured otherwise
-if [[ -z "$PIMCORE_TEST_CACHE_FILE" ]] || [[ "$PIMCORE_TEST_CACHE_FILE" -ne 1 ]]; then
-    CMD="$CMD --skip-group cache.core.file"
-fi
-
 # generate json result file
 CMD="$CMD --json"
 

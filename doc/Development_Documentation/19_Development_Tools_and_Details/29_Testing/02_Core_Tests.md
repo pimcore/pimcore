@@ -50,11 +50,11 @@ PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVI
 
 ##### Redis Cache tests
 
-For Redis, the `PIMCORE_TEST_CACHE_REDIS_DATABASE` option is mandatory. Set to a value that does not conflict to any
+For Redis, the `PIMCORE_TEST_REDIS_DSN` option is mandatory. Set to a value that does not conflict to any
 other Redis DBs on your system.
 
 ```
-PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 PIMCORE_TEST_CACHE_REDIS_DATABASE=1 vendor/bin/codecept run -c vendor/pimcore/pimcore cache    
+PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVIRONMENT=test PIMCORE_TEST=1 PIMCORE_TEST_REDIS_DSN=redis://localhost vendor/bin/codecept run -c vendor/pimcore/pimcore cache    
 ```
 
 
@@ -65,15 +65,7 @@ PIMCORE_TEST_DB_DSN="mysql://[USERNAME]:[PASSWORD]@[HOST]/[DBNAME]" PIMCORE_ENVI
 | PIMCORE_ENVIRONMENT                       | test             | Test environment                                                                                                               |
 | PIMCORE_TEST                              | 1                | **important** this will switch several directories (like /var/classes)                                                         |
 | PIMCORE_TEST_SKIP_DB                      | 1                | Skips DB setup. This does not skip the db-related tests but it<br>reduces the setup time for tests that don't need a database. |
-| PIMCORE_TEST_CACHE_REDIS_DATABASE         | 1                | **required for REDIS tests**                                                                                                   |
-| PIMCORE_TEST_CACHE_REDIS_PORT             | defaults to 6379 | Redis port                                                                                                                     |
-| PIMCORE_TEST_CACHE_REDIS_PERSISTENT       |                  |                                                                                                                                |
-| PIMCORE_TEST_CACHE_REDIS_FORCE_STANDALONE | 0                |                                                                                                                                |
-| PIMCORE_TEST_CACHE_REDIS_CONNECT_RETRIES  | defaults to 1    |                                                                                                                                |
-| PIMCORE_TEST_CACHE_REDIS_TIMEOUT          | defaults to 2.5  |                                                                                                                                |
-| PIMCORE_TEST_CACHE_REDIS_READ_TIMEOUT     | defaults to 0    |                                                                                                                                |
-| PIMCORE_TEST_CACHE_REDIS_PASSWORD         |                  |                                                                                                                                |
-| ...                                       |                  |                                                                                                                                |                        
+| PIMCORE_TEST_REDIS_DSN                    | redis://localhost| **required for REDIS tests**                                                                                                   |
 
 #### Suites
 
