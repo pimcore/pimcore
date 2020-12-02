@@ -26,8 +26,6 @@ class LocalizedFieldTest extends ModelTestCase
         $this->assertEquals('TestKo', $object->getLinput('ko'));
     }
 
-    /**
-     */
     public function testExceptionInStrictMode()
     {
         $object = TestHelper::createEmptyObject();

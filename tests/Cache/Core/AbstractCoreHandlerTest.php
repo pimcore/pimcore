@@ -8,9 +8,8 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Handler\TestHandler;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
-use Pimcore\Cache\Core\WriteLock;
 use Pimcore\Cache\Core\CoreCacheHandler;
-use Psr\Log\LoggerAwareInterface;
+use Pimcore\Cache\Core\WriteLock;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
 use Symfony\Component\Cache\CacheItem;
 
@@ -146,7 +145,7 @@ abstract class AbstractCoreHandlerTest extends TestCase
             ->setConstructorArgs([
                 $this->cache,
                 $this->writeLock,
-                \Pimcore::getEventDispatcher()
+                \Pimcore::getEventDispatcher(),
             ])
             ->getMock();
 

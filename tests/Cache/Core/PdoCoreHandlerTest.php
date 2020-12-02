@@ -21,6 +21,7 @@ class PdoCoreHandlerTest extends AbstractCoreHandlerTest
         TestHelper::checkDbSupport();
         $pdoAdapter = new PdoAdapter(\Pimcore::getContainer()->get('doctrine.dbal.default_connection'), '', $this->defaultLifetime);
         $adapter = new TagAwareAdapter($pdoAdapter);
+
         return $adapter;
     }
 }
