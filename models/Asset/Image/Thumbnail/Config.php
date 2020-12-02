@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Asset\Image\Thumbnail;
 
+use Pimcore\Cache\Runtime;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Tool\Serialize;
@@ -174,19 +175,12 @@ class Config extends Model\AbstractModel
         }
 
         try {
-            $thumbnail = \Pimcore\Cache\Runtime::get($cacheKey);
+            $thumbnail = Runtime::get($cacheKey);
             $thumbnail->setName($name);
-            if (!$thumbnail) {
-                throw new \Exception('Thumbnail in registry is null');
-            }
         } catch (\Exception $e) {
-            try {
-                $thumbnail = new self();
-                $thumbnail->getDao()->getByName($name);
-                \Pimcore\Cache\Runtime::set($cacheKey, $thumbnail);
-            } catch (\Exception $e) {
-                return null;
-            }
+            $thumbnail = new self();
+            $thumbnail->getDao()->getByName($name);
+            Runtime::set($cacheKey, $thumbnail);
         }
 
         // only return clones of configs, this is necessary since we cache the configs in the registry (see above)
