@@ -833,7 +833,7 @@ class Mail extends \Swift_Message
 
         if (!empty($htmlContent)) {
             try {
-                $content = Html2Text::convert($content, $this->getHtml2TextOptions());
+                $content = Html2Text::convert($htmlContent, $this->getHtml2TextOptions());
             } catch (\Exception $e) {
 
             }
