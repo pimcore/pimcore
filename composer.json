@@ -50,7 +50,7 @@
     "defuse/php-encryption": "^2.2.0",
     "doctrine/annotations": "^1.6.0",
     "doctrine/collections": "^1.5.0",
-    "doctrine/common": "^2.13.0",
+    "doctrine/persistence": "^2.1.0",
     "doctrine/dbal": "^2.11.0",
     "doctrine/doctrine-bundle": "^2.2.1",
     "doctrine/doctrine-migrations-bundle": "^3.0.1",
