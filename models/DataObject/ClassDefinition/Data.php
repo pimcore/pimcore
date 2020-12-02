@@ -1699,7 +1699,7 @@ abstract class Data
     }
 
     /**
-     * @param object $object
+     * @param DataObject\ClassDefinition\Data\LazyLoadingSupportInterface $object
      */
     public function markLazyloadedFieldAsLoaded($object)
     {
