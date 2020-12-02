@@ -251,19 +251,18 @@ class ClassDefinition extends Model\AbstractModel
      * @param string $name
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
         try {
             $class = new self();
             $id = $class->getDao()->getIdByName($name);
-            if ($id) {
-                return self::getById($id);
-            }
-        } catch (\Exception $e) {
+            return self::getById($id);
+        } catch (Model\Exception\NotFoundException $e) {
+            return null;
         }
-
-        return null;
     }
 
     /**
