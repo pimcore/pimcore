@@ -69,7 +69,7 @@ class Dao extends Model\Dao\AbstractDao
         if (!empty($data['id'])) {
             $this->assignVariablesToModel($data);
         } else {
-            throw new Model\Exception\NotFoundException(sprintf('Collection Config with name "%s" does not exist.', $name));
+            throw new Model\Exception\NotFoundException(sprintf('Classification store collection config with name "%s" does not exist.', $name));
         }
     }
 
