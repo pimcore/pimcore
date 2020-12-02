@@ -122,6 +122,8 @@ class Rule extends Model\AbstractModel
      * @param string $name
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
@@ -130,7 +132,7 @@ class Rule extends Model\AbstractModel
             $target->getDao()->getByName($name);
 
             return $target;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

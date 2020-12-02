@@ -130,6 +130,8 @@ class Config extends Model\AbstractModel implements \JsonSerializable
      * @param string $name
      *
      * @return null|Config
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
@@ -138,7 +140,7 @@ class Config extends Model\AbstractModel implements \JsonSerializable
             $report->getDao()->getByName($name);
 
             return $report;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

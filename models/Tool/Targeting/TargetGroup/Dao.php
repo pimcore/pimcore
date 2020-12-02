@@ -50,6 +50,10 @@ class Dao extends Model\Dao\AbstractDao
         }
     }
 
+    /**
+     * @param string|null $name
+     * @throws \Exception
+     */
     public function getByName(string $name = null)
     {
         if (null !== $name) {
@@ -61,7 +65,10 @@ class Dao extends Model\Dao\AbstractDao
         if (count($data) === 1) {
             $this->getById($data[0]['id']);
         } else {
-            throw new \Exception(sprintf('Target Group with name %s doesn\'t exist or isn\'t unique', $this->model->getName()));
+            throw new Model\Exception\NotFoundException(sprintf(
+                'Targeting group with name "%s" does not exist or is not unique.',
+                $this->model->getName()
+            ));
         }
     }
 

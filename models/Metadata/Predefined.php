@@ -110,6 +110,8 @@ class Predefined extends Model\AbstractModel
      * @param string $language
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name, $language = '')
     {
@@ -119,7 +121,7 @@ class Predefined extends Model\AbstractModel
             $metadata->getDao()->getByNameAndLanguage($name, $language);
 
             return $metadata;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

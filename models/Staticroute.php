@@ -18,6 +18,7 @@
 namespace Pimcore\Model;
 
 use Pimcore\Event\FrontendEvents;
+use Pimcore\Model\Exception\NotFoundException;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -162,6 +163,8 @@ class Staticroute extends AbstractModel
      * @param int|null $siteId
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name, $siteId = null)
     {
@@ -177,7 +180,7 @@ class Staticroute extends AbstractModel
 
         try {
             $route->getDao()->getByName($name, $siteId);
-        } catch (\Exception $e) {
+        } catch (NotFoundException $e) {
             return null;
         }
 

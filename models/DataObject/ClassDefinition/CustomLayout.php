@@ -113,16 +113,14 @@ class CustomLayout extends Model\AbstractModel
      * @param string $name
      *
      * @return null|CustomLayout
+     *
+     * @throws \Exception
      */
     public static function getByName(string $name)
     {
         $customLayout = new self();
         $id = $customLayout->getDao()->getIdByName($name);
-        if ($id) {
-            return self::getById($id);
-        }
-
-        return null;
+        return self::getById($id);
     }
 
     /**
@@ -130,16 +128,14 @@ class CustomLayout extends Model\AbstractModel
      * @param string $classId
      *
      * @return null|CustomLayout
+     *
+     * @throws \Exception
      */
     public static function getByNameAndClassId(string $name, $classId)
     {
         $customLayout = new self();
         $id = $customLayout->getDao()->getIdByNameAndClassId($name, $classId);
-        if ($id) {
-            return self::getById($id);
-        }
-
-        return null;
+        return self::getById($id);
     }
 
     /**
