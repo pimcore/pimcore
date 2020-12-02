@@ -170,7 +170,6 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      * @return bool
      *
      * @throws InvalidConfigException
-     * @throws \Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException
      *
      * @deprecated use checkout implementation V7 instead
      */
