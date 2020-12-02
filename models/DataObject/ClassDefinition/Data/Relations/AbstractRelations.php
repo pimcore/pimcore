@@ -513,7 +513,7 @@ abstract class AbstractRelations extends Data implements
     public function getPhpdocInputType(): ?string
     {
         if ($this->getPhpdocType()) {
-            return "\\". $this->getPhpdocType();
+            return $this->getPhpdocType();
         }
 
         return null;
