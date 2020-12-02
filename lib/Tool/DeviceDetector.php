@@ -183,7 +183,7 @@ class DeviceDetector
             return;
         }
 
-        $userAgent = $_SERVER['HTTP_USER_AGENT'];
+        $userAgent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 
         $type = null;
 
