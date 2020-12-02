@@ -82,7 +82,7 @@
     "symfony/contracts": "^2.0",
     "symfony/monolog-bundle": "^3.1.0",
     "symfony/swiftmailer-bundle": "^3.5.0",
-    "symfony/symfony": "^5.1.1",
+    "symfony/symfony": "^5.2.0",
     "tijsverkoyen/css-to-inline-styles": "^2.2.1",
     "twig/extensions": "^1.5",
     "twig/twig": "^2.10",
