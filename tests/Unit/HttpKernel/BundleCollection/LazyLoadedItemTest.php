@@ -58,8 +58,6 @@ class LazyLoadedItemTest extends TestCase
         $this->assertEquals(LazyLoadedItemTestBundleA::class, $item->getBundleIdentifier());
     }
 
-    /**
-     */
     public function testExceptionOnInvalidClass()
     {
         $this->expectException(\InvalidArgumentException::class);

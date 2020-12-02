@@ -15,9 +15,9 @@
 
 namespace Pimcore\Bundle\AdminBundle\Security;
 
+use Pimcore\Tool\Session;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Pimcore\Tool\Session;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -111,5 +111,4 @@ class CsrfProtectionHandler implements LoggerAwareInterface
     {
         return $this->excludedRoutes;
     }
-
 }

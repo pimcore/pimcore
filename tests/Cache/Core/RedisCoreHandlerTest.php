@@ -20,6 +20,7 @@ class RedisCoreHandlerTest extends AbstractCoreHandlerTest
         $dsn = getenv('PIMCORE_TEST_REDIS_DSN');
         $client = RedisAdapter::createConnection($dsn);
         $adapter = new RedisTagAwareAdapter($client, '', $this->defaultLifetime);
+
         return $adapter;
     }
 }

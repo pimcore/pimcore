@@ -15,7 +15,6 @@
 namespace Pimcore\Cache\Core;
 
 use DeepCopy\TypeMatcher\TypeMatcher;
-use Symfony\Component\Cache\CacheItem;
 use Pimcore\Event\CoreCacheEvents;
 use Pimcore\Model\Document\Hardlink\Wrapper\WrapperInterface;
 use Pimcore\Model\Element\ElementDumpStateInterface;
@@ -26,8 +25,9 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Cache\Adapter\TagAwareAdapterInterface;
-use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Core pimcore cache handler with logic handling deferred save on shutdown (specialized for internal pimcore use). This
@@ -187,6 +187,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     {
         $this->enabled = true;
         $this->dispatchStatusEvent();
+
         return $this;
     }
 
@@ -197,6 +198,7 @@ class CoreCacheHandler implements LoggerAwareInterface
     {
         $this->enabled = false;
         $this->dispatchStatusEvent();
+
         return $this;
     }
 
@@ -208,9 +210,6 @@ class CoreCacheHandler implements LoggerAwareInterface
         return $this->enabled;
     }
 
-    /**
-     *
-     */
     protected function dispatchStatusEvent()
     {
         $this->dispatcher->dispatch(new Event(),
@@ -540,6 +539,7 @@ class CoreCacheHandler implements LoggerAwareInterface
      * @param array $tags
      * @param null $lifetime
      * @param false $force
+     *
      * @return bool
      */
     protected function storeCacheData(string $key, $data, array $tags = [], $lifetime = null, $force = false)
@@ -696,6 +696,7 @@ class CoreCacheHandler implements LoggerAwareInterface
         if (count($tags) > 0) {
             $result = $this->pool->invalidateTags($tags);
             $this->addClearedTags($tags);
+
             return $result;
         }
 

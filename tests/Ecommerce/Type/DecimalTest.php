@@ -64,8 +64,6 @@ class DecimalTest extends TestCase
         $this->assertSame('16', $noScale->asString(0));
     }
 
-    /**
-     */
     public function testInvalidScaleThrowsException()
     {
         $this->expectException(\DomainException::class);
@@ -113,8 +111,6 @@ class DecimalTest extends TestCase
         Decimal::create($value);
     }
 
-    /**
-     */
     public function testInvalidScaleThrowsExceptionOnCreate()
     {
         $this->expectException(\DomainException::class);
@@ -154,8 +150,6 @@ class DecimalTest extends TestCase
         $this->assertEquals(15.99, $decimalValue->asNumeric());
     }
 
-    /**
-     */
     public function testExceptionOnInvalidFromNumeric()
     {
         $this->expectException(\InvalidArgumentException::class);

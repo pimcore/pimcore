@@ -165,8 +165,6 @@ class LocalizedFieldTest extends ModelTestCase
         $class->save();
     }
 
-    /**
-     */
     public function testInvalidLocaleList()
     {
         $this->expectException(\Exception::class);

@@ -127,8 +127,6 @@ class BundleCollectionTest extends TestCase
         }
     }
 
-    /**
-     */
     public function testGetItemThrowsException()
     {
         $this->expectException(\InvalidArgumentException::class);

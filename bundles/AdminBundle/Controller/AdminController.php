@@ -21,7 +21,6 @@ use Pimcore\Controller\Controller;
 use Pimcore\Extension\Bundle\PimcoreBundleManager;
 use Pimcore\Logger;
 use Pimcore\Model\User;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;

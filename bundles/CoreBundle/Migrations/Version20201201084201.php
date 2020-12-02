@@ -9,16 +9,16 @@ use Doctrine\Migrations\AbstractMigration;
 
 final class Version20201201084201 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
-        foreach(['cache', 'cache_tags'] as $tableName) {
-            if($schema->hasTable($tableName)) {
+        foreach (['cache', 'cache_tags'] as $tableName) {
+            if ($schema->hasTable($tableName)) {
                 $this->addSql(sprintf('DROP TABLE IF EXISTS `%s`;', $tableName));
             }
         }
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         $this->addSql("DROP TABLE IF EXISTS `cache`;
         CREATE TABLE `cache` (
