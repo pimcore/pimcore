@@ -86,7 +86,7 @@ interface AreabrickInterface
     /**
      * Determines if the brick has a view template
      *
-     * @TODO active in Pimcore v7
+     * @TODO active in Pimcore 10
      *
      * @return bool
      */
@@ -95,7 +95,7 @@ interface AreabrickInterface
     /**
      * Get view template
      *
-     * @TODO active in Pimcore v7
+     * @TODO active in Pimcore 10
      *
      * @return string|null
      */

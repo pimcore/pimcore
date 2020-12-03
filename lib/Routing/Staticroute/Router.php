@@ -244,7 +244,7 @@ class Router implements RouterInterface, RequestMatcherInterface, VersatileGener
 
         $params = $this->context->getParameters();
 
-        // @TODO: remove in Pimcore v7 not supported anymore
+        // @TODO: remove in Pimcore 10 not supported anymore
         $params = array_merge(Tool::getRoutingDefaults(), $params);
 
         foreach ($this->getStaticRoutes() as $route) {

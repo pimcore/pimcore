@@ -23,7 +23,7 @@ use Pimcore\Migrations\Configuration\Configuration;
 use Pimcore\Migrations\Configuration\InstallConfiguration;
 
 /**
- * @deprecated will be removed in Pimcore v7, use InstallerInterface instead
+ * @deprecated will be removed in Pimcore 10, use InstallerInterface instead
  */
 interface MigrationInstallerInterface extends InstallerInterface
 {

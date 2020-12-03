@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\Listing\Concrete;
 
 /**
  * @deprecated - use commands instead
- * @TODO Pimcore 7 - remove this
+ * @TODO Pimcore 10 - remove this
  */
 class IndexUpdater
 {
@@ -35,7 +35,7 @@ class IndexUpdater
      *
      * Stop-Gap solution until later refactoring:
      *
-     * @TODO Pimcore 7 - check if this is necessary when having monolog logging
+     * @TODO Pimcore 10 - check if this is necessary when having monolog logging
      */
     private static function startSession()
     {
@@ -51,7 +51,7 @@ class IndexUpdater
     }
 
     /**
-     * @deprecated will be removed in Pimcore 7. Use ecommerce:indexservice:bootstrap command instead.
+     * @deprecated will be removed in Pimcore 10. Use ecommerce:indexservice:bootstrap command instead.
      *
      * Runs update index for all tenants
      *  - but does not run processPreparationQueue or processUpdateIndexQueue
@@ -112,7 +112,7 @@ class IndexUpdater
     }
 
     /**
-     * @deprecated will be removed in Pimcore 7. Use ecommerce:indexservice:process-preparation-queue command instead.
+     * @deprecated will be removed in Pimcore 10. Use ecommerce:indexservice:process-preparation-queue command instead.
      *
      * @param array $tenants
      * @param int $maxRounds - max rounds after process returns. null for infinite run until no work is left
@@ -179,7 +179,7 @@ class IndexUpdater
     }
 
     /**
-     * @deprecated will be removed in Pimcore 7. Use ecommerce:indexservice:process-update-queue command instead.
+     * @deprecated will be removed in Pimcore 10. Use ecommerce:indexservice:process-update-queue command instead.
      *
      * Runs processUpdateIndexQueue for given tenants or for all tenants
      *

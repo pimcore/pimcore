@@ -110,7 +110,7 @@ class TemplateControllerListener implements EventSubscriberInterface
             $template->setTemplate($templateReference);
 
             // inject Template annotation into the request - will be used by SensioFrameworkExtraBundle
-            @trigger_error('Auto view rendering has been deprecated since v6.8.0 and will be removed in Pimcore 7.', E_USER_DEPRECATED);
+            @trigger_error('Auto view rendering has been deprecated since v6.8.0 and will be removed in Pimcore 10.', E_USER_DEPRECATED);
             $request->attributes->set('_template', $template);
         }
     }

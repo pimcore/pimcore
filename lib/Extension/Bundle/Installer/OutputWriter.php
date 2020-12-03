@@ -22,7 +22,7 @@ use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * @deprecated will be removed in Pimcore v7, use OutputInterface instead
+ * @deprecated will be removed in Pimcore 10, use OutputInterface instead
  */
 class OutputWriter implements OutputWriterInterface
 {

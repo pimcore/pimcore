@@ -129,7 +129,7 @@ class EditableRenderer implements LoggerAwareInterface
 
                 $editable = $document->getEditable($name);
 
-                // @TODO: BC layer, to be removed in v7.0
+                // @TODO: BC layer, to be removed in Pimcore 10
                 $aliases = [
                     'href' => 'relation',
                     'multihref' => 'relations',

@@ -5,14 +5,14 @@ services:
         public: false
 
     Pimcore\Migrations\Command\:
-        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore v7. Use Doctrine Migrations commands instead.'
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 10. Use Doctrine Migrations commands instead.'
         resource: '../../../../lib/Migrations/Command'
 
     Pimcore\Migrations\Configuration\ConfigurationFactory:
-        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore v7.'
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 10.'
         public: true
 
     Pimcore\Migrations\MigrationManager:
-        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore v7.'
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 10.'
         lazy: true
         public: true

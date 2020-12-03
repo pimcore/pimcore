@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Extension\Bundle\Installer;
 
 /**
- * @deprecated will be removed in Pimcore v7, use OutputInterface instead
+ * @deprecated will be removed in Pimcore 10, use OutputInterface instead
  */
 interface OutputWriterInterface
 {

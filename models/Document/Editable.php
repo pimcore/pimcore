@@ -44,7 +44,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @var array
      *
-     * @deprecated will be removed in Pimcore 7. use $config instead
+     * @deprecated will be removed in Pimcore 10. use $config instead
      */
     protected $options;
 
@@ -432,7 +432,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * @return array
      *
-     * @deprecated will be removed in Pimcore 7. Use getConfig() instead.
+     * @deprecated will be removed in Pimcore 10. Use getConfig() instead.
      */
     public function getOptions()
     {
@@ -444,7 +444,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return $this
      *
-     * @deprecated will be removed in Pimcore 7. Use setConfig() instead.
+     * @deprecated will be removed in Pimcore 10. Use setConfig() instead.
      */
     public function setOptions($options)
     {

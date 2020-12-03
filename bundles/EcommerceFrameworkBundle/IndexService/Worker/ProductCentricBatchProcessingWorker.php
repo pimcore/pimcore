@@ -23,13 +23,13 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
 {
     /**
      * @deprecated
-     * @TODO Pimcore 7 - remove this
+     * @TODO Pimcore 10 - remove this
      */
     const WORKER_MODE_LEGACY = 'legacy';
     const WORKER_MODE_PRODUCT_CENTRIC = 'product_centric';
 
     /**
-     * @deprecated Will be removed in Pimcore 7
+     * @deprecated Will be removed in Pimcore 10
      *
      * @var string
      */
@@ -98,7 +98,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
               KEY `in_preparation_queue_index` (`tenant`,`in_preparation_queue`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;");
         } else {
-            //@TODO Pimcore 7 - remove this
+            //@TODO Pimcore 10 - remove this
             parent::createOrUpdateStoreTable();
         }
     }
@@ -127,14 +127,14 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
                 });
             }
         } else {
-            // @TODO Pimcore 7 - remove this
+            // @TODO Pimcore 10 - remove this
             parent::insertDataToIndex($data, $subObjectId);
         }
     }
 
     /**
      * @inheritDoc
-     * @TODO Pimcore 7 - remove this
+     * @TODO Pimcore 10 - remove this
      */
     public function processPreparationQueue($limit = 200)
     {
@@ -147,7 +147,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
 
     /**
      * @inheritDoc
-     * @TODO Pimcore 7 - remove this
+     * @TODO Pimcore 10 - remove this
      */
     public function processUpdateIndexQueue($limit = 200)
     {
@@ -176,7 +176,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
                 $this->name,
             ]);
         } else {
-            // @TODO Pimcore 7 - remove this
+            // @TODO Pimcore 10 - remove this
             parent::resetPreparationQueue();
         }
     }
@@ -189,7 +189,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
         if ($this->workerMode == self::WORKER_MODE_PRODUCT_CENTRIC) {
             Logger::info('Index-Actions - Resetting index queue');
             $className = (new \ReflectionClass($this))->getShortName();
-            $query = 'UPDATE '. $this->getStoreTableName() .' SET 
+            $query = 'UPDATE '. $this->getStoreTableName() .' SET
                         trigger_info = ?,
                         crc_index = 0 WHERE tenant = ?';
             $this->db->query($query, [
@@ -197,7 +197,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
                 $this->name,
             ]);
         } else {
-            // @TODO Pimcore 7 - remove this
+            // @TODO Pimcore 10 - remove this
             parent::resetIndexingQueue();
         }
     }

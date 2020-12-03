@@ -104,7 +104,7 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
         $idColumnType = $this->tenantConfig->getIdColumnType(false);
 
         /**
-         * @TODO Pimcore 7 - remove worker columns
+         * @TODO Pimcore 10 - remove worker columns
          */
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $this->getStoreTableName() . "` (
           `o_id` $primaryIdColumnType,

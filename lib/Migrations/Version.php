@@ -31,7 +31,7 @@ use Pimcore\Migrations\Migration\DryRunMigrationInterface;
 use Pimcore\Migrations\Migration\PimcoreMigrationInterface;
 
 /**
- * @deprecated will be removed in Pimcore v7
+ * @deprecated will be removed in Pimcore 10
  */
 class Version extends \Doctrine\DBAL\Migrations\Version
 {

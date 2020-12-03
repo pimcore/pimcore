@@ -21,7 +21,7 @@ use Doctrine\DBAL\Migrations\OutputWriter;
 use Pimcore\Migrations\Configuration\Configuration;
 
 /**
- * @deprecated will be removed in Pimcore v7
+ * @deprecated will be removed in Pimcore 10
  */
 class Migration extends \Doctrine\DBAL\Migrations\Migration
 {

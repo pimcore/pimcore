@@ -515,7 +515,7 @@ abstract class AbstractListing extends AbstractModel implements \Iterator, \Coun
                 $this->getDao()->load();
             } else {
                 @trigger_error(
-                    'Please provide load() method in '.\get_class($dao).'. This method will be required in Pimcore 7.',
+                    'Please provide load() method in '.\get_class($dao).'. This method will be required in Pimcore 10.',
                     \E_USER_DEPRECATED
                 );
             }

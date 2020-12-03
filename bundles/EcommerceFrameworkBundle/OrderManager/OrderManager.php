@@ -132,7 +132,7 @@ class OrderManager implements OrderManagerInterface
      * Sets the model factory. For BC, this is currently added as extra method call. The required annotation
      * makes sure this is called via autowiring.
      *
-     * TODO Pimcore 7 set modelFactory as constructor dependency
+     * TODO Pimcore 10 set modelFactory as constructor dependency
      *
      * @required
      *

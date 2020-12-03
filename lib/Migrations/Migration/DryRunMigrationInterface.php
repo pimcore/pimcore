@@ -22,7 +22,7 @@ namespace Pimcore\Migrations\Migration;
  * doctrine migration does not know about the dry-run switch (SQL is simply not executed), we need to pass the
  * dry-run state to the migration itself.
  *
- * @deprecated will be removed in Pimcore v7
+ * @deprecated will be removed in Pimcore 10
  */
 interface DryRunMigrationInterface
 {

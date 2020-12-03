@@ -25,7 +25,7 @@ use Symfony\Component\Templating\TemplateNameParserInterface;
  * Times the time spent to render a template. This is the same class as the core TimedPhpEngine, but extends our custom
  * PHP engine.
  *
- * @deprecated since 6.8.0 and will be removed in Pimcore 7.
+ * @deprecated since 6.8.0 and will be removed in Pimcore 10.
  */
 class TimedPhpEngine extends PhpEngine
 {

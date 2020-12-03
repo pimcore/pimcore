@@ -170,20 +170,20 @@ pimcore:
     documents:
         editables:
             map:
-                # @TODO: BC layer, to be removed in v7
+                # @TODO: BC layer, to be removed in vPimcore 10
                 href: \Pimcore\Model\Document\Editable\Relation
                 multihref: \Pimcore\Model\Document\Editable\Relations
 
             prefixes:
                 - \Pimcore\Model\Document\Editable\
-        tags: # @TODO to be removed in v7
+        tags: # @TODO to be removed in Pimcore 10
             map:
                 href: \Pimcore\Model\Document\Tag\Relation
                 multihref: \Pimcore\Model\Document\Tag\Relations
 
             prefixes:
                 - \Pimcore\Model\Document\Tag\
-                - \Document_Tag_ # @TODO to be removed in v7
+                - \Document_Tag_ # @TODO to be removed in Pimcore 10
     newsletter:
         source_adapters:
             defaultAdapter: pimcore.document.newsletter.factory.default

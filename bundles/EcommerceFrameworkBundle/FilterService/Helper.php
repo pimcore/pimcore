@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractCategory;
 use Pimcore\Templating\Model\ViewModel;
 
 /**
- * @deprecated will be removed in Pimcore 7, use \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\ListHelper service instead
+ * @deprecated will be removed in Pimcore 10, use \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\ListHelper service instead
  * Helper Class for setting up a product list utilizing the filter service
  * based on a filter definition and set filter parameters
  */

@@ -22,7 +22,7 @@ use Pimcore\Migrations\Configuration\Configuration;
 use Pimcore\Migrations\Migration\InstallMigration;
 
 /**
- * @deprecated will be removed in Pimcore v7
+ * @deprecated will be removed in Pimcore 10
  */
 class InstallVersion extends Version
 {

@@ -20,7 +20,7 @@ namespace Pimcore\Migrations\Migration;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * @deprecated will be removed in Pimcore v7
+ * @deprecated will be removed in Pimcore 10
  */
 abstract class AbstractPimcoreMigration extends AbstractMigration implements PimcoreMigrationInterface, DryRunMigrationInterface
 {

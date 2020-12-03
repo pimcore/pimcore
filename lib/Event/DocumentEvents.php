@@ -186,7 +186,7 @@ final class DocumentEvents
      *
      * @Event("Pimcore\Event\Model\Document\TagNameEvent")
      *
-     * @TODO: change value to 'pimcore.document.editable.name' in Pimcore 7
+     * @TODO: change value to 'pimcore.document.editable.name' in Pimcore 10
      */
     const EDITABLE_NAME = 'pimcore.document.tag.name';
 

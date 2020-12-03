@@ -157,7 +157,7 @@ class PublicServicesController extends Controller
                         // to check for the constant first
                         $headers[AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER] = true;
                     } else {
-                        // @TODO to be removed in Pimcore 7
+                        // @TODO to be removed in Pimcore 10
                         // Symfony 3.4 doesn't support bypassing the session listener, so we just remove it
                         \Pimcore::getEventDispatcher()->removeSubscriber($sessionListener);
                     }

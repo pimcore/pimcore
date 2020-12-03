@@ -20,7 +20,7 @@ namespace Pimcore\Migrations\Configuration;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @deprecated will be removed in Pimcore v7
+ * @deprecated will be removed in Pimcore 10
  */
 final class MigrationSetConfiguration
 {
