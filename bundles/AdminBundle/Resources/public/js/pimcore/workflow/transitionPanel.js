@@ -43,6 +43,10 @@ pimcore.workflow.transitionPanel = Class.create({
             itemId: 'workflowMessage',
             html: ''
         },{
+            xtype: 'container',
+            itemId: 'customHtmlTop',
+            html: ''
+        },{
             xtype: 'hiddenfield',
             name: 'cid',
             value: this.elementId
@@ -59,7 +63,12 @@ pimcore.workflow.transitionPanel = Class.create({
             },
             items: [],
             hidden: true
-        }];
+        },{
+            xtype: 'container',
+            itemId: 'customHtmlCenter',
+            html: ''
+        }
+        ];
 
         if(this.transitionConfig.notes.commentEnabled) {
 
@@ -84,6 +93,12 @@ pimcore.workflow.transitionPanel = Class.create({
             });
         }
 
+        items.push({
+            xtype: 'container',
+            itemId: 'customHtmlBottom',
+            html: ''
+        });
+
         return items;
     },
 
@@ -107,6 +122,8 @@ pimcore.workflow.transitionPanel = Class.create({
 
 
             this.setAdditionalFields(this.transitionConfig.notes.additionalFields);
+
+            this.loadCustomHtml();
         }
 
         return this.workflowFormPanel
@@ -328,5 +345,41 @@ pimcore.workflow.transitionPanel = Class.create({
 
     reloadObject: function() {
         this.elementEditor.reload({layoutId: this.transitionConfig.objectLayout});
+    },
+
+    loadCustomHtml: function() {
+
+        var formvars = this.getWorkflowFormPanelValues();
+
+        //this.transitionConfig.isGlobalAction
+
+        //send a request to the server with the current form data
+        Ext.Ajax.request({
+            url : Routing.generate('pimcore_admin_workflow_modal_custom_html'),
+            method: 'post',
+            params: formvars,
+            success: this.onCustomHtmlResponse.bind(this),
+            failure: this.genericError.bind(this)
+        });
+    },
+
+    onCustomHtmlResponse: function(response) {
+
+        var data = Ext.decode(response.responseText);
+        var position = data.position;
+        if (!position || !this.getCustomHtmlPositions().includes(position)) {
+            position = 'top';
+        }
+        position = position.charAt(0).toUpperCase() + position.slice(1);
+        var customHtml = this.workflowFormPanel.getComponent('customHtml' + position);
+        customHtml.setHtml(data.customHtml);
+
+        // dynamic height, with a max of 650
+        var height = Math.min(510 + customHtml.getHeight(), 650);
+        this.transitionWindow.setHeight(height);
+    },
+
+    getCustomHtmlPositions: function() {
+        return ['top', 'center', 'bottom']
     }
 });

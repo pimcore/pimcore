@@ -278,6 +278,55 @@ class WorkflowController extends AdminController implements KernelControllerEven
     }
 
     /**
+     * Get custom HTML for the workflow transition submit modal, depending whether it is configured or not.
+     *
+     * @Route("/modal-custom-html", name="pimcore_admin_workflow_modal_custom_html", methods={"POST"})
+     *
+     * @param Request $request
+     * @param Registry $workflowRegistry
+     *
+     * @return Response
+     *
+     * @throws \Exception
+     */
+    public function getModalCustomHtml(Request $request, Registry $workflowRegistry) {
+
+        $workflow = $workflowRegistry->get($this->element, $request->get('workflowName'));
+
+        if ($workflow->can($this->element, $request->get('transition'))) {
+
+            $enabledTransitions = $workflow->getEnabledTransitions($this->element);
+            $transition = null;
+            foreach ($enabledTransitions as $_transition) {
+                if ($_transition->getName() === $request->get('transition')) {
+                    $transition = $_transition;
+                }
+            }
+
+            if ($transition instanceof Transition) {
+
+                $customHtmlService = $transition->getCustomHtmlService();
+
+                $data = [
+                    'success' => true,
+                    'position' => 'center',
+                    'customHtml' => $customHtmlService->renderHtml($workflow, $transition, $this->element)
+                ];
+
+                return new JsonResponse($data);
+            }
+        }
+
+        $data = [
+            'success' => false,
+            'customHtml' => '',
+            'message' => 'error validating the action on this element, element cannot peform this action'
+        ];
+
+        return new JsonResponse($data);
+    }
+
+    /**
      * @param Workflow $workflow
      *
      * @return string

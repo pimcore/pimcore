@@ -14,21 +14,13 @@
 
 namespace Pimcore\Workflow\Notes;
 
-interface NotesAwareInterface
+abstract class AbstractCustomHtmlService implements CustomHtmlServiceInterface
 {
-    public function getNotes(): ?array;
+    protected $position;
 
-    public function getNotesCommentRequired(): bool;
+    public function __construct(string $position = "")
+    {
+        $this->position = $position;
+    }
 
-    public function getNotesCommentEnabled(): bool;
-
-    public function getNotesCommentSetterFn(): ?string;
-
-    public function getNotesType(): string;
-
-    public function getNotesTitle(): string;
-
-    public function getNotesAdditionalFields(): array;
-
-    public function getCustomHtmlService() : ?CustomHtmlServiceInterface;
 }

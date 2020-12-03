@@ -14,21 +14,19 @@
 
 namespace Pimcore\Workflow\Notes;
 
-interface NotesAwareInterface
+use Pimcore\Model\Element\ElementInterface;
+use Pimcore\Model\Workflow;
+use Pimcore\Workflow\Transition;
+use Symfony\Component\Workflow\WorkflowInterface;
+
+interface CustomHtmlServiceInterface
 {
-    public function getNotes(): ?array;
+    public function renderHtml(WorkflowInterface $workflow, Transition $transition, ElementInterface $element) : string;
 
-    public function getNotesCommentRequired(): bool;
+   // public function renderHtmlTop(): string;
 
-    public function getNotesCommentEnabled(): bool;
+   // public function renderHtmlCenter(): string;
 
-    public function getNotesCommentSetterFn(): ?string;
+  //  public function renderHtmlBottom(): string;
 
-    public function getNotesType(): string;
-
-    public function getNotesTitle(): string;
-
-    public function getNotesAdditionalFields(): array;
-
-    public function getCustomHtmlService() : ?CustomHtmlServiceInterface;
 }
