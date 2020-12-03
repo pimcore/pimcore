@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService;
 
 @trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\IVoucherService is deprecated since version 6.0.0 and will be removed in Pimcore 10. ' .
     ' Use ' . VoucherServiceInterface::class . ' class instead.',
     E_USER_DEPRECATED
 );

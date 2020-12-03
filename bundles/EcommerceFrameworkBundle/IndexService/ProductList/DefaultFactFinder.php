@@ -25,7 +25,7 @@ use Psr\Http\Message\ResponseInterface;
 use Zend\Paginator\Adapter\AdapterInterface;
 
 /**
- * @deprecated since version 6.7.0 and will be removed in 7.0.0.
+ * @deprecated since version 6.7.0 and will be removed in Pimcore 10.
  *
  */
 class DefaultFactFinder implements ProductListInterface
@@ -261,7 +261,7 @@ class DefaultFactFinder implements ProductListInterface
     public function __construct(ConfigInterface $tenantConfig)
     {
         @trigger_error(
-            'Class ' . self::class . ' is deprecated since version 6.7.0 and will be removed in 7.0.0.',
+            'Class ' . self::class . ' is deprecated since version 6.7.0 and will be removed in Pimcore 10.',
             E_USER_DEPRECATED
         );
 
