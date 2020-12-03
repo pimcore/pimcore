@@ -203,7 +203,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     {
         $services = [
             EditableLoader::class => [
-                //@TODO just use $config['documents']['editables'] in Pimcore 7
+                //@TODO just use $config['documents']['editables'] in Pimcore 10
                 'config' => array_replace_recursive($config['documents']['tags'], $config['documents']['editables']),
                 'prefixLoader' => DocumentEditablePrefixLoader::class,
             ],
@@ -253,7 +253,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
     private function configureRouting(ContainerBuilder $container, array $config)
     {
-        // @TODO remove in Pimcore v7
+        // @TODO remove in Pimcore 10
         $container->setParameter(
             'pimcore.routing.defaults',
             $config['defaults']
@@ -546,7 +546,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
      */
     public function prepend(ContainerBuilder $container)
     {
-        // @TODO: to be removed in Pimcore 7 -> move security config to skeleton & demo package
+        // @TODO: to be removed in Pimcore 10 -> move security config to skeleton & demo package
         $securityConfigs = $container->getExtensionConfig('security');
 
         if (count($securityConfigs) > 1) {

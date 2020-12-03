@@ -19,7 +19,7 @@ namespace Pimcore\Document\Tag\Block;
 
 use Pimcore\Document\Editable\Block\BlockName as EditableBlockName;
 
-@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', BlockName::class, EditableBlockName::class), E_USER_DEPRECATED);
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in Pimcore 10. Use "%s" instead.', BlockName::class, EditableBlockName::class), E_USER_DEPRECATED);
 
 class_exists(EditableBlockName::class);
 

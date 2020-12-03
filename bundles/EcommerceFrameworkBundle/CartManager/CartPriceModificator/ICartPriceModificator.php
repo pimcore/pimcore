@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartPriceModificator;
 
 @trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceModificator is deprecated since version 6.0.0 and will be removed in 7.0.0. Use ' . CartPriceModificatorInterface::class . ' class instead.',
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartPriceModificator is deprecated since version 6.0.0 and will be removed in Pimcore 10. Use ' . CartPriceModificatorInterface::class . ' class instead.',
     E_USER_DEPRECATED
 );
 

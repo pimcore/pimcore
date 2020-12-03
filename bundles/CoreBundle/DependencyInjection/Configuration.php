@@ -280,7 +280,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('instance_identifier')
                     ->defaultNull()->end()
                 ->booleanNode('show_cookie_notice')
-                    ->setDeprecated('The cookie bar will be removed in Pimcore 7')
+                    ->setDeprecated('The cookie bar will be removed in Pimcore 10')
                     ->beforeNormalization()
                         ->ifString()
                         ->then(function ($v) {
@@ -1257,7 +1257,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('migrations')
-                    ->setDeprecated('The "%node%" option is deprecated and will be removed in Pimcore v7')
+                    ->setDeprecated('The "%node%" option is deprecated and will be removed in Pimcore 10')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('sets')

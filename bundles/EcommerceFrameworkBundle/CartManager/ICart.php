@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\CartManager;
 
 @trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart is deprecated since version 6.0.0 and will be removed in 7.0.0. Use ' . CartInterface::class . ' class instead.',
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICart is deprecated since version 6.0.0 and will be removed in Pimcore 10. Use ' . CartInterface::class . ' class instead.',
     E_USER_DEPRECATED
 );
 

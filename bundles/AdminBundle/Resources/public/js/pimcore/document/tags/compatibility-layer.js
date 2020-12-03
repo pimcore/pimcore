@@ -10,7 +10,7 @@
  * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  *
- * @deprecated since v6.8 and will be removed in 7. Use {@link pimcore.document.editables.*} instead.
+ * @deprecated since v6.8 and will be removed in Pimcore 10. Use {@link pimcore.document.editables.*} instead.
  */
 
 pimcore.document["tags"] = {

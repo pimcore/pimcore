@@ -18,7 +18,7 @@
 namespace Pimcore\Model\DataObject\Traits;
 
 @trigger_error(
-    'DirtyIndicatorTrait is deprecated since version 6.6.0 and will be removed in 7.0.0. ' .
+    'DirtyIndicatorTrait is deprecated since version 6.6.0 and will be removed in Pimcore 10. ' .
     'Use `' . \Pimcore\Model\Element\Traits\DirtyIndicatorTrait::class . '` instead.',
     E_USER_DEPRECATED
 );

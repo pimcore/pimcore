@@ -59,13 +59,13 @@ class BlockName implements \JsonSerializable
     }
 
     /**
-     * @TODO remove in v7
+     * @TODO remove in Pimcore 10
      *
      * @param Editable $tag
      *
      * @return BlockName
      *
-     * @deprecated since 6.8, will be removed in v7, use createFromEditable() instead
+     * @deprecated since 6.8, will be removed in Pimcore 10, use createFromEditable() instead
      */
     public static function createFromTag(Editable $tag): BlockName
     {

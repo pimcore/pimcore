@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config;
 
 @trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Config\IMysqlConfig is deprecated since version 6.0.0 and will be removed in Pimcore 10. ' .
     ' Use ' . MysqlConfigInterface::class . ' class instead.',
     E_USER_DEPRECATED
 );

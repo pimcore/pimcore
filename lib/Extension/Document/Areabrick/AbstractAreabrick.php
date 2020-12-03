@@ -32,7 +32,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
     protected $editableRenderer;
 
     /**
-     * @deprecated will be removed in Pimcore 7
+     * @deprecated will be removed in Pimcore 10
      * Called in AreabrickPass
      *
      * @param EditableRenderer $editableRenderer
@@ -190,7 +190,7 @@ abstract class AbstractAreabrick implements AreabrickInterface, TemplateAreabric
      *
      * @return Editable|null
      *
-     * @deprecated since v6.8 and will be removed in 7. Use getDocumentEditable() instead.
+     * @deprecated since v6.8 and will be removed in Pimcore 10. Use getDocumentEditable() instead.
      */
     protected function getDocumentTag(PageSnippet $document, $type, $inputName, array $options = [])
     {

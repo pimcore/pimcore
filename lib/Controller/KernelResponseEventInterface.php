@@ -15,7 +15,7 @@
 /**
  * Alias to support Symfony 3.4 where ResponseEvent is not available and required for this interface
  *
- * @TODO remove in Pimcore 7
+ * @TODO remove in Pimcore 10
  */
 
 namespace {

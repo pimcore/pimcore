@@ -79,7 +79,7 @@ class ViewModelResolver extends AbstractRequestResolver
      */
     public function createViewModel(Request $request = null)
     {
-        @trigger_error(sprintf('Class "%s" is deprecated since v6.8.0 and will be removed in Pimcore 7.', ViewModel::class), E_USER_DEPRECATED);
+        @trigger_error(sprintf('Class "%s" is deprecated since v6.8.0 and will be removed in Pimcore 10.', ViewModel::class), E_USER_DEPRECATED);
 
         if (null === $request) {
             $request = $this->getCurrentRequest();

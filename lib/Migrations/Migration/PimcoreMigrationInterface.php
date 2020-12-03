@@ -23,7 +23,7 @@ namespace Pimcore\Migrations\Migration;
  * handle their SQL updates implicitely. If a migration implements this interface and doesSqlMigrations() returns
  * false, the warning will be omitted.
  *
- * @deprecated will be removed in Pimcore v7
+ * @deprecated will be removed in Pimcore 10
  */
 interface PimcoreMigrationInterface
 {

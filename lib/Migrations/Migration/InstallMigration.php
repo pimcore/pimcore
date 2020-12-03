@@ -25,7 +25,7 @@ use Pimcore\Migrations\InstallVersion;
  * This migration is executed when a bundle is about to be installed/uninstalled and is built in
  * conjunction with InstallConfiguration and InstallVersion.
  *
- * @deprecated will be removed in Pimcore v7
+ * @deprecated will be removed in Pimcore 10
  */
 class InstallMigration extends AbstractPimcoreMigration
 {

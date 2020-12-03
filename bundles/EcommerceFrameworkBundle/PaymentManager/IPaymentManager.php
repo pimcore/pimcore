@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager;
 
 @trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\IPaymentManager is deprecated since version 6.0.0 and will be removed in Pimcore 10. ' .
     ' Use ' . PaymentManagerInterface::class . ' class instead.',
     E_USER_DEPRECATED
 );

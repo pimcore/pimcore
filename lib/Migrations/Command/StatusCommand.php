@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * @deprecated will be removed in Pimcore v7, please use Doctrine Migrations commands directly
+ * @deprecated will be removed in Pimcore 10, please use Doctrine Migrations commands directly
  */
 class StatusCommand extends MigrationsStatusDoctrineCommand
 {

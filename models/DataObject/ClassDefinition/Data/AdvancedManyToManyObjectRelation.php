@@ -613,7 +613,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         }
 
         $objectsMetadata = $this->getDataFromObjectParam($object, $params);
-        //TODO: move validation to checkValidity & throw exception in Pimcore 7
+        //TODO: move validation to checkValidity & throw exception in Pimcore 10
         $objectsMetadata = $this->filterMultipleAssignments($objectsMetadata, $object, $params);
 
         $classId = null;

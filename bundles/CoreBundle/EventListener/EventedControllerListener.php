@@ -48,7 +48,7 @@ class EventedControllerListener implements EventSubscriberInterface
         $request = $event->getRequest();
         $controller = $callable[0];
 
-        /** @TODO: Remove in Pimcore 7 */
+        /** @TODO: Remove in Pimcore 10 */
         if ($controller instanceof EventedControllerInterface) {
             $request->attributes->set('_evented_controller', $controller);
             $controller->onKernelController($event);
@@ -73,7 +73,7 @@ class EventedControllerListener implements EventSubscriberInterface
             return;
         }
 
-        /** @TODO: Remove in Pimcore 7 */
+        /** @TODO: Remove in Pimcore 10 */
         if ($eventedController instanceof EventedControllerInterface) {
             $eventedController->onKernelResponse($event);
         }

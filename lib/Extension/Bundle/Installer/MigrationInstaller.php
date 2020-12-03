@@ -31,7 +31,7 @@ use Pimcore\Migrations\Version;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
 /**
- * @deprecated will be removed in Pimcore v7, use AbstractInstaller instead
+ * @deprecated will be removed in Pimcore 10, use AbstractInstaller instead
  */
 abstract class MigrationInstaller extends AbstractInstaller implements MigrationInstallerInterface
 {

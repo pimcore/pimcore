@@ -27,7 +27,7 @@ use Pimcore\Migrations\InstallVersion;
  * Configuration for bundle install/uninstall operations handling only a single migration which delegates
  * changes to the bundle installer.
  *
- * @deprecated will be removed in Pimcore v7
+ * @deprecated will be removed in Pimcore 10
  */
 class InstallConfiguration extends Configuration
 {

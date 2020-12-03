@@ -668,7 +668,7 @@ class Staticroute extends AbstractModel
             $module = trim($this->getModule());
 
             // check for dynamic controller / action / module
-            // @TODO: remove in Pimcore v7 - not supported anymore
+            // @TODO: remove in Pimcore 10 - not supported anymore
             $dynamicRouteReplace = function ($item, $params) {
                 if (strpos($item, '%') !== false) {
                     uksort($params, function ($a, $b) {

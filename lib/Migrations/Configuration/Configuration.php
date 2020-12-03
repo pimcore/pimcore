@@ -29,7 +29,7 @@ use Pimcore\Migrations\InstallVersion;
 use Pimcore\Migrations\Version;
 
 /**
- * @deprecated will be removed in Pimcore v7
+ * @deprecated will be removed in Pimcore 10
  */
 class Configuration extends \Doctrine\DBAL\Migrations\Configuration\Configuration
 {

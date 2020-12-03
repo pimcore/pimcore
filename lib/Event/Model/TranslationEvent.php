@@ -56,7 +56,7 @@ class TranslationEvent extends Event implements ElementEventInterface
     }
 
     /**
-     * @deprecated use getTranslation() instead - will be removed in Pimcore v7
+     * @deprecated use getTranslation() instead - will be removed in Pimcore 10
      *
      * @return AbstractTranslation
      */

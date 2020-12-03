@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Templating\Helper;
 
 @trigger_error(
-    'Pimcore\Templating\Helper\HeadTitle is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    'Pimcore\Templating\Helper\HeadTitle is deprecated since version 6.8.0 and will be removed in Pimcore 10. ' .
     ' Use ' . \Pimcore\Twig\Extension\Templating\HeadTitle::class . ' instead.',
     E_USER_DEPRECATED
 );

@@ -276,7 +276,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * @deprecated Pimcore\Mail::determineHtml2TextIsInstalled is deprecated since 6.6.0 and will be removed with 7.0
+     * @deprecated Pimcore\Mail::determineHtml2TextIsInstalled is deprecated since 6.6.0 and will be removed with Pimcore 10
      *
      * Determines if mbayer html2text is installed (more information at http://www.mbayer.de/html2text/)
      * and uses it to automatically create a text version of the html email
@@ -850,7 +850,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * @deprecated Pimcore\Mail::getHtml2TextBinaryEnabled is deprecated since 6.6.0 and will be removed with 7.0
+     * @deprecated Pimcore\Mail::getHtml2TextBinaryEnabled is deprecated since 6.6.0 and will be removed with Pimcore 10
      *
      * @return bool
      */
@@ -860,7 +860,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * @deprecated Pimcore\Mail::enableHtml2textBinary is deprecated since 6.6.0 and will be removed with 7.0
+     * @deprecated Pimcore\Mail::enableHtml2textBinary is deprecated since 6.6.0 and will be removed with Pimcore 10
      *
      * @return $this
      *
@@ -872,7 +872,7 @@ class Mail extends \Swift_Message
     }
 
     /**
-     * @deprecated Pimcore\Mail::getHtml2textInstalled is deprecated since 6.6.0 and will be removed with 7.0
+     * @deprecated Pimcore\Mail::getHtml2textInstalled is deprecated since 6.6.0 and will be removed with Pimcore 10
      *
      * @static
      * returns  html2text binary installation status

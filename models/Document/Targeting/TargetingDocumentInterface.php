@@ -19,10 +19,10 @@ namespace Pimcore\Model\Document\Targeting;
 
 /**
  *
- * @method string getTargetGroupEditablePrefix(int $targetGroupId) - not implementing it is deprecated since v6.7 and will throw exception in 7.
- * @method string getTargetGroupEditableName(int $targetGroupId = null) - not implementing it is deprecated since v6.7 and will throw exception in 7.
- * @method bool hasTargetGroupSpecificEditables() - not implementing it is deprecated since v6.7 and will throw exception in 7.
- * @method array getTargetGroupSpecificEditableNames() - not implementing it is deprecated since v6.7 and will throw exception in 7.
+ * @method string getTargetGroupEditablePrefix(int $targetGroupId) - not implementing it is deprecated since v6.7 and will throw exception in Pimcore 10.
+ * @method string getTargetGroupEditableName(int $targetGroupId = null) - not implementing it is deprecated since v6.7 and will throw exception in Pimcore 10.
+ * @method bool hasTargetGroupSpecificEditables() - not implementing it is deprecated since v6.7 and will throw exception in Pimcore 10.
+ * @method array getTargetGroupSpecificEditableNames() - not implementing it is deprecated since v6.7 and will throw exception in Pimcore 10.
  */
 interface TargetingDocumentInterface
 {
@@ -31,12 +31,12 @@ interface TargetingDocumentInterface
     const TARGET_GROUP_EDITABLE_PREFIX = 'persona_-';
     const TARGET_GROUP_EDITABLE_SUFFIX = '-_';
     /**
-     * @deprecated since v6.7 and will be removed in 7. Use TARGET_GROUP_EDITABLE_PREFIX instead
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use TARGET_GROUP_EDITABLE_PREFIX instead
      */
     const TARGET_GROUP_ELEMENT_PREFIX = 'persona_-';
 
     /**
-     * @deprecated since v6.7 and will be removed in 7. Use TARGET_GROUP_EDITABLE_SUFFIX instead
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use TARGET_GROUP_EDITABLE_SUFFIX instead
      */
     const TARGET_GROUP_ELEMENT_SUFFIX = '-_';
 
@@ -49,7 +49,7 @@ interface TargetingDocumentInterface
      *
      * @return string
      *
-     * @deprecated since v6.7 and will be removed in 7. Use getTargetGroupEditablePrefix() instead.
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use getTargetGroupEditablePrefix() instead.
      */
     public function getTargetGroupElementPrefix(int $targetGroupId = null): string;
 
@@ -61,7 +61,7 @@ interface TargetingDocumentInterface
      *
      * @return string
      *
-     * @deprecated since v6.7 and will be removed in 7. Use getTargetGroupEditableName() instead.
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use getTargetGroupEditableName() instead.
      */
     public function getTargetGroupElementName(string $name): string;
 
@@ -84,7 +84,7 @@ interface TargetingDocumentInterface
      *
      * @return bool
      *
-     * @deprecated since v6.7 and will be removed in 7. Use hasTargetGroupSpecificEditables() instead.
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use hasTargetGroupSpecificEditables() instead.
      */
     public function hasTargetGroupSpecificElements(): bool;
 
@@ -93,7 +93,7 @@ interface TargetingDocumentInterface
      *
      * @return array
      *
-     * @deprecated since v6.7 and will be removed in 7. Use getTargetGroupSpecificEditableNames() instead.
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use getTargetGroupSpecificEditableNames() instead.
      */
     public function getTargetGroupSpecificElementNames(): array;
 }

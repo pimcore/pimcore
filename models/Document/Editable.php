@@ -44,7 +44,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @var array
      *
-     * @deprecated will be removed in Pimcore 7. use $config instead
+     * @deprecated will be removed in Pimcore 10. use $config instead
      */
     protected $options;
 
@@ -90,7 +90,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     protected $document;
 
     /**
-     * @deprecated Unused - will be removed in 7.0
+     * @deprecated Unused - will be removed in Pimcore 10.0
      *
      * @var string|null
      */
@@ -432,7 +432,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
     /**
      * @return array
      *
-     * @deprecated will be removed in Pimcore 7. Use getConfig() instead.
+     * @deprecated will be removed in Pimcore 10. Use getConfig() instead.
      */
     public function getOptions()
     {
@@ -444,7 +444,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return $this
      *
-     * @deprecated will be removed in Pimcore 7. Use setConfig() instead.
+     * @deprecated will be removed in Pimcore 10. Use setConfig() instead.
      */
     public function setOptions($options)
     {
@@ -793,7 +793,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @throws \Exception
      *
-     * @deprecated since v6.8 and will be removed in 7. use buildEditableName() instead
+     * @deprecated since v6.8 and will be removed in Pimcore 10. use buildEditableName() instead
      */
     public static function buildTagName(string $type, string $name, Document $document = null)
     {
@@ -868,7 +868,7 @@ abstract class Editable extends Model\AbstractModel implements Model\Document\Ed
      *
      * @return string
      *
-     * @deprecated since v6.8 and will be removed in 7. Use buildEditableRealName() instead
+     * @deprecated since v6.8 and will be removed in Pimcore 10. Use buildEditableRealName() instead
      */
     public static function buildTagRealName(string $name, Document $document): string
     {

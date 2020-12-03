@@ -101,7 +101,7 @@ abstract class Tracker implements TrackerInterface
     {
         if ($this->templateExtension == 'php') {
             @trigger_error(
-                '*.js.php templates are deprecated since version 6.9 and will not be supported in 7.0. ' .
+                '*.js.php templates are deprecated since version 6.9 and will not be supported in Pimcore 10. ' .
                 'Use Twig(*.js.twig) templates instead.',
                 E_USER_DEPRECATED
             );

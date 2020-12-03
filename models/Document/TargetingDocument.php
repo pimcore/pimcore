@@ -99,7 +99,7 @@ abstract class TargetingDocument extends PageSnippet implements TargetingDocumen
     /**
      * @inheritDoc
      *
-     * @deprecated since v6.7 and will be removed in 7. Use hasTargetGroupSpecificEditables() instead.
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use hasTargetGroupSpecificEditables() instead.
      */
     public function hasTargetGroupSpecificElements(): bool
     {

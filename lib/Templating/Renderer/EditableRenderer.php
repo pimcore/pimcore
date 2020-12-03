@@ -29,7 +29,7 @@ class EditableRenderer implements LoggerAwareInterface
     /**
      * @var EditableLoaderInterface
      *
-     * @deprecated since v6.8 and will be removed in 7. Use $editableLoader instead.
+     * @deprecated since v6.8 and will be removed in Pimcore 10. Use $editableLoader instead.
      */
     protected $tagLoader;
 
@@ -59,7 +59,7 @@ class EditableRenderer implements LoggerAwareInterface
      *
      * @return bool
      *
-     * @deprecated since v6.8 and will be removed in 7. Use editableExists() instead.
+     * @deprecated since v6.8 and will be removed in Pimcore 10. Use editableExists() instead.
      */
     public function tagExists($type)
     {
@@ -87,7 +87,7 @@ class EditableRenderer implements LoggerAwareInterface
      *
      * @return Editable|null
      *
-     * @deprecated since v6.8 and will be removed in 7. Use editableExists() instead.
+     * @deprecated since v6.8 and will be removed in Pimcore 10. Use editableExists() instead.
      */
     public function getTag(PageSnippet $document, $type, $inputName, array $options = [], bool $editmode = null)
     {
@@ -129,7 +129,7 @@ class EditableRenderer implements LoggerAwareInterface
 
                 $editable = $document->getEditable($name);
 
-                // @TODO: BC layer, to be removed in v7.0
+                // @TODO: BC layer, to be removed in Pimcore 10
                 $aliases = [
                     'href' => 'relation',
                     'multihref' => 'relations',

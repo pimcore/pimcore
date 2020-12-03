@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * @deprecated since version 6.7.0 and will be removed in 7.0.0.
+ * @deprecated since version 6.7.0 and will be removed in Pimcore 10.
  *
  */
 class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\NumberRange
@@ -35,7 +35,7 @@ class NumberRange extends \Pimcore\Bundle\EcommerceFrameworkBundle\FilterService
     public function __construct(TranslatorInterface $translator, EngineInterface $templatingEngine, RequestStack $requestStack, string $template, array $options = [])
     {
         @trigger_error(
-            'Class ' . self::class . ' is deprecated since version 6.7.0 and will be removed in 7.0.0.',
+            'Class ' . self::class . ' is deprecated since version 6.7.0 and will be removed in Pimcore 10.',
             E_USER_DEPRECATED
         );
 

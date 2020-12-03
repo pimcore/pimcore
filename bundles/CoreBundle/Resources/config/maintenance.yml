@@ -130,7 +130,7 @@ services:
             - { name: pimcore.maintenance.task, type: low_quality_image_preview }
 
     Pimcore\Maintenance\Tasks\TagsExpireTask:
-        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 7'
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in Pimcore 10'
         arguments:
             - '@logger'
         tags:

@@ -60,7 +60,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @var array
      *
-     * @deprecated since v6.7 and will be removed in 7. Use getter/setter methods or $this->editables
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use getter/setter methods or $this->editables
      */
     protected $elements = null;
 
@@ -99,7 +99,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @var array
      *
-     * @deprecated since v6.7 and will be removed in 7. Use getter/setter methods or $this->inheritedEditables
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use getter/setter methods or $this->inheritedEditables
      */
     protected $inheritedElements = [];
 
@@ -365,7 +365,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      *
-     * @deprecated since v6.7 and will be removed in 7. Use setRawEditable() instead.
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use setRawEditable() instead.
      */
     public function setRawElement($name, $type, $data)
     {
@@ -410,7 +410,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      *
-     * @deprecated since v6.7 and will be removed in 7. Use setEditable() instead.
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use setEditable() instead.
      */
     public function setElement($name, $data)
     {
@@ -438,7 +438,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      *
-     * @deprecated since v6.7 and will be removed in 7. Use removeEditable() instead.
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use removeEditable() instead.
      */
     public function removeElement($name)
     {
@@ -467,7 +467,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return Editable|null
      *
-     * @deprecated since v6.7 and will be removed in 7. Use getEditable() instead.
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use getEditable() instead.
      */
     public function getElement($name)
     {
@@ -580,7 +580,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return bool
      *
-     * @deprecated since v6.7 and will be removed in 7. Use hasEditable() instead.
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use hasEditable() instead.
      */
     public function hasElement($name)
     {
@@ -600,7 +600,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @return Editable[]
      *
-     * @deprecated since v6.7 and will be removed in 7. Use getEditables() instead.
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use getEditables() instead.
      */
     public function getElements()
     {
@@ -624,7 +624,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @return $this
      *
-     * @deprecated since v6.7 and will be removed in 7. Use setEditables() instead.
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use setEditables() instead.
      */
     public function setElements($elements)
     {

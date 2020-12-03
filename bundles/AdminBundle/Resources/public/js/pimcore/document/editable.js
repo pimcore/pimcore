@@ -122,7 +122,7 @@ pimcore.document.editable = Class.create({
         }
 
         /**
-         * @TODO remove in Pimcore 7
+         * @TODO remove in Pimcore 10
          * @deprecated use this.config()
          */
         this.options = config;

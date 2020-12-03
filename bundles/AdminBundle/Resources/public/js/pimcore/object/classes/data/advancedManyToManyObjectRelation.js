@@ -387,5 +387,5 @@ pimcore.object.classes.data.advancedManyToManyObjectRelation = Class.create(pimc
 
 });
 
-// @TODO BC layer, to be removed in v7.0
+// @TODO BC layer, to be removed in Pimcore 10
 pimcore.object.classes.data.objectsMetadata = pimcore.object.classes.data.advancedManyToManyObjectRelation;

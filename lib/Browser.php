@@ -14,10 +14,10 @@
 
 namespace Pimcore;
 
-@trigger_error('The "\Pimcore\Browser" library will be removed in Pimcore 7.0.0. use \Browser directly', E_USER_DEPRECATED);
+@trigger_error('The "\Pimcore\Browser" library will be removed in Pimcore 10.0.0. use \Browser directly', E_USER_DEPRECATED);
 
 /**
- * @deprecated since 6.8.0, use \Browser directly, will be removed in Pimcore 7.0.0
+ * @deprecated since 6.8.0, use \Browser directly, will be removed in Pimcore 10.0.0
  */
 class Browser extends \Browser
 {

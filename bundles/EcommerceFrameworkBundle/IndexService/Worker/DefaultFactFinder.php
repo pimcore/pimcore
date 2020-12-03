@@ -26,7 +26,7 @@ use Pimcore\Tool\Text;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * @deprecated since version 6.7.0 and will be removed in 7.0.0.
+ * @deprecated since version 6.7.0 and will be removed in Pimcore 10.
  *
  * @property DefaultFactFinderConfig $tenantConfig
  */
@@ -49,7 +49,7 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
     public function __construct(FactFinderConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
         @trigger_error(
-            'Class ' . self::class . ' is deprecated since version 6.7.0 and will be removed in 7.0.0.',
+            'Class ' . self::class . ' is deprecated since version 6.7.0 and will be removed in Pimcore 10.',
             E_USER_DEPRECATED
         );
 
@@ -104,7 +104,7 @@ class DefaultFactFinder extends AbstractMockupCacheWorker implements WorkerInter
         $idColumnType = $this->tenantConfig->getIdColumnType(false);
 
         /**
-         * @TODO Pimcore 7 - remove worker columns
+         * @TODO Pimcore 10 - remove worker columns
          */
         $this->db->query('CREATE TABLE IF NOT EXISTS `' . $this->getStoreTableName() . "` (
           `o_id` $primaryIdColumnType,

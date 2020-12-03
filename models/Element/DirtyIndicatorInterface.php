@@ -44,5 +44,5 @@ interface DirtyIndicatorInterface
     public function resetDirtyMap();
 }
 
-//TODO: remove in Pimcore 7
+//TODO: remove in Pimcore 10
 class_alias(DirtyIndicatorInterface::class, 'Pimcore\Model\DataObject\DirtyIndicatorInterface');

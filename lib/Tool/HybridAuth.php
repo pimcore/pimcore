@@ -15,7 +15,7 @@
 namespace Pimcore\Tool;
 
 /**
- * @deprecated since version 6.8 and will be removed in 7.0.
+ * @deprecated since version 6.8 and will be removed in Pimcore 10.
  */
 class HybridAuth
 {
@@ -25,7 +25,7 @@ class HybridAuth
     public static function init()
     {
         @trigger_error(
-            'Class ' . self::class . ' is deprecated since version 6.8 and will be removed in 7.0. ' .
+            'Class ' . self::class . ' is deprecated since version 6.8 and will be removed in Pimcore 10. ' .
             E_USER_DEPRECATED
         );
 

@@ -80,7 +80,7 @@ class DocumentEditableExtension extends AbstractExtension
      *
      * @return \Pimcore\Model\Document\Editable|string
      *
-     * @deprecated since v6.8 and will be removed in 7. use renderEditable instead.
+     * @deprecated since v6.8 and will be removed in Pimcore 10. use renderEditable instead.
      */
     public function renderTag($context, $name, $inputName, array $options = [])
     {

@@ -17,7 +17,7 @@ namespace Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Editable\Relations;
 
 @trigger_error(
-    'Tag `Multihref` is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    'Tag `Multihref` is deprecated since version 6.0.0 and will be removed in Pimcore 10. ' .
     'Use `Multihref` instead.',
     E_USER_DEPRECATED
 );

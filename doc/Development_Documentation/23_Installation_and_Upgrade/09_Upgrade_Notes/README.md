@@ -1,16 +1,16 @@
 # Upgrade Notes
 ## 6.9.0
-- [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 7. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 7. 
+- [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 10. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 10. 
 - Config option and container parameter `pimcore.routing.defaults` is deprecated, use `pimcore.documents.default_controller` instead. 
-- Method `\Pimcore\Tool::getRoutingDefaults()` is deprecated and will be removed in Pimcore v7. 
-- `PageSnippet::$module|$action|get/setAction()|get/setModule()` are deprecated and will be removed in Pimcore v7 - see below for migration.
-- `DocType::$module|$action|get/setAction()|get/setModule()` are deprecated and will be removed in Pimcore v7 - see below for migration.
-- `Staticroute::$module|$action|get/setAction()|get/setModule()` are deprecated and will be removed in Pimcore v7 - see below for migration.
-- Using dynamic modules, controllers and actions in static routes (e.g. `%controller`) is deprecated and will not continue to work in Pimcore v7.
-- `\Pimcore\Controller\Config\ConfigNormalizer` has been deprecated and will be removed in Pimcore v7. 
-- Templating helper `$this->action()` as well as the Twig extension `pimcore_action()` are deprecated and will be removed in Pimcore v7. Use Twig `render()` instead.
-- `\Pimcore\Model\Element\Reference\Placeholder` has been deprecated and will be removed in Pimcore v7. Use `\Pimcore\Model\Element\ElementDescriptor` instead.
-- `WebDebugToolbarListenerPass` has been deprecated and will be removed in Pimcore v7. 
+- Method `\Pimcore\Tool::getRoutingDefaults()` is deprecated and will be removed in Pimcore 10. 
+- `PageSnippet::$module|$action|get/setAction()|get/setModule()` are deprecated and will be removed in Pimcore 10 - see below for migration.
+- `DocType::$module|$action|get/setAction()|get/setModule()` are deprecated and will be removed in Pimcore 10 - see below for migration.
+- `Staticroute::$module|$action|get/setAction()|get/setModule()` are deprecated and will be removed in Pimcore 10 - see below for migration.
+- Using dynamic modules, controllers and actions in static routes (e.g. `%controller`) is deprecated and will not continue to work in Pimcore 10.
+- `\Pimcore\Controller\Config\ConfigNormalizer` has been deprecated and will be removed in Pimcore 10. 
+- Templating helper `$this->action()` as well as the Twig extension `pimcore_action()` are deprecated and will be removed in Pimcore 10. Use Twig `render()` instead.
+- `\Pimcore\Model\Element\Reference\Placeholder` has been deprecated and will be removed in Pimcore 10. Use `\Pimcore\Model\Element\ElementDescriptor` instead.
+- `WebDebugToolbarListenerPass` has been deprecated and will be removed in Pimcore 10. 
 - `MigrationInstaller` for bundles has been deprecated and will be removed in Pimcore 10, please use `AbstractInstaller` instead. 
 - The entire `Pimcore\Migrations` namespace has been deprecated and will be removed in Pimcore 10. Please use Doctrine Migrations directly instead for your project and bundles.
 - `ClassMapLoader` now takes priority over `PrefixLoader` e.g. config `pimcore.document.editables.map` has higher priority than `pimcore.document.editables.prefixes`.
@@ -24,35 +24,35 @@ If there are some errors during the execution of the command, don't panic.
 You can run the command as often as you want, since it doesn't touch already migrated entities. 
 
 ## 6.8.0
-- HybridAuth integration is deprecated and will be removed in Pimcore 7.
-- `Pimcore\Browser` is deprecated and will be replaced by `\Browser` in Pimcore 7. [#7084](https://github.com/pimcore/pimcore/pull/7084)
-- Javascript - All classes under namespaces `pimcore.document.tags` are deprecated and will be removed in 7. These are moved to new namespace `pimcore.document.editables`. 
+- HybridAuth integration is deprecated and will be removed in Pimcore 10.
+- `Pimcore\Browser` is deprecated and will be replaced by `\Browser` in Pimcore 10. [#7084](https://github.com/pimcore/pimcore/pull/7084)
+- Javascript - All classes under namespaces `pimcore.document.tags` are deprecated and will be removed in Pimcore 10. These are moved to new namespace `pimcore.document.editables`. 
 If you have custom editables or wysiwyg global config then please change namespace from `pimcore.document.tags.*` to `pimcore.document.editables.*`
-- Javascript - Class `pimcore.document.tag` is deprecated as well and will be removed in 7. Use new class `pimcore.document.editable` instead.
+- Javascript - Class `pimcore.document.tag` is deprecated as well and will be removed in Pimcore 10. Use new class `pimcore.document.editable` instead.
 - All classes in namespace `Pimcore\Document\Tag` moved to new namespace `Pimcore\Document\Editable` (including their services) for better readability and marked as deprecated. Please update custom document editable classes and mappings. [#6921](https://github.com/pimcore/pimcore/pull/6921)
-- All `document_tag_` css classes are deprecated and will be removed in Pimcore 7. Use new classes `document_editable_` for custom styling of document editables.
+- All `document_tag_` css classes are deprecated and will be removed in Pimcore 10. Use new classes `document_editable_` for custom styling of document editables.
 - Method signature `AbstractObject::setChildren($children)` has been updated to `AbstractObject::setChildren($children, array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)`.
-- Edit Template for Area Bricks `edit.html.(php|twig)` has been deprecated and will be removed in Pimcore 7. Use new feature [editable dialog box](https://github.com/pimcore/pimcore/pull/6923#issuecomment-671257112) instead.
-- `EventedControllerInterface` is marked as deprecated and will be removed in v7. Please use new interfaces for kernel events `KernelControllerEventInterface::onKernelControllerEvent()` or `KernelResponseEventInterface::onKernelResponseEvent()` instead.
-- PHP templating engine (including templating helpers & vars) has been deprecated and will be removed in Pimcore 7. Use Twig Instead.
-- The Tag Manager has been deprecated and will be removed in Pimcore 7. 
-- Class `\Pimcore\Model\Tool\Tracking\Event` has been deprecated and will be removed in Pimcore 7. 
-- Auto view rendering has been deprecated and will be removed in Pimcore 7, which means views will not be tied to action implicitly using the filename and `$this->view` (`ViewModel`) in actions stops working. Use Symfony way of [Rendering Templates](https://symfony.com/doc/current/templates.html#rendering-templates) instead.
-- Event `\Pimcore\Event\AdminEvents::INDEX_SETTINGS` has been deprecated and will be removed in Pimcore 7, use `\Pimcore\Event\AdminEvents::INDEX_ACTION_SETTINGS` instead.
-- Class `\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Helper` has been deprecated and will be removed in Pimcore 7. Use `Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\ListHelper` service instead.
-- Class `\Pimcore\Model\Tool\Lock` has been deprecated and will be removed in Pimcore 7 use the lock factory service `Symfony\Component\Lock\LockFactory` instead 
-- Payment providers `Datatrans`, `Heidelpay`, `Hobex`, `Klarna`, `Mpay24Seamless`, `OGone`, `PayPalSmartPaymentButton`, `PayU` are deprecated and will be moved to a separate bundle in Pimcore 7.
-- Payment providers `WirecardSeamless`, `Qpay`, `Paypal` are deprecated and will be removed in Pimcore 7.
-- QRCodes (`\Pimcore\Model\Tool\Qrcode\Config`) have been deprecated and will be removed in Pimcore 7. 
+- Edit Template for Area Bricks `edit.html.(php|twig)` has been deprecated and will be removed in Pimcore 10. Use new feature [editable dialog box](https://github.com/pimcore/pimcore/pull/6923#issuecomment-671257112) instead.
+- `EventedControllerInterface` is marked as deprecated and will be removed in Pimcore 10. Please use new interfaces for kernel events `KernelControllerEventInterface::onKernelControllerEvent()` or `KernelResponseEventInterface::onKernelResponseEvent()` instead.
+- PHP templating engine (including templating helpers & vars) has been deprecated and will be removed in Pimcore 10. Use Twig Instead.
+- The Tag Manager has been deprecated and will be removed in Pimcore 10. 
+- Class `\Pimcore\Model\Tool\Tracking\Event` has been deprecated and will be removed in Pimcore 10. 
+- Auto view rendering has been deprecated and will be removed in Pimcore 10, which means views will not be tied to action implicitly using the filename and `$this->view` (`ViewModel`) in actions stops working. Use Symfony way of [Rendering Templates](https://symfony.com/doc/current/templates.html#rendering-templates) instead.
+- Event `\Pimcore\Event\AdminEvents::INDEX_SETTINGS` has been deprecated and will be removed in Pimcore 10, use `\Pimcore\Event\AdminEvents::INDEX_ACTION_SETTINGS` instead.
+- Class `\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\Helper` has been deprecated and will be removed in Pimcore 10. Use `Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\ListHelper` service instead.
+- Class `\Pimcore\Model\Tool\Lock` has been deprecated and will be removed in Pimcore 10 use the lock factory service `Symfony\Component\Lock\LockFactory` instead 
+- Payment providers `Datatrans`, `Heidelpay`, `Hobex`, `Klarna`, `Mpay24Seamless`, `OGone`, `PayPalSmartPaymentButton`, `PayU` are deprecated and will be moved to a separate bundle in Pimcore 10.
+- Payment providers `WirecardSeamless`, `Qpay`, `Paypal` are deprecated and will be removed in Pimcore 10.
+- QRCodes (`\Pimcore\Model\Tool\Qrcode\Config`) have been deprecated and will be removed in Pimcore 10. 
 
 ## 6.7.0
 - [Ecommerce][IndexService] Elastic Search worker does not use mockup cache anymore. Now mockup objects are build directly based on information in response of ES response (_source flag). Therefore `AbstractElasticSearch` Worker does not extend `AbstractMockupCacheWorker` anymore. 
 - Rules regarding default values in combination with inheritance enabled have been clarified. Read [this](../../05_Objects/01_Object_Classes/01_Data_Types/README.md#page_Default-values) for details.
-- [Ecommerce] Deprecated FactFinder integration and will be removed in Pimcore 7.
+- [Ecommerce] Deprecated FactFinder integration and will be removed in Pimcore 10.
 - Saving unpublished data objects via API will not throw Validation exceptions anymore (just like Admin UI). Please set `omitMandatoryCheck` explicitly to `false` to force mandatory checks.
-- `\Pimcore\DataObject\GridColumnConfig\Operator\ObjectBrickGetter` operator is deprecated and will be removed in 7.0.0
+- `\Pimcore\DataObject\GridColumnConfig\Operator\ObjectBrickGetter` operator is deprecated and will be removed in Pimcore 10
 - Calling `Pimcore\Model\DataObject\ClassDefinition\Data::isEqual()` is deprecated since version 6.7.0 and will be removed in version 7 . Implement `\Pimcore\Model\DataObject\ClassDefinition\Data\EqualComparisonInterface` instead.
-- Following properties and methods are deprecated to unify document editables and will be removed in 7. [#6900](https://github.com/pimcore/pimcore/pull/6900):
+- Following properties and methods are deprecated to unify document editables and will be removed in Pimcore 10. [#6900](https://github.com/pimcore/pimcore/pull/6900):
     - `PageSnippet::$elements`. Use `PageSnippet::$editables` instead.
     - `PageSnippet::$inheritedElements`. Use `PageSnippet::$inheritedEditables` instead.
     - `PageSnippet::getElements`. Use `PageSnippet::getEditables` instead.
@@ -67,23 +67,23 @@ If you have custom editables or wysiwyg global config then please change namespa
     - `TargetingDocumentInterface::getTargetGroupSpecificElementNames`. Use `TargetingDocumentInterface::getTargetGroupSpecificEditableNames` instead.
     - `TargetingDocumentInterface::getTargetGroupSpecificElementNames`. Use `TargetingDocumentInterface::getTargetGroupSpecificEditableNames` instead.
     
-- The legacy editable naming scheme has been deprecated and will be removed in Pimcore 7. Please [migrate to the new naming scheme](../../03_Documents/13_Editable_Naming_Strategies.md). 
-- All classes in namespace `Pimcore\Document\Tag\NamingStrategy` are marked as deprecated and will be removed in v7. 
-- `TagHandlerInterface` and `DelegatingTagHandler` are marked as deprecated and will be removed in v7.
+- The legacy editable naming scheme has been deprecated and will be removed in Pimcore 10. Please [migrate to the new naming scheme](../../03_Documents/13_Editable_Naming_Strategies.md). 
+- All classes in namespace `Pimcore\Document\Tag\NamingStrategy` are marked as deprecated and will be removed in Pimcore 10. 
+- `TagHandlerInterface` and `DelegatingTagHandler` are marked as deprecated and will be removed in Pimcore 10.
 ## 6.6.4
 - If you are using the specific settings 'max. items' option for ObjectBricks & Fieldcollections on your class definition, then API will validate the max limit on save() calls from now on.
 
 ## 6.6.2
 - class `ElementDescriptor` has been moved from 'Pimcore\Model\Version' to 'Pimcore\Model\Element'.
-The BC layer will be removed in 7. Use the following [migration scripts](https://gist.github.com/weisswurstkanone/a63f733fe58930778f41c695f862724a) to migrate your version and recyclebin files
+The BC layer will be removed in Pimcore 10. Use the following [migration scripts](https://gist.github.com/weisswurstkanone/a63f733fe58930778f41c695f862724a) to migrate your version and recyclebin files
 if necessary.   
 
 ## 6.6.0
 - Default config for monolog handler `main` in prod environment is now `stream` instead of `fingers_crossed`. If you still want to use `fingers_crossed` please update your project config accordingly. 
 - `app` migration set is now located in `app/Migrations` instead of `app/Resources/migrations` - Pimcore will automatically move existing migration scripts for you (update your VCS!)
-- Replaced `html2text` from [Martin Bayer] with `Html2Text\Html2Text` library. `Pimcore\Mail::determineHtml2TextIsInstalled`, `Pimcore\Mail::getHtml2TextBinaryEnabled`, `Pimcore\Mail::enableHtml2textBinary`, are deprecated in favour of new library and will be removed in Pimcore 7. Also, `Pimcore\Mail::setHtml2TextOptions` now accepts array options instead of string.
+- Replaced `html2text` from [Martin Bayer] with `Html2Text\Html2Text` library. `Pimcore\Mail::determineHtml2TextIsInstalled`, `Pimcore\Mail::getHtml2TextBinaryEnabled`, `Pimcore\Mail::enableHtml2textBinary`, are deprecated in favour of new library and will be removed in Pimcore 10. Also, `Pimcore\Mail::setHtml2TextOptions` now accepts array options instead of string.
 - Ecommerce: interpreter getters in the application which do not return the correct type: a string or integer field may receive "false" - if false was returned which should actually be null, see [#5876](https://github.com/pimcore/pimcore/pull/5876)
-- Dirty detection `\Pimcore\Model\DataObject\DirtyIndicatorInterface` & `\Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait` is deprecated and will be removed in Pimcore 7. Please use new interface `\Pimcore\Model\Element\DirtyIndicatorInterface` and trait `\Pimcore\Model\Element\Traits\DirtyIndicatorTrait` instead.
+- Dirty detection `\Pimcore\Model\DataObject\DirtyIndicatorInterface` & `\Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait` is deprecated and will be removed in Pimcore 10. Please use new interface `\Pimcore\Model\Element\DirtyIndicatorInterface` and trait `\Pimcore\Model\Element\Traits\DirtyIndicatorTrait` instead.
 - Image thumbnails using any (P)JPEG/AUTO format will now all use `.jpg` as file extension (used to be `.jpeg` or `.pjpeg`). 
 You can delete all existing `.pjpeg` and `.jpeg` thumbnails as they are not getting used anymore (`.jpg` files will be newly generated). 
 You can use the following command to delete the obsolete files: `find web/var/tmp/image-thumbnails/ -type f \( -iname \*.jpeg -o -iname \*.pjpeg \) -delete`   
@@ -100,7 +100,7 @@ If you're using pre-generation for your thumbnails, don't forget to run the comm
                 changePublishedState: save_version
     ```
 ## 6.5.2
-- Passing multiple relations (w/o multiple assignments check) in data objects is deprecated and will throw exception in Pimcore 7.
+- Passing multiple relations (w/o multiple assignments check) in data objects is deprecated and will throw exception in Pimcore 10.
 
 ## 6.5.0
 
@@ -130,7 +130,7 @@ foreach ($list as $class) {
   see [5427](https://github.com/pimcore/pimcore/issues/5427)
 - [Data Objects] If you have custom lazy-loaded datatypes **not** extending `Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations`,
   implement the `Pimcore\Model\DataObject\ClassDefinition\Data\LazyLoadingSupportInterface`
-  The `method_exists('getLazyLoading')` calls will be removed in Pimcore 7.
+  The `method_exists('getLazyLoading')` calls will be removed in Pimcore 10.
 - It is now possible to configure `php:memory_limit` for `web2print:pdf-creation` command with following configuration:
 ```yaml
 pimcore:
@@ -142,12 +142,12 @@ pimcore:
 - Using static methods for [dynamic text labels](../../05_Objects/01_Object_Classes/03_Layout_Elements/01_Dynamic_Text_Labels.md) is now deprecated, use services instead.
 - Removed method `\Pimcore\Model\DataObject\ClassDefinition\Data\Relations\AbstractRelations::isRemoteOwner()`, as this method was only used for `ReverseManyToManyObjectRelation` internal check are now made using `instanceof` 
 - [Data Objects] inheritance skips now objects of other classes (so far only folders) so with an object path like `A (class Product) > B (other class) > C (class Product)` object C can inherit data from A.
-- The built in cookie info bar (in system settings) is now marked as deprecated and will be removed in Pimcore 7. 
-- `\Pimcore\Config::getSystemConfig()` is now marked as deprecated and will be removed in Pimcore 7. Use `Pimcore\Config` service or `\Pimcore\Config::getSystemConfiguration()` method instead.
-- Javascript function `ts(key)` (alias of `t(key)`) is marked as deprecated and will be removed in v7. Please use `t(key)` instead. 
+- The built in cookie info bar (in system settings) is now marked as deprecated and will be removed in Pimcore 10. 
+- `\Pimcore\Config::getSystemConfig()` is now marked as deprecated and will be removed in Pimcore 10. Use `Pimcore\Config` service or `\Pimcore\Config::getSystemConfiguration()` method instead.
+- Javascript function `ts(key)` (alias of `t(key)`) is marked as deprecated and will be removed in Pimcore 10. Please use `t(key)` instead. 
 
 ## 6.4.0
-- Deprecated the REST Webservice API. The API will be removed in Pimcore 7, use the [Pimcore Datahub](https://github.com/pimcore/data-hub) instead.
+- Deprecated the REST Webservice API. The API will be removed in Pimcore 10, use the [Pimcore Datahub](https://github.com/pimcore/data-hub) instead.
 - Removed `Pimcore\Bundle\EcommerceFrameworkBundle\PricingManagerPricingManagerInterface::getRule()` and `Pimcore\Bundle\EcommerceFrameworkBundle\PricingManager::getRule()`
 - The `DocumentRenderer::setEventDispatcher()` method has been removed. Pass event dispatcher to the constructor instead.
 - `RedirectHandler::setRequestHelper()` and `RedirectHandler::setSiteResolver()` methods have been removed. Pass instance of `Pimcore\Http\RequestHelper` & `Pimcore\Http\Request\Resolver\SiteResolver` to the constructor instead.
@@ -244,7 +244,7 @@ If you have configured your own session handler nothing will change.
   
 - Changed return type of `applyCartRules(CartInterface $cart)` in `PricingManagerInterface` - from `PricingManagerInterface` to `array`  
 - Introduction of new Checkout Manager architecture. It is parallel to the old architecture, which is deprecated now and will be removed in 
-  Pimcore 7. For details see [Checkout Manager Details](../../10_E-Commerce_Framework/13_Checkout_Manager/08_Checkout_Manager_Details.md).
+  Pimcore 10. For details see [Checkout Manager Details](../../10_E-Commerce_Framework/13_Checkout_Manager/08_Checkout_Manager_Details.md).
 
 ### E-Commerce Back Office
 - Following views are migrated from .php to .twig (with snake_case naming)

@@ -128,7 +128,7 @@ class EditableNameEvent extends Event
     /**
      * @return string
      *
-     * @deprecated since 6.8 and will be removed in 7. use getEditableName() instead.
+     * @deprecated since 6.8 and will be removed in Pimcore 10. use getEditableName() instead.
      */
     public function getTagName(): string
     {
@@ -138,7 +138,7 @@ class EditableNameEvent extends Event
     /**
      * @param string $tagName
      *
-     * @deprecated since 6.8 and will be removed in 7. use setEditableName() instead.
+     * @deprecated since 6.8 and will be removed in Pimcore 10. use setEditableName() instead.
      */
     public function setTagName(string $tagName)
     {

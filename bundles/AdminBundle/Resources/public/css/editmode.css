@@ -56,7 +56,7 @@ input.cke_dialog_ui_input_tel {
 
 /* pimcore editables */
 [class^="pimcore_tag_"], [class*=" pimcore_tag_"] {
-    --deprecated: "Warning! pimcore_tag_* class selectors are deprecated and will be removed in Pimcore 7. Use .pimcore_editable_* instead";
+    --deprecated: "Warning! pimcore_tag_* class selectors are deprecated and will be removed in Pimcore 10. Use .pimcore_editable_* instead";
 }
 
 .pimcore_tag_image,

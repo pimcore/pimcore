@@ -422,7 +422,7 @@ class Configuration implements ConfigurationInterface
             // support deprecated options at the root level of the pricing_manager
             // values set here will OVERWRITE the value in every tenant, even if the
             // tenant defines the value!
-            // TODO remove in Pimcore 7
+            // TODO remove in Pimcore 10
             ->validate()
                 ->always(function ($v) {
                     $enabled = null;
@@ -751,11 +751,11 @@ class Configuration implements ConfigurationInterface
                     ->cannotBeEmpty()
                     ->defaultValue(IndexService::class)
                 ->end()
-                // @TODO Pimcore 7 - remove this
+                // @TODO Pimcore 10 - remove this
                 ->enumNode('worker_mode')
                     ->values([ProductCentricBatchProcessingWorker::WORKER_MODE_PRODUCT_CENTRIC, ProductCentricBatchProcessingWorker::WORKER_MODE_LEGACY])
                     ->cannotBeEmpty()
-                    ->setDeprecated('will be removed in Pimcore 7 as then ' . ProductCentricBatchProcessingWorker::WORKER_MODE_PRODUCT_CENTRIC . ' will be default mode.')
+                    ->setDeprecated('will be removed in Pimcore 10 as then ' . ProductCentricBatchProcessingWorker::WORKER_MODE_PRODUCT_CENTRIC . ' will be default mode.')
                     ->info('Worker mode for ' . ProductCentricBatchProcessingWorker::class . ' workers.')
                     ->defaultValue(ProductCentricBatchProcessingWorker::WORKER_MODE_LEGACY)
                 ->end()
@@ -915,7 +915,7 @@ class Configuration implements ConfigurationInterface
                                             // this option was never properly supported
                                             // and is ignored
                                             if (isset($v['mapping'])) {
-                                                @trigger_error('The "mapping" config entry on the ecommerce index attribute level is unsupported and will be removed in Pimcore 7. Please set "options.mapping" instead.', E_USER_DEPRECATED);
+                                                @trigger_error('The "mapping" config entry on the ecommerce index attribute level is unsupported and will be removed in Pimcore 10. Please set "options.mapping" instead.', E_USER_DEPRECATED);
                                                 unset($v['mapping']);
                                             }
 
@@ -933,7 +933,7 @@ class Configuration implements ConfigurationInterface
                                         ->append($this->buildOptionsNode('getter_options'))
                                         ->scalarNode('interpreter_id')->defaultNull()->info('Service id of interpreter for this field')->end()
                                         ->append($this->buildOptionsNode('interpreter_options'))
-                                        ->append($this->buildOptionsNode('mapping')) // TODO Symfony 3.4 set as deprecated. TODO Pimcore 7 remove option completely.
+                                        ->append($this->buildOptionsNode('mapping')) // TODO Symfony 3.4 set as deprecated. TODO Pimcore 10 remove option completely.
                                         ->booleanNode('hide_in_fieldlist_datatype')->defaultFalse()->info('Hides field in field list selection data type of filter service - default to false')->end()
                                     ->end()
                                 ->end()

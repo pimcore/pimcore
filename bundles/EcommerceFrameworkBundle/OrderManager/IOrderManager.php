@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
 @trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\IOrderManager is deprecated since version 6.0.0 and will be removed in Pimcore 10. ' .
     ' Use ' . OrderManagerInterface::class . ' class instead.',
     E_USER_DEPRECATED
 );
