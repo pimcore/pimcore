@@ -449,6 +449,7 @@ class Configuration implements ConfigurationInterface
                                 ->addDefaultsIfNotSet()
                                 ->children()
                                     ->booleanNode('webp_auto_support')
+                                        ->setDeprecated('The "%node%" option is deprecated and will be removed in Pimcore 10.')
                                         ->beforeNormalization()
                                             ->ifString()
                                             ->then(function ($v) {
