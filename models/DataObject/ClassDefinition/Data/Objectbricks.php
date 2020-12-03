@@ -33,13 +33,6 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     public $fieldtype = 'objectbricks';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\' . Objectbrick::class;
-
-    /**
      * @var array
      */
     public $allowedTypes = [];
@@ -967,4 +960,26 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
             }
         }
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Objectbrick::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Objectbrick::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Objectbrick::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Objectbrick::class . '|null';
+    }
+
+
 }

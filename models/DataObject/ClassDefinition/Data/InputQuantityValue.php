@@ -56,8 +56,6 @@ class InputQuantityValue extends QuantityValue
         'unit' => 'bigint(20)',
     ];
 
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\InputQuantityValue';
-
     /**
      * @param array $data
      * @param Model\DataObject\Concrete|null $object
@@ -182,4 +180,26 @@ class InputQuantityValue extends QuantityValue
     {
         return new InputQuantityValueDataObject($value, $unitId);
     }
+
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
+    }
+
 }

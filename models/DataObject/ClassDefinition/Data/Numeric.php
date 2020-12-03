@@ -22,7 +22,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Model\DataObject\Traits\DefaultValueTrait;
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType {
@@ -67,13 +66,6 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public $columnType = 'double';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'float';
-
-    /**
      * @var bool
      */
     public $integer = false;
@@ -115,10 +107,7 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
      */
     public $decimalPrecision;
 
-    /**
-     * @inheritDoc
-     */
-    public function getPhpdocType(): string
+    protected function getPhpdocType(): string
     {
         if ($this->getInteger()) {
             return 'int';
@@ -629,4 +618,26 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     {
         return $this->toNumeric($oldValue) == $this->toNumeric($newValue);
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?' . $this->getPhpdocType();
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?' . $this->getPhpdocType();
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return $this->getPhpdocType() . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return $this->getPhpdocType() . '|null';
+    }
+
+
 }

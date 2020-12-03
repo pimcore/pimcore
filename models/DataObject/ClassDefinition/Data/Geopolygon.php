@@ -47,13 +47,6 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     public $columnType = 'longtext';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'array';
-
-    /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
@@ -337,4 +330,26 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
 
         return true;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'array|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'array|null';
+    }
+
+
 }

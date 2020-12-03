@@ -64,13 +64,6 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     public $rows = [];
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\StructuredTable';
-
-    /**
      * @return int
      */
     public function getWidth()
@@ -609,4 +602,26 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
 
         return $this->isEqualArray($oldData, $newData);
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\StructuredTable::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\StructuredTable::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\StructuredTable::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\StructuredTable::class . '|null';
+    }
+
+
 }

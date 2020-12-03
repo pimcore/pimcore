@@ -25,7 +25,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class Date extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use DataObject\Traits\DefaultValueTrait;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -50,13 +49,6 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @var string
      */
     public $columnType = 'bigint(20)';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Carbon\\Carbon';
 
     /**
      * @var int
@@ -462,4 +454,25 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         return $oldValue === $newValue;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Carbon::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Carbon::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Carbon::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Carbon::class . '|null';
+    }
+
 }

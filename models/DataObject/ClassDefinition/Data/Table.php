@@ -96,13 +96,6 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public $columnType = 'longtext';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'array';
-
-    /**
      * @return int
      */
     public function getWidth()
@@ -643,4 +636,216 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         return $this->isEqualArray($oldValue, $newValue);
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?array';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return 'array';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '?array';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'array';
+    }
+
+    /**
+     * Creates getter code which is used for generation of php file for object classes using this data type
+     *
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
+     *
+     * @return string
+     */
+    public function getGetterCode($class)
+    {
+        $key = $this->getName();
+
+        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
+        $code = '';
+
+        $code .= '/**' . "\n";
+        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
+
+        $code .= $this->getPreGetValueHookCode($key);
+
+        if (method_exists($this, 'preGetData')) {
+            $code .= "\t" . '$data = $this->getClass()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n\n";
+        } else {
+            $code .= "\t" . '$data = $this->' . $key . ";\n\n";
+        }
+
+        // insert this line if inheritance from parent objects is allowed
+        if ($class instanceof DataObject\ClassDefinition && $class->getAllowInherit() && $this->supportsInheritance()) {
+            $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues() && $this->getClass()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
+            $code .= "\t\t" . 'try {' . "\n";
+            $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
+            $code .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
+            $code .= "\t\t" . '}' . "\n";
+            $code .= "\t" . '}' . "\n\n";
+        }
+
+        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
+        $code .= "\t\t" . '    return $data->getPlain() ?? [];' . "\n";
+        $code .= "\t" . '}' . "\n\n";
+
+        $code .= "\treturn " . '$data ?? []' . ";\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
+
+    /**
+     * Creates getter code which is used for generation of php file for object brick classes using this data type
+     *
+     * @param DataObject\Objectbrick\Definition $brickClass
+     *
+     * @return string
+     */
+    public function getGetterCodeObjectbrick($brickClass)
+    {
+        $key = $this->getName();
+
+        if ($brickClass->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
+        $code = '';
+        $code .= '/**' . "\n";
+        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
+
+        if (method_exists($this, 'preGetData')) {
+            $code .= "\t" . '$data = $this->getDefinition()->getFieldDefinition("' . $key . '")->preGetData($this);' . "\n";
+        } else {
+            $code .= "\t" . '$data = $this->' . $key . ";\n";
+        }
+
+        if ($this->supportsInheritance()) {
+            $code .= "\t" . 'if(\Pimcore\Model\DataObject::doGetInheritedValues($this->getObject()) && $this->getDefinition()->getFieldDefinition("' . $key . '")->isEmpty($data)) {' . "\n";
+            $code .= "\t\t" . 'try {' . "\n";
+            $code .= "\t\t\t" . 'return $this->getValueFromParent("' . $key . '");' . "\n";
+            $code .= "\t\t" . '} catch (InheritanceParentNotFoundException $e) {' . "\n";
+            $code .= "\t\t\t" . '// no data from parent available, continue ... ' . "\n";
+            $code .= "\t\t" . '}' . "\n";
+            $code .= "\t" . '}' . "\n";
+        }
+
+        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
+        $code .= "\t\t" . 'return $data->getPlain() ?? [];' . "\n";
+        $code .= "\t" . '}' . "\n";
+
+        $code .= "\t return " . '$data??[]' . ";\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
+
+    /**
+     * Creates getter code which is used for generation of php file for fieldcollectionk classes using this data type
+     *
+     * @param DataObject\Fieldcollection\Definition $fieldcollectionDefinition
+     *
+     * @return string
+     */
+    public function getGetterCodeFieldcollection($fieldcollectionDefinition)
+    {
+        $key = $this->getName();
+
+        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
+        $code = '';
+        $code .= '/**' . "\n";
+        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= 'public function get' . ucfirst($key) . ' ()' . $typeDeclaration . " {\n";
+
+        if (method_exists($this, 'preGetData')) {
+            $code .= "\t" . '$container = $this;' . "\n";
+            $code .= "\t" . '$fd = $this->getDefinition()->getFieldDefinition("' . $key . '");' . "\n";
+            $code .= "\t" . '$data = $fd->preGetData($container);' . "\n";
+        } else {
+            $code .= "\t" . '$data = $this->' . $key . ";\n";
+        }
+
+        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
+        $code .= "\t\t" . '    return $data->getPlain() ?? [];' . "\n";
+        $code .= "\t" . '}' . "\n";
+
+        $code .= "\t return " . '$data ?? []' . ";\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
+
+    /**
+     * Creates getter code which is used for generation of php file for localized fields in classes using this data type
+     *
+     * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
+     *
+     * @return string
+     */
+    public function getGetterCodeLocalizedfields($class)
+    {
+        $key = $this->getName();
+
+        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
+            $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
+        } else {
+            $typeDeclaration = '';
+        }
+
+        $code = '/**' . "\n";
+        $code .= '* Get ' . str_replace(['/**', '*/', '//'], '', $this->getName()) . ' - ' . str_replace(['/**', '*/', '//'], '', $this->getTitle()) . "\n";
+        $code .= '* @return ' . $this->getPhpdocReturnType() . "\n";
+        $code .= '*/' . "\n";
+        $code .= 'public function get' . ucfirst($key) . ' ($language = null)' . $typeDeclaration . ' {' . "\n";
+
+        $code .= "\t" . '$data = $this->getLocalizedfields()->getLocalizedValue("' . $key . '", $language);' . "\n";
+
+        if (!$class instanceof DataObject\Fieldcollection\Definition && !$class instanceof DataObject\Objectbrick\Definition) {
+            $code .= $this->getPreGetValueHookCode($key);
+        }
+
+        $code .= "\t" . 'if ($data instanceof \\Pimcore\\Model\\DataObject\\Data\\EncryptedField) {' . "\n";
+        $code .= "\t\t" . 'return $data->getPlain() ?? [];' . "\n";
+        $code .= "\t" . '}' . "\n";
+
+        // we don't need to consider preGetData, because this is already managed directly by the localized fields within getLocalizedValue()
+
+        $code .= "\treturn " . '$data ?? []' . ";\n";
+        $code .= "}\n\n";
+
+        return $code;
+    }
+
+
+
+
+
 }

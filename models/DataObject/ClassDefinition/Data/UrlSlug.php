@@ -55,13 +55,6 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     public $availableSites;
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\UrlSlug[]';
-
-    /**
      * @return int
      */
     public function getWidth()
@@ -763,6 +756,11 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return $result;
     }
 
+    public function supportsInheritance()
+    {
+        return false;
+    }
+
     /** @inheritDoc */
     public function getParameterTypeDeclaration(): ?string
     {
@@ -775,8 +773,14 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         return '?array';
     }
 
-    public function supportsInheritance()
+    public function getPhpdocInputType(): ?string
     {
-        return false;
+        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
     }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
+    }
+
 }

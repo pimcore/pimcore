@@ -21,7 +21,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class Input extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
@@ -65,13 +64,6 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @var int
      */
     public $columnLength = 190;
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'string';
 
     /**
      * @var string
@@ -342,4 +334,25 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
         return $this;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'string|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'string|null';
+    }
+
 }
