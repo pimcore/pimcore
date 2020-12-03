@@ -339,9 +339,9 @@ class Thumbnail
                             $html .= "\t" . $sourceHtmlWebP . "\n";
                         }
                     }
-                }
 
-                $html .= "\t" . $sourceHtml . "\n";
+                    $html .= "\t" . $sourceHtml . "\n";
+                }
             }
         }
 
