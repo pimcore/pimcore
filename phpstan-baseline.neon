@@ -6,24 +6,9 @@ parameters:
 			path: bundles/AdminBundle/Security/LogoutSuccessHandler.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Event\\\\Model\\\\ElementEventInterface\\:\\:getArgument\\(\\)\\.$#"
-			count: 1
-			path: bundles/CoreBundle/EventListener/ElementTagsListener.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\:\\:getId\\(\\)\\.$#"
-			count: 4
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
 			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\AbstractCart\\:\\:getRecentlyAddedItems\\(\\) should return array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\> but returns array\\<int, Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\CartItemInterface\\>\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCart.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\:\\:getId\\(\\)\\.$#"
-			count: 2
-			path: bundles/EcommerceFrameworkBundle/CartManager/AbstractCartItem.php
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\CartItemInterface\\:\\:setParentItemKey\\(\\)\\.$#"
@@ -54,16 +39,6 @@ parameters:
 			message: "#^Call to an undefined method Pimcore\\\\Model\\\\DataObject\\\\Listing\\:\\:setCartItems\\(\\)\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/CartManager/CartItem/Listing/Dao.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\:\\:getId\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/CartPriceCalculator.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\CartManager\\\\CartInterface\\:\\:setItems\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/CartManager/SessionCartItem.php
 
 		-
 			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\OrderManagerInterface\\:\\:isValidOrderForRecurringPayment\\(\\)\\.$#"
@@ -686,16 +661,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/IndexService/Worker/ElasticSearch/AbstractElasticSearch.php
 
 		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrder\\:\\:getTaxInfo\\(\\) should return array but return statement is missing\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Model/AbstractOrder.php
-
-		-
-			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrder\\:\\:getLastPaymentInfo\\(\\) should return Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractPaymentInformation but returns Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\AbstractData\\|false\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Model/AbstractOrder.php
-
-		-
 			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrder\\:\\:getLastPaymentInfo\\(\\) should return Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractPaymentInformation but returns null\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/Model/AbstractOrder.php
@@ -704,16 +669,6 @@ parameters:
 			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrderItem\\:\\:getOrder\\(\\) should return Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrder but returns Pimcore\\\\Model\\\\DataObject\\\\AbstractObject\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/Model/AbstractOrderItem.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\:\\:getId\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Model/AbstractSetProductEntry.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\:\\:getId\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/OfferTool/DefaultService.php
 
 		-
 			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\AbstractOrderList\\:\\:load\\(\\) should return array\\<Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\OrderListItemInterface\\> but returns \\$this\\(Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\OrderManager\\\\AbstractOrderList\\)\\.$#"
@@ -746,27 +701,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/OrderManager/Order/Listing/Filter/AbstractSearch.php
 
 		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\PriceSystem\\\\ModificatedPriceInterface\\:\\:getRule\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/OrderManager/OrderManager.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrderItem\\:\\:setComment\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/OrderManager/OrderManager.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\CheckoutableInterface\\:\\:getId\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/OrderManager/OrderManager.php
-
-		-
 			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrder\\:\\:setCartHash\\(\\)\\.$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/OrderManager/V7/OrderManager.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\Model\\\\AbstractOrder\\:\\:getCartHash\\(\\)\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/OrderManager/V7/OrderManager.php
 
@@ -946,11 +881,6 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/Tracking/AbstractData.php
 
 		-
-			message: "#^PHPDoc tag @implements has invalid value \\(IProductImpression\\)\\: Unexpected token \"\\\\n     \\*\", expected '\\<' at offset 80$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/Tracking/TrackingManager.php
-
-		-
 			message: "#^PHPDoc tag @implements has invalid value \\(ProductInterfaceView\\)\\: Unexpected token \"\\\\n     \", expected '\\<' at offset 123$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/Tracking/TrackingManager.php
@@ -976,49 +906,9 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/VoucherService/Statistic.php
 
 		-
-			message: "#^PHPDoc tag @implements has invalid value \\(IExportableTokenManager\\)\\: Unexpected token \"\\\\n     \", expected '\\<' at offset 137$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/VoucherService/TokenManager/AbstractTokenManager.php
-
-		-
-			message: "#^PHPDoc tag @implements has invalid value \\(IExportableTokenManager\\)\\: Unexpected token \"\\\\n     \", expected '\\<' at offset 149$#"
-			count: 1
-			path: bundles/EcommerceFrameworkBundle/VoucherService/TokenManager/AbstractTokenManager.php
-
-		-
 			message: "#^Method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\VoucherService\\\\TokenManager\\\\Pattern\\:\\:getFinalTokenLength\\(\\) should return int but returns float\\.$#"
 			count: 2
 			path: bundles/EcommerceFrameworkBundle/VoucherService/TokenManager/Pattern.php
-
-		-
-			message: "#^Return type \\(Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\) of method Pimcore\\\\Cache\\\\Pool\\\\AbstractCacheItemPool\\:\\:getItem\\(\\) should be compatible with return type \\(Symfony\\\\Component\\\\Cache\\\\CacheItem\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItem\\(\\)$#"
-			count: 1
-			path: lib/Cache/Pool/AbstractCacheItemPool.php
-
-		-
-			message: "#^Return type \\(array\\<Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\>\\|\\(iterable\\<Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\>&Traversable\\)\\) of method Pimcore\\\\Cache\\\\Pool\\\\AbstractCacheItemPool\\:\\:getItems\\(\\) should be compatible with return type \\(iterable\\<Symfony\\\\Component\\\\Cache\\\\CacheItem\\>&Traversable\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItems\\(\\)$#"
-			count: 1
-			path: lib/Cache/Pool/AbstractCacheItemPool.php
-
-		-
-			message: "#^Call to an undefined method Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\:\\:getMetadata\\(\\)\\.$#"
-			count: 1
-			path: lib/Cache/Pool/AbstractCacheItemPool.php
-
-		-
-			message: "#^Call to an undefined method Doctrine\\\\DBAL\\\\Driver\\\\ResultStatement\\:\\:execute\\(\\)\\.$#"
-			count: 1
-			path: lib/Cache/Pool/Doctrine.php
-
-		-
-			message: "#^Return type \\(Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\) of method Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemPoolInterface\\:\\:getItem\\(\\) should be compatible with return type \\(Symfony\\\\Component\\\\Cache\\\\CacheItem\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItem\\(\\)$#"
-			count: 1
-			path: lib/Cache/Pool/PimcoreCacheItemPoolInterface.php
-
-		-
-			message: "#^Return type \\(array\\<Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\>\\|\\(iterable\\<Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemInterface\\>&Traversable\\)\\) of method Pimcore\\\\Cache\\\\Pool\\\\PimcoreCacheItemPoolInterface\\:\\:getItems\\(\\) should be compatible with return type \\(iterable\\<Symfony\\\\Component\\\\Cache\\\\CacheItem\\>&Traversable\\) of method Symfony\\\\Component\\\\Cache\\\\Adapter\\\\AdapterInterface\\:\\:getItems\\(\\)$#"
-			count: 1
-			path: lib/Cache/Pool/PimcoreCacheItemPoolInterface.php
 
 		-
 			message: "#^Method Pimcore\\\\Config\\:\\:getConfigInstance\\(\\) should return Pimcore\\\\Config\\\\Config\\|null but returns array\\.$#"
