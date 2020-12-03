@@ -120,6 +120,7 @@ class CustomLayout extends Model\AbstractModel
     {
         $customLayout = new self();
         $id = $customLayout->getDao()->getIdByName($name);
+
         return self::getById($id);
     }
 
@@ -135,6 +136,7 @@ class CustomLayout extends Model\AbstractModel
     {
         $customLayout = new self();
         $id = $customLayout->getDao()->getIdByNameAndClassId($name, $classId);
+
         return self::getById($id);
     }
 
