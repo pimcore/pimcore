@@ -245,7 +245,7 @@ abstract class AdminController extends Controller implements AdminControllerInte
      */
     public function checkCsrfToken(Request $request)
     {
-        @trigger_error(sprintf('Calling '.__METHOD__.' is deprecated since version 6.9.0 and will be removed in 7.0.0. ' .
+        @trigger_error(sprintf('Calling '.__METHOD__.' is deprecated since version 6.9.0 and will be removed in Pimcore 10. ' .
             'Use %s service instead.', CsrfProtectionHandler::class), E_USER_DEPRECATED);
 
         $csrfCheck = $this->container->get('Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener');

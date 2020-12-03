@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\Tracking;
 
 @trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutComplete is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\Tracking\ICheckoutComplete is deprecated since version 6.0.0 and will be removed in Pimcore 10. ' .
     ' Use ' . CheckoutCompleteInterface::class . ' class instead.',
     E_USER_DEPRECATED
 );

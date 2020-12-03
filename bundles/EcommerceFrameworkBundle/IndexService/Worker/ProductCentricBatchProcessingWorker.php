@@ -48,7 +48,7 @@ abstract class ProductCentricBatchProcessingWorker extends AbstractBatchProcessi
 
         if ($workerMode == self::WORKER_MODE_LEGACY) {
             @trigger_error(
-                'Worker_mode "LEGACY" is deprecated since version 6.7.0 and will be removed in 7.0.0. Default will be "PRODUCT_CENTRIC"',
+                'Worker_mode "LEGACY" is deprecated since version 6.7.0 and will be removed in Pimcore 10. Default will be "PRODUCT_CENTRIC"',
                 E_USER_DEPRECATED
             );
         }

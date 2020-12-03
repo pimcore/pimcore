@@ -23,7 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Traits\OptionsResolverTrait;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @deprecated since version 6.7.0 and will be removed in 7.0.0.
+ * @deprecated since version 6.7.0 and will be removed in Pimcore 10.
  *
  * Default implementation for fact finder as product index backend
  *
@@ -53,7 +53,7 @@ class DefaultFactFinder extends AbstractConfig implements FactFinderConfigInterf
         array $options = []
     ) {
         @trigger_error(
-            'Class ' . self::class . ' is deprecated since version 6.7.0 and will be removed in 7.0.0.',
+            'Class ' . self::class . ' is deprecated since version 6.7.0 and will be removed in Pimcore 10.',
             E_USER_DEPRECATED
         );
 

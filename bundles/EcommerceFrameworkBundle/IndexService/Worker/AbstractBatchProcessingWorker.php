@@ -409,7 +409,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     public function processPreparationQueue($limit = 200)
     {
         @trigger_error(
-            'Method AbstractBatchProcessingWorker::processPrepartionQueue is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+            'Method AbstractBatchProcessingWorker::processPrepartionQueue is deprecated since version 6.7.0 and will be removed in Pimcore 10. ' .
             'Use ecommerce:indexservice:process-preparation-queue command instead.',
             E_USER_DEPRECATED
         );
@@ -461,7 +461,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     public function processUpdateIndexQueue($limit = 200)
     {
         @trigger_error(
-            'Method AbstractBatchProcessingWorker::processUpdateIndexQueue is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+            'Method AbstractBatchProcessingWorker::processUpdateIndexQueue is deprecated since version 6.7.0 and will be removed in Pimcore 10. ' .
             'Use ecommerce:indexservice:process-update-queue command instead.',
             E_USER_DEPRECATED
         );

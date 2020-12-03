@@ -64,7 +64,7 @@ class IndexUpdater
     public static function updateIndex($objectListClass, $condition = '', $updateIndexStructures = false, $loggername = 'indexupdater')
     {
         @trigger_error(
-            'Method IndexUpdater::updateIndex is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+            'Method IndexUpdater::updateIndex is deprecated since version 6.7.0 and will be removed in Pimcore 10. ' .
             'Use ecommerce:indexservice:bootstrap command instead.',
             E_USER_DEPRECATED
         );
@@ -126,7 +126,7 @@ class IndexUpdater
     public static function processPreparationQueue($tenants = null, $maxRounds = null, $loggername = 'indexupdater', $preparationItemsPerRound = 200, $timeout = -1)
     {
         @trigger_error(
-            'Method IndexUpdater::processPreparationQueue is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+            'Method IndexUpdater::processPreparationQueue is deprecated since version 6.7.0 and will be removed in Pimcore 10. ' .
             'Use ecommerce:indexservice:process-preparation-queue command instead.',
             E_USER_DEPRECATED
         );
@@ -195,7 +195,7 @@ class IndexUpdater
     public static function processUpdateIndexQueue($tenants = null, $maxRounds = null, $loggername = 'indexupdater', $indexItemsPerRound = 200, $timeout = -1)
     {
         @trigger_error(
-            'Method IndexUpdater::processPreparationQueue is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+            'Method IndexUpdater::processPreparationQueue is deprecated since version 6.7.0 and will be removed in Pimcore 10. ' .
             'Use ecommerce:indexservice:process-update-queue command instead.',
             E_USER_DEPRECATED
         );

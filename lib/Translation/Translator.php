@@ -138,7 +138,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
     public function transChoice($id, $number, array $parameters = [], $domain = null, $locale = null)
     {
         @trigger_error(
-            'transChoice is deprecated since version 6.0.1 and will be removed in 7.0.0. ' .
+            'transChoice is deprecated since version 6.0.1 and will be removed in Pimcore 10. ' .
             ' Use the trans() method with "%count%" parameter.',
             E_USER_DEPRECATED
         );

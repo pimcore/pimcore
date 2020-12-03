@@ -17,7 +17,7 @@ namespace Pimcore\Model\Document\Tag;
 use Pimcore\Model\Document\Editable\Relation;
 
 @trigger_error(
-    'Tag `Href` is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    'Tag `Href` is deprecated since version 6.0.0 and will be removed in Pimcore 10. ' .
     'Use `Relation` instead.',
     E_USER_DEPRECATED
 );

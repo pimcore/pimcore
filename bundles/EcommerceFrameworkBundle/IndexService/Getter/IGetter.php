@@ -15,7 +15,7 @@
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter;
 
 @trigger_error(
-    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\IGetter is deprecated since version 6.0.0 and will be removed in 7.0.0. ' .
+    'Interface Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Getter\IGetter is deprecated since version 6.0.0 and will be removed in Pimcore 10. ' .
     ' Use ' . GetterInterface::class . ' class instead.',
     E_USER_DEPRECATED
 );

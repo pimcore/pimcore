@@ -20,7 +20,7 @@ namespace Pimcore\Templating\Helper\Navigation\Exception;
 use Pimcore\Navigation\Renderer\RendererInterface;
 
 @trigger_error(
-    'Pimcore\Templating\Helper\Navigation\Exception\InvalidRendererException is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    'Pimcore\Templating\Helper\Navigation\Exception\InvalidRendererException is deprecated since version 6.8.0 and will be removed in Pimcore 10. ' .
     ' Use ' . \Pimcore\Twig\Extension\Templating\Navigation\Exception\InvalidRendererException::class . ' instead.',
     E_USER_DEPRECATED
 );

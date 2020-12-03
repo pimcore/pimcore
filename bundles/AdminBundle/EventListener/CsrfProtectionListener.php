@@ -91,7 +91,7 @@ class CsrfProtectionListener implements EventSubscriberInterface
      */
     public function checkCsrfToken(Request $request)
     {
-        @trigger_error(sprintf('Calling '.__METHOD__.' is deprecated since version 6.9.0 and will be removed in 7.0.0. ' .
+        @trigger_error(sprintf('Calling '.__METHOD__.' is deprecated since version 6.9.0 and will be removed in Pimcore 10. ' .
             'Use %s service instead.', CsrfProtectionHandler::class), E_USER_DEPRECATED);
 
         $this->csrfProtectionHandler->checkCsrfToken($request);

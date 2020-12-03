@@ -50,7 +50,7 @@ If you have custom editables or wysiwyg global config then please change namespa
 - Rules regarding default values in combination with inheritance enabled have been clarified. Read [this](../../05_Objects/01_Object_Classes/01_Data_Types/README.md#page_Default-values) for details.
 - [Ecommerce] Deprecated FactFinder integration and will be removed in Pimcore 10.
 - Saving unpublished data objects via API will not throw Validation exceptions anymore (just like Admin UI). Please set `omitMandatoryCheck` explicitly to `false` to force mandatory checks.
-- `\Pimcore\DataObject\GridColumnConfig\Operator\ObjectBrickGetter` operator is deprecated and will be removed in 7.0.0
+- `\Pimcore\DataObject\GridColumnConfig\Operator\ObjectBrickGetter` operator is deprecated and will be removed in Pimcore 10
 - Calling `Pimcore\Model\DataObject\ClassDefinition\Data::isEqual()` is deprecated since version 6.7.0 and will be removed in version 7 . Implement `\Pimcore\Model\DataObject\ClassDefinition\Data\EqualComparisonInterface` instead.
 - Following properties and methods are deprecated to unify document editables and will be removed in 7. [#6900](https://github.com/pimcore/pimcore/pull/6900):
     - `PageSnippet::$elements`. Use `PageSnippet::$editables` instead.
