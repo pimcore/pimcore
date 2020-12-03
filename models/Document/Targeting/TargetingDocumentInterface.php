@@ -19,10 +19,10 @@ namespace Pimcore\Model\Document\Targeting;
 
 /**
  *
- * @method string getTargetGroupEditablePrefix(int $targetGroupId) - not implementing it is deprecated since v6.7 and will throw exception in 7.
- * @method string getTargetGroupEditableName(int $targetGroupId = null) - not implementing it is deprecated since v6.7 and will throw exception in 7.
- * @method bool hasTargetGroupSpecificEditables() - not implementing it is deprecated since v6.7 and will throw exception in 7.
- * @method array getTargetGroupSpecificEditableNames() - not implementing it is deprecated since v6.7 and will throw exception in 7.
+ * @method string getTargetGroupEditablePrefix(int $targetGroupId) - not implementing it is deprecated since v6.7 and will throw exception in Pimcore 10.
+ * @method string getTargetGroupEditableName(int $targetGroupId = null) - not implementing it is deprecated since v6.7 and will throw exception in Pimcore 10.
+ * @method bool hasTargetGroupSpecificEditables() - not implementing it is deprecated since v6.7 and will throw exception in Pimcore 10.
+ * @method array getTargetGroupSpecificEditableNames() - not implementing it is deprecated since v6.7 and will throw exception in Pimcore 10.
  */
 interface TargetingDocumentInterface
 {
