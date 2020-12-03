@@ -71,10 +71,6 @@ class CacheExtension extends AbstractExtension
         $this->key = 'pimcore_viewcache_' . $name;
         $this->force = $force;
 
-        if (Tool\Frontend::hasWebpSupport()) {
-            $this->key .= 'webp';
-        }
-
         if (!$lifetime) {
             $lifetime = null;
         }
