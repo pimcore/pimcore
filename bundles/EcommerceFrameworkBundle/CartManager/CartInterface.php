@@ -54,7 +54,7 @@ interface CartInterface
      *
      * @return bool
      *
-     * @deprecated use checkout implementation V7 instead
+     * @deprecated use checkout implementation Pimcore 10 instead
      *
      */
     public function isCartReadOnly();

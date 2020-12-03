@@ -420,7 +420,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @internal trigger deprecation error when a relation is passed multiple times, remove in Pimcore 7
+     * @internal trigger deprecation error when a relation is passed multiple times, remove in Pimcore 10
      *
      * @param array|null $data
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $container

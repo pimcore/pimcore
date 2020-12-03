@@ -131,7 +131,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @deprecated use checkout implementation V7 instead
+     * @deprecated use checkout implementation Pimcore 10 instead
      *
      * @return bool
      */
@@ -151,7 +151,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     abstract protected function getCartCheckoutDataClassName();
 
     /**
-     * @deprecated use checkout implementation V7 instead
+     * @deprecated use checkout implementation Pimcore 10 instead
      */
     protected function setIgnoreReadonly()
     {
@@ -159,7 +159,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
     }
 
     /**
-     * @deprecated use checkout implementation V7 instead
+     * @deprecated use checkout implementation Pimcore 10 instead
      */
     protected function unsetIgnoreReadonly()
     {
@@ -171,7 +171,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      *
      * @throws InvalidConfigException
      *
-     * @deprecated use checkout implementation V7 instead
+     * @deprecated use checkout implementation Pimcore 10 instead
      */
     public function isCartReadOnly()
     {
@@ -197,7 +197,7 @@ abstract class AbstractCart extends AbstractModel implements CartInterface
      *
      * @throws \Exception
      *
-     * @deprecated use checkout implementation V7 instead
+     * @deprecated use checkout implementation Pimcore 10 instead
      */
     protected function checkCartIsReadOnly()
     {
