@@ -142,8 +142,6 @@ class AbstractProduct extends \Pimcore\Model\DataObject\Concrete implements Prod
      * there should either be a attribute in pro product object or
      * it should be overwritten in mapped sub classes of product classes
      *
-     * @throws UnsupportedException
-     *
      * @return string
      */
     public function getAvailabilitySystemName()
