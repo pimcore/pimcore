@@ -1668,7 +1668,7 @@ abstract class Data
     }
 
     /**
-     * @param LazyLoadingInterface $object
+     * @param DataObject\Concrete $object
      */
     public function markLazyloadedFieldAsLoaded($object)
     {
