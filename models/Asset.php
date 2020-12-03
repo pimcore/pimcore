@@ -1837,7 +1837,7 @@ class Asset extends Element\AbstractElement
             }
         }
 
-        return $metaData;
+        return $result;
     }
 
     /**
