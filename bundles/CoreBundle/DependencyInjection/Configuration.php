@@ -1655,9 +1655,22 @@ class Configuration implements ConfigurationInterface
                                                                      ->prototype('variable')->end()
                                                                 ->end()
                                                             ->end()
-
                                                         ->end()
                                                     ->end()
+
+                                                    ->arrayNode('customHtml')
+                                                        ->children()
+                                                            ->enumNode('position')
+                                                                ->values(['top','center','bottom'])
+                                                                ->info('Set position of custom HTML inside modal (top, center, bottom).')
+                                                            ->end()
+                                                            ->scalarNode('service')
+                                                                ->cannotBeEmpty()
+                                                                ->info('Define a custom service for rendering custom HTML within the note modal.')
+                                                            ->end()
+                                                        ->end()
+                                                    ->end()
+
                                                 ->end()
                                                 ->info('See notes section of transitions. It works exactly the same way.')
                                             ->end()

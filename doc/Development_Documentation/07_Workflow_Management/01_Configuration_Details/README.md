@@ -307,4 +307,13 @@ pimcore:
                                 required:             false
                                 setterFn:             ~
                                 fieldTypeSettings:    []
+                                
+                        # Configure the output of custom HTML for a transition.
+                        customHtml:
+                        
+                            # Define a custom service for rendering custom HTML within the note modal.
+                            service: 'AppBundle\Service\Workflow\CustomHtmlService'
+                            
+                            # Set position of custom HTML inside modal (top, center, bottom; default=top).
+                            position: 'top'                                
 ```

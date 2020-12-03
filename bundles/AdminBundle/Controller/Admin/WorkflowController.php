@@ -284,16 +284,30 @@ class WorkflowController extends AdminController implements KernelControllerEven
      *
      * @param Request $request
      * @param Registry $workflowRegistry
+     * @param Manager $manager
      *
      * @return Response
      *
      * @throws \Exception
      */
-    public function getModalCustomHtml(Request $request, Registry $workflowRegistry) {
+    public function getModalCustomHtml(Request $request, Registry $workflowRegistry, Manager $manager) {
 
         $workflow = $workflowRegistry->get($this->element, $request->get('workflowName'));
 
-        if ($workflow->can($this->element, $request->get('transition'))) {
+        if ($request->get('isGlobalAction') == 'true') {
+            $globalAction = $manager->getGlobalAction($workflow->getName(), $request->get('transition'));
+
+            if ($globalAction) {
+                $customHtmlService = $globalAction->getCustomHtmlService();
+                $data = [
+                    'success' => true,
+                    'position' => $customHtmlService ? $customHtmlService->getPosition() : null,
+                    'customHtml' => $customHtmlService ? $customHtmlService->renderHtml() : ''
+                ];
+                return new JsonResponse($data);
+            }
+
+        } elseif ($workflow->can($this->element, $request->get('transition'))) {
 
             $enabledTransitions = $workflow->getEnabledTransitions($this->element);
             $transition = null;
@@ -309,8 +323,8 @@ class WorkflowController extends AdminController implements KernelControllerEven
 
                 $data = [
                     'success' => true,
-                    'position' => 'center',
-                    'customHtml' => $customHtmlService->renderHtml($workflow, $transition, $this->element)
+                    'position' => $customHtmlService ? $customHtmlService->getPosition() : null,
+                    'customHtml' => $customHtmlService ? $customHtmlService->renderHtml() : ''
                 ];
 
                 return new JsonResponse($data);

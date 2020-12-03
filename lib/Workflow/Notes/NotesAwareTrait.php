@@ -63,10 +63,9 @@ trait NotesAwareTrait
         return $this->options['notes']['additionalFields'] ?? [];
     }
 
-    public function setCustomHtmlService(CustomHtmlServiceInterface $customHtmlService) {
+    public function setCustomHtmlService($customHtmlService) {
         $this->customHtmlService = $customHtmlService;
     }
-
 
     public function getCustomHtmlService() : ?CustomHtmlServiceInterface {
         return $this->customHtmlService;

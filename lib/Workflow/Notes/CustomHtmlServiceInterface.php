@@ -14,19 +14,10 @@
 
 namespace Pimcore\Workflow\Notes;
 
-use Pimcore\Model\Element\ElementInterface;
-use Pimcore\Model\Workflow;
-use Pimcore\Workflow\Transition;
-use Symfony\Component\Workflow\WorkflowInterface;
-
 interface CustomHtmlServiceInterface
 {
-    public function renderHtml(WorkflowInterface $workflow, Transition $transition, ElementInterface $element) : string;
+    public function renderHtml() : string;
 
-   // public function renderHtmlTop(): string;
-
-   // public function renderHtmlCenter(): string;
-
-  //  public function renderHtmlBottom(): string;
+    public function getPosition() : string;
 
 }

@@ -350,8 +350,7 @@ pimcore.workflow.transitionPanel = Class.create({
     loadCustomHtml: function() {
 
         var formvars = this.getWorkflowFormPanelValues();
-
-        //this.transitionConfig.isGlobalAction
+        formvars['isGlobalAction'] = this.transitionConfig.isGlobalAction;
 
         //send a request to the server with the current form data
         Ext.Ajax.request({
