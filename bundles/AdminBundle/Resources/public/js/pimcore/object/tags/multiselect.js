@@ -37,7 +37,7 @@ pimcore.object.tags.multiselect = Class.create(pimcore.object.tags.abstract, {
             getEditor:this.getWindowCellEditor.bind(this, field),
             renderer: function (key, displayValues, value, metaData, record) {
                 try {
-                    if(record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
+                    if(record.data.inheritedFields && record.data.inheritedFields[key] && record.data.inheritedFields[key].inherited == true) {
                         metaData.tdCls += " grid_value_inherited";
                     }
                 } catch (e) {
