@@ -14,6 +14,8 @@
 
 namespace Pimcore\Workflow\Notes;
 
+use Pimcore\Model\Element\ElementInterface;
+
 abstract class AbstractCustomHtmlService implements CustomHtmlServiceInterface
 {
     protected $transitionName = "";
@@ -32,10 +34,17 @@ abstract class AbstractCustomHtmlService implements CustomHtmlServiceInterface
         $this->position = $position;
     }
 
+    public function renderHtmlForRequestedPosition(ElementInterface $element, string $requestedPosition) : string {
+        if ($this->getPosition() === $requestedPosition) {
+            return $this->renderHtml($element);
+        }
+        return "";
+    }
+
     /**
      * @return string
      */
-    public function getTransitionName(): string
+    public final function getTransitionName(): string
     {
         return $this->transitionName;
     }
@@ -43,7 +52,7 @@ abstract class AbstractCustomHtmlService implements CustomHtmlServiceInterface
     /**
      * @return string
      */
-    public function getActionName(): string
+    public final function getActionName(): string
     {
         return $this->actionName;
     }
@@ -51,7 +60,7 @@ abstract class AbstractCustomHtmlService implements CustomHtmlServiceInterface
     /**
      * @return bool
      */
-    public function isGlobalAction(): bool
+    public final function isGlobalAction(): bool
     {
         return $this->isGlobalAction;
     }
@@ -59,8 +68,9 @@ abstract class AbstractCustomHtmlService implements CustomHtmlServiceInterface
     /**
      * @return string
      */
-    public function getPosition(): string
+    public final function getPosition(): string
     {
         return $this->position;
     }
+
 }

@@ -325,20 +325,15 @@ class WorkflowController extends AdminController implements KernelControllerEven
     }
 
     private function customHtmlResponse(CustomHtmlServiceInterface $customHtmlService = null) : JsonResponse {
-
         $data = [
             'success' => true,
-            'customHtml' => [
-                'top' => '',
-                'center' => '',
-                'bottom' => ''
-            ]
+            'customHtml' => []
         ];
 
         if ($customHtmlService) {
-            $position = $customHtmlService->getPosition();
-            $customHtml = $customHtmlService->renderHtml();
-            $data['customHtml'][$position] = $customHtml;
+            foreach (['top', 'center', 'bottom'] as $position) {
+                $data['customHtml'][$position] = $customHtmlService->renderHtmlForRequestedPosition($this->element, $position);
+            }
         }
 
         return new JsonResponse($data);
