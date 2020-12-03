@@ -132,8 +132,8 @@ Following elements are configured:
 * **Cart factory service ID**: builds carts when needed and can be configured with cart class name and further options varying
   by factory implementation
   * Factory option `cart_readonly_mode`, possible values are:
-     * `deactivated`: Cart is never read only (will be default value with Pimcore 7), details see also [Payment Integration](./13_Checkout_Manager/07_Integrating_Payment.md).
-     * `strict` (default value, deprecated, will be removed in Pimcore 7): Cart is read only as soon as payment is pending.  
+     * `deactivated`: Cart is never read only (will be default value with Pimcore 10), details see also [Payment Integration](./13_Checkout_Manager/07_Integrating_Payment.md).
+     * `strict` (default value, deprecated, will be removed in Pimcore 10): Cart is read only as soon as payment is pending.  
 * **Price calculator factory service ID + options and modificators**: The price calculator is a framework for calculation
   and modification (shipping costs, discounts, ...) of prices on cart level. Each modification is implemented in a 
   [`CartPriceModificatorInterface` class](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/CartManager/CartPriceModificator/CartPriceModificatorInterface.php). 

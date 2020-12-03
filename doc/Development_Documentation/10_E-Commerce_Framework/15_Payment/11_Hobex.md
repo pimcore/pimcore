@@ -43,7 +43,7 @@ pimcore_ecommerce_framework:
             default: ~                              
 ```
 
-Hobex is compatible with Pimcore V7, so for Pimcore 6 you may have to add the following line to your config.yml:
+Hobex is compatible with Pimcore 10, so for Pimcore 6 you may have to add the following line to your config.yml:
 ```yml
     - { resource: '@PimcoreEcommerceFrameworkBundle/Resources/config/v7_configurations.yml' }
 ```

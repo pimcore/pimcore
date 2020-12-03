@@ -18,7 +18,7 @@
 namespace Pimcore\Model\Version;
 
 @trigger_error(
-    'Pimcore\Model\Version\ElementDescriptor is deprecated since version 6.6.2 and will be removed in 7.0.0. ' .
+    'Pimcore\Model\Version\ElementDescriptor is deprecated since version 6.6.2 and will be removed in Pimcore 10. ' .
     ' Use ' . \Pimcore\Model\Element\ElementDescriptor::class . ' instead.',
     E_USER_DEPRECATED
 );

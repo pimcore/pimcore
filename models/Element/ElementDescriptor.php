@@ -87,5 +87,5 @@ class ElementDescriptor
     }
 }
 
-//TODO: remove in Pimcore 7
+//TODO: remove in Pimcore 10
 class_alias(ElementDescriptor::class, 'Pimcore\Model\Version\ElementDescriptor');

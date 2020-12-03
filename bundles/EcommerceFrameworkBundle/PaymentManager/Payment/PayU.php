@@ -31,7 +31,7 @@ use Pimcore\Model\DataObject\OnlineShopOrderItem;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-payu" in Pimcore 7.
+ * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-payu" in Pimcore 10.
  */
 class PayU extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {

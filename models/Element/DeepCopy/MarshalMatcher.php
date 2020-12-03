@@ -61,5 +61,5 @@ class MarshalMatcher extends TypeMatcher
     }
 }
 
-//TODO: remove in Pimcore 7
+//TODO: remove in Pimcore 10
 class_alias(MarshalMatcher::class, 'Pimcore\Model\Version\MarshalMatcher');

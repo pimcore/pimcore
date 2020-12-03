@@ -108,9 +108,9 @@ abstract class AbstractConfig implements ConfigInterface
 
     /**
      * Sets attribute factory as dependency. This was added as setter for BC reasons and will be added to the constructor
-     * signature in Pimcore 7.
+     * signature in Pimcore 10.
      *
-     * TODO Pimcore 7 add to constructor signature.
+     * TODO Pimcore 10 add to constructor signature.
      *
      * @required
      *
@@ -229,7 +229,7 @@ abstract class AbstractConfig implements ConfigInterface
      */
     public function getAttributes(): array
     {
-        // TODO Pimcore 7 remove as soon as attribute factory was added to the constructor.
+        // TODO Pimcore 10 remove as soon as attribute factory was added to the constructor.
         if (null === $this->attributes) {
             throw new \RuntimeException('Attributes are not built yet. Is the service properly configured to set an attribute factory?');
         }
@@ -244,7 +244,7 @@ abstract class AbstractConfig implements ConfigInterface
      */
     public function getSearchAttributes(): array
     {
-        // TODO Pimcore 7 remove as soon as attribute factory was added to the constructor.
+        // TODO Pimcore 10 remove as soon as attribute factory was added to the constructor.
         if (null === $this->attributes) {
             throw new \RuntimeException('Search attributes are not built yet. Is the service properly configured to set an attribute factory?');
         }

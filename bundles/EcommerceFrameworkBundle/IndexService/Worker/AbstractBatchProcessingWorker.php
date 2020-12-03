@@ -31,8 +31,8 @@ use Pimcore\Model\DataObject\Localizedfield;
  *
  * @property AbstractConfig $tenantConfig
  *
- * @deprecated will be removed in Pimcore 7.0 use ProductCentricBatchProcessing instead
- * @TODO Pimcore 7 - remove this
+ * @deprecated will be removed in Pimcore 10.0 use ProductCentricBatchProcessing instead
+ * @TODO Pimcore 10 - remove this
  */
 abstract class AbstractBatchProcessingWorker extends AbstractWorker implements BatchProcessingWorkerInterface
 {
@@ -396,8 +396,8 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     }
 
     /**
-     * @deprecated will be removed in Pimcore 7.0
-     * @TODO Pimcore 7 - remove this
+     * @deprecated will be removed in Pimcore 10.0
+     * @TODO Pimcore 10 - remove this
      *
      * processes elements in the queue for preparation of index data
      * can be run in parallel since each thread marks the entries it is working on and only processes these entries
@@ -409,7 +409,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     public function processPreparationQueue($limit = 200)
     {
         @trigger_error(
-            'Method AbstractBatchProcessingWorker::processPrepartionQueue is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+            'Method AbstractBatchProcessingWorker::processPrepartionQueue is deprecated since version 6.7.0 and will be removed in Pimcore 10. ' .
             'Use ecommerce:indexservice:process-preparation-queue command instead.',
             E_USER_DEPRECATED
         );
@@ -448,8 +448,8 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     }
 
     /**
-     * @deprecated will be removed in Pimcore 7.0
-     * @TODO Pimcore 7 - remove this
+     * @deprecated will be removed in Pimcore 10.0
+     * @TODO Pimcore 10 - remove this
      *
      * processes the update index queue - updates all elements where current_crc != index_crc
      * can be run in parallel since each thread marks the entries it is working on and only processes these entries
@@ -461,7 +461,7 @@ abstract class AbstractBatchProcessingWorker extends AbstractWorker implements B
     public function processUpdateIndexQueue($limit = 200)
     {
         @trigger_error(
-            'Method AbstractBatchProcessingWorker::processUpdateIndexQueue is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+            'Method AbstractBatchProcessingWorker::processUpdateIndexQueue is deprecated since version 6.7.0 and will be removed in Pimcore 10. ' .
             'Use ecommerce:indexservice:process-update-queue command instead.',
             E_USER_DEPRECATED
         );

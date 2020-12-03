@@ -69,7 +69,7 @@ class ProcessQueueCommand extends AbstractIndexServiceCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         @trigger_error(
-            'Command ProcessQueueCommand is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+            'Command ProcessQueueCommand is deprecated since version 6.7.0 and will be removed in Pimcore 10. ' .
             'Use ecommerce:indexservice:process-preparation-queue or ecommerce:indexservice:process-update-queue instead.',
             E_USER_DEPRECATED
         );

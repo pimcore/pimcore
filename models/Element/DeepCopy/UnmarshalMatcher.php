@@ -30,5 +30,5 @@ class UnmarshalMatcher extends TypeMatcher
     }
 }
 
-//TODO: remove in Pimcore 7
+//TODO: remove in Pimcore 10
 class_alias(UnmarshalMatcher::class, 'Pimcore\Model\Version\UnmarshalMatcher');

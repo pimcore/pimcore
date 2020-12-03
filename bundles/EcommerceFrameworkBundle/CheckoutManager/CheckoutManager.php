@@ -122,7 +122,7 @@ class CheckoutManager implements CheckoutManagerInterface
         PaymentInterface $paymentProvider = null
     ) {
         @trigger_error(
-            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in 7.0.0. ' .
+            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in Pimcore 10. ' .
             ' Use ' . \Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\CheckoutManager::class . ' class instead.',
             E_USER_DEPRECATED
         );

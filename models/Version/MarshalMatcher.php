@@ -18,7 +18,7 @@
 namespace Pimcore\Model\Version;
 
 @trigger_error(
-    'Pimcore\Model\Version\MarshalMatcher is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    'Pimcore\Model\Version\MarshalMatcher is deprecated since version 6.8.0 and will be removed in Pimcore 10. ' .
     ' Use ' . \Pimcore\Model\Element\DeepCopy\MarshalMatcher::class . ' instead.',
     E_USER_DEPRECATED
 );

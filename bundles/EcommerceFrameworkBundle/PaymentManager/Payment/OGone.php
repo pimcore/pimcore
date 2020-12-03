@@ -39,7 +39,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  *
  * @package Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment
  *
- * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-ogone" in Pimcore 7.
+ * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-ogone" in Pimcore 10.
  */
 class OGone extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {

@@ -355,5 +355,5 @@ pimcore.object.classes.data.manyToOneRelation = Class.create(pimcore.object.clas
 
 });
 
-// @TODO BC layer, to be removed in v7.0
+// @TODO BC layer, to be removed in Pimcore 10
 pimcore.object.classes.data.href = pimcore.object.classes.data.manyToOneRelation;

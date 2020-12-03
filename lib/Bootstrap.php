@@ -160,7 +160,7 @@ class Bootstrap
     }
 
     /**
-     * @deprecated 7.0.0 Typo in name; use Bootstrap::bootstrap() instead
+     * @deprecated Pimcore 10 Typo in name; use Bootstrap::bootstrap() instead
      * @see Bootstrap::bootstrap()
      */
     public static function boostrap()
