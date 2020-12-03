@@ -384,8 +384,6 @@ class Agent implements OrderAgentInterface
      * @param string $paymentState
      *
      * @return PaymentInfo
-     *
-     * @throws UnsupportedException
      */
     protected function createNewOrderInformation(Order $order, string $paymentState)
     {
@@ -506,8 +504,6 @@ class Agent implements OrderAgentInterface
      *  - all product numbers
      *
      * @return int
-     *
-     * @throws UnsupportedException
      */
     protected function getFingerprintOfOrder()
     {

@@ -17,7 +17,6 @@ namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\CartItemInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\EnvironmentInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Exception\UnsupportedException;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrderItem;
@@ -297,7 +296,6 @@ class OrderManager implements OrderManagerInterface
      * @return AbstractOrder
      *
      * @throws \Exception
-     * @throws UnsupportedException
      *
      */
     public function getOrCreateOrderFromCart(CartInterface $cart)
@@ -386,20 +384,11 @@ class OrderManager implements OrderManagerInterface
     protected function cleanupZombieOrderItems(AbstractOrder $order)
     {
         $validItemIds = [];
-        try {
-            foreach ($order->getItems() ?: [] as $item) {
-                $validItemIds[] = $item->getId();
-            }
-        } catch (UnsupportedException $e) {
-            Logger::info('getItems not implemented for ' . get_class($order));
+        foreach ($order->getItems() ?: [] as $item) {
+            $validItemIds[] = $item->getId();
         }
-
-        try {
-            foreach ($order->getGiftItems() ?: [] as $giftItem) {
-                $validItemIds[] = $giftItem->getId();
-            }
-        } catch (UnsupportedException $e) {
-            Logger::info('getGiftItems not implemented for ' . get_class($order));
+        foreach ($order->getGiftItems() ?: [] as $giftItem) {
+            $validItemIds[] = $giftItem->getId();
         }
 
         $orderItemChildren = $order->getChildren();
@@ -494,8 +483,6 @@ class OrderManager implements OrderManagerInterface
      * @param AbstractOrder $order
      *
      * @return AbstractOrder
-     *
-     * @throws UnsupportedException
      */
     protected function setCurrentCustomerToOrder(AbstractOrder $order)
     {

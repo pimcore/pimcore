@@ -61,8 +61,6 @@ class AbstractOfferToolProduct extends \Pimcore\Model\DataObject\Concrete implem
      * defines the name of the availability system for this product.
      * for offline tool there are no availability systems implemented
      *
-     * @throws UnsupportedException
-     *
      * @return string
      */
     public function getAvailabilitySystemName()

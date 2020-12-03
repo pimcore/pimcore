@@ -296,10 +296,6 @@ class FullPageCacheListener
             }
         }
 
-        if (Tool\Frontend::hasWebpSupport()) {
-            $appendKey .= 'webp';
-        }
-
         if ($request->isXmlHttpRequest()) {
             $appendKey .= 'xhr';
         }

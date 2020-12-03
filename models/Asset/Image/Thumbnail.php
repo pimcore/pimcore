@@ -143,10 +143,6 @@ class Thumbnail
     }
 
     /**
-     * Get the public path to the thumbnail image.
-     * This method is here for backwards compatility.
-     * Up to Pimcore 1.4.8 a thumbnail was returned as a path to an image.
-     *
      * @return string Public path to thumbnail image.
      */
     public function __toString()
@@ -170,56 +166,30 @@ class Thumbnail
         return $path;
     }
 
-    /**
-     * Get generated HTML for displaying the thumbnail image in a HTML document. (XHTML compatible).
-     * Attributes can be added as a parameter. Attributes containing illegal characters are ignored.
-     * Width and Height attribute can be overridden. SRC-attribute not.
-     * Values of attributes are escaped.
-     *
-     * @param array $options Custom configurations and HTML attributes.
-     * @param array $removeAttributes Listof key-value pairs of HTML attributes that should be removed
-     *
-     * @return string IMG-element with at least the attributes src, width, height, alt.
-     */
-    public function getHtml($options = [], $removeAttributes = [])
+    protected function getImageTag(array $options = [])
     {
         /** @var Image $image */
         $image = $this->getAsset();
-        $attributes = [];
-        $pictureAttribs = $options['pictureAttributes'] ?? []; // this is used for the html5 <picture> element
+        $attributes = $options['imgAttributes'] ?? [];
+        $callback = $options['imgCallback'] ?? null;
 
-        // re-add support for disableWidthHeightAttributes
-        if (isset($options['disableWidthHeightAttributes']) && $options['disableWidthHeightAttributes']) {
-            // make sure the attributes are removed
-            $removeAttributes = array_merge($removeAttributes, ['width', 'height']);
+        if(isset($options['previewDataUri'])) {
+            $attributes['src'] = $options['previewDataUri'];
         } else {
-            if ($this->getWidth()) {
-                $attributes['width'] = $this->getWidth();
-            }
-
-            if ($this->getHeight()) {
-                $attributes['height'] = $this->getHeight();
-            }
+            $path = $this->getPath(true);
+            $attributes['src'] = $this->addCacheBuster($path, $options, $image);
         }
 
-        $w3cImgAttributes = ['alt', 'align', 'border', 'height', 'hspace', 'ismap', 'longdesc', 'usemap',
-            'vspace', 'width', 'class', 'dir', 'id', 'lang', 'style', 'title', 'xml:lang', 'onmouseover',
-            'onabort', 'onclick', 'ondblclick', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseup',
-            'onkeydown', 'onkeypress', 'onkeyup', 'itemprop', 'itemscope', 'itemtype', 'loading', ];
-
-        $customAttributes = [];
-        if (isset($options['attributes']) && is_array($options['attributes'])) {
-            $customAttributes = $options['attributes'];
+        if ($this->getWidth()) {
+            $attributes['width'] = $this->getWidth();
         }
 
-        $altText = '';
-        $titleText = '';
-        if (isset($options['alt'])) {
-            $altText = $options['alt'];
+        if ($this->getHeight()) {
+            $attributes['height'] = $this->getHeight();
         }
-        if (isset($options['title'])) {
-            $titleText = $options['title'];
-        }
+
+        $altText = $attributes['alt'] ?? '';
+        $titleText = $attributes['title'] ?? '';
 
         if (empty($titleText) && (!isset($options['disableAutoTitle']) || !$options['disableAutoTitle'])) {
             if ($image->getMetadata('title')) {
@@ -249,142 +219,119 @@ class Thumbnail
             $titleText .= ('© ' . $image->getMetadata('copyright'));
         }
 
-        $options['alt'] = $altText;
+        $attributes['alt'] = $altText;
         if (!empty($titleText)) {
-            $options['title'] = $titleText;
+            $attributes['title'] = $titleText;
         }
 
-        $attributesRaw = array_merge($options, $customAttributes);
+        $attributes['loading'] = 'lazy';
 
-        foreach ($attributesRaw as $key => $value) {
-            if (!(is_string($value) || is_numeric($value) || is_bool($value))) {
-                continue;
-            }
-
-            if (!(in_array($key, $w3cImgAttributes) || isset($customAttributes[$key]) || strpos($key, 'data-') === 0)) {
-                continue;
-            }
-
-            //only include attributes with characters a-z and dashes in their name.
-            if (preg_match('/^[a-z-]+$/i', $key)) {
-                $attributes[$key] = $value;
-
-                // some attributes need to be added also as data- attribute, this is specific to picturePolyfill
-                if (in_array($key, ['alt'])) {
-                    $pictureAttribs['data-' . $key] = $value;
-                }
-            }
+        if($callback) {
+            $attributes = $callback($attributes);
         }
 
-        $path = $this->getPath(true);
-        $attributes['src'] = $this->addCacheBuster($path, $options, $image);
+        $htmlImgTag = '';
+        if(!empty($attributes)) {
+            $htmlImgTag = '<img ' . array_to_html_attribute_string($attributes) . ' />';
+        }
 
+        return $htmlImgTag;
+    }
+
+    /**
+     * Get generated HTML for displaying the thumbnail image in a HTML document. (XHTML compatible).
+     * Attributes can be added as a parameter. Attributes containing illegal characters are ignored.
+     * Width and Height attribute can be overridden. SRC-attribute not.
+     * Values of attributes are escaped.
+     *
+     * @param array $options Custom configurations and HTML attributes.
+     *
+     * @return string IMG-element with at least the attributes src, width, height, alt.
+     */
+    public function getHtml($options = [])
+    {
+        /** @var Image $image */
+        $image = $this->getAsset();
         $thumbConfig = $this->getConfig();
 
-        if ($this->getConfig() && !$this->getConfig()->hasMedias() && !$this->useOriginalFile($path)) {
-            // generate the srcset
-            $srcSetValues = [];
-            foreach ([1, 2] as $highRes) {
-                $thumbConfigRes = clone $thumbConfig;
-                $thumbConfigRes->setHighResolution($highRes);
-                $srcsetEntry = $image->getThumbnail($thumbConfigRes, true) . ' ' . $highRes . 'x';
-                $srcSetValues[] = $this->addCacheBuster($srcsetEntry, $options, $image);
-            }
-            $attributes['srcset'] = implode(', ', $srcSetValues);
-        }
+        $pictureTagAttributes = $options['pictureAttributes'] ?? []; // this is used for the html5 <picture> element
 
-        foreach ($removeAttributes as $attribute) {
-            unset($attributes[$attribute]);
-            unset($pictureAttribs[$attribute]);
-        }
-
-        $isLowQualityPreview = false;
+        $previewDataUri = null;
         if ((isset($options['lowQualityPlaceholder']) && $options['lowQualityPlaceholder']) && !Tool::isFrontendRequestByAdmin()) {
-            $previewDataUri = $this->getAsset()->getLowQualityPreviewDataUri();
+            $previewDataUri = $image->getLowQualityPreviewDataUri();
             if (!$previewDataUri) {
                 // use a 1x1 transparent GIF as a fallback if no LQIP exists
                 $previewDataUri = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
             }
 
-            $isLowQualityPreview = true;
-            $attributes['data-src'] = $attributes['src'];
-            if (isset($attributes['srcset'])) {
-                $attributes['data-srcset'] = $attributes['srcset'];
-            }
-            $attributes['src'] = $previewDataUri;
-            unset($attributes['srcset']);
+            // this gets used in getImagTag() later
+            $options['previewDataUri'] = $previewDataUri;
         }
 
-        // build html tag
-        $htmlImgTag = '<img ' . array_to_html_attribute_string($attributes) . ' />';
+        $isAutoFormat = strtolower($this->getConfig()->getFormat()) === 'source';
 
-        // $this->getConfig() can be empty, the original image is returned
-        if ($this->getConfig() && ($this->getConfig()->hasMedias() || $this->getConfig()->getForcePictureTag())) {
-            // output the <picture> - element
-            $config = \Pimcore\Config::getSystemConfiguration('assets');
-            $isWebPAutoSupport = $config['image']['thumbnails']['webp_auto_support'] ?? false;
-            $isAutoFormat = ($isWebPAutoSupport && strtolower($this->getConfig()->getFormat()) === 'source') ? true : false;
-            $webpSupportBackup = null;
+        if ($isAutoFormat) {
+            // ensure the default image is not WebP
+            $this->filesystemPath = null;
+        }
 
-            if ($isAutoFormat) {
-                $webpSupportBackup = Image\Thumbnail\Processor::setHasWebpSupport(false);
-                // ensure the default image is not WebP
-                $this->filesystemPath = null;
-                $path = $this->getPath(true);
-            }
+        $pictureCallback = $options['pictureCallback'] ?? null;
+        if($pictureCallback) {
+            $pictureTagAttributes = $pictureCallback($pictureTagAttributes);
+        }
 
-            $html = '<picture ' . array_to_html_attribute_string($pictureAttribs) . ' data-default-src="' . $this->addCacheBuster($path, $options, $image) . '">' . "\n";
-            $mediaConfigs = $thumbConfig->getMedias();
+        $html = '<picture ' . array_to_html_attribute_string($pictureTagAttributes) . '>' . "\n";
+        $mediaConfigs = $thumbConfig->getMedias();
 
-            // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
-            ksort($mediaConfigs, SORT_NUMERIC);
-            array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
+        // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
+        ksort($mediaConfigs, SORT_NUMERIC);
+        array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
 
-            foreach ($mediaConfigs as $mediaQuery => $config) {
-                $srcSetValues = [];
-                $sourceTagAttributes = [];
-                $thumb = null;
+        foreach ($mediaConfigs as $mediaQuery => $config) {
+            $srcSetValues = [];
+            $sourceTagAttributes = [];
+            $thumb = null;
 
-                foreach ([1, 2] as $highRes) {
-                    $thumbConfigRes = clone $thumbConfig;
-                    $thumbConfigRes->selectMedia($mediaQuery);
-                    $thumbConfigRes->setHighResolution($highRes);
-                    $thumb = $image->getThumbnail($thumbConfigRes, true);
-                    $srcSetValues[] = $this->addCacheBuster($thumb . ' ' . $highRes . 'x', $options, $image);
+            foreach ([1, 2] as $highRes) {
+                $thumbConfigRes = clone $thumbConfig;
+                $thumbConfigRes->selectMedia($mediaQuery);
+                $thumbConfigRes->setHighResolution($highRes);
+                $thumb = $image->getThumbnail($thumbConfigRes, true);
 
-                    if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
-                        break;
-                    }
+                $descriptor = $highRes . 'x';
+                $srcSetValues[] = $this->addCacheBuster($thumb . ' ' . $descriptor, $options, $image);
 
-                    if ($isAutoFormat) {
-                        $thumbConfigWebP = clone $thumbConfigRes;
-                        $thumbConfigWebP->setFormat('webp');
-                        $image->getThumbnail($thumbConfigWebP, true)->getPath();
-                    }
+                if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
+                    break;
                 }
 
-                if ($thumb) {
-                    $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
-                    if ($mediaQuery) {
-                        if (preg_match('/^[\d]+w$/', $mediaQuery)) {
-                            // we replace the width indicator (400w) out of the name and build a proper media query for max width
-                            $maxWidth = str_replace('w', '', $mediaQuery);
-                            $sourceTagAttributes['media'] = '(max-width: ' . $maxWidth . 'px)';
-                        } else {
-                            // new style custom media queries
-                            $sourceTagAttributes['media'] = $mediaQuery;
-                        }
+                if ($isAutoFormat) {
+                    $thumbConfigWebP = clone $thumbConfigRes;
+                    $thumbConfigWebP->setFormat('webp');
+                    $image->getThumbnail($thumbConfigWebP, true)->getPath();
+                }
+            }
 
-                        $thumb->reset();
-                    }
+            if ($thumb) {
+                $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
+                if ($mediaQuery) {
+                    $sourceTagAttributes['media'] = $mediaQuery;
+                    $thumb->reset();
+                }
 
-                    if ($isLowQualityPreview) {
-                        $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
-                        unset($sourceTagAttributes['srcset']);
-                    }
+                if ($previewDataUri) {
+                    $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
+                    unset($sourceTagAttributes['srcset']);
+                }
 
-                    $sourceTagAttributes['type'] = $thumb->getMimeType();
+                $sourceTagAttributes['type'] = $thumb->getMimeType();
 
+                $sourceCallback = $options['sourceCallback'] ?? null;
+                if($sourceCallback) {
+                    $sourceTagAttributes = $sourceCallback($sourceTagAttributes);
+                }
+
+                if(!empty($sourceTagAttributes)) {
                     $sourceHtml = '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
                     if ($isAutoFormat) {
                         $sourceHtmlWebP = preg_replace(['@(\.)(jpg|png)( \dx)@', '@(/)(jpeg|png)(")@'], '$1webp$3', $sourceHtml);
@@ -396,41 +343,19 @@ class Thumbnail
                     $html .= "\t" . $sourceHtml . "\n";
                 }
             }
-
-            $attrCleanedForPicture = $attributes;
-            $attrCleanedForPicture['src'] = $this->addCacheBuster($path, $options, $image);
-            unset($attrCleanedForPicture['width']);
-            unset($attrCleanedForPicture['height']);
-
-            if (isset($attrCleanedForPicture['srcset'])) {
-                unset($attrCleanedForPicture['srcset']);
-            }
-
-            if ($isLowQualityPreview) {
-                unset($attrCleanedForPicture['data-src']);
-                unset($attrCleanedForPicture['data-srcset']);
-                $attrCleanedForPicture['data-src'] = $attrCleanedForPicture['src'];
-                $attrCleanedForPicture['src'] = $attributes['src'];
-            }
-
-            $htmlImgTagForpicture = "\t" . '<img ' . array_to_html_attribute_string($attrCleanedForPicture) .' />';
-
-            $html .= $htmlImgTagForpicture . "\n";
-
-            $html .= '</picture>' . "\n";
-
-            $htmlImgTag = $html;
-
-            if ($isAutoFormat) {
-                Image\Thumbnail\Processor::setHasWebpSupport($webpSupportBackup);
-            }
         }
+
+        if(!($options['disableImgTag'] ?? null)) {
+            $html .= "\t" . $this->getImageTag($options) . "\n";
+        }
+
+        $html .= '</picture>' . "\n";
 
         if (isset($options['useDataSrc']) && $options['useDataSrc']) {
-            $htmlImgTag = preg_replace('/ src(set)?=/i', ' data-src$1=', $htmlImgTag);
+            $html = preg_replace('/ src(set)?=/i', ' data-src$1=', $html);
         }
 
-        return $htmlImgTag;
+        return $html;
     }
 
     /**
