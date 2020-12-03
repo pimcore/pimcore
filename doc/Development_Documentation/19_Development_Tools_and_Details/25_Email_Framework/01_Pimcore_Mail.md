@@ -29,7 +29,7 @@ to the html with a `<style>` tag because the image paths are also normalised.
 | getSubjectRendered()              | Replaces the placeholders and renders as a Twig template with the provided params and returns the resulting Subject                                                                                                                                |
 | getBodyHtmlRendered()             | Replaces the placeholders and renders as a Twig template with the content and returns the resulting HTML                                                                                                                                   |
 | getBodyTextRendered()             | Replaces the placeholders and renders as a Twig template with the content and returns the resulting text if a text was set with `$mail->setBodyText()`. If no text was set, a text version on the html email will be automatically created |
-| enableHtml2textBinary()           | `html2text` from Martin Bayer (http://www.mbayer.de/html2text/index.shtml) - throws an Exception if html2text is not installed!     (deprecated since 6.6.0 and will be removed in 7.0)                                                                       |
+| enableHtml2textBinary()           | `html2text` from Martin Bayer (http://www.mbayer.de/html2text/index.shtml) - throws an Exception if html2text is not installed!     (deprecated since 6.6.0 and will be removed in Pimcore 10)                                                                       |
 | setHtml2TextOptions($options)     | set options for html2text (only for binary version)                                                                                                                                                        |
 
 

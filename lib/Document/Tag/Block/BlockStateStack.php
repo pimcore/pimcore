@@ -19,7 +19,7 @@ namespace Pimcore\Document\Tag\Block;
 
 use Pimcore\Document\Editable\Block\BlockStateStack as EditableBlockStateStack;
 
-@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', BlockStateStack::class, EditableBlockStateStack::class), E_USER_DEPRECATED);
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in Pimcore 10. Use "%s" instead.', BlockStateStack::class, EditableBlockStateStack::class), E_USER_DEPRECATED);
 
 class_exists(EditableBlockStateStack::class);
 

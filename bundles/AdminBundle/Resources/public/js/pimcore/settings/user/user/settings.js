@@ -445,7 +445,7 @@ pimcore.settings.user.user.settings = Class.create({
             this.apiKeyDescription = new Ext.form.DisplayField({
                 hideLabel: true,
                 width: 600,
-                value: "<b>DEPRECATED! Will be removed in 7.0!</b>  " +  t("user_apikey_description"),
+                value: "<b>DEPRECATED! Will be removed in Pimcore 10!</b>  " +  t("user_apikey_description"),
                 cls: "pimcore_extra_label_bottom",
                 hidden: !this.wsenabled
             });

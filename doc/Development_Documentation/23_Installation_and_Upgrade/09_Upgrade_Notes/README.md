@@ -26,9 +26,9 @@ You can run the command as often as you want, since it doesn't touch already mig
 ## 6.8.0
 - HybridAuth integration is deprecated and will be removed in Pimcore 10.
 - `Pimcore\Browser` is deprecated and will be replaced by `\Browser` in Pimcore 10. [#7084](https://github.com/pimcore/pimcore/pull/7084)
-- Javascript - All classes under namespaces `pimcore.document.tags` are deprecated and will be removed in 7. These are moved to new namespace `pimcore.document.editables`. 
+- Javascript - All classes under namespaces `pimcore.document.tags` are deprecated and will be removed in Pimcore 10. These are moved to new namespace `pimcore.document.editables`. 
 If you have custom editables or wysiwyg global config then please change namespace from `pimcore.document.tags.*` to `pimcore.document.editables.*`
-- Javascript - Class `pimcore.document.tag` is deprecated as well and will be removed in 7. Use new class `pimcore.document.editable` instead.
+- Javascript - Class `pimcore.document.tag` is deprecated as well and will be removed in Pimcore 10. Use new class `pimcore.document.editable` instead.
 - All classes in namespace `Pimcore\Document\Tag` moved to new namespace `Pimcore\Document\Editable` (including their services) for better readability and marked as deprecated. Please update custom document editable classes and mappings. [#6921](https://github.com/pimcore/pimcore/pull/6921)
 - All `document_tag_` css classes are deprecated and will be removed in Pimcore 10. Use new classes `document_editable_` for custom styling of document editables.
 - Method signature `AbstractObject::setChildren($children)` has been updated to `AbstractObject::setChildren($children, array $objectTypes = [self::OBJECT_TYPE_OBJECT, self::OBJECT_TYPE_FOLDER], $includingUnpublished = false)`.
@@ -52,7 +52,7 @@ If you have custom editables or wysiwyg global config then please change namespa
 - Saving unpublished data objects via API will not throw Validation exceptions anymore (just like Admin UI). Please set `omitMandatoryCheck` explicitly to `false` to force mandatory checks.
 - `\Pimcore\DataObject\GridColumnConfig\Operator\ObjectBrickGetter` operator is deprecated and will be removed in Pimcore 10
 - Calling `Pimcore\Model\DataObject\ClassDefinition\Data::isEqual()` is deprecated since version 6.7.0 and will be removed in version 7 . Implement `\Pimcore\Model\DataObject\ClassDefinition\Data\EqualComparisonInterface` instead.
-- Following properties and methods are deprecated to unify document editables and will be removed in 7. [#6900](https://github.com/pimcore/pimcore/pull/6900):
+- Following properties and methods are deprecated to unify document editables and will be removed in Pimcore 10. [#6900](https://github.com/pimcore/pimcore/pull/6900):
     - `PageSnippet::$elements`. Use `PageSnippet::$editables` instead.
     - `PageSnippet::$inheritedElements`. Use `PageSnippet::$inheritedEditables` instead.
     - `PageSnippet::getElements`. Use `PageSnippet::getEditables` instead.
@@ -75,7 +75,7 @@ If you have custom editables or wysiwyg global config then please change namespa
 
 ## 6.6.2
 - class `ElementDescriptor` has been moved from 'Pimcore\Model\Version' to 'Pimcore\Model\Element'.
-The BC layer will be removed in 7. Use the following [migration scripts](https://gist.github.com/weisswurstkanone/a63f733fe58930778f41c695f862724a) to migrate your version and recyclebin files
+The BC layer will be removed in Pimcore 10. Use the following [migration scripts](https://gist.github.com/weisswurstkanone/a63f733fe58930778f41c695f862724a) to migrate your version and recyclebin files
 if necessary.   
 
 ## 6.6.0

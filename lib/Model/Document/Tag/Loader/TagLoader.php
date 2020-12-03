@@ -19,7 +19,7 @@ namespace Pimcore\Model\Document\Tag\Loader;
 
 use Pimcore\Model\Document\Editable\Loader\EditableLoader;
 
-@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', TagLoader::class, EditableLoader::class), E_USER_DEPRECATED);
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in Pimcore 10. Use "%s" instead.', TagLoader::class, EditableLoader::class), E_USER_DEPRECATED);
 
 class_exists(EditableLoader::class);
 

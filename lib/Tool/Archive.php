@@ -33,7 +33,7 @@ class Archive
      */
     public static function createZip($sourceDir, $destinationFile, $excludeFilePattern = [], $options = [])
     {
-        @trigger_error(sprintf('Method "%s" is deprecated since v6.8 and will be removed in 7. ', __METHOD__), E_USER_DEPRECATED);
+        @trigger_error(sprintf('Method "%s" is deprecated since v6.8 and will be removed in Pimcore 10. ', __METHOD__), E_USER_DEPRECATED);
 
         list($sourceDir, $destinationFile, $items) = self::prepareArchive($sourceDir, $destinationFile);
         $mode = $options['mode'];
@@ -104,7 +104,7 @@ class Archive
      */
     public static function createPhar($sourceDir, $destinationFile, $excludeFilePattern = [], $options = [])
     {
-        @trigger_error(sprintf('Method "%s" is deprecated since v6.8 and will be removed in 7. ', __METHOD__), E_USER_DEPRECATED);
+        @trigger_error(sprintf('Method "%s" is deprecated since v6.8 and will be removed in Pimcore 10. ', __METHOD__), E_USER_DEPRECATED);
 
         list($sourceDir, $destinationFile, $items) = self::prepareArchive($sourceDir, $destinationFile);
 

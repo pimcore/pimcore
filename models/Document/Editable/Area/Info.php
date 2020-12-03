@@ -31,7 +31,7 @@ class Info
 
     /**
      *
-     * @deprecated since v6.8 and will be removed in 7.
+     * @deprecated since v6.8 and will be removed in Pimcore 10.
      */
     public $tag;
 
@@ -93,7 +93,7 @@ class Info
     /**
      * @return Editable|Editable\Area|Editable\Areablock
      *
-     * @deprecated since v6.8 and will be removed in 7. use getEditable() instead.
+     * @deprecated since v6.8 and will be removed in Pimcore 10. use getEditable() instead.
      */
     public function getTag()
     {
@@ -103,7 +103,7 @@ class Info
     /**
      * @param Editable $tag
      *
-     * @deprecated since v6.8 and will be removed in 7. use setEditable() instead.
+     * @deprecated since v6.8 and will be removed in Pimcore 10. use setEditable() instead.
      */
     public function setTag(Editable $tag)
     {

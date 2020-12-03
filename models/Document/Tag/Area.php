@@ -19,7 +19,7 @@ namespace Pimcore\Model\Document\Tag;
 
 use Pimcore\Model\Document\Editable\Area as EditableArea;
 
-@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', Area::class, EditableArea::class), E_USER_DEPRECATED);
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in Pimcore 10. Use "%s" instead.', Area::class, EditableArea::class), E_USER_DEPRECATED);
 
 class_exists(EditableArea::class);
 
