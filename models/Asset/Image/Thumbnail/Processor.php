@@ -54,6 +54,7 @@ class Processor
     ];
 
     /**
+     * @deprecated
      * @var null|bool
      */
     protected static $hasWebpSupport = null;
@@ -430,6 +431,7 @@ class Processor
     }
 
     /**
+     * @deprecated
      * @param bool|null $webpSupport
      *
      * @return bool|null
@@ -443,6 +445,7 @@ class Processor
     }
 
     /**
+     * @deprecated
      * @return bool
      */
     protected static function hasWebpSupport(): bool

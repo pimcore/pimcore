@@ -145,6 +145,7 @@ class Frontend
     }
 
     /**
+     * @deprecated
      * @return bool
      */
     public static function hasWebpSupport()
