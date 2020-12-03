@@ -25,7 +25,6 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /** storage value for yes */
     const YES_VALUE = 1;
@@ -87,12 +86,6 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $columnType = 'tinyint(1) null';
 
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'bool';
 
     /**
      * @return array
@@ -478,5 +471,25 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
         }
 
         return $value;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?bool';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?bool';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'bool|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'bool|null';
     }
 }

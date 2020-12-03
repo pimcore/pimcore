@@ -28,7 +28,6 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -50,13 +49,6 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @var array
      */
     public $columnType = ['image' => 'int(11)', 'hotspots' => 'text'];
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Hotspotimage';
 
     /**
      * @var int
@@ -706,4 +698,26 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 
         return true;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' .DataObject\Data\Hotspotimage::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' .DataObject\Data\Hotspotimage::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Hotspotimage::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Hotspotimage::class . '|null';
+    }
+
+
 }

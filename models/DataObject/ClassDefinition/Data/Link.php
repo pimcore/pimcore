@@ -28,7 +28,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -50,13 +49,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
      * @var string
      */
     public $columnType = 'text';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Link';
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
@@ -479,4 +471,26 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         return $this->isEqualArray($oldValue, $newValue);
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Link::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Link::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Link::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Link::class . '|null';
+    }
+
+
 }

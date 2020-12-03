@@ -23,7 +23,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class CalculatedValue extends Data implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -58,13 +57,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @var int
      */
     public $columnLength = 190;
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\CalculatedValue';
 
     /**
      * @return string
@@ -540,4 +532,26 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     {
         return $oldValue === $newValue;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\CalculatedValue::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\CalculatedValue::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\CalculatedValue::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\CalculatedValue::class . '|null';
+    }
+
+
 }

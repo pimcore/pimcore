@@ -26,7 +26,6 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -60,13 +59,6 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @var string
      */
     public $columnType = 'text';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Video';
 
     /**
      * @return int
@@ -630,4 +622,26 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
         return true;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Video::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Video::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Video::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Video::class . '|null';
+    }
+
+
 }

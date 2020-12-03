@@ -24,7 +24,6 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -56,13 +55,6 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     public $columnType = ['rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
         'a' => 'VARCHAR(2) NULL DEFAULT NULL',
     ];
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\RgbaColor';
 
     /**
      * @return int
@@ -432,4 +424,25 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
 
         return $oldValue === $newValue;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\RgbaColor::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\RgbaColor::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
+    }
+
 }

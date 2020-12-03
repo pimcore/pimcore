@@ -49,12 +49,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     public $columnType = ['images' => 'text', 'hotspots' => 'text'];
 
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ImageGallery';
 
     /**
      * @var int
@@ -629,4 +623,26 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
 
         return true;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\ImageGallery::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\ImageGallery::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\ImageGallery::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\ImageGallery::class . '|null';
+    }
+
+
 }

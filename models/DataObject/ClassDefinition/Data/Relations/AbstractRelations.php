@@ -506,4 +506,33 @@ abstract class AbstractRelations extends Data implements
     {
         return 'array';
     }
+
+    /**
+     * @return string|null
+     */
+    public function getPhpdocInputType(): ?string
+    {
+        if ($this->getPhpdocType()) {
+            return $this->getPhpdocType();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhpdocReturnType(): ?string
+    {
+        if ($this->getPhpdocType()) {
+            return $this->getPhpdocType();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return string
+     */
+    abstract protected function getPhpdocType();
 }

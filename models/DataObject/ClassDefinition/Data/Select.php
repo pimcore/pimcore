@@ -28,7 +28,6 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     use Extension\QueryColumnType;
 
     use DataObject\Traits\DefaultValueTrait;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -84,13 +83,6 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @var int
      */
     public $columnLength = 190;
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'string';
 
     /**
      * @var bool
@@ -574,4 +566,26 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
 
         return $this;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'string|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'string|null';
+    }
+
+
 }

@@ -25,7 +25,6 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -82,13 +81,6 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @var string
      */
     public $columnType = 'double';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'float';
 
     /**
      * @return int
@@ -407,4 +399,26 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
 
         return false;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?float';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?float';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'float|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'float|null';
+    }
+
+
 }

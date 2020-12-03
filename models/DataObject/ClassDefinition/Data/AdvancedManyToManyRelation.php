@@ -984,14 +984,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     }
 
     /**
-     * @return string
-     */
-    public function getPhpdocType()
-    {
-        return $this->phpdocType;
-    }
-
-    /**
      * @inheritdoc
      */
     public function processDiffDataForEditMode($originalData, $data, $object = null, $params = [])
@@ -1142,5 +1134,16 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     public function setEnableBatchEdit($enableBatchEdit)
     {
         $this->enableBatchEdit = $enableBatchEdit;
+    }
+
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
     }
 }

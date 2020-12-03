@@ -30,7 +30,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     use Extension\QueryColumnType;
 
     use Model\DataObject\Traits\DefaultValueTrait;
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -94,13 +93,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
         'value' => 'double',
         'unit' => 'bigint(20)',
     ];
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\QuantityValue';
 
     /**
      * @return int
@@ -700,4 +692,26 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
 
         return $unitId;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\QuantityValue::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . Model\DataObject\Data\QuantityValue::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
+    }
+
+
 }

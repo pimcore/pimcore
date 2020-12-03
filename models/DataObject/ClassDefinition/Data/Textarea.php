@@ -25,7 +25,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     use Model\DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -72,13 +71,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @var string
      */
     public $columnType = 'longtext';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'string';
 
     /**
      * @return int
@@ -309,4 +301,26 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         return true;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?string';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'string|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'string|null';
+    }
+
+
 }
