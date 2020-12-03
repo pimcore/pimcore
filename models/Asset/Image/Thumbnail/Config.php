@@ -724,8 +724,8 @@ class Config extends Model\AbstractModel
         }
 
         // ensure we return int's, sometimes $arg[...] contain strings
-        $dimensions['width'] = (int) $dimensions['width'];
-        $dimensions['height'] = (int) $dimensions['height'];
+        $dimensions['width'] = (int) $dimensions['width'] * ($this->getHighResolution() ?: 1);
+        $dimensions['height'] = (int) $dimensions['height'] * ($this->getHighResolution() ?: 1);
 
         return $dimensions;
     }
