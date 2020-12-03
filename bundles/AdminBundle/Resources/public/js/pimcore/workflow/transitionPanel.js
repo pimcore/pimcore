@@ -364,17 +364,21 @@ pimcore.workflow.transitionPanel = Class.create({
 
     onCustomHtmlResponse: function(response) {
 
+        var customHeight = 0;
         var data = Ext.decode(response.responseText);
-        var position = data.position;
-        if (!position || !this.getCustomHtmlPositions().includes(position)) {
-            position = 'top';
+        if (data.success && data.customHtml) {
+            for (var position in data.customHtml) {
+                if (this.getCustomHtmlPositions().includes(position)) {
+                    var containerName = 'customHtml' + position.charAt(0).toUpperCase() + position.slice(1);
+                    var customHtmlContainer = this.workflowFormPanel.getComponent(containerName);
+                    customHtmlContainer.setHtml(data.customHtml[position]);
+                    customHeight += customHtmlContainer.getHeight();
+                }
+            }
         }
-        position = position.charAt(0).toUpperCase() + position.slice(1);
-        var customHtml = this.workflowFormPanel.getComponent('customHtml' + position);
-        customHtml.setHtml(data.customHtml);
 
         // dynamic height, with a max of 650
-        var height = Math.min(510 + customHtml.getHeight(), 650);
+        var height = Math.min(510 + customHeight, 650);
         this.transitionWindow.setHeight(height);
     },
 

@@ -24,6 +24,7 @@ use Pimcore\Model\Element\ValidationException;
 use Pimcore\Tool\Console;
 use Pimcore\Workflow\ActionsButtonService;
 use Pimcore\Workflow\Manager;
+use Pimcore\Workflow\Notes\CustomHtmlServiceInterface;
 use Pimcore\Workflow\Place\StatusInfo;
 use Pimcore\Workflow\Transition;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -296,15 +297,8 @@ class WorkflowController extends AdminController implements KernelControllerEven
 
         if ($request->get('isGlobalAction') == 'true') {
             $globalAction = $manager->getGlobalAction($workflow->getName(), $request->get('transition'));
-
             if ($globalAction) {
-                $customHtmlService = $globalAction->getCustomHtmlService();
-                $data = [
-                    'success' => true,
-                    'position' => $customHtmlService ? $customHtmlService->getPosition() : null,
-                    'customHtml' => $customHtmlService ? $customHtmlService->renderHtml() : ''
-                ];
-                return new JsonResponse($data);
+                return $this->customHtmlResponse($globalAction->getCustomHtmlService());
             }
 
         } elseif ($workflow->can($this->element, $request->get('transition'))) {
@@ -318,24 +312,34 @@ class WorkflowController extends AdminController implements KernelControllerEven
             }
 
             if ($transition instanceof Transition) {
-
-                $customHtmlService = $transition->getCustomHtmlService();
-
-                $data = [
-                    'success' => true,
-                    'position' => $customHtmlService ? $customHtmlService->getPosition() : null,
-                    'customHtml' => $customHtmlService ? $customHtmlService->renderHtml() : ''
-                ];
-
-                return new JsonResponse($data);
+                return $this->customHtmlResponse($transition->getCustomHtmlService());
             }
         }
 
         $data = [
             'success' => false,
-            'customHtml' => '',
             'message' => 'error validating the action on this element, element cannot peform this action'
         ];
+
+        return new JsonResponse($data);
+    }
+
+    private function customHtmlResponse(CustomHtmlServiceInterface $customHtmlService = null) : JsonResponse {
+
+        $data = [
+            'success' => true,
+            'customHtml' => [
+                'top' => '',
+                'center' => '',
+                'bottom' => ''
+            ]
+        ];
+
+        if ($customHtmlService) {
+            $position = $customHtmlService->getPosition();
+            $customHtml = $customHtmlService->renderHtml();
+            $data['customHtml'][$position] = $customHtml;
+        }
 
         return new JsonResponse($data);
     }
