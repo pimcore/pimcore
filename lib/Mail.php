@@ -65,7 +65,7 @@ class Mail extends \Swift_Message
      * @var array
      */
     protected $html2textOptions = [
-        'ignore_errors' => true
+        'ignore_errors' => true,
     ];
 
     /**

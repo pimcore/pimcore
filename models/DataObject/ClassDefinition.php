@@ -259,6 +259,7 @@ class ClassDefinition extends Model\AbstractModel
         try {
             $class = new self();
             $id = $class->getDao()->getIdByName($name);
+
             return self::getById($id);
         } catch (Model\Exception\NotFoundException $e) {
             return null;

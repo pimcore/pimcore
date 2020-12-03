@@ -78,7 +78,7 @@ class Dao extends Model\Dao\AbstractDao
 
         if (empty($id)) {
             throw new Model\Exception\NotFoundException(sprintf(
-                'Data object class definition with with name "%s" does not exist.',  $name
+                'Data object class definition with with name "%s" does not exist.', $name
             ));
         }
 
