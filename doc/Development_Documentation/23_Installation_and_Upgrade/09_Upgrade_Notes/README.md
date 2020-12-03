@@ -14,6 +14,9 @@
 - `MigrationInstaller` for bundles has been deprecated and will be removed in Pimcore 10, please use `AbstractInstaller` instead. 
 - The entire `Pimcore\Migrations` namespace has been deprecated and will be removed in Pimcore 10. Please use Doctrine Migrations directly instead for your project and bundles.
 - `ClassMapLoader` now takes priority over `PrefixLoader` e.g. config `pimcore.document.editables.map` has higher priority than `pimcore.document.editables.prefixes`.
+- The config option `asset.image.thumbnails.webp_auto_support` has been deprecated and will be removed in Pimcore 10. Use the `<picture>` tag instead (you can force that in your thumbnail config).
+- `\Pimcore\Model\Asset\Image\Thumbnail\Processor::setHasWebpSupport()` and `hasWebpSupport()` has been deprecated and will be removed in Pimcore 10.
+- `\Pimcore\Tool\Frontend::hasWebpSupport()` and all related `webp` methods have been deprecated and will be removed in Pimcore 10. 
 
 #### Migrating legacy module/controller/action configurations to new controller references
 You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 
