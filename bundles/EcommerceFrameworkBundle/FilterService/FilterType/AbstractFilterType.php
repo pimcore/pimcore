@@ -108,15 +108,33 @@ abstract class AbstractFilterType
      * renders and returns the rendered html snippet for the current filter
      * based on settings in the filter definition and the current filter params.
      *
-     * @abstract
-     *
      * @param AbstractFilterDefinitionType $filterDefinition
      * @param ProductListInterface $productList
      * @param array $currentFilter
      *
      * @return string
      */
-    abstract public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter);
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    {
+        return $this->render(
+            $this->getTemplate($filterDefinition),
+            $this->getFilterValues($filterDefinition, $productList, $currentFilter)
+        );
+    }
+
+    /**
+     * returns the raw data for the current filter based on settings in the
+     * filter definition and the current filter params.
+     *
+     * @abstract
+     *
+     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     *
+     * @return array
+     */
+    abstract public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array;
 
     /**
      * adds necessary conditions to the product list implementation based on the currently set filter params.

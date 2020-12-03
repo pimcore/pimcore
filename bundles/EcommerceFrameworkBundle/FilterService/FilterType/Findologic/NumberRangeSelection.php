@@ -31,11 +31,11 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
      * @param ProductListInterface $productList
      * @param array $currentFilter
      *
-     * @return string
+     * @return array
      *
      * @throws \Exception
      */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $ranges = $filterDefinition->getRanges();
         $groupByValues = $productList->getGroupByValues($filterDefinition->getField(), true);
@@ -72,7 +72,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
             $currentValue = implode('-', $currentFilter[$filterDefinition->getField()]);
         }
 
-        return $this->render($this->getTemplate($filterDefinition), [
+        return [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentValue,
@@ -82,7 +82,7 @@ class NumberRangeSelection extends \Pimcore\Bundle\EcommerceFrameworkBundle\Filt
             'definition' => $filterDefinition,
             'fieldname' => $filterDefinition->getField(),
             'resultCount' => $productList->count(),
-        ]);
+        ];
     }
 
     /**

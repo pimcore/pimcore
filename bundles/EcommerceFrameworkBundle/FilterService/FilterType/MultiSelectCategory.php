@@ -19,7 +19,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 
 class MultiSelectCategory extends AbstractFilterType
 {
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $rawValues = $productList->getGroupByValues($filterDefinition->getField(), true);
         $values = [];
@@ -45,7 +45,7 @@ class MultiSelectCategory extends AbstractFilterType
             }
         }
 
-        return $this->render($this->getTemplate($filterDefinition), [
+        return [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$filterDefinition->getField()],
@@ -53,7 +53,7 @@ class MultiSelectCategory extends AbstractFilterType
             'fieldname' => $filterDefinition->getField(),
             'metaData' => $filterDefinition->getMetaData(),
             'resultCount' => $productList->count(),
-        ]);
+        ];
     }
 
     public function addCondition(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter, $params, $isPrecondition = false)

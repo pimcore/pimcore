@@ -23,7 +23,7 @@ The backend implementation of Filter Types takes place in php classes which exte
 the correct filter conditions based on the Product Index implementation and rendering the filter output to the frontend. 
 
 Therefore `\Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType` expects the two methods 
-`getFilterFrontend()` and `addCondition()` to be implemented. 
+`getFilterValues()` and `addCondition()` to be implemented. 
 
 Each Filter Type needs to be defined as service and registered on the `pimcore_ecommerce_framework.filter_service` configuration.
 The framework already defines a number of core filter types in [filter_service_filter_types.yml](https://github.com/pimcore/pimcore/blob/master/bundles/EcommerceFrameworkBundle/Resources/config/filter_service_filter_types.yml).

@@ -1,4 +1,29 @@
 # Upgrade Notes
+
+## 10.0.0
+- Added `Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterType\AbstractFilterType::getFilterValues()` with the same signature as `getFilterFrontend()`. To upgrade, rename `getFilterFrontend()` to `getFilterValues()` and remove the rendering stuff to just return the data array.
+
+    Before:
+    ```php
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter) 
+    {
+        // ...
+        return $this->render($this->getTemplate($filterDefinition), [
+            //...
+        ]);
+    }
+    ```
+    After:
+    ```php
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array 
+    {
+        // ...
+        return [
+            //...
+        ];
+    }
+    ```
+
 ## 6.9.0
 - [Ecommerce] Ecommerce tracking `*.js.php` templates are deprecated and will not supported on Pimcore 10. Please use Twig `*.js.twig` templates. Also `Tracker::templateExtension` property is deprecated and will be removed in Pimcore 10. 
 - Config option and container parameter `pimcore.routing.defaults` is deprecated, use `pimcore.documents.default_controller` instead. 

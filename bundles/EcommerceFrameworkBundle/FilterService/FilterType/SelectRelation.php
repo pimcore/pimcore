@@ -28,11 +28,11 @@ class SelectRelation extends AbstractFilterType
      * @param ProductListInterface $productList
      * @param array $currentFilter
      *
-     * @return string
+     * @return array
      *
      * @throws \Exception
      */
-    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
     {
         $field = $this->getField($filterDefinition);
 
@@ -53,13 +53,7 @@ class SelectRelation extends AbstractFilterType
         }
         Logger::info('done.');
 
-        if ($filterDefinition->getScriptPath()) {
-            $script = $filterDefinition->getScriptPath();
-        } else {
-            $script = $this->template;
-        }
-
-        return $this->render($script, [
+        return [
             'hideFilter' => $filterDefinition->getRequiredFilterField() && empty($currentFilter[$filterDefinition->getRequiredFilterField()]),
             'label' => $filterDefinition->getLabel(),
             'currentValue' => $currentFilter[$field],
@@ -68,7 +62,7 @@ class SelectRelation extends AbstractFilterType
             'fieldname' => $field,
             'metaData' => $filterDefinition->getMetaData(),
             'resultCount' => $productList->count(),
-        ]);
+        ];
     }
 
     protected function loadAllAvailableRelations($availableRelations, $availableRelationsArray = [])
