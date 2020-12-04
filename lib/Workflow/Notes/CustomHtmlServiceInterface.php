@@ -28,10 +28,8 @@ interface CustomHtmlServiceInterface
 
     /**
      * Render custom HTML for a specific position within the workflow note modals.
-     *
      * Implement this method if you need full control of the rendering process, and you want to show HTML
      * on multiple positions for an element.
-     *
      * @param ElementInterface $element
      * @param string $requestedPosition the requested position for which content should be rendered.
      * @return string the HTML markup or an empty string, if for the requested position nothing should be rendered.
