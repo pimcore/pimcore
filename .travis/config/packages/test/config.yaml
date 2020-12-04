@@ -1,5 +1,5 @@
 imports:
-    - { resource: config_dev.yml }
+    - { resource: ../dev/config.yaml }
 
 # this cache is used during tests when setting up pimcore
 pimcore:
