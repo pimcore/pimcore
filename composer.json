@@ -148,7 +148,10 @@
   "autoload-dev": {
     "psr-4": {
       "Pimcore\\Tests\\": "tests"
-    }
+    },
+    "files": [
+      "src/Kernel.php"
+    ]
   },
   "scripts": {
     "post-create-project-cmd": "Pimcore\\Composer::postCreateProject",
