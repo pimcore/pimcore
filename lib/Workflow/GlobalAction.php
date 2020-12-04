@@ -47,7 +47,7 @@ class GlobalAction implements NotesAwareInterface
         $this->options = $options;
         $this->expressionService = $expressionService;
         $this->workflowName = $workflowName;
-        $this->customHtmlService = $customHtmlService;
+        $this->setCustomHtmlService($customHtmlService);
     }
 
     /**

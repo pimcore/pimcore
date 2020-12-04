@@ -63,8 +63,18 @@ trait NotesAwareTrait
         return $this->options['notes']['additionalFields'] ?? [];
     }
 
+    /**
+     * Inject service via compiler pass.
+     * @param $customHtmlService
+     */
     public function setCustomHtmlService($customHtmlService) {
-        $this->customHtmlService = $customHtmlService;
+        if ($customHtmlService instanceof AbstractCustomHtmlService) {
+            if ($this->getName() == $customHtmlService->getTransitionName()) {
+                $this->customHtmlService = $customHtmlService;
+            } elseif ($this->getName() == $customHtmlService->getActionName()) {
+                $this->customHtmlService = $customHtmlService;
+            }
+        }
     }
 
     public function getCustomHtmlService() : ?CustomHtmlServiceInterface {
