@@ -91,6 +91,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->booleanNode('case_insensitive')
+                            ->setDeprecated('The "%node%" option is deprecated and will be removed in Pimcore 10.')
                             ->beforeNormalization()
                                 ->ifString()
                                 ->then(function ($v) {
