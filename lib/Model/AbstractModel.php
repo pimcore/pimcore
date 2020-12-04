@@ -14,6 +14,7 @@
 
 namespace Pimcore\Model;
 
+use JsonSerializable;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
 
@@ -25,7 +26,7 @@ use Pimcore\Model\DataObject\Traits\ObjectVarTrait;
  * @method array getValidTableColumns(string $table, bool $cache)
  * @method void resetValidTableColumnsCache(string $table)
  */
-abstract class AbstractModel implements ModelInterface
+abstract class AbstractModel implements ModelInterface, JsonSerializable
 {
     use ObjectVarTrait;
     /**
@@ -274,5 +275,13 @@ abstract class AbstractModel implements ModelInterface
     protected static function getModelFactory()
     {
         return \Pimcore::getContainer()->get('pimcore.model.factory');
+    }
+
+    public function jsonSerialize()
+    {
+        if(method_exists($this, 'getObjectVars')) {
+            return $this->getObjectVars();
+        }
+        return get_object_vars($this);
     }
 }
