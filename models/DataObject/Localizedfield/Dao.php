@@ -123,7 +123,9 @@ class Dao extends Model\Dao\AbstractDao
             throw new \Exception('need owner from container implementation');
         }
 
-        $this->model->setOwner($params['owner'], 'localizedfields');
+        $this->model->_setOwner($params['owner']);
+        $this->model->_setOwnerFieldname('localizedfields');
+        $this->model->_setOwnerLanguage(null);
 
         /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
         $localizedfields = $container->getFieldDefinition('localizedfields');
@@ -591,7 +593,9 @@ class Dao extends Model\Dao\AbstractDao
             throw new \Exception('need owner from container implementation');
         }
 
-        $this->model->setOwner($params['owner'], 'localizedfields');
+        $this->model->_setOwner($params['owner']);
+        $this->model->_setOwnerFieldname('localizedfields');
+        $this->model->_setOwnerLanguage(null);
 
         foreach ($data as $row) {
             /** @var DataObject\ClassDefinition\Data\Localizedfields $localizedfields */
