@@ -362,6 +362,4 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
     {
         return '\\' . DataObject\Data\Geobounds::class . '|null';
     }
-
-
 }

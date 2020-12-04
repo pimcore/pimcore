@@ -350,6 +350,4 @@ class Geopolygon extends AbstractGeo implements ResourcePersistenceAwareInterfac
     {
         return 'array|null';
     }
-
-
 }

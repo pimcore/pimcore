@@ -866,6 +866,4 @@ class Fieldcollections extends Data implements CustomResourcePersistingInterface
     {
         return '\\' . DataObject\Fieldcollection::class . '|null';
     }
-
-
 }

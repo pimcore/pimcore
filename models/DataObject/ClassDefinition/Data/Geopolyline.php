@@ -350,5 +350,4 @@ class Geopolyline extends AbstractGeo implements ResourcePersistenceAwareInterfa
     {
         return 'array|null';
     }
-
 }

@@ -718,6 +718,4 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     {
         return '\\' . DataObject\Data\Hotspotimage::class . '|null';
     }
-
-
 }

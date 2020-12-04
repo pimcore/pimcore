@@ -457,6 +457,4 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     {
         return '\\' . DataObject\Data\Consent::class . '|null';
     }
-
-
 }

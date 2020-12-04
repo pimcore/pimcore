@@ -444,5 +444,4 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     {
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
     }
-
 }

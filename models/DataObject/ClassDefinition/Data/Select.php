@@ -586,6 +586,4 @@ class Select extends Data implements ResourcePersistenceAwareInterface, QueryRes
     {
         return 'string|null';
     }
-
-
 }

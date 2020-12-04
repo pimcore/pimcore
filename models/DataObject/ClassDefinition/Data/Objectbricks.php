@@ -980,6 +980,4 @@ class Objectbricks extends Data implements CustomResourcePersistingInterface, Ty
     {
         return '\\' . Objectbrick::class . '|null';
     }
-
-
 }

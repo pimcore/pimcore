@@ -342,5 +342,4 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         return 'bool|null';
     }
-
 }

@@ -72,7 +72,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      */
     public $columnType = 'LONGBLOB';
 
-
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -607,6 +606,4 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     {
         return $this->delegate ? $this->delegate->getPhpdocReturnType() : null;
     }
-
-
 }

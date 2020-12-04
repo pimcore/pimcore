@@ -622,6 +622,4 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     {
         return '\\' . DataObject\Data\StructuredTable::class . '|null';
     }
-
-
 }

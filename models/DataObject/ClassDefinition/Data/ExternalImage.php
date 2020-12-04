@@ -349,5 +349,4 @@ class ExternalImage extends Data implements ResourcePersistenceAwareInterface, Q
     {
         return '\\' . DataObject\Data\ExternalImage::class . '|null';
     }
-
 }

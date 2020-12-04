@@ -638,6 +638,4 @@ class Numeric extends Data implements ResourcePersistenceAwareInterface, QueryRe
     {
         return $this->getPhpdocType() . '|null';
     }
-
-
 }

@@ -642,6 +642,4 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         return '\\' . DataObject\Data\Video::class . '|null';
     }
-
-
 }

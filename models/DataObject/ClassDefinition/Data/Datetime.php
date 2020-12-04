@@ -471,5 +471,4 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         return '\\' . Carbon::class . '|null';
     }
-
 }

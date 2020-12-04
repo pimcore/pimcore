@@ -181,7 +181,6 @@ class InputQuantityValue extends QuantityValue
         return new InputQuantityValueDataObject($value, $unitId);
     }
 
-
     public function getParameterTypeDeclaration(): ?string
     {
         return '?\\' . Model\DataObject\Data\InputQuantityValue::class;
@@ -201,5 +200,4 @@ class InputQuantityValue extends QuantityValue
     {
         return '\\' . Model\DataObject\Data\InputQuantityValue::class . '|null';
     }
-
 }

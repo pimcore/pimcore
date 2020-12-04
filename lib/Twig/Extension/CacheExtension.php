@@ -16,7 +16,6 @@ namespace Pimcore\Twig\Extension;
 
 use Pimcore\Cache as CacheManager;
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
-use Pimcore\Tool;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 

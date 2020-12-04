@@ -412,5 +412,4 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
     {
         return 'string|null';
     }
-
 }
