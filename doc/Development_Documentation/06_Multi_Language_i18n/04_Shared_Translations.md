@@ -21,7 +21,7 @@ hit (translations might be looked up twice) and it does not  conform with Symfon
 translation keys with the same casing as they were saved.
 
 You can turn case insensitive handling on by setting the following config setting (see [#2005](https://github.com/pimcore/pimcore/pull/2005)):
-  
+Note: this feature is deprecated and will be removed in Pimcore 10.   
 ```yaml
 pimcore:
   translations:
