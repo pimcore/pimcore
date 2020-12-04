@@ -68,12 +68,13 @@ class DocumentController extends ElementControllerBase implements KernelControll
      * @Route("/delete-info", name="pimcore_admin_document_document_deleteinfo", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function deleteInfoAction(Request $request)
+    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        return parent::deleteInfoAction($request);
+        return parent::deleteInfoAction($request, $eventDispatcher);
     }
 
     /**
@@ -256,16 +257,12 @@ class DocumentController extends ElementControllerBase implements KernelControll
                 if ($docType) {
                     $createValues['template'] = $docType->getTemplate();
                     $createValues['controller'] = $docType->getController();
-                    $createValues['action'] = $docType->getAction();
-                    $createValues['module'] = $docType->getModule();
                 } elseif ($request->get('translationsBaseDocument')) {
                     $translationsBaseDocument = Document\PageSnippet::getById($request->get('translationsBaseDocument'));
                     $createValues['template'] = $translationsBaseDocument->getTemplate();
                     $createValues['controller'] = $translationsBaseDocument->getController();
-                    $createValues['action'] = $translationsBaseDocument->getAction();
-                    $createValues['module'] = $translationsBaseDocument->getModule();
                 } elseif ($request->get('type') == 'page' || $request->get('type') == 'snippet' || $request->get('type') == 'email') {
-                    $createValues += Tool::getRoutingDefaults();
+                    $createValues['controller'] = $this->getParameter('pimcore.documents.default_controller');
                 }
 
                 if ($request->get('inheritanceSource')) {

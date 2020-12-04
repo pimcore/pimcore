@@ -79,7 +79,7 @@ class Table extends Model\Document\Editable
     }
 
     /**
-     * @see TagInterface::setDataFromResource
+     * @see EditableInterface::setDataFromResource
      *
      * @param mixed $data
      *

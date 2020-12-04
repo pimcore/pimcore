@@ -84,7 +84,7 @@ It works in the similar way as getting the data.
 
 ```php
 $object = DataObject::getById(234);
-$object->setInput1("My Name", "fr") // set the French value for the field "input1"
+$object->setInput1("My Name", "fr"); // set the French value for the field "input1"
 ```
 
 **Warning:** Please note that moving a field from outside (normal object field) into the localizedfield container means 

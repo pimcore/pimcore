@@ -37,6 +37,7 @@
 
 namespace Pimcore\Db\ZendCompatibility;
 
+use Doctrine\DBAL\Driver\ResultStatement;
 use Exception;
 use Pimcore\Db\ConnectionInterface;
 
@@ -830,10 +831,10 @@ class QueryBuilder
     /**
      * Executes the current select object and returns the result
      *
-     * @param int $fetchMode OPTIONAL
-     * @param  mixed  $bind An array of data to bind to the placeholders.
+     * @param int|null $fetchMode
+     * @param mixed $bind An array of data to bind to the placeholders.
      *
-     * @return \Doctrine\DBAL\Driver\Statement
+     * @return ResultStatement
      */
     public function query($fetchMode = null, $bind = [])
     {
@@ -856,7 +857,7 @@ class QueryBuilder
      *
      * Uses {@see Connection::executeQuery}
      *
-     * @return \Doctrine\DBAL\Driver\Statement|int
+     * @return ResultStatement
      */
     public function execute()
     {

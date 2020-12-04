@@ -81,7 +81,7 @@ class Agent implements OrderAgentInterface
         EventDispatcherInterface $eventDispatcher
     ) {
         @trigger_error(
-            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in 7.0.0. ' .
+            'Class ' . self::class . ' is deprecated since version 6.1.0 and will be removed in Pimcore 10. ' .
             ' Use ' . OrderAgent::class . ' class instead.',
             E_USER_DEPRECATED
         );
@@ -384,8 +384,6 @@ class Agent implements OrderAgentInterface
      * @param string $paymentState
      *
      * @return PaymentInfo
-     *
-     * @throws UnsupportedException
      */
     protected function createNewOrderInformation(Order $order, string $paymentState)
     {
@@ -506,8 +504,6 @@ class Agent implements OrderAgentInterface
      *  - all product numbers
      *
      * @return int
-     *
-     * @throws UnsupportedException
      */
     protected function getFingerprintOfOrder()
     {

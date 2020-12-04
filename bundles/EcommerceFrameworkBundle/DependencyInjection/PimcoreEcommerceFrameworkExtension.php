@@ -24,7 +24,6 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\CommitOrderProcessor
 use Pimcore\Bundle\EcommerceFrameworkBundle\CheckoutManager\V7\HandlePendingPayments\ThrowExceptionStrategy;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\FilterService\FilterServiceLocatorInterface;
-use Pimcore\Bundle\EcommerceFrameworkBundle\Legacy\InterfaceLoader;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocator;
 use Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager\OrderManagerLocatorInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\PriceSystem\PriceSystemLocator;
@@ -59,11 +58,6 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
      */
     protected function loadInternal(array $config, ContainerBuilder $container)
     {
-
-        //necessary to make sure custom services still can use old interfaces (e.g. IProduct). needs to be removed
-        //when BC layer of interfaces is removed.
-        InterfaceLoader::loadInterfaces();
-
         $loader = new YamlFileLoader(
             $container,
             new FileLocator(__DIR__ . '/../Resources/config')
@@ -414,7 +408,7 @@ class PimcoreEcommerceFrameworkExtension extends ConfigurableExtension
 
         $container->setParameter('pimcore_ecommerce.index_service.default_tenant', $config['default_tenant']);
 
-        //@TODO Pimcore 7 - remove this
+        //@TODO Pimcore 10 - remove this
         $container->setParameter('pimcore_ecommerce.index_service.worker_mode', $config['worker_mode']);
 
         $getterIds = [];

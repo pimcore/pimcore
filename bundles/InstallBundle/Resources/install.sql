@@ -55,23 +55,6 @@ CREATE TABLE `assets_metadata` (
 	INDEX `name` (`name`)
 ) DEFAULT CHARSET=utf8mb4;
 
-DROP TABLE IF EXISTS `cache`;
-CREATE TABLE `cache` (
-  `id` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  `data` longblob,
-  `mtime` INT(11) UNSIGNED DEFAULT NULL,
-  `expire` INT(11) UNSIGNED DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) DEFAULT CHARSET=utf8mb4;
-
-DROP TABLE IF EXISTS `cache_tags`;
-CREATE TABLE `cache_tags` (
-  `id` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  `tag` varchar(165) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`,`tag`),
-  INDEX `tag` (`tag`)
-) DEFAULT CHARSET=ascii;
-
 DROP TABLE IF EXISTS `classes` ;
 CREATE TABLE `classes` (
 	`id` VARCHAR(50) NOT NULL,
@@ -141,9 +124,7 @@ CREATE TABLE `documents_editables` (
 DROP TABLE IF EXISTS `documents_email`;
 CREATE TABLE `documents_email` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
+  `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `to` varchar(255) DEFAULT NULL,
   `from` varchar(255) DEFAULT NULL,
@@ -158,9 +139,7 @@ CREATE TABLE `documents_email` (
 DROP TABLE IF EXISTS `documents_newsletter`;
 CREATE TABLE `documents_newsletter` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
+  `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `from` varchar(255) DEFAULT NULL,
   `subject` varchar(255) DEFAULT NULL,
@@ -197,9 +176,7 @@ CREATE TABLE `documents_link` (
 DROP TABLE IF EXISTS `documents_page` ;
 CREATE TABLE `documents_page` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
+  `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   `description` varchar(383) DEFAULT NULL,
@@ -215,9 +192,7 @@ CREATE TABLE `documents_page` (
 DROP TABLE IF EXISTS `documents_snippet`;
 CREATE TABLE `documents_snippet` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
+  `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `contentMasterDocumentId` int(11) DEFAULT NULL,
   `missingRequiredEditable` tinyint(1) unsigned DEFAULT NULL,
@@ -237,9 +212,7 @@ CREATE TABLE `documents_translations` (
 DROP TABLE IF EXISTS `documents_printpage`;
 CREATE TABLE `documents_printpage` (
   `id` int(11) unsigned NOT NULL DEFAULT '0',
-  `module` varchar(255) DEFAULT NULL,
-  `controller` varchar(255) DEFAULT NULL,
-  `action` varchar(255) DEFAULT NULL,
+  `controller` varchar(500) DEFAULT NULL,
   `template` varchar(255) DEFAULT NULL,
   `lastGenerated` int(11) DEFAULT NULL,
   `lastGenerateMessage` text,

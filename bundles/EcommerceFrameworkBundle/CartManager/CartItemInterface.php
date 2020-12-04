@@ -169,5 +169,3 @@ interface CartItemInterface
      */
     public function getName();
 }
-
-class_alias(CartItemInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\ICartItem');

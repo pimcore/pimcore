@@ -105,7 +105,7 @@ class Snippet extends Model\Document\Editable
      */
     public function frontend()
     {
-        // TODO inject services via DI when tags are built through container
+        // TODO inject services via DI when editables are built through container
         $container = \Pimcore::getContainer();
 
         $editableHandler = $container->get(EditableHandler::class);
@@ -143,24 +143,17 @@ class Snippet extends Model\Document\Editable
                 $cacheParams['target_group'] = $this->snippet->getUseTargetGroup();
             }
 
-            $cacheParams['webp'] = Frontend::hasWebpSupport();
-
             if (Site::isSiteRequest()) {
                 $cacheParams['siteId'] = Site::getCurrentSite()->getId();
             }
 
-            $cacheKey = 'tag_snippet__' . md5(serialize($cacheParams));
+            $cacheKey = 'editable_snippet__' . md5(serialize($cacheParams));
             if ($content = Cache::load($cacheKey)) {
                 return $content;
             }
         }
 
-        $content = $editableHandler->renderAction(
-            $this->snippet->getController(),
-            $this->snippet->getAction(),
-            $this->snippet->getModule(),
-            $params
-        );
+        $content = $editableHandler->renderAction($this->snippet->getController(), $params);
 
         // write contents to the cache, if output-cache is enabled
         if (isset($params['cache']) && $params['cache'] === true) {

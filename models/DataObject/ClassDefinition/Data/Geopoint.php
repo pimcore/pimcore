@@ -52,13 +52,6 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     ];
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Geopoint';
-
-    /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param string $data
@@ -318,4 +311,26 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
         return (abs($oldValue->getLongitude() - $newValue->getLongitude()) < 0.000000000001)
             && (abs($oldValue->getLatitude() - $newValue->getLatitude()) < 0.000000000001);
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Geopoint::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Geopoint::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Geopoint::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Geopoint::class . '|null';
+    }
+
+
 }

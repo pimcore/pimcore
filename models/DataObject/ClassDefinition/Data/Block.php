@@ -80,13 +80,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     public $styleElement = '';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\BlockElement[][]';
-
-    /**
      * @var array
      */
     public $childs = [];
@@ -136,7 +129,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         continue;
                     }
                     $elementData = $blockElement->getData();
-                    //TODO: move validation to checkValidity & throw exception in Pimcore 7
+                    //TODO: move validation to checkValidity & throw exception in Pimcore 10
                     if ($elementData instanceof DataObject\Localizedfield && $fd instanceof Localizedfields) {
                         foreach ($elementData->getInternalData() as $language => $fields) {
                             foreach ($fields as $fieldName => $values) {
@@ -1159,4 +1152,16 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
             $blockElement->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
         }
     }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\BlockElement::class . '[][]';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' .DataObject\Data\BlockElement::class . '[][]';
+    }
+
+
 }

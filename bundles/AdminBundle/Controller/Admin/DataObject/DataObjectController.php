@@ -18,6 +18,7 @@ use Pimcore\Bundle\AdminBundle\Controller\Admin\ElementControllerBase;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\AdminStyleTrait;
 use Pimcore\Bundle\AdminBundle\Controller\Traits\ApplySchedulerDataTrait;
 use Pimcore\Bundle\AdminBundle\Helper\GridHelperService;
+use Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler;
 use Pimcore\Controller\KernelControllerEventInterface;
 use Pimcore\Controller\Traits\ElementEditLockHelperTrait;
 use Pimcore\Db;
@@ -82,12 +83,13 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      * @Route("/delete-info", name="pimcore_admin_dataobject_dataobject_deleteinfo", methods={"GET"})
      *
      * @param Request $request
+     * @param EventDispatcherInterface $eventDispatcher
      *
      * @return JsonResponse
      */
-    public function deleteInfoAction(Request $request)
+    public function deleteInfoAction(Request $request, EventDispatcherInterface $eventDispatcher)
     {
-        return parent::deleteInfoAction($request);
+        return parent::deleteInfoAction($request, $eventDispatcher);
     }
 
     /**
@@ -774,10 +776,11 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      * @Route("/add", name="pimcore_admin_dataobject_dataobject_add", methods={"POST"})
      *
      * @param Request $request
+     * @param Model\FactoryInterface $modelFactory
      *
      * @return JsonResponse
      */
-    public function addAction(Request $request)
+    public function addAction(Request $request, Model\FactoryInterface $modelFactory)
     {
         $success = false;
 
@@ -791,7 +794,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
 
             if (!DataObject\Service::pathExists($intendedPath)) {
                 /** @var DataObject\Concrete $object */
-                $object = $this->get('pimcore.model.factory')->build($className);
+                $object = $modelFactory->build($className);
                 $object->setOmitMandatoryCheck(true); // allow to save the object although there are mandatory fields
 
                 if ($request->get('variantViaTree')) {
@@ -1531,6 +1534,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
      * @param EventDispatcherInterface $eventDispatcher
      * @param GridHelperService $gridHelperService
      * @param LocaleServiceInterface $localeService
+     * @param CsrfProtectionHandler $csrfProtection
      *
      * @return JsonResponse
      */
@@ -1538,7 +1542,8 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         Request $request,
         EventDispatcherInterface $eventDispatcher,
         GridHelperService $gridHelperService,
-        LocaleServiceInterface $localeService
+        LocaleServiceInterface $localeService,
+        CsrfProtectionHandler $csrfProtection
     ) {
         $allParams = array_merge($request->request->all(), $request->query->all());
         $csvMode = $allParams['csvMode'] ?? false;
@@ -1559,7 +1564,6 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         $requestedLanguage = $allParams['language'] ?? null;
         if ($requestedLanguage) {
             if ($requestedLanguage != 'default') {
-                //                $this->get('translator')->setLocale($requestedLanguage);
                 $request->setLocale($requestedLanguage);
             }
         } else {
@@ -1567,7 +1571,7 @@ class DataObjectController extends ElementControllerBase implements KernelContro
         }
 
         if (isset($allParams['data']) && $allParams['data']) {
-            $this->checkCsrfToken($request);
+            $csrfProtection->checkCsrfToken($request);
             if ($allParams['xaction'] == 'update') {
                 try {
                     $data = $this->decodeJson($allParams['data']);

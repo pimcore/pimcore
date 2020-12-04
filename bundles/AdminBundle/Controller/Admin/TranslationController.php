@@ -518,7 +518,7 @@ class TranslationController extends AdminController
                     foreach ($joins as $join) {
                         $fieldname = $join['language'];
 
-                        if ($alreadyJoined[$fieldname]) {
+                        if (isset($alreadyJoined[$fieldname])) {
                             continue;
                         }
                         $alreadyJoined[$fieldname] = 1;
@@ -767,7 +767,7 @@ class TranslationController extends AdminController
         $elements = array_chunk($elements, $elementsPerJob);
         foreach ($elements as $chunk) {
             $jobs[] = [[
-                'url' => $this->get('router')->getContext()->getBaseUrl() . '/admin/translation/' . $type . '-export',
+                'url' => $request->getBaseUrl() . '/admin/translation/' . $type . '-export',
                 'method' => 'POST',
                 'params' => [
                     'id' => $exportId,

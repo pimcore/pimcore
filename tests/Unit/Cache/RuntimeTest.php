@@ -31,13 +31,13 @@ class RuntimeTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @dataProvider blockedIndexProvider
      *
      * @param string $index
      */
     public function testThrowsExceptionOnBlockedIndexConstruct(string $index)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $data = [];
         $data[$index] = 'foo';
 
@@ -45,25 +45,25 @@ class RuntimeTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @dataProvider blockedIndexProvider
      *
      * @param string $index
      */
     public function testThrowsExceptionOnBlockedIndexMagicSet(string $index)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $cache = new Runtime();
         $cache->$index = 'foo';
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @dataProvider blockedIndexProvider
      *
      * @param string $index
      */
     public function testThrowsExceptionOnBlockedIndexOffsetSet(string $index)
     {
+        $this->expectException(\InvalidArgumentException::class);
         $cache = new Runtime();
         $cache->offsetSet($index, 'foo');
     }

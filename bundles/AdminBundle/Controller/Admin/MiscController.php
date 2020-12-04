@@ -26,9 +26,9 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Symfony\Component\HttpKernel\Profiler\Profiler;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @Route("/misc")
@@ -36,87 +36,22 @@ use Symfony\Component\Routing\Annotation\Route;
 class MiscController extends AdminController
 {
     /**
-     * @Route("/get-available-modules", name="pimcore_admin_misc_getavailablemodules", methods={"GET"})
-     *
-     * @param ControllerDataProvider $provider
-     *
-     * @return JsonResponse
-     */
-    public function getAvailableModulesAction(ControllerDataProvider $provider)
-    {
-        // convert to normal array
-        $bundles = array_values($provider->getBundles());
-
-        $result = array_map(function (BundleInterface $bundle) {
-            return [
-                'name' => $bundle->getName(),
-            ];
-        }, $bundles);
-
-        sort($result);
-
-        return $this->adminJson([
-            'data' => $result,
-        ]);
-    }
-
-    /**
-     * @Route("/get-available-controllers", name="pimcore_admin_misc_getavailablecontrollers", methods={"GET"})
+     * @Route("/get-available-controller-references", name="pimcore_admin_misc_getavailablecontroller_references", methods={"GET"})
      *
      * @param Request $request
      * @param ControllerDataProvider $provider
      *
      * @return JsonResponse
      */
-    public function getAvailableControllersAction(Request $request, ControllerDataProvider $provider)
+    public function getAvailableControllerReferencesAction(Request $request, ControllerDataProvider $provider)
     {
-        $routingDefaults = $this->getParameter('pimcore.routing.defaults');
-        $bundle = $request->get('moduleName');
-        $controllers = $provider->getControllers($bundle, $routingDefaults['bundle']);
+        $controllerReferences = $provider->getControllerReferences();
 
         $result = array_map(function ($controller) {
             return [
                 'name' => $controller,
             ];
-        }, $controllers);
-
-        sort($result);
-
-        return $this->adminJson([
-            'data' => $result,
-        ]);
-    }
-
-    /**
-     * @Route("/get-available-actions", name="pimcore_admin_misc_getavailableactions", methods={"GET"})
-     *
-     * @param Request $request
-     * @param ControllerDataProvider $provider
-     *
-     * @return JsonResponse
-     */
-    public function getAvailableActionsAction(Request $request, ControllerDataProvider $provider)
-    {
-        $routingDefaults = $this->getParameter('pimcore.routing.defaults');
-        $bundle = $request->get('moduleName');
-        if (empty($bundle)) {
-            $bundle = $routingDefaults['bundle'];
-        }
-
-        $controller = $request->get('controllerName');
-        if (empty($controller)) {
-            $controller = $routingDefaults['controller'];
-        }
-
-        $actions = $provider->getActions($controller, $bundle);
-
-        $result = array_map(function ($action) {
-            return [
-                'name' => $action,
-            ];
-        }, $actions);
-
-        sort($result);
+        }, $controllerReferences);
 
         return $this->adminJson([
             'data' => $result,
@@ -134,13 +69,13 @@ class MiscController extends AdminController
     {
         $templates = $provider->getTemplates();
 
-        $result = array_map(function ($template) {
+        sort($templates, SORT_NATURAL | SORT_FLAG_CASE);
+
+        $result = array_map(static function ($template) {
             return [
                 'path' => $template,
             ];
         }, $templates);
-
-        sort($result);
 
         return $this->adminJson([
             'data' => $result,
@@ -154,11 +89,11 @@ class MiscController extends AdminController
      *
      * @return Response
      */
-    public function jsonTranslationsSystemAction(Request $request)
+    public function jsonTranslationsSystemAction(Request $request, TranslatorInterface $translator)
     {
         $language = $request->get('language');
 
-        $translator = $this->get('translator');
+        /** @var Translator $translator */
         $translator->lazyInitialize('admin', $language);
 
         $translations = $translator->getCatalogue($language)->all('admin');

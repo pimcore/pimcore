@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\Targeting\Document;
 
 use Pimcore\Bundle\AdminBundle\Security\User\UserLoader;
-use Pimcore\Cache\Core\CoreHandlerInterface;
+use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Document\Targeting\TargetingDocumentInterface;
@@ -43,7 +43,7 @@ class DocumentTargetingConfigurator
     private $userLoader;
 
     /**
-     * @var CoreHandlerInterface
+     * @var CoreCacheHandler
      */
     private $cache;
 
@@ -61,7 +61,7 @@ class DocumentTargetingConfigurator
         VisitorInfoStorageInterface $visitorInfoStorage,
         RequestHelper $requestHelper,
         UserLoader $userLoader,
-        CoreHandlerInterface $cache
+        CoreCacheHandler $cache
     ) {
         $this->visitorInfoStorage = $visitorInfoStorage;
         $this->requestHelper = $requestHelper;

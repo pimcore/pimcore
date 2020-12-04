@@ -87,7 +87,7 @@ interface PaymentInterface
     /**
      * Payment supports recurring payment
      *
-     * @todo Pimcore 7 remove this method as it moved to RecurringPaymentInterface
+     * @todo Pimcore 10 remove this method as it moved to RecurringPaymentInterface
      *
      * @return bool
      */
@@ -97,7 +97,7 @@ interface PaymentInterface
      * @param AbstractOrder $sourceOrder
      * @param object $paymentBrick
      *
-     * @todo Pimcore 7 remove this method as it moved to RecurringPaymentInterface
+     * @todo Pimcore 10 remove this method as it moved to RecurringPaymentInterface
      *
      * @return mixed
      */
@@ -106,7 +106,7 @@ interface PaymentInterface
     /**
      * @param Concrete $orderListing
      *
-     * @todo Pimcore 7 remove this method as it moved to RecurringPaymentInterface
+     * @todo Pimcore 10 remove this method as it moved to RecurringPaymentInterface
      *
      * @return Concrete
      */
@@ -119,5 +119,3 @@ interface PaymentInterface
      */
     public function getConfigurationKey();
 }
-
-class_alias(PaymentInterface::class, 'Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\IPayment');

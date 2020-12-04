@@ -54,11 +54,6 @@ class Processor
     ];
 
     /**
-     * @var null|bool
-     */
-    protected static $hasWebpSupport = null;
-
-    /**
      * @param string $format
      * @param array $allowed
      * @param string $fallback
@@ -148,12 +143,6 @@ class Processor
         }
 
         $image = Asset\Image::getImageTransformInstance();
-
-        if ($optimizedFormat && self::hasWebpSupport() && $image->supportsFormat('webp')) {
-            $optimizedFormat = $optimizeContent = false;
-            $format = 'webp';
-        }
-
         $thumbDir = $asset->getImageThumbnailSavePath() . '/image-thumb__' . $asset->getId() . '__' . $config->getName();
         $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '$/i', '', $asset->getFilename());
 
@@ -427,30 +416,5 @@ class Processor
         }
 
         return $path;
-    }
-
-    /**
-     * @param bool|null $webpSupport
-     *
-     * @return bool|null
-     */
-    public static function setHasWebpSupport(?bool $webpSupport): ?bool
-    {
-        $prevValue = self::$hasWebpSupport;
-        self::$hasWebpSupport = $webpSupport;
-
-        return $prevValue;
-    }
-
-    /**
-     * @return bool
-     */
-    protected static function hasWebpSupport(): bool
-    {
-        if (self::$hasWebpSupport !== null) {
-            return self::$hasWebpSupport;
-        }
-
-        return Frontend::hasWebpSupport();
     }
 }

@@ -1035,7 +1035,7 @@ class Menu extends AbstractRenderer
             'pages' => $container, // we can't use `container` as index name, since this is used by the DI-container
         ];
 
-        return $this->twig->render($partial, $model);
+        return $this->templatingEngine->render($partial, $model);
     }
 
     /**

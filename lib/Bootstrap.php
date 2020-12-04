@@ -18,8 +18,8 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\Document;
 use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Debug\Debug;
 use Symfony\Component\Dotenv\Dotenv;
+use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -160,7 +160,7 @@ class Bootstrap
     }
 
     /**
-     * @deprecated 7.0.0 Typo in name; use Bootstrap::bootstrap() instead
+     * @deprecated Pimcore 10 Typo in name; use Bootstrap::bootstrap() instead
      * @see Bootstrap::bootstrap()
      */
     public static function boostrap()

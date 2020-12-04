@@ -68,11 +68,6 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    Pimcore\Controller\Config\ConfigNormalizer:
-        calls:
-            - [setRoutingDefaults, ['%pimcore.routing.defaults%']]
-
-
     Pimcore\Controller\Config\ControllerDataProvider:
         public : true
         arguments:

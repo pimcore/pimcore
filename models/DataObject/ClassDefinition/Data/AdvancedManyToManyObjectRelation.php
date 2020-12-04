@@ -56,13 +56,6 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
     public $fieldtype = 'advancedManyToManyObjectRelation';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]';
-
-    /**
      * @var bool
      */
     public $enableBatchEdit;
@@ -511,7 +504,7 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         }
 
         $objectsMetadata = $this->getDataFromObjectParam($object, $params);
-        //TODO: move validation to checkValidity & throw exception in Pimcore 7
+        //TODO: move validation to checkValidity & throw exception in Pimcore 10
         $objectsMetadata = $this->filterMultipleAssignments($objectsMetadata, $object, $params);
 
         $classId = null;
@@ -1114,11 +1107,13 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
         return $elementType . $id;
     }
 
-    /**
-     * @return string
-     */
-    public function getPhpdocType()
+    public function getPhpdocInputType(): ?string
     {
-        return $this->phpdocType;
+        return '\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Data\\ObjectMetadata[]';
     }
 }

@@ -251,19 +251,19 @@ class ClassDefinition extends Model\AbstractModel
      * @param string $name
      *
      * @return self|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
         try {
             $class = new self();
             $id = $class->getDao()->getIdByName($name);
-            if ($id) {
-                return self::getById($id);
-            }
-        } catch (\Exception $e) {
-        }
 
-        return null;
+            return self::getById($id);
+        } catch (Model\Exception\NotFoundException $e) {
+            return null;
+        }
     }
 
     /**
@@ -671,7 +671,6 @@ class ClassDefinition extends Model\AbstractModel
 
         $brickListing = new DataObject\Objectbrick\Definition\Listing();
         $brickListing = $brickListing->load();
-        /** @var DataObject\Objectbrick\Definition $brickDefinition */
         foreach ($brickListing as $brickDefinition) {
             $modified = false;
 

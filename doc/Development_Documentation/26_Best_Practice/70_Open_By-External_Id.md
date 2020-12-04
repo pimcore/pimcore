@@ -90,6 +90,8 @@ class BackendController
     /**
      * @param Request $request
      * @Route("/admin/find-by-external-id")
+     * 
+     * @return JsonResponse
      */
     public function findByWordpressId(Request $request) {
         if($id = (int)$request->get('external-id')) {

@@ -19,7 +19,6 @@ use Pimcore\Config\EnvironmentConfig;
 use Pimcore\Config\EnvironmentConfigInterface;
 use Pimcore\Model\Element\ElementInterface;
 use Pimcore\Model\User\UserRole;
-use Pimcore\Model\WebsiteSetting;
 use Symfony\Cmf\Bundle\RoutingBundle\Routing\DynamicRouter;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\HttpFoundation\IpUtils;
@@ -252,7 +251,6 @@ class Config implements \ArrayAccess
                 $list = new Model\WebsiteSetting\Listing();
                 $list = $list->load();
 
-                /** @var WebsiteSetting $item */
                 foreach ($list as $item) {
                     $itemSiteId = $item->getSiteId();
 
@@ -500,6 +498,7 @@ class Config implements \ArrayAccess
                     ],
                     'archive_treshold' => self::getArrayValue(['applicationlog', 'archive_treshold'], $config),
                     'archive_alternative_database' => self::getArrayValue(['applicationlog', 'archive_alternative_database'], $config),
+                    'delete_archive_threshold' => self::getArrayValue(['applicationlog', 'delete_archive_threshold'], $config),
                 ],
             ]);
         }
@@ -509,7 +508,7 @@ class Config implements \ArrayAccess
 
     /**
      * @deprecated use getSystemConfiguration()/Pimcore\Config service instead
-     * to be removed in v7.0
+     * to be removed in Pimcore 10
      *
      * @return mixed|null|\Pimcore\Config\Config
      *

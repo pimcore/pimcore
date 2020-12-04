@@ -272,7 +272,6 @@ class Service extends Model\Element\Service
             $target->setEditables($source->getEditables());
 
             $target->setTemplate($source->getTemplate());
-            $target->setAction($source->getAction());
             $target->setController($source->getController());
 
             if ($source instanceof Document\Page) {

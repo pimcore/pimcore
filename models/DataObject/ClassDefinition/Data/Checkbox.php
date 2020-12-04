@@ -23,7 +23,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use DataObject\Traits\DefaultValueTrait;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     use Extension\ColumnType;
     use Extension\QueryColumnType;
@@ -53,14 +52,6 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @var string
      */
     public $columnType = 'tinyint(1)';
-
-    /**
-     * Type for the generated phpdoc. Do not use boolean here because boolean is an alias for bool and
-     * aliases don't work in type declarations.
-     *
-     * @var string
-     */
-    public $phpdocType = 'bool';
 
     /**
      * @return int|null
@@ -331,4 +322,25 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         return $oldValue === $newValue;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?bool';
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?bool';
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return 'bool|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return 'bool|null';
+    }
+
 }

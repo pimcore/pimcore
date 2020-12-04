@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Analytics\Piwik\EventListener;
 
-use Pimcore\Cache\Core\CoreHandlerInterface;
+use Pimcore\Cache\Core\CoreCacheHandler;
 use Pimcore\Event\Admin\Report\SettingsEvent;
 use Pimcore\Event\Admin\ReportEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -25,14 +25,14 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class CacheListener implements EventSubscriberInterface
 {
     /**
-     * @var CoreHandlerInterface
+     * @var CoreCacheHandler
      */
     private $cache;
 
     /**
-     * @param CoreHandlerInterface $cache
+     * @param CoreCacheHandler $cache
      */
-    public function __construct(CoreHandlerInterface $cache)
+    public function __construct(CoreCacheHandler $cache)
     {
         $this->cache = $cache;
     }

@@ -21,10 +21,10 @@ use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Translation\Exception\InvalidArgumentException;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\TranslatorBagInterface;
-use Symfony\Component\Translation\TranslatorInterface as LegacyTranslatorInterface;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class Translator implements LegacyTranslatorInterface, TranslatorInterface, TranslatorBagInterface
+class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleAwareInterface
 {
     /**
      * @var TranslatorInterface|TranslatorBagInterface
@@ -66,10 +66,10 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
     protected $kernel;
 
     /**
-     * @param LegacyTranslatorInterface $translator
+     * @param TranslatorInterface $translator
      * @param bool $caseInsensitive
      */
-    public function __construct(LegacyTranslatorInterface $translator, bool $caseInsensitive = false)
+    public function __construct(TranslatorInterface $translator, bool $caseInsensitive = false)
     {
         if (!$translator instanceof TranslatorBagInterface) {
             throw new InvalidArgumentException(sprintf('The Translator "%s" must implement TranslatorInterface and TranslatorBagInterface.', get_class($translator)));
@@ -82,7 +82,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
     /**
      * {@inheritdoc}
      */
-    public function trans($id, array $parameters = [], $domain = null, $locale = null)
+    public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null)
     {
         $id = trim($id);
 
@@ -135,23 +135,11 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
     /**
      * {@inheritdoc}
      */
-    public function transChoice($id, $number, array $parameters = [], $domain = null, $locale = null)
+    public function setLocale(string $locale)
     {
-        @trigger_error(
-            'transChoice is deprecated since version 6.0.1 and will be removed in 7.0.0. ' .
-            ' Use the trans() method with "%count%" parameter.',
-            E_USER_DEPRECATED
-        );
-
-        return $this->trans($id, ['%count%' => $number] + $parameters, $domain, $locale);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setLocale($locale)
-    {
-        $this->translator->setLocale($locale);
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($locale);
+        }
     }
 
     /**
@@ -159,13 +147,17 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
      */
     public function getLocale()
     {
-        return $this->translator->getLocale();
+        if ($this->translator instanceof LocaleAwareInterface) {
+            return $this->translator->getLocale();
+        }
+
+        return \Pimcore\Tool::getDefaultLanguage();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getCatalogue($locale = null)
+    public function getCatalogue(string $locale = null)
     {
         return $this->translator->getCatalogue($locale);
     }
@@ -279,28 +271,28 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
      */
     protected function checkForEmptyTranslation($id, $translated, $parameters, $domain, $locale)
     {
+        if (empty($id)) {
+            return $translated;
+        }
+
         $normalizedId = $id;
         if ($this->caseInsensitive) {
             $normalizedId = mb_strtolower($id);
         }
 
         if (isset($parameters['%count%'])) {
-            $normalizedId = $translated;
+            $normalizedId = $id = $translated;
         }
 
-        $comparisonId = $normalizedId;
-        if (!empty($parameters)) {
-            $comparisonId = strtr($normalizedId, $parameters);
-        }
-
-        $lookForFallback = $comparisonId == $translated;
-        if (empty($id)) {
+        $lookForFallback = $normalizedId == $translated;
+        if ($normalizedId != $translated && $translated) {
             return $translated;
-        } elseif ($comparisonId != $translated && $translated) {
-            return $translated;
-        } elseif ($comparisonId == $translated) {
+        } elseif ($normalizedId == $translated) {
             if ($this->getCatalogue($locale)->has($normalizedId, $domain)) {
-                return $this->getCatalogue($locale)->get($normalizedId, $domain);
+                $translated = $this->getCatalogue($locale)->get($normalizedId, $domain);
+                if ($translated != $normalizedId) {
+                    return $translated;
+                }
             } elseif ($backend = $this->getBackendForDomain($domain)) {
                 if (strlen($id) > 190) {
                     throw new \Exception("Message ID's longer than 190 characters are invalid!");
@@ -353,12 +345,16 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
                     $fallbackValue = $catalogue->get($normalizedId, $domain);
                 }
 
-                if ($fallbackValue) {
+                if ($fallbackValue && $normalizedId != $fallbackValue) {
                     // update fallback value in original catalogue otherwise multiple calls to the same id will not work
                     $this->getCatalogue($locale)->set($normalizedId, $fallbackValue, $domain);
 
-                    return $fallbackValue;
+                    return strtr($fallbackValue, $parameters);
                 }
+            }
+
+            if ($this->caseInsensitive) {
+                return $id;
             }
         }
 

@@ -74,7 +74,7 @@ class ObjectFieldGetter extends AbstractOperator
             $value = $valueContainer->value;
             $result->value = $value;
 
-            if ($valueContainer->isArrayType) {
+            if ($valueContainer->isArrayType ?? false) {
                 if (is_array($value)) {
                     $newValues = [];
                     foreach ($value as $o) {

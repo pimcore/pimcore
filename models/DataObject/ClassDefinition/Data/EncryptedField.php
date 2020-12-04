@@ -32,7 +32,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Extension\ColumnType;
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * don't throw an error it encrypted field cannot be decoded (default)
@@ -73,12 +72,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      */
     public $columnType = 'LONGBLOB';
 
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType;
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
@@ -491,14 +484,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @param string $phpdocType
-     */
-    public function setPhpdocType($phpdocType)
-    {
-        $this->phpdocType = $phpdocType;
-    }
-
-    /**
      * @return Model\DataObject\ClassDefinition\Data
      */
     public function getDelegateDatatypeDefinition()
@@ -576,14 +561,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     }
 
     /**
-     * @return string
-     */
-    public function getPhpdocType()
-    {
-        return $this->delegate ? $this->delegate->getPhpdocType() : null;
-    }
-
-    /**
      * @inheritDoc
      */
     public function getDataForSearchIndex($object, $params = [])
@@ -610,4 +587,26 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
 
         return false;
     }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return $this->delegate ? $this->delegate->getParameterTypeDeclaration() : null;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return $this->delegate ? $this->delegate->getReturnTypeDeclaration() : null;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return $this->delegate ? $this->delegate->getPhpdocInputType() : null;
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return $this->delegate ? $this->delegate->getPhpdocReturnType() : null;
+    }
+
+
 }

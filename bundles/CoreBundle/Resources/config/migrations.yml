@@ -4,12 +4,9 @@ services:
         autoconfigure: true
         public: false
 
-    Pimcore\Migrations\Command\:
-        resource: '../../../../lib/Migrations/Command'
-
-    Pimcore\Migrations\Configuration\ConfigurationFactory:
+    Pimcore\Migrations\FilteredMigrationsRepository:
         public: true
 
-    Pimcore\Migrations\MigrationManager:
-        lazy: true
+    Pimcore\Migrations\FilteredTableMetadataStorage:
         public: true
+

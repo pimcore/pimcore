@@ -159,7 +159,7 @@ class TestHelper
                 foreach ($editables as $key => $value) {
                     if ($value instanceof Document\Editable\Video) {
                         // with video can't use frontend(), it includes random id
-                        $d['editable_' . $key] = $value->getName() . ':' . $value->type . '_' . $value->id;
+                        $d['editable_' . $key] = $value->getName() . ':' . $value->getType() . '_' . $value->getId();
                     } elseif (!$value instanceof Document\Editable\Block) {
                         $d['editable_' . $key] = $value->getName() . ':' . $value->frontend();
                     } else {
@@ -783,10 +783,10 @@ class TestHelper
     }
 
     /**
-     * @param ElementInterface $root
+     * @param ElementInterface|null $root
      * @param string $type
      */
-    public static function cleanUpTree(ElementInterface $root, $type)
+    public static function cleanUpTree(?ElementInterface $root, $type)
     {
         if (!($root instanceof AbstractObject || $root instanceof Document || $root instanceof Asset)) {
             throw new \InvalidArgumentException(sprintf('Cleanup root type for %s needs to be one of: AbstractObject, Document, Asset', $type));

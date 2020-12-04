@@ -23,6 +23,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\Element;
 use Pimcore\Model\User;
 use Pimcore\Tool;
+use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Google\GoogleAuthenticatorInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -795,16 +796,16 @@ class UserController extends AdminController implements KernelControllerEventInt
      * @Route("/user/renew-2fa-qr-secret", name="pimcore_admin_user_renew2fasecret", methods={"GET"})
      *
      * @param Request $request
+     * @param GoogleAuthenticatorInterface $twoFactor
      *
      * @return BinaryFileResponse
      */
-    public function renew2FaSecretAction(Request $request)
+    public function renew2FaSecretAction(Request $request, GoogleAuthenticatorInterface $twoFactor)
     {
         $user = $this->getAdminUser();
         $proxyUser = $this->getAdminUser(true);
 
-        $twoFactorService = $this->get('scheb_two_factor.security.google_authenticator');
-        $newSecret = $twoFactorService->generateSecret();
+        $newSecret = $twoFactor->generateSecret();
         $user->setTwoFactorAuthentication('enabled', true);
         $user->setTwoFactorAuthentication('type', 'google');
         $user->setTwoFactorAuthentication('secret', $newSecret);
@@ -815,8 +816,7 @@ class UserController extends AdminController implements KernelControllerEventInt
             $adminSession->set('2fa_required', true);
         });
 
-        $twoFactorService = $this->get('scheb_two_factor.security.google_authenticator');
-        $url = $twoFactorService->getQRContent($proxyUser);
+        $url = $twoFactor->getQRContent($proxyUser);
 
         $code = new \Endroid\QrCode\QrCode;
         $code->setWriterByName('png');
@@ -1082,7 +1082,6 @@ class UserController extends AdminController implements KernelControllerEventInt
         $list->load();
         $roleList = $list->getRoles();
 
-        /** @var User\Role $role */
         foreach ($roleList as $role) {
             if (!$request->get('permission') || in_array($request->get('permission'), $role->getPermissions())) {
                 $roles[] = [
@@ -1155,7 +1154,7 @@ class UserController extends AdminController implements KernelControllerEventInt
                     $mail = Tool::getMail([$user->getEmail()], 'Pimcore login invitation for ' . Tool::getHostname());
                     $mail->setIgnoreDebugMode(true);
                     $mail->setBodyText("Login to pimcore and change your password using the following link. This temporary login link will expire in  24 hours: \r\n\r\n" . $loginUrl);
-                    $res = $mail->send();
+                    $mail->send();
 
                     $success = true;
                     $message = sprintf($this->trans('invitation_link_sent'), $user->getEmail());

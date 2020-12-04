@@ -19,14 +19,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Intl\Exception\NotImplementedException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Twig\Environment;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Class Mpay24
  * Payment integration for Mpay24
  *
  * @see https://payment-services.ingenico.com/int/en/ogone/support/guides/integration%20guides/e-commerce/introduction
- * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-mpay24-seamless" in Pimcore 7.
+ * @deprecated since v6.8.0 and will be moved to package "pimcore/payment-mpay24-seamless" in Pimcore 10.
  */
 class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\PaymentInterface
 {
@@ -35,17 +35,17 @@ class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\Ecommerc
      */
     private $ecommerceConfig;
 
-    /** @var Environment */
-    private $twig;
+    /** @var EngineInterface */
+    private $template;
 
     private $successURL;
     private $errorURL;
     private $confirmationURL;
     private $authorizedData;
 
-    public function __construct(array $options, Environment $twig)
+    public function __construct(array $options, EngineInterface $template)
     {
-        $this->twig = $twig;
+        $this->template = $template;
         $this->configureOptions(new OptionsResolver())->resolve($options);
         $this->ecommerceConfig = $options;
         $this->confirmationURL = '';
@@ -163,7 +163,7 @@ class Mpay24Seamless extends AbstractPayment implements \Pimcore\Bundle\Ecommerc
         $params['paymentMethods'] = $this->ecommerceConfig['payment_methods'];
         $params['enabledPaymentMethods'] = isset($config['enabledPaymentMethods']) ? $config['enabledPaymentMethods'] : array_keys($params['paymentMethods']);
 
-        return $this->twig->render($this->ecommerceConfig['partial'], $params);
+        return $this->template->render($this->ecommerceConfig['partial'], $params);
     }
 
     /**

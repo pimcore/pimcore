@@ -14,8 +14,8 @@
 
 namespace Pimcore\Bundle\EcommerceFrameworkBundle\OrderManager;
 
+use Laminas\Paginator\Adapter\AdapterInterface;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractOrder;
-use Zend\Paginator\Adapter\AdapterInterface;
 
 abstract class AbstractOrderList implements OrderListInterface
 {

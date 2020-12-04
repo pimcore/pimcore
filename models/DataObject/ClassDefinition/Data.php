@@ -21,7 +21,7 @@ use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
 use ProxyManager\Proxy\LazyLoadingInterface;
 
-abstract class Data
+abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface
 {
     use DataObject\ClassDefinition\Helper\VarExport;
 
@@ -54,13 +54,6 @@ abstract class Data
      * @var int
      */
     public $index;
-
-    /**
-     * @deprecated implement getPhpdocInputType() and getPhpdocReturnType() instead
-     *
-     * @var string
-     */
-    public $phpdocType;
 
     /**
      * @var bool
@@ -388,16 +381,6 @@ abstract class Data
     }
 
     /**
-     * @deprecated use getPhpdocInputType() and getPhpdocReturnType() instead
-     *
-     * @return string
-     */
-    public function getPhpdocType()
-    {
-        return $this->phpdocType;
-    }
-
-    /**
      *
      * @return string
      */
@@ -627,54 +610,6 @@ abstract class Data
     }
 
     /**
-     * @return string|null
-     */
-    public function getParameterTypeDeclaration(): ?string
-    {
-        if ($this->getPhpdocInputType()) {
-            return '?' . $this->getPhpdocInputType();
-        }
-
-        return null;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getReturnTypeDeclaration(): ?string
-    {
-        if ($this->getPhpdocReturnType()) {
-            return '?' . $this->getPhpdocReturnType();
-        }
-
-        return null;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getPhpdocInputType(): ?string
-    {
-        if ($this->getPhpdocType()) {
-            return $this->getPhpdocType();
-        }
-
-        return null;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getPhpdocReturnType(): ?string
-    {
-        if ($this->getPhpdocType()) {
-            return $this->getPhpdocType();
-        }
-
-        return null;
-    }
-
-    /**
      * Creates getter code which is used for generation of php file for object classes using this data type
      *
      * @param DataObject\ClassDefinition|DataObject\Objectbrick\Definition|DataObject\Fieldcollection\Definition $class
@@ -685,7 +620,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -747,7 +682,7 @@ abstract class Data
 
         $key = $this->getName();
 
-        if ($class->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getParameterTypeDeclaration()) {
             $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
         } else {
             $typeDeclaration = '';
@@ -815,7 +750,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($brickClass->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($brickClass->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -865,7 +800,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($brickClass->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($brickClass->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getParameterTypeDeclaration()) {
             $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
         } else {
             $typeDeclaration = '';
@@ -934,7 +869,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -976,7 +911,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($fieldcollectionDefinition->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getParameterTypeDeclaration()) {
             $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
         } else {
             $typeDeclaration = '';
@@ -1036,7 +971,7 @@ abstract class Data
     {
         $key = $this->getName();
 
-        if ($class->getGenerateTypeDeclarations() && $this->getReturnTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getReturnTypeDeclaration()) {
             $typeDeclaration = ': ' . $this->getReturnTypeDeclaration();
         } else {
             $typeDeclaration = '';
@@ -1087,7 +1022,7 @@ abstract class Data
             $containerGetter = 'getClass';
         }
 
-        if ($class->getGenerateTypeDeclarations() && $this->getParameterTypeDeclaration() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface) {
+        if ($class->getGenerateTypeDeclarations() && $this instanceof DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface && $this->getParameterTypeDeclaration()) {
             $typeDeclaration = $this->getParameterTypeDeclaration() . ' ';
         } else {
             $typeDeclaration = '';
@@ -1661,14 +1596,14 @@ abstract class Data
      */
     public function isEqual($oldValue, $newValue)
     {
-        @trigger_error('Calling '.__METHOD__.' is deprecated since version 6.7.0 and will be removed in 7.0.0. ' .
+        @trigger_error('Calling '.__METHOD__.' is deprecated since version 6.7.0 and will be removed in Pimcore 10. ' .
             'Implement `' . DataObject\ClassDefinition\Data\EqualComparisonInterface::class . '` instead.', E_USER_DEPRECATED);
 
         return false;
     }
 
     /**
-     * @param LazyLoadingInterface $object
+     * @param DataObject\Concrete $object
      */
     public function markLazyloadedFieldAsLoaded($object)
     {
@@ -1688,9 +1623,9 @@ abstract class Data
     }
 
     /**
-     * @param DataObject\Listing            $listing
-     * @param string|int|float|float|array $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
-     * @param string                        $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
+     * @param DataObject\Listing $listing
+     * @param string|int|float|array $data comparison data, can be scalar or array (if operator is e.g. "IN (?)")
+     * @param string $operator SQL comparison operator, e.g. =, <, >= etc. You can use "?" as placeholder, e.g. "IN (?)"
      *
      * @return DataObject\Listing
      */

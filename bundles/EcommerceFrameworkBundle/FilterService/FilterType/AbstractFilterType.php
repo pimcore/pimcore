@@ -19,8 +19,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\ProductList\ProductList
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\AbstractFilterDefinitionType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Templating\EngineInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Twig\Environment;
 
 abstract class AbstractFilterType
 {
@@ -32,9 +32,9 @@ abstract class AbstractFilterType
     protected $translator;
 
     /**
-     * @var Environment
+     * @var EngineInterface
      */
-    protected $twig;
+    protected $templatingEngine;
 
     /**
      * @var string
@@ -48,19 +48,19 @@ abstract class AbstractFilterType
 
     /**
      * @param TranslatorInterface $translator
-     * @param Environment $twig
+     * @param EngineInterface $templatingEngine
      * @param string $template for rendering the filter frontend
      * @param array $options for additional options
      */
     public function __construct(
         TranslatorInterface $translator,
-        Environment $twig,
+        EngineInterface $templatingEngine,
         RequestStack $requestStack,
         string $template,
         array $options = []
     ) {
         $this->translator = $translator;
-        $this->twig = $twig;
+        $this->templatingEngine = $templatingEngine;
         $this->template = $template;
         $this->request = $requestStack->getCurrentRequest();
 
@@ -108,15 +108,33 @@ abstract class AbstractFilterType
      * renders and returns the rendered html snippet for the current filter
      * based on settings in the filter definition and the current filter params.
      *
-     * @abstract
-     *
      * @param AbstractFilterDefinitionType $filterDefinition
      * @param ProductListInterface $productList
      * @param array $currentFilter
      *
      * @return string
      */
-    abstract public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter);
+    public function getFilterFrontend(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, $currentFilter)
+    {
+        return $this->render(
+            $this->getTemplate($filterDefinition),
+            $this->getFilterValues($filterDefinition, $productList, $currentFilter)
+        );
+    }
+
+    /**
+     * returns the raw data for the current filter based on settings in the
+     * filter definition and the current filter params.
+     *
+     * @abstract
+     *
+     * @param AbstractFilterDefinitionType $filterDefinition
+     * @param ProductListInterface $productList
+     * @param array $currentFilter
+     *
+     * @return array
+     */
+    abstract public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array;
 
     /**
      * adds necessary conditions to the product list implementation based on the currently set filter params.
@@ -167,6 +185,6 @@ abstract class AbstractFilterType
      */
     protected function render($template, array $parameters = [])
     {
-        return $this->twig->render($template, $parameters);
+        return $this->templatingEngine->render($template, $parameters);
     }
 }

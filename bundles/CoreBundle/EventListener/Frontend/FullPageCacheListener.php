@@ -168,6 +168,10 @@ class FullPageCacheListener
      */
     public function onKernelRequest(RequestEvent $event)
     {
+        if (!$this->isEnabled()) {
+            return;
+        }
+
         $request = $event->getRequest();
 
         if (!$event->isMasterRequest()) {
@@ -290,10 +294,6 @@ class FullPageCacheListener
             if (is_array($tags)) {
                 $appendKey = '_' . implode('_', $tags);
             }
-        }
-
-        if (Tool\Frontend::hasWebpSupport()) {
-            $appendKey .= 'webp';
         }
 
         if ($request->isXmlHttpRequest()) {

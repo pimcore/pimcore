@@ -23,7 +23,6 @@ use Pimcore\Http\Request\Resolver\PimcoreContextResolver;
 use Pimcore\Model\Document;
 use Pimcore\Version;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\Asset\Packages;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -310,7 +309,7 @@ class EditmodeListener implements EventSubscriberInterface
     {
         return array_merge(
             [
-                'bundles/fosjsrouting/js/router.js',
+                '/bundles/fosjsrouting/js/router.js',
                 '/bundles/pimcoreadmin/js/pimcore/functions.js',
                 '/bundles/pimcoreadmin/js/pimcore/overrides.js',
                 '/bundles/pimcoreadmin/js/pimcore/tool/milestoneslider.js',

@@ -2,6 +2,7 @@
 
 namespace Pimcore\Tests\Model\Inheritance;
 
+use Pimcore\Db\Connection;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Folder;
@@ -13,7 +14,7 @@ use Pimcore\Tests\Util\TestHelper;
 
 class GeneralTest extends ModelTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         TestHelper::cleanUp();
@@ -33,7 +34,6 @@ class GeneralTest extends ModelTestCase
     {
         // According to the bootstrap file en and de are valid website languages
 
-        /** @var Inheritance $one */
         $one = new Inheritance();
         $one->setKey('one');
         $one->setParentId(1);
@@ -42,7 +42,6 @@ class GeneralTest extends ModelTestCase
         $one->setNormalInput('parenttext');
         $one->save();
 
-        /** @var Inheritance $two */
         $two = new Inheritance();
         $two->setKey('two');
         $two->setParentId($one->getId());
@@ -144,7 +143,6 @@ class GeneralTest extends ModelTestCase
         $target->setSomeAttribute('Some content 1');
         $target->save();
 
-        /** @var Inheritance $one */
         $one = new Inheritance();
         $one->setKey('one');
         $one->setParentId(1);
@@ -156,7 +154,6 @@ class GeneralTest extends ModelTestCase
 
         // create child "two", inherit relation from "one"
 
-        /** @var Inheritance $two */
         $two = new Inheritance();
         $two->setKey('one');
         $two->setParentId($one->getId());
@@ -237,12 +234,14 @@ class GeneralTest extends ModelTestCase
         $this->assertEquals(1, count($relationobjects), 'inheritance for object relations failed');
         $this->assertEquals($one->getId(), $relationobjects[0]->getId(), 'inheritance for object relations failed (wrong object)');
 
+        /** @var Connection $db */
         $db = $this->tester->getContainer()->get('database_connection');
         $table = 'object_' . $one->getClassId();
 
-        $relationobjectsString = $db->fetchColumn('SELECT relationobjects FROM ' . $table . ' WHERE oo_id = ?', [
-            $two->getId(),
-        ]);
+        $relationobjectsString = $db->fetchOne(
+            'SELECT relationobjects FROM ' . $table . ' WHERE oo_id = ?',
+            [$two->getId()]
+        );
 
         $this->assertEquals(
             ',' . $one->getId() . ',',
@@ -300,12 +299,14 @@ class GeneralTest extends ModelTestCase
         $this->assertCount(1, $relationobjects, 'inheritance for object relations failed');
         $this->assertEquals($one->getId(), $relationobjects[0]->getId(), 'inheritance for object relations failed (wrong object)');
 
+        /** @var Connection $db */
         $db = $this->tester->getContainer()->get('database_connection');
         $table = 'object_' . $one->getClassId();
 
-        $relationobjectsString = $db->fetchColumn('SELECT relationobjects FROM ' . $table . ' WHERE oo_id = ?', [
-            $two->getId(),
-        ]);
+        $relationobjectsString = $db->fetchOne(
+            'SELECT relationobjects FROM ' . $table . ' WHERE oo_id = ?',
+            [$two->getId()]
+        );
 
         $this->assertEquals(
             ',' . $one->getId() . ',',

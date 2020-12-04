@@ -21,8 +21,6 @@ use Pimcore\Tool\Serialize;
 
 abstract class AbstractGeo extends Model\DataObject\ClassDefinition\Data implements Model\DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface
 {
-    use Model\DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
-
     /**
      * @var float
      */
