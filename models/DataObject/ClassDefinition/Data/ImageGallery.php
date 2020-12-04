@@ -261,7 +261,9 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $imageGallery = new DataObject\Data\ImageGallery($resultItems);
 
         if (isset($params['owner'])) {
-            $imageGallery->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+            $imageGallery->_setOwner($params['owner']);
+            $imageGallery->_setOwnerFieldname($params['fieldname']);
+            $imageGallery->_setOwnerLanguage($params['language'] ?? null);
         }
 
         return $imageGallery;
@@ -277,7 +279,9 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $imageGallery = new DataObject\Data\ImageGallery(null);
 
         if (isset($params['owner'])) {
-            $imageGallery->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+            $imageGallery->_setOwner($params['owner']);
+            $imageGallery->_setOwnerFieldname($params['fieldname']);
+            $imageGallery->_setOwnerLanguage($params['language'] ?? null);
         }
 
         return $imageGallery;
