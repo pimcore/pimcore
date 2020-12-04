@@ -148,10 +148,7 @@
   "autoload-dev": {
     "psr-4": {
       "Pimcore\\Tests\\": "tests"
-    },
-    "files": [
-      "app/AppKernel.php"
-    ]
+    }
   },
   "scripts": {
     "post-create-project-cmd": "Pimcore\\Composer::postCreateProject",
@@ -173,7 +170,7 @@
     "symfony-app-dir": "app",
     "symfony-bin-dir": "bin",
     "symfony-var-dir": "var",
-    "symfony-web-dir": "web",
+    "symfony-web-dir": "public",
     "symfony-tests-dir": "tests",
     "symfony-assets-install": "relative",
     "branch-alias": {

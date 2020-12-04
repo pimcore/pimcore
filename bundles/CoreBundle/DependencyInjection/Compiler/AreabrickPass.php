@@ -116,6 +116,12 @@ class AreabrickPass implements CompilerPassInterface
         array $excludedClasses
     ) {
         $bundles = $container->getParameter('kernel.bundles_metadata');
+        //Find bricks from /src since AppBundle is removed
+        $bundles['App'] = [
+            "path" => PIMCORE_PROJECT_ROOT . '/src',
+            "namespace" => "App"
+        ];
+
         foreach ($bundles as $bundleName => $bundleMetadata) {
             $bundleAreas = $this->findBundleBricks($container, $bundleName, $bundleMetadata, $excludedClasses);
 

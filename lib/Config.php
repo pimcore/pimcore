@@ -1048,7 +1048,7 @@ class Config implements \ArrayAccess
 
             // check env vars - fall back to default (prod)
             if (!$environment) {
-                foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $envVarName) {
+                foreach (['PIMCORE_ENVIRONMENT', 'APP_ENV'] as $envVarName) {
                     $environment = self::resolveEnvVarValue($envVarName);
                     if ($environment) {
                         break;

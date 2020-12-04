@@ -25,7 +25,7 @@ class Composer
 {
     protected static $options = [
         'symfony-app-dir' => 'app',
-        'symfony-web-dir' => 'web',
+        'symfony-web-dir' => 'public',
         'symfony-assets-install' => 'hard',
         'symfony-cache-warmup' => false,
     ];
