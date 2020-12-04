@@ -173,7 +173,7 @@ class Thumbnail
         $attributes = $options['imgAttributes'] ?? [];
         $callback = $options['imgCallback'] ?? null;
 
-        if(isset($options['previewDataUri'])) {
+        if (isset($options['previewDataUri'])) {
             $attributes['src'] = $options['previewDataUri'];
         } else {
             $path = $this->getPath(true);
@@ -226,12 +226,12 @@ class Thumbnail
 
         $attributes['loading'] = 'lazy';
 
-        if($callback) {
+        if ($callback) {
             $attributes = $callback($attributes);
         }
 
         $htmlImgTag = '';
-        if(!empty($attributes)) {
+        if (!empty($attributes)) {
             $htmlImgTag = '<img ' . array_to_html_attribute_string($attributes) . ' />';
         }
 
@@ -276,7 +276,7 @@ class Thumbnail
         }
 
         $pictureCallback = $options['pictureCallback'] ?? null;
-        if($pictureCallback) {
+        if ($pictureCallback) {
             $pictureTagAttributes = $pictureCallback($pictureTagAttributes);
         }
 
@@ -327,11 +327,11 @@ class Thumbnail
                 $sourceTagAttributes['type'] = $thumb->getMimeType();
 
                 $sourceCallback = $options['sourceCallback'] ?? null;
-                if($sourceCallback) {
+                if ($sourceCallback) {
                     $sourceTagAttributes = $sourceCallback($sourceTagAttributes);
                 }
 
-                if(!empty($sourceTagAttributes)) {
+                if (!empty($sourceTagAttributes)) {
                     $sourceHtml = '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
                     if ($isAutoFormat) {
                         $sourceHtmlWebP = preg_replace(['@(\.)(jpg|png)( \dx)@', '@(/)(jpeg|png)(")@'], '$1webp$3', $sourceHtml);
@@ -345,7 +345,7 @@ class Thumbnail
             }
         }
 
-        if(!($options['disableImgTag'] ?? null)) {
+        if (!($options['disableImgTag'] ?? null)) {
             $html .= "\t" . $this->getImageTag($options) . "\n";
         }
 

@@ -1248,6 +1248,4 @@ class Classificationstore extends Data implements CustomResourcePersistingInterf
     {
         return '\\' . DataObject\Classificationstore::class . '|null';
     }
-
-
 }

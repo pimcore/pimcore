@@ -491,6 +491,4 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         return '\\' . DataObject\Data\Link::class . '|null';
     }
-
-
 }

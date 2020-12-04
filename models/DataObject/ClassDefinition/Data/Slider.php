@@ -419,6 +419,4 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
     {
         return 'float|null';
     }
-
-
 }

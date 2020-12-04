@@ -331,6 +331,4 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
     {
         return '\\' . DataObject\Data\Geopoint::class . '|null';
     }
-
-
 }

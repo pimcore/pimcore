@@ -1162,6 +1162,4 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
     {
         return '\\' .DataObject\Data\BlockElement::class . '[][]';
     }
-
-
 }

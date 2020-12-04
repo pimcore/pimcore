@@ -782,5 +782,4 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     {
         return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
     }
-
 }

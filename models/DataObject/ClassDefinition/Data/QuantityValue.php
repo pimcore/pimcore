@@ -712,6 +712,4 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     {
         return '\\' . Model\DataObject\Data\QuantityValue::class . '|null';
     }
-
-
 }

@@ -455,5 +455,4 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     {
         return 'string|null';
     }
-
 }

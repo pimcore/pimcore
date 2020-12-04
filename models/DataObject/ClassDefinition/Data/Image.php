@@ -491,5 +491,4 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         return '\\' . Asset\Image::class . '|null';
     }
-
 }

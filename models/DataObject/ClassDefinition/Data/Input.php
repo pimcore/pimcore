@@ -354,5 +354,4 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         return 'string|null';
     }
-
 }

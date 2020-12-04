@@ -49,7 +49,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
      */
     public $columnType = ['images' => 'text', 'hotspots' => 'text'];
 
-
     /**
      * @var int
      */
@@ -643,6 +642,4 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     {
         return '\\' . DataObject\Data\ImageGallery::class . '|null';
     }
-
-
 }

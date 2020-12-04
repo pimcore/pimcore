@@ -15,8 +15,6 @@
 namespace Pimcore\Tool;
 
 use Pimcore\Bundle\CoreBundle\EventListener\Frontend\FullPageCacheListener;
-use Pimcore\Document\DocumentStack;
-use Pimcore\Http\RequestHelper;
 use Pimcore\Model\Document;
 use Pimcore\Model\Site;
 

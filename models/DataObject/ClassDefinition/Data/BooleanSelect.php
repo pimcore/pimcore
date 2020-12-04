@@ -86,7 +86,6 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public $columnType = 'tinyint(1) null';
 
-
     /**
      * @return array
      */
