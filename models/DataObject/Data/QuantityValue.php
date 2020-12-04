@@ -26,17 +26,17 @@ class QuantityValue implements OwnerAwareFieldInterface
     use OwnerAwareFieldTrait;
 
     /**
-     * @var float
+     * @var float|null
      */
     protected $value;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $unitId;
 
     /**
-     * @var \Pimcore\Model\DataObject\QuantityValue\Unit|null
+     * @var Unit|null
      */
     protected $unit;
 
@@ -44,19 +44,18 @@ class QuantityValue implements OwnerAwareFieldInterface
      * QuantityValue constructor.
      *
      * @param float|null $value
-     * @param int|Unit|null $unitId
+     * @param Unit|string|null $unit
      */
-    public function __construct($value = null, $unitId = null)
+    public function __construct($value = null, $unit = null)
     {
         $this->value = $value;
-        $this->unitId = $unitId;
-        $this->unit = null;
 
-        if ($unitId instanceof Unit) {
-            $this->unit = $unitId;
-            $this->unitId = $this->unit->getId();
-        } elseif ($unitId) {
-            $this->unit = Unit::getById($this->unitId);
+        if ($unit instanceof Unit) {
+            $this->unit = $unit;
+            $this->unitId = $unit->getId();
+        } elseif ($unit) {
+            $this->unit = Unit::getById($unit);
+            $this->unitId = $unit;
         }
         $this->markMeDirty();
     }
@@ -72,7 +71,7 @@ class QuantityValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getUnitId()
     {
@@ -80,7 +79,7 @@ class QuantityValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return Unit
+     * @return Unit|null
      */
     public function getUnit()
     {
@@ -101,7 +100,7 @@ class QuantityValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getValue()
     {
