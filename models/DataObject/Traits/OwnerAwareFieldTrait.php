@@ -54,21 +54,24 @@ trait OwnerAwareFieldTrait
     /**
      * @return mixed
      */
-    public function _getOwner() {
+    public function _getOwner()
+    {
         return $this->_owner;
     }
 
     /**
      * @return string|null
      */
-    public function _getOwnerFieldname(): ?string {
+    public function _getOwnerFieldname(): ?string
+    {
         return $this->_fieldname;
     }
 
     /**
      * @return string|null
      */
-    public function _getOwnerLanguage(): ?string {
+    public function _getOwnerLanguage(): ?string
+    {
         return $this->_language;
     }
 
@@ -79,8 +82,10 @@ trait OwnerAwareFieldTrait
      *
      * @return $this;
      */
-    public function _setOwnerFieldname(?string $fieldname) {
+    public function _setOwnerFieldname(?string $fieldname)
+    {
         $this->_fieldname = $fieldname;
+
         return $this;
     }
 
@@ -91,8 +96,10 @@ trait OwnerAwareFieldTrait
      *
      * @return $this
      */
-    public function _setOwnerLanguage(?string $language) {
+    public function _setOwnerLanguage(?string $language)
+    {
         $this->_language = $language;
+
         return $this;
     }
 
