@@ -6,7 +6,7 @@ This is an alternative to the static text defined in the class definition.
 
 Let's consider the following example. 
 
-It states that we want to use a custom renderer service which implements `DynamicTextLabelInterface` and in turn returns dynamic text string from `renderLayoutText` method. We also want to pass some additional data (*some additional data - 12345679* in this example) to the rendering method.
+It states that we want to use a custom renderer service which implements `DynamicTextLabelInterface` and in turn returns dynamic text string from `renderLayoutText` method. We also want to pass some additional data (*some additional data :)* in this example) to the rendering method.
 
 ![Class Definition](../../../img/dynamic_textlabel_1.png)
 
