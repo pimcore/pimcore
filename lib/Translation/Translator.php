@@ -69,11 +69,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
             throw new InvalidArgumentException(sprintf('The Translator "%s" must implement TranslatorInterface and TranslatorBagInterface.', get_class($translator)));
         }
 
-        if($caseInsensitive === true) {
-            @trigger_error('Case-insensitive support is deprecated and will be removed in Pimcore 10', \E_USER_DEPRECATED);
-
-        }
-
         $this->translator = $translator;
     }
 
