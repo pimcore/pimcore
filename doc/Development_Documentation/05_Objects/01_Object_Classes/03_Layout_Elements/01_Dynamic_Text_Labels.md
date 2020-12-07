@@ -15,7 +15,7 @@ Here is an example for a rendering class.
 ```php
 <?php
 
-namespace Website;
+namespace AppBundle\Helpers;
 
 use Pimcore\Model\DataObject\Concrete;
 
@@ -25,7 +25,7 @@ class CustomRenderer implements DynamicTextLabelInterface
      * @param string $data as provided in the class definition
      * @param Concrete|null $object 
      * @param mixed $params 
- * 
+     * 
      * @return string
      */
     public function renderLayoutText($data, $object, $params) {
