@@ -30,10 +30,6 @@ function t(key, defaultValue, placeholders) {
     });
 
     var originalKey = key;
-    if(pimcore.system_i18n_case_insensitive && key){
-        key = key.toLocaleLowerCase();
-    }
-
     // the maximum length of a translation key are 190 characters
     if (key.length > 190) {
         if (!defaultValue) {

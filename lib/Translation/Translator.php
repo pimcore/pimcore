@@ -32,11 +32,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     protected $translator;
 
     /**
-     * @var bool
-     */
-    protected $caseInsensitive = false;
-
-    /**
      * @var array
      */
     protected $initializedCatalogues = [];
@@ -67,16 +62,14 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * @param TranslatorInterface $translator
-     * @param bool $caseInsensitive
      */
-    public function __construct(TranslatorInterface $translator, bool $caseInsensitive = false)
+    public function __construct(TranslatorInterface $translator)
     {
         if (!$translator instanceof TranslatorBagInterface) {
             throw new InvalidArgumentException(sprintf('The Translator "%s" must implement TranslatorInterface and TranslatorBagInterface.', get_class($translator)));
         }
 
         $this->translator = $translator;
-        $this->caseInsensitive = $caseInsensitive;
     }
 
     /**
@@ -112,10 +105,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $this->lazyInitialize($domain, $locale);
 
         $originalId = $id;
-        if ($this->caseInsensitive && in_array($domain, ['messages', 'admin'])) {
-            $id = mb_strtolower($id);
-        }
-
         $term = $this->translator->trans($id, $parameters, $domain, $locale);
 
         // only check for empty translation on original ID - we don't want to create empty
@@ -222,11 +211,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                         !empty($translationTerm)) {
                         $translationKey = $translation['key'];
 
-                        // store as case insensitive if configured
-                        if ($this->caseInsensitive) {
-                            $translationKey = mb_strtolower($translationKey);
-                        }
-
                         if (empty($translationTerm)) {
                             $translationTerm = $translationKey;
                         }
@@ -276,10 +260,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
 
         $normalizedId = $id;
-        if ($this->caseInsensitive) {
-            $normalizedId = mb_strtolower($id);
-        }
-
         if (isset($parameters['%count%'])) {
             $normalizedId = $id = $translated;
         }
@@ -351,10 +331,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
                     return strtr($fallbackValue, $parameters);
                 }
-            }
-
-            if ($this->caseInsensitive) {
-                return $id;
             }
         }
 
@@ -445,11 +421,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
 
         return $text;
-    }
-
-    public function getCaseInsensitive(): bool
-    {
-        return $this->caseInsensitive;
     }
 
     /**
