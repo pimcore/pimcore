@@ -97,6 +97,7 @@ class WorkflowPass implements CompilerPassInterface
                     foreach ($transitions as $transition) {
                         $customHtmlServiceDefinition = new Definition($customHtmlServiceName, [$transitionName, false, $position]);
                         $customHtmlServiceDefinition->setPublic(false);
+                        $customHtmlServiceDefinition->setAutowired(true);
                         $transition->addMethodCall('setCustomHtmlService', [$customHtmlServiceDefinition]);
                     }
                 }
@@ -117,6 +118,7 @@ class WorkflowPass implements CompilerPassInterface
                     $position = $actionConfig['notes']['customHtml']['position'];
                     $customHtmlServiceDefinition = new Definition($customHtmlServiceName, [$action, true, $position]);
                     $customHtmlServiceDefinition->setPublic(false);
+                    $customHtmlServiceDefinition->setAutowired(true);
                 }
                 $workflowManagerDefinition->addMethodCall('addGlobalAction', [$workflowName, $action, $actionConfig, $customHtmlServiceDefinition]);
             }

@@ -65,8 +65,9 @@ trait NotesAwareTrait
 
     /**
      * Inject service via compiler pass.
+     * @param CustomHtmlServiceInterface $customHtmlService
      */
-    public function setCustomHtmlService(CustomHtmlServiceInterface $customHtmlService = null) {
+    public function setCustomHtmlService(CustomHtmlServiceInterface $customHtmlService) {
         if ($customHtmlService instanceof AbstractCustomHtmlService) {
             if ($this->getName() == $customHtmlService->getTransitionName()) {
                 $this->customHtmlService = $customHtmlService;
