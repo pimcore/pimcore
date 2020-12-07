@@ -4,9 +4,9 @@ set -eu
 
 mkdir -p var/config
 
-cp -r .travis/src src
-cp -r .travis/config config
+cp -r .travis/config/. config
 cp -r .travis/bin/console bin/console
+cp -r .travis/src src
 cp -r .travis/public public
 
 cp .travis/extensions.template.php var/config/extensions.php
