@@ -20,14 +20,6 @@ reconfigure Pimcore to handle website and admin translations as case insensitive
 hit (translations might be looked up twice) and it does not  conform with Symfony's translators you're encouraged to reference
 translation keys with the same casing as they were saved.
 
-You can turn case insensitive handling on by setting the following config setting (see [#2005](https://github.com/pimcore/pimcore/pull/2005)):
-Note: this feature is deprecated and will be removed in Pimcore 10.   
-```yaml
-pimcore:
-  translations:
-      case_insensitive: true
-```
-
 ## Working with Shared Translations / the Translator in Code
   
 #### Example in Templates / Views
