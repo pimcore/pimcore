@@ -32,6 +32,7 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
     protected $translator;
 
     /**
+     * @deprecated
      * @var bool
      */
     protected $caseInsensitive = false;
@@ -73,6 +74,11 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
     {
         if (!$translator instanceof TranslatorBagInterface) {
             throw new InvalidArgumentException(sprintf('The Translator "%s" must implement TranslatorInterface and TranslatorBagInterface.', get_class($translator)));
+        }
+
+        if($caseInsensitive === true) {
+            @trigger_error('Case-insensitive support is deprecated and will be removed in Pimcore 10', \E_USER_DEPRECATED);
+
         }
 
         $this->translator = $translator;
@@ -455,6 +461,10 @@ class Translator implements LegacyTranslatorInterface, TranslatorInterface, Tran
         return $text;
     }
 
+    /**
+     * @deprecated
+     * @return bool
+     */
     public function getCaseInsensitive(): bool
     {
         return $this->caseInsensitive;
