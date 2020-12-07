@@ -32,7 +32,7 @@ are shown in a grid. Via buttons object variants can be created, opened and dele
 
 
 To create object variants via code, just create a normal object, set as parent the generic t-shirt and set the object 
-type to `Object_Abstract::OBJECT_TYPE_VARIANT`.
+type to `DataObject::OBJECT_TYPE_VARIANT`.
 
 ```php
 

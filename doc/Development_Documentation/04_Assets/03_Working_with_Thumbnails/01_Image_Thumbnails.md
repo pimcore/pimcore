@@ -279,7 +279,7 @@ which is described in the examples below.
 $a = Asset::getById(71);
  
 // list all available medias in "galleryCarousel" thumbnail configuration
-p_r(array_keys(Asset_Image_Thumbnail_Config::getByName("galleryCarousel")->getMedias()));
+p_r(array_keys(Asset\Image\Thumbnail\Config::getByName("galleryCarousel")->getMedias()));
  
 // get the <picture> element for "galleryCarousel" => default behavior
 $a->getThumbnail("galleryCarousel")->getHtml();

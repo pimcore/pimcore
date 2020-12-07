@@ -30,7 +30,7 @@ $note->setUser(0);
  
 // you can add as much additional data to notes & events as you want
 $note->addData("myText", "text", "Some Text");
-$note->addData("myObject", "object", Object_Abstract::getById(7));
+$note->addData("myObject", "object", DataObject::getById(7));
 $note->addData("myDocument", "document", Document::getById(18));
 $note->addData("myAsset", "asset", Asset::getById(20));
  
