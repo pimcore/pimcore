@@ -16,6 +16,7 @@
 
 namespace Pimcore\Model\DataObject\Data;
 
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
 
 class QuantityValue extends AbstractQuantityValue
