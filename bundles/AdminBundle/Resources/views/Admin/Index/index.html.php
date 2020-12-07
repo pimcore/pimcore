@@ -567,8 +567,6 @@ $scripts = array(
     "pimcore/object/gridcolumn/operator/Trimmer.js",
     "pimcore/object/gridcolumn/operator/Alias.js",
     "pimcore/object/gridcolumn/operator/WorkflowState.js",
-    "pimcore/object/gridcolumn/value/Href.js",
-    "pimcore/object/gridcolumn/value/Objects.js",
     "pimcore/object/gridcolumn/value/DefaultValue.js",
     "pimcore/object/gridcolumn/operator/GeopointRenderer.js",
     "pimcore/object/gridcolumn/operator/ImageRenderer.js",

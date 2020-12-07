@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\DataObject\GridColumnConfig\Value\Factory;
 
 use Pimcore\DataObject\GridColumnConfig\Value\ValueInterface;
+use Pimcore\Localization\LocaleServiceInterface;
 
 class DefaultValueFactory implements ValueFactoryInterface
 {
@@ -26,13 +27,19 @@ class DefaultValueFactory implements ValueFactoryInterface
      */
     private $className;
 
-    public function __construct(string $className)
+    /**
+     * @var LocaleServiceInterface
+     */
+    private $localeService;
+
+    public function __construct(string $className, LocaleServiceInterface $localeService)
     {
         $this->className = $className;
+        $this->localeService = $localeService;
     }
 
     public function build(\stdClass $configElement, $context = null): ValueInterface
     {
-        return new $this->className($configElement, $context);
+        return new $this->className($configElement, $context, $this->localeService);
     }
 }
