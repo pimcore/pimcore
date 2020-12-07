@@ -8,7 +8,7 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 trait ManyToManyRelationTrait
 {
     /**
-     * TODO: move validation to checkValidity & throw exception in Pimcore 7
+     * TODO: move validation to checkValidity & throw exception in Pimcore 10
      *
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $container
      * @param array $params

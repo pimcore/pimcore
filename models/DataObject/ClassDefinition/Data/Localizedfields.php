@@ -38,13 +38,6 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public $fieldtype = 'localizedfields';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Localizedfield';
-
-    /**
      * @var array
      */
     public $childs = [];
@@ -585,7 +578,7 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function preGetData($container, $params = [])
     {
         if (!$container instanceof DataObject\Concrete && !$container instanceof DataObject\Fieldcollection\Data\AbstractData
-                    && !$container instanceof DataObject\Objectbrick\Data\AbstractData) {
+            && !$container instanceof DataObject\Objectbrick\Data\AbstractData) {
             throw new \Exception('Localized Fields are only valid in Objects, Fieldcollections and Objectbricks');
         }
 
@@ -1369,6 +1362,26 @@ class Localizedfields extends Data implements CustomResourcePersistingInterface,
     public function setTabPosition($tabPosition): void
     {
         $this->tabPosition = $tabPosition;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Localizedfield::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Localizedfield::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\'. DataObject\Localizedfield::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Localizedfield::class . '|null';
     }
 
     /**

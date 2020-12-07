@@ -25,7 +25,6 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -55,13 +54,6 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         'consent' => 'tinyint(1)',
         'note' => 'int(11)',
     ];
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Consent';
 
     /**
      * Width of field
@@ -112,7 +104,9 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         }
 
         if (isset($params['owner'])) {
-            $consent->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+            $consent->_setOwner($params['owner']);
+            $consent->_setOwnerFieldname($params['fieldname']);
+            $consent->_setOwnerLanguage($params['language'] ?? null);
         }
 
         return $consent;
@@ -444,5 +438,25 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $newValue = $newValue instanceof DataObject\Data\Consent ? $newValue->getConsent() : null;
 
         return $oldValue === $newValue;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Consent::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Consent::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Consent::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Consent::class . '|null';
     }
 }

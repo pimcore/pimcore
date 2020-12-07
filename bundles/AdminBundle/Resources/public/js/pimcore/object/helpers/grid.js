@@ -394,6 +394,12 @@ pimcore.object.helpers.grid = Class.create({
 
                         fc.locked = this.getColumnLock(field);
 
+                        if ((fieldType === "select" || fieldType === "multiselect") && field.layout.options.length > 0) {
+                            field.layout.options.forEach(option => {
+                                option.key = t(option.key);
+                            });
+                        }
+
                         gridColumns.push(fc);
                         gridColumns[gridColumns.length - 1].hidden = false;
                         gridColumns[gridColumns.length - 1].layout = fields[i];
@@ -533,6 +539,24 @@ pimcore.object.helpers.grid = Class.create({
                         let colName = columnKeys[col];
                         result += '<td style="padding: 0 5px 0 5px; font-size:11px; border-bottom: 1px solid #d0d0d0;  border-top: 1px solid #d0d0d0; border-left: 1px solid #d0d0d0; border-right: 1px solid #d0d0d0;">';
                         let displayValue = item[colName] ? item[colName] : "&nbsp";
+                        let colType = field.layout.columns[col].type;
+                        let colValues = field.layout.columns[col].value;
+
+                        // Replace multiple values
+                        if (colType === "multiselect") {
+                            colValues.split(";").forEach(value => {
+                                if (displayValue.indexOf(value + ",") === 0) {
+                                    displayValue = t(value) + displayValue.substr(value.length);
+                                } else if (displayValue.indexOf("," + value) === displayValue.length - value.length - 1) {
+                                    displayValue = displayValue.substr(0, displayValue.length - value.length) + t(value);
+                                } else {
+                                    displayValue = displayValue.replace("," + value + ",", "," + t(value) + ",");
+                                }
+                            });
+                        } else if (colType === "select") {
+                            displayValue = t(displayValue);
+                        }
+
                         result += displayValue;
                         result += '</td>';
                     }

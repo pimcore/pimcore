@@ -101,7 +101,7 @@ class FilterService
     }
 
     /**
-     * Returns filter frontend script for given filter type (delegates )
+     * Returns filter frontend script for given filter type (delegates)
      *
      * @param AbstractFilterDefinitionType $filterDefinition filter definition to get frontend script for
      * @param ProductListInterface $productList current product list (with all set filters) to get available options and counts
@@ -114,6 +114,22 @@ class FilterService
         return $this
             ->getFilterType($filterDefinition->getType())
             ->getFilterFrontend($filterDefinition, $productList, $currentFilter);
+    }
+
+    /**
+     * Returns filter data for given filter type (delegates)
+     *
+     * @param AbstractFilterDefinitionType $filterDefinition filter definition to get frontend script for
+     * @param ProductListInterface $productList current product list (with all set filters) to get available options and counts
+     * @param array $currentFilter current filter for this filter definition
+     *
+     * @return array
+     */
+    public function getFilterValues(AbstractFilterDefinitionType $filterDefinition, ProductListInterface $productList, array $currentFilter): array
+    {
+        return $this
+            ->getFilterType($filterDefinition->getType())
+            ->getFilterValues($filterDefinition, $productList, $currentFilter);
     }
 
     /**
