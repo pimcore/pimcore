@@ -166,7 +166,7 @@ pimcore.workflow.transitionPanel = Class.create({
     {
 
         if (!this.transitionWindow) {
-            var height = 510;
+            var height = this.getNotesField() ? 510 : 200;
             this.transitionWindow = new Ext.Window({
                 width: 530,
                 height: height,
@@ -216,7 +216,8 @@ pimcore.workflow.transitionPanel = Class.create({
      */
     getNotesField: function()
     {
-        return this.getWorkflowFormPanel().getComponent('notesFieldset').getComponent('notesField');
+        return this.getWorkflowFormPanel().getComponent('notesFieldset') ?
+            this.getWorkflowFormPanel().getComponent('notesFieldset').getComponent('notesField') : null;
     },
 
 
@@ -295,7 +296,8 @@ pimcore.workflow.transitionPanel = Class.create({
      */
     submitWorkflowTransition: function()
     {
-        if(!this.getNotesField().validate()) {
+        var notesField = this.getNotesField();
+        if(notesField && !notesField.validate()) {
             return; //ui will handle the error
         }
 
@@ -378,7 +380,7 @@ pimcore.workflow.transitionPanel = Class.create({
         }
 
         // dynamic height, with a max of 650
-        var height = Math.min(510 + customHeight, 650);
+        var height = Math.min((this.getNotesField() ? 510 : 200) + customHeight, 650);
         this.transitionWindow.setHeight(height);
     },
 

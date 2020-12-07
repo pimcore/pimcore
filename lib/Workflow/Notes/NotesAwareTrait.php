@@ -26,7 +26,7 @@ trait NotesAwareTrait
 
     public function getNotes(): ?array
     {
-        if ($this->getNotesCommentEnabled()) {
+        if ($this->getNotesCommentEnabled() || $this->getCustomHtmlService()) {
             return $this->options['notes'];
         }
 
