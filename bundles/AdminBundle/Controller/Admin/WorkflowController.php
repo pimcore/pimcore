@@ -110,7 +110,7 @@ class WorkflowController extends AdminController implements KernelControllerEven
 
         if ($workflow->can($this->element, $request->get('transition'))) {
             try {
-                $workflowManager->applyWithAdditionalData($workflow, $this->element, $request->get('transition'), $workflowOptions, true);
+                $workflowManager->applyWithAdditionalData($workflow, $this->element, $request->get('transition'), $workflowOptions);
 
                 $data = [
                     'success' => true,

@@ -241,25 +241,13 @@ class Manager
      * @throws ValidationException
      * @throws \Exception
      */
-    public function applyWithAdditionalData(Workflow $workflow, $subject, string $transition, array $additionalData, $saveSubject = false)
+    public function applyWithAdditionalData(Workflow $workflow, $subject, string $transition, array $additionalData)
     {
         $this->notesSubscriber->setAdditionalData($additionalData);
 
         $marking = $workflow->apply($subject, $transition);
 
         $this->notesSubscriber->setAdditionalData([]);
-
-        $transition = $this->getTransitionByName($workflow->getName(), $transition);
-        $changePublishedState = $transition instanceof Transition ? $transition->getChangePublishedState() : null;
-
-        if ($saveSubject && $subject instanceof ElementInterface) {
-            if (method_exists($subject, 'getPublished')
-                && (!$subject->getPublished() || $changePublishedState === ChangePublishedStateSubscriber::SAVE_VERSION)) {
-                $subject->saveVersion();
-            } else {
-                $subject->save();
-            }
-        }
 
         return $marking;
     }
