@@ -234,7 +234,6 @@ class Manager
      * @param Asset|Concrete|PageSnippet $subject
      * @param string $transition
      * @param array $additionalData
-     * @param bool $saveSubject
      *
      * @return Marking
      *
