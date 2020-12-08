@@ -30,7 +30,6 @@ use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\DataLoaderInterface;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor;
-use Pimcore\Translation\Translator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
