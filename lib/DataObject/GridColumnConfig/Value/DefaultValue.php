@@ -125,7 +125,7 @@ class DefaultValue extends AbstractValue
                     /** @var Classificationstore $classificationStoreData */
                     $classificationStoreData = $object->$getter();
 
-                    /** @var Classificationstore $csFieldDefinition */
+                    /** @var Data\Classificationstore $csFieldDefinition */
                     $csFieldDefinition = $object->getClass()->getFieldDefinition($field);
                     $csLanguage = $this->localeService->getLocale();
 
