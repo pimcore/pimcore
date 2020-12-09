@@ -617,11 +617,12 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
      * @param Model\DataObject\Concrete $object
      * @param mixed $params
      *
-     * @return array
+     * @return string
      */
     public function getDataForGrid($data, $object = null, $params = [])
     {
-        return $this->getDataForEditmode($data, $object, $params);
+        $editmodeData = $this->getDataForEditmode($data, $object, $params);
+        return isset($editmodeData[0]) ? $editmodeData[0]['slug'] : '';
     }
 
     /**
