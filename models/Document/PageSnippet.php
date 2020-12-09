@@ -57,9 +57,10 @@ abstract class PageSnippet extends Model\Document
      *
      * @var array
      *
-     * @deprecated since v6.7 and will be removed in 7. Use getter/setter methods or $this->editables
+     * @deprecated since v6.7 and will be removed in 7. Use getter/setter methods or $this->editables.
+     *                From 6.9 on this property will be private instead of protected.
      */
-    protected $elements = null;
+    private $elements = null;
 
     /**
      * Contains all content-editables of the document
@@ -107,7 +108,6 @@ abstract class PageSnippet extends Model\Document
 
     public function __construct()
     {
-        $this->elements = & $this->editables;
         $this->inheritedElements = & $this->inheritedEditables;
     }
 
@@ -679,12 +679,12 @@ abstract class PageSnippet extends Model\Document
         return $this->getFullPath();
     }
 
-    /**
-     * @TODO: remove with $this->elements
-     */
     public function __wakeup()
     {
-        $this->editables = & $this->elements;
+        if ($this->editables === null && $this->elements !== null) {
+            $this->editables = $this->elements;
+            unset($this->elements);
+        }
 
         parent::__wakeup();
     }
