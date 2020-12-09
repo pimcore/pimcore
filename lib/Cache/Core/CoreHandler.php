@@ -580,7 +580,7 @@ class CoreHandler implements LoggerAwareInterface, CoreHandlerInterface
                 return false;
             }
 
-            // dump state is used to trigger a full serialized dump in __sleep eg. in Document, DataObject
+            // dump state is used to trigger a full serialized dump in __sleep eg. in Document, AbstractObject
             $data->setInDumpState(false);
 
             $context = [
