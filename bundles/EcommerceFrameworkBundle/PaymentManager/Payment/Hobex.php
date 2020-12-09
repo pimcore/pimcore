@@ -528,18 +528,20 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
      */
     protected function handleWebhookResponse( $response)
     {
-        $secret = '33872F92850E251B932321DEE1618800967D5295786D4CD1076DFF68489C49FA';
-        $authTag = $response['authTag'];
-        $initVector = $response['initVector'];
-        if ($authTag && $initVector && $response){
+        $secret = $this->config->getWebhookSecret();
+        if (!$secret){
+            $this->logger->debug('can not handle webhook response in ' . self::class . '::handleWebhookResponse, no webhook secret defined');
+        }
+        else {
+            $authTag = $response['authTag'];
+            $initVector = $response['initVector'];
+
             $key = hex2bin($secret);
             $iv = hex2bin($initVector);
             $auth_tag = hex2bin($authTag);
             $cipher_text = hex2bin($response['base64Content']);
             $jsonResult = openssl_decrypt($cipher_text, "aes-256-gcm", $key, OPENSSL_RAW_DATA, $iv, $auth_tag);
             $result = json_decode($jsonResult, true);
-            $this->logger->debug('Received JSON webhook response in ' . self::class . '::handleWebhookResponse', $result);
-
             if ($result['type'] == 'PAYMENT'){
                 return $result['payload'];
             }
