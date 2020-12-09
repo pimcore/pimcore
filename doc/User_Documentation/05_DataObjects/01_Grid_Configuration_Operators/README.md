@@ -27,7 +27,7 @@ child. One example for that is the [`Text`](./Formatters/Text.md) operator.
 * [RequiredBy](./Extractors/RequiredBy.md)
 * [PropertyGetter](./Extractors/PropertyGetter.md)
 * [WorkflowState](./Extractors/WorkflowState.md)
-* [AnyGetter](./Operators/AnyGetter.md)
+* [AnyGetter](./Extractors/AnyGetter.md)
 
 
 ### Formatters
@@ -74,4 +74,4 @@ In the following example, the image (the result of `getImage_1()`) would be rend
 * [Substring](./Transformers/Substring.md)
 * [TranslateValue](./Transformers/TranslateValue.md)
 * [Trimmer](./Transformers/Trimmer.md)
-* [Iterator](./Operators/Iterator.md)
+* [Iterator](./Transformers/Iterator.md)
