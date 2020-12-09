@@ -50,7 +50,7 @@ interface ElasticSearchConfigInterface extends ConfigInterface
      *
      * @return SynonymProviderInterface[]
      *
-     * @todo pimcore 7 - add this method to the interface
+     * @todo Pimcore 10 - add this method to the interface
      */
 //    public function getSynonymProviders(): array
 //    {

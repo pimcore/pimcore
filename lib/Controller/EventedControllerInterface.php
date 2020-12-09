@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 
 /**
- * @deprecated since v6.8.0 and will be removed in 7. Use KernelControllerEventInterface or KernelResponseEventInterface instead
+ * @deprecated since v6.8.0 and will be removed in Pimcore 10. Use KernelControllerEventInterface or KernelResponseEventInterface instead
  */
 interface EventedControllerInterface
 {

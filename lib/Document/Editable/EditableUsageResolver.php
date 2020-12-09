@@ -43,7 +43,7 @@ class EditableUsageResolver
      *
      * @return array
      *
-     * @deprecated since 6.8 and will be removed in v7. Use getUsedEditableNames() instead.
+     * @deprecated since 6.8 and will be removed in Pimcore 10. Use getUsedEditableNames() instead.
      */
     public function getUsedTagnames(Document\PageSnippet $document)
     {

@@ -91,6 +91,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->booleanNode('case_insensitive')
+                            ->setDeprecated('The "%node%" option is deprecated and will be removed in Pimcore 10.')
                             ->beforeNormalization()
                                 ->ifString()
                                 ->then(function ($v) {
@@ -280,7 +281,7 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('instance_identifier')
                     ->defaultNull()->end()
                 ->booleanNode('show_cookie_notice')
-                    ->setDeprecated('The cookie bar will be removed in Pimcore 7')
+                    ->setDeprecated('The cookie bar will be removed in Pimcore 10')
                     ->beforeNormalization()
                         ->ifString()
                         ->then(function ($v) {
@@ -449,6 +450,7 @@ class Configuration implements ConfigurationInterface
                                 ->addDefaultsIfNotSet()
                                 ->children()
                                     ->booleanNode('webp_auto_support')
+                                        ->setDeprecated('The "%node%" option is deprecated and will be removed in Pimcore 10.')
                                         ->beforeNormalization()
                                             ->ifString()
                                             ->then(function ($v) {
@@ -662,6 +664,9 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->scalarNode('default_controller')
+                    ->defaultValue('AppBundle\\Controller\\DefaultController::defaultAction')
+                ->end()
                 ->arrayNode('error_pages')
                     ->children()
                         ->scalarNode('default')
@@ -779,6 +784,7 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->arrayNode('defaults')
                             ->addDefaultsIfNotSet()
+                            ->setDeprecated('The "%node%" option is deprecated. Use pimcore.documents.default_controller instead.')
                             ->children()
                                 ->scalarNode('bundle')
                                     ->defaultValue('AppBundle')
@@ -1253,6 +1259,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->arrayNode('migrations')
+                    ->setDeprecated('The "%node%" option is deprecated and will be removed in Pimcore 10')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->arrayNode('sets')

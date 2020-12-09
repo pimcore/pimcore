@@ -26,7 +26,7 @@ class UsageRecorderSubscriber implements EventSubscriberInterface
     /**
      * @var array
      *
-     * @deprecated since 6.8 and will be removed in 7. use $recordedEditableNames instead.
+     * @deprecated since 6.8 and will be removed in Pimcore 10. use $recordedEditableNames instead.
      */
     protected $recordedTagNames = [];
 
@@ -66,7 +66,7 @@ class UsageRecorderSubscriber implements EventSubscriberInterface
     /**
      * @return array
      *
-     * @deprecated since 6.8 and will be removed in 7. use getRecordedEditableNames() instead.
+     * @deprecated since 6.8 and will be removed in Pimcore 10. use getRecordedEditableNames() instead.
      */
     public function getRecordedTagNames(): array
     {
@@ -76,7 +76,7 @@ class UsageRecorderSubscriber implements EventSubscriberInterface
     /**
      * @param array $recordedTagNames
      *
-     * @deprecated since 6.8 and will be removed in 7. use setRecordedEditableNames() instead.
+     * @deprecated since 6.8 and will be removed in Pimcore 10. use setRecordedEditableNames() instead.
      */
     public function setRecordedTagNames(array $recordedTagNames): void
     {

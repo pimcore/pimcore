@@ -177,7 +177,7 @@ final class DocumentEvents
      *
      * @Event("Pimcore\Event\Model\Document\TagNameEvent")
      *
-     * @deprecated since 6.8 and will be removed in 7. use EDITABLE_NAME instead.
+     * @deprecated since 6.8 and will be removed in Pimcore 10. use EDITABLE_NAME instead.
      */
     const TAG_NAME = 'pimcore.document.tag.name';
 
@@ -186,7 +186,7 @@ final class DocumentEvents
      *
      * @Event("Pimcore\Event\Model\Document\TagNameEvent")
      *
-     * @TODO: change value to 'pimcore.document.editable.name' in Pimcore 7
+     * @TODO: change value to 'pimcore.document.editable.name' in Pimcore 10
      */
     const EDITABLE_NAME = 'pimcore.document.tag.name';
 

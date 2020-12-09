@@ -136,7 +136,7 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                         continue;
                     }
                     $elementData = $blockElement->getData();
-                    //TODO: move validation to checkValidity & throw exception in Pimcore 7
+                    //TODO: move validation to checkValidity & throw exception in Pimcore 10
                     if ($elementData instanceof DataObject\Localizedfield && $fd instanceof Localizedfields) {
                         foreach ($elementData->getInternalData() as $language => $fields) {
                             foreach ($fields as $fieldName => $values) {

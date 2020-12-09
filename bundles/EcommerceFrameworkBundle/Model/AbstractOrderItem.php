@@ -129,7 +129,7 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
      */
     public function getTotalNetPrice()
     {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
+        // @TODO Throw UnsupportedException or change to abstract method in Pimcore 10
         Logger::err('getTotalNetPrice not implemented for ' . get_class($this));
     }
 
@@ -138,7 +138,7 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
      */
     public function setTotalNetPrice($totalNetPrice)
     {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
+        // @TODO Throw UnsupportedException or change to abstract method in Pimcore 10
         Logger::err('setTotalNetPrice not implemented for ' . get_class($this));
     }
 
@@ -149,7 +149,7 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
      */
     public function getTaxInfo()
     {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
+        // @TODO Throw UnsupportedException or change to abstract method in Pimcore 10
         Logger::err('getTaxInfo not implemented for ' . get_class($this));
     }
 
@@ -158,7 +158,7 @@ class AbstractOrderItem extends \Pimcore\Model\DataObject\Concrete
      */
     public function setTaxInfo($taxInfo)
     {
-        // @TODO Throw UnsupportedException or change to abstract method in v7.0
+        // @TODO Throw UnsupportedException or change to abstract method in Pimcore 10
         Logger::err('setTaxInfo not implemented for ' . get_class($this));
     }
 

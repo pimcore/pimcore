@@ -20,7 +20,7 @@ Following documentation page provide a few more insights on Checkout Manager Arc
 
 ### Start with V7 architecture 
 Following steps are necessary to get started with the V7 architecture. They will not be necessary
-with Pimcore 7 since then new V7 architecture will be default. 
+with Pimcore 10 since then new V7 architecture will be default. 
 
 * Include `v7_configurations.yml` to your system configuration
 ```yml

@@ -22,7 +22,7 @@ use Pimcore\Model\DataObject\Objectbrick;
 /**
  * Class ObjectBrickGetter
  *
- * @deprecated ObjectBrickGetter operator is deprecated since version 6.7 and will be removed in 7.0.0
+ * @deprecated ObjectBrickGetter operator is deprecated since version 6.7 and will be removed in Pimcore 10
  */
 class ObjectBrickGetter extends AbstractOperator
 {
@@ -40,7 +40,7 @@ class ObjectBrickGetter extends AbstractOperator
         parent::__construct($config, $context);
 
         @trigger_error(
-            'ObjectBrickGetter operator is deprecated since version 6.7 and will be removed in 7.0.0',
+            'ObjectBrickGetter operator is deprecated since version 6.7 and will be removed in Pimcore 10',
             E_USER_DEPRECATED
         );
 

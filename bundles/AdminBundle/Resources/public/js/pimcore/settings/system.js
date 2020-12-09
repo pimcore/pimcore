@@ -676,7 +676,7 @@ pimcore.settings.system = Class.create({
                                 }
                             }, {
                                 xtype: "checkbox",
-                                fieldLabel: t("show_cookie_notice") + "<br><b>DEPRECATED! Will be removed in 7.0</b>",
+                                fieldLabel: t("show_cookie_notice") + "<br><b>DEPRECATED! Will be removed in Pimcore 10</b>",
                                 name: "general.show_cookie_notice",
                                 checked: this.getValue("general.show_cookie_notice")
                             }
@@ -999,7 +999,7 @@ pimcore.settings.system = Class.create({
                         items: [
                             {
                                 xtype: 'container',
-                                html: "<b>DEPRECATED! Will be removed in 7.0</b>"
+                                html: "<b>DEPRECATED! Will be removed in Pimcore 10</b>"
                             },
                             {
                                 fieldLabel: t("webservice_enabled"),

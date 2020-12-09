@@ -21,7 +21,7 @@ use Pimcore\Templating\Model\ViewModel;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * @deprecated will be removed in Pimcore 7, use IndexActionSettingsEvent instead
+ * @deprecated will be removed in Pimcore 10, use IndexActionSettingsEvent instead
  */
 class IndexSettingsEvent extends Event
 {

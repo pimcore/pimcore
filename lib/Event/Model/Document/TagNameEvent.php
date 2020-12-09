@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 namespace Pimcore\Event\Model\Document;
 
-@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in 7. Use "%s" instead.', TagNameEvent::class, EditableNameEvent::class), E_USER_DEPRECATED);
+@trigger_error(sprintf('Class "%s" is deprecated since v6.8 and will be removed in Pimcore 10. Use "%s" instead.', TagNameEvent::class, EditableNameEvent::class), E_USER_DEPRECATED);
 
 class_exists(EditableNameEvent::class);
 

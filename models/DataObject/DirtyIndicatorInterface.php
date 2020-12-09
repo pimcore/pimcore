@@ -18,7 +18,7 @@
 namespace Pimcore\Model\DataObject;
 
 @trigger_error(
-    'Interface Pimcore\Model\DataObject\DirtyIndicatorInterface is deprecated since version 6.6.0 and will be removed in 7.0.0. ' .
+    'Interface Pimcore\Model\DataObject\DirtyIndicatorInterface is deprecated since version 6.6.0 and will be removed in Pimcore 10. ' .
     ' Use ' . \Pimcore\Model\Element\DirtyIndicatorInterface::class . ' interface instead.',
     E_USER_DEPRECATED
 );

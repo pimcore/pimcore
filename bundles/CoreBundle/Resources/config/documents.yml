@@ -31,7 +31,7 @@ services:
 
 
     # delegating tag handler holds a collection of tag handlers it delegates to (e.g. default and legacy)
-    # @TODO delegating will be removed in Pimcore 7
+    # @TODO delegating will be removed in Pimcore 10
     Pimcore\Document\Editable\DelegatingEditableHandler:
         public: true
         calls:

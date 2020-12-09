@@ -71,5 +71,5 @@ trait DirtyIndicatorTrait
     }
 }
 
-//TODO: remove in Pimcore 7
+//TODO: remove in Pimcore 10
 class_alias(DirtyIndicatorTrait::class, 'Pimcore\Model\DataObject\Traits\DirtyIndicatorTrait');

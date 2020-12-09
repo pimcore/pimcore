@@ -89,6 +89,8 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_tmp_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_tmp_files_atime_older_than']);
         $container->setParameter('pimcore.maintenance.housekeeping.cleanup_profiler_files_atime_older_than', $config['maintenance']['housekeeping']['cleanup_profiler_files_atime_older_than']);
 
+        $container->setParameter('pimcore.documents.default_controller', $config['documents']['default_controller']);
+
         // register pimcore config on container
         // TODO is this bad practice?
         // TODO only extract what we need as parameter?
@@ -201,7 +203,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
     {
         $services = [
             EditableLoader::class => [
-                //@TODO just use $config['documents']['editables'] in Pimcore 7
+                //@TODO just use $config['documents']['editables'] in Pimcore 10
                 'config' => array_replace_recursive($config['documents']['tags'], $config['documents']['editables']),
                 'prefixLoader' => DocumentEditablePrefixLoader::class,
             ],
@@ -224,16 +226,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         foreach ($services as $serviceId => $cfg) {
             $loaders = [];
 
-            if ($cfg['config']['map']) {
-                $classMapLoader = new Definition(ClassMapLoader::class, [$cfg['config']['map']]);
-                $classMapLoader->setPublic(false);
-
-                $classMapLoaderId = $serviceId . '.class_map_loader';
-                $container->setDefinition($classMapLoaderId, $classMapLoader);
-
-                $loaders[] = new Reference($classMapLoaderId);
-            }
-
             if ($cfg['config']['prefixes']) {
                 $prefixLoader = new Definition($cfg['prefixLoader'], [$cfg['config']['prefixes']]);
                 $prefixLoader->setPublic(false);
@@ -244,6 +236,16 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
                 $loaders[] = new Reference($prefixLoaderId);
             }
 
+            if ($cfg['config']['map']) {
+                $classMapLoader = new Definition(ClassMapLoader::class, [$cfg['config']['map']]);
+                $classMapLoader->setPublic(false);
+
+                $classMapLoaderId = $serviceId . '.class_map_loader';
+                $container->setDefinition($classMapLoaderId, $classMapLoader);
+
+                $loaders[] = new Reference($classMapLoaderId);
+            }
+
             $service = $container->getDefinition($serviceId);
             $service->setArguments([$loaders]);
         }
@@ -251,10 +253,12 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
     private function configureRouting(ContainerBuilder $container, array $config)
     {
+        // @TODO remove in Pimcore 10
         $container->setParameter(
             'pimcore.routing.defaults',
             $config['defaults']
         );
+
         $container->setParameter(
             'pimcore.routing.static.locale_params',
             $config['static']['locale_params']
@@ -542,7 +546,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
      */
     public function prepend(ContainerBuilder $container)
     {
-        // @TODO: to be removed in Pimcore 7 -> move security config to skeleton & demo package
+        // @TODO: to be removed in Pimcore 10 -> move security config to skeleton & demo package
         $securityConfigs = $container->getExtensionConfig('security');
 
         if (count($securityConfigs) > 1) {

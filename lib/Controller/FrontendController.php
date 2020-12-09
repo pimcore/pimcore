@@ -154,7 +154,7 @@ abstract class FrontendController extends Controller implements EventedControlle
      *
      * @return null|Document\Tag
      *
-     * @deprecated since v6.8 and will be removed in 7. Use getDocumentEditable() instead.
+     * @deprecated since v6.8 and will be removed in Pimcore 10. Use getDocumentEditable() instead.
      */
     public function getDocumentTag($type, $inputName, array $options = [], Document\PageSnippet $document = null)
     {

@@ -20,6 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
+ * @deprecated
  * Overrides the core web debug toolbar listener
  */
 class WebDebugToolbarListenerPass implements CompilerPassInterface

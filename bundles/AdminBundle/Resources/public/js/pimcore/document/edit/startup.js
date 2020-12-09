@@ -133,7 +133,7 @@ Ext.onReady(function () {
         }
         editableNames.push(name);
 
-        // @TODO: change pimcore.document.tags to pimcore.document.editables in v7
+        // @TODO: change pimcore.document.tags to pimcore.document.editables in Pimcore 10
         var editable = new pimcore.document.tags[definition.type](definition.id, name, definition.config, definition.data, inherited);
         editable.setRealName(definition.realName);
         editable.setInDialogBox(definition.inDialogBox);

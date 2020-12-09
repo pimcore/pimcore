@@ -98,7 +98,7 @@ pimcore.document.editables.input = Class.create(pimcore.document.editable, {
             this.element.dom.setAttribute('data-placeholder', this.config["placeholder"]);
         }
 
-        // @TODO validator is based on \Zend\Json\Expr and does not work with Twig templates, to be removed in v7.0
+        // @TODO validator is based on \Zend\Json\Expr and does not work with Twig templates, to be removed in Pimcore 10
         if(this.config["validator"]) {
             this.element.isValid = this.config["validator"];
             this.validateElement();

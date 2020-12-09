@@ -25,6 +25,9 @@ use Pimcore\Migrations\Configuration\ConfigurationFactory;
 use Pimcore\Migrations\Configuration\InstallConfiguration;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
+/**
+ * @deprecated will be removed in Pimcore 10
+ */
 class MigrationManager
 {
     /**

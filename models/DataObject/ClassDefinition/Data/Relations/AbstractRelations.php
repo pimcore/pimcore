@@ -420,7 +420,7 @@ abstract class AbstractRelations extends Data implements
     }
 
     /**
-     * @internal trigger deprecation error when a relation is passed multiple times, remove in Pimcore 7
+     * @internal trigger deprecation error when a relation is passed multiple times, remove in Pimcore 10
      *
      * @param array|null $data
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $container
@@ -478,7 +478,7 @@ abstract class AbstractRelations extends Data implements
                     $relationItems[$elementHash] = $item;
                 } else {
                     @trigger_error(
-                            'Passing relations multiple times is deprecated since version 6.5.2 and will throw exception in 7.0.0, tried to assign ' . $elementHash
+                            'Passing relations multiple times is deprecated since version 6.5.2 and will throw exception in Pimcore 10, tried to assign ' . $elementHash
                             . ' multiple times in field' . $fieldName . ' of object id: ' . $objectId,
                             E_USER_DEPRECATED
                         );

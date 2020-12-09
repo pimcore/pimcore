@@ -200,14 +200,14 @@ class Newsletter
      *
      * @throws Exception
      *
-     * @deprecated Pimcore\Tool\Newsletter::sendMail is deprecated and will be removed with 7.0,
+     * @deprecated Pimcore\Tool\Newsletter::sendMail is deprecated and will be removed with Pimcore 10,
      * please use the internal:newsletter-document-send command instead.
      */
     public static function sendMail($newsletter, $object, $emailAddress = null, $hostUrl = null): void
     {
         trigger_error(
             sprintf(
-                '%s::%s is deprecated and will be removed with 7.0, please use the %s command instead.',
+                '%s::%s is deprecated and will be removed with Pimcore 10, please use the %s command instead.',
                 static::class,
                 __METHOD__,
                 'internal:newsletter-document-send'

@@ -19,7 +19,7 @@ use Pimcore\Model\Document\Editable\Area\Info;
 use Pimcore\Templating\Model\ViewModelInterface;
 
 /**
- * @deprecated will be removed in v7, use EditableHandler directly instead
+ * @deprecated will be removed in Pimcore 10, use EditableHandler directly instead
  */
 interface EditableHandlerInterface
 {

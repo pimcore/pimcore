@@ -465,7 +465,7 @@ via the template. So can either use them as well in the template or access them 
 
 ## Configuration in Editmode [DEPRECATED]
 
-> This feature will be removed in Pimcore v7!
+> This feature will be removed in Pimcore 10!
 
 You can use the edit template to allow users to add data to the brick. The edit template file can include HTML and 
 editables. When this file is present an icon will appear for the user which can be clicked to display and edit the 
