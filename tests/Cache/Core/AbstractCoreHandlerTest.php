@@ -130,15 +130,6 @@ abstract class AbstractCoreHandlerTest extends TestCase
     {
         $mockMethods = ['isCli'];
 
-        // allow to define additional handler mock methods via custom mockHandlerMethods annotation
-        $annotations = $this->getAnnotations();
-        if (isset($annotations['method']) && isset($annotations['method']['mockHandlerMethods'])) {
-            $mockMethods = array_merge(
-                $mockMethods,
-                explode(',', $annotations['method']['mockHandlerMethods'][0])
-            );
-        }
-
         /** @var CoreCacheHandler|\PHPUnit_Framework_MockObject_MockObject $handler */
         $handler = $this->getMockBuilder(CoreCacheHandler::class)
             ->setMethods($mockMethods)
@@ -516,43 +507,6 @@ abstract class AbstractCoreHandlerTest extends TestCase
         $this->assertFalse($this->cacheHasItem('itemA'));
         $this->assertTrue($this->handler->save('itemA', 'test'));
         $this->assertTrue($this->cacheHasItem('itemA'));
-    }
-
-    /**
-     * @group cache-cli
-     * @mockHandlerMethods writeSaveQueue
-     */
-    public function testNoWriteInCliShutdown()
-    {
-        // expect that writeSaveQueue is never called
-        $this->handler
-            ->expects($this->never())
-            ->method('writeSaveQueue');
-
-        // enable cli to allow queueing the item
-        $this->handler->setHandleCli(true);
-        $this->assertTrue($this->handler->save('itemA', 'test'));
-        $this->handler->setHandleCli(false);
-
-        $this->handler->shutdown();
-    }
-
-    /**
-     * @group cache-cli
-     * @mockHandlerMethods writeSaveQueue
-     */
-    public function testWriteInCliShutdownWithHandleCliOption()
-    {
-        // expect writeSaveQueue to be called on shutdown
-        $this->handler
-            ->expects($this->once())
-            ->method('writeSaveQueue');
-
-        // enable cli to allow queueing the item
-        $this->handler->setHandleCli(true);
-        $this->assertTrue($this->handler->save('itemA', 'test'));
-
-        $this->handler->shutdown();
     }
 
     public function testRemove()

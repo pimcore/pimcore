@@ -154,7 +154,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                                 ]
                             );
 
-                        $metaData->setOwner($object, $this->getName());
+                        $metaData->_setOwner($object);
+                        $metaData->_setOwnerFieldname($this->getName());
 
                         $metaData->setElementTypeAndId($element['type'], $element['dest_id']);
 
@@ -382,7 +383,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                             ]
                         );
 
-                    $metaData->setOwner($object, $this->getName());
+                    $metaData->_setOwner($object);
+                    $metaData->_setOwnerFieldname($this->getName());
 
                     foreach ($this->getColumns() as $columnConfig) {
                         $key = $columnConfig['key'];
@@ -559,7 +561,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                         ]
                     );
 
-                $metaObject->setOwner($object, $this->getName());
+                $metaObject->_setOwner($object);
+                $metaObject->_setOwnerFieldname($this->getName());
                 $value[] = $metaObject;
             }
         }
@@ -590,7 +593,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         }
 
         $multihrefMetadata = $this->getDataFromObjectParam($object, $params);
-        //TODO: move validation to checkValidity & throw exception in Pimcore 7
+        //TODO: move validation to checkValidity & throw exception in Pimcore 10
         $multihrefMetadata = $this->filterMultipleAssignments($multihrefMetadata, $object, $params);
 
         $classId = null;
@@ -973,7 +976,8 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
                     $data = $elementMetadata['data'];
 
                     $item = new DataObject\Data\ElementMetadata($fieldname, $columns, $element);
-                    $item->setOwner($object, $this->getName());
+                    $item->_setOwner($object);
+                    $item->_setOwnerFieldname($this->getName());
                     $item->setData($data);
                     $result[] = $item;
                 }
@@ -981,14 +985,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
 
             return $result;
         }
-    }
-
-    /**
-     * @return string
-     */
-    public function getPhpdocType()
-    {
-        return $this->phpdocType;
     }
 
     /**
@@ -1142,5 +1138,15 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
     public function setEnableBatchEdit($enableBatchEdit)
     {
         $this->enableBatchEdit = $enableBatchEdit;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\Pimcore\\Model\\DataObject\\Data\\ElementMetadata[]';
     }
 }

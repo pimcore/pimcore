@@ -69,13 +69,6 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     public $queryColumnType = 'text';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = 'array';
-
-    /**
      * @var bool
      */
     public $relationType = true;
@@ -798,7 +791,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
     /**
      * @return string
      */
-    public function getPhpdocType()
+    protected function getPhpdocType()
     {
         return implode(' | ', $this->getPhpDocClassString(true));
     }

@@ -50,13 +50,6 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public $columnType = ['images' => 'text', 'hotspots' => 'text'];
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\ImageGallery';
-
-    /**
      * @var int
      */
     public $width;
@@ -268,7 +261,9 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $imageGallery = new DataObject\Data\ImageGallery($resultItems);
 
         if (isset($params['owner'])) {
-            $imageGallery->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+            $imageGallery->_setOwner($params['owner']);
+            $imageGallery->_setOwnerFieldname($params['fieldname']);
+            $imageGallery->_setOwnerLanguage($params['language'] ?? null);
         }
 
         return $imageGallery;
@@ -284,7 +279,9 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         $imageGallery = new DataObject\Data\ImageGallery(null);
 
         if (isset($params['owner'])) {
-            $imageGallery->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+            $imageGallery->_setOwner($params['owner']);
+            $imageGallery->_setOwnerFieldname($params['fieldname']);
+            $imageGallery->_setOwnerLanguage($params['language'] ?? null);
         }
 
         return $imageGallery;
@@ -628,5 +625,25 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
         }
 
         return true;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\ImageGallery::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\ImageGallery::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\ImageGallery::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\ImageGallery::class . '|null';
     }
 }

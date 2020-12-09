@@ -191,7 +191,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/MultiSelect.php
 
 		-
-			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\MultiSelect\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiSelect\\.$#"
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\MultiSelect\\:\\:getFilterValues\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiSelect\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/MultiSelect.php
 
@@ -206,7 +206,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/MultiSelectRelation.php
 
 		-
-			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\MultiSelectRelation\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiRelation\\.$#"
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\MultiSelectRelation\\:\\:getFilterValues\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiRelation\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/MultiSelectRelation.php
 
@@ -231,7 +231,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRange.php
 
 		-
-			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\NumberRange\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRange\\.$#"
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\NumberRange\\:\\:getFilterValues\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRange\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRange.php
 
@@ -266,7 +266,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRangeSelection.php
 
 		-
-			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\NumberRangeSelection\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRangeSelection\\.$#"
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\NumberRangeSelection\\:\\:getFilterValues\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRangeSelection\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/NumberRangeSelection.php
 
@@ -311,7 +311,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/SelectRelation.php
 
 		-
-			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\SelectRelation\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterRelation\\.$#"
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\Findologic\\\\SelectRelation\\:\\:getFilterValues\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterRelation\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/Findologic/SelectRelation.php
 
@@ -376,7 +376,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelectRelation.php
 
 		-
-			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\MultiSelectRelation\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiRelation\\.$#"
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\MultiSelectRelation\\:\\:getFilterValues\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterMultiRelation\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/MultiSelectRelation.php
 
@@ -406,7 +406,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRange.php
 
 		-
-			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\NumberRange\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRange\\.$#"
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\NumberRange\\:\\:getFilterValues\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRange\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRange.php
 
@@ -436,7 +436,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRangeSelection.php
 
 		-
-			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\NumberRangeSelection\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRangeSelection\\.$#"
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\NumberRangeSelection\\:\\:getFilterValues\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterNumberRangeSelection\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/NumberRangeSelection.php
 
@@ -501,7 +501,7 @@ parameters:
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/SelectRelation.php
 
 		-
-			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\SelectRelation\\:\\:getFilterFrontend\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterRelation\\.$#"
+			message: "#^Parameter \\$filterDefinition of method Pimcore\\\\Bundle\\\\EcommerceFrameworkBundle\\\\FilterService\\\\FilterType\\\\SelectRelation\\:\\:getFilterValues\\(\\) has invalid typehint type Pimcore\\\\Model\\\\DataObject\\\\Fieldcollection\\\\Data\\\\FilterRelation\\.$#"
 			count: 1
 			path: bundles/EcommerceFrameworkBundle/FilterService/FilterType/SelectRelation.php
 

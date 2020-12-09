@@ -21,7 +21,6 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
-use Pimcore\Tool\Frontend;
 
 class Processor
 {

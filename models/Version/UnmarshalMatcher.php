@@ -18,7 +18,7 @@
 namespace Pimcore\Model\Version;
 
 @trigger_error(
-    'Pimcore\Model\Version\UnmarshalMatcher is deprecated since version 6.8.0 and will be removed in 7.0.0. ' .
+    'Pimcore\Model\Version\UnmarshalMatcher is deprecated since version 6.8.0 and will be removed in Pimcore 10. ' .
     ' Use ' . \Pimcore\Model\Element\DeepCopy\UnmarshalMatcher::class . ' instead.',
     E_USER_DEPRECATED
 );
