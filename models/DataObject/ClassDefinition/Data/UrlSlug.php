@@ -452,8 +452,8 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     }
 
     /**
-     * @param mixed $oldValue
-     * @param mixed $newValue
+     * @param mixed|null|Model\DataObject\Data\UrlSlug[] $oldValue
+     * @param mixed|null|Model\DataObject\Data\UrlSlug[] $newValue
      *
      * @return bool
      */
@@ -462,7 +462,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
         $oldData = [];
         $newData = [];
 
-        if (is_array($oldValue)) {
+        if (is_array($oldValue) && !empty($oldValue)) {
             /** @var Model\DataObject\Data\UrlSlug $item */
             foreach ($oldValue as $item) {
                 $oldData[] = [$item->getSlug(), $item->getSiteId()];
@@ -471,7 +471,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
             $oldData = $oldValue;
         }
 
-        if (is_array($newValue)) {
+        if (is_array($newValue) && !empty($newValue)) {
             /** @var Model\DataObject\Data\UrlSlug $item */
             foreach ($newValue as $item) {
                 $newData[] = [$item->getSlug(), $item->getSiteId()];
@@ -480,11 +480,9 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
             $newData = $newValue;
         }
 
-        $oldData = json_encode($oldData);
-        $newData = json_encode($newData);
-
-        return $oldData === $newData;
+        return json_encode($oldData) === json_encode($newData);
     }
+
 
     /**
      * @return bool
