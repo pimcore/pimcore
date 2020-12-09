@@ -49,9 +49,9 @@ In the frontend (template) you can use the following code to the the html for th
 
 ```php
 <?php
-$object = DataObject::getById(234);
+$object = AbstractObject::getById(234);
 ?>
- 
+
 <ul>
   <li><?= $object->getMyLink()->getHtml(); ?></li>
 </ul>
@@ -66,7 +66,7 @@ Allows to store RGBA Values. RGB and Alpha values are stored as hex values in tw
 
 ![Color Picker](../../../img/rgba_color_picker.png)
 
-  
+
 API Examples:
 
 ```php

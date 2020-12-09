@@ -1,5 +1,5 @@
 # Object Variants
-The best way to show the use and function of object variants is via an use case:
+The best way to show the use and function of object variants is via a use case:
 
 Your goal is to store lots of products in Pimcore. Many of these products are variants of each other, for example a 
 yellow t-shirt, a blue t-shirt, a red t-shirt etc. Most of the t-shirts' attributes have the same values and they 
@@ -32,10 +32,9 @@ are shown in a grid. Via buttons object variants can be created, opened and dele
 
 
 To create object variants via code, just create a normal object, set as parent the generic t-shirt and set the object 
-type to `Object_Abstract::OBJECT_TYPE_VARIANT`.
+type to `DataObject\AbstractObject::OBJECT_TYPE_VARIANT`.
 
 ```php
-
 $objectX = new DataObject\Product();
 $objectX->setParent(DataObject\Product::getById(362603));
 $objectX->setKey("variantname");
@@ -57,7 +56,6 @@ $objectX->getChildren([DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
 By default, `getChildren` delivers objects and folders but no variants.
 
 
-
 #### Object Variants in Object Lists
 
 Similar to `getChildren`, the object list objects now have an object type property, which defines the object types to 
@@ -71,7 +69,6 @@ $list->load();
 
 // or
 
-
 DataObject\Product::getList([
     "objectTypes" => [DataObject\AbstractObject::OBJECT_TYPE_VARIANT]
 ]);
@@ -83,5 +80,4 @@ If you want regular objects and variants, you should use:
 $list = new DataObject\Product\Listing();
 $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_VARIANT,DataObject\AbstractObject::OBJECT_TYPE_OBJECT]);
 $list->load();
-
 ```

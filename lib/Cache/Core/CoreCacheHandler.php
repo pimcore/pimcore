@@ -575,7 +575,7 @@ class CoreCacheHandler implements LoggerAwareInterface
                 return false;
             }
 
-            // dump state is used to trigger a full serialized dump in __sleep eg. in Document, \Object_Abstract
+            // dump state is used to trigger a full serialized dump in __sleep eg. in Document, AbstractObject
             $data->setInDumpState(false);
 
             $context = [

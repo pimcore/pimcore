@@ -4,7 +4,7 @@ Pimcore heavily uses runtime cache to cache API results for performance reasons.
 ```php
 //Delete item from the list
 $list = new \Pimcore\Model\DataObject\Myclassname\Listing;
-//or 
+//or
 $list = new \Pimcore\Model\Document\Listing;
 //or
 $list = new \Pimcore\Model\Asset\Listing;
@@ -13,12 +13,12 @@ $list->current()->delete(); //delete current item from list
 
 $list->load(); //call load again to reset the runtime cache
 
-foreach($list as $element) {
+foreach ($list as $element) {
     ...
 }
 
 //using force param to load latest data from database
-\Pimcore\Model\DataObject::getById(123) === \Pimcore\Model\DataObject::getById(123) => true
+\Pimcore\Model\DataObject\AbstractObject::getById(123) === \Pimcore\Model\DataObject\AbstractObject::getById(123) => true
 
-\Pimcore\Model\DataObject::getById(123) === \Pimcore\Model\DataObject::getById(123, true) => true/false
+\Pimcore\Model\DataObject\AbstractObject::getById(123) === \Pimcore\Model\DataObject\AbstractObject::getById(123, true) => true/false
 ```
