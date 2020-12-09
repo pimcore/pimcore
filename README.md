@@ -15,7 +15,7 @@ Pimcore - Open Source Digital Experience Platform: MDM/PIM, CDP, DAM, CMS/UX & e
 * 👍 Like us on [Facebook](https://www.facebook.com/pimcore)
 * 🕊 Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
 * 🐞 [Issue Tracker](https://github.com/pimcore/pimcore/issues) - Report bugs or suggest new features
-* 🗨  [Forums](https://talk.pimcore.org/) - Community support and discussions
+* 🗨  [Forums](https://github.com/pimcore/pimcore/discussions) - Community support and discussions
 * 👪 [Community Chat](https://gitter.im/pimcore/pimcore) - Gitter
   
 
