@@ -18,6 +18,8 @@
 
 namespace Pimcore\DataObject\GridColumnConfig\Operator;
 
+use Pimcore\Model\Element\AbstractElement;
+
 class PropertyGetter extends AbstractOperator
 {
     /** @var string */
@@ -37,7 +39,7 @@ class PropertyGetter extends AbstractOperator
     }
 
     /**
-     * @param \Pimcore\Model\Element\ElementInterface $element
+     * @param AbstractElement $element
      *
      * @return \stdClass
      */
