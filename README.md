@@ -10,7 +10,6 @@ Pimcore - Open Source Digital Experience Platform: MDM/PIM, CDP, DAM, CMS/UX & e
 
 * 🌍 [Website](https://pimcore.com/) - Learn more about Pimcore
 * 📖 [Documentation](https://pimcore.com/docs/)
-* 📚 [API Documentation](https://pimcore.com/docs/api/)
 * 🉐 **Help translating Pimcore!** Start with [Essentials](https://poeditor.com/join/project/VWmZyvFVMH), continue with [Extended](https://poeditor.com/join/project/XliCYYgILb).
 * 👍 Like us on [Facebook](https://www.facebook.com/pimcore)
 * 🕊 Twitter: [@pimcore](https://twitter.com/pimcore) - Get the latest news
@@ -77,11 +76,8 @@ cd ./my-project
 
 This will install an empty skeleton application, 
 but we're also offering a demo package for your convenience - of course also with 3 commands 💪
-[Click here for more installation options and a detailed guide](https://pimcore.com/docs/6.x/Development_Documentation/Getting_Started/Installation.html)
+[Click here for more installation options and a detailed guide](https://pimcore.com/docs/pimcore/current/Development_Documentation/Getting_Started/Installation.html)
 
 ## Copyright and License 
-Copyright: [Pimcore](http://www.pimcore.org) GmbH  
-For licensing details please visit [LICENSE.md](LICENSE.md) 
-  
-  
-
+Copyright: [Pimcore](https://www.pimcore.org) GmbH
+For licensing details please visit [LICENSE.md](LICENSE.md)
