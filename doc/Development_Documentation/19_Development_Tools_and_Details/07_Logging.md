@@ -1,6 +1,6 @@
 # Logging
 
-There are several different kinds of logs in Pimcore. All of them are located under `/var/logs/` and get rotated
+There are several different kinds of logs in Pimcore. All of them are located under `/var/log` and get rotated
 as well as compressed automatically on every day (7 days retention) by the maintenance command. 
  
 ## <env>.log
@@ -53,7 +53,7 @@ function like this:
 \Pimcore\Log\Simple::log($name, $message);
 ```
 
-The `$name` variable defines the filename of the log file, "mylog" will write a file to `/var/logs/mylog.log` 
+The `$name` variable defines the filename of the log file, "mylog" will write a file to `/var/log/mylog.log` 
 (extension is added automatically). If the file does not yet exist it will be created on the fly. 
 
 The message is the line that will be written to the log. A date and time will also be prepended 

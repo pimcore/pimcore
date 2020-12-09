@@ -581,7 +581,7 @@
     "assign_target_group_weight": "น้ำหนัก",
     "target_group_multiselect": "กลุ่มเป้าหมายหลายกลุ่ม",
     "select_a_target_group": "เลือกกลุ่มเป้าหมาย",
-    "usage_statistics_explanation": "โปรดอย่าปิดการใช้งานนี้เว้นแต่คุณจะจำเป็นจริงๆ คุณสามารถดูข้อมูลใน /var/logs/usagelog.log",
+    "usage_statistics_explanation": "โปรดอย่าปิดการใช้งานนี้เว้นแต่คุณจะจำเป็นจริงๆ คุณสามารถดูข้อมูลใน /var/log/usagelog.log",
     "turn_off_usage_statistics": "ปิดสถิติการใช้งาน",
     "redirects_type_entire_uri": "URI ทั้งหมด",
     "redirects_type_path_query": "เส้นทางและแบบสอบถาม",

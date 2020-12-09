@@ -581,7 +581,7 @@
     "assign_target_group_weight": "Waga",
     "target_group_multiselect": "Multiwybór Grup Docelowych",
     "select_a_target_group": "Wybierz grupę docelową",
-    "usage_statistics_explanation": "Please do not deactivate this unless you really need to. You can see the data in /var/logs/usagelog.log",
+    "usage_statistics_explanation": "Please do not deactivate this unless you really need to. You can see the data in /var/log/usagelog.log",
     "turn_off_usage_statistics": "Wyłącz statystyki użytkowania",
     "redirects_type_entire_uri": "Cały URI",
     "redirects_type_path_query": "Ścieżka i Zapytanie",

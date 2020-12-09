@@ -263,7 +263,7 @@ class FullPageCacheListener
         } catch (\Exception $e) {
             Logger::error($e);
 
-            $this->disable('ERROR: Exception (see log files in /var/logs)');
+            $this->disable('ERROR: Exception (see log files in /var/log)');
 
             return;
         }
