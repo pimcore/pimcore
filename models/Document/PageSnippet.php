@@ -99,6 +99,13 @@ abstract class PageSnippet extends Model\Document
 
     /**
      * @var array
+     *
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use getter/setter methods or $this->inheritedEditables
+     */
+    private $inheritedElements = [];
+
+    /**
+     * @var array
      */
     protected $inheritedEditables = [];
 
