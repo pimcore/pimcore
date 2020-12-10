@@ -60,7 +60,7 @@ abstract class PageSnippet extends Model\Document
      *
      * @var array
      *
-     * @deprecated since v6.7 and will be removed in 10. Use getter/setter methods or $this->editables.
+     * @deprecated since v6.7 and will be removed in 10. Use getter/setter methods getEditables/setEditables instead.
      *                From 6.9 on this property will be private instead of protected.
      */
     private $elements = null;
@@ -100,7 +100,7 @@ abstract class PageSnippet extends Model\Document
     /**
      * @var array
      *
-     * @deprecated since v6.7 and will be removed in Pimcore 10. Use getter/setter methods or $this->inheritedEditables
+     * @deprecated since v6.7 and will be removed in Pimcore 10. Use getter/setter methods h
      */
     private $inheritedElements = [];
 
