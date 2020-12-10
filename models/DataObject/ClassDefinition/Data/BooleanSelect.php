@@ -205,7 +205,13 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
      */
     public function getVersionPreview($data, $object = null, $params = [])
     {
-        return $data;
+        if ($data === true) {
+            return $this->getYesLabel();
+        } elseif ($data === false) {
+            return $this->getNoLabel();
+        }
+
+        return '';
     }
 
     /** True if change is allowed in edit mode.
