@@ -685,6 +685,11 @@ abstract class PageSnippet extends Model\Document
             unset($this->elements);
         }
 
+        if ($this->inheritedEditables === null && $this->inheritedElements !== null) {
+            $this->inheritedEditables = $this->inheritedElements;
+            unset($this->inheritedElements);
+        }
+
         parent::__wakeup();
     }
 
