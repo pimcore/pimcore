@@ -101,6 +101,7 @@ abstract class PageSnippet extends Model\Document
      * @var array
      *
      * @deprecated since v6.7 and will be removed in Pimcore 10.
+     *              From 6.9 on this property will be private instead of protected.
      */
     private $inheritedElements = [];
 
@@ -681,7 +682,7 @@ abstract class PageSnippet extends Model\Document
             unset($this->elements);
         }
 
-        if (empty($this->inheritedEditables) && !empty($this->inheritedElements)) {
+        if ($this->inheritedEditables === null && $this->inheritedElements !== null) {
             $this->inheritedEditables = $this->inheritedElements;
             unset($this->inheritedElements);
         }
