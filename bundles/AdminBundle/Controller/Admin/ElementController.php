@@ -597,18 +597,25 @@ class ElementController extends AdminController
                 if ($element->isAllowed('versions')) {
                     $schedule = $element->getScheduledTasks();
                     $schedules = [];
+                    $hasSchedule = false;
                     foreach ($schedule as $task) {
                         if ($task->getActive()) {
-                            $schedules[$task->getVersion()] = $task->getDate();
+                            if ($task->getAction() === 'publish-version' && $task->getVersion()) {
+                                $schedules[$task->getVersion()] = $task->getDate();
+                            } else {
+                                $hasSchedule = $task->getDate();
+                            }
                         }
                     }
 
-                    $versions = $element->getVersions();
-                    $versions = Model\Element\Service::getSafeVersionInfo($versions);
+                    $versions = Model\Element\Service::getSafeVersionInfo($element->getVersions());
                     $versions = array_reverse($versions); //reverse array to sort by ID DESC
                     foreach ($versions as &$version) {
                         $version['scheduled'] = null;
-                        if (array_key_exists($version['id'], $schedules)) {
+
+                        if ($hasSchedule && $version['versionCount'] === $element->getVersionCount()) {
+                            $version['scheduled'] = $hasSchedule;
+                        } elseif (isset($schedules[$version['id']])) {
                             $version['scheduled'] = $schedules[$version['id']];
                         }
                     }
