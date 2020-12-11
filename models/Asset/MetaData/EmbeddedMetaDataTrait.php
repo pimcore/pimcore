@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Asset\MetaData;
 
+use Pimcore\Logger;
 use Pimcore\Tool;
 
 trait EmbeddedMetaDataTrait
