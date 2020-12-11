@@ -316,6 +316,7 @@ pimcore.settings.system = Class.create({
                                     valueField: 'language',
                                     forceSelection: true,
                                     typeAhead: true,
+                                    anyMatch: true,
                                     width: 450
                                 }, {
                                     xtype: "button",
