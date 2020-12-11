@@ -384,13 +384,7 @@ class CustomReportController extends ReportsControllerBase
 
         $sort = $request->get('sort');
         $dir = $request->get('dir');
-
-        if ($request->get('filter')) {
-            $filters = json_decode(urldecode($request->get('filter')), true);
-        } else {
-            $filters = null;
-        }
-
+        $filters = $request->get('filter') ? json_decode(urldecode($request->get('filter')), true) : null;
         $drillDownFilters = $request->get('drillDownFilters', null);
         $includeHeaders = $request->get('headers', false);
 
