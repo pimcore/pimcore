@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\Asset\MetaData;
 
+use Pimcore\Logger;
 use Pimcore\Tool;
 
 trait EmbeddedMetaDataTrait
@@ -82,7 +83,14 @@ trait EmbeddedMetaDataTrait
                 }
             }
         } else {
-            $xmp = $this->flattenArray($this->getXMPData($filePath));
+            try {
+                $xmp = $this->flattenArray($this->getXMPData($filePath));
+            } catch (\Exception $e) {
+                $xmp = [];
+                Logger::error('Problem reading XMP metadata of the image with ID ' . $this->getId() . ' Reason: '
+                    . $e->getMessage());
+            }
+
             $iptc = $this->flattenArray($this->getIPTCData($filePath));
             $exif = $this->flattenArray($this->getEXIFData($filePath));
             $embeddedMetaData = array_merge(array_merge($xmp, $exif), $iptc);
