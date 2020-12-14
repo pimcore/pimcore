@@ -44,7 +44,7 @@ class Merge extends AbstractOperator
 
         foreach ($childs as $c) {
             $childResult = $c->getLabeledValue($element);
-            $childValues = $childResult->value;
+            $childValues = $childResult->value ?? null;
 
             if ($this->flatten) {
                 if (is_array($childValues)) {
