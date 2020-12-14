@@ -54,7 +54,7 @@ pimcore.settings.user.editorSettings = Class.create({
             width: 500,
             columns: [
                 {text: t("language"), sortable: true, dataIndex: 'value', editor: new Ext.form.TextField({}),
-                    width: 200},
+                    flex: 1},
                 {text: t("abbreviation"), sortable: true, dataIndex: 'key', editor: new Ext.form.TextField({}),
                     width: 200},
                 {

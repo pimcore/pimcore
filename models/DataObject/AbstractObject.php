@@ -17,7 +17,7 @@
 
 namespace Pimcore\Model\DataObject;
 
-use Doctrine\DBAL\Exception\DeadlockException;
+use Doctrine\DBAL\Exception\RetryableException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
@@ -675,11 +675,13 @@ class AbstractObject extends Model\Element\AbstractElement
 
                     if ($e instanceof UniqueConstraintViolationException) {
                         throw new Element\ValidationException('unique constraint violation', 0, $e);
-                    } elseif ($e instanceof DeadlockException) {
+                    }
+
+                    if ($e instanceof RetryableException) {
                         // we try to start the transaction $maxRetries times again (deadlocks, ...)
                         if ($retries < ($maxRetries - 1)) {
                             $run = $retries + 1;
-                            $waitTime = rand(1, 5) * 100000; // microseconds
+                            $waitTime = random_int(1, 5) * 100000; // microseconds
                             Logger::warn('Unable to finish transaction (' . $run . ". run) because of the following reason '" . $e->getMessage() . "'. --> Retrying in " . $waitTime . ' microseconds ... (' . ($run + 1) . ' of ' . $maxRetries . ')');
 
                             usleep($waitTime); // wait specified time until we restart the transaction
