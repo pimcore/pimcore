@@ -38,6 +38,7 @@
 namespace Pimcore\Twig\Extension\Templating\Placeholder;
 
 use Twig\Extension\RuntimeExtensionInterface;
+use Pimcore\Templating\Helper\HelperCharsetTrait;
 
 /**
  * @method void set(mixed $value)
@@ -58,6 +59,8 @@ use Twig\Extension\RuntimeExtensionInterface;
  */
 abstract class AbstractExtension implements \IteratorAggregate, \Countable, \ArrayAccess, RuntimeExtensionInterface
 {
+    use HelperCharsetTrait;
+
     /**
      * @var ContainerService
      */
@@ -326,4 +329,4 @@ abstract class AbstractExtension implements \IteratorAggregate, \Countable, \Arr
     }
 }
 
-class_alias(AbstractExtension::class, 'Pimcore\Templating\Helper\Placeholder\AbstractExtension');
+class_alias(AbstractExtension::class, 'Pimcore\Templating\Helper\Placeholder\AbstractHelper');
