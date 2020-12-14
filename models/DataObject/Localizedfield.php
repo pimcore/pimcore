@@ -293,7 +293,14 @@ class Localizedfield extends Model\AbstractModel implements
             if (Tool::isValidLanguage($locale)) {
                 return (string) $locale;
             }
-            throw new \Exception('Not supported language');
+
+            foreach(Tool::getValidLanguages() as $validLocale) {
+                if(strpos($validLocale, $locale.'_') === 0) {
+                    return $validLocale;
+                }
+            }
+
+            return Tool::getDefaultLanguage();
         } catch (\Exception $e) {
             return Tool::getDefaultLanguage();
         }
