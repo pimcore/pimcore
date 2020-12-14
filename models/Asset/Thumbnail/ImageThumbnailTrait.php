@@ -28,7 +28,7 @@ trait ImageThumbnailTrait
     protected $asset;
 
     /**
-     * @var Image\Thumbnail\Config
+     * @var Image\Thumbnail\Config|null
      */
     protected $config;
 
@@ -193,7 +193,7 @@ trait ImageThumbnailTrait
     }
 
     /**
-     * @return Image\Thumbnail\Config
+     * @return Image\Thumbnail\Config|null
      */
     public function getConfig()
     {

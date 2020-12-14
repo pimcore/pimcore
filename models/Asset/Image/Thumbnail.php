@@ -36,7 +36,7 @@ class Thumbnail
 
     /**
      * @param Image $asset
-     * @param string|array|Thumbnail\Config $config
+     * @param string|array|Thumbnail\Config|null $config
      * @param bool $deferred
      */
     public function __construct($asset, $config = null, $deferred = true)
@@ -268,7 +268,7 @@ class Thumbnail
             $options['previewDataUri'] = $previewDataUri;
         }
 
-        $isAutoFormat = strtolower($this->getConfig()->getFormat()) === 'source';
+        $isAutoFormat = $thumbConfig instanceof Image\Thumbnail\Config ? strtolower($thumbConfig->getFormat()) === 'source' : false;
 
         if ($isAutoFormat) {
             // ensure the default image is not WebP
@@ -281,66 +281,69 @@ class Thumbnail
         }
 
         $html = '<picture ' . array_to_html_attribute_string($pictureTagAttributes) . '>' . "\n";
-        $mediaConfigs = $thumbConfig->getMedias();
 
-        // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
-        ksort($mediaConfigs, SORT_NUMERIC);
-        array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
+        if ($thumbConfig instanceof Image\Thumbnail\Config) {
+            $mediaConfigs = $thumbConfig->getMedias();
 
-        foreach ($mediaConfigs as $mediaQuery => $config) {
-            $srcSetValues = [];
-            $sourceTagAttributes = [];
-            $thumb = null;
+            // currently only max-width is supported, the key of the media is WIDTHw (eg. 400w) according to the srcset specification
+            ksort($mediaConfigs, SORT_NUMERIC);
+            array_push($mediaConfigs, $thumbConfig->getItems()); //add the default config at the end - picturePolyfill v4
 
-            foreach ([1, 2] as $highRes) {
-                $thumbConfigRes = clone $thumbConfig;
-                $thumbConfigRes->selectMedia($mediaQuery);
-                $thumbConfigRes->setHighResolution($highRes);
-                $thumb = $image->getThumbnail($thumbConfigRes, true);
+            foreach ($mediaConfigs as $mediaQuery => $config) {
+                $srcSetValues = [];
+                $sourceTagAttributes = [];
+                $thumb = null;
 
-                $descriptor = $highRes . 'x';
-                $srcSetValues[] = $this->addCacheBuster($thumb . ' ' . $descriptor, $options, $image);
+                foreach ([1, 2] as $highRes) {
+                    $thumbConfigRes = clone $thumbConfig;
+                    $thumbConfigRes->selectMedia($mediaQuery);
+                    $thumbConfigRes->setHighResolution($highRes);
+                    $thumb = $image->getThumbnail($thumbConfigRes, true);
 
-                if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
-                    break;
-                }
+                    $descriptor = $highRes . 'x';
+                    $srcSetValues[] = $this->addCacheBuster($thumb . ' ' . $descriptor, $options, $image);
 
-                if ($isAutoFormat) {
-                    $thumbConfigWebP = clone $thumbConfigRes;
-                    $thumbConfigWebP->setFormat('webp');
-                    $image->getThumbnail($thumbConfigWebP, true)->getPath();
-                }
-            }
-
-            if ($thumb) {
-                $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
-                if ($mediaQuery) {
-                    $sourceTagAttributes['media'] = $mediaQuery;
-                    $thumb->reset();
-                }
-
-                if ($previewDataUri) {
-                    $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
-                    unset($sourceTagAttributes['srcset']);
-                }
-
-                $sourceTagAttributes['type'] = $thumb->getMimeType();
-
-                $sourceCallback = $options['sourceCallback'] ?? null;
-                if ($sourceCallback) {
-                    $sourceTagAttributes = $sourceCallback($sourceTagAttributes);
-                }
-
-                if (!empty($sourceTagAttributes)) {
-                    $sourceHtml = '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
-                    if ($isAutoFormat) {
-                        $sourceHtmlWebP = preg_replace(['@(\.)(jpg|png)( \dx)@', '@(/)(jpeg|png)(")@'], '$1webp$3', $sourceHtml);
-                        if ($sourceHtmlWebP != $sourceHtml) {
-                            $html .= "\t" . $sourceHtmlWebP . "\n";
-                        }
+                    if ($this->useOriginalFile($this->asset->getFilename()) && $this->getConfig()->isSvgTargetFormatPossible()) {
+                        break;
                     }
 
-                    $html .= "\t" . $sourceHtml . "\n";
+                    if ($isAutoFormat) {
+                        $thumbConfigWebP = clone $thumbConfigRes;
+                        $thumbConfigWebP->setFormat('webp');
+                        $image->getThumbnail($thumbConfigWebP, true)->getPath();
+                    }
+                }
+
+                if ($thumb) {
+                    $sourceTagAttributes['srcset'] = implode(', ', $srcSetValues);
+                    if ($mediaQuery) {
+                        $sourceTagAttributes['media'] = $mediaQuery;
+                        $thumb->reset();
+                    }
+
+                    if ($previewDataUri) {
+                        $sourceTagAttributes['data-srcset'] = $sourceTagAttributes['srcset'];
+                        unset($sourceTagAttributes['srcset']);
+                    }
+
+                    $sourceTagAttributes['type'] = $thumb->getMimeType();
+
+                    $sourceCallback = $options['sourceCallback'] ?? null;
+                    if ($sourceCallback) {
+                        $sourceTagAttributes = $sourceCallback($sourceTagAttributes);
+                    }
+
+                    if (!empty($sourceTagAttributes)) {
+                        $sourceHtml = '<source ' . array_to_html_attribute_string($sourceTagAttributes) . ' />';
+                        if ($isAutoFormat) {
+                            $sourceHtmlWebP = preg_replace(['@(\.)(jpg|png)( \dx)@', '@(/)(jpeg|png)(")@'], '$1webp$3', $sourceHtml);
+                            if ($sourceHtmlWebP != $sourceHtml) {
+                                $html .= "\t" . $sourceHtmlWebP . "\n";
+                            }
+                        }
+
+                        $html .= "\t" . $sourceHtml . "\n";
+                    }
                 }
             }
         }
