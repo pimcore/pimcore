@@ -18,6 +18,8 @@
 - `\Pimcore\Model\Asset\Image\Thumbnail\Processor::setHasWebpSupport()` and `hasWebpSupport()` has been deprecated and will be removed in Pimcore 10.
 - `\Pimcore\Tool\Frontend::hasWebpSupport()` and all related `webp` methods have been deprecated and will be removed in Pimcore 10. 
 - Config option `pimcore.translations.case_insensitive` has been deprecated and will be removed in Pimcore 10. 
+- `PageSnippet::$elements` property visibility changed from `protected` to `private`
+- `PageSnippet::$inheritedElements` property visibility changed from `protected` to `private`
 
 #### Migrating legacy module/controller/action configurations to new controller references
 You can use `./bin/console migration:controller-reference` to migrate your existing Documents, 

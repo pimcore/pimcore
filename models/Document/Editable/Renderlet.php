@@ -333,7 +333,6 @@ class Renderlet extends Model\Document\Editable
                         }
                     }
                 } else {
-                    p_r($this);
                     throw new \Exception('cannot get values from web service import - type is not valid');
                 }
             } else {

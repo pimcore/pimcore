@@ -35,11 +35,12 @@ geobounds. Programmatically both points are `Pimcore\Model\DataObject\Data\Geopo
 `Pimcore\Model\DataObject\Data\Geopoints` Object. The following code snippet shows how to set Geobounds:
 
 ```php
+use Pimcore\Model\DataObject\Data\Geobounds;
 use Pimcore\Model\DataObject\Data\Geopoint;
  
 $northEast = new Geopoint(150.96588134765625, -33.704920213014425);
 $southWest = new Geopoint(150.60333251953125, -33.893217379440884)
-$object->setBounds(new Object_Data_Geobounds($northEast,$southWest));
+$object->setBounds(new Geobounds($northEast,$southWest));
 $object->save();
 ```
 

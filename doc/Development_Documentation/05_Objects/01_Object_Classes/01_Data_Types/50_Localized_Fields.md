@@ -58,10 +58,10 @@ $languages = \Pimcore\Tool::getValidLanguages();
 
 ### Disable Fallback languages ###
 
-You can disable the Fallbacklanguages
+You can disable the Fallback languages
 
 ```php
-    \Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues(false);
+\Pimcore\Model\DataObject\Localizedfield::setGetFallbackValues(false);
 ```
 
 ### Accessing the data
@@ -70,12 +70,12 @@ Accessing the data is simple as below:
 
 ```php
 // with global registered locale
-$object = DataObject::getById(234);
+$object = AbstractObject::getById(234);
 $object->getInput1(); // will return the en_US data for the field "input1"
  
  
 // get specific localized data, regardless which locale is globally registered
-$object->getInput1("de") // will return the German value for the field "input1"
+$object->getInput1("de"); // will return the German value for the field "input1"
 ```
 
 ### Setting data
@@ -83,8 +83,8 @@ $object->getInput1("de") // will return the German value for the field "input1"
 It works in the similar way as getting the data.
 
 ```php
-$object = DataObject::getById(234);
-$object->setInput1("My Name", "fr") // set the French value for the field "input1"
+$object = AbstractObject::getById(234);
+$object->setInput1("My Name", "fr"); // set the French value for the field "input1"
 ```
 
 **Warning:** Please note that moving a field from outside (normal object field) into the localizedfield container means 

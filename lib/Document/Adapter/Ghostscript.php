@@ -185,7 +185,7 @@ class Ghostscript extends Adapter
     protected function getVersion()
     {
         if (is_null($this->version)) {
-            $this->version = Console::exec(self::getGhostscriptCli() . ' --version');
+            $this->version = trim(Console::exec(self::getGhostscriptCli() . ' --version'));
         }
 
         return $this->version;
