@@ -47,9 +47,9 @@ class DateFormatter extends AbstractOperator
 
             foreach ($childs as $c) {
                 $childResult = $c->getLabeledValue($element);
-                $isArrayType = $childResult->isArrayType;
+                $isArrayType = $childResult->isArrayType ?? false;
 
-                $childValues = $childResult->value;
+                $childValues = $childResult->value ?? null;
                 if ($childValues && !is_array($childValues)) {
                     $childValues = [$childValues];
                 }
@@ -87,23 +87,18 @@ class DateFormatter extends AbstractOperator
 
     public function format($theValue)
     {
-        if ($theValue) {
-            if (is_int($theValue)) {
-                $theValue = Carbon::createFromTimestamp($theValue);
-            }
-            if ($this->format) {
-                $timestamp = null;
+        $timestamp = null;
+        if (is_int($theValue)) {
+            $timestamp = Carbon::createFromTimestamp($theValue);
+        }
+        if ($theValue instanceof Carbon) {
+            $timestamp = $theValue->getTimestamp();
+        }
 
-                if ($theValue instanceof Carbon) {
-                    $timestamp = $theValue->getTimestamp();
-
-                    $theValue = date($this->format, $timestamp);
-                }
-            } else {
-                if ($theValue instanceof Carbon) {
-                    $theValue = $theValue->toDateString();
-                }
-            }
+        if ($timestamp && $this->format) {
+            return date($this->format, $timestamp);
+        } else if ($theValue instanceof Carbon) {
+            return $theValue->toDateString();
         }
 
         return $theValue;

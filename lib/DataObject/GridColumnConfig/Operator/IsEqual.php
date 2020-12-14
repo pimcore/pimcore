@@ -43,8 +43,8 @@ class IsEqual extends AbstractOperator
             $valueArray = [];
             foreach ($childs as $c) {
                 $childResult = $c->getLabeledValue($element);
-                $isArrayType = $childResult->isArrayType;
-                $childValues = $childResult->value;
+                $isArrayType = $childResult->isArrayType ?? false;
+                $childValues = $childResult->value ?? null;
                 if ($childValues && !$isArrayType) {
                     $childValues = [$childValues];
                 }
