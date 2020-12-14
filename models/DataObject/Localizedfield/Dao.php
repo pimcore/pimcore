@@ -17,7 +17,6 @@
 
 namespace Pimcore\Model\DataObject\Localizedfield;
 
-use Doctrine\DBAL\Exception\DeadlockException;
 use Pimcore\Db;
 use Pimcore\Logger;
 use Pimcore\Model;
