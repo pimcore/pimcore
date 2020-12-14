@@ -36,8 +36,16 @@ class AdminExtension extends AbstractExtension
     /**
      * @deprecated
      */
-    public function minimize(string $value): array
+    public function minimize(array $paths): array
     {
-        return Admin::getMinimizedScriptPath($value);
+        $scriptContents = '';
+        foreach($paths as $path) {
+            $fullPath = PIMCORE_WEB_ROOT . '/bundles/pimcoreadmin/js/' . $path;
+            if(file_exists($fullPath)) {
+                $scriptContents .= file_get_contents($fullPath) . "\n\n\n";
+            }
+        }
+
+        return Admin::getMinimizedScriptPath($scriptContents);
     }
 }
