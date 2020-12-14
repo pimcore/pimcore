@@ -215,7 +215,9 @@ class Dao extends Model\Dao\AbstractDao
                 if (strpos($e->getMessage(), 'exist')) {
                     $this->db->rollBack();
                     $this->createUpdateTable();
-                    throw new \Exception('missing table created, start next run ... ;-)');
+
+                    // throw exception which gets caught in AbstractObject::save() -> retry saving
+                    throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
                 }
                 throw $e;
             }
@@ -254,7 +256,7 @@ class Dao extends Model\Dao\AbstractDao
                         $this->createUpdateTable();
 
                         // at this point we throw an exception so that the transaction gets repeated in DataObject::save()
-                        throw new \Exception('missing table created, start next run ... ;-)');
+                        throw new LanguageTableDoesNotExistException('missing table created, start next run ... ;-)');
                     }
                 }
 
