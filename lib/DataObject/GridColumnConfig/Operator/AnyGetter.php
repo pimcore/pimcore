@@ -61,15 +61,18 @@ class AnyGetter extends AbstractOperator
         $childs = $this->getChilds();
 
         $getter = 'get'.ucfirst($this->attribute);
+        $fallbackGetter = $this->attribute;
 
         if (!$childs) {
+            $result->value = null;
             if ($this->attribute && method_exists($element, $getter)) {
-                $result->value = $element->$getter();
-                if ($result->value instanceof AbstractModel) {
-                    $result->value = $result->value->getObjectVars();
-                }
+                $result->value = $element->$getter($this->getParam1());
+            } else if($this->attribute && method_exists($element, $fallbackGetter)) {
+                $result->value = $element->$fallbackGetter($this->getParam1());
+            }
 
-                return $result;
+            if ($result->value instanceof AbstractModel) {
+                $result->value = $result->value->getObjectVars();
             }
         } else {
             if (count($childs) > 1) {
@@ -108,20 +111,22 @@ class AnyGetter extends AbstractOperator
 
                 if ($this->getisArrayType()) {
                     if (is_array($value)) {
-                        $newValues = [];
+                        $subValues = [];
                         foreach ($value as $o) {
                             if ($this->attribute && method_exists($o, $getter)) {
-                                $targetValue = $o->$getter($this->getParam1());
-                                $newValues[] = $targetValue;
+                                $subValues[] = $o->$getter($this->getParam1());
+                            } else if ($this->attribute && method_exists($o, $fallbackGetter)) {
+                                $subValues[] = $o->$fallbackGetter($this->getParam1());
                             }
                         }
-                        $resultElementValue = $newValues;
+                        $resultElementValue = $subValues;
                     }
                 } else {
-                    $o = $value; // Concrete::getById($value->getId());
+                    $o = $value;
                     if ($this->attribute && method_exists($o, $getter)) {
-                        $value = $o->$getter($this->getParam1());
-                        $resultElementValue = $value;
+                        $resultElementValue = $o->$getter($this->getParam1());
+                    } else if ($this->attribute && method_exists($o, $fallbackGetter)) {
+                        $resultElementValue = $o->$fallbackGetter($this->getParam1());
                     }
                 }
                 $resultElements[] = $resultElementValue;

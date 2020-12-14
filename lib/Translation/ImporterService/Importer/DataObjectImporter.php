@@ -50,7 +50,7 @@ class DataObjectImporter extends AbstractElementImporter
 
             if (method_exists($brickContainer, $brickGetter)) {
                 $brick = $brickContainer->$brickGetter();
-                if ($brick instanceof DataObject\Objectbrick) {
+                if ($brick instanceof DataObject\Objectbrick\Data\AbstractData) {
                     $localizedFields = $brick->get('localizedfields');
                     if ($localizedFields instanceof DataObject\Localizedfield) {
                         $localizedFields->setLocalizedValue($field, $attribute->getContent(), $targetLanguage);
