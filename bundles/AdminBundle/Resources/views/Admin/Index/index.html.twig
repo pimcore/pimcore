@@ -723,15 +723,7 @@
     <script src="/bundles/pimcoreadmin/js/{{ scriptUrl }}?_dc={{ settings.build }}"></script>
     {% endfor %}
 {% else %}
-    {% set scriptContents = "" %}
-    {% for scriptUrl in scripts %}
-        {% set scriptContent = source(constant('PIMCORE_WEB_ROOT') ~ "/bundles/pimcoreadmin/js/" ~ scriptUrl, ignore_missing = true) %}
-        {% if scriptContent|length > 0 %}
-            {% set scriptContents = scriptContents ~ scriptContent ~ "\n\n\n" %}
-        {% endif %}
-    {% endfor %}
-    {% set minimizedScriptParams = pimcore_minimize_scripts(scriptContents) %}
-
+    {% set minimizedScriptParams = pimcore_minimize_scripts(scripts) %}
     <script src="{{ path('pimcore_admin_misc_scriptproxy', minimizedScriptParams) }}"></script>
 {% endif %}
 
