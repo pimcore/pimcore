@@ -481,7 +481,7 @@ pimcore.object.tags.manyToOneRelation = Class.create(pimcore.object.tags.abstrac
             pimcore.helpers.requestNicePathData(
                 {
                     type: "object",
-                    id: this.data.id
+                    id: this.object.id
                 },
                 targets,
                 {
