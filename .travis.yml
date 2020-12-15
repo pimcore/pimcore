@@ -22,9 +22,9 @@ addons:
   artifacts:
     s3_region: "eu-west-1"      # see https://docs.aws.amazon.com/general/latest/gr/rande.html
     debug: true
-    paths:                      # - $(ls var/logs/*.log | tr "\n" ":")
+    paths:                      # - $(ls var/log/*.log | tr "\n" ":")
       #      - app/config
-      - var/logs
+      - var/log
       - tests/_output/var/classes
       - phpstan-baseline.neon
   hosts:

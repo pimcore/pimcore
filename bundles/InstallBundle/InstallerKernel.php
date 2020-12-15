@@ -65,7 +65,7 @@ class InstallerKernel extends Kernel
      */
     public function getLogDir()
     {
-        return $this->projectRoot . '/var/logs';
+        return $this->projectRoot . '/var/log';
     }
 
     /**

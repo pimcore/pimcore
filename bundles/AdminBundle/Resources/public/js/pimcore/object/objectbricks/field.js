@@ -354,7 +354,7 @@ pimcore.object.objectbricks.field = Class.create(pimcore.object.classes.klass, {
             if (rdata && rdata.message) {
                 pimcore.helpers.showNotification(t("error"), rdata.message, "error");
             } else {
-                throw "save was not successful, see log files in /var/logs";
+                throw "save was not successful, see log files in /var/log";
             }
         }
 

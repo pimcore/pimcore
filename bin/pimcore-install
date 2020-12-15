@@ -49,7 +49,7 @@ Debug::enable();
 
 // Load a startup file if it exists - this is a good place to preconfigure the system
 // before the kernel is loaded - e.g. to set trusted proxies on the request object
-$startupFile = PIMCORE_PROJECT_ROOT . '/app/startup.php';
+$startupFile = PIMCORE_PROJECT_ROOT . '/config/pimcore/startup.php';
 if (file_exists($startupFile)) {
     include_once $startupFile;
 }

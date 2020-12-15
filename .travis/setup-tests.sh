@@ -4,12 +4,13 @@ set -eu
 
 mkdir -p var/config
 
-cp -r .travis/app app
+cp -r .travis/config/. config
+cp -r .travis/templates templates
 cp -r .travis/bin/console bin/console
-cp -r .travis/web web
+cp -r .travis/src src
+cp -r .travis/public public
 
 cp .travis/extensions.template.php var/config/extensions.php
-cp app/config/parameters.example.yml app/config/parameters.yml
 
 # install composer dependencies
 composer self-update --2

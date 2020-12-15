@@ -162,11 +162,6 @@ class ControllerDataProvider
 
         $templates = [];
 
-        $appPath = realpath(implode(DIRECTORY_SEPARATOR, [PIMCORE_APP_ROOT, 'Resources', 'views']));
-        if ($appPath && is_dir($appPath)) {
-            $templates = array_merge($templates, $this->findTemplates($appPath));
-        }
-
         $symfonyPath = realpath(implode(DIRECTORY_SEPARATOR, [PIMCORE_PROJECT_ROOT, 'templates']));
         if ($symfonyPath && is_dir($symfonyPath)) {
             $templates = array_merge($templates, $this->findTemplates($symfonyPath));

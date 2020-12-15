@@ -12,9 +12,11 @@
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-use Pimcore\Kernel;
+namespace App;
 
-class AppKernel extends Kernel
+use Pimcore\Kernel as BaseKernel;
+
+class Kernel extends BaseKernel
 {
 
 }

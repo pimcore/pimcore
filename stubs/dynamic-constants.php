@@ -4,7 +4,6 @@
 define('PIMCORE_COMPOSER_PATH', '');
 define('PIMCORE_COMPOSER_FILE_PATH', '');
 define('PIMCORE_PATH', '');
-define('PIMCORE_APP_ROOT', '');
 define('PIMCORE_WEB_ROOT', '');
 define('PIMCORE_PRIVATE_VAR', '');
 define('PIMCORE_PUBLIC_VAR', '');

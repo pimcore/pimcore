@@ -25,7 +25,7 @@ class Composer
 {
     protected static $options = [
         'symfony-app-dir' => 'app',
-        'symfony-web-dir' => 'web',
+        'symfony-web-dir' => 'public',
         'symfony-assets-install' => 'hard',
         'symfony-cache-warmup' => false,
     ];
@@ -120,11 +120,8 @@ class Composer
     {
         // ensure that there's a parameters.yml, if not we'll create a temporary one, so that the requirement check works
         $parameters = '';
-        $parametersYml = $rootPath . '/app/config/parameters.yml';
-        $parametersYmlExample = $rootPath . '/app/config/parameters.example.yml';
-        if (!file_exists($parametersYml) && file_exists($parametersYmlExample)) {
-            $parameters = file_get_contents($parametersYmlExample);
-        } elseif (file_exists($parametersYml)) {
+        $parametersYml = $rootPath . '/config/services.yaml';
+        if (file_exists($parametersYml)) {
             $parameters = file_get_contents($parametersYml);
         }
 

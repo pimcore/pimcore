@@ -581,7 +581,7 @@
     "assign_target_group_weight": "Poids",
     "target_group_multiselect": "Groupe Cible Multiselect",
     "select_a_target_group": "Sélectionner un Groupe Cible",
-    "usage_statistics_explanation": "Veuillez ne pas désactiver ceci à moins que vous n'en ayez vraiment besoin. Vous pouvez voir les données dans /var/logs/usagelog.log",
+    "usage_statistics_explanation": "Veuillez ne pas désactiver ceci à moins que vous n'en ayez vraiment besoin. Vous pouvez voir les données dans /var/log/usagelog.log",
     "turn_off_usage_statistics": "Désactiver les statistiques d'utilisation",
     "redirects_type_entire_uri": "URI entière",
     "redirects_type_path_query": "Chemin et paramètres",

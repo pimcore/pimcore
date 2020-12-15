@@ -1476,7 +1476,7 @@ pimcore.object.classes.klass = Class.create({
                 if (res.message) {
                     pimcore.helpers.showNotification(t("error"), res.message, "error");
                 } else {
-                    throw "save was not successful, see log files in /var/logs";
+                    throw "save was not successful, see log files in /var/log";
                 }
             }
         } catch (e) {

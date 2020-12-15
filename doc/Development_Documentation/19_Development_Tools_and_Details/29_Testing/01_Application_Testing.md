@@ -302,7 +302,7 @@ settings:
     memory_limit: 1024M
     colors: true
 paths:
-    log: var/logs
+    log: var/log
 include:
   - tests
 ```

@@ -142,7 +142,7 @@ class Bootstrap
 
         // load a startup file if it exists - this is a good place to preconfigure the system
         // before the kernel is loaded - e.g. to set trusted proxies on the request object
-        $startupFile = PIMCORE_PROJECT_ROOT . '/app/startup.php';
+        $startupFile = PIMCORE_PROJECT_ROOT . '/config/pimcore/startup.php';
         if (file_exists($startupFile)) {
             include_once $startupFile;
         }
@@ -184,7 +184,7 @@ class Bootstrap
             if (method_exists($dotEnv, 'loadEnv')) {
                 // Symfony => 4.2 style
                 $envVarName = 'APP_ENV';
-                foreach (['PIMCORE_ENVIRONMENT', 'SYMFONY_ENV', 'APP_ENV'] as $varName) {
+                foreach (['PIMCORE_ENVIRONMENT', 'APP_ENV'] as $varName) {
                     if (isset($_SERVER[$varName]) || isset($_ENV[$varName])) {
                         $envVarName = $varName;
                         break;
@@ -203,7 +203,7 @@ class Bootstrap
             }
         }
 
-        $_ENV['PIMCORE_ENVIRONMENT'] = $_ENV['SYMFONY_ENV'] = $_ENV['APP_ENV'] = Config::getEnvironment();
+        $_ENV['PIMCORE_ENVIRONMENT'] = $_ENV['APP_ENV'] = Config::getEnvironment();
         $_SERVER += $_ENV;
     }
 
@@ -212,7 +212,7 @@ class Bootstrap
         self::prepareEnvVariables();
 
         // load custom constants
-        $customConstantsFile = PIMCORE_PROJECT_ROOT . '/app/constants.php';
+        $customConstantsFile = PIMCORE_PROJECT_ROOT . '/config/pimcore/constants.php';
         if (file_exists($customConstantsFile)) {
             include_once $customConstantsFile;
         }
@@ -237,8 +237,7 @@ class Bootstrap
         $resolveConstant('PIMCORE_COMPOSER_PATH', PIMCORE_PROJECT_ROOT . '/vendor');
         $resolveConstant('PIMCORE_COMPOSER_FILE_PATH', PIMCORE_PROJECT_ROOT);
         $resolveConstant('PIMCORE_PATH', realpath(__DIR__ . '/..'));
-        $resolveConstant('PIMCORE_APP_ROOT', PIMCORE_PROJECT_ROOT . '/app');
-        $resolveConstant('PIMCORE_WEB_ROOT', PIMCORE_PROJECT_ROOT . '/web');
+        $resolveConstant('PIMCORE_WEB_ROOT', PIMCORE_PROJECT_ROOT . '/public');
         $resolveConstant('PIMCORE_PRIVATE_VAR', PIMCORE_PROJECT_ROOT . '/var');
         $resolveConstant('PIMCORE_PUBLIC_VAR', PIMCORE_WEB_ROOT . '/var');
 
@@ -256,11 +255,11 @@ class Bootstrap
         }
 
         // paths relying on basic paths above
-        $resolveConstant('PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY', PIMCORE_APP_ROOT . '/config/pimcore');
+        $resolveConstant('PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY', PIMCORE_PROJECT_ROOT . '/config/pimcore');
         $resolveConstant('PIMCORE_CONFIGURATION_DIRECTORY', PIMCORE_PRIVATE_VAR . '/config');
         $resolveConstant('PIMCORE_ASSET_DIRECTORY', PIMCORE_PUBLIC_VAR . '/assets');
         $resolveConstant('PIMCORE_VERSION_DIRECTORY', PIMCORE_PRIVATE_VAR . '/versions');
-        $resolveConstant('PIMCORE_LOG_DIRECTORY', PIMCORE_PRIVATE_VAR . '/logs');
+        $resolveConstant('PIMCORE_LOG_DIRECTORY', PIMCORE_PRIVATE_VAR . '/log');
         $resolveConstant('PIMCORE_LOG_FILEOBJECT_DIRECTORY', PIMCORE_PRIVATE_VAR . '/application-logger');
         $resolveConstant('PIMCORE_TEMPORARY_DIRECTORY', PIMCORE_PUBLIC_VAR . '/tmp');
         $resolveConstant('PIMCORE_CACHE_DIRECTORY', PIMCORE_PRIVATE_VAR . '/cache/pimcore');
@@ -274,7 +273,7 @@ class Bootstrap
 
         // configure PHP's error logging
         $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
-        $resolveConstant('PIMCORE_KERNEL_CLASS', '\AppKernel');
+        $resolveConstant('PIMCORE_KERNEL_CLASS', '\App\Kernel');
 
         $kernelDebug = $resolveConstant('PIMCORE_KERNEL_DEBUG', null, false);
         if ($kernelDebug === 'true') {
@@ -337,7 +336,7 @@ class Bootstrap
         if (defined('PIMCORE_KERNEL_CLASS')) {
             $kernelClass = PIMCORE_KERNEL_CLASS;
         } else {
-            $kernelClass = '\AppKernel';
+            $kernelClass = '\App\Kernel';
         }
 
         if (!class_exists($kernelClass)) {

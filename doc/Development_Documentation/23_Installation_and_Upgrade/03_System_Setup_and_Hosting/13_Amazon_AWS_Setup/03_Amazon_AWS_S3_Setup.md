@@ -23,7 +23,7 @@ composer require aws/aws-sdk-php
 
 ## Create a Custom `startup.php`
 
-Create a new file (or re-use existing) with the following code in `/app/startup.php`. 
+Create a new file (or re-use existing) with the following code in `/config/pimcore/startup.php`. 
 
 Please read the comments in the following code to better understand what it does and how to customize the settings. 
 

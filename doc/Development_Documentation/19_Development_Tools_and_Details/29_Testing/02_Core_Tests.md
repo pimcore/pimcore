@@ -132,7 +132,7 @@ PHPStan see this [list](https://gist.github.com/carusogabriel/62698312f451589afd
 
 ### Build Artifacts
 
-Travis will automatically upload build artifacts to Amazon S3 (currently everything in `var/logs`).
+Travis will automatically upload build artifacts to Amazon S3 (currently everything in `var/log`).
 
 Look for something like this in your job output and open it in your web browser.
 
