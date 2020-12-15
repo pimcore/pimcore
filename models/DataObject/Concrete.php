@@ -792,9 +792,11 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
         $parentVars = parent::__sleep();
 
         $finalVars = [];
-        $blockedVars = ['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'];
+
+        $blockedVars = [];
 
         if (!$this->isInDumpState()) {
+            $blockedVars = ['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'];
             // do not dump lazy loaded fields for caching
             $lazyLoadedFields = $this->getLazyLoadedFieldNames();
             $blockedVars = array_merge($lazyLoadedFields, $blockedVars);
