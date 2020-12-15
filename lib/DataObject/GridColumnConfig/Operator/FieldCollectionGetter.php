@@ -58,7 +58,7 @@ class FieldCollectionGetter extends AbstractOperator
             $item = $fc->get($this->idx);
             if ($item) {
                 $itemGetter = 'get' . ucfirst($this->colAttr);
-                if(method_exists($item, $itemGetter)) {
+                if (method_exists($item, $itemGetter)) {
                     $value = $item->$itemGetter();
                     $result->value = $value;
                     $result->isEmpty = false;

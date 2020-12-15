@@ -7,7 +7,6 @@ use Pimcore\Migrations\Migration\AbstractPimcoreMigration;
 
 class Version20201207132025 extends AbstractPimcoreMigration
 {
-
     public function doesSqlMigrations(): bool
     {
         return false;

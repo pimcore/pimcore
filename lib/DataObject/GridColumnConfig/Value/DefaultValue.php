@@ -106,7 +106,6 @@ class DefaultValue extends AbstractValue
         return $result;
     }
 
-
     private function getClassificationStoreValueForObject($object, $key)
     {
         $keyParts = explode('~', $key);
@@ -194,7 +193,6 @@ class DefaultValue extends AbstractValue
             // key value, ignore for now
 
             return $this->getClassificationStoreValueForObject($element, $this->attribute);
-
         } elseif (count($attributeParts) > 1) {
             $brickType = $attributeParts[0];
             $brickKey = $attributeParts[1];

@@ -97,7 +97,7 @@ class DateFormatter extends AbstractOperator
 
         if ($timestamp && $this->format) {
             return date($this->format, $timestamp);
-        } else if ($theValue instanceof Carbon) {
+        } elseif ($theValue instanceof Carbon) {
             return $theValue->toDateString();
         }
 
