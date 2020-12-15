@@ -273,7 +273,7 @@ class Bootstrap
 
         // configure PHP's error logging
         $resolveConstant('PIMCORE_PHP_ERROR_LOG', PIMCORE_LOG_DIRECTORY . '/php.log');
-        $resolveConstant('PIMCORE_KERNEL_CLASS', 'App\Kernel');
+        $resolveConstant('PIMCORE_KERNEL_CLASS', '\App\Kernel');
 
         $kernelDebug = $resolveConstant('PIMCORE_KERNEL_DEBUG', null, false);
         if ($kernelDebug === 'true') {
@@ -336,7 +336,7 @@ class Bootstrap
         if (defined('PIMCORE_KERNEL_CLASS')) {
             $kernelClass = PIMCORE_KERNEL_CLASS;
         } else {
-            $kernelClass = 'App\Kernel';
+            $kernelClass = '\App\Kernel';
         }
 
         if (!class_exists($kernelClass)) {
