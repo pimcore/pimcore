@@ -795,6 +795,8 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
 
         $finalVars = [];
 
+        $blockedVars = [];
+
         if (!$this->isInDumpState()) {
             $blockedVars = ['loadedLazyKeys', 'allLazyKeysMarkedAsLoaded'];
             // do not dump lazy loaded fields for caching
