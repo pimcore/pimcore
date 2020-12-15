@@ -618,7 +618,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->scalarNode('default_controller')
-                    ->defaultValue('AppBundle\\Controller\\DefaultController::defaultAction')
+                    ->defaultValue('App\\Controller\\DefaultController::defaultAction')
                 ->end()
                 ->arrayNode('error_pages')
                     ->children()
@@ -888,10 +888,10 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('encoder_factories')
                             ->info('Encoder factories to use as className => factory service ID mapping')
                             ->example([
-                                'AppBundle\Model\DataObject\User1' => [
+                                'App\Model\DataObject\User1' => [
                                     'id' => 'website_demo.security.encoder_factory2',
                                 ],
-                                'AppBundle\Model\DataObject\User2' => 'website_demo.security.encoder_factory2',
+                                'App\Model\DataObject\User2' => 'website_demo.security.encoder_factory2',
                             ])
                             ->useAttributeAsKey('class')
                             ->prototype('array')

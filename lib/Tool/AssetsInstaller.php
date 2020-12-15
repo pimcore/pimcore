@@ -72,7 +72,7 @@ class AssetsInstaller
             Console::getPhpCli(),
             PIMCORE_PROJECT_ROOT . '/bin/console',
             'assets:install',
-            'web',
+            PIMCORE_WEB_ROOT,
         ];
 
         $options = $this->resolveOptions($options);
