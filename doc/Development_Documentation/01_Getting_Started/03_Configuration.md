@@ -88,7 +88,7 @@ for a `.env` file at this point.
 
 ## Adding logic to the startup process
 
-If you need to execute code to influence Pimcore's startup process, you can do so by adding a file in `/app/startup.php`
+If you need to execute code to influence Pimcore's startup process, you can do so by adding a file in `/config/pimcore/startup.php`
 which will be automatically included as part of the bootstrap process. Specifically, it will be loaded after all other
 bootstrapping (loading the autoloader, parsing constants, ...) is done, but **before** the kernel is loaded and booted.
 This gives you the possibility to reconfigure environment settings before they are used and to configure the system for
@@ -100,7 +100,7 @@ your needs. Examples:
 ```php
 <?php
 
-// /app/startup.php
+// /config/pimcore/startup.php
 
 use \Symfony\Component\HttpFoundation\Request;
 

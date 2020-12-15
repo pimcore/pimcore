@@ -151,7 +151,7 @@
       "Pimcore\\Tests\\": "tests"
     },
     "files": [
-      "app/AppKernel.php"
+      "src/Kernel.php"
     ]
   },
   "scripts": {
@@ -174,7 +174,7 @@
     "symfony-app-dir": "app",
     "symfony-bin-dir": "bin",
     "symfony-var-dir": "var",
-    "symfony-web-dir": "web",
+    "symfony-web-dir": "public",
     "symfony-tests-dir": "tests",
     "symfony-assets-install": "relative",
     "branch-alias": {
