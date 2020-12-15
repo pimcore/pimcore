@@ -159,7 +159,13 @@ class ProcessUpdateIndexQueueCommand extends AbstractIndexServiceCommand
             }
         }
 
-        $this->childWorkerList = $workerList;
+        // collect all workers from all processed tenants
+        $this->childWorkerList = $this->childWorkerList ?? [];
+        $childWorkerList = [];
+        foreach(array_merge($this->childWorkerList, $workerList) as $worker) {
+            $childWorkerList[$worker->getTenantConfig()->getTenantName()] = $worker;
+        }
+        $this->childWorkerList = array_values($childWorkerList);
 
         return $workerList;
     }
