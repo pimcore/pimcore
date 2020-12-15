@@ -27,7 +27,6 @@ In `app/config/services.yaml` add
   AppBundle\EventListener\AdminStyleListener:
     tags:
       - { name: kernel.event_listener, event: pimcore.admin.resolve.elementAdminStyle, method: onResolveElementAdminStyle }
-
 ```
 
 Create AdminStyleListener in EventListeners
@@ -53,8 +52,6 @@ class AdminStyleListener
 
  
 ### Example: Custom Icon for the Car DataObject
-
-See [demo site](http://pimcore-demo-basic.pim.zone/admin/login/deeplink?object_27_folder) for comparison.
 
 This will change the `Car` icon depending on the car type:
 
@@ -105,8 +102,8 @@ The example outlines how to provide a custom tooltip for `Car` objects.
     {
         if ($this->element instanceof \AppBundle\Model\Product\Car) {
             $element = $this->element;
+
             return ForceInheritance::run(function () use ($element) {
-                $thumbnail = null;
                 $text = '<h1>' . $element->getName() . '</h1>';
 
                 $mainImage = $element->getMainImage();
@@ -114,15 +111,16 @@ The example outlines how to provide a custom tooltip for `Car` objects.
                     $thumbnail = $mainImage->getThumbnail("content");
                     $text .= '<p><img src="' . $thumbnail . '" width="150" height="150"/></p>';
                 }
+
                 $text .= wordwrap($this->element->getDescription(), 50, "<br>");
+
                 return [
                     "title" => "ID: " . $element->getId() . " - Year: " . $element->getProductionYear(),
-                    "text" => $text
-
+                    "text" => $text,
                 ];
             });
-
         }
+
         return parent::getElementQtipConfig();
     }
 ```
@@ -152,13 +150,14 @@ class AssetEventStyle extends AdminStyle
             if (strpos($element->getKey(), 'C') === 0) {
                 $this->elementIconClass = null;
                 $this->elementIcon = '/bundles/pimcoreadmin/img/twemoji/1f61c.svg';
-                $this->elementQtipConfig = [
-                    'title' => 'ID: ' . $element->getId(),
-                    'text' => 'Path: ' . $element->getFullPath()
-                            . '<br>Modified: ' . date('c', $element->getModificationDate())
-                            . '<br>Size:  '. $element->getWidth() . 'x' . $element->getHeight() . " px" . '</p>'
-                ];
             }
+
+            $this->elementQtipConfig = [
+                'title' => 'ID: ' . $element->getId(),
+                'text' => 'Path: ' . $element->getFullPath()
+                        . '<br>Modified: ' . date('c', $element->getModificationDate())
+                        . '<br>Size:  '. $element->getWidth() . 'x' . $element->getHeight() . " px"
+            ];
         }
     }
 }
