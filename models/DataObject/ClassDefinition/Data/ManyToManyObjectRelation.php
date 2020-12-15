@@ -345,6 +345,8 @@ class ManyToManyObjectRelation extends AbstractRelations implements QueryResourc
         }
 
         if (is_array($data)) {
+            $this->performMultipleAssignmentCheck($data);
+
             foreach ($data as $o) {
                 if (empty($o)) {
                     continue;

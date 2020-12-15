@@ -477,6 +477,7 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         }
 
         if (is_array($data)) {
+            $this->performMultipleAssignmentCheck($data);
             foreach ($data as $elementMetadata) {
                 if (!($elementMetadata instanceof DataObject\Data\ElementMetadata)) {
                     throw new Element\ValidationException('Expected DataObject\\Data\\ElementMetadata');
@@ -593,8 +594,6 @@ class AdvancedManyToManyRelation extends ManyToManyRelation
         }
 
         $multihrefMetadata = $this->getDataFromObjectParam($object, $params);
-        //TODO: move validation to checkValidity & throw exception in Pimcore 10
-        $multihrefMetadata = $this->filterMultipleAssignments($multihrefMetadata, $object, $params);
 
         $classId = null;
         $objectId = null;
