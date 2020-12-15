@@ -283,7 +283,7 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
                 'value' => $rgb,
                 'value2' => $a,
             ];
-        } else if (is_array($value)) {
+        } elseif (is_array($value)) {
             return [
                 'value' => $value[$this->getName() . '__rgb'],
                 'value2' => $value[$this->getName() . '__a'],
