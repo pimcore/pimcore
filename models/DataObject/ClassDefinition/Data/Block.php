@@ -1065,9 +1065,6 @@ class Block extends Data implements CustomResourcePersistingInterface, ResourceP
                                         $lfd = $fd->getFieldDefinition($fieldName);
                                         if ($lfd instanceof ManyToManyRelation || $lfd instanceof ManyToManyObjectRelation) {
                                             if (!method_exists($lfd, 'getAllowMultipleAssignments') || !$lfd->getAllowMultipleAssignments()) {
-                                                $contextParams['language'] = $language;
-                                                $contextParams['context'] = ['containerType' => 'block', 'fieldname' => $fieldName];
-                                                $updateParams = array_merge($params, $contextParams);
                                                 $lfd->performMultipleAssignmentCheck($values);
                                             }
                                         }
