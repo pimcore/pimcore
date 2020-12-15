@@ -123,8 +123,8 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         if ($data instanceof Model\DataObject\Data\RgbaColor) {
             if (isset($params['owner'])) {
                 $data->_setOwner($params['owner']);
-                $color->_setOwnerFieldname($params['fieldname']);
-                $color->_setOwnerLanguage($params['language'] ?? null);
+                $data->_setOwnerFieldname($params['fieldname']);
+                $data->_setOwnerLanguage($params['language'] ?? null);
             }
 
             return $data;
