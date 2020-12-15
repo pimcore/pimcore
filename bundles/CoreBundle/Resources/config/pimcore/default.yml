@@ -8,7 +8,7 @@ framework:
     serializer:
         enabled: true
     router:
-        resource: "%kernel.project_dir%/app/config/routing.yml"
+        resource: "%kernel.project_dir%/config/routes.yaml"
         strict_requirements: ~
     form: ~
     csrf_protection: ~
@@ -34,8 +34,8 @@ twig:
         container: '@service_container'
         pimcore_csrf: '@Pimcore\Bundle\AdminBundle\Security\CsrfProtectionHandler'
     paths:
-        '%kernel.project_dir%/app/Resources/views': App
-        
+        '%kernel.project_dir%/templates': App
+
 # Doctrine Configuration
 doctrine:
     dbal:

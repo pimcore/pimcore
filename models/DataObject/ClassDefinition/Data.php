@@ -19,7 +19,6 @@ namespace Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;
-use ProxyManager\Proxy\LazyLoadingInterface;
 
 abstract class Data implements DataObject\ClassDefinition\Data\TypeDeclarationSupportInterface
 {

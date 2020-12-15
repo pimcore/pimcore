@@ -145,7 +145,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                                 'object' => null,
                             ]);
 
-                        $metaData->setOwner($container, $this->getName());
+                        $metaData->_setOwner($container);
+                        $metaData->_setOwnerFieldname($this->getName());
                         $metaData->setObjectId($destinationId);
 
                         $ownertype = $relation['ownertype'] ? $relation['ownertype'] : '';
@@ -273,7 +274,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                             'columns' => $this->getColumnKeys(),
                             'object' => $o,
                         ]);
-                    $metaData->setOwner($object, $this->getName());
+                    $metaData->_setOwner($object);
+                    $metaData->_setOwnerFieldname($this->getName());
 
                     foreach ($this->getColumns() as $c) {
                         $setter = 'set' . ucfirst($c['key']);
@@ -448,7 +450,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                         'columns' => $this->getColumnKeys(),
                         'object' => $el,
                     ]);
-                $metaObject->setOwner($object, $this->getName());
+                $metaObject->_setOwner($object);
+                $metaObject->_setOwnerFieldname($this->getName());
 
                 $value[] = $metaObject;
             }
@@ -1002,7 +1005,8 @@ class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation
                     $data = $elementMetadata['data'];
 
                     $item = new DataObject\Data\ObjectMetadata($fieldname, $columns, $target);
-                    $item->setOwner($object, $this->getName());
+                    $item->_setOwner($object);
+                    $item->_setOwnerFieldname($this->getName());
                     $item->setData($data);
                     $result[] = $item;
                 }

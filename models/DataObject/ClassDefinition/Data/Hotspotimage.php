@@ -205,7 +205,9 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
             $value = new DataObject\Data\Hotspotimage($imageId, $hotspots, $marker, $crop);
 
             if (isset($params['owner'])) {
-                $value->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                $value->_setOwner($params['owner']);
+                $value->_setOwnerFieldname($params['fieldname']);
+                $value->_setOwnerLanguage($params['language'] ?? null);
             }
 
             return $value;
@@ -718,6 +720,4 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     {
         return '\\' . DataObject\Data\Hotspotimage::class . '|null';
     }
-
-
 }

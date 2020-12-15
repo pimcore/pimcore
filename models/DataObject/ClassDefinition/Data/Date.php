@@ -474,5 +474,4 @@ class Date extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         return '\\' . Carbon::class . '|null';
     }
-
 }

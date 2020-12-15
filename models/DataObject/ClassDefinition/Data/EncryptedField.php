@@ -72,7 +72,6 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      */
     public $columnType = 'LONGBLOB';
 
-
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
@@ -201,7 +200,9 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
             $field = new Model\DataObject\Data\EncryptedField($this->delegate, $data);
 
             if (isset($params['owner'])) {
-                $field->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                $field->_setOwner($params['owner']);
+                $field->_setOwnerFieldname($params['fieldname']);
+                $field->_setOwnerLanguage($params['language'] ?? null);
             }
 
             return $field;
@@ -607,6 +608,4 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
     {
         return $this->delegate ? $this->delegate->getPhpdocReturnType() : null;
     }
-
-
 }

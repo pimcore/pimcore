@@ -30,7 +30,6 @@ use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\DataLoaderInterface;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor;
-use Pimcore\Translation\Translator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -231,12 +230,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
 
     private function configureTranslations(ContainerBuilder $container, array $config)
     {
-        // set translator to case insensitive
-        if ($config['case_insensitive']) {
-            $definition = $container->getDefinition(Translator::class);
-            $definition->setArgument('$caseInsensitive', $config['case_insensitive']);
-        }
-
         $parameter = $config['debugging']['parameter'];
 
         // remove the listener as it isn't needed at all if it is disabled or the parameter is empty

@@ -55,6 +55,8 @@ class Dao extends Model\Element\Dao
 
                     $transformedData = $md['data'];
 
+                    $md['type'] = $md['type'] ?? 'input';
+
                     try {
                         /** @var Data $instance */
                         $instance = $loader->build($md['type']);

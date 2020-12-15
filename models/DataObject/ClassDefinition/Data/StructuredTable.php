@@ -276,7 +276,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
         $structuredTable = new DataObject\Data\StructuredTable($structuredData);
 
         if (isset($params['owner'])) {
-            $structuredTable->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+            $structuredTable->_setOwner($params['owner']);
+            $structuredTable->_setOwnerFieldname($params['fieldname']);
+            $structuredTable->_setOwnerLanguage($params['language'] ?? null);
         }
 
         return $structuredTable;
@@ -631,6 +633,4 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     {
         return '\\' . DataObject\Data\StructuredTable::class . '|null';
     }
-
-
 }

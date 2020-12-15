@@ -849,9 +849,4 @@ class Table extends Data implements ResourcePersistenceAwareInterface, QueryReso
 
         return $code;
     }
-
-
-
-
-
 }

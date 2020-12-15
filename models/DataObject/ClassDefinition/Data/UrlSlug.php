@@ -177,7 +177,7 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
                 if (strlen($slug) > 0) {
                     $document = Model\Document::getByPath($slug);
                     if ($document) {
-                        throw new Model\Element\ValidationException('Found conflict with docucment path "' . $slug . '"');
+                        throw new Model\Element\ValidationException('Found conflict with document path "' . $slug . '"');
                     }
 
                     if (strlen($slug) < 2 || $slug[0] !== '/') {
@@ -785,5 +785,4 @@ class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoa
     {
         return '\\' . Model\DataObject\Data\UrlSlug::class . '[]';
     }
-
 }

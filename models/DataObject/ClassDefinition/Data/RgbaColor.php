@@ -117,16 +117,20 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      */
     public function getDataFromResource($data, $object = null, $params = [])
     {
-        if ($data && $data[$this->getName() . '__rgb'] && $data[$this->getName() . '__a']) {
+        if (is_array($data) && isset($data[$this->getName() . '__rgb']) && isset($data[$this->getName() . '__a'])) {
             list($r, $g, $b) = sscanf($data[$this->getName() . '__rgb'], '%02x%02x%02x');
             $a = hexdec($data[$this->getName() . '__a']);
-            $color = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
+            $data = new Model\DataObject\Data\RgbaColor($r, $g, $b, $a);
+        }
 
+        if ($data instanceof Model\DataObject\Data\RgbaColor) {
             if (isset($params['owner'])) {
-                $color->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                $data->_setOwner($params['owner']);
+                $data->_setOwnerFieldname($params['fieldname']);
+                $data->_setOwnerLanguage($params['language'] ?? null);
             }
 
-            return $color;
+            return $data;
         }
 
         return null;
@@ -282,7 +286,14 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
                 'value' => $rgb,
                 'value2' => $a,
             ];
+        } elseif (is_array($value)) {
+            return [
+                'value' => $value[$this->getName() . '__rgb'],
+                'value2' => $value[$this->getName() . '__a'],
+            ];
         }
+
+        return $value;
     }
 
     /** See marshal
@@ -447,5 +458,4 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
     {
         return '\\' . Model\DataObject\Data\RgbaColor::class . '|null';
     }
-
 }

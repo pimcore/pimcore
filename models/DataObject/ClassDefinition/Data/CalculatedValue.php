@@ -555,6 +555,4 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     {
         return '\\' . DataObject\Data\CalculatedValue::class . '|null';
     }
-
-
 }

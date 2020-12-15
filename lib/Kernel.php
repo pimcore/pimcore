@@ -63,7 +63,7 @@ abstract class Kernel extends SymfonyKernel
      */
     public function getRootDir()
     {
-        return PIMCORE_APP_ROOT;
+        return PIMCORE_PROJECT_ROOT;
     }
 
     /**
@@ -110,9 +110,9 @@ abstract class Kernel extends SymfonyKernel
             $loader->load($bundleConfig);
         }
 
-        $configRealPath = realpath($this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml');
+        $configRealPath = realpath($this->getProjectDir() . '/config/packages/' . $this->getEnvironment() . '/config.yaml');
         if ($configRealPath === false) {
-            throw new InvalidConfigurationException('File ' . $this->getRootDir() . '/config/config_' . $this->getEnvironment() . '.yml  cannot be found.');
+            throw new InvalidConfigurationException('File ' . $this->getProjectDir() . '/config/packages/' . $this->getEnvironment() . '/config.yaml cannot be found.');
         }
         $loader->load($configRealPath);
     }

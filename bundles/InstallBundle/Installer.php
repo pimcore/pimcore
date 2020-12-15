@@ -375,7 +375,7 @@ class Installer
         // load the kernel for the same environment as the app.php would do. the kernel booted here
         // will always be in "dev" with the exception of an environment set via env vars
         $environment = Config::getEnvironment(true, 'dev');
-        $kernel = new \AppKernel($environment, true);
+        $kernel = new \App\Kernel($environment, true);
 
         $this->clearKernelCacheDir($kernel);
 
@@ -531,7 +531,6 @@ class Installer
 
         $writer->writeSystemConfig();
         $writer->writeDebugModeConfig();
-        $writer->generateParametersFile();
     }
 
     private function clearKernelCacheDir(KernelInterface $kernel)
@@ -707,7 +706,7 @@ class Installer
         ]);
         $db->insert('documents_page', [
             'id' => 1,
-            'controller' => 'AppBundle\\Controller\\DefaultController::defaultAction',
+            'controller' => 'App\\Controller\\DefaultController::defaultAction',
             'template' => '',
             'title' => '',
             'description' => '',

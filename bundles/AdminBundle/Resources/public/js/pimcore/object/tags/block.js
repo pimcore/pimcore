@@ -323,7 +323,7 @@ pimcore.object.tags.block = Class.create(pimcore.object.tags.abstract, {
         if (this.dataFields[name]) {
             // this is especially for localized fields which get aggregated here into one field definition
             // in the case that there are more than one localized fields in the class definition
-            // see also Object_Class::extractDataDefinitions();
+            // see also ClassDefinition::extractDataDefinitions();
             if(typeof this.dataFields[name]["addReferencedField"]){
                 this.dataFields[name].addReferencedField(field);
             }

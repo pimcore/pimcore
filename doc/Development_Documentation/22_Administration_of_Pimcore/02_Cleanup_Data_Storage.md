@@ -38,7 +38,7 @@ rm -r var/versions/asset
 ```
 
 ## Logging Data
-All logging information is located in `var/logs/`. Pimcore rotates & compresses and cleans up the logs automatically: 
+All logging information is located in `var/log/`. Pimcore rotates & compresses and cleans up the logs automatically: 
 Rotate: when the file is bigger than 200MB  
 Compress: immediately after rotating (gzip)  
 Delete: After 30 days 
