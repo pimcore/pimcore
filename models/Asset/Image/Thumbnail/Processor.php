@@ -276,6 +276,7 @@ class Processor
             }
 
             $highResFactor = $config->getHighResolution();
+            $imageCropped = false;
 
             $calculateMaxFactor = function ($factor, $original, $new) {
                 $newFactor = $factor * $original / $new;
@@ -296,6 +297,15 @@ class Processor
 
                     if (is_string($transformation['method'])) {
                         $mapping = self::$argumentMapping[$transformation['method']];
+
+                        if (in_array($transformation['method'], ['cropPercent'])) {
+                            //avoid double cropping in case of $highResFactor re-calculation (goto prepareTransformations)
+                            if ($imageCropped) {
+                                continue;
+                            }
+                            $imageCropped = true;
+                        }
+
                         if (is_array($transformation['arguments'])) {
                             foreach ($transformation['arguments'] as $key => $value) {
                                 $position = array_search($key, $mapping);
