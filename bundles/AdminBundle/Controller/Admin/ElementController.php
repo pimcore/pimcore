@@ -602,7 +602,7 @@ class ElementController extends AdminController
                         if ($task->getActive()) {
                             if ($task->getAction() === 'publish-version' && $task->getVersion()) {
                                 $schedules[$task->getVersion()] = $task->getDate();
-                            } else {
+                            } elseif ($task->getAction() === 'publish') {
                                 $hasSchedule = $task->getDate();
                             }
                         }
