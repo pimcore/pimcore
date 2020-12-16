@@ -20,7 +20,6 @@ services:
 
     pimcore.cache.adapter.pdo:
         class: Symfony\Component\Cache\Adapter\PdoAdapter
-        public: true
         arguments:
             - '@doctrine.dbal.default_connection'
             - ''
