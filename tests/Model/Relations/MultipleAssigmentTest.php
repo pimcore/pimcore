@@ -77,7 +77,7 @@ class MultipleAssigmentTest extends ModelTestCase
 
         try {
             $object->save();
-            $this->fail("TODO move this up multiple assignment not allowed, expected an exception");
+            $this->fail("only one assignment allowed but validation accepted duplicate items");
         } catch (\Exception $e) {
         }
     }
