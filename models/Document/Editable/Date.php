@@ -81,9 +81,7 @@ class Date extends Model\Document\Editable
         }
 
         if ($this->date instanceof \DateTimeInterface) {
-            $result = $this->date->formatLocalized($format);
-
-            return $result;
+            return $this->date->formatLocalized($format);
         }
     }
 
@@ -94,7 +92,6 @@ class Date extends Model\Document\Editable
      */
     public function getDataForResource()
     {
-        $this->checkValidity();
         if ($this->date) {
             return $this->date->getTimestamp();
         }
