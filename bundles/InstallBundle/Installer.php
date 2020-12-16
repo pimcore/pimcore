@@ -33,6 +33,7 @@ use Pimcore\Tool\Console;
 use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -575,6 +576,9 @@ class Installer
                     $db->query($sql);
                 }
             }
+
+            $pdoCacheAdapter = new PdoAdapter($db);
+            $pdoCacheAdapter->createTable();
         }
 
         if ($this->importDatabaseData) {
