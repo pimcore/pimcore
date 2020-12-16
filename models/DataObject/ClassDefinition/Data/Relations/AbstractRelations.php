@@ -448,10 +448,14 @@ abstract class AbstractRelations extends Data implements
                     } elseif (!isset($relationItems[$elementHash])) {
                         $relationItems[$elementHash] = $item;
                     } else {
-                        throw new \Exception(
-                            'Passing relations multiple times not allowed anymore: ' . $elementHash
-                            . ' multiple times in field' . $fieldName
-                        );
+                        $message = "Passing relations multiple times not allowed anymore: " . $elementHash
+                            . ' multiple times in field ' . $fieldName;
+
+                        if (method_exists($this, 'getAllowMultipleAssignments')) {
+                            $message .= ", Reason: 'Allow Multiple Assignments' setting is disabled in class definition. ";
+                        }
+
+                        throw new \Exception($message);
                     }
                 }
 
