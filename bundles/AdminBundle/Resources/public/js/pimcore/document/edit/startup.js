@@ -118,13 +118,18 @@ Ext.onReady(function () {
     Ext.MessageBox.minPromptWidth = 500;
 
     function getEditable(definition) {
+        let type = definition.type
         let name = definition.name;
         let inherited = false;
         if(typeof definition["inherited"] != "undefined") {
             inherited = definition["inherited"];
         }
 
-        let EditableClass = pimcore.document.editables[definition.type] || pimcore.document.tags[definition.type]
+        let EditableClass = pimcore.document.editables[type] || pimcore.document.tags[type]
+
+        if (typeof EditableClass !== 'function') {
+            throw 'Editable of type `' + type + '` with name `' + name + '` could not be found.';
+        }
 
         if (definition.inDialogBox && typeof EditableClass.prototype['render'] !== 'function') {
             throw 'Editable of type `' + type + '` with name `' + name + '` does not support the use in the dialog box.';
