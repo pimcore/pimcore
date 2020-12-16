@@ -11,6 +11,4 @@ services:
 
     Pimcore\Composer\PackageInfo: ~
 
-    Pimcore\Bundle\InstallBundle\Installer:
-        arguments:
-            $cacheAdapter: '@pimcore.cache.adapter.pdo'
+    Pimcore\Bundle\InstallBundle\Installer: ~
