@@ -17,78 +17,23 @@
 namespace Pimcore\Model\DataObject\Data;
 
 use Pimcore\Localization\LocaleServiceInterface;
-use Pimcore\Model\DataObject\OwnerAwareFieldInterface;
 use Pimcore\Model\DataObject\QuantityValue\Unit;
-use Pimcore\Model\DataObject\Traits\OwnerAwareFieldTrait;
 
-class QuantityValue implements OwnerAwareFieldInterface
+class QuantityValue extends AbstractQuantityValue
 {
-    use OwnerAwareFieldTrait;
-
     /**
-     * @var float
+     * @var float|null
      */
     protected $value;
 
     /**
-     * @var string
-     */
-    protected $unitId;
-
-    /**
-     * @var \Pimcore\Model\DataObject\QuantityValue\Unit|null
-     */
-    protected $unit;
-
-    /**
-     * QuantityValue constructor.
-     *
      * @param float|null $value
-     * @param int|Unit|null $unitId
+     * @param Unit|string|null $unit
      */
-    public function __construct($value = null, $unitId = null)
+    public function __construct($value = null, $unit = null)
     {
         $this->value = $value;
-        $this->unitId = $unitId;
-        $this->unit = null;
-
-        if ($unitId instanceof Unit) {
-            $this->unit = $unitId;
-            $this->unitId = $this->unit->getId();
-        } elseif ($unitId) {
-            $this->unit = Unit::getById($this->unitId);
-        }
-        $this->markMeDirty();
-    }
-
-    /**
-     * @param string $unitId
-     */
-    public function setUnitId($unitId)
-    {
-        $this->unitId = $unitId;
-        $this->unit = null;
-        $this->markMeDirty();
-    }
-
-    /**
-     * @return string
-     */
-    public function getUnitId()
-    {
-        return $this->unitId;
-    }
-
-    /**
-     * @return Unit
-     */
-    public function getUnit()
-    {
-        if (empty($this->unit)) {
-            $this->unit = Unit::getById($this->unitId);
-        }
-
-        return $this->unit;
+        parent::__construct($unit);
     }
 
     /**
@@ -101,7 +46,7 @@ class QuantityValue implements OwnerAwareFieldInterface
     }
 
     /**
-     * @return float
+     * @return float|null
      */
     public function getValue()
     {
@@ -129,6 +74,6 @@ class QuantityValue implements OwnerAwareFieldInterface
             $value .= ' ' . $this->getUnit()->getAbbreviation();
         }
 
-        return $value ? $value : '';
+        return $value ? (string)$value : '';
     }
 }

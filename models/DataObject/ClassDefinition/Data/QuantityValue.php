@@ -409,11 +409,7 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     {
         $data = $this->getDataFromObjectParam($object, $params);
         if ($data instanceof Model\DataObject\Data\QuantityValue) {
-            if ($unit = $data->getUnit()) {
-                return $data->getValue() . ' ' . $unit->getAbbreviation();
-            }
-
-            return $data->getValue();
+            return (string) $data;
         }
 
         return '';
