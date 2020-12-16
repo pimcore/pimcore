@@ -1074,9 +1074,3 @@ parameters:
 			message: "#^Parameter \\#1 \\$data \\(Pimcore\\\\Model\\\\DataObject\\\\Data\\\\Hotspotimage\\|null\\) of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Hotspotimage\\:\\:getDataForGrid\\(\\) should be compatible with parameter \\$data \\(Pimcore\\\\Model\\\\Asset\\) of method Pimcore\\\\Model\\\\DataObject\\\\ClassDefinition\\\\Data\\\\Image\\:\\:getDataForGrid\\(\\)$#"
 			count: 1
 			path: models/DataObject/ClassDefinition/Data/Hotspotimage.php
-
-		-
-			message: "#^Return type \\(string\\) of method Pimcore\\\\Model\\\\DataObject\\\\Data\\\\InputQuantityValue\\:\\:getValue\\(\\) should be compatible with return type \\(float\\) of method Pimcore\\\\Model\\\\DataObject\\\\Data\\\\QuantityValue\\:\\:getValue\\(\\)$#"
-			count: 1
-			path: models/DataObject/Data/InputQuantityValue.php
-
