@@ -2,6 +2,7 @@
 
 namespace Pimcore\Tests\Model\DataType;
 
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Unittest;
 use Pimcore\Tests\Test\DataType\AbstractDataTypeTestCase;
 use Pimcore\Tests\Util\TestHelper;
@@ -34,5 +35,9 @@ class DataTypeTest extends AbstractDataTypeTestCase
     public function testPassword()
     {
         $this->markTestIncomplete('To be checked - what is the intended behaviour here in local context?');
+    }
+
+    public function refreshObject() {
+        $this->testObject = AbstractObject::getById($this->testObject->getId(), true);
     }
 }

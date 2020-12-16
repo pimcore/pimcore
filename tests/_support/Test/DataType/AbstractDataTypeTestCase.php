@@ -102,6 +102,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('booleanSelect');
 
+        $this->refreshObject();
         $this->testDataHelper->assertBooleanSelect($this->testObject, 'booleanSelect', $this->seed);
     }
 
@@ -114,6 +115,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->testDataHelper->assertBricks($this->testObject, 'mybricks', $this->seed);
     }
 
@@ -121,6 +123,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('checkbox');
 
+        $this->refreshObject();
         $this->testDataHelper->assertCheckbox($this->testObject, 'checkbox', $this->seed);
     }
 
@@ -128,6 +131,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('country');
 
+        $this->refreshObject();
         $this->testDataHelper->assertCountry($this->testObject, 'country', $this->seed);
     }
 
@@ -140,6 +144,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->testDataHelper->assertCountryMultiSelect($this->testObject, 'countries', $this->seed);
     }
 
@@ -147,6 +152,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('date');
 
+        $this->refreshObject();
         $this->testDataHelper->assertDate($this->testObject, 'date', $this->seed);
     }
 
@@ -159,6 +165,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->testDataHelper->assertDate($this->testObject, 'datetime', $this->seed);
     }
 
@@ -171,6 +178,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->testDataHelper->assertFieldCollection($this->testObject, 'myfieldcollection', $this->seed);
     }
 
@@ -183,6 +191,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->testDataHelper->assertGeobounds($this->testObject, 'bounds', $this->comparisonObject, $this->seed);
     }
 
@@ -195,6 +204,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->testDataHelper->assertGeopoint($this->testObject, 'point', $this->seed);
     }
 
@@ -207,6 +217,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->testDataHelper->assertGeopolygon($this->testObject, 'poly', $this->comparisonObject, $this->seed);
     }
 
@@ -219,6 +230,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->assertNotNull($this->testObject->getHotspotImage());
 
         if (null !== $this->comparisonObject) {
@@ -233,6 +245,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         TestHelper::createEmptyObjects();
         $this->createTestObject('href');
 
+        $this->refreshObject();
         $this->testDataHelper->assertHref($this->testObject, 'href', $this->seed);
     }
 
@@ -240,6 +253,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('image');
 
+        $this->refreshObject();
         $this->assertNotNull($this->testObject->getImage());
 
         if (null !== $this->comparisonObject) {
@@ -253,6 +267,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('input');
 
+        $this->refreshObject();
         $this->testDataHelper->assertInput($this->testObject, 'input', $this->seed);
     }
 
@@ -272,6 +287,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->testDataHelper->assertLanguage($this->testObject, 'languagex', $this->seed);
     }
 
@@ -284,6 +300,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->testDataHelper->assertCountryMultiSelect($this->testObject, 'languages', $this->seed);
     }
 
@@ -304,6 +321,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'en');
         $this->testDataHelper->assertObjects($this->testObject, 'lmultihrefLazy', $this->seed, 'de');
 
@@ -320,6 +338,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('link');
 
+        $this->refreshObject();
         $this->testDataHelper->assertLink($this->testObject, 'link', $this->seed);
     }
 
@@ -338,6 +357,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->testDataHelper->assertInput($this->testObject, 'linput', $this->seed, 'en');
         $this->testDataHelper->assertInput($this->testObject, 'linput', $this->seed, 'de');
     }
@@ -359,6 +379,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->testDataHelper->assertObjects($this->testObject, 'lobjects', $this->seed, 'en');
         $this->testDataHelper->assertObjects($this->testObject, 'lobjects', $this->seed, 'de');
     }
@@ -378,6 +399,8 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
+
         $this->testObject = Concrete::getById($this->testObject->getId(), true);
         $this->testDataHelper->assertUrlSlug($this->testObject, 'lurlSlug', $this->seed, 'en');
         $this->testDataHelper->assertUrlSlug($this->testObject, 'lurlSlug', $this->seed, 'de');
@@ -388,6 +411,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
         TestHelper::createEmptyObjects();
         $this->createTestObject('multihref');
 
+        $this->refreshObject();
         $this->testDataHelper->assertMultihref($this->testObject, 'multihref', $this->seed);
     }
 
@@ -400,6 +424,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->testDataHelper->assertMultiSelect($this->testObject, 'multiselect', $this->seed);
     }
 
@@ -407,6 +432,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('number');
 
+        $this->refreshObject();
         $this->testDataHelper->assertNumber($this->testObject, 'number', $this->seed);
     }
 
@@ -417,6 +443,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->createTestObject('objects');
 
+        $this->refreshObject();
         $this->testDataHelper->assertObjects($this->testObject, 'objects', $this->seed);
     }
 
@@ -431,6 +458,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->testDataHelper->assertObjectsWithmetadata($this->testObject, 'objectswithmetadata', $this->comparisonObject, $this->seed);
     }
 
@@ -438,6 +466,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('password');
 
+        $this->refreshObject();
         $this->testDataHelper->assertPassword($this->testObject, 'password', $this->seed);
     }
 
@@ -445,6 +474,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('select');
 
+        $this->refreshObject();
         $this->testDataHelper->assertSelect($this->testObject, 'select', $this->seed);
     }
 
@@ -452,6 +482,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('slider');
 
+        $this->refreshObject();
         $this->testDataHelper->assertSlider($this->testObject, 'slider', $this->seed);
     }
 
@@ -464,6 +495,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
             ],
         ]);
 
+        $this->refreshObject();
         $this->testDataHelper->assertStructuredTable($this->testObject, 'structuredtable', $this->comparisonObject, $this->seed);
     }
 
@@ -471,6 +503,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('table');
 
+        $this->refreshObject();
         $this->testDataHelper->assertTable($this->testObject, 'table', $this->comparisonObject, $this->seed);
     }
 
@@ -478,6 +511,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('textarea');
 
+        $this->refreshObject();
         $this->testDataHelper->assertTextarea($this->testObject, 'textarea', $this->seed);
     }
 
@@ -485,6 +519,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('time');
 
+        $this->refreshObject();
         $this->testDataHelper->assertTime($this->testObject, 'time', $this->seed);
     }
 
@@ -492,6 +527,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('urlSlug');
 
+        $this->refreshObject();
         $this->testDataHelper->assertUrlSlug($this->testObject, 'urlSlug', $this->seed);
 
         // test invalid slug
@@ -537,6 +573,7 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('user');
 
+        $this->refreshObject();
         $this->testDataHelper->assertUser($this->testObject, 'user', $this->seed);
     }
 
@@ -544,6 +581,9 @@ abstract class AbstractDataTypeTestCase extends TestCase
     {
         $this->createTestObject('wysiwyg');
 
+        $this->refreshObject();
         $this->testDataHelper->assertWysiwyg($this->testObject, 'wysiwyg', $this->seed);
     }
+
+    public abstract function refreshObject();
 }

@@ -1193,9 +1193,7 @@ class TestDataHelper extends Module
 
         $this->assertCount(count($expected), $value);
 
-        /** @var DataObject\Data\ObjectMetadata $expectedMetadata */
         foreach ($expected as $i => $expectedMetadata) {
-            /** @var DataObject\Data\ObjectMetadata $valueMetadata */
             $valueMetadata = $value[$i];
 
             $this->assertEquals($expectedMetadata->getColumns(), $valueMetadata->getColumns());
