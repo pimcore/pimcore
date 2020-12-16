@@ -33,6 +33,8 @@ use Pimcore\Tool\Console;
 use Pimcore\Tool\Requirements;
 use Pimcore\Tool\Requirements\Check;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\AdapterInterface;
+use Symfony\Component\Cache\Adapter\PdoAdapter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -64,6 +66,11 @@ class Installer
      * @var PimcoreStyle
      */
     private $commandLineOutput;
+
+    /**
+     * @var AdapterInterface
+     */
+    private $cacheAdapter;
 
     /**
      * When false, skips creating database structure during install
@@ -121,10 +128,12 @@ class Installer
 
     public function __construct(
         LoggerInterface $logger,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        AdapterInterface $cacheAdapter = null
     ) {
         $this->logger = $logger;
         $this->eventDispatcher = $eventDispatcher;
+        $this->cacheAdapter = $cacheAdapter;
     }
 
     public function setDbCredentials(array $dbCredentials = [])
@@ -574,6 +583,10 @@ class Installer
                     $sql .= ';';
                     $db->query($sql);
                 }
+            }
+
+            if ($this->cacheAdapter instanceof PdoAdapter) {
+                $this->cacheAdapter->createTable();
             }
         }
 
