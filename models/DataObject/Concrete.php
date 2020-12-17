@@ -350,7 +350,7 @@ class Concrete extends AbstractObject implements LazyLoadedFieldsInterface
             return $value;
         }
 
-        return false;
+        return null;
     }
 
     /**
