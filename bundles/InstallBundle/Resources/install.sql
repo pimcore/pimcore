@@ -306,6 +306,8 @@ CREATE TABLE `lock_keys` (
   PRIMARY KEY (`key_id`)
 ) DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `migration_versions`; /* table is created using doctrine:migrations:sync-metadata-storage command */
+
 DROP TABLE IF EXISTS `notes`;
 CREATE TABLE `notes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
