@@ -16,11 +16,13 @@ namespace Pimcore\Twig\Extension\Templating;
 
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class PimcoreUrl implements RuntimeExtensionInterface
 {
+    use HelperCharsetTrait;
     /**
      * @var UrlGeneratorInterface
      */

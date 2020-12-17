@@ -16,11 +16,14 @@ namespace Pimcore\Twig\Extension\Templating;
 
 use Pimcore\Http\Request\Resolver\EditmodeResolver;
 use Pimcore\Model\Document\PageSnippet;
+use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Pimcore\Templating\Renderer\IncludeRenderer;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class Inc implements RuntimeExtensionInterface
 {
+    use HelperCharsetTrait;
+
     /**
      * @var IncludeRenderer
      */
