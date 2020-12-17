@@ -60,9 +60,10 @@ abstract class PageSnippet extends Model\Document
      *
      * @var array
      *
-     * @deprecated since v6.7 and will be removed in Pimcore 10. Use getter/setter methods or $this->editables
+     * @deprecated since v6.7 and will be removed in 10. Use getter/setter methods getEditables/setEditables instead.
+     *                From 6.9 on this property will be private instead of protected.
      */
-    protected $elements = null;
+    private $elements = null;
 
     /**
      * Contains all content-editables of the document
@@ -99,20 +100,16 @@ abstract class PageSnippet extends Model\Document
     /**
      * @var array
      *
-     * @deprecated since v6.7 and will be removed in Pimcore 10. Use getter/setter methods or $this->inheritedEditables
+     * @deprecated since v6.7 and will be removed in Pimcore 10.
+     *              From 6.9 on this property will be private instead of protected.
      */
-    protected $inheritedElements = [];
+    private $inheritedElements = [];
 
     /**
      * @var array
      */
     protected $inheritedEditables = [];
 
-    public function __construct()
-    {
-        $this->elements = & $this->editables;
-        $this->inheritedElements = & $this->inheritedEditables;
-    }
 
     /**
      * @param array $params additional parameters (e.g. "versionNote" for the version note)
@@ -678,12 +675,17 @@ abstract class PageSnippet extends Model\Document
         return $this->getFullPath();
     }
 
-    /**
-     * @TODO: remove with $this->elements
-     */
     public function __wakeup()
     {
-        $this->editables = & $this->elements;
+        if ($this->editables === null && $this->elements !== null) {
+            $this->editables = $this->elements;
+            unset($this->elements);
+        }
+
+        if (empty($this->inheritedEditables) && !empty($this->inheritedElements)) {
+            $this->inheritedEditables = $this->inheritedElements;
+            unset($this->inheritedElements);
+        }
 
         parent::__wakeup();
     }
