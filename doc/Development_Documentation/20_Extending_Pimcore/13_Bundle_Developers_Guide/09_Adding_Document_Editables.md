@@ -47,7 +47,7 @@ pimcore:
 
 For the frontend, a JavaScript class needs to be added `pimcore.document.editables.markdown`. It can 
 extend any of the existing `pimcore.document.editables.*` class and must return it's type by overwriting 
-the function `getType()`. If you extend from other bundles tags make sure your bundle is loaded after your parent tag has been initialized.
+the function `getType()`. If you extend from other bundles editables make sure your bundle is loaded after your parent editable has been initialized.
 
 ```js
 // src/Resources/public/js/pimcore/document/editables/markdown.js
@@ -75,7 +75,7 @@ class AppBundle extends AbstractPimcoreBundle
     public function getEditmodeJsPaths()
     {
         return [
-            '/bundles/app/js/pimcore/document/tags/markdown.js'
+            '/bundles/app/js/pimcore/document/editables/markdown.js'
         ];
     }
 }
