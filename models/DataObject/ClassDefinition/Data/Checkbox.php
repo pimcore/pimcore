@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -23,9 +26,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use DataObject\Traits\DefaultValueTrait;
-
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -38,20 +38,6 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @var int|null
      */
     public $defaultValue;
-
-    /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = 'tinyint(1)';
-
-    /**
-     * Type for the column
-     *
-     * @var string
-     */
-    public $columnType = 'tinyint(1)';
 
     /**
      * @return int|null
@@ -74,6 +60,20 @@ class Checkbox extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->defaultValue = $defaultValue;
 
         return $this;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::BOOLEAN), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

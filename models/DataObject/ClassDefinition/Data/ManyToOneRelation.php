@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
@@ -27,7 +30,6 @@ use Pimcore\Model\Element;
 class ManyToOneRelation extends AbstractRelations implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Relation;
-    use Extension\QueryColumnType;
     use DataObject\ClassDefinition\Data\Relations\AllowObjectRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowAssetRelationTrait;
     use DataObject\ClassDefinition\Data\Relations\AllowDocumentRelationTrait;
@@ -54,15 +56,20 @@ class ManyToOneRelation extends AbstractRelations implements QueryResourcePersis
      */
     public $relationType = true;
 
-    /**
-     * Type for the column to query
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'id' => 'int(11)',
-        'type' => "enum('document','asset','object')",
-    ];
+
+    public function getQuerySchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__id', Type::getType(Types::INTEGER), [
+                'length' => 11,
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__type', Type::getType(Types::INTEGER), [
+                'columnDefinition' => "enum('document','asset','object')",
+                'notnull' => false
+            ]),
+        ];
+    }
 
     /**
      *

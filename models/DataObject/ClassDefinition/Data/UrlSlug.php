@@ -25,8 +25,6 @@ use Pimcore\Model\Redirect;
 
 class UrlSlug extends Data implements CustomResourcePersistingInterface, LazyLoadingSupportInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
-    use Extension\ColumnType;
-
     use Model\DataObject\Traits\ContextPersistenceTrait;
 
     /**

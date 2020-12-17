@@ -23,8 +23,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class StructuredTable extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -465,29 +463,27 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     }
 
     /**
-     * @return array|string
+     * {@inheritdoc}
      */
-    public function getColumnType()
+    public function getSchemaColumns(): array
     {
         $columns = [];
+
         foreach ($this->calculateDbColumns() as $c) {
-            $columns[$c->name] = $c->type;
+            $columns[$c->name] = new Column($this->getName() . '__' . $c->name, Type::getType($c->type), [
+                'notnull' => false
+            ]);
         }
 
         return $columns;
     }
 
     /**
-     * @return array|string
+     * {@inheritdoc}
      */
-    public function getQueryColumnType()
+    public function getQuerySchemaColumns(): array
     {
-        $columns = [];
-        foreach ($this->calculateDbColumns() as $c) {
-            $columns[$c->name] = $c->type;
-        }
-
-        return $columns;
+        return $this->getSchemaColumns();
     }
 
     /**
@@ -527,9 +523,9 @@ class StructuredTable extends Data implements ResourcePersistenceAwareInterface,
     protected function typeMapper($type, $length = null)
     {
         $mapper = [
-            'text' => 'varchar('.($length > 0 ? $length : '190').')',
-            'number' => 'double',
-            'bool' => 'tinyint(1)',
+            'text' => 'string',
+            'number' => 'float',
+            'bool' => 'boolean',
         ];
 
         return $mapper[$type];

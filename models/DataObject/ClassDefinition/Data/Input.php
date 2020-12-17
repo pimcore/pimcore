@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
@@ -23,8 +26,6 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
     use Model\DataObject\Traits\DefaultValueTrait;
 
     /**
@@ -43,20 +44,6 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @var string|null
      */
     public $defaultValue;
-
-    /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = 'varchar';
-
-    /**
-     * Type for the column
-     *
-     * @var string
-     */
-    public $columnType = 'varchar';
 
     /**
      * Column length
@@ -98,6 +85,21 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $this->width = $width;
 
         return $this;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::STRING), [
+                'length' => $this->getColumnLength(),
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**
@@ -252,22 +254,6 @@ class Input extends Data implements ResourcePersistenceAwareInterface, QueryReso
     public function setShowCharCount($showCharCount)
     {
         $this->showCharCount = $showCharCount;
-    }
-
-    /**
-     * @return string
-     */
-    public function getColumnType()
-    {
-        return $this->columnType . '(' . $this->getColumnLength() . ')';
-    }
-
-    /**
-     * @return string
-     */
-    public function getQueryColumnType()
-    {
-        return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
     }
 
     /**

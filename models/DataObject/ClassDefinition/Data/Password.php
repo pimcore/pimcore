@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -23,8 +26,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class Password extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     const HASH_FUNCTION_PASSWORD_HASH = 'password_hash';
 
@@ -39,20 +40,6 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @var int
      */
     public $width;
-
-    /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = 'varchar(255)';
-
-    /**
-     * Type for the column
-     *
-     * @var string
-     */
-    public $columnType = 'varchar(255)';
 
     /**
      * @var string
@@ -135,6 +122,20 @@ class Password extends Data implements ResourcePersistenceAwareInterface, QueryR
     public function getSaltlocation()
     {
         return $this->saltlocation;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::STRING), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

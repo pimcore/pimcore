@@ -16,6 +16,8 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\DataObject\Consent\Service;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
@@ -23,9 +25,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class Consent extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     /**
      * Static type of this element
      *
@@ -39,28 +38,32 @@ class Consent extends Data implements ResourcePersistenceAwareInterface, QueryRe
     public $defaultValue = 0;
 
     /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = 'tinyint(1)';
-
-    /**
-     * Type for the column
-     *
-     * @var array
-     */
-    public $columnType = [
-        'consent' => 'tinyint(1)',
-        'note' => 'int(11)',
-    ];
-
-    /**
      * Width of field
      *
      * @var int
      */
     public $width = 0;
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__consent', Type::getType(Types::BOOLEAN), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__note', Type::getType(Types::INTEGER), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::BOOLEAN), [
+                'notnull' => false
+            ]),
+        ];
+    }
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource

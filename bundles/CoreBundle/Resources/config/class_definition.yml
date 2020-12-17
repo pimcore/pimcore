@@ -25,3 +25,5 @@ services:
     Pimcore\DataObject\ClassDefinition\DefinitionPathResolverInterface: '@Pimcore\DataObject\ClassDefinition\DefinitionPathResolver'
     Pimcore\DataObject\ClassDefinition\DefinitionPathResolver: ~
 
+    Pimcore\DataObject\ClassDefinition\Dbal\SchemaBuilderInterface: '@Pimcore\DataObject\ClassDefinition\Dbal\SchemaBuilder'
+    Pimcore\DataObject\ClassDefinition\Dbal\SchemaBuilder:

@@ -93,10 +93,10 @@ class Dao extends Model\DataObject\Fieldcollection\Dao
                         }
                     }
                     if ($fd instanceof ResourcePersistenceAwareInterface) {
-                        if (is_array($fd->getColumnType())) {
+                        if (count($fd->getSchemaColumns()) > 1) {
                             $multidata = [];
-                            foreach ($fd->getColumnType() as $fkey => $fvalue) {
-                                $multidata[$key . '__' . $fkey] = $result[$key . '__' . $fkey];
+                            foreach ($fd->getSchemaColumns() as $column) {
+                                $multidata[$column->getName()] = $result[$column->getName()];
                             }
                             $brick->setValue(
                                 $key,

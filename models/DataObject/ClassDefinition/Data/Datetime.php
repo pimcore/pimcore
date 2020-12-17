@@ -17,15 +17,15 @@
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Carbon\Carbon;
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Db;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     use Model\DataObject\Traits\DefaultValueTrait;
 
     /**
@@ -36,28 +36,44 @@ class Datetime extends Data implements ResourcePersistenceAwareInterface, QueryR
     public $fieldtype = 'datetime';
 
     /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = 'bigint(20)';
-
-    /**
-     * Type for the column
-     *
-     * @var string
-     */
-    public $columnType = 'bigint(20)';
-
-    /**
      * @var int|null
      */
     public $defaultValue;
 
     /**
+     * @var string
+     */
+    public $columnType;
+
+    /**
      * @var bool
      */
     public $useCurrentDate;
+
+    public function getColumnType()
+    {
+        return $this->columnType;
+    }
+
+    public function setColumnType($columnType)
+    {
+        $this->columnType = $this->columnType;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType($this->columnType === 'date' ? Types::DATETIME_MUTABLE : Types::BIGINT), [
+                'length' => 20,
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource

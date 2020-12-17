@@ -131,7 +131,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             if ($fd instanceof ResourcePersistenceAwareInterface) {
-                if (is_array($fd->getColumnType())) {
+                if (count($fd->getSchemaColumns()) > 1) {
                     $insertDataArray = $fd->getDataForResource($this->model->$getter(), $object, [
                         'owner' => $this->model, //\Pimcore\Model\DataObject\Objectbrick\Data\Dao
                         'isUpdate' => $isBrickUpdate,

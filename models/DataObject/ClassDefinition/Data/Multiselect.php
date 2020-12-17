@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -24,8 +27,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Service;
 class Multiselect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface, \JsonSerializable
 {
     use DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -70,20 +71,6 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
      * @var string
      */
     public $optionsProviderData;
-
-    /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = 'text';
-
-    /**
-     * Type for the column
-     *
-     * @var string
-     */
-    public $columnType = 'text';
 
     /**
      * @var bool
@@ -188,6 +175,21 @@ class Multiselect extends Data implements ResourcePersistenceAwareInterface, Que
     public function getRenderType()
     {
         return $this->renderType;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::TEXT), [
+                'length' => 65535,
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

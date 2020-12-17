@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
@@ -23,8 +26,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
 {
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -57,20 +58,6 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
      * @var bool
      */
     public $excludeFromSearchIndex = false;
-
-    /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
 
     /**
      * @return int
@@ -162,6 +149,20 @@ class Textarea extends Data implements ResourcePersistenceAwareInterface, QueryR
         $this->excludeFromSearchIndex = $excludeFromSearchIndex;
 
         return $this;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::TEXT), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

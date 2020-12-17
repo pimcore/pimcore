@@ -16,14 +16,14 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 
 class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     /**
      * Static type of this element
      *
@@ -31,25 +31,22 @@ class Geopoint extends AbstractGeo implements ResourcePersistenceAwareInterface,
      */
     public $fieldtype = 'geopoint';
 
-    /**
-     * Type for the column to query
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'longitude' => 'double',
-        'latitude' => 'double',
-    ];
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__longitude', Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__latitude', Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ]),
+        ];
+    }
 
-    /**
-     * Type for the column
-     *
-     * @var array
-     */
-    public $columnType = [
-        'longitude' => 'double',
-        'latitude' => 'double',
-    ];
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource

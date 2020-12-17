@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -26,8 +29,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
 {
     use DataObject\Traits\SimpleComparisonTrait;
     use Model\DataObject\ClassDefinition\Data\Extension\Text;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -45,20 +46,6 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
      * @var int
      */
     public $height;
-
-    /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = 'longtext';
-
-    /**
-     * Type for the column
-     *
-     * @var string
-     */
-    public $columnType = 'longtext';
 
     /**
      * @var string
@@ -148,6 +135,20 @@ class Wysiwyg extends Data implements ResourcePersistenceAwareInterface, QueryRe
         $this->excludeFromSearchIndex = $excludeFromSearchIndex;
 
         return $this;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::TEXT), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

@@ -18,6 +18,7 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Cache;
+use Pimcore\DataObject\ClassDefinition\Dbal\SchemaBuilderInterface;
 use Pimcore\DataObject\ClassDefinition\DefinitionFileGeneratorInterface;
 use Pimcore\DataObject\ClassDefinition\DefinitionPathResolverInterface;
 use Pimcore\DataObject\ClassDefinition\DeleterInterface;
@@ -364,7 +365,9 @@ class ClassDefinition extends Model\AbstractModel
 
         $this->setModificationDate(time());
 
-        $this->getDao()->save($isUpdate);
+//        $this->getDao()->save($isUpdate);
+        $migrateSchema = \Pimcore::getContainer()->get(SchemaBuilderInterface::class)->getMigrateSchema($this);
+        $this->getDao()->db->executeQuery($migrateSchema);
 
         //TODO: Move to Controller? Only place this is needed inside Pimcore
         //For other use cases, the service can be included and used instead

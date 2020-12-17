@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Cache;
 use Pimcore\Cache\Runtime;
 use Pimcore\Db;
@@ -26,9 +29,6 @@ use Pimcore\Model\DataObject\QuantityValue\UnitConversionService;
 
 class QuantityValue extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     use Model\DataObject\Traits\DefaultValueTrait;
 
     /**
@@ -73,26 +73,6 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
      * @var bool
      */
     public $autoConvert;
-
-    /**
-     * Type for the column to query
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'value' => 'double',
-        'unit' => 'bigint(20)',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @var array
-     */
-    public $columnType = [
-        'value' => 'double',
-        'unit' => 'bigint(20)',
-    ];
 
     /**
      * @return int
@@ -210,6 +190,24 @@ class QuantityValue extends Data implements ResourcePersistenceAwareInterface, Q
     public function setAutoConvert($autoConvert)
     {
         $this->autoConvert = (bool)$autoConvert;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__value', Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__unit', Type::getType(Types::BIGINT), [
+                'length' => 20,
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

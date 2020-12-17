@@ -188,7 +188,7 @@ class Dao extends Model\Dao\AbstractDao
                     }
                 }
                 if ($fd instanceof ResourcePersistenceAwareInterface) {
-                    if (is_array($fd->getColumnType())) {
+                    if (count($fd->getSchemaColumns()) > 1) {
                         $insertDataArray = $fd->getDataForResource(
                             $this->model->getLocalizedValue($fd->getName(), $language, true),
                             $object,
@@ -625,10 +625,10 @@ class Dao extends Model\Dao\AbstractDao
                         }
                     }
                     if ($fd instanceof ResourcePersistenceAwareInterface) {
-                        if (is_array($fd->getColumnType())) {
+                        if (count($fd->getSchemaColumns()) > 1) {
                             $multidata = [];
-                            foreach ($fd->getColumnType() as $fkey => $fvalue) {
-                                $multidata[$key.'__'.$fkey] = $row[$key.'__'.$fkey];
+                            foreach ($fd->getSchemaColumns() as $col) {
+                                $multidata[$col->getName()] = $row[$col->getName()];
                             }
                             $value = $fd->getDataFromResource($multidata, null, $this->getFieldDefinitionParams($key, $row['language']));
                             $this->model->setLocalizedValue($key, $value, $row['language'], false);

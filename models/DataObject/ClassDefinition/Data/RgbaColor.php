@@ -16,15 +16,15 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Tool\Serialize;
 
 class RgbaColor extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     /**
      * Static type of this element
      *
@@ -36,25 +36,6 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
      * @var int
      */
     public $width;
-
-    /**
-     * Type for the column to query
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
-        'a' => 'VARCHAR(2) NULL DEFAULT NULL',
-    ];
-
-    /**
-     * Type for the column
-     *
-     * @var array
-     */
-    public $columnType = ['rgb' => 'VARCHAR(6) NULL DEFAULT NULL',
-        'a' => 'VARCHAR(2) NULL DEFAULT NULL',
-    ];
 
     /**
      * @return int
@@ -74,6 +55,26 @@ class RgbaColor extends Data implements ResourcePersistenceAwareInterface, Query
         $this->width = $width;
 
         return $this;
+    }
+
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__rgb', Type::getType(Types::STRING), [
+                'length' => 6,
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__a', Type::getType(Types::STRING), [
+                'length' => 2,
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

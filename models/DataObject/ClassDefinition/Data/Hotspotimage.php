@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -26,8 +29,6 @@ use Pimcore\Tool\Serialize;
 class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
 {
     use DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -35,20 +36,6 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @var string
      */
     public $fieldtype = 'hotspotimage';
-
-    /**
-     * Type for the column to query
-     *
-     * @var array
-     */
-    public $queryColumnType = ['image' => 'int(11)', 'hotspots' => 'text'];
-
-    /**
-     * Type for the column
-     *
-     * @var array
-     */
-    public $columnType = ['image' => 'int(11)', 'hotspots' => 'text'];
 
     /**
      * @var int
@@ -111,6 +98,24 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     public function setPredefinedDataTemplates($predefinedDataTemplates)
     {
         $this->predefinedDataTemplates = $predefinedDataTemplates;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__image', Type::getType(Types::INTEGER), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__hotspots', Type::getType(Types::TEXT), [
+                'length' => 65535, //SEE Doctrine\DBAL\Platforms\MySqlPlatform::LENGTH_LIMIT_TEXT
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

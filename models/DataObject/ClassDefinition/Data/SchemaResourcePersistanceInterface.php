@@ -20,23 +20,10 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 use Doctrine\DBAL\Schema\Column;
 use Pimcore\Model\DataObject\Concrete;
 
-interface QueryResourcePersistenceAwareInterface
+interface SchemaResourcePersistanceInterface
 {
     /**
-     * Returns the data which should be stored in the query columns
-     *
-     * @param mixed $data
-     * @param null|Concrete $object
-     * @param mixed $params
-     *
-     * @return mixed
-     *
-     * abstract public function getDataForQueryResource($data);
+     * @return \Doctrine\DBAL\Schema\Table[]
      */
-    public function getDataForQueryResource($data, $object = null, $params = []);
-
-    /**
-     * @return Column[]
-     */
-    public function getQuerySchemaColumns(): array;
+    public function getTables(): array;
 }

@@ -16,14 +16,15 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 
 class CalculatedValue extends Data implements QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
-    use Extension\QueryColumnType;
-
     /**
      * Static type of this element
      *
@@ -43,13 +44,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
      * @var string
      */
     public $calculatorClass;
-
-    /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = 'varchar';
 
     /**
      * Column length
@@ -116,6 +110,16 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
         }
 
         return $this;
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::STRING), [
+                'length' => $this->getColumnLength(),
+                'notnull' => false
+            ])
+        ];
     }
 
     /**
@@ -235,14 +239,6 @@ class CalculatedValue extends Data implements QueryResourcePersistenceAwareInter
     {
         // nothing to do
         return null;
-    }
-
-    /**
-     * @return string
-     */
-    public function getQueryColumnType()
-    {
-        return $this->queryColumnType . '(' . $this->getColumnLength() . ')';
     }
 
     /**

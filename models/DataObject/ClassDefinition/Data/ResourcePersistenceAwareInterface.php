@@ -17,6 +17,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
 use Pimcore\Model\DataObject\Concrete;
 
 interface ResourcePersistenceAwareInterface
@@ -44,7 +45,7 @@ interface ResourcePersistenceAwareInterface
     public function getDataFromResource($data, $object = null, $params = []);
 
     /**
-     * @return string|array
+     * @return Column[]
      */
-    public function getColumnType();
+    public function getSchemaColumns(): array;
 }

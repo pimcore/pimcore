@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -23,8 +26,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     /** storage value for yes */
     const YES_VALUE = 1;
@@ -73,20 +74,6 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
     public $width;
 
     /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = 'tinyint(1) null';
-
-    /**
-     * Type for the column
-     *
-     * @var string
-     */
-    public $columnType = 'tinyint(1) null';
-
-    /**
      * @return array
      */
     public function getOptions()
@@ -123,6 +110,20 @@ class BooleanSelect extends Data implements ResourcePersistenceAwareInterface, Q
         $this->width = $this->getAsIntegerCast($width);
 
         return $this;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::BOOLEAN), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

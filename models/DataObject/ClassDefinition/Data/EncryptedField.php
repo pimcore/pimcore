@@ -18,6 +18,9 @@ namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Logger;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -31,8 +34,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
  */
 class EncryptedField extends Data implements ResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
-    use Extension\ColumnType;
-
     /**
      * don't throw an error it encrypted field cannot be decoded (default)
      */
@@ -65,12 +66,16 @@ class EncryptedField extends Data implements ResourcePersistenceAwareInterface, 
      */
     public $delegate;
 
-    /**
-     * Type for the column
-     *
-     * @var string
-     */
-    public $columnType = 'LONGBLOB';
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::BLOB), [
+                'length' => $this->getColumnLength(),
+                'notnull' => false
+            ])
+        ];
+    }
+
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource

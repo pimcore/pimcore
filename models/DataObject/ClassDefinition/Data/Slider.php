@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -23,8 +26,6 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 class Slider extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
     use Model\DataObject\Traits\SimpleComparisonTrait;
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
 
     /**
      * Static type of this element
@@ -67,20 +68,6 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
      * @var int
      */
     public $decimalPrecision;
-
-    /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = 'double';
-
-    /**
-     * Type for the column
-     *
-     * @var string
-     */
-    public $columnType = 'double';
 
     /**
      * @return int
@@ -230,6 +217,20 @@ class Slider extends Data implements ResourcePersistenceAwareInterface, QueryRes
         $this->decimalPrecision = $this->getAsIntegerCast($decimalPrecision);
 
         return $this;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

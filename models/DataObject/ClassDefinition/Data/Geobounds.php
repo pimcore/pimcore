@@ -16,14 +16,14 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data\Geo\AbstractGeo;
 
 class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, EqualComparisonInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     /**
      * Static type of this element
      *
@@ -31,29 +31,28 @@ class Geobounds extends AbstractGeo implements ResourcePersistenceAwareInterface
      */
     public $fieldtype = 'geobounds';
 
-    /**
-     * Type for the column to query
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'NElongitude' => 'double',
-        'NElatitude' => 'double',
-        'SWlongitude' => 'double',
-        'SWlatitude' => 'double',
-    ];
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__NElongitude', Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__NElatitude', Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__SWlongitude', Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__SWlatitude', Type::getType(Types::FLOAT), [
+                'notnull' => false
+            ]),
+        ];
+    }
 
-    /**
-     * Type for the column
-     *
-     * @var array
-     */
-    public $columnType = [
-        'NElongitude' => 'double',
-        'NElatitude' => 'double',
-        'SWlongitude' => 'double',
-        'SWlatitude' => 'double',
-    ];
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
 
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource

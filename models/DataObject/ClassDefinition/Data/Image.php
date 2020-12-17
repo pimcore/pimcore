@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -23,9 +26,6 @@ use Pimcore\Model\Element;
 
 class Image extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     /**
      * Static type of this element
      *
@@ -49,20 +49,6 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @var string
      */
     public $uploadPath;
-
-    /**
-     * Type for the column to query
-     *
-     * @var string
-     */
-    public $queryColumnType = 'int(11)';
-
-    /**
-     * Type for the column
-     *
-     * @var string
-     */
-    public $columnType = 'int(11)';
 
     /**
      * @return int
@@ -102,6 +88,20 @@ class Image extends Data implements ResourcePersistenceAwareInterface, QueryReso
         $this->height = $this->getAsIntegerCast($height);
 
         return $this;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName(), Type::getType(Types::INTEGER), [
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**

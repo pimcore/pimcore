@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\DataObject\Data\InputQuantityValue as InputQuantityValueDataObject;
 
@@ -28,33 +31,28 @@ use Pimcore\Model\DataObject\Data\InputQuantityValue as InputQuantityValueDataOb
  */
 class InputQuantityValue extends QuantityValue
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     /**
      * @var string
      */
     public $fieldtype = 'inputQuantityValue';
 
-    /**
-     * Type for the column to query
-     *
-     * @var array
-     */
-    public $queryColumnType = [
-        'value' => 'varchar(255)',
-        'unit' => 'bigint(20)',
-    ];
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__value', Type::getType(Types::STRING), [
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__unit', Type::getType(Types::BIGINT), [
+                'length' => 20,
+                'notnull' => false
+            ]),
+        ];
+    }
 
-    /**
-     * Type for the column
-     *
-     * @var array
-     */
-    public $columnType = [
-        'value' => 'varchar(255)',
-        'unit' => 'bigint(20)',
-    ];
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
+    }
 
     /**
      * @param array $data

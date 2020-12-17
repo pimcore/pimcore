@@ -16,6 +16,9 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition\Data;
 
+use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use Pimcore\Model;
 use Pimcore\Model\Asset;
 use Pimcore\Model\DataObject;
@@ -25,29 +28,12 @@ use Pimcore\Tool\Serialize;
 
 class ImageGallery extends Data implements ResourcePersistenceAwareInterface, QueryResourcePersistenceAwareInterface, TypeDeclarationSupportInterface, EqualComparisonInterface
 {
-    use Extension\ColumnType;
-    use Extension\QueryColumnType;
-
     /**
      * Static type of this element
      *
      * @var string
      */
     public $fieldtype = 'imageGallery';
-
-    /**
-     * Type for the column to query
-     *
-     * @var array
-     */
-    public $queryColumnType = ['images' => 'text', 'hotspots' => 'text'];
-
-    /**
-     * Type for the column
-     *
-     * @var array
-     */
-    public $columnType = ['images' => 'text', 'hotspots' => 'text'];
 
     /**
      * @var int
@@ -175,6 +161,25 @@ class ImageGallery extends Data implements ResourcePersistenceAwareInterface, Qu
     public function setUploadPath($uploadPath)
     {
         $this->uploadPath = $uploadPath;
+    }
+
+    public function getSchemaColumns(): array
+    {
+        return [
+            new Column($this->getName() . '__images', Type::getType(Types::TEXT), [
+                'length' => 65535,
+                'notnull' => false
+            ]),
+            new Column($this->getName() . '__hotspots', Type::getType(Types::TEXT), [
+                'length' => 65535,
+                'notnull' => false
+            ])
+        ];
+    }
+
+    public function getQuerySchemaColumns(): array
+    {
+        return $this->getSchemaColumns();
     }
 
     /**
