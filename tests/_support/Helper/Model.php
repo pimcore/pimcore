@@ -391,6 +391,10 @@ class Model extends AbstractDefinitionHelper
             $rootPanel = (new \Pimcore\Model\DataObject\ClassDefinition\Layout\Tabpanel())->setName('Layout');
             $rootPanel->addChild($panel);
 
+            $calculatedValue = $this->createDataChild('calculatedValue');
+            $calculatedValue->setCalculatorClass("@test.calculatorservice");
+            $panel->addChild($calculatedValue);
+
             $panel->addChild($this->createDataChild('date'));
             $panel->addChild($this->createDataChild('manyToOneRelation', 'lazyHref')
                 ->setDocumentTypes([])->setAssetTypes([])->setClasses([])

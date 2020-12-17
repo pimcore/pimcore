@@ -3,6 +3,7 @@
 namespace Pimcore\Tests\Test\DataType;
 
 use Pimcore\Cache;
+use Pimcore\Db;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Data\UrlSlug;
@@ -117,6 +118,42 @@ abstract class AbstractDataTypeTestCase extends TestCase
 
         $this->refreshObject();
         $this->testDataHelper->assertBricks($this->testObject, 'mybricks', $this->seed);
+    }
+
+    public function testCalculatedValue()
+    {
+        $this->createTestObject([
+            [
+                'method' => 'fillCalculatedValue',
+                'field' => 'calculatedValue',
+            ],
+        ]);
+
+        // create a random number and hand it over to the calculator via the runtime and then make sure it will be returned
+        $value = uniqid();
+        Cache\Runtime::set("modeltest.testCalculatedValue.value", $value);
+
+        $valueFromCalculator = $this->testObject->getCalculatedValue();
+        $this->assertEquals($value, $valueFromCalculator, "calculated value does not match");
+
+        // now call the setter and retry, shouldn't have any effect
+        $newValue = uniqid();
+        $this->testObject->setCalculatedValue($newValue);
+
+        $valueFromCalculator = $this->testObject->getCalculatedValue();
+        $this->assertEquals($value, $valueFromCalculator, "calculated value does not match");
+
+        //check if it got written to the query table
+
+        $this->testObject->save();
+
+        $db = Db::get();
+        $select = "SELECT calculatedValue from object_query_" . $this->testObject->getClassId()
+                        . " WHERE oo_id = " . $this->testObject->getId();
+        $row = $db->fetchRow($select);
+
+        $this->assertEquals($value, $row['calculatedValue'], "value should have been written to query table");
+
     }
 
     public function testCheckbox()

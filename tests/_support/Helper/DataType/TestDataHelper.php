@@ -393,6 +393,17 @@ class TestDataHelper extends Module
      * @param string   $field
      * @param int      $seed
      */
+    public function fillCalculatedValue(Concrete $object, $field, $seed = 1)
+    {
+        // nothing to do
+    }
+
+
+    /**
+     * @param Concrete $object
+     * @param string   $field
+     * @param int      $seed
+     */
     public function fillCountry(Concrete $object, $field, $seed = 1)
     {
         $setter = 'set' . ucfirst($field);
