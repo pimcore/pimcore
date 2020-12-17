@@ -18,6 +18,11 @@
 namespace Pimcore\Model\DataObject;
 
 use Pimcore\Cache;
+use Pimcore\DataObject\ClassDefinition\DefinitionFileGeneratorInterface;
+use Pimcore\DataObject\ClassDefinition\DefinitionPathResolverInterface;
+use Pimcore\DataObject\ClassDefinition\DeleterInterface;
+use Pimcore\DataObject\ClassDefinition\PHPFileGenerator;
+use Pimcore\DataObject\ClassDefinition\PHPFileGeneratorInterface;
 use Pimcore\Db;
 use Pimcore\Event\DataObjectClassDefinitionEvents;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
@@ -227,7 +232,7 @@ class ClassDefinition extends Model\AbstractModel
             try {
                 $class = new self();
                 $name = $class->getDao()->getNameById($id);
-                $definitionFile = $class->getDefinitionFile($name);
+                $definitionFile = \Pimcore::getContainer()->get(DefinitionPathResolverInterface::class)->resolvePath($name);
                 $class = @include $definitionFile;
 
                 if (!$class instanceof self) {
@@ -361,6 +366,8 @@ class ClassDefinition extends Model\AbstractModel
 
         $this->getDao()->save($isUpdate);
 
+        //TODO: Move to Controller? Only place this is needed inside Pimcore
+        //For other use cases, the service can be included and used instead
         $this->generateClassFiles($saveDefinitionFile);
 
         // empty object cache
@@ -380,260 +387,15 @@ class ClassDefinition extends Model\AbstractModel
      * @param bool $generateDefinitionFile
      *
      * @throws \Exception
+     * @deprecated Deprecated in Pimcore 6.9, will be removed with 10.0. Use Pimcore\DataObject\ClassDefinition\PHPFileGeneratorInterface instead
      */
     public function generateClassFiles($generateDefinitionFile = true)
     {
-        $infoDocBlock = $this->getInfoDocBlock();
-
-        // create class for object
-        $extendClass = 'Concrete';
-        if ($this->getParentClass()) {
-            $extendClass = $this->getParentClass();
-            $extendClass = '\\'.ltrim($extendClass, '\\');
-        }
-
-        // create directory if not exists
-        if (!is_dir(PIMCORE_CLASS_DIRECTORY.'/DataObject')) {
-            File::mkdir(PIMCORE_CLASS_DIRECTORY.'/DataObject');
-        }
-
-        $cd = '<?php ';
-        $cd .= "\n\n";
-        $cd .= $infoDocBlock;
-        $cd .= "\n\n";
-        $cd .= 'namespace Pimcore\\Model\\DataObject;';
-        $cd .= "\n\n";
-        $cd .= 'use Pimcore\Model\DataObject\Exception\InheritanceParentNotFoundException;';
-        $cd .= "\n";
-        $cd .= 'use Pimcore\Model\DataObject\PreGetValueHookInterface;';
-        $cd .= "\n\n";
-        $cd .= "/**\n";
-        $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst($this->getName()).'\Listing getList()'."\n";
-        if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
-            foreach ($this->getFieldDefinitions() as $key => $def) {
-                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                    $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
-                            $this->getName()
-                        ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
-                            $this->getName()
-                        ).' getBy'.ucfirst(
-                            $def->getName()
-                        ).' ($field, $value, $locale = null, $limit = 0, $offset = 0) '."\n";
-
-                    foreach ($def->getFieldDefinitions() as $localizedFieldDefinition) {
-                        $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
-                                $this->getName()
-                            ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
-                                $this->getName()
-                            ).' getBy'.ucfirst(
-                                $localizedFieldDefinition->getName()
-                            ).' ($value, $locale = null, $limit = 0, $offset = 0) '."\n";
-                    }
-                } elseif ($def->isFilterable()) {
-                    $cd .= '* @method static \\Pimcore\\Model\\DataObject\\'.ucfirst(
-                            $this->getName()
-                        ).'\Listing|\\Pimcore\\Model\\DataObject\\'.ucfirst(
-                            $this->getName()
-                        ).' getBy'.ucfirst($def->getName()).' ($value, $limit = 0, $offset = 0) '."\n";
-                }
-            }
-        }
-        $cd .= "*/\n\n";
-
-        $implementsParts = [];
-
-        $implements = DataObject\ClassDefinition\Service::buildImplementsInterfacesCode($implementsParts, $this->getImplementsInterfaces());
-
-        $cd .= 'class '.ucfirst($this->getName()).' extends '.$extendClass. $implements . ' {';
-        $cd .= "\n\n";
-
-        $useParts = [];
-
-        $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode($useParts, $this->getUseTraits());
-
-        $cd .= 'protected $o_classId = "' . $this->getId(). "\";\n";
-        $cd .= 'protected $o_className = "'.$this->getName().'"'.";\n";
-
-        if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
-            foreach ($this->getFieldDefinitions() as $key => $def) {
-                if (!$def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation && !$def instanceof DataObject\ClassDefinition\Data\CalculatedValue
-                ) {
-                    $cd .= 'protected $'.$key.";\n";
-                }
-            }
-        }
-
-        $cd .= "\n\n";
-
-        $cd .= '/**'."\n";
-        $cd .= '* @param array $values'."\n";
-        $cd .= '* @return \\Pimcore\\Model\\DataObject\\'.ucfirst($this->getName())."\n";
-        $cd .= '*/'."\n";
-        $cd .= 'public static function create($values = array()) {';
-        $cd .= "\n";
-        $cd .= "\t".'$object = new static();'."\n";
-        $cd .= "\t".'$object->setValues($values);'."\n";
-        $cd .= "\t".'return $object;'."\n";
-        $cd .= '}';
-
-        $cd .= "\n\n";
-
-        if (is_array($this->getFieldDefinitions()) && count($this->getFieldDefinitions())) {
-            foreach ($this->getFieldDefinitions() as $key => $def) {
-                if ($def instanceof DataObject\ClassDefinition\Data\ReverseManyToManyObjectRelation) {
-                    continue;
-                }
-
-                // get setter and getter code
-                $cd .= $def->getGetterCode($this);
-                $cd .= $def->getSetterCode($this);
-
-                // call the method "classSaved" if exists, this is used to create additional data tables or whatever which depends on the field definition, for example for localizedfields
-                if (method_exists($def, 'classSaved')) {
-                    $def->classSaved($this);
-                }
-            }
-        }
-
-        $cd .= "}\n";
-        $cd .= "\n";
-
-        $classFile = PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'.php';
-        if (!is_writable(dirname($classFile)) || (is_file($classFile) && !is_writable($classFile))) {
-            throw new \Exception('Cannot write class file in '.$classFile.' please check the rights on this directory');
-        }
-        File::put($classFile, $cd);
-
-        // create class for object list
-        $extendListingClass = 'DataObject\\Listing\\Concrete';
-        if ($this->getListingParentClass()) {
-            $extendListingClass = $this->getListingParentClass();
-            $extendListingClass = '\\'.ltrim($extendListingClass, '\\');
-        }
-
-        // create list class
-        $cd = '<?php ';
-
-        $cd .= "\n\n";
-        $cd .= 'namespace Pimcore\\Model\\DataObject\\'.ucfirst($this->getName()).';';
-        $cd .= "\n\n";
-        $cd .= 'use Pimcore\\Model\\DataObject;';
-        $cd .= "\n\n";
-        $cd .= "/**\n";
-        $cd .= ' * @method DataObject\\'.ucfirst($this->getName())." current()\n";
-        $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] load()\n";
-        $cd .= ' * @method DataObject\\'.ucfirst($this->getName())."[] getData()\n";
-        $cd .= ' */';
-        $cd .= "\n\n";
-        $cd .= 'class Listing extends '.$extendListingClass.' {';
-        $cd .= "\n\n";
-
-        $cd .= DataObject\ClassDefinition\Service::buildUseTraitsCode([], $this->getListingUseTraits());
-
-        $cd .= 'protected $classId = "'. $this->getId()."\";\n";
-        $cd .= 'protected $className = "'.$this->getName().'"'.";\n";
-
-        $cd .= "\n\n";
-
-        if (\is_array($this->getFieldDefinitions())) {
-            foreach ($this->getFieldDefinitions() as $key => $def) {
-                if ($def instanceof DataObject\ClassDefinition\Data\Localizedfields) {
-                    foreach ($def->getFieldDefinitions() as $localizedFieldDefinition) {
-                        $cd .= $localizedFieldDefinition->getFilterCode();
-                    }
-                } elseif ($def->isFilterable()) {
-                    $cd .= $def->getFilterCode();
-                }
-            }
-        }
-
-        $cd .= "\n\n";
-        $cd .= "}\n";
-
-        File::mkdir(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()));
-
-        $classListFile = PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'/Listing.php';
-        if (!is_writable(dirname($classListFile)) || (is_file($classListFile) && !is_writable($classListFile))) {
-            throw new \Exception(
-                'Cannot write class file in '.$classListFile.' please check the rights on this directory'
-            );
-        }
-        File::put($classListFile, $cd);
+        \Pimcore::getContainer()->get(PHPFileGeneratorInterface::class)->generatePHPFile($this);
 
         if ($generateDefinitionFile) {
-            // save definition as a php file
-            $definitionFile = $this->getDefinitionFile();
-            if (!is_writable(dirname($definitionFile)) || (is_file($definitionFile) && !is_writable($definitionFile))) {
-                throw new \Exception(
-                    'Cannot write definition file in: '.$definitionFile.' please check write permission on this directory.'
-                );
-            }
-
-            $clone = clone $this;
-            $clone->setDao(null);
-            unset($clone->fieldDefinitions);
-
-            self::cleanupForExport($clone->layoutDefinitions);
-
-            $exportedClass = var_export($clone, true);
-
-            $data = '<?php ';
-            $data .= "\n\n";
-            $data .= $infoDocBlock;
-            $data .= "\n\n";
-
-            $data .= "\nreturn ".$exportedClass.";\n";
-
-            \Pimcore\File::putPhpFile($definitionFile, $data);
+            \Pimcore::getContainer()->get(DefinitionFileGeneratorInterface::class)->generateDefinitionFile($this);
         }
-    }
-
-    /**
-     * @return string
-     */
-    protected function getInfoDocBlock()
-    {
-        $cd = '';
-
-        $cd .= '/** ';
-        $cd .= "\n";
-        $cd .= '* Inheritance: '.($this->getAllowInherit() ? 'yes' : 'no')."\n";
-        $cd .= '* Variants: '.($this->getAllowVariants() ? 'yes' : 'no')."\n";
-
-        if ($this->getDescription()) {
-            $description = str_replace(['/**', '*/', '//'], '', $this->getDescription());
-            $description = str_replace("\n", "\n* ", $description);
-
-            $cd .= '* '.$description."\n";
-        }
-
-        $cd .= "\n\n";
-        $cd .= "Fields Summary: \n";
-
-        $cd = $this->getInfoDocBlockForFields($this, $cd, 1);
-
-        $cd .= '*/ ';
-
-        return $cd;
-    }
-
-    /**
-     * @param ClassDefinition|ClassDefinition\Data $definition
-     * @param string $text
-     * @param int $level
-     *
-     * @return string
-     */
-    protected function getInfoDocBlockForFields($definition, $text, $level)
-    {
-        foreach ($definition->getFieldDefinitions() as $fd) {
-            $text .= str_pad('', $level, '-').' '.$fd->getName().' ['.$fd->getFieldtype()."]\n";
-            if (method_exists($fd, 'getFieldDefinitions')) {
-                $text = $this->getInfoDocBlockForFields($fd, $text, $level + 1);
-            }
-        }
-
-        return $text;
     }
 
     public function delete()
@@ -698,20 +460,19 @@ class ClassDefinition extends Model\AbstractModel
 
     /**
      * Deletes PHP files from Filesystem
+     *
+     * @deprecated Deprecated in Pimcore 6.9, will be removed with 10.0. Use Pimcore\DataObject\ClassDefinition\DeleterInterface instead
      */
     protected function deletePhpClasses()
     {
-        // delete the class files
-        @unlink(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'.php');
-        @unlink(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()).'/Listing.php');
-        @rmdir(PIMCORE_CLASS_DIRECTORY.'/DataObject/'.ucfirst($this->getName()));
-        @unlink($this->getDefinitionFile());
+        \Pimcore::getContainer()->get(DeleterInterface::class)->deleteClassDefinition($this);
     }
 
     /**
      * @param string|null $name
      *
      * @return string
+     * @deprecated Deprecated in Pimcore 6.9, will be removed with 10.0. Use Pimcore\DataObject\ClassDefinition\DefinitionPathResolverInterface instead
      */
     public function getDefinitionFile($name = null)
     {
@@ -719,9 +480,7 @@ class ClassDefinition extends Model\AbstractModel
             $name = $this->getName();
         }
 
-        $file = PIMCORE_CLASS_DIRECTORY.'/definition_'.$name.'.php';
-
-        return $file;
+        return \Pimcore::getContainer()->get(DefinitionPathResolverInterface::class)->resolvePath($name);
     }
 
     /**

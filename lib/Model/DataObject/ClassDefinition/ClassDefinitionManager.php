@@ -14,6 +14,7 @@
 
 namespace Pimcore\Model\DataObject\ClassDefinition;
 
+use Pimcore\DataObject\ClassDefinition\DefinitionPathResolverInterface;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 
@@ -22,6 +23,13 @@ class ClassDefinitionManager
     public const SAVED = 'saved';
     public const CREATED = 'created';
     public const DELETED = 'deleted';
+
+    protected $definitionPathResolver;
+
+    public function __construct(DefinitionPathResolverInterface  $definitionPathResolver)
+    {
+        $this->definitionPathResolver = $definitionPathResolver;
+    }
 
     /**
      * Delete all classes from db
@@ -38,7 +46,7 @@ class ClassDefinitionManager
 
             $cls = new ClassDefinition();
             $cls->setId($id);
-            $definitionFile = $cls->getDefinitionFile($name);
+            $definitionFile = $this->definitionPathResolver->resolvePath($name);
 
             if (!file_exists($definitionFile)) {
                 $deleted[] = [$name, $id];

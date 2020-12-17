@@ -126,6 +126,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $loader->load('maintenance.yml');
         $loader->load('commands.yml');
         $loader->load('cache.yml');
+        $loader->load('class_definition.yml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
@@ -144,6 +145,9 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $loader->load('templating_twig.yml');
 
         $this->addContextRoutes($container, $config['context']);
+
+        $container->setParameter('pimcore.constant.class_definition.directory', PIMCORE_CLASS_DIRECTORY . '/');
+        $container->setParameter('pimcore.constant.class_definition.php_file.directory', PIMCORE_CLASS_DIRECTORY . '/DataObject/');
     }
 
     /**

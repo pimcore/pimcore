@@ -1,0 +1,27 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+        bind:
+            $classDirectory: '%pimcore.constant.class_definition.php_file.directory%'
+            $definitionDirectory: '%pimcore.constant.class_definition.directory%'
+
+    Pimcore\DataObject\ClassDefinition\PHPFileGeneratorInterface: '@Pimcore\DataObject\ClassDefinition\PHPFileGenerator'
+    Pimcore\DataObject\ClassDefinition\PHPFileGenerator: ~
+
+    Pimcore\DataObject\ClassDefinition\PHPFileDocBlockGeneratorInterface: '@Pimcore\DataObject\ClassDefinition\PHPFileDocBlockGenerator'
+    Pimcore\DataObject\ClassDefinition\PHPFileDocBlockGenerator: ~
+
+    Pimcore\DataObject\ClassDefinition\PHPFileFieldDocBlockGeneratorInterface: '@Pimcore\DataObject\ClassDefinition\PHPFileFieldDocBlockGenerator'
+    Pimcore\DataObject\ClassDefinition\PHPFileFieldDocBlockGenerator: ~
+
+    Pimcore\DataObject\ClassDefinition\DefinitionFileGeneratorInterface: '@Pimcore\DataObject\ClassDefinition\DefinitionFileGenerator'
+    Pimcore\DataObject\ClassDefinition\DefinitionFileGenerator: ~
+
+    Pimcore\DataObject\ClassDefinition\DeleterInterface: '@Pimcore\DataObject\ClassDefinition\Deleter'
+    Pimcore\DataObject\ClassDefinition\Deleter: ~
+
+    Pimcore\DataObject\ClassDefinition\DefinitionPathResolverInterface: '@Pimcore\DataObject\ClassDefinition\DefinitionPathResolver'
+    Pimcore\DataObject\ClassDefinition\DefinitionPathResolver: ~
+
