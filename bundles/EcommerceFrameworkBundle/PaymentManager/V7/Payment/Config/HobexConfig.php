@@ -26,6 +26,9 @@ class HobexConfig
 
     protected $paymentMethods = [];
 
+    protected $webhookSecret;
+
+
     /**
      * @return string
      */
@@ -123,6 +126,25 @@ class HobexConfig
     {
         $this->paymentMethods = $paymentMethods;
 
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getWebhookSecret()
+    {
+        return $this->webhookSecret;
+    }
+
+    /**
+     * @param string|null $webhookSecret
+     *
+     * @return HobexConfig
+     */
+    public function setWebhookSecret($webhookSecret) : self
+    {
+        $this->webhookSecret = $webhookSecret;
         return $this;
     }
 }
