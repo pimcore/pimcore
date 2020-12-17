@@ -24,7 +24,7 @@ use Pimcore\Navigation\Renderer\Breadcrumbs;
 use Pimcore\Navigation\Renderer\Menu;
 use Pimcore\Navigation\Renderer\Menu as MenuRenderer;
 use Pimcore\Navigation\Renderer\RendererInterface;
-use Pimcore\Templating\Helper\HelperCharsetTrait;
+use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Pimcore\Twig\Extension\Templating\Navigation\Exception\InvalidRendererException;
 use Pimcore\Twig\Extension\Templating\Navigation\Exception\RendererNotFoundException;
 use Psr\Container\ContainerInterface;
