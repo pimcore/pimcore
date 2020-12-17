@@ -15,11 +15,8 @@ declare(strict_types=1);
  * @license    http://www.pimcore.org/license     GPLv3 and PEL
  */
 
-namespace Pimcore\Templating\Helper;
+namespace Pimcore\Twig\Extension\Templating\Traits;
 
-/**
- * @deprecated remove in Pimcore 10
- */
 trait HelperCharsetTrait
 {
     protected $charset = 'UTF-8';
