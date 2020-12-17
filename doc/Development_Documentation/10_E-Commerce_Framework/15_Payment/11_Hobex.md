@@ -157,3 +157,57 @@ PaymentController:
     }
 ```
 
+## Implementation
+see https://hobex.docs.oppwa.com/tutorials/webhooks/configuration
+
+If you want to use webhooks, you have to configure the webhook secret: 
+
+```yaml
+pimcore_ecommerce_framework:
+    
+    # ...
+    
+    # add hobex to the set of active payment providers
+    payment_manager:
+        providers:
+            hobex_testprovider:
+                provider_id: Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\Payment\Hobex                    
+                profile: sandbox
+                profiles:
+                    sandbox:
+                        entityId: '8a829418530df1d201531299e097175c'
+                        authorizationBearer: 'OGE4Mjk0MTg1MzBkZjFkMjAxNTMxMjk5ZTJjMTE3YWF8ZzJnU3BnS2hLUw=='
+                        # optional: if you configured webhook, you need to configure the secret here  
+                        webhookSecret: '353FADF1340CA4AFA7052AD8BAAEA788E177C9D9CFC8271294F53CA83F4DB4AD' 
+                        testSystem: true
+                        payment_methods:
+                            - VISA
+                            - MASTER
+                            - SOFORTUEBERWEISUNG
+                            - SEPA
+    
+                              
+```
+
+Example of controller/Action to handle the webhook response: 
+
+
+PaymentController:
+```php
+    /**
+     * In the payment controller the webhook response from Hobex payments is handled.
+     * @Route("/checkout/payment/webhook")
+     * @param Request $request
+     */
+    public function webhookAction(Request $request){
+        $paymentProvider = Factory::getInstance()->getPaymentManager()->getProvider("hobex_testprovider");
+        $order = Factory::getInstance()->getCommitOrderProcessor()->handlePaymentResponseAndCommitOrderPayment(
+                ['base64Content' => $request->getContent(), 'authTag' => $request->headers->get('x-authentication-tag'),
+                 'initVector' => $request->headers->get('x-initialization-vector')],
+                $paymentProvider
+            );
+        return new Response('ok',200);
+
+    }
+
+```
