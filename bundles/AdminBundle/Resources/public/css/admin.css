@@ -2295,7 +2295,7 @@ ul.leaflet-draw-actions.leaflet-draw-actions-top.leaflet-draw-actions-bottom li:
 /** END notifications **/
 
 .x-body .sf-minitoolbar {
-    left:10px;
+    left:12px;
     right:auto;
     bottom: 195px;
     background: #0C0F12;
