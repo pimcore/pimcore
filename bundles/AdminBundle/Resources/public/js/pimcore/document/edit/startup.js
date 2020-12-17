@@ -125,7 +125,7 @@ Ext.onReady(function () {
             inherited = definition["inherited"];
         }
 
-        let EditableClass = pimcore.document.editables[type] || pimcore.document.tags[type]
+        let EditableClass = pimcore.document.editables[type] || pimcore.document.tags[type];
 
         if (typeof EditableClass !== 'function') {
             throw 'Editable of type `' + type + '` with name `' + name + '` could not be found.';
