@@ -20,7 +20,7 @@ namespace Pimcore\Twig\Extension\Templating;
 <<<<<<<< HEAD:lib/Twig/Extension/Templating/Action.php
 use Pimcore\Model\Document\PageSnippet;
 use Pimcore\Targeting\Document\DocumentTargetingConfigurator;
-use Pimcore\Templating\Helper\HelperCharsetTrait;
+use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Pimcore\Templating\Renderer\ActionRenderer;
 use Twig\Extension\RuntimeExtensionInterface;
 

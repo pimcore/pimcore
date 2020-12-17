@@ -20,7 +20,7 @@ namespace Pimcore\Twig\Extension\Templating;
 <<<<<<<< HEAD:lib/Twig/Extension/Templating/PimcoreUrl.php
 use Pimcore\Http\RequestHelper;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Templating\Helper\HelperCharsetTrait;
+use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 
