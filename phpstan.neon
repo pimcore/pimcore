@@ -3,11 +3,13 @@ includes:
 
 parameters:
 
-    #bootstrap: dev/pimcore/pimcore/.travis/phpstan-bootstrap.php # optional when running in project scope
+    bootstrapFiles:
+        #- .github/ci/files/phpstan-bootstrap.php # optional when running in project scope
     reportUnmatchedIgnoredErrors: false
 
     symfony:
         container_xml_path: var/cache/dev/App_KernelDevDebugContainer.xml
+        #container_xml_path: ../../../var/cache/dev/App_KernelDevDebugContainer.xml # optional when running in project scope
 
     excludes_analyse:
         - '**/DependencyInjection/Configuration.php'
