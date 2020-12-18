@@ -53,8 +53,6 @@ class MultipleAssigmentTest extends ModelTestCase
 
     public function testMultipleAssignmentsOnSingleManyToMany()
     {
-        $this->expectException(\Exception::class);
-
         $listing = new RelationTest\Listing();
         $listing->setLimit(5);
 
@@ -77,7 +75,11 @@ class MultipleAssigmentTest extends ModelTestCase
 
         $object->setOnlyOneManyToMany($metaDataList);
 
-        $object->save();
+        try {
+            $object->save();
+            $this->fail("only one assignment allowed but validation accepted duplicate items");
+        } catch (\Exception $e) {
+        }
     }
 
     protected function checkMultipleAssignmentsOnSingleManyToMany(array $metaDataList, $positionMessage = '')
@@ -90,8 +92,6 @@ class MultipleAssigmentTest extends ModelTestCase
 
     public function testMultipleAssignmentsOnSingleManyToManyObject()
     {
-        $this->expectException(\Exception::class);
-
         $listing = new RelationTest\Listing();
         $listing->setLimit(5);
 
@@ -114,7 +114,12 @@ class MultipleAssigmentTest extends ModelTestCase
 
         $object->setOnlyOneManyToManyObject($metaDataList);
 
-        $object->save();
+        try {
+            $object->save();
+            $this->fail("only one assignment allowed but validation accepted duplicate items");
+        } catch (\Exception $e) {
+
+        }
     }
 
     protected function checkMultipleAssignmentsOnMultipleManyToMany(array $metaDataList, $positionMessage = '')
