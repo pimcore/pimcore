@@ -45,7 +45,6 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
 
     const LOCK_KEY = 'hobex-handleresponse-lock';
 
-
     const HOST_URL_TESTSYSTEM = 'https://test.oppwa.com';
     const HOST_URL_LIVESYSTEM = 'https://oppwa.com';
 
@@ -87,7 +86,6 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
             ->setWebhookSecret($options['webhookSecret'])
         ;
         $this->lockFactory = $lockFactory;
-
     }
 
     /**
@@ -266,26 +264,24 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
         $lock = $this->lockFactory->createLock(self::LOCK_KEY . $checkoutId);
         $lock->acquire(true);
 
-
         try {
             $jsonResponse = null;
-            if ($response['base64Content']){
+            if ($response['base64Content']) {
                 $jsonResponse = $this->handleWebhookResponse($response);
             }
             if (!$jsonResponse) {
-
                 $transactionId = $this->getExistingTransactionId($checkoutId);
                 if ($transactionId) {
-                    $resourcePath = sprintf("/v1/query/%s", $transactionId);
+                    $resourcePath = sprintf('/v1/query/%s', $transactionId);
                 } else {
                     $resourcePath = $response['resourcePath'];
                     if (!$resourcePath) {
-                        $resourcePath = sprintf("/v1/checkouts/%s/payment", $checkoutId);
+                        $resourcePath = sprintf('/v1/checkouts/%s/payment', $checkoutId);
                     }
                 }
                 $client = new Client([
                         'base_uri' => $this->config->getHostURL() . $resourcePath,
-                        'headers'  => [
+                        'headers' => [
                             'Authorization:Bearer' => $this->config->getAuthorizationBearer(),
                         ],
                     ]
@@ -481,34 +477,34 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
         $jsonResponse,
         \Pimcore\Bundle\EcommerceFrameworkBundle\PaymentManager\V7\Payment\StartPaymentRequest\HobexRequest $requestConfig
     ) {
-
     }
 
     /**
      * @param string $checkoutId
      *
      * @return string|null
+     *
      * @throws \Exception
      */
     protected function getExistingTransactionId($checkoutId)
     {
         $transactionId = null;
         $list = OnlineShopOrder::getList([
-            "objectbricks" => ["PaymentProviderHobex"],
+            'objectbricks' => ['PaymentProviderHobex'],
 
         ]);
-        $list->setCondition("PaymentProviderHobex.auth_checkoutId = ?", $checkoutId);
-        if ($list->count()>0) {
+        $list->setCondition('PaymentProviderHobex.auth_checkoutId = ?', $checkoutId);
+        if ($list->count() > 0) {
             /** @var OnlineShopOrder $order */
             $order = $list->current();
             $hobex = $order->getPaymentProvider()->getPaymentProviderHobex();
             $status = $hobex->getAuth_paymentState();
-            if (!$this->isStatusPending($status)){
-                $transactionId =  $hobex->getAuth_extId();
+            if (!$this->isStatusPending($status)) {
+                $transactionId = $hobex->getAuth_extId();
             }
         }
-        return $transactionId;
 
+        return $transactionId;
     }
 
     /**
@@ -526,13 +522,12 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
      *
      * @return array|null
      */
-    protected function handleWebhookResponse( $response)
+    protected function handleWebhookResponse($response)
     {
         $secret = $this->config->getWebhookSecret();
-        if (!$secret){
+        if (!$secret) {
             $this->logger->debug('can not handle webhook response in ' . self::class . '::handleWebhookResponse, no webhook secret defined');
-        }
-        else {
+        } else {
             $authTag = $response['authTag'];
             $initVector = $response['initVector'];
 
@@ -540,12 +535,13 @@ class Hobex extends AbstractPayment implements PaymentInterface, LoggerAwareInte
             $iv = hex2bin($initVector);
             $auth_tag = hex2bin($authTag);
             $cipher_text = hex2bin($response['base64Content']);
-            $jsonResult = openssl_decrypt($cipher_text, "aes-256-gcm", $key, OPENSSL_RAW_DATA, $iv, $auth_tag);
+            $jsonResult = openssl_decrypt($cipher_text, 'aes-256-gcm', $key, OPENSSL_RAW_DATA, $iv, $auth_tag);
             $result = json_decode($jsonResult, true);
-            if ($result['type'] == 'PAYMENT'){
+            if ($result['type'] == 'PAYMENT') {
                 return $result['payload'];
             }
         }
+
         return null;
     }
 }

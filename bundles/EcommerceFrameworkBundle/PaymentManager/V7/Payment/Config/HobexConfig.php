@@ -28,7 +28,6 @@ class HobexConfig
 
     protected $webhookSecret;
 
-
     /**
      * @return string
      */
@@ -142,9 +141,10 @@ class HobexConfig
      *
      * @return HobexConfig
      */
-    public function setWebhookSecret($webhookSecret) : self
+    public function setWebhookSecret($webhookSecret): self
     {
         $this->webhookSecret = $webhookSecret;
+
         return $this;
     }
 }
