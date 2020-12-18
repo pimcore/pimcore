@@ -25,9 +25,8 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\IndexService\Worker;
 use Pimcore\Bundle\EcommerceFrameworkBundle\Model\IndexableInterface;
 use Pimcore\Db\ConnectionInterface;
 use Pimcore\Logger;
+use Pimcore\Model\Tool\TmpStore;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Lock\Factory as LockFactory;
-use Symfony\Component\Lock\LockInterface;
 
 /**
  * @property ElasticSearch $tenantConfig
@@ -77,29 +76,23 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      */
     protected $indexStoreMetaData = [];
 
-    /**
-     * @var LockInterface|null
-     */
-    protected $lock = null;
 
     /**
-     * @var LockFactory|null
+     * @var int
      */
-    protected $lockFactory = null;
+    protected $lastLockLogTimestamp = 0;
 
     /**
-     * @param LockFactory $lockFactory
      * @param ElasticSearchConfigInterface $tenantConfig
      * @param ConnectionInterface $db
      * @param EventDispatcherInterface $eventDispatcher
      * @param string|null $workerMode
      */
-    public function __construct(LockFactory $lockFactory, ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
+    public function __construct(ElasticSearchConfigInterface $tenantConfig, ConnectionInterface $db, EventDispatcherInterface $eventDispatcher, string $workerMode = null)
     {
         parent::__construct($tenantConfig, $db, $eventDispatcher, $workerMode);
 
         $this->indexName = ($tenantConfig->getClientConfig('indexName')) ? strtolower($tenantConfig->getClientConfig('indexName')) : strtolower($this->name);
-        $this->lockFactory = $lockFactory;
     }
 
     /**
@@ -830,6 +823,54 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
     }
 
     /**
+     * Blocks all write operations
+     *
+     * @param string $indexName the name of the index.
+     */
+    protected function blockIndexWrite(string $indexName)
+    {
+        $esClient = $this->getElasticSearchClient();
+        $result = $esClient->indices()->exists(['index' => $indexName]);
+        if ($result) {
+            Logger::info('Block write index '.$indexName.'.');
+            $esClient->indices()->putSettings([
+                'index' => $indexName,
+                'body' => [
+                    'index.blocks.write' => true
+                ]
+            ]);
+
+            $esClient->indices()->refresh([
+                'index' => $indexName
+            ]);
+        }
+    }
+
+    /**
+     * Unblocks all write operations
+     *
+     * @param string $indexName the name of the index.
+     */
+    protected function unblockIndexWrite(string $indexName)
+    {
+        $esClient = $this->getElasticSearchClient();
+        $result = $esClient->indices()->exists(['index' => $indexName]);
+        if ($result) {
+            Logger::info('Unlock write index '.$indexName.'.');
+            $esClient->indices()->putSettings([
+                'index' => $indexName,
+                'body' => [
+                    'index.blocks.write' => false
+                ]
+            ]);
+
+            $esClient->indices()->refresh([
+                'index' => $indexName
+            ]);
+        }
+    }
+
+    /**
      * Get the next index version, e.g. if currently 13, then 14 will be returned.
      *
      * @return int
@@ -908,7 +949,9 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
             $this->createEsIndex($nextIndexName);
             $this->putIndexMapping($nextIndexName);
 
+            $this->blockIndexWrite($currentIndexName);
             $this->performReindex($currentIndexName, $nextIndexName);
+            $this->unblockIndexWrite($currentIndexName);
 
             $this->indexVersion = $nextIndex;
 
@@ -1049,19 +1092,6 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
         return $indexPart;
     }
 
-    /**
-     * @var int
-     */
-    protected $lastLockLogTimestamp = 0;
-
-    protected function getLock(): LockInterface
-    {
-        if (!$this->lock) {
-            $this->lock = $this->lockFactory->createLock(self::REINDEXING_LOCK_KEY, 60 * 10);
-        }
-
-        return $this->lock;
-    }
 
     /**
      * Verify if the index is currently locked.
@@ -1074,7 +1104,7 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
      */
     protected function checkIndexLock(bool $throwException = true): bool
     {
-        if (!$this->getLock()->acquire()) {
+        if (TmpStore::get(self::REINDEXING_LOCK_KEY)) {
             $errorMessage = sprintf('Index is currently locked by "%s" as reindex is in progress.', self::REINDEXING_LOCK_KEY);
             if ($throwException) {
                 throw new \Exception($errorMessage);
@@ -1094,12 +1124,12 @@ abstract class AbstractElasticSearch extends Worker\ProductCentricBatchProcessin
 
     protected function activateIndexLock()
     {
-        $this->getLock()->acquire();
+        TmpStore::set(self::REINDEXING_LOCK_KEY, 1, null, 60*10);
     }
 
     protected function releaseIndexLock()
     {
-        $this->getLock()->release();
+        TmpStore::delete(self::REINDEXING_LOCK_KEY);
         $this->lastLockLogTimestamp = 0;
     }
 }
