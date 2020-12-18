@@ -7,19 +7,19 @@ $this->get("translate")->setDomain("admin");
 //detect browser
 $supported      = false;
 $browser        = new \Pimcore\Browser();
-$browserVersion = (int)$browser->getVersion();
+$browserVersion = (float)$browser->getVersion();
 $platform       = $browser->getPlatform();
 
-if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_FIREFOX && $browserVersion >= 52) {
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_FIREFOX && $browserVersion >= 72) {
     $supported = true;
 }
 if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_CHROME && $browserVersion >= 84) {
     $supported = true;
 }
-if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_SAFARI && $browserVersion >= 10) {
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_SAFARI && $browserVersion >= 13.1) {
     $supported = true;
 }
-if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion >= 42) {
+if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_OPERA && $browserVersion >= 67) {
     $supported = true;
 }
 if ($browser->getBrowser() == \Pimcore\Browser::BROWSER_EDGE && $browserVersion >= 84) {
