@@ -17,8 +17,9 @@
 
 namespace Pimcore\Model\DataObject\Listing;
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendQueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 
@@ -41,9 +42,12 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
+     *
+     * @deprecated use getSelectQuery() instead.
+     *
      * @param array|string|Expression $columns
      *
-     * @return QueryBuilder
+     * @return ZendQueryBuilder
      *
      * @throws \Exception
      */
@@ -76,6 +80,47 @@ class Dao extends Model\Listing\Dao\AbstractDao
         }
 
         return $select;
+    }
+
+    /**
+     * @param array|string|Expression $columns
+     *
+     * @return QueryBuilder
+     *
+     * @throws \Exception
+     */
+    public function getSelectQuery($columns = '*')
+    {
+        // init
+        $query = $this->db->createQueryBuilder();
+
+        // select columns
+        $query->select($columns);
+
+        // add from table
+        $query->from($this->getTableName());
+
+        // add joins
+        //$this->addJoins($query);
+
+        // add condition
+        $this->addConditions($query);
+
+        // group by
+        $this->addGroupBy($query);
+
+        // order
+        $this->addOrder($query);
+
+        // limit
+        $this->addLimit($query);
+
+        if ($this->onCreateQueryCallback) {
+            $closure = $this->onCreateQueryCallback;
+            $closure($query);
+        }
+
+        return $query;
     }
 
     /**
@@ -112,17 +157,17 @@ class Dao extends Model\Listing\Dao\AbstractDao
             $query->distinct(true);
         }
 
-        $query->reset(QueryBuilder::LIMIT_COUNT);
-        $query->reset(QueryBuilder::LIMIT_OFFSET);
-        $query->reset(QueryBuilder::ORDER);
+        $query->reset(ZendQueryBuilder::LIMIT_COUNT);
+        $query->reset(ZendQueryBuilder::LIMIT_OFFSET);
+        $query->reset(ZendQueryBuilder::ORDER);
 
-        if ($this->isQueryPartinUse($query, QueryBuilder::GROUP) || $this->isQueryPartinUse($query, QueryBuilder::HAVING)) {
+        if ($this->isQueryPartinUse($query, ZendQueryBuilder::GROUP) || $this->isQueryPartinUse($query, ZendQueryBuilder::HAVING)) {
             $query = 'SELECT COUNT(*) FROM (' . $query . ') as XYZ';
         } else {
-            $query->reset(QueryBuilder::COLUMNS);
+            $query->reset(ZendQueryBuilder::COLUMNS);
 
             $countIdentifier = '*';
-            if ($this->isQueryPartinUse($query, QueryBuilder::DISTINCT)) {
+            if ($this->isQueryPartinUse($query, ZendQueryBuilder::DISTINCT)) {
                 $countIdentifier = 'DISTINCT ' . $this->getTableName() . '.o_id';
             }
 
@@ -171,6 +216,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      * Loads a list of document ids for the specicifies parameters, returns an array of ids
      *
      * @return int[]
+     * @throws \Exception
      */
     public function loadIdList()
     {

@@ -17,8 +17,9 @@
 
 namespace Pimcore\Model\DataObject\Listing\Concrete;
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendQueryBuilder;
 use Pimcore\Model;
 use Pimcore\Model\DataObject;
 use Pimcore\Tool;
@@ -51,9 +52,11 @@ class Dao extends Model\DataObject\Listing\Dao
     /**
      * get select query
      *
+     * @deprecated use getSelectQuery() instead.
+     *
      * @param array|string|Expression|bool $columns
      *
-     * @return QueryBuilder
+     * @return ZendQueryBuilder
      *
      * @throws \Exception
      */
@@ -85,6 +88,49 @@ class Dao extends Model\DataObject\Listing\Dao
         }
 
         return $select;
+    }
+
+    /**
+     * get select query
+     *
+     * @param array|string|Expression|bool $columns
+     *
+     * @return QueryBuilder
+     *
+     * @throws \Exception
+     */
+    public function getSelectQuery($columns = '*')
+    {
+        // init
+        $query = $this->db->createQueryBuilder();
+
+        // select columns
+        $query->select($columns);
+
+        // add from table
+        $query->from($this->getTableName());
+
+        // add joins
+        //$this->addJoins($query);
+
+        // add condition
+        $this->addConditions($query);
+
+        // group by
+        $this->addGroupBy($query);
+
+        // order
+        $this->addOrder($query);
+
+        // limit
+        $this->addLimit($query);
+
+        if ($this->onCreateQueryCallback) {
+            $closure = $this->onCreateQueryCallback;
+            $closure($query);
+        }
+
+        return $query;
     }
 
     /**

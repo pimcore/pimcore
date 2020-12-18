@@ -14,8 +14,9 @@
 
 namespace Pimcore\Model\Listing\Dao;
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use Pimcore\Db\ZendCompatibility\Expression;
-use Pimcore\Db\ZendCompatibility\QueryBuilder;
+use Pimcore\Db\ZendCompatibility\QueryBuilder as ZendQueryBuilder;
 use Pimcore\Model;
 
 abstract class AbstractDao extends Model\Dao\AbstractDao
@@ -126,13 +127,17 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
                         $lastOrder = $order[$c];
                     }
 
-                    $parts[] = $key . ' ' . $lastOrder;
+                    if (get_class($select) === ZendQueryBuilder::class) {
+                        $parts[] = $key . ' ' . $lastOrder;
+                    } else {
+                        $select->addOrderBy($key, $lastOrder);
+                    }
 
                     $c++;
                 }
             }
 
-            if (!empty($parts)) {
+            if (!empty($parts) && get_class($select) === ZendQueryBuilder::class) {
                 $select->order(new Expression(implode(', ', $parts)));
             }
         }
@@ -152,7 +157,11 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
     {
         $groupBy = $this->model->getGroupBy();
         if ($groupBy) {
-            $select->group($groupBy);
+            if (get_class($select) === ZendQueryBuilder::class) {
+                $select->group($groupBy);
+            } else {
+                $select->addGroupBy($groupBy);
+            }
         }
 
         return $this;
@@ -165,7 +174,12 @@ abstract class AbstractDao extends Model\Dao\AbstractDao
      */
     protected function addLimit(QueryBuilder $select)
     {
-        $select->limit($this->model->getLimit(), $this->model->getOffset());
+        if (get_class($select) === ZendQueryBuilder::class) {
+            $select->limit($this->model->getLimit(), $this->model->getOffset());
+        } else {
+            $select->setFirstResult($this->model->getOffset());
+            $select->setMaxResults($this->model->getLimit());
+        }
 
         return $this;
     }

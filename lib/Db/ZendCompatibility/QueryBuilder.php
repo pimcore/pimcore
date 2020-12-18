@@ -43,7 +43,7 @@ use Pimcore\Db\ConnectionInterface;
 /**
  * @deprecated
  */
-class QueryBuilder
+class QueryBuilder extends \Doctrine\DBAL\Query\QueryBuilder
 {
     const DISTINCT = 'distinct';
     const COLUMNS = 'columns';
@@ -329,7 +329,7 @@ class QueryBuilder
      *
      * @return self
      */
-    public function distinct($flag = true)
+    public function distinct($flag = true): \Doctrine\DBAL\Query\QueryBuilder
     {
         $this->_parts[self::DISTINCT] = (bool) $flag;
 
