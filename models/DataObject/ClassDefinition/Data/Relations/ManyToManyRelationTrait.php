@@ -8,8 +8,6 @@ use Pimcore\Model\Element\DirtyIndicatorInterface;
 trait ManyToManyRelationTrait
 {
     /**
-     * TODO: move validation to checkValidity & throw exception in Pimcore 10
-     *
      * @param DataObject\Concrete|DataObject\Localizedfield|DataObject\Objectbrick\Data\AbstractData|\Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $container
      * @param array $params
      */
@@ -34,7 +32,6 @@ trait ManyToManyRelationTrait
         }
 
         $data = $this->getDataFromObjectParam($container, $params);
-        $this->filterMultipleAssignments($data, $container, $params);
 
         parent::save($container, $params);
     }

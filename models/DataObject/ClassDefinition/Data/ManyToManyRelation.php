@@ -485,6 +485,7 @@ class ManyToManyRelation extends AbstractRelations implements QueryResourcePersi
 
         $allow = true;
         if (is_array($data)) {
+            $this->performMultipleAssignmentCheck($data);
             foreach ($data as $d) {
                 if ($d instanceof Document) {
                     $allow = $this->allowDocumentRelation($d);
