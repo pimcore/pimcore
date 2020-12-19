@@ -448,7 +448,7 @@ abstract class AbstractRelations extends Data implements
                     } elseif (!isset($relationItems[$elementHash])) {
                         $relationItems[$elementHash] = $item;
                     } else {
-                        $message = "Passing relations multiple times not allowed anymore: " . $elementHash
+                        $message = 'Passing relations multiple times not allowed anymore: ' . $elementHash
                             . ' multiple times in field ' . $fieldName;
 
                         if (method_exists($this, 'getAllowMultipleAssignments')) {
@@ -458,10 +458,8 @@ abstract class AbstractRelations extends Data implements
                         throw new \Exception($message);
                     }
                 }
-
             }
         }
-
     }
 
     /**
