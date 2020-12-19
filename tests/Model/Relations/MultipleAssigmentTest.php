@@ -77,7 +77,7 @@ class MultipleAssigmentTest extends ModelTestCase
 
         try {
             $object->save();
-            $this->fail("only one assignment allowed but validation accepted duplicate items");
+            $this->fail('only one assignment allowed but validation accepted duplicate items');
         } catch (\Exception $e) {
         }
     }
@@ -116,9 +116,8 @@ class MultipleAssigmentTest extends ModelTestCase
 
         try {
             $object->save();
-            $this->fail("only one assignment allowed but validation accepted duplicate items");
+            $this->fail('only one assignment allowed but validation accepted duplicate items');
         } catch (\Exception $e) {
-
         }
     }
 
