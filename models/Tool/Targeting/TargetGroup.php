@@ -70,6 +70,8 @@ class TargetGroup extends Model\AbstractModel
      * @param string $name
      *
      * @return TargetGroup|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
@@ -78,7 +80,7 @@ class TargetGroup extends Model\AbstractModel
             $target->getDao()->getByName($name);
 
             return $target;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }

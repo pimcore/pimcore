@@ -1,0 +1,48 @@
+parameters:
+    secret: ThisTokenIsNotSoSecretChangeIt
+
+    # customize the full path to external executables
+    # normally they are auto-detected by `which program` or auto-discovered in the configured path in
+    # System Settings -> General -> Additional $PATH variable
+    # but in general it's a good idea to have your programs in your $PATH environment variable (system wide)
+
+    #pimcore_executable_composer: php /opt/vendor/bin/composer.phar
+    #pimcore_executable_soffice: /opt/libreoffice/bin/soffice
+    #pimcore_executable_gs: /opt/ghostscript/bin/gs
+    #pimcore_executable_pdftotext: /opt/tools/pdftotext
+    #pimcore_executable_xvfb-run: /opt/tools/xvfb-run
+    #pimcore_executable_pngcrush: /opt/tools/pngcrush
+    #pimcore_executable_zopflipng: /opt/tools/zopflipng
+    #pimcore_executable_pngout: /opt/tools/pngout
+    #pimcore_executable_advpng: /opt/tools/advpng
+    #pimcore_executable_cjpeg: /opt/tools/cjpeg
+    #pimcore_executable_jpegoptim: /opt/tools/jpegoptim
+    #pimcore_executable_php: /usr/local/custom-php/bin/php
+    #pimcore_executable_nice: /opt/tools/nice
+    #pimcore_executable_nohup: /opt/tools/nohup
+    #pimcore_executable_ffmpeg: /opt/tools/ffmpeg
+    #pimcore_executable_exiftool: /opt/tools/exiftool
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        # automatically injects dependencies in your services
+        autowire: true
+        # automatically registers your services as commands, event subscribers, etc.
+        autoconfigure: true
+        # this means you cannot fetch services directly from the container via $container->get()
+        # if you need to do this, you can override this setting on individual services
+        public: false
+
+    # Example custom templating helper
+    # AppBundle\Templating\Helper\Example:
+    #     # templating helpers need to be public as they
+    #     # are fetched from the container on demand
+    #     public: true
+    #     tags:
+    #         - { name: templating.helper, alias: fooBar }
+
+    # Example event listener for objects
+    # AppBundle\EventListener\TestListener:
+    #     tags:
+    #         - { name: kernel.event_listener, event: pimcore.dataobject.preUpdate, method: onObjectPreUpdate }

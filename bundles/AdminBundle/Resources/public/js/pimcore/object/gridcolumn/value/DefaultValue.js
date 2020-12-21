@@ -41,6 +41,8 @@ pimcore.object.gridcolumn.value.defaultvalue = Class.create(pimcore.object.gridc
         var copy = source.createNode({
             iconCls: source.data.iconCls,
             text: source.data.text,
+            key: source.data.key,
+            layout: source.data.layout,
             isTarget: true,
             leaf: true,
             dataType: source.data.dataType,

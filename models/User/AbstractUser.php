@@ -23,6 +23,7 @@ use Pimcore\Model;
 
 /**
  * @method \Pimcore\Model\User\AbstractUser\Dao getDao()
+ * @method void setLastLoginDate()
  */
 class AbstractUser extends Model\AbstractModel
 {
@@ -93,6 +94,8 @@ class AbstractUser extends Model\AbstractModel
      * @param string $name
      *
      * @return static|null
+     *
+     * @throws \Exception
      */
     public static function getByName($name)
     {
@@ -101,7 +104,7 @@ class AbstractUser extends Model\AbstractModel
             $user->getDao()->getByName($name);
 
             return $user;
-        } catch (\Exception $e) {
+        } catch (Model\Exception\NotFoundException $e) {
             return null;
         }
     }
@@ -259,7 +262,6 @@ class AbstractUser extends Model\AbstractModel
         $userRoleListing->setCondition('FIND_IN_SET(' . $this->getId() . ',roles)');
         $userRoleListing = $userRoleListing->load();
         if (count($userRoleListing)) {
-            /** @var Model\User $relatedUser */
             foreach ($userRoleListing as $relatedUser) {
                 $userRoles = $relatedUser->getRoles();
                 if (is_array($userRoles)) {

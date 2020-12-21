@@ -22,6 +22,7 @@ use Pimcore\Workflow\EventSubscriber\NotificationSubscriber;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
 use Symfony\Component\Workflow\Workflow;
+use Symfony\Contracts\Translation\LocaleAwareInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class NotificationEmailService extends AbstractNotificationService
@@ -78,7 +79,19 @@ class NotificationEmailService extends AbstractNotificationService
             $deeplink = '';
             $hostUrl = Tool::getHostUrl();
             if ($hostUrl !== '') {
-                $deeplink = $hostUrl . $this->router->generate('pimcore_admin_login') . '/deeplink?object_' . $subject->getId() . '_object';
+
+                // Decide what kind of link to create
+                $objectType = $type = 'object';
+                if ($subject instanceof \Pimcore\Model\Document) {
+                    $objectType = 'document';
+                    $type = $subject->getType();
+                }
+                if ($subject instanceof \Pimcore\Model\Asset) {
+                    $objectType = 'asset';
+                    $type = $subject->getType();
+                }
+
+                $deeplink = $hostUrl . $this->router->generate('pimcore_admin_login_deeplink') . '?'.$objectType.'_' . $subject->getId() . '_'. $type;
             }
 
             foreach ($recipients as $language => $recipientsPerLanguage) {
@@ -186,8 +199,11 @@ class NotificationEmailService extends AbstractNotificationService
         $inheritanceBackup = AbstractObject::getGetInheritedValues();
         AbstractObject::setGetInheritedValues(true);
 
-        $translatorLocaleBackup = $this->translator->getLocale();
-        $this->translator->setLocale($language);
+        $translatorLocaleBackup = null;
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $translatorLocaleBackup = $this->translator->getLocale();
+            $this->translator->setLocale($language);
+        }
 
         $emailTemplate = $this->template->render(
             $mailPath, $this->getNotificationEmailParameters($subjectType, $subject, $workflow, $action, $deeplink, $language)
@@ -196,8 +212,10 @@ class NotificationEmailService extends AbstractNotificationService
         //reset inheritance
         AbstractObject::setGetInheritedValues($inheritanceBackup);
 
-        //reset translation locale
-        $this->translator->setLocale($translatorLocaleBackup);
+        if ($this->translator instanceof LocaleAwareInterface) {
+            //reset translation locale
+            $this->translator->setLocale($translatorLocaleBackup);
+        }
 
         return $emailTemplate;
     }

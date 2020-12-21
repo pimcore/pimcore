@@ -68,7 +68,6 @@ class JSON extends AbstractOperator
             } else {
                 $result->value = $valueArray[0];
             }
-            $result->$valueArray;
         }
 
         if ($this->mode === 'e') {

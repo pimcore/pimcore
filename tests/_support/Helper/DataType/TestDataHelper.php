@@ -532,7 +532,6 @@ class TestDataHelper extends Module
         $user = User::getByName($username);
 
         if (!$user) {
-            /** @var User $user */
             $user = User::create([
                 'parentId' => 0,
                 'username' => $username,

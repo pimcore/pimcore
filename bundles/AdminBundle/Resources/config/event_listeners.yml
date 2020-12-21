@@ -14,16 +14,7 @@ services:
         arguments:
             $unauthenticatedRoutes: '%pimcore.admin.unauthenticated_routes%'
 
-    Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener:
-        public: true
-        arguments:
-            - '%pimcore_admin.csrf_protection.excluded_routes%'
-            - '@twig'
-        calls:
-            - [setLogger, ['@logger']]
-        tags:
-            - { name: monolog.logger, channel: admin }
-
+    Pimcore\Bundle\AdminBundle\EventListener\CsrfProtectionListener: ~
     #
     # EXCEPTION HANDLING
     #

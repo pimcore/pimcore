@@ -143,8 +143,6 @@ class Snippet extends Model\Document\Editable
                 $cacheParams['target_group'] = $this->snippet->getUseTargetGroup();
             }
 
-            $cacheParams['webp'] = Frontend::hasWebpSupport();
-
             if (Site::isSiteRequest()) {
                 $cacheParams['siteId'] = Site::getCurrentSite()->getId();
             }

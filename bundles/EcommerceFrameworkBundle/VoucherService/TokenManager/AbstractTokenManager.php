@@ -23,7 +23,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\VoucherService\Token;
 use Pimcore\Model\DataObject\OnlineShopVoucherSeries;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-abstract class AbstractTokenManager implements TokenManagerInterface
+abstract class AbstractTokenManager implements TokenManagerInterface, ExportableTokenManagerInterface
 {
     /* @var AbstractVoucherTokenType */
     public $configuration;
@@ -155,7 +155,6 @@ abstract class AbstractTokenManager implements TokenManagerInterface
      * @param array $params
      *
      * @return mixed
-     * @implements IExportableTokenManager
      */
     public function exportCsv(array $params)
     {
@@ -202,7 +201,6 @@ abstract class AbstractTokenManager implements TokenManagerInterface
      * @param array $params
      *
      * @return mixed
-     * @implements IExportableTokenManager
      */
     public function exportPlain(array $params)
     {

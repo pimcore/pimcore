@@ -268,7 +268,7 @@ pimcore.object.classes.klass = Class.create({
         var dataMenu = [];
         var dataComps = Object.keys(pimcore.object.classes.data);
 
-        // @TODO: ignoredAliases are there for BC reasons, to be removed in v7
+        // @TODO: ignoredAliases are there for BC reasons, to be removed in Pimcore 10
         var ignoredAliases = ['multihrefMetadata','objectsMetadata','objects','multihref','href','nonownerobjects'];
         ignoredAliases.forEach(function (item) {
             dataComps = array_remove_value(dataComps, item);
@@ -1476,7 +1476,7 @@ pimcore.object.classes.klass = Class.create({
                 if (res.message) {
                     pimcore.helpers.showNotification(t("error"), res.message, "error");
                 } else {
-                    throw "save was not successful, see log files in /var/logs";
+                    throw "save was not successful, see log files in /var/log";
                 }
             }
         } catch (e) {

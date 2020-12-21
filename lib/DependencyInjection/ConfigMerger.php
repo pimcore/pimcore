@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Pimcore\DependencyInjection;
 
 /**
- * @deprecated Will be removed in Pimcore 7
+ * @deprecated Will be removed in Pimcore 10
  */
 class ConfigMerger
 {

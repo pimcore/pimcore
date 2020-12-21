@@ -22,9 +22,9 @@ addons:
   artifacts:
     s3_region: "eu-west-1"      # see https://docs.aws.amazon.com/general/latest/gr/rande.html
     debug: true
-    paths:                      # - $(ls var/logs/*.log | tr "\n" ":")
+    paths:                      # - $(ls var/log/*.log | tr "\n" ":")
       #      - app/config
-      - var/logs
+      - var/log
       - tests/_output/var/classes
       - phpstan-baseline.neon
   hosts:
@@ -49,10 +49,10 @@ jobs:
 
     # All tests
 
-    - name: "All Tests - PHP 7.3 | MariaDB 10.4"
+    - name: "All Tests - PHP 7.4 | MariaDB 10.4"
       os: linux
       sudo: required
-      php: 7.3
+      php: 7.4
       env:
           - DATABASE_SERVER="mariadb-10.4"
 
@@ -70,10 +70,10 @@ jobs:
       env:
           - DATABASE_SERVER="mariadb-10.2"
 
-    - name: "All Tests - PHP 7.3 | MySQL 8.0 | Lowest dependencies"
+    - name: "All Tests - PHP 7.4 | MySQL 8.0 | Lowest dependencies"
       os: linux
       sudo: required
-      php: 7.3
+      php: 7.4
       env:
         - DATABASE_SERVER="mysql-8.0"
         - COMPOSER_PREFER_LOWEST=1
@@ -86,9 +86,9 @@ jobs:
         - TASK_TESTS=0
         - TASK_STAN=1
 
-    - name: "PHPStan - PHP 7.3 | Level 3 | baseline | Lowest dependencies"
+    - name: "PHPStan - PHP 7.4 | Level 3 | baseline | Lowest dependencies"
       os: linux
-      php: 7.3
+      php: 7.4
       env:
         - TASK_TESTS=0
         - TASK_STAN=1
@@ -141,7 +141,7 @@ env:
     - PIMCORE_TEST=1
     - PIMCORE_TEST_URL=http://pimcore-test.dev
     - PIMCORE_TEST_DB_DSN="mysql://root@localhost/pimcore_test"
-    - PIMCORE_TEST_CACHE_REDIS_DATABASE=1
+    - PIMCORE_TEST_REDIS_DSN="redis://localhost"
     - DATABASE_SERVER="mariadb-10.4"
     - PIMCORE_PROJECT_ROOT=$TRAVIS_BUILD_DIR
 

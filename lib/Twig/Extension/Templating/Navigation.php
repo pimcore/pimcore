@@ -26,6 +26,7 @@ use Pimcore\Navigation\Renderer\Menu as MenuRenderer;
 use Pimcore\Navigation\Renderer\RendererInterface;
 use Pimcore\Twig\Extension\Templating\Navigation\Exception\InvalidRendererException;
 use Pimcore\Twig\Extension\Templating\Navigation\Exception\RendererNotFoundException;
+use Pimcore\Twig\Extension\Templating\Traits\HelperCharsetTrait;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -37,6 +38,8 @@ use Twig\Extension\RuntimeExtensionInterface;
  */
 class Navigation implements RuntimeExtensionInterface
 {
+    use HelperCharsetTrait;
+
     /**
      * @var Builder
      */

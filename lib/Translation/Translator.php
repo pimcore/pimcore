@@ -32,11 +32,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
     protected $translator;
 
     /**
-     * @var bool
-     */
-    protected $caseInsensitive = false;
-
-    /**
      * @var array
      */
     protected $initializedCatalogues = [];
@@ -67,22 +62,20 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
 
     /**
      * @param TranslatorInterface $translator
-     * @param bool $caseInsensitive
      */
-    public function __construct(TranslatorInterface $translator, bool $caseInsensitive = false)
+    public function __construct(TranslatorInterface $translator)
     {
         if (!$translator instanceof TranslatorBagInterface) {
             throw new InvalidArgumentException(sprintf('The Translator "%s" must implement TranslatorInterface and TranslatorBagInterface.', get_class($translator)));
         }
 
         $this->translator = $translator;
-        $this->caseInsensitive = $caseInsensitive;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function trans($id, array $parameters = [], $domain = null, $locale = null)
+    public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null)
     {
         $id = trim($id);
 
@@ -112,10 +105,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         $this->lazyInitialize($domain, $locale);
 
         $originalId = $id;
-        if ($this->caseInsensitive && in_array($domain, ['messages', 'admin'])) {
-            $id = mb_strtolower($id);
-        }
-
         $term = $this->translator->trans($id, $parameters, $domain, $locale);
 
         // only check for empty translation on original ID - we don't want to create empty
@@ -137,7 +126,9 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      */
     public function setLocale(string $locale)
     {
-        $this->translator->setLocale($locale);
+        if ($this->translator instanceof LocaleAwareInterface) {
+            $this->translator->setLocale($locale);
+        }
     }
 
     /**
@@ -145,7 +136,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      */
     public function getLocale()
     {
-        return $this->translator->getLocale();
+        if ($this->translator instanceof LocaleAwareInterface) {
+            return $this->translator->getLocale();
+        }
+
+        return \Pimcore\Tool::getDefaultLanguage();
     }
 
     /**
@@ -216,11 +211,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                         !empty($translationTerm)) {
                         $translationKey = $translation['key'];
 
-                        // store as case insensitive if configured
-                        if ($this->caseInsensitive) {
-                            $translationKey = mb_strtolower($translationKey);
-                        }
-
                         if (empty($translationTerm)) {
                             $translationTerm = $translationKey;
                         }
@@ -265,28 +255,24 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
      */
     protected function checkForEmptyTranslation($id, $translated, $parameters, $domain, $locale)
     {
-        $normalizedId = $id;
-        if ($this->caseInsensitive) {
-            $normalizedId = mb_strtolower($id);
-        }
-
-        if (isset($parameters['%count%'])) {
-            $normalizedId = $translated;
-        }
-
-        $comparisonId = $normalizedId;
-        if (!empty($parameters)) {
-            $comparisonId = strtr($normalizedId, $parameters);
-        }
-
-        $lookForFallback = $comparisonId == $translated;
         if (empty($id)) {
             return $translated;
-        } elseif ($comparisonId != $translated && $translated) {
+        }
+
+        $normalizedId = $id;
+        if (isset($parameters['%count%'])) {
+            $normalizedId = $id = $translated;
+        }
+
+        $lookForFallback = $normalizedId == $translated;
+        if ($normalizedId != $translated && $translated) {
             return $translated;
-        } elseif ($comparisonId == $translated) {
+        } elseif ($normalizedId == $translated) {
             if ($this->getCatalogue($locale)->has($normalizedId, $domain)) {
-                return $this->getCatalogue($locale)->get($normalizedId, $domain);
+                $translated = $this->getCatalogue($locale)->get($normalizedId, $domain);
+                if ($translated != $normalizedId) {
+                    return $translated;
+                }
             } elseif ($backend = $this->getBackendForDomain($domain)) {
                 if (strlen($id) > 190) {
                     throw new \Exception("Message ID's longer than 190 characters are invalid!");
@@ -339,11 +325,11 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
                     $fallbackValue = $catalogue->get($normalizedId, $domain);
                 }
 
-                if ($fallbackValue) {
+                if ($fallbackValue && $normalizedId != $fallbackValue) {
                     // update fallback value in original catalogue otherwise multiple calls to the same id will not work
                     $this->getCatalogue($locale)->set($normalizedId, $fallbackValue, $domain);
 
-                    return $fallbackValue;
+                    return strtr($fallbackValue, $parameters);
                 }
             }
         }
@@ -435,11 +421,6 @@ class Translator implements TranslatorInterface, TranslatorBagInterface, LocaleA
         }
 
         return $text;
-    }
-
-    public function getCaseInsensitive(): bool
-    {
-        return $this->caseInsensitive;
     }
 
     /**

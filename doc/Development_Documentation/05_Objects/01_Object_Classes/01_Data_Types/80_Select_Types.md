@@ -65,7 +65,7 @@ use Pimcore\Model\DataObject;
 
 ...
 
-$o = DataObject::getById(49);
+$o = DataObject\AbstractObject::getById(49);
 
 // for a (single) select data field
 $valuesSingle = DataObject\Service::getOptionsForSelectField($o, "select"); 
@@ -92,7 +92,7 @@ use Pimcore\Model\DataObject;
 
 ...
 
-$product = DataObject::getById(49);
+$product = DataObject\AbstractObject::getById(49);
 // for a select data field
 $colorOptions = DataObject\Service::getOptionsForSelectField($product, "color");
 

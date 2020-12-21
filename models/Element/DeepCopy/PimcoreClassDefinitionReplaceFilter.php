@@ -57,5 +57,5 @@ class PimcoreClassDefinitionReplaceFilter implements Filter
     }
 }
 
-//TODO: remove in Pimcore 7
+//TODO: remove in Pimcore 10
 class_alias(PimcoreClassDefinitionReplaceFilter::class, 'Pimcore\Model\Version\PimcoreClassDefinitionReplaceFilter');

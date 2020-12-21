@@ -3,7 +3,7 @@
 Pimcore provides an object orientated PHP API to work with Objects. There are several generic functionalities 
 provided by Pimcore and for each Pimcore object class Pimcore generates corresponding PHP classes for working
 with these objects via a comfortable PHP API and take full advantage of a IDE (e.g. code completion etc.). 
-    
+
 ## CRUD Operations
 The following code snippet indicates how to access, create and modify an object programmatically:
 
@@ -36,17 +36,17 @@ $myObject->getDescription();
 $city = DataObject\City::getByZip(5020,1);
 
 // you can also get an object by id where you don't know the type
-$object = DataObject::getById(235);
+$object = DataObject\AbstractObject::getById(235);
 
 // or obtain an object by path
-$object = DataObject::getByPath("/path/to/the/object");
+$object = DataObject\AbstractObject::getByPath("/path/to/the/object");
 
 
 //updating and saving objects
 $myObject->setName("My Name");
 $myObject->save();
 
- 
+
 //deleting objects
 $city->delete();
 ```

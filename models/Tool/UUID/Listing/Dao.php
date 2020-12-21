@@ -28,7 +28,7 @@ use Pimcore\Model\Tool\UUID;
 class Dao extends Model\Listing\Dao\AbstractDao
 {
     /**
-     * Loads a list of Email_Log for the specified parameters, returns an array of Email_Log elements
+     * Loads a list of UUID for the specified parameters, returns an array of UUID elements
      *
      * @return array
      */
@@ -44,7 +44,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
     }
 
     /**
-     * Returns the total amount of Email_Log entries
+     * Returns the total amount of UUID entries
      *
      * @return int
      */

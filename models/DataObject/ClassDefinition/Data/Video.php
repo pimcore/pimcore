@@ -26,7 +26,6 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
 {
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -60,13 +59,6 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
      * @var string
      */
     public $columnType = 'text';
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Video';
 
     /**
      * @return int
@@ -121,7 +113,9 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
     {
         if ($data instanceof DataObject\Data\Video) {
             $data = clone $data;
-            $data->setOwner(null, '');
+            $data->_setOwner(null);
+            $data->_setOwnerFieldname('');
+            $data->_setOwnerLanguage(null);
 
             if ($data->getData() instanceof Asset) {
                 $data->setData($data->getData()->getId());
@@ -167,7 +161,9 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
             if ($raw['data']) {
                 $video = new DataObject\Data\Video();
                 if (isset($params['owner'])) {
-                    $video->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                    $video->_setOwner($params['owner']);
+                    $video->_setOwnerFieldname($params['fieldname']);
+                    $video->_setOwnerLanguage($params['language'] ?? null);
                 }
                 $video->setData($raw['data']);
                 $video->setType($raw['type']);
@@ -629,5 +625,25 @@ class Video extends Data implements ResourcePersistenceAwareInterface, QueryReso
         }
 
         return true;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Video::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Video::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Video::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Video::class . '|null';
     }
 }

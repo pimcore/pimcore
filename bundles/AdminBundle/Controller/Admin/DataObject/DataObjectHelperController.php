@@ -770,12 +770,12 @@ class DataObjectHelperController extends AdminController
                 if ($bf instanceof DataObject\ClassDefinition\Data\Localizedfields) {
                     $localizedFieldDefinitions = $bf->getFieldDefinitions();
 
-                    $context = [
+                    $localizedContext = [
                         'containerKey' => $brickType,
                         'fieldname' => $field->getName(),
                     ];
 
-                    $this->appendBrickFields($bf, $localizedFieldDefinitions, $availableFields, $gridType, $count, $brickType, $class, $objectId, $context);
+                    $this->appendBrickFields($bf, $localizedFieldDefinitions, $availableFields, $gridType, $count, $brickType, $class, $objectId, $localizedContext);
                 } else {
                     if ($context) {
                         $context['brickfield'] = $bf->getName();
@@ -1735,7 +1735,6 @@ class DataObjectHelperController extends AdminController
                 $configData->classId = $request->get('classId');
                 $resolver = $importService->getResolver($configData->resolverSettings->strategy);
 
-                /** @var DataObject\Concrete $object */
                 $object = $resolver->resolve($configData, $parentId, $rowData);
 
                 $context = $eventData->getContext();

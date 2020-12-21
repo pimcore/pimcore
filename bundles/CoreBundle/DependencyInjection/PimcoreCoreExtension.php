@@ -30,7 +30,6 @@ use Pimcore\Targeting\ActionHandler\DelegatingActionHandler;
 use Pimcore\Targeting\DataLoaderInterface;
 use Pimcore\Targeting\Storage\TargetingStorageInterface;
 use Pimcore\Translation\ExportDataExtractorService\DataExtractor\DataObjectDataExtractor;
-use Pimcore\Translation\Translator;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -126,11 +125,11 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         $loader->load('image_optimizers.yml');
         $loader->load('maintenance.yml');
         $loader->load('commands.yml');
+        $loader->load('cache.yml');
 
         $this->configureImplementationLoaders($container, $config);
         $this->configureModelFactory($container, $config);
         $this->configureRouting($container, $config['routing']);
-        $this->configureCache($container, $loader, $config);
         $this->configureTranslations($container, $config['translations']);
         $this->configureTargeting($container, $loader, $config['targeting']);
         $this->configurePasswordEncoders($container, $config);
@@ -196,16 +195,6 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         foreach ($services as $serviceId => $cfg) {
             $loaders = [];
 
-            if ($cfg['config']['map']) {
-                $classMapLoader = new Definition(ClassMapLoader::class, [$cfg['config']['map']]);
-                $classMapLoader->setPublic(false);
-
-                $classMapLoaderId = $serviceId . '.class_map_loader';
-                $container->setDefinition($classMapLoaderId, $classMapLoader);
-
-                $loaders[] = new Reference($classMapLoaderId);
-            }
-
             if ($cfg['config']['prefixes']) {
                 $prefixLoader = new Definition($cfg['prefixLoader'], [$cfg['config']['prefixes']]);
                 $prefixLoader->setPublic(false);
@@ -214,6 +203,16 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
                 $container->setDefinition($prefixLoaderId, $prefixLoader);
 
                 $loaders[] = new Reference($prefixLoaderId);
+            }
+
+            if ($cfg['config']['map']) {
+                $classMapLoader = new Definition(ClassMapLoader::class, [$cfg['config']['map']]);
+                $classMapLoader->setPublic(false);
+
+                $classMapLoaderId = $serviceId . '.class_map_loader';
+                $container->setDefinition($classMapLoaderId, $classMapLoader);
+
+                $loaders[] = new Reference($classMapLoaderId);
             }
 
             $service = $container->getDefinition($serviceId);
@@ -229,79 +228,8 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
         );
     }
 
-    /**
-     * Configure pimcore core cache
-     *
-     * @param ContainerBuilder $container
-     * @param LoaderInterface $loader
-     * @param array $config
-     */
-    private function configureCache(ContainerBuilder $container, LoaderInterface $loader, array $config)
-    {
-        $coreCachePool = null;
-        if (null !== $config['cache']['pool_service_id']) {
-            $coreCachePool = $config['cache']['pool_service_id'];
-        }
-
-        // default lifetime
-        $container->setParameter('pimcore.cache.core.default_lifetime', $config['cache']['default_lifetime']);
-
-        $loader->load('cache.yml');
-
-        $configuredCachePool = null;
-
-        // register doctrine cache if it is enabled
-        if ($config['cache']['pools']['doctrine']['enabled']) {
-            $loader->load('cache_doctrine.yml');
-
-            // load named connection
-            $connectionId = sprintf('doctrine.dbal.%s_connection', $config['cache']['pools']['doctrine']['connection']);
-
-            $doctrinePool = $container->findDefinition('pimcore.cache.core.pool.doctrine');
-            $doctrinePool->replaceArgument(0, new Reference($connectionId));
-
-            $configuredCachePool = 'pimcore.cache.core.pool.doctrine';
-        }
-
-        // register redis cache if it is enabled
-        if ($config['cache']['pools']['redis']['enabled']) {
-            $container->setParameter(
-                'pimcore.cache.core.redis.connection',
-                $config['cache']['pools']['redis']['connection'] ?? []
-            );
-
-            $container->setParameter(
-                'pimcore.cache.core.redis.options',
-                $config['cache']['pools']['redis']['options'] ?? []
-            );
-
-            $loader->load('cache_redis.yml');
-
-            $configuredCachePool = 'pimcore.cache.core.pool.redis';
-        }
-
-        if (null === $coreCachePool) {
-            if (null !== $configuredCachePool) {
-                // use one of the pools configured above
-                $coreCachePool = $configuredCachePool;
-            } else {
-                // default to filesystem cache
-                $coreCachePool = 'pimcore.cache.core.pool.filesystem';
-            }
-        }
-
-        // set core cache pool alias
-        $container->setAlias('pimcore.cache.core.pool', $coreCachePool)->setPublic(true);
-    }
-
     private function configureTranslations(ContainerBuilder $container, array $config)
     {
-        // set translator to case insensitive
-        if ($config['case_insensitive']) {
-            $definition = $container->getDefinition(Translator::class);
-            $definition->setArgument('$caseInsensitive', $config['case_insensitive']);
-        }
-
         $parameter = $config['debugging']['parameter'];
 
         // remove the listener as it isn't needed at all if it is disabled or the parameter is empty
@@ -494,7 +422,7 @@ class PimcoreCoreExtension extends ConfigurableExtension implements PrependExten
      */
     public function prepend(ContainerBuilder $container)
     {
-        // @TODO: to be removed in Pimcore 7 -> move security config to skeleton & demo package
+        // @TODO: to be removed in Pimcore 10 -> move security config to skeleton & demo package
         $securityConfigs = $container->getExtensionConfig('security');
 
         if (count($securityConfigs) > 1) {

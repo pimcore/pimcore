@@ -28,7 +28,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -52,13 +51,6 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     public $columnType = 'text';
 
     /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Link';
-
-    /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
      * @param DataObject\Data\Link $data
@@ -71,7 +63,9 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
     {
         if ($data instanceof DataObject\Data\Link) {
             $data = clone $data;
-            $data->setOwner(null, '');
+            $data->_setOwner(null);
+            $data->_setOwnerFieldname('');
+            $data->_setOwnerLanguage(null);
 
             if ($data->getLinktype() == 'internal' && !$data->getPath()) {
                 $data->setLinktype(null);
@@ -111,7 +105,9 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
 
         if ($link instanceof DataObject\Data\Link) {
             if (isset($params['owner'])) {
-                $link->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                $link->_setOwner($params['owner']);
+                $link->_setOwnerFieldname($params['fieldname']);
+                $link->_setOwnerLanguage($params['language'] ?? null);
             }
 
             try {
@@ -478,5 +474,25 @@ class Link extends Data implements ResourcePersistenceAwareInterface, QueryResou
         }
 
         return $this->isEqualArray($oldValue, $newValue);
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Link::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . DataObject\Data\Link::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Link::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Link::class . '|null';
     }
 }

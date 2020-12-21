@@ -28,7 +28,6 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     use DataObject\Traits\SimpleComparisonTrait;
     use Extension\ColumnType;
     use Extension\QueryColumnType;
-    use DataObject\ClassDefinition\NullablePhpdocReturnTypeTrait;
 
     /**
      * Static type of this element
@@ -50,13 +49,6 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
      * @var array
      */
     public $columnType = ['image' => 'int(11)', 'hotspots' => 'text'];
-
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Model\\DataObject\\Data\\Hotspotimage';
 
     /**
      * @var int
@@ -124,7 +116,7 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
     /**
      * @see ResourcePersistenceAwareInterface::getDataForResource
      *
-     * @param DataObject\Data\Hotspotimage $data
+     * @param mixed $data
      * @param null|DataObject\Concrete $object
      * @param array $params
      *
@@ -213,7 +205,9 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
             $value = new DataObject\Data\Hotspotimage($imageId, $hotspots, $marker, $crop);
 
             if (isset($params['owner'])) {
-                $value->setOwner($params['owner'], $params['fieldname'], $params['language'] ?? null);
+                $value->_setOwner($params['owner']);
+                $value->_setOwnerFieldname($params['fieldname']);
+                $value->_setOwnerLanguage($params['language'] ?? null);
             }
 
             return $value;
@@ -705,5 +699,25 @@ class Hotspotimage extends Model\DataObject\ClassDefinition\Data\Image
         }
 
         return true;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' .DataObject\Data\Hotspotimage::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' .DataObject\Data\Hotspotimage::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . DataObject\Data\Hotspotimage::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . DataObject\Data\Hotspotimage::class . '|null';
     }
 }

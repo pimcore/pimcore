@@ -21,7 +21,6 @@ use Pimcore\File;
 use Pimcore\Logger;
 use Pimcore\Model\Asset;
 use Pimcore\Model\Tool\TmpStore;
-use Pimcore\Tool\Frontend;
 
 class Processor
 {
@@ -52,11 +51,6 @@ class Processor
         'brightnessSaturation' => ['brightness', 'saturation', 'hue'],
         'mirror' => ['mode'],
     ];
-
-    /**
-     * @var null|bool
-     */
-    protected static $hasWebpSupport = null;
 
     /**
      * @param string $format
@@ -148,12 +142,6 @@ class Processor
         }
 
         $image = Asset\Image::getImageTransformInstance();
-
-        if ($optimizedFormat && self::hasWebpSupport() && $image->supportsFormat('webp')) {
-            $optimizedFormat = $optimizeContent = false;
-            $format = 'webp';
-        }
-
         $thumbDir = $asset->getImageThumbnailSavePath() . '/image-thumb__' . $asset->getId() . '__' . $config->getName();
         $filename = preg_replace("/\." . preg_quote(File::getFileExtension($asset->getFilename()), '/') . '$/i', '', $asset->getFilename());
 
@@ -278,6 +266,7 @@ class Processor
             }
 
             $highResFactor = $config->getHighResolution();
+            $imageCropped = false;
 
             $calculateMaxFactor = function ($factor, $original, $new) {
                 $newFactor = $factor * $original / $new;
@@ -298,6 +287,15 @@ class Processor
 
                     if (is_string($transformation['method'])) {
                         $mapping = self::$argumentMapping[$transformation['method']];
+
+                        if (in_array($transformation['method'], ['cropPercent'])) {
+                            //avoid double cropping in case of $highResFactor re-calculation (goto prepareTransformations)
+                            if ($imageCropped) {
+                                continue;
+                            }
+                            $imageCropped = true;
+                        }
+
                         if (is_array($transformation['arguments'])) {
                             foreach ($transformation['arguments'] as $key => $value) {
                                 $position = array_search($key, $mapping);
@@ -427,30 +425,5 @@ class Processor
         }
 
         return $path;
-    }
-
-    /**
-     * @param bool|null $webpSupport
-     *
-     * @return bool|null
-     */
-    public static function setHasWebpSupport(?bool $webpSupport): ?bool
-    {
-        $prevValue = self::$hasWebpSupport;
-        self::$hasWebpSupport = $webpSupport;
-
-        return $prevValue;
-    }
-
-    /**
-     * @return bool
-     */
-    protected static function hasWebpSupport(): bool
-    {
-        if (self::$hasWebpSupport !== null) {
-            return self::$hasWebpSupport;
-        }
-
-        return Frontend::hasWebpSupport();
     }
 }

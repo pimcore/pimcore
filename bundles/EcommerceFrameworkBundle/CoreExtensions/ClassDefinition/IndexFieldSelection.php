@@ -55,13 +55,6 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
         'preSelect' => 'text',
     ];
 
-    /**
-     * Type for the generated phpdoc
-     *
-     * @var string
-     */
-    public $phpdocType = '\\Pimcore\\Bundle\\EcommerceFrameworkBundle\\CoreExtensions\\ObjectData\\IndexFieldSelection';
-
     public $width;
     public $considerTenants = false;
     public $multiPreSelect = false;
@@ -335,5 +328,25 @@ class IndexFieldSelection extends Data implements ResourcePersistenceAwareInterf
     public function setWidth($width)
     {
         $this->width = (int)$width;
+    }
+
+    public function getParameterTypeDeclaration(): ?string
+    {
+        return '?\\' . IndexFieldSelection::class;
+    }
+
+    public function getReturnTypeDeclaration(): ?string
+    {
+        return '?\\' . IndexFieldSelection::class;
+    }
+
+    public function getPhpdocInputType(): ?string
+    {
+        return '\\' . IndexFieldSelection::class . '|null';
+    }
+
+    public function getPhpdocReturnType(): ?string
+    {
+        return '\\' . IndexFieldSelection::class . '|null';
     }
 }

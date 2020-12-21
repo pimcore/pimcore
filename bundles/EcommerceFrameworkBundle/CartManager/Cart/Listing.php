@@ -21,6 +21,7 @@ use Pimcore\Bundle\EcommerceFrameworkBundle\Factory;
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart current()
  * @method int getTotalCount()
  * @method \Pimcore\Bundle\EcommerceFrameworkBundle\CartManager\Cart\Listing\Dao getDao()
+ * @method void setCartClass(string $cartClass)
  */
 class Listing extends \Pimcore\Model\Listing\AbstractListing
 {
