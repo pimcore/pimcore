@@ -17,23 +17,30 @@ env:
     PIMCORE_ENVIRONMENT: test
     PIMCORE_TEST: 1
     PIMCORE_TEST_DB_DSN: "mysql://root@127.0.0.1:33006/pimcore_test"
+    PIMCORE_TEST_REDIS_DSN: "redis://127.0.0.1:63379"
 
 jobs:
     codeception-tests:
         name: "Codeception tests"
         runs-on: "ubuntu-20.04"
-
+        continue-on-error: ${{ matrix.experimental }}
         strategy:
             matrix:
-                dependencies:
-                    - "lowest"
-                    - "highest"
-                php-version:
-                    - "7.4"
+                include:
+                    - { php-version: 7.4, database: "mariadb:10.5", dependencies: highest, experimental: false }
+                    - { php-version: 7.4, database: "mariadb:10.3", dependencies: lowest, experimental: false }
+                    - { php-version: 7.4, database: "mysql:5.7", dependencies: lowest, experimental: false }
+                    - { php-version: 7.4, database: "mysql:8.0", dependencies: lowest, experimental: false }
+                    - { php-version: 7.4, database: "percona:8.0", dependencies: lowest, experimental: false }
+                    #- { php-version: 8.0, database: "mariadb:10.4", dependencies: highest, experimental: true }
 
         services:
+            redis:
+                image: redis
+                ports:
+                    - 63379:6379
             mariadb:
-                image: "mariadb:10.4"
+                image: "${{ matrix.database }}"
                 ports:
                     - 33006:3306
                 env:
@@ -47,6 +54,8 @@ jobs:
               uses: "shivammathur/setup-php@v2"
               with:
                   coverage: "none"
+                  extensions: imagick
+                  ini-values: display_errors=On, display_startup_errors=On, error_reporting=32767
                   php-version: "${{ matrix.php-version }}"
 
             - name: Verify MariaDB connection
@@ -56,19 +65,21 @@ jobs:
                     sleep 1
                   done
 
-            - name: "Database server infos"
-              run: |
-                  mysql -e "SELECT VERSION();"
-                  mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
-
             - name: "Setup Pimcore environment"
               run: |
+                  mysql -e "CREATE DATABASE pimcore_test CHARSET=utf8mb4;"
                   .github/ci/scripts/setup-pimcore-environment.sh
 
             - name: "Install dependencies with Composer"
               uses: "ramsey/composer-install@v1"
               with:
                   dependency-versions: "${{ matrix.dependencies }}"
+
+            - name: "Test environment infos"
+              run: |
+                  mysql -e "SELECT VERSION();"
+                  php -i
+                  ./bin/console pimcore:system:requirements:check
 
             - name: "Run Codeception"
               run: "vendor/bin/codecept run -c . -vvv --json"
